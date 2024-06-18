@@ -13,8 +13,6 @@ export const selectRestaurant = state => state.restaurant
 
 export const selectCart = state => state.cart
 
-export const selectOrderNodeId = state => state.cart['@id']
-
 export const selectCartTotal = state => state.cart.total
 
 /**

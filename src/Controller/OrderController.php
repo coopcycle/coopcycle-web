@@ -348,13 +348,13 @@ class OrderController extends AbstractController
         $checkoutPayment = new CheckoutPayment($order);
         $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
 
-        $parameters =  $this->auth([
+        $parameters =  [
             'order' => $order,
             'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-        ]);
+        ];
 
         $form->handleRequest($request);
 

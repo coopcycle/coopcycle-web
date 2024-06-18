@@ -43,6 +43,9 @@ const buildInitialState = () => {
 
 const store = createStoreFromPreloadedState(buildInitialState())
 
+// used by the PaymentForm
+window._rootStore = store
+
 const container = document.getElementById('react-root')
 
 const fulfilmentTimeRangeContainer = document.getElementById('order__fulfilment_time_range__container')

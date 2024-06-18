@@ -16,8 +16,8 @@ import '../components/order/index.scss'
 import { disableBtn, enableBtn } from '../widgets/button'
 import { createStoreFromPreloadedState } from './redux/store'
 import {
+  checkTimeRange,
   getTimingPathForStorage,
-  isTimeRangeSignificantlyDifferent,
 } from '../utils/order/helpers'
 import TimeRangeChangedModal
   from '../components/order/timeRange/TimeRangeChangedModal'
@@ -30,11 +30,9 @@ import {
   selectShippingTimeRange,
 } from '../entities/order/reduxSlice'
 import {
-  openTimeRangeChangedModal,
   selectPersistedTimeRange,
   timeRangeSlice,
 } from '../components/order/timeRange/reduxSlice'
-import { apiSlice } from '../api/slice'
 
 require('gasparesganga-jquery-loading-overlay')
 
@@ -296,35 +294,13 @@ form.addEventListener('submit', async function(event) {
 
   // if the customer has already selected the time range, it will be checked on the server side
   if (!shippingTimeRange && persistedTimeRange) {
-    let latestTiming = null
 
     try {
-      const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId, { forceRefetch: true }))
-      latestTiming = result.data
+      await checkTimeRange(persistedTimeRange, store.getState, store.dispatch)
     } catch (error) {
-      // ignore the error and continue without the timing check
-    }
-
-    if (latestTiming) {
-      if (latestTiming.range) {
-        if (isTimeRangeSignificantlyDifferent(persistedTimeRange, latestTiming.range)) {
-          submitPageBtn.classList.remove('btn--loading')
-          setLoading(false)
-
-          store.dispatch(openTimeRangeChangedModal())
-          return
-        }
-
-        window.sessionStorage.setItem(getTimingPathForStorage(orderNodeId), JSON.stringify(latestTiming.range))
-
-      } else {
-        // no time ranges available; restaurant is closed for the coming days
-        submitPageBtn.classList.remove('btn--loading')
-        setLoading(false)
-
-        store.dispatch(openTimeRangeChangedModal())
-        return
-      }
+      submitPageBtn.classList.remove('btn--loading')
+      setLoading(false)
+      return
     }
   }
 

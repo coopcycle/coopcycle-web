@@ -7,6 +7,7 @@ import i18n, {getCountry} from '../../i18n'
 import {geocode} from '../../components/AddressAutosuggest'
 import { createAction } from '@reduxjs/toolkit'
 import { setOrderAccessToken } from '../../entities/guest/reduxSlice'
+import { setOrderNodeId } from '../../entities/order/reduxSlice'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const FETCH_SUCCESS = 'FETCH_SUCCESS'
@@ -160,6 +161,7 @@ function handleAjaxResponse(res, dispatch, broadcast = true) {
   const orderNodeId = res.cart['@id']
   const orderAccessToken = res.orderAccessToken
   if (orderNodeId && orderAccessToken) {
+    dispatch(setOrderNodeId(orderNodeId))
     dispatch(setOrderAccessToken({ orderNodeId, orderAccessToken }))
   }
 

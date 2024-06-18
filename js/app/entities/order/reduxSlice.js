@@ -9,6 +9,9 @@ const slice = createSlice({
   name: 'order',
   initialState,
   reducers: {
+    setOrderNodeId: (state, action) => {
+      state['@id'] = action.payload
+    },
     setShippingTimeRange: (state, action) => {
       state.shippingTimeRange = action.payload
     },
@@ -16,7 +19,7 @@ const slice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setShippingTimeRange } = slice.actions
+export const { setOrderNodeId, setShippingTimeRange } = slice.actions
 
 export const orderSlice = slice
 

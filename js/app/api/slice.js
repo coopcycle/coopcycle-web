@@ -6,6 +6,7 @@ import {
 import { selectOrderAccessToken } from '../entities/guest/selectors'
 
 const guestCheckoutEndpoints = [
+  'getOrderValidate',
   'getOrderTiming',
   'updateOrder',
 ]
@@ -59,6 +60,9 @@ export const apiSlice = createApi({
   endpoints: builder => ({
     getOrderTiming: builder.query({
       query: (nodeId) => `${ nodeId }/timing`,
+    }),
+    getOrderValidate: builder.query({
+      query: (nodeId) => `${ nodeId }/validate`,
     }),
     updateOrder: builder.mutation({
       query: ({ nodeId, ...patch }) => ({

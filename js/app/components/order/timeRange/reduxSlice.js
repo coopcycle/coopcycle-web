@@ -30,7 +30,6 @@ export const {
 
 export const timeRangeSlice = slice
 
-
 export const selectPersistedTimeRange = state => state.timeRange.persistedTimeRange
 
 export const selectIsTimeRangeChangedModalOpen = state => state.timeRange.isModalOpen

@@ -13,7 +13,6 @@ import {
   openProductOptionsModal,
   fetchRequest,
   fetchFailure,
-  updateCartTiming,
 } from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
@@ -38,16 +37,13 @@ import {
   selectCanAddToExistingCart,
   selectCartShippingTimeRange,
   selectCartTiming,
-  selectOrderNodeId,
 } from './redux/selectors'
 import {
-  getTimingPathForStorage,
-  isTimeRangeSignificantlyDifferent,
+  checkTimeRange,
 } from '../utils/order/helpers'
 import {
-  openTimeRangeChangedModal, timeRangeSlice,
+  timeRangeSlice,
 } from '../components/order/timeRange/reduxSlice'
-import { apiSlice } from '../api/slice'
 import {
   accountSlice,
 } from '../entities/account/reduxSlice'
@@ -113,37 +109,12 @@ function init() {
       if (!shippingTimeRange) {
         const displayedTiming = selectCartTiming(store.getState())
 
-        const orderNodeId = selectOrderNodeId(store.getState())
-
-        let latestTiming = null
-
         try {
-          const result = await store.dispatch(apiSlice.endpoints.getOrderTiming.initiate(orderNodeId, { forceRefetch: true }))
-          latestTiming = result.data
+          await checkTimeRange(displayedTiming?.range, store.getState, store.dispatch)
         } catch (error) {
-          // ignore the error and continue without the timing check
-        }
-
-        if (displayedTiming && displayedTiming.range && latestTiming) {
-          store.dispatch(updateCartTiming(latestTiming))
-
-          if (latestTiming.range) {
-            if (isTimeRangeSignificantlyDifferent(displayedTiming.range, latestTiming.range)) {
-              setMenuLoading(false)
-              store.dispatch(fetchFailure()) // only to hide loading state in some react components
-              store.dispatch(openTimeRangeChangedModal())
-              return
-            }
-
-            window.sessionStorage.setItem(getTimingPathForStorage(orderNodeId), JSON.stringify(latestTiming.range))
-
-          } else {
-            // no time ranges available; restaurant is closed for the coming days
-            setMenuLoading(false)
-            store.dispatch(fetchFailure()) // only to hide loading state in some react components
-            store.dispatch(openTimeRangeChangedModal())
-            return
-          }
+          setMenuLoading(false)
+          store.dispatch(fetchFailure()) // only to hide loading state in some react components
+          return
         }
       }
     }

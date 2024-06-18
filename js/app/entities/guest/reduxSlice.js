@@ -19,3 +19,5 @@ const slice = createSlice({
 export const { setOrderAccessToken } = slice.actions
 
 export const guestSlice = slice
+
+export const selectOrderAccessTokens = state => state.guest.orderAccessTokens

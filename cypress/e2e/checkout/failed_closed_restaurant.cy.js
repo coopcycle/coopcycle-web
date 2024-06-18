@@ -192,7 +192,7 @@ describe('Failed checkout; restaurant is closed', () => {
       context('restaurant is closed while the customer is on the payment page' +
         ` (${ customerType })`,
         () => {
-          it('proceed with payment (FIXME)' + ` (${ customerType })`, () => {
+          it('suggest to choose a new time range (Timing modal)' + ` (${ customerType })`, () => {
 
             cy.visit('/fr/')
 
@@ -266,13 +266,30 @@ describe('Failed checkout; restaurant is closed', () => {
 
             cy.get('form[name="checkout_payment"]').submit()
 
-            //FIXME: this behaviour is broken since https://github.com/coopcycle/coopcycle-web/pull/3971
-            // and it will be re-introduced in https://github.com/coopcycle/coopcycle-web/issues/4167
+            cy.get('[data-testid="order.timeRangeChangedModal"]')
+              .should('be.visible')
+
+            cy.intercept('PUT', '/api/orders/*')
+              .as('putOrder1')
+            cy.get(
+              '[data-testid="order.timeRangeChangedModal.setTimeRange"]:visible button')
+              .click()
+            cy.wait('@putOrder1')
+
+            cy.get(
+              '[data-testid="order.time"]:visible')
+              .invoke('text')
+              .should('match', /^Demain entre 10:00 et 10:10/i)
+
+            cy.intercept('POST', '/stripe/payment/*/create-intent')
+              .as('createStripePaymentIntent')
+
+            cy.get('form[name="checkout_payment"]').submit()
+
+            cy.wait('@createStripePaymentIntent')
+
             cy.get('#order-timeline')
               .contains('Commande en attente de validation')
-
-            // cy.get('form[name="checkout_address"]')
-            //   .contains('Il n\'est plus possible de commander pour aujourd\'hui')
           })
         })
     })
