@@ -69,7 +69,7 @@ const DashboardApp = () => {
     return () => {
       window.removeEventListener('keydown', toggleSearchOnKeyDown, false)
     }
-  })
+  }, [])
 
   return (
     <div className="dashboard__aside-container">
