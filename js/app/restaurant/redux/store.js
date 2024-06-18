@@ -21,7 +21,6 @@ import {
   isPlayer,
   isProductOptionsModalOpen,
   isSetPlayerEmailModalOpen,
-  isTimeRangeChangedModalOpen,
   lastAddItemRequest,
   player,
   productOptionsModalContext,
@@ -29,10 +28,12 @@ import {
   restaurantTiming,
   shouldAskToEnableReusablePackaging,
 } from './reducers'
-import { accountSlice } from '../../redux/account'
-import { guestSlice } from '../../redux/guest'
-import { apiSlice } from '../../redux/api/slice'
 import { playerWebsocket, updateFormElements } from './middlewares'
+import { timeRangeSlice } from '../../components/order/timeRange/reduxSlice'
+import { apiSlice } from '../../api/slice'
+import { accountSlice } from '../../entities/account/reduxSlice'
+import { guestSlice } from '../../entities/guest/reduxSlice'
+import { orderSlice } from '../../entities/order/reduxSlice'
 
 const middlewares = [
   updateFormElements,
@@ -47,11 +48,12 @@ const composeEnhancers = (typeof window !== 'undefined' &&
 export const createStoreFromPreloadedState = preloadedState => {
   return createStore(
     combineReducers({
-      account: accountSlice.reducer,
-      guest: guestSlice.reducer,
+      [accountSlice.name]: accountSlice.reducer,
+      [guestSlice.name]: guestSlice.reducer,
       [apiSlice.reducerPath]: apiSlice.reducer,
       isFetching,
       cart,
+      [orderSlice.name]: orderSlice.reducer,
       restaurant,
       errors,
       addressFormElements,
@@ -75,7 +77,7 @@ export const createStoreFromPreloadedState = preloadedState => {
       player,
       isGroupOrdersEnabled,
       shouldAskToEnableReusablePackaging,
-      isTimeRangeChangedModalOpen,
+      [timeRangeSlice.name]: timeRangeSlice.reducer,
     }),
     preloadedState,
     composeEnhancers(

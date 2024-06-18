@@ -1,9 +1,6 @@
-import { apiSlice } from '../../redux/api/slice'
 import { createSelector } from 'reselect'
-
-export const selectOrderNodeId = state => state.order['@id']
-export const selectShippingTimeRange = state => state.order.shippingTimeRange
-export const selectPersistedTimeRange = state => state.order.persistedTimeRange
+import { apiSlice } from '../../api/slice'
+import { selectOrderNodeId, selectShippingTimeRange } from './reduxSlice'
 
 export const selectFirstAvailableTimeRange = createSelector(
   state => state,
@@ -20,5 +17,3 @@ export const selectFulfilmentTimeRange = createSelector(
     return shippingTimeRange ?? firstAvailableTimeRange
   })
 
-
-export const selectIsTimeRangeChangedModalOpen = state => state.ui.isTimeRangeChangedModalOpen

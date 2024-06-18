@@ -1,21 +1,46 @@
 import React, { useEffect } from 'react'
-import Modal from 'react-modal'
+
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
-import TimeSlotPicker from './TimeSlotPicker'
-import DatePicker from './DatePicker'
-import Button from '../core/Button'
-import LoadingIcon from '../core/LoadingIcon'
+import Modal from 'react-modal'
 
-export default function TimeRangeChangedModal({
-  isModalOpen,
-  timing,
-  onChangeTimeRangeClick,
-  onChangeRestaurantClick,
-  isFetchingTiming = false,
-  isUpdatingTiming = false,
-  isFailedToUpdateTiming = false,
-}) {
+import { getTimingPathForStorage } from '../../../utils/order/helpers'
+import {
+  closeTimeRangeChangedModal,
+  selectIsTimeRangeChangedModalOpen,
+  setPersistedTimeRange,
+} from './reduxSlice'
+import {
+  useGetOrderTimingQuery, useUpdateOrderMutation,
+} from '../../../api/slice'
+import {
+  selectOrderNodeId,
+  setShippingTimeRange,
+} from '../../../entities/order/reduxSlice'
+import LoadingIcon from '../../core/LoadingIcon'
+import TimeSlotPicker from '../TimeSlotPicker'
+import DatePicker from '../DatePicker'
+import Button from '../../core/Button'
+
+export default function TimeRangeChangedModal() {
+  const isModalOpen = useSelector(selectIsTimeRangeChangedModalOpen)
+
+  const dispatch = useDispatch()
+
+  const orderNodeId = useSelector(selectOrderNodeId)
+
+  const {
+    data: timing, isFetching: isFetchingTiming,
+  } = useGetOrderTimingQuery(orderNodeId, {
+    skip: !isModalOpen,
+  })
+
+  const [
+    updateOrder, {
+      isLoading: isUpdatingTiming, isError: isFailedToUpdateTiming,
+    } ] = useUpdateOrderMutation()
+
   const [ value, setValue ] = React.useState(null)
 
   const hasTimingOptions = timing && timing.ranges.length > 0
@@ -60,11 +85,9 @@ export default function TimeRangeChangedModal({
               choices={ timing.ranges }
               value={ value }
               onChange={ value => setValue(value) } />) : null }
-            { isFailedToUpdateTiming ? (
-              <div className="alert alert-danger">
-                { t('CART_CHANGE_TIME_FAILED') }
-              </div>
-            ) : null }
+            { isFailedToUpdateTiming ? (<div className="alert alert-danger">
+              { t('CART_CHANGE_TIME_FAILED') }
+            </div>) : null }
           </div>
           <div
             className="ReactModal__Content__buttons"
@@ -73,7 +96,22 @@ export default function TimeRangeChangedModal({
               primary
               loading={ isUpdatingTiming }
               onClick={ () => {
-                onChangeTimeRangeClick(value)
+                updateOrder({
+                  nodeId: orderNodeId, shippingTimeRange: value,
+                }).then((result) => {
+                  if (result.error) {
+                    //error will be handled via isError prop
+                    return
+                  }
+
+                  dispatch(setShippingTimeRange(value))
+
+                  dispatch(setPersistedTimeRange(null))
+                  window.sessionStorage.removeItem(
+                    getTimingPathForStorage(orderNodeId))
+
+                  dispatch(closeTimeRangeChangedModal())
+                })
               } }>
               { t('CART_CHANGE_TIME_MODAL_LABEL') }
             </Button>
@@ -92,7 +130,7 @@ export default function TimeRangeChangedModal({
         <Button
           primary
           onClick={ () => {
-            onChangeRestaurantClick()
+            dispatch(closeTimeRangeChangedModal())
             window.location.href = window.Routing.generate('restaurants')
           } }>
           { t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS') }

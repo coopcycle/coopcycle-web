@@ -13,7 +13,6 @@ import {
   openProductOptionsModal,
   fetchRequest,
   fetchFailure,
-  openTimeRangeChangedModal,
   updateCartTiming,
 } from './redux/actions'
 import storage from '../search/address-storage'
@@ -41,13 +40,20 @@ import {
   selectCartTiming,
   selectOrderNodeId,
 } from './redux/selectors'
-import { getAccountInitialState } from '../redux/account'
-import { getGuestInitialState } from '../redux/guest'
-import { apiSlice } from '../redux/api/slice'
 import {
   getTimingPathForStorage,
   isTimeRangeSignificantlyDifferent,
 } from '../utils/order/helpers'
+import {
+  openTimeRangeChangedModal, timeRangeSlice,
+} from '../components/order/timeRange/reduxSlice'
+import { apiSlice } from '../api/slice'
+import {
+  accountSlice,
+} from '../entities/account/reduxSlice'
+import { buildGuestInitialState } from '../entities/guest/utils'
+import { guestSlice } from '../entities/guest/reduxSlice'
+import { orderSlice } from '../entities/order/reduxSlice'
 
 window._paq = window._paq || []
 
@@ -183,9 +189,14 @@ function init() {
   }
 
   const state = {
-    account: getAccountInitialState(),
-    guest: getGuestInitialState(cart['@id'], orderAccessToken),
+    [accountSlice.name]: accountSlice.getInitialState(),
+    [guestSlice.name]: buildGuestInitialState(cart['@id'], orderAccessToken),
     cart,
+    [orderSlice.name]: {
+      ...orderSlice.getInitialState(),
+      '@id': cart['@id'],
+      shippingTimeRange: cart.shippingTimeRange,
+    },
     restaurant,
     datePickerTimeSlotInputName: 'cart[timeSlot]',
     addressFormElements: {
@@ -202,6 +213,7 @@ function init() {
     country: getCountry(),
     isPlayer,
     isGroupOrdersEnabled,
+    [timeRangeSlice.name]: timeRangeSlice.getInitialState(),
   }
 
   store = createStoreFromPreloadedState(state)

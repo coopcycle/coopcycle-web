@@ -9,31 +9,33 @@ import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import i18n, { getCurrencySymbol } from '../i18n'
 import LoopeatModal from './LoopeatModal'
-
-require('gasparesganga-jquery-loading-overlay')
-
 import './index.scss'
 import '../components/order/index.scss'
 
 import { disableBtn, enableBtn } from '../widgets/button'
 import { createStoreFromPreloadedState } from './redux/store'
 import {
-  openTimeRangeChangedModal,
-} from './redux/uiSlice'
-import RootPage from './RootPage'
-import { getAccountInitialState } from '../redux/account'
-import { getGuestInitialState } from '../redux/guest'
-import { initialState as orderInitialState } from './redux/orderSlice'
-import {
   getTimingPathForStorage,
   isTimeRangeSignificantlyDifferent,
 } from '../utils/order/helpers'
-import { apiSlice } from '../redux/api/slice'
-import TimeRange from './TimeRange'
+import TimeRangeChangedModal
+  from '../components/order/timeRange/TimeRangeChangedModal'
+import TimeRange from '../components/order/timeRange/TimeRange'
+import { accountSlice } from '../entities/account/reduxSlice'
+import { guestSlice } from '../entities/guest/reduxSlice'
+import { buildGuestInitialState } from '../entities/guest/utils'
 import {
-  selectPersistedTimeRange,
+  orderSlice,
   selectShippingTimeRange,
-} from './redux/selectors'
+} from '../entities/order/reduxSlice'
+import {
+  openTimeRangeChangedModal,
+  selectPersistedTimeRange,
+  timeRangeSlice,
+} from '../components/order/timeRange/reduxSlice'
+import { apiSlice } from '../api/slice'
+
+require('gasparesganga-jquery-loading-overlay')
 
 const {
   currency,
@@ -260,20 +262,22 @@ const orderNodeId = orderDataElement.dataset.orderNodeId
 const orderAccessToken = orderDataElement.dataset.orderAccessToken
 
 const buildInitialState = () => {
-  const shippingTimeRange = JSON.parse(orderDataElement.dataset.shippingTimeRange ?? null)
+  const shippingTimeRange = JSON.parse(orderDataElement.dataset.orderShippingTimeRange ?? null)
   const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
 
-  const initialState = {
-    account: getAccountInitialState(),
-    guest: getGuestInitialState(orderNodeId, orderAccessToken),
-    order: {
-      ...orderInitialState,
+  return {
+    [accountSlice.name]: accountSlice.getInitialState(),
+    [guestSlice.name]: buildGuestInitialState(orderNodeId, orderAccessToken),
+    [orderSlice.name]: {
+      ...orderSlice.getInitialState(),
       '@id': orderNodeId,
       shippingTimeRange: shippingTimeRange,
-      persistedTimeRange: persistedTimeRange,
     },
+    [timeRangeSlice.name]: {
+      ...timeRangeSlice.getInitialState(),
+      persistedTimeRange: persistedTimeRange,
+    }
   }
-  return initialState
 }
 
 const store = createStoreFromPreloadedState(buildInitialState())
@@ -337,7 +341,7 @@ root.render(
   <Provider store={ store }>
     <I18nextProvider i18n={ i18n }>
       {createPortal(<TimeRange />, fulfilmentTimeRangeContainer) }
-      <RootPage />
+      <TimeRangeChangedModal />
     </I18nextProvider>
   </Provider>
 )

@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const initialState = {
+const initialState = {
   accessToken: null,
 }
 
 // only for registered users, for guest users (guest checkout) use guestSlice
-export const slice = createSlice({
+const slice = createSlice({
   name: 'account',
   initialState,
   reducers: {
@@ -18,4 +18,6 @@ export const slice = createSlice({
 // Action creators are generated for each case reducer function
 export const { setAccessToken } = slice.actions
 
-export default slice.reducer
+export const accountSlice = slice
+
+export const selectAccessToken = state => state.account.accessToken

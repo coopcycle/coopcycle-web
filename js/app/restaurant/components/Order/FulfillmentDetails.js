@@ -10,14 +10,9 @@ import {
   selectCanAddToExistingCart,
   selectIsOrderAdmin,
   selectIsFulfilmentTimeSlotsAvailable,
-  selectIsTimeRangeChangedModalOpen,
-  selectCartTiming,
 } from '../../redux/selectors'
 import {
-  changeDate,
-  closeTimeRangeChangedModal,
-  openAddressModal,
-  setDateModalOpen,
+  openAddressModal, setDateModalOpen,
 } from '../../redux/actions'
 import FulfillmentMethod from './FulfillmentMethod'
 import Time from './Time'
@@ -27,7 +22,7 @@ import { useTranslation } from 'react-i18next'
 import ChangeRestaurantOnEditFulfilmentDetailsModal
   from './ChangeRestaurantOnEditFulfilmentDetailsModal'
 import TimeRangeChangedModal
-  from '../../../components/order/TimeRangeChangedModal'
+  from '../../../components/order/timeRange/TimeRangeChangedModal'
 
 export default function FulfillmentDetails() {
   const cart = useSelector(selectCart)
@@ -38,14 +33,9 @@ export default function FulfillmentDetails() {
   const isFulfilmentTimeSlotsAvailable = useSelector(
     selectIsFulfilmentTimeSlotsAvailable)
 
-  const cartTiming = useSelector(selectCartTiming)
-
   const canAddToExistingCart = useSelector(selectCanAddToExistingCart)
 
   const errors = useSelector(selectFulfillmentRelatedErrorMessages)
-
-  const isTimeRangeChangedModalOpen = useSelector(
-    selectIsTimeRangeChangedModalOpen)
 
   const [ isWarningModalOpen, setWarningModalOpen ] = useState(false)
 
@@ -69,8 +59,7 @@ export default function FulfillmentDetails() {
     }
   }
 
-  return (
-    <div className="panel panel-default">
+  return (<div className="panel panel-default">
       <div className="panel-body">
         <div className="fulfillment-details"
              data-testid="cart.fulfillmentDetails">
@@ -79,18 +68,15 @@ export default function FulfillmentDetails() {
             shippingAddress={ cart.shippingAddress }
             onClick={ changeFulfillmentMethod }
             allowEdit={ isOrderAdmin } />
-          { isFulfilmentTimeSlotsAvailable ? (
-            <Time
-              timeRange={ fulfilmentTimeRange }
-              onClick={ changeTimeSlot }
-              allowEdit={ isOrderAdmin } />) : t('NOT_AVAILABLE_ATM') }
-          { errors.length > 0 ? (
-            <div className="alert alert-warning">
+          { isFulfilmentTimeSlotsAvailable ? (<Time
+            timeRange={ fulfilmentTimeRange }
+            onClick={ changeTimeSlot }
+            allowEdit={ isOrderAdmin } />) : t('NOT_AVAILABLE_ATM') }
+          { errors.length > 0 ? (<div className="alert alert-warning">
               <i className="fa fa-warning"></i>
               &nbsp;
               <span>{ _.first(errors) }</span>
-            </div>
-          ) : null }
+            </div>) : null }
         </div>
       </div>
       { canAddToExistingCart ? (<AddressModal />) : null }
@@ -98,17 +84,6 @@ export default function FulfillmentDetails() {
       <ChangeRestaurantOnEditFulfilmentDetailsModal
         isWarningModalOpen={ isWarningModalOpen }
         setWarningModalOpen={ setWarningModalOpen } />
-      <TimeRangeChangedModal
-        isModalOpen={ isTimeRangeChangedModalOpen }
-        timing={ cartTiming }
-        onChangeTimeRangeClick={ (timeRange) => {
-          dispatch(changeDate(timeRange))
-          dispatch(closeTimeRangeChangedModal())
-        } }
-        onChangeRestaurantClick={ () => {
-          dispatch(closeTimeRangeChangedModal())
-        } }
-      />
-    </div>
-  )
+      <TimeRangeChangedModal />
+    </div>)
 }

@@ -1,13 +1,13 @@
-import { initialState } from './slice'
+import { guestSlice } from './reduxSlice'
 
-export function getGuestInitialState(orderNodeId, orderAccessToken) {
+export function buildGuestInitialState(orderNodeId, orderAccessToken) {
   const orderAccessTokens = {}
 
   if (orderAccessToken) {
     orderAccessTokens[orderNodeId] = orderAccessToken
   }
   return ({
-    ...initialState,
+    ...guestSlice.getInitialState(),
     orderAccessTokens: orderAccessTokens,
   })
 }

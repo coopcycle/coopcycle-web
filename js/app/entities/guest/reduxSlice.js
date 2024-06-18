@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const initialState = {
+const initialState = {
   orderAccessTokens: {},
 }
 
-export const slice = createSlice({
+const slice = createSlice({
   name: 'guest',
   initialState,
   reducers: {
@@ -18,4 +18,4 @@ export const slice = createSlice({
 // Action creators are generated for each case reducer function
 export const { setOrderAccessToken } = slice.actions
 
-export default slice.reducer
+export const guestSlice = slice

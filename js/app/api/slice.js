@@ -1,7 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { selectAccessToken } from '../account'
-import { selectOrderAccessToken } from '../guest'
-import { setAccessToken } from '../account/slice'
+import {
+  selectAccessToken,
+  setAccessToken,
+} from '../entities/account/reduxSlice'
+import { selectOrderAccessToken } from '../entities/guest/selectors'
 
 const guestCheckoutEndpoints = [
   'getOrderTiming',

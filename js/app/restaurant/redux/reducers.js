@@ -28,10 +28,9 @@ import {
   STOP_ASKING_ENABLE_REUSABLE_PACKAGING,
   ENABLE_REUSABLE_PACKAGING,
   DISABLE_REUSABLE_PACKAGING,
-  openTimeRangeChangedModal,
-  closeTimeRangeChangedModal,
-  updateCartTiming
+  updateCartTiming,
 } from './actions'
+import { setShippingTimeRange } from '../../entities/order/reduxSlice'
 
 export const initialState = {
   cart: {
@@ -99,7 +98,6 @@ export const initialState = {
   },
   isGroupOrdersEnabled: false,
   shouldAskToEnableReusablePackaging: true,
-  isTimeRangeChangedModalOpen: false,
 }
 
 export const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -192,6 +190,13 @@ export const cart = (state = initialState.cart, action = {}) => {
       ...state,
       reusablePackagingEnabled: false,
     }
+
+  case setShippingTimeRange.type:
+
+      return {
+        ...state,
+        shippingTimeRange: action.payload,
+      }
 
   default:
 
@@ -406,16 +411,5 @@ export const shouldAskToEnableReusablePackaging = (state = initialState.shouldAs
     return false
   default:
     return state
-  }
-}
-
-export const isTimeRangeChangedModalOpen = (state = initialState.isTimeRangeChangedModalOpen, action = {}) => {
-  switch (action.type) {
-    case openTimeRangeChangedModal.type:
-      return true
-    case closeTimeRangeChangedModal.type:
-      return false
-    default:
-      return state
   }
 }
