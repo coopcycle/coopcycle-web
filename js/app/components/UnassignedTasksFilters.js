@@ -2,7 +2,7 @@ import React from 'react'
 
 import { setFilterValue } from '../dashboard/redux/actions'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAllTags, selectFiltersSetting } from '../dashboard/redux/selectors'
+import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../dashboard/redux/selectors'
 import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
 import { findTagFromSlug } from '../dashboard/utils'
 import { useTranslation } from 'react-i18next'
@@ -51,7 +51,7 @@ export default () => {
       onChange={ onChange }
       selectOptions={ options }
       defaultValue={ defaultDisplayedValue }
-      loading={ organizationsLoading }
+      isLoading={ organizationsLoading }
     />
   )
 }

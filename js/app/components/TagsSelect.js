@@ -4,9 +4,10 @@ import chroma from 'chroma-js'
 
 import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
 
-import { selectAllTags, selectFiltersSetting } from '../dashboard/redux/selectors'
+import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../dashboard/redux/selectors'
 import { findTagFromSlug } from '../dashboard/utils'
 import { useTranslation } from 'react-i18next'
+import { selectAllOrganizations } from '../../shared/src/logistics/redux/selectors'
 
 const styles = {
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
@@ -56,10 +57,13 @@ export default ({setFieldValue}) => {
 
   const allTags = useSelector(selectAllTags)
   const { t } = useTranslation()
-  const { tags, excludedTags } = useSelector(selectFiltersSetting)
+  const { tags, excludedTags, includedOrgs, excludedOrgs } = useSelector(selectFiltersSetting)
 
   const tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
-  const organizationOptions = []
+  const allOrganizations = useSelector(selectAllOrganizations)
+  const organizationsLoading = useSelector(selectOrganizationsLoading)
+  const organizationOptions = allOrganizations.map(val => {return {...val, label: val.name, value: val.name}})
+
   const initOptions = Array.prototype.concat(tagOptions, organizationOptions)
 
   const onChange = (selected) => {
@@ -67,7 +71,8 @@ export default ({setFieldValue}) => {
     setFieldValue('tags', selected.filter(opt => opt.isTag && !opt.isExclusion).map(opt => opt.value))
     setFieldValue('excludedTags', selected.filter(opt => opt.isTag && opt.isExclusion).map(opt => opt.value))
 
-    // do the same for orgs
+    setFieldValue('includedOrgs', selected.filter(opt => !opt.isTag && !opt.isExclusion).map(opt => opt.value))
+    setFieldValue('excludedOrgs', selected.filter(opt => !opt.isTag && opt.isExclusion).map(opt => opt.value))
   }
 
   const defaultDisplayedValue = Array.prototype.concat(
@@ -79,17 +84,18 @@ export default ({setFieldValue}) => {
       const tag = findTagFromSlug(slug, allTags)
       return {...tag, label: tag.name, value: slug}
     }),
-    // unassignedTasksFilters.excludedOrgs.map((val) => {return {label: '-'+ val,value:val, isExclusion: true}}),
-    // unassignedTasksFilters.includedOrgs.map((val) => {return {label: val, value: val}})
+    excludedOrgs.map((val) => {return {label: '-'+ val,value:val, isExclusion: true}}),
+    includedOrgs.map((val) => {return {label: val, value: val}})
   )
 
 
   return (
     <IncludeExcludeMultiSelect
-      placeholder={ t('TAGS_SELECT_PLACEHOLDER') }
-      onChange={ onChange }
-      selectOptions={ initOptions }
-      defaultValue={ defaultDisplayedValue }
+      placeholder={t('TAGS_SELECT_PLACEHOLDER')}
+      onChange={onChange}
+      selectOptions={initOptions}
+      defaultValue={defaultDisplayedValue}
       selectProps={styles}
+      isLoading={organizationsLoading}
     />)
 }

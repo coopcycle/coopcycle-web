@@ -69,6 +69,8 @@ class FiltersModalContent extends React.Component {
     );
     this.props.setFilterValue("tags", values.tags);
     this.props.setFilterValue("excludedTags", values.excludedTags);
+    this.props.setFilterValue("includedOrgs", values.includedOrgs);
+    this.props.setFilterValue("excludedOrgs", values.excludedOrgs);
     this.props.setFilterValue("hiddenCouriers", values.hiddenCouriers);
     this.props.setFilterValue("timeRange", values.timeRange);
 
