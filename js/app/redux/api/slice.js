@@ -1,38 +1,59 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { selectAccessToken } from '../account'
 import { selectOrderAccessToken } from '../guest'
+import { setAccessToken } from '../account/slice'
 
 const guestCheckoutEndpoints = [
   'getOrderTiming',
-  'updateOrder'
+  'updateOrder',
 ]
 
+const baseQuery = fetchBaseQuery({
+  baseUrl: '/',
+  prepareHeaders: (headers, { getState, endpoint }) => {
+    // headers.set('Content-Type', 'application/ld+json') // breaks serialization for PUT requests
+    headers.set('Content-Type', 'application/json')
+
+    const accessToken = selectAccessToken(getState())
+
+    if (accessToken) {
+      headers.set('Authorization', `Bearer ${ accessToken }`)
+
+    } else if (guestCheckoutEndpoints.includes(endpoint)) {
+      const orderAccessToken = selectOrderAccessToken(getState())
+
+      if (orderAccessToken) {
+        headers.set('Authorization', `Bearer ${ orderAccessToken }`)
+      }
+    }
+
+    return headers
+  },
+})
+
+//based on https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#automatic-re-authorization-by-extending-fetchbasequery
+const baseQueryWithReauth = async (args, api, extraOptions) => {
+  let result = await baseQuery(args, api, extraOptions)
+
+  if (result.error && result.error.status === 401) {
+    // try to get a new token; works only for logged in users
+    const refreshResponse = await baseQuery(window.Routing.generate('profile_jwt'), api, extraOptions)
+
+    if (refreshResponse.data && refreshResponse.data.jwt) {
+      api.dispatch(setAccessToken(refreshResponse.data.jwt))
+      // retry the initial query
+      result = await baseQuery(args, api, extraOptions)
+    } else {
+      // api.dispatch(loggedOut())
+    }
+  }
+  return result
+}
+
 // Define our single API slice object
-// FIXME; implement token refresh
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({
-    baseUrl: '/',
-    prepareHeaders: (headers, { getState, endpoint }) => {
-      // headers.set('Content-Type', 'application/ld+json') // breaks serialization for PUT requests
-      headers.set('Content-Type', 'application/json')
-
-      const accessToken = selectAccessToken(getState())
-
-      if (accessToken) {
-        headers.set('Authorization', `Bearer ${ accessToken }`)
-
-      } else if (guestCheckoutEndpoints.includes(endpoint)) {
-        const orderAccessToken = selectOrderAccessToken(getState())
-
-        if (orderAccessToken) {
-          headers.set('Authorization', `Bearer ${ orderAccessToken }`)
-        }
-      }
-
-      return headers
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   // The "endpoints" represent operations and requests for this server
   // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({

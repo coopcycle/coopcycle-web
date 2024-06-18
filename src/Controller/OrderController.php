@@ -282,7 +282,7 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', $this->auth([
+        return $this->render('order/index.html.twig', [
             'order' => $order,
             'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
@@ -292,7 +292,7 @@ class OrderController extends AbstractController
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ]));
+        ]);
     }
 
     private function getShippingTimeRange(OrderInterface $order)

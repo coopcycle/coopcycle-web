@@ -8,10 +8,14 @@ export const initialState = {
 export const slice = createSlice({
   name: 'account',
   initialState,
-  reducers: {},
+  reducers: {
+    setAccessToken: (state, action) => {
+      state.accessToken = action.payload
+    },
+  },
 })
 
 // Action creators are generated for each case reducer function
-// export const { increment, decrement, incrementByAmount } = slice.actions
+export const { setAccessToken } = slice.actions
 
 export default slice.reducer
