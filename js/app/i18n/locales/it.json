@@ -108,6 +108,8 @@
         "ADMIN_DASHBOARD_USERS_SEARCHRESTAURANT": "Cerca un ristorante…",
         "ADMIN_DASHBOARD_NAV_SETTINGS": "Impostazioni",
         "ADMIN_DASHBOARD_FILTERS_TAB_TAGS_AND_ORGS": "Tags, negozi, botteghe",
+        "ADMIN_DASHBOARD_FILTERS_TAGS": "Tags",
+        "ADMIN_DASHBOARD_FILTERS_ORGS": "Negozi, botteghe",
         "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_HELP_TEXT": "Digita \"-\" per escludere.",
         "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER": "Seleziona un tag, un negozio, una bottega...",
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME_LABEL": "Nome della persona da contattare",
