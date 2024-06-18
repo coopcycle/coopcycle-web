@@ -172,7 +172,7 @@
         "ADMIN_DASHBOARD_NO_SELECTED_TASKS": "Please select one task",
         "ADMIN_DASHBOARD_WAIT_FOR_PREVIOUS_ASSIGN": "Waiting for previous assignment to complete",
         "ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT": "{{action}} and close the incident",
-        "ADMIN_DASHBOARD_LOADING": "Loading...",
+        "ADMIN_DASHBOARD_LOADING_ORGS": "Loading stores and shops...",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
         "USER_EDIT_DISABLED_LABEL": "Disabled",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Order created",
