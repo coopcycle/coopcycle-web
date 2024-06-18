@@ -19,6 +19,7 @@ import {
 } from "../redux/selectors";
 
 import "antd/lib/grid/style/index.css";
+import OrganizationsOrTagsSelect from "./OrganizationsOrTagsSelect";
 
 function isHidden(hiddenCouriers, username) {
   return !!_.find(hiddenCouriers, (u) => u === username);
@@ -285,7 +286,7 @@ class FiltersModalContent extends React.Component {
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_tags">
                 <div className="dashboard__modal-filters__tabpane">
-                  <TagsSelect
+                  <OrganizationsOrTagsSelect
                     setFieldValue={setFieldValue}
                   />
                 </div>

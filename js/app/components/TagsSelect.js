@@ -1,13 +1,15 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import Select from 'react-select'
+import _ from 'lodash'
 import chroma from 'chroma-js'
 
-import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
+import i18n from '../i18n'
 
-import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../dashboard/redux/selectors'
-import { findTagFromSlug } from '../dashboard/utils'
-import { useTranslation } from 'react-i18next'
-import { selectAllOrganizations } from '../../shared/src/logistics/redux/selectors'
+const tagAsOption = tag => ({
+  ...tag,
+  value: tag.slug,
+  label: tag.name
+})
 
 const styles = {
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
@@ -50,52 +52,41 @@ const styles = {
       }
     }
   },
-  menuPortal: base => ({ ...base, zIndex: 9 })
 }
 
-export default ({setFieldValue}) => {
+export default (props) => {
 
-  const allTags = useSelector(selectAllTags)
-  const { t } = useTranslation()
-  const { tags, excludedTags, includedOrgs, excludedOrgs } = useSelector(selectFiltersSetting)
+  const { tags, defaultValue, ...rest } = props
 
-  const tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
-  const allOrganizations = useSelector(selectAllOrganizations)
-  const organizationsLoading = useSelector(selectOrganizationsLoading)
-  const organizationOptions = allOrganizations.map(val => {return {...val, label: val.name, value: val.name}})
+  let defaultValueAsTags = []
+  if (defaultValue && Array.isArray(defaultValue)) {
+    defaultValueAsTags = _.map(defaultValue, tag => {
+      if (_.isString(tag)) {
+        return _.find(tags, t => t.slug === tag)
+      }
 
-  const initOptions = Array.prototype.concat(tagOptions, organizationOptions)
-
-  const onChange = (selected) => {
-    // set field values in FilterModalForm
-    setFieldValue('tags', selected.filter(opt => opt.isTag && !opt.isExclusion).map(opt => opt.value))
-    setFieldValue('excludedTags', selected.filter(opt => opt.isTag && opt.isExclusion).map(opt => opt.value))
-
-    setFieldValue('includedOrgs', selected.filter(opt => !opt.isTag && !opt.isExclusion).map(opt => opt.value))
-    setFieldValue('excludedOrgs', selected.filter(opt => !opt.isTag && opt.isExclusion).map(opt => opt.value))
+      return _.find(tags, t => t.slug === tag.slug)
+    })
   }
 
-  const defaultDisplayedValue = Array.prototype.concat(
-    excludedTags.map((slug) => {
-      const tag = findTagFromSlug(slug, allTags)
-      return {...tag, label: '-'+tag.name, value: slug, isExclusion: true}
-    }),
-    tags.map((slug) => {
-      const tag = findTagFromSlug(slug, allTags)
-      return {...tag, label: tag.name, value: slug}
-    }),
-    excludedOrgs.map((val) => {return {label: '-'+ val,value:val, isExclusion: true}}),
-    includedOrgs.map((val) => {return {label: val, value: val}})
-  )
-
+  if (defaultValue && typeof defaultValue === 'string') {
+    const slugs = defaultValue.split(/[ ]+/)
+    defaultValueAsTags = slugs.map(slug => _.find(tags, t => t.slug === slug))
+  }
 
   return (
-    <IncludeExcludeMultiSelect
-      placeholder={t('TAGS_SELECT_PLACEHOLDER')}
-      onChange={onChange}
-      selectOptions={initOptions}
-      defaultValue={defaultDisplayedValue}
-      selectProps={styles}
-      isLoading={organizationsLoading}
-    />)
+    <Select
+      defaultValue={ _.map(defaultValueAsTags, tagAsOption) }
+      isMulti
+      options={ _.map(tags, tagAsOption) }
+      // https://github.com/coopcycle/coopcycle-web/issues/774
+      // https://github.com/JedWatson/react-select/issues/3030
+      menuPortalTarget={ document.body }
+      styles={{
+        ...styles,
+        menuPortal: base => ({ ...base, zIndex: 9 })
+      }}
+      placeholder={ i18n.t('TAGS_SELECT_PLACEHOLDER') }
+      { ...rest } />
+  )
 }
