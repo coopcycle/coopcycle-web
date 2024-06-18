@@ -31,6 +31,7 @@ export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoadi
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
 export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
+export const selectOrganizationsLoading = state => state.logistics.ui.organizationsLoading
 
 // Settings selectors
 export const selectFiltersSetting = state => state.settings.filters

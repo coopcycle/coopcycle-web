@@ -1597,21 +1597,23 @@ export function onlyFilter(filter) {
   }
 }
 
-// TODO ALOIS
 
-export function
+export function loadOrganizations() {
 
-const jwt = useSelector(state => state.jwt)
-const client = createClient(dispatch)
+  return async function(dispatch, getState) {
 
-client.paginatedRequest({
-  method: 'GET',
-  url: window.Routing.generate('api_organizations_get_collection'),
-  headers: {
-    'Authorization': `Bearer ${jwt}`,
-    'Accept': 'application/ld+json',
-    'Content-Type': 'application/ld+json'
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_organizations_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadOrganizationsSuccess(data))
   }
-}).then(data => {
-  dispatch(loadOrganizationsSuccess(data))
-})
+}

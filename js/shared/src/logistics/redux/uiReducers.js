@@ -39,7 +39,7 @@ export default (state = initialState, action) => {
     case loadOrganizationsSuccess.type:
       return {
         ...state,
-        organizationsLoading: true,
+        organizationsLoading: false,
       }
 
     default:

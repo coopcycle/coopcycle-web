@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 import { setFilterValue } from '../dashboard/redux/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectAllTags, selectFiltersSetting } from '../dashboard/redux/selectors'
-import { createClient } from '../dashboard/utils/client'
 import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
 import { findTagFromSlug } from '../dashboard/utils'
 import { useTranslation } from 'react-i18next'
@@ -17,6 +16,7 @@ export default () => {
 
   const allTags = useSelector(selectAllTags),
     allOrganizations = useSelector(selectAllOrganizations),
+    organizationsLoading = useSelector(selectOrganizationsLoading),
     organizationOptions = allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}),
     tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}}),
     options = Array.prototype.concat(tagOptions, organizationOptions)
@@ -51,6 +51,7 @@ export default () => {
       onChange={ onChange }
       selectOptions={ options }
       defaultValue={ defaultDisplayedValue }
+      loading={ organizationsLoading }
     />
   )
 }
