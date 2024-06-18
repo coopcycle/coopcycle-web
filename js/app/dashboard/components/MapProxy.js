@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import 'leaflet-polylinedecorator'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
@@ -20,11 +19,11 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected, useAvatarColors, polylineEnabled) => {
+const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}) => {
 
   if (selected) {
     return '#EEB516'
-  } else if (task.isAssigned && useAvatarColors && polylineEnabled[task.assignedTo]) {
+  } else if (task.isAssigned && (useAvatarColors || polylineEnabled[task.assignedTo])) {
     return colorHash.hex(task.assignedTo)
   } else if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
@@ -350,37 +349,14 @@ export default class MapProxy {
   }
 
   setPolylineAsTheCrowFlies(username, polyline) {
+
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
-
-    const layer = L.polyline(polyline, {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   setPolyline(username, polyline) {
@@ -389,39 +365,17 @@ export default class MapProxy {
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
-
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   showPolyline(username, style = 'normal') {
     if (style === 'as_the_crow_flies') {
+      this.getPolylineLayerGroup(username).removeFrom(this.map)
       this.getPolylineAsTheCrowFliesLayerGroup(username).addTo(this.map)
     } else {
+      this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
       this.getPolylineLayerGroup(username).addTo(this.map)
     }
   }

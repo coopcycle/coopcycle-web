@@ -1,4 +1,5 @@
 import MapHelper from '../MapHelper'
+import L from 'leaflet'
 import _ from 'lodash'
 import JsBarcode from 'jsbarcode'
 require('gasparesganga-jquery-loading-overlay')
@@ -9,6 +10,7 @@ import PricePreview from './PricePreview'
 import './form.scss'
 
 let map
+let polylineLayerGroup
 let form
 let pricePreview
 
@@ -36,6 +38,7 @@ function route(delivery) {
       return {
         distance,
         kms,
+        polyline: MapHelper.decodePolyline(route.geometry),
       }
     })
 }
@@ -108,6 +111,8 @@ function isValid(delivery) {
 
 if (document.getElementById('map')) {
   map = MapHelper.init('map')
+  polylineLayerGroup = new L.LayerGroup()
+  polylineLayerGroup.addTo(map)
 }
 
 form = new DeliveryForm('delivery', {
@@ -137,9 +142,13 @@ form = new DeliveryForm('delivery', {
     if (isValid(delivery)) {
 
       this.disable()
+      polylineLayerGroup.clearLayers()
 
       const updateDistance = new Promise((resolve) => {
         route(delivery).then((infos) => {
+          polylineLayerGroup.addLayer(
+            MapHelper.createPolylineWithArrows(infos.polyline, '#3498DB')
+          )
           $('#delivery_distance').text(`${infos.kms} Km`)
           resolve()
         })
