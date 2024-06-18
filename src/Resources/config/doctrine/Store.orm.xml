@@ -76,7 +76,7 @@
     <many-to-many field="timeSlots" target-entity="AppBundle\Entity\TimeSlot">
       <cascade>
         <cascade-persist/>
-      </cascade>
+        </cascade>
       <join-table name="store_time_slot">
         <join-columns>
           <join-column name="store_id" referenced-column-name="id" on-delete="CASCADE"/>

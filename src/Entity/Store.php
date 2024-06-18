@@ -54,6 +54,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "delete"={
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "patch"={
+ *      "method"="PATCH",
+ *      "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   subresourceOperations={
@@ -73,6 +77,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     /**
      * @var int
+     * @Groups({"store"})
      */
     private $id;
 
@@ -163,6 +168,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $multiDropEnabled = false;
 
+    /**
+     * @Groups({"store"})
+     */
     private $timeSlots;
 
 
@@ -230,14 +238,18 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->website;
     }
-
+    /**
+     * @param mixed $website
+     */
     public function setWebsite($website)
     {
         $this->website = $website;
 
         return $this;
     }
-
+    /**
+     * @param mixed $imageName
+     */
     public function setImageName($imageName)
     {
         $this->imageName = $imageName;
@@ -311,7 +323,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->pricingRuleSet;
     }
-
+    /**
+     * @param mixed $pricingRuleSet
+     */
     public function setPricingRuleSet($pricingRuleSet)
     {
         $this->pricingRuleSet = $pricingRuleSet;
@@ -343,7 +357,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->prefillPickupAddress;
     }
-
+    /**
+     * @param mixed $prefillPickupAddress
+     */
     public function setPrefillPickupAddress($prefillPickupAddress)
     {
         $this->prefillPickupAddress = $prefillPickupAddress;
@@ -355,7 +371,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->createOrders;
     }
-
+    /**
+     * @param mixed $createOrders
+     */
     public function setCreateOrders($createOrders)
     {
         $this->createOrders = $createOrders;
@@ -367,7 +385,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->addresses;
     }
-
+    /**
+     * @param mixed $addresses
+     */
     public function setAddresses($addresses)
     {
         $this->addresses = $addresses;
@@ -383,7 +403,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
         return $this;
     }
-
+    /**
+     * @param mixed $timeSlot
+     */
     public function setTimeSlot($timeSlot)
     {
         $this->timeSlot = $timeSlot;
@@ -395,7 +417,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->timeSlot;
     }
-
+    /**
+     * @param mixed $packageSet
+     */
     public function setPackageSet($packageSet)
     {
         $this->packageSet = $packageSet;
@@ -422,7 +446,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
         return $delivery;
     }
-
+    /**
+     * @param mixed $checkExpression
+     */
     public function setCheckExpression($checkExpression)
     {
         $this->checkExpression = $checkExpression;
@@ -500,7 +526,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this->timeSlots;
     }
 
-    public function addTimeSlot(TimeSlot $timeSlot)
+    /**
+     * @param array<TimeSlot> $ts
+     */
+    public function setTimeSlots(array $ts): void {
+        $this->timeSlots = $ts;
+    }
+
+    public function addTimeSlot(TimeSlot $timeSlot): void
     {
         $this->timeSlots->add($timeSlot);
     }
