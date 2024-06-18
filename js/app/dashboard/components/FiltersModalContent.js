@@ -5,7 +5,6 @@ import { withTranslation } from "react-i18next";
 import { Form, Slider, Switch } from "antd";
 import { Formik } from "formik";
 
-import TagsSelect from "../../components/TagsSelect";
 import Avatar from "../../components/Avatar";
 import {
   closeFiltersModal,
@@ -122,7 +121,7 @@ class FiltersModalContent extends React.Component {
                   role="tab"
                   data-toggle="tab"
                 >
-                  {this.props.t("ADMIN_DASHBOARD_FILTERS_TAB_TAGS")}
+                  {this.props.t("ADMIN_DASHBOARD_FILTERS_TAB_TAGS_AND_ORGS")}
                 </a>
               </li>
               <li role="presentation">
