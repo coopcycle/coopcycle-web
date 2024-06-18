@@ -80,12 +80,12 @@ describe('Failed checkout; restaurant is closed', () => {
             cy.get('[data-testid="order.timeRangeChangedModal"]')
               .should('be.visible')
 
-            cy.intercept('POST', '/fr/restaurant/*/cart')
-              .as('postRestaurantCart3')
+            cy.intercept('PUT', '/api/orders/*')
+              .as('putOrder1')
             cy.get(
               '[data-testid="order.timeRangeChangedModal.setTimeRange"]:visible button')
               .click()
-            cy.wait('@postRestaurantCart3')
+            cy.wait('@putOrder1')
 
             cy.get(
               '[data-testid="cart.time"]:visible')
