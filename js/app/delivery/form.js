@@ -1,4 +1,6 @@
 import MapHelper from '../MapHelper'
+import L from 'leaflet'
+import 'leaflet-polylinedecorator'
 import _ from 'lodash'
 import JsBarcode from 'jsbarcode'
 require('gasparesganga-jquery-loading-overlay')
@@ -9,6 +11,7 @@ import PricePreview from './PricePreview'
 import './form.scss'
 
 let map
+let polylineLayerGroup
 let form
 let pricePreview
 
@@ -36,6 +39,7 @@ function route(delivery) {
       return {
         distance,
         kms,
+        polyline: MapHelper.decodePolyline(route.geometry),
       }
     })
 }
@@ -108,6 +112,8 @@ function isValid(delivery) {
 
 if (document.getElementById('map')) {
   map = MapHelper.init('map')
+  polylineLayerGroup = new L.LayerGroup()
+  polylineLayerGroup.addTo(map)
 }
 
 form = new DeliveryForm('delivery', {
@@ -137,9 +143,38 @@ form = new DeliveryForm('delivery', {
     if (isValid(delivery)) {
 
       this.disable()
+      polylineLayerGroup.clearLayers()
 
       const updateDistance = new Promise((resolve) => {
         route(delivery).then((infos) => {
+
+          const polyline = L.polyline(infos.polyline, {
+            color: '#3498DB',
+            opacity: 0.7
+          })
+
+          // Add arrows to polyline
+          const arrows = L.polylineDecorator(polyline, {
+            patterns: [
+              {
+                offset: '5%',
+                repeat: '12.5%',
+                symbol: L.Symbol.arrowHead({
+                  pixelSize: 12,
+                  polygon: false,
+                  pathOptions: {
+                    stroke: true,
+                    color: '#3498DB',
+                    opacity: 0.7
+                  }
+                })
+              }
+            ]
+          })
+
+          polylineLayerGroup.addLayer(polyline)
+          polylineLayerGroup.addLayer(arrows)
+
           $('#delivery_distance').text(`${infos.kms} Km`)
           resolve()
         })
