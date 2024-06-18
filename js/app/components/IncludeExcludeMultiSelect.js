@@ -1,7 +1,7 @@
 import React,{ useEffect, useState } from "react"
 import Select, { createFilter } from 'react-select'
 
-export default ({placeholder, onChange, selectOptions, defaultValue, loading}) => {
+export default ({placeholder, onChange, selectOptions, defaultValue, isLoading}) => {
 
     const [excludeState, setExcludeState] = useState(false)
     const [options, setOptions] = useState([])
@@ -48,6 +48,6 @@ export default ({placeholder, onChange, selectOptions, defaultValue, loading}) =
       filterOption={createFilter(filterConfig)}
       defaultValue={defaultValue}
       classNamePrefix="dashboard"
-      loading={loading}
+      isLoading={isLoading}
     />)
 }

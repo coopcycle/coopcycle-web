@@ -148,7 +148,8 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
         expandedTourPanelsIds: expandedToursIds,
         loadingTourPanelsIds: [],
         unassignedTasksIdsOrder: [],
-        unassignedToursOrGroupsOrderIds: []
+        unassignedToursOrGroupsOrderIds: [],
+        organizationsLoading: true
       }
     }
   })

@@ -102,6 +102,8 @@ export const isTaskVisible = (task, filters, date) => {
     alwayShowUnassignedTasks,
     tags,
     excludedTags,
+    includedOrgs,
+    excludedOrgs,
     hiddenCouriers,
     timeRange,
     onlyFilter,
@@ -147,8 +149,19 @@ export const isTaskVisible = (task, filters, date) => {
     }
   }
 
-  // apply this first as most of the time we want to filter them out
   if (!showCancelledTasks && isCancelled) {
+    return false
+  }
+
+  if (!showFinishedTasks && isFinished) {
+    return false
+  }
+
+  if (!showCancelledTasks && isCancelled) {
+    return false
+  }
+
+  if (!showIncidentReportedTasks && isIncidentReported) {
     return false
   }
 
@@ -174,23 +187,19 @@ export const isTaskVisible = (task, filters, date) => {
     }
   }
 
-  if (!showFinishedTasks && isFinished) {
-    return false
-  }
-
-  if (!showCancelledTasks && isCancelled) {
-    return false
-  }
-
-  if (!showIncidentReportedTasks && isIncidentReported) {
-    return false
-  }
-
   if (tags.length > 0 && !isTaskInTags(task, tags)) {
     return false
   }
 
+  if (includedOrgs.length > 0 && !isTaskInOrgs(task, includedOrgs)) {
+    return false
+  }
+
   if (excludedTags.length > 0 && isTaskInTags(task, excludedTags)) {
+    return false
+  }
+
+  if (excludedOrgs.length > 0 && isTaskInOrgs(task, excludedOrgs)) {
     return false
   }
 
