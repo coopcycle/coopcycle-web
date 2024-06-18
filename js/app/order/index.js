@@ -9,6 +9,7 @@ import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import i18n, { getCurrencySymbol } from '../i18n'
 import LoopeatModal from './LoopeatModal'
+
 import './index.scss'
 import '../components/order/index.scss'
 
@@ -262,7 +263,7 @@ const orderNodeId = orderDataElement.dataset.orderNodeId
 const orderAccessToken = orderDataElement.dataset.orderAccessToken
 
 const buildInitialState = () => {
-  const shippingTimeRange = JSON.parse(orderDataElement.dataset.orderShippingTimeRange ?? null)
+  const shippingTimeRange = JSON.parse(orderDataElement.dataset.orderShippingTimeRange || null)
   const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
 
   return {

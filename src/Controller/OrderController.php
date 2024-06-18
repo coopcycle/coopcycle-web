@@ -308,20 +308,6 @@ class OrderController extends AbstractController
         return $shippingTimeRange;
     }
 
-    private function getDisplayedTimeRangeAsString(OrderInterface $order)
-    {
-        $range =
-            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
-
-        // Don't forget that $range may be NULL
-        $shippingTimeRange = $range ? implode(' - ', [
-            $range->getLower()->format(\DateTime::ATOM),
-            $range->getUpper()->format(\DateTime::ATOM),
-        ]) : '';
-
-        return $shippingTimeRange;
-    }
-
     /**
      * @Route("/order/payment", name="order_payment")
      */
@@ -364,10 +350,10 @@ class OrderController extends AbstractController
 
         $parameters =  $this->auth([
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-            'shippingTimeRange' => $this->getDisplayedTimeRangeAsString($order),
         ]);
 
         $form->handleRequest($request);

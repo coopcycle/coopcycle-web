@@ -164,6 +164,7 @@
     <nav class="checkout-nav border-top">
       <div class="container">
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
+          <!-- React component will be inserted here -->
           <div id="order__fulfilment_time_range__container">
           </div>
           <div>
@@ -262,13 +263,13 @@
 {% endblock %}
 
 {% block styles %}
-  {{ encore_entry_link_tags('order') }}
+  {{ encore_entry_link_tags('order-index') }}
   {{ encore_entry_link_tags('optins') }}
 {% endblock %}
 
 {% block scripts %}
 {% if not order.empty %}
-{{ encore_entry_script_tags('order') }}
+{{ encore_entry_script_tags('order-index') }}
 {% endif %}
 {{ encore_entry_script_tags('optins') }}
 {% endblock %}
