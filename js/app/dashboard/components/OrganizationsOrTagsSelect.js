@@ -68,6 +68,7 @@ export default ({setFieldValue}) => {
   const initOptions = Array.prototype.concat(tagOptions, organizationOptions)
 
   const onChange = (selected) => {
+    console.log(selected)
     // set field values in FilterModalForm
     setFieldValue('tags', selected.filter(opt => opt.isTag && !opt.isExclusion).map(opt => opt.value))
     setFieldValue('excludedTags', selected.filter(opt => opt.isTag && opt.isExclusion).map(opt => opt.value))
@@ -79,11 +80,11 @@ export default ({setFieldValue}) => {
   const defaultDisplayedValue = Array.prototype.concat(
     excludedTags.map((slug) => {
       const tag = findTagFromSlug(slug, allTags)
-      return {...tag, label: '-'+tag.name, value: slug, isExclusion: true}
+      return {...tag, label: '-'+tag.name, value: slug, isExclusion: true, isTag:true}
     }),
     tags.map((slug) => {
       const tag = findTagFromSlug(slug, allTags)
-      return {...tag, label: tag.name, value: slug}
+      return {...tag, label: tag.name, value: slug, isTag:true}
     }),
     excludedOrgs.map((val) => {return {label: '-'+ val,value:val, isExclusion: true}}),
     includedOrgs.map((val) => {return {label: val, value: val}})
