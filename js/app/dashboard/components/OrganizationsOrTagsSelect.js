@@ -63,12 +63,9 @@ export default ({setFieldValue}) => {
   const tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
   const allOrganizations = useSelector(selectAllOrganizations)
   const organizationsLoading = useSelector(selectOrganizationsLoading)
-  const organizationOptions = allOrganizations.length > 0 ? allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}) : [{value: '', label: `${t('ADMIN_DASHBOARD_LOADING')}`, isDisabled: true}]
+  const organizationOptions = allOrganizations.length > 0 ? allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}) : [{value: '', label: `${t('ADMIN_DASHBOARD_LOADING_ORGS')}`, isDisabled: true}]
 
-  const initOptions = [
-    {'label': t('ADMIN_DASHBOARD_FILTERS_ORGS'), options: organizationOptions},
-    {'label': t('ADMIN_DASHBOARD_FILTERS_TAGS'), options: tagOptions},
-  ]
+  const initOptions = Array.prototype.concat(tagOptions, organizationOptions)
 
   const onChange = (selected) => {
     // set field values in FilterModalForm

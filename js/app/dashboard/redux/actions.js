@@ -133,7 +133,6 @@ export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS'
 
 export const startTaskFailure = createAction('START_TASK_FAILURE')
 
-export const loadOrganizations = createAction('LOAD_ORGANIZATIONS')
 export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
 
 
