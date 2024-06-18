@@ -96,7 +96,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
 
   return (
     <div className="dashboard__panel">
-      <h4 className="d-flex justify-content-between">
+      <h4 className="dashboard__panel__header d-flex justify-content-between">
         <a onClick={() => splitCollapseAction()}>
             <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
             <span className="mr-2">({ tours.length + groups.length })</span>
