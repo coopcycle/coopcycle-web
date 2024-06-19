@@ -528,15 +528,22 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         }, $this->timeSlots->toArray());
     }
 
-    /**
-     * @param array<TimeSlot> $ts
-     */
+
     public function setTimeSlots(array $ts): void {
-        $this->timeSlots = $ts;
+        die("s");
+        $store_ts_array = array_map(function (TimeSlot $t, $index) {
+            $sts = new StoreTimeSlot();
+            $sts->setTimeSlot($t);
+            $sts->setStore($this);
+            $sts->setPosition($index);
+            return $sts;
+        }, $ts);
+        $this->timeSlots = $store_ts_array;
     }
 
     public function addTimeSlot(TimeSlot $timeSlot): void
     {
+        die("t");
         $sts = new StoreTimeSlot();
         $sts->setTimeSlot($timeSlot);
         $sts->setStore($this);
