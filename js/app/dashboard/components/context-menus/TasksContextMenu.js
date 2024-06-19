@@ -63,7 +63,7 @@ const useAssignAction = function() {
   const taskLists = useSelector(taskListSelectors.selectAll)
 
   return async function (username, tasksToAssign) {
-    let tasksList = taskLists.find(tl => tl.username)
+    let tasksList = taskLists.find(tl => tl.username === username)
 
     if (!tasksList) {
       tasksList= await dispatch(createTaskList(date, username))
