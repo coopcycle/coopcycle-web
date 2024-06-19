@@ -20,7 +20,7 @@ import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled, selectSearchIsOn } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 
-const DashboardApp = () => {
+const DashboardApp = ({ loadingAnim }) => {
 
   const dispatch = useDispatch()
 
@@ -64,6 +64,10 @@ const DashboardApp = () => {
     window.addEventListener('keydown', toggleSearchOnKeyDown)
 
     dispatch(loadOrganizations())
+
+    loadingAnim.stop()
+    loadingAnim.destroy()
+    document.querySelector('.dashboard__loader').remove()
 
     // return cleanup function
     return () => {

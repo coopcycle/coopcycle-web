@@ -1,5 +1,5 @@
 import React, { createRef } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
@@ -158,7 +158,9 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   const mapRef = createRef()
 
-  render(
+  const root = createRoot(document.getElementById('dashboard'))
+
+  root.render(
     <Provider store={ store }>
       <I18nextProvider i18n={ i18n }>
         <ConfigProvider locale={antdLocale}>
@@ -190,29 +192,20 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
               </div>
             </div>
             <aside className="dashboard__aside">
-              <RightPanel />
+              <RightPanel loadingAnim={loadingAnim} />
             </aside>
           </Split>
           <Modals />
         </ConfigProvider>
       </I18nextProvider>
     </Provider>,
-    document.getElementById('dashboard'),
-    () => {
-      anim.stop()
-      anim.destroy()
-      document.querySelector('.dashboard__loader').remove()
-
-      // Make sure map is rendered correctly with Split.js
-      // mapRef.current.invalidateSize()
-    }
   )
 
   // hide export modal after button click
   $('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
 }
 
-const anim = lottie.loadAnimation({
+const loadingAnim = lottie.loadAnimation({
   container: document.querySelector('#dashboard__loader'),
   renderer: 'svg',
   loop: true,
@@ -220,7 +213,7 @@ const anim = lottie.loadAnimation({
   path: '/img/loading.json'
 })
 
-anim.addEventListener('DOMLoaded', function() {
+loadingAnim.addEventListener('DOMLoaded', function() {
   const headers = {
     'Authorization': `Bearer ${jwtToken}`,
     'Accept': 'application/ld+json',
