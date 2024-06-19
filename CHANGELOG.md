@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.3] - 2024-06-19
+
+* Fix right-click assign in dispatch (was assigning to the first rider of the planning)
+
+## [2.9.2] - 2024-06-19
+
+### Changed
+
+* Support multi points in time based pricing functions by @alexsegura in #4422
+
 ## [2.9.0] - 2024-06-18
 
 ### Fixed
