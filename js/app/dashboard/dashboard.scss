@@ -204,6 +204,9 @@ html, body {
   font-size: 100%;
 }
 
+.dashboard__map-container .leaflet-popup-content-wrapper {
+  min-width: 200px;
+}
 
 :not(.task-package).list-group-item {
 

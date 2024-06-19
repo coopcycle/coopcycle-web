@@ -4,7 +4,6 @@ import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
 import React from 'react'
-import { render } from 'react-dom'
 import ColorHash from 'color-hash'
 
 import MapHelper from '../../MapHelper'
@@ -12,6 +11,8 @@ import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
 import { isMarkerInsidePolygon } from '../utils'
+import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -190,34 +191,28 @@ export default class MapProxy {
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
-    let popupComponent = this.taskPopups.get(task['@id'])
+    let popupComponent
 
     if (!marker) {
 
       marker = MapHelper.createMarker(coords, iconName, 'marker', color)
 
       const el = document.createElement('div')
+      const root = createRoot(el)
 
-      popupComponent = React.createRef()
+      this.taskMarkers.set(task['@id'], marker)
 
-      const cb = () => {
-        this.taskMarkers.set(task['@id'], marker)
+      marker.bindPopup(() => {
+        popupComponent = React.createRef()
+        root.render(
+          <LeafletPopupContent
+            ref={ popupComponent }
+            task={ task }
+            onEditClick={ this.onEditClick }
+          />)
         this.taskPopups.set(task['@id'], popupComponent)
-      }
-
-      render(<LeafletPopupContent
-          task={ task }
-          ref={ popupComponent }
-          onEditClick={ this.onEditClick }
-        />,
-        el,
-        cb
-      )
-
-      const popup = L.popup()
-        .setContent(el)
-
-      marker.bindPopup(popup)
+        return el
+      }).addTo(this.map)
 
       marker.on('click', (e) => {
         if(e.originalEvent.ctrlKey) { // e is a leaflet 'click' event
@@ -228,6 +223,8 @@ export default class MapProxy {
       })
 
     } else {
+
+      console.debug(`Marker for Task #${task['@id']} already exists, updating...`)
 
       // OPTIMIZATION
       // Do *NOT* recreate an icon each time, it's expensive
@@ -250,9 +247,13 @@ export default class MapProxy {
       if (!marker.getLatLng().equals(latLng)) {
         marker.setLatLng(latLng).update()
       }
+    }
 
+    popupComponent = this.taskPopups.get(task['@id'])
+
+    if (popupComponent) {
+      console.debug(`Popup for Task #${task['@id']} already exists, updating...`)
       popupComponent.current.updateTask(task)
-
     }
 
     L.Util.setOptions(marker, { task })
