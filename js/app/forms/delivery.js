@@ -103,25 +103,28 @@ function createAddressWidget(name, type, cb) {
   })
 }
 
-function getDatePickerValue(name, type) {
-  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
+function getTimeWindowProps(name, type) {
 
-  if (timeSlotEl) {
-    return $(`#${name}_${type}_timeSlot`).val()
-  }
-
-  const defaultValue = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
-
-  return moment(defaultValue, 'YYYY-MM-DD HH:mm:ss').format()
-}
-
-function getDatePickerKey(name, type) {
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
   if (timeSlotEl) {
-    return 'timeSlot'
+    return {
+      timeSlot: timeSlotEl.val()
+    }
   }
 
-  return 'before'
+  const before = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
+
+  const after = $(`#${name}_${type}_doneAfter`).val()
+  if (!after) {
+    return {
+      before: moment(before, 'YYYY-MM-DD HH:mm:ss').format(),
+    }
+  }
+
+  return {
+    after: moment(after, 'YYYY-MM-DD HH:mm:ss').format(),
+    before: moment(before, 'YYYY-MM-DD HH:mm:ss').format(),
+  }
 }
 
 function getTaskType(name, type) {
@@ -433,7 +436,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const task = {
     type: getTaskType(name, taskForm),
     address: null,
-    [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+    ...getTimeWindowProps(name, taskForm),
   }
 
   if (preloadedState) {
