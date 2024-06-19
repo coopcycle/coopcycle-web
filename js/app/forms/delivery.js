@@ -1,6 +1,9 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import { createStore, applyMiddleware, compose } from 'redux'
+import { Provider } from 'react-redux'
 import _ from 'lodash'
 import axios from 'axios'
 import { createSelector } from 'reselect'
@@ -10,6 +13,7 @@ import DateTimePicker from '../widgets/DateTimePicker'
 import DateRangePicker from '../widgets/DateRangePicker'
 import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
+import SuggestionModal from '../delivery/form/SuggestionModal'
 
 const selectTasks = state => state.tasks
 
@@ -22,6 +26,8 @@ const selectLastDropoff = createSelector(
 
 const collectionHolder = document.querySelector('#delivery_tasks')
 
+let store
+
 class DeliveryForm {
   disable() {
     $('#delivery-submit').attr('disabled', true)
@@ -31,9 +37,29 @@ class DeliveryForm {
     $('#delivery-submit').attr('disabled', false)
     $('#loader').addClass('hidden')
   }
+  showSuggestions(suggestions) {
+    store.dispatch({
+      type: 'SHOW_SUGGESTIONS',
+      suggestions,
+    })
+  }
 }
 
-let store
+function reorder(suggestedOrder) {
+
+  // https://stackoverflow.com/questions/5882768/how-to-append-a-childnode-to-a-specific-position
+
+  const taskEls = collectionHolder.children
+
+  suggestedOrder.forEach((oldIndex, newIndex) => {
+    const taskEl = taskEls[oldIndex]
+    collectionHolder.insertBefore(taskEl, taskEls[newIndex])
+  })
+
+  collectionHolder.children.forEach((el, index) => {
+    el.querySelector('[data-position]').value = '' + index
+  })
+}
 
 function toPackages(name) {
   const packages = []
@@ -406,6 +432,33 @@ function reducer(state = {}, action) {
       ...state,
       tasks: removeTasks(state, action.taskIndex)
     }
+  case 'SHOW_SUGGESTIONS':
+    return {
+      ...state,
+      showSuggestions: true,
+      suggestions: action.suggestions,
+    }
+  case 'REJECT_SUGGESTIONS':
+    return {
+      ...state,
+      showSuggestions: false,
+      suggestions: [],
+    }
+  case 'ACCEPT_SUGGESTIONS':
+
+    const currentTasks = state.tasks
+    const newTasks = []
+
+    state.suggestions[0].order.forEach((oldIndex, newIndex) => {
+      newTasks.splice(newIndex, 0, currentTasks[oldIndex])
+    })
+
+    return {
+      ...state,
+      showSuggestions: false,
+      suggestions: [],
+      tasks: newTasks,
+    }
   default:
     return state
   }
@@ -489,7 +542,10 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
       if (collectionHolder.children.length === 2) {
         document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
       }
-      collectionHolder.dataset.index--
+      const indexes = Array
+        .from(collectionHolder.children)
+        .map(el => parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10))
+      collectionHolder.dataset.index = Math.max(...indexes) + 1
     })
   }
 
@@ -535,6 +591,19 @@ function createOnTasksChanged(onChange) {
   }
 }
 
+const acceptSuggestions = ({ getState }) => (next) => (action) => {
+
+  const suggestions = action.type === 'ACCEPT_SUGGESTIONS' ? getState().suggestions : []
+
+  const result = next(action)
+
+  if (suggestions.length > 0) {
+    reorder(suggestions[0].order)
+  }
+
+  return result
+}
+
 export default function(name, options) {
 
   const el = document.querySelector(`form[name="${name}"]`)
@@ -546,11 +615,12 @@ export default function(name, options) {
 
   if (el) {
 
-
     // Intialize Redux store
     let preloadedState = {
       tasks: [],
-      packages: []
+      packages: [],
+      showSuggestions: false,
+      suggestions: [],
     }
 
     if (el.dataset.store) {
@@ -564,7 +634,7 @@ export default function(name, options) {
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
     taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
 
-    const middlewares = [ createOnTasksChanged(onChange) ]
+    const middlewares = [ createOnTasksChanged(onChange), acceptSuggestions ]
     const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
 
     store = createStore(
@@ -634,6 +704,13 @@ export default function(name, options) {
         }
       })
     }
+
+    const reactRoot = createRoot(document.getElementById('delivery-form-modal'))
+    reactRoot.render(
+      <Provider store={ store }>
+        <SuggestionModal isOpen={ true } />
+      </Provider>
+    )
   }
 
   return form

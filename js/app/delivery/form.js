@@ -6,6 +6,9 @@ require('gasparesganga-jquery-loading-overlay')
 
 import DeliveryForm from '../forms/delivery'
 import PricePreview from './PricePreview'
+import axios from 'axios'
+
+const baseURL = location.protocol + '//' + location.host
 
 import './form.scss'
 
@@ -132,6 +135,37 @@ form = new DeliveryForm('delivery', {
         })
       })
 
+      const loadSuggestions = new Promise((resolve) => {
+
+        $.getJSON(window.Routing.generate('profile_jwt'))
+          .then(result => {
+
+            axios({
+              method: 'post',
+              url: `${baseURL}/api/deliveries/suggest_optimizations`,
+              data: {
+                ...delivery,
+                tasks: delivery.tasks.slice(0).map(t => ({
+                  ...t,
+                  address: serializeAddress(t.address)
+                }))
+              },
+              headers: {
+                Accept: 'application/ld+json',
+                'Content-Type': 'application/ld+json',
+                Authorization: `Bearer ${result.jwt}`
+              }
+            })
+            .then(response => {
+              if (response.data.suggestions.length > 0) {
+                this.showSuggestions(response.data.suggestions)
+                // this.reorder(response.data.suggestions[0].order)
+              }
+              resolve()
+            })
+          })
+      })
+
       const updatePrice = new Promise((resolve) => {
         if (delivery.store && pricePreview) {
 
@@ -153,6 +187,7 @@ form = new DeliveryForm('delivery', {
 
       Promise.all([
         updateDistance,
+        loadSuggestions,
         updatePrice,
       ])
       .then(() => {
