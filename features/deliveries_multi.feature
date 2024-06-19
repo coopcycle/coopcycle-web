@@ -491,7 +491,10 @@ Feature: Multi-step deliveries
               "@context": {"@*@": "@*@"},
               "@type": "OptimizationSuggestion",
               "@id": @string@,
-              "gain": "distance",
+              "gain": {
+                "type": "distance",
+                "amount": @integer@
+              },
               "order": [
                 0,
                 2,
