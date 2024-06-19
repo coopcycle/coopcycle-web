@@ -1,6 +1,6 @@
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import _ from 'lodash'
 import axios from 'axios'
 import { createSelector } from 'reselect'
@@ -512,6 +512,22 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   }
 }
 
+function createOnTasksChanged(onChange) {
+
+  return ({ getState }) => (next) => (action) => {
+
+    const prevState = getState()
+    const result = next(action)
+    const state = getState()
+
+    if (prevState.tasks !== state.tasks) {
+      onChange(state)
+    }
+
+    return result
+  }
+}
+
 export default function(name, options) {
 
   const el = document.querySelector(`form[name="${name}"]`)
@@ -541,13 +557,16 @@ export default function(name, options) {
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
     taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
 
+    const middlewares = [ createOnTasksChanged(onChange) ]
+    const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
+
     store = createStore(
-      reducer, preloadedState,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+      reducer,
+      preloadedState,
+      composeEnhancers(applyMiddleware(...middlewares))
     )
 
     onReady(preloadedState)
-    store.subscribe(() => onChange(store.getState()))
 
     new ClipboardJS('#copy', {
       text: function() {
