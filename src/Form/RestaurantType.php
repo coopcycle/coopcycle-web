@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Cuisine;
+use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\DabbaType;
@@ -11,19 +12,20 @@ use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
 use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
+use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class RestaurantType extends LocalBusinessType
 {
@@ -74,22 +76,40 @@ class RestaurantType extends LocalBusinessType
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder
                 ->add('featured', CheckboxType::class, [
-                    'label' => 'restaurant.form.featured.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.featured.label', 'restaurant.form.featured.docs_path'),
                     'required' => false
                 ])
                 ->add('exclusive', CheckboxType::class, [
-                    'label' => 'restaurant.form.exclusive.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.exclusive.label', 'restaurant.form.exclusive.docs_path'),
                     'required' => false
                 ])
                 ->add('contract', ContractType::class)
                 ->add('quotesAllowed', CheckboxType::class, [
-                    'label' => 'restaurant.form.quotes_allowed.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.quotes_allowed.label', 'restaurant.form.quotes_allowed.docs_path'),
                     'required' => false,
                 ])
                 ->add('depositRefundEnabled', CheckboxType::class, [
-                    'label' => 'restaurant.form.deposit_refund_enabled.label',
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.deposit_refund_enabled.label', 'restaurant.form.deposit_refund_enabled.docs_path'),
                     'required' => false,
-                ]);
+                ])
+                ->add('autoAcceptOrdersEnabled', CheckboxType::class, [
+                    ...$this->formFieldUtils->getLabelWithLinkToDocs('restaurant.form.auto_accept_orders_enabled.label', 'restaurant.form.auto_accept_orders_enabled.docs_path'),
+                    'required' => false,
+                ])
+                ->add('failureReasonSet', EntityType::class, array(
+                    'label' => 'form.store_type.failure_reason_set.label',
+                    'help' => 'form.store_type.failure_reason_set.help',
+                    'class' => FailureReasonSet::class,
+                    'choice_label' => 'name',
+                    'query_builder' => new OrderByNameQueryBuilder(),
+                    'required' => false,
+                    'translation_domain' => 'messages',
+                    'help_translation_parameters' => [
+                        '%failure_reason_set%' => $this->urlGenerator->generate('admin_failures_list', [], UrlGeneratorInterface::ABSOLUTE_URL),
+                        '%entity%' => 'restaurant',
+                    ],
+                    'help_html' => true,
+                ));
 
             if ($this->cashOnDeliveryOptinEnabled) {
                 $builder
@@ -189,9 +209,8 @@ class RestaurantType extends LocalBusinessType
 
                     if ($options['edenred_enabled']) {
                         $form
-                            ->add('edenredMerchantId', TextType::class, [
-                                'label' => 'restaurant.form.edenred_merchant_id.label',
-                                'help' => 'restaurant.form.edenred_merchant_id.help',
+                            ->add('edenredEnabled', CheckboxType::class, [
+                                'label' => 'restaurant.form.edenred_enabled.label',
                                 'required' => false,
                                 'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN')
                             ]);

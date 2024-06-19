@@ -28,6 +28,9 @@ export const selectIsTourDragging = state => state.logistics.ui.isTourDragging
 export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
 export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTourPanelsIds
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
+export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
+export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
+export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 
 // Settings selectors
 export const selectFiltersSetting = state => state.settings.filters
@@ -134,7 +137,12 @@ export const selectStandaloneTasks = createSelector(
       standaloneTasks = grouped
     } else {
       standaloneTasks.sort((a, b) => {
-        return moment(a.before).isBefore(b.before) ? -1 : 1
+        if (moment(a.before).isSame(b.before) && a.type === 'PICKUP') {
+          return -1
+        } else {
+          // put on top of the list the tasks that have an end of delivery window that finishes sooner
+          return moment(a.before).isBefore(b.before) ? -1 : 1
+        }
       })
     }
 
@@ -166,7 +174,7 @@ export const selectAsTheCrowFlies = createSelector(
   (tasksById, taskListsByUsername) => {
 
     return mapValues(taskListsByUsername, taskList => {
-      const polyline = map(taskList.itemIds, itemId => {
+      const polyline = map(taskList.items, itemId => {
         const item = tasksById[itemId]
 
         return item ? [

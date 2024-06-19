@@ -17,7 +17,9 @@ export const storeFixture = {
             '/api/tasks/733',
             '/api/tasks/734',
             '/api/tasks/735',
-            '/api/tasks/736'
+            '/api/tasks/736',
+            '/api/tasks/737',
+            '/api/tasks/738'
           ],
           entities: {
             '/api/tasks/730': {
@@ -225,6 +227,40 @@ export const storeFixture = {
               previous: null,
               next: null
             },
+            '/api/tasks/737': {
+              '@context': '/api/contexts/Task',
+              '@id': '/api/tasks/737',
+              '@type': 'Task',
+              id: 737,
+              type: 'DROPOFF',
+              status: 'TODO',
+              group: null,
+              after: '2024-01-09T00:00:00+01:00',
+              before: '2024-01-09T23:59:59+01:00',
+              isAssigned: true,
+              doneAfter: '2024-01-09T00:00:00+01:00',
+              doneBefore: '2024-01-09T23:59:59+01:00',
+              assignedTo: 'admin',
+              previous: null,
+              next: '/api/tasks/738'
+            },
+            '/api/tasks/738': {
+              '@context': '/api/contexts/Task',
+              '@id': '/api/tasks/738',
+              '@type': 'Task',
+              id: 738,
+              type: 'DROPOFF',
+              status: 'TODO',
+              group: null,
+              after: '2024-01-09T00:00:00+01:00',
+              before: '2024-01-09T23:59:59+01:00',
+              isAssigned: true,
+              doneAfter: '2024-01-09T00:00:00+01:00',
+              doneBefore: '2024-01-09T23:59:59+01:00',
+              assignedTo: 'admin',
+              previous: '/api/tasks/737',
+              next: null
+            },
           }
         },
         taskLists: {
@@ -243,11 +279,8 @@ export const storeFixture = {
               username: 'admin',
               createdAt: '2024-01-08T15:01:12+01:00',
               updatedAt: '2024-01-09T11:01:58+01:00',
-              itemIds: [
-                '/api/tasks/729',
-                '/api/tasks/730',
-                '/api/tasks/731',
-                '/api/tasks/727'
+              items: [
+                '/api/tours/111'
               ]
             }
           }
@@ -269,7 +302,7 @@ export const storeFixture = {
               createdAt: '2024-01-08T14:34:25+01:00',
               updatedAt: '2024-01-08T17:59:50+01:00',
               name: 'tour 1',
-              itemIds: [
+              items: [
                 '/api/tasks/729',
                 '/api/tasks/730',
                 '/api/tasks/731',
@@ -287,13 +320,25 @@ export const storeFixture = {
               date: '2024-01-09',
               createdAt: '2024-01-09T12:46:23+01:00',
               updatedAt: '2024-01-09T12:46:47+01:00',
-              itemIds: [
+              items: [
                 '/api/tasks/733',
                 '/api/tasks/732'
               ],
             }
           }
         }
+      },
+      ui: {
+        unassignedTasksIdsOrder: [
+          '/api/tasks/728',
+          '/api/tasks/732',
+          '/api/tasks/733',
+          '/api/tasks/734',
+          '/api/tasks/735',
+          '/api/tasks/736',
+          '/api/tasks/737',
+          '/api/tasks/738'
+        ]
       }
     },
     config: {

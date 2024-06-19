@@ -50,20 +50,21 @@ function toPackages(name) {
 function hideRememberAddress(name, type) {
   const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
   if (rememberAddr) {
-    rememberAddr.closest('.checkbox').classList.add('invisible')
+    rememberAddr.closest('.checkbox').classList.add('hidden')
   }
 }
 
 function showRememberAddress(name, type) {
   const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
   if (rememberAddr) {
-    rememberAddr.closest('.checkbox').classList.remove('invisible')
+    rememberAddr.closest('.checkbox').classList.remove('hidden')
   }
 }
 
 function createAddressWidget(name, type, cb) {
 
   new AddressBook(document.querySelector(`#${name}_${type}_address`), {
+    allowSearchSavedAddresses: true,
     existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
     newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
     isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),

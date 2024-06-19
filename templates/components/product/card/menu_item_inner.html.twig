@@ -1,0 +1,44 @@
+{% set variant = product|sylius_resolve_variant %}
+
+<div class="menu-item-inner">
+  <div class="menu-item-inner__image-wrapper">
+    {% if card_product_image is not empty %}
+      <img src="{{ card_product_image }}">
+    {% endif %}
+  </div>
+  <div class="menu-item-inner__content">
+    <div class="menu-item-inner__content__block1">
+      <h5 class="menu-item-inner__name">{{ product.name }}</h5>
+      {% if product.enabled %}
+        {% if product.description is not null %}
+          <small class="menu-item-inner__description">{{ product.description|nl2br }}</small>
+        {% endif %}
+      {% else %}
+        <small class="menu-item-inner__description">{{ 'restaurant.unavailable'|trans }}</small>
+      {% endif %}
+    </div>
+    <div class="menu-item-inner__content__block2">
+      <div class="product-badge-container product-badge-container--compact">
+
+        {% set restrictedDiets = [] %}
+        {% if product.restrictedDiets is not empty %}
+          {% for restrictedDiet in product.restrictedDiets %}
+            {% set restrictedDiets = restrictedDiets|merge([('restricted_diets.' ~ restrictedDiet)|trans]) %}
+          {% endfor %}
+        {% endif %}
+
+        {% for restrictedDiet in restrictedDiets %}
+          {% include "components/product/badge/product_badge.html.twig" with {type: 'restricted_diet', value: restrictedDiet} %}
+        {% endfor %}
+
+        {% if product.isReusablePackagingEnabled() %}
+          {% include "components/product/badge/product_badge.html.twig" with {type: 'reusable_packaging'} %}
+        {% endif %}
+
+      </div>
+      <span class="menu-item-inner__price">
+        {{ variant.price|price_format }}
+      </span>
+    </div>
+  </div>
+</div>

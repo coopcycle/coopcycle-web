@@ -15,24 +15,43 @@ export function withoutTasks(state, tasks) {
   )
 }
 
-export function withOrderTasksForDragNDrop(tasks, allTasks, taskIdToTourIdMap) {
+/**
+ * @param {Array.string} currentItems - Current list of items (tasks or tours IRIs)
+ * @param {Array.string} toRemoveItems - Items to be removed (tasks or tours IRIs)
+ */
+export function withoutItemsIRIs(currentItems, toRemoveItems) {
 
-  if (!Array.isArray(tasks)) {
-    tasks = [ tasks ]
+  return _.differenceWith(
+    currentItems,
+    _.intersectionWith(currentItems, toRemoveItems)
+  )
+}
+
+export function withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap) {
+
+  if (!Array.isArray(selectedTasks)) {
+    selectedTasks = [ selectedTasks ]
   }
 
   const groups = taskUtils.groupLinkedTasks(allTasks)
   const newTasks = []
 
-  tasks.forEach(task => {
+  selectedTasks.forEach(task => {
     if (Object.prototype.hasOwnProperty.call(groups, task['@id']) ) {
       groups[task['@id']].forEach(taskId => {
-        const taskWasAlreadyAdded = _.find(newTasks, t => t['@id'] === taskId)
+        const taskIsCurrentTask = taskId === task['@id']
+        const taskWasAlreadyAdded = newTasks.some(t => t['@id'] === taskId)
+        const taskIsAlreadyInSelection = selectedTasks.some(t => t['@id'] === taskId)
 
-        if (!(taskWasAlreadyAdded)) {
+        /*
+          We want the tasks to keep the selection order, so we insert linked tasks if needed but if the task was already in `selectedTasks` add it when its turn come.
+        */
+        if (taskIsCurrentTask) {
+          newTasks.push(task)
+        } else if (!taskIsAlreadyInSelection && !taskWasAlreadyAdded) {
           const taskToAdd = _.find(allTasks, t => t['@id'] === taskId)
 
-          // we don't want to move tasks that have been assigned to other courier, or moved individually to another tour..
+          // we don't want to move tasks that have been assigned to other courier, or moved individually to another tour
           if (isValidTasksMultiSelect([task, taskToAdd], taskIdToTourIdMap)) {
             newTasks.push(taskToAdd)
           }
@@ -82,6 +101,7 @@ export const isTaskVisible = (task, filters, date) => {
     showIncidentReportedTasks,
     alwayShowUnassignedTasks,
     tags,
+    excludedTags,
     hiddenCouriers,
     timeRange,
     onlyFilter,
@@ -132,10 +152,21 @@ export const isTaskVisible = (task, filters, date) => {
     }
   }
 
+  if (excludedTags && excludedTags.length > 0) {
+
+    if (task.tags.length === 0) {
+      return true
+    }
+
+    if (_.intersectionWith(task.tags, excludedTags, (tag, slug) => tag.slug === slug).length > 0) {
+      return false
+    }
+  }
+
   if (hiddenCouriers.length > 0) {
 
     if (!task.isAssigned) {
-      return false
+      return true
     }
 
     if (_.includes(hiddenCouriers, task.assignedTo)) {

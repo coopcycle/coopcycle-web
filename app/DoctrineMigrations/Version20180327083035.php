@@ -18,10 +18,10 @@ class Version20180327083035 extends AbstractMigration implements ContainerAwareI
     private function findAllOrders()
     {
         $stmt = $this->connection->prepare('SELECT * FROM sylius_order');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $orders = [];
-        while ($order = $stmt->fetch()) {
+        while ($order = $result->fetchAssociative()) {
             $orders[] = $order;
         }
 
@@ -53,9 +53,9 @@ class Version20180327083035 extends AbstractMigration implements ContainerAwareI
         foreach ($this->findAllOrders() as $order) {
 
             $stmt->bindParam('order_id', $order['id']);
-            $stmt->execute();
+            $result = $stmt->execute();
 
-            while ($row = $stmt->fetch()) {
+            while ($row = $result->fetchAssociative()) {
 
                 $taxAdjustment = $adjustmentFactory->createWithData(
                     AdjustmentInterface::TAX_ADJUSTMENT,

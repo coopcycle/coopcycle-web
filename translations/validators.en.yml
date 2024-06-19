@@ -62,7 +62,7 @@ order.adjustments.unexpectedCount: Unexpected number of "%type%" adjustments
 
 dabba.insufficient_wallet: Your Dabba wallet is missing %amount%
 
-googlemaps.api_key.invalid: The Google Maps API Key is not valid
+googlemaps.api_key.invalid: The Google Maps API Key is not valid. %error%
 
 loopeat.insufficient_stock: Insufficient reusable packaging quantity for « %name% »
 
@@ -70,3 +70,5 @@ spreadsheet.missing_column: You must provide a « %column% » column
 spreadsheet.missing_columns: You must provide a « %column% » or a « %other_column% » column
 spreadsheet.alternative_columns: You must provide a « %column% » or a « %other_column% » column, not both
 spreadsheet.csv_encoding: CSV files must be encoded in UTF-8
+
+siret.invalid: Invalid SIRET number

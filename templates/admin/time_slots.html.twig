@@ -15,7 +15,6 @@
 
 <table class="table">
   <thead>
-    <th>#</th>
     <th>{{ 'form.time_slot.name.label'|trans }}</th>
     <th>{{ 'form.time_slot.interval.label'|trans }}</th>
     <th>{{ 'form.time_slot.prior_notice_hours.label'|trans }}</th>
@@ -26,10 +25,7 @@
   {% for time_slot in time_slots %}
     <tr>
       <td>
-        <a href="{{ path('admin_time_slot', { id: time_slot.id }) }}">#{{ time_slot.id }}</a>
-      </td>
-      <td>
-        {{ time_slot.name }}
+        <a href="{{ path('admin_time_slot', { id: time_slot.id }) }}">{{ time_slot.name }}</a>
       </td>
       <td>
         {{ time_slot.interval }}
@@ -47,10 +43,23 @@
           {% endfor %}
         </ul>
       </td>
+      <td>
+        <div {{ react_component('ShowApplications', { objectId: time_slot.id, data: relatedEntitiesByTimeSlotId[time_slot.id] }) }}></div>
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td>
+          <div {{ react_component('DeleteIcon', { objectId: time_slot.id, objectName: time_slot.name, deleteUrl: 'api_time_slots_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_TIME_SLOT_BEFORE_DELETION'}) }}>
+          </div>
+        </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
+
+<div class="text-center">
+  {{ knp_pagination_render(time_slots, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 {% endblock %}
 

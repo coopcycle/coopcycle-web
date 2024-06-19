@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import 'leaflet-polylinedecorator'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
@@ -12,6 +11,7 @@ import MapHelper from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
+import { isMarkerInsidePolygon } from '../utils'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -19,21 +19,19 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected, useAvatarColors) => {
+const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}) => {
 
   if (selected) {
     return '#EEB516'
-  }
-
-  if (task.group && task.group.tags.length > 0) {
+  } else if (task.isAssigned && (useAvatarColors || polylineEnabled[task.assignedTo])) {
+    return colorHash.hex(task.assignedTo)
+  } else if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
-  }
-
-  if (task.tags.length > 0) {
+  } else if (task.tags.length > 0) {
     return tagsColor(task.tags)
+  } else {
+    return '#777'
   }
-
-  return task.isAssigned && useAvatarColors ? colorHash.hex(task.assignedTo) : '#777'
 }
 
 const taskIcon = task => {
@@ -144,6 +142,7 @@ export default class MapProxy {
     this.map.selectArea.enable()
 
     this.map.on('areaselected', (e) => {
+      console.debug(e.bounds)
       L.Util.requestAnimFrame(() => {
         const markers = []
         this.map.eachLayer((layer) => {
@@ -159,15 +158,34 @@ export default class MapProxy {
       })
     })
 
+    this.map.on('pm:create', ({layer}) => {
+
+      const polygonLayer = layer
+      L.Util.requestAnimFrame(() => {
+        const markers = []
+        this.map.eachLayer((marker) => {
+          if (!_.includes(Array.from(this.taskMarkers.values()), marker)) {
+            return
+          }
+          if (isMarkerInsidePolygon(marker, polygonLayer)) {
+            markers.push(marker)
+          }
+        })
+        options.onMarkersSelected(markers)
+        map.removeLayer(polygonLayer)
+        map.pm.disableDraw()
+      })
+    })
+
     this.useAvatarColors = options.useAvatarColors
 
   }
 
-  addTask(task, selected = false, isRestaurantAddress = false) {
+  addTask(task, selected = false, isRestaurantAddress = false, polylineEnabled = {}) {
 
     let marker = this.taskMarkers.get(task['@id'])
 
-    const color = taskColor(task, selected, this.useAvatarColors)
+    const color = taskColor(task, selected, this.useAvatarColors, polylineEnabled)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
@@ -188,9 +206,13 @@ export default class MapProxy {
       }
 
       render(<LeafletPopupContent
-        task={ task }
-        ref={ popupComponent }
-        onEditClick={ () => this.onEditClick(task) } />, el, cb)
+          task={ task }
+          ref={ popupComponent }
+          onEditClick={ this.onEditClick }
+        />,
+        el,
+        cb
+      )
 
       const popup = L.popup()
         .setContent(el)
@@ -327,37 +349,14 @@ export default class MapProxy {
   }
 
   setPolylineAsTheCrowFlies(username, polyline) {
+
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
-
-    const layer = L.polyline(polyline, {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   setPolyline(username, polyline) {
@@ -366,39 +365,17 @@ export default class MapProxy {
     layerGroup.clearLayers()
 
     const color = colorHash.hex(username)
-
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   showPolyline(username, style = 'normal') {
     if (style === 'as_the_crow_flies') {
+      this.getPolylineLayerGroup(username).removeFrom(this.map)
       this.getPolylineAsTheCrowFliesLayerGroup(username).addTo(this.map)
     } else {
+      this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
       this.getPolylineLayerGroup(username).addTo(this.map)
     }
   }

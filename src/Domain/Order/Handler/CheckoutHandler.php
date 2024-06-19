@@ -74,9 +74,8 @@ class CheckoutHandler
             $this->gateway->authorize($payment, ['token' => $stripeToken]);
             $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
         } catch (\Exception $e) {
-            $this->checkoutLogger->error(sprintf('Order %s | CheckoutHandler | CheckoutFailed: %s',
-                $this->loggingUtils->getOrderId($order),
-                $e->getMessage()), ['exception' => $e]);
+            $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
+                ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
 
             $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
         }

@@ -46,7 +46,7 @@ services:
     build:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
-    image: coopcycle/php:8.1
+    image: coopcycle/php:${PHP_VERSION:-8.2}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -68,9 +68,7 @@ services:
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
       - STRIPE_CONNECT_CLIENT_ID
-      - ALGOLIA_PLACES_APP_ID
-      - ALGOLIA_PLACES_API_KEY
-      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
+      - GEOCODE_EARTH_API_KEY
     volumes:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'

@@ -8,8 +8,8 @@ use AppBundle\Validator\Constraints\Spreadsheet as SpreadsheetConstraint;
 use AppBundle\Validator\Constraints\TaskSpreadsheetValidator;
 use Cocur\Slugify\Slugify;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Flysystem\Adapter\Local as LocalFilesystemAdapter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Local\LocalFilesystemAdapter as LocalFilesystemAdapter;
 use Nucleos\UserBundle\Model\UserManager;
 use Oneup\UploaderBundle\Uploader\File\FlysystemFile;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -50,7 +50,7 @@ class TaskSpreadsheetValidatorTest extends ConstraintValidatorTestCase
 
     public function testMissingHeaders()
     {
-        $value = new FlysystemFile($this->filesystem->get('tasks_missing_headers.csv'), $this->filesystem);
+        $value = new FlysystemFile('tasks_missing_headers.csv', $this->filesystem);
 
         $constraint = new SpreadsheetConstraint('task');
         $violations = $this->validator->validate($value, $constraint);
@@ -63,7 +63,7 @@ class TaskSpreadsheetValidatorTest extends ConstraintValidatorTestCase
 
     public function testValidHeaders()
     {
-        $value = new FlysystemFile($this->filesystem->get('tasks.csv'), $this->filesystem);
+        $value = new FlysystemFile('tasks.csv', $this->filesystem);
 
         $constraint = new SpreadsheetConstraint('task');
         $violations = $this->validator->validate($value, $constraint);

@@ -21,8 +21,8 @@ final class Version20181115101859 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT * FROM store_delivery');
 
-        $stmt->execute();
-        while ($storeDelivery = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($storeDelivery = $result->fetchAssociative()) {
             $this->addSql('UPDATE delivery SET store_id = :store_id WHERE id = :delivery_id', [
                 'store_id' => $storeDelivery['store_id'],
                 'delivery_id' => $storeDelivery['delivery_id'],
@@ -45,8 +45,8 @@ final class Version20181115101859 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT * FROM delivery WHERE store_id IS NOT NULL');
 
-        $stmt->execute();
-        while ($delivery = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($delivery = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO store_delivery (store_id, delivery_id) VALUES (:store_id, :delivery_id)', [
                 'store_id' => $delivery['store_id'],
                 'delivery_id' => $delivery['id'],

@@ -8,12 +8,15 @@ import {
   selectSortedErrorMessages,
 } from '../../redux/selectors'
 import OrderState from './OrderState'
+import { useTranslation } from 'react-i18next'
 
 export default function MobileOrderHeading() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
   const errors = useSelector(selectSortedErrorMessages)
 
   const dispatch = useDispatch()
+
+  const { t } = useTranslation()
 
   const handleClick = () => {
     // use similar to ReactModal approach to prevent body in the background from scrolling
@@ -39,7 +42,7 @@ export default function MobileOrderHeading() {
         }) }
         onClick={ handleClick }>
         <div className="panel-heading__body">
-          { isMobileCartVisible ? null : (<OrderState />) }
+          { isMobileCartVisible ? (<span>{t('CART_TITLE')}</span>) : (<OrderState />) }
         </div>
         <span className="panel-heading__right">
           <i className={ isMobileCartVisible

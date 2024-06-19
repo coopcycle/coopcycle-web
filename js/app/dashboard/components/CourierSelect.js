@@ -21,7 +21,9 @@ const Option = ({ children, ...props }) => {
 
   return (
     <components.Option { ...props }>
-      <Avatar username={ props.data.username } />  { children }
+      <div data-cypress-select-username={ props.data.username }>
+        <Avatar username={ props.data.username } />  { children }
+      </div>
     </components.Option>
   )
 }
@@ -40,13 +42,14 @@ class CourierSelect extends Component {
   render() {
 
     const options = this.props.couriers.map(courierAsOption)
+    const {isMulti } = this.props
 
     return (
       <Select
         defaultValue={ lookupCourier(options, this.props.username) }
         options={ options }
         onChange={ this.props.onChange }
-        placeholder={ this.props.t('ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER') }
+        placeholder={ isMulti ? this.props.t('ADMIN_DASHBOARD_COURIERS_SELECT_PLACEHOLDER') : this.props.t('ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER') }
         components={{ Option, SingleValue }}
         menuPlacement={ Object.prototype.hasOwnProperty.call(this.props, 'menuPlacement') ? this.props.menuPlacement : 'auto' }
         isDisabled={ Object.prototype.hasOwnProperty.call(this.props, 'isDisabled') ? this.props.isDisabled : false }
@@ -57,7 +60,10 @@ class CourierSelect extends Component {
         menuPortalTarget={ document.body }
         styles={{
           menuPortal: base => ({ ...base, zIndex: 9 })
-        }} />
+        }}
+        isMulti={isMulti}
+        closeMenuOnSelect={!isMulti}
+      />
     )
   }
 }

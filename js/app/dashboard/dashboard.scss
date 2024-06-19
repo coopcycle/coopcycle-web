@@ -94,6 +94,12 @@ html, body {
       }
     }
 
+    &__collapsed {
+      text-align: center;
+      height: 100%;
+      padding: 5px;
+    }
+
     &__scroll {
       overflow: auto;
     }
@@ -245,13 +251,11 @@ html, body {
   border: 2px dashed #F1C40F;
   padding: 4px;
   background-color: $light-gray;
+  box-sizing: border-box;
+  min-height: ($line-height-computed * 2) + (6 * 2);
 
   .list-group-item {
     padding: 8px 32px 8px 14px;
-  }
-  &--empty {
-    box-sizing: border-box;
-    min-height: ($line-height-computed * 2) + (6 * 2);
   }
 }
 
@@ -291,6 +295,16 @@ html, body {
 
 .task__highlighted {
   background-color: $yellow!important;
+}
+
+.task__has-incidents {
+  background: repeating-linear-gradient(
+    -45deg,
+    $white,
+    $white 10px,
+    lighten($yellow, 40%) 9px,
+    lighten($yellow, 40%) 18px
+    )
 }
 
 .task__eta {
@@ -340,6 +354,9 @@ html, body {
   padding: 0;
 }
 
+.ReactModal__Content--task-report-incident {
+  min-width: 40%;
+}
 .ReactModal__Content--filters {
   min-width: 66.666%;
 }

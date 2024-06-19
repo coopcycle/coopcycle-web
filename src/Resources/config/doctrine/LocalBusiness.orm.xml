@@ -48,13 +48,14 @@
       </options>
     </field>
     <field name="vatID" type="string" column="vat_id" nullable="true"/>
-    <field name="additionalProperties" type="json_array" column="additional_properties" nullable="true"/>
+    <field name="additionalProperties" type="json" column="additional_properties" nullable="true"/>
     <field name="rateLimitRangeDuration" type="integer" column="rate_limit_range_duration" nullable="true" />
     <field name="rateLimitAmount" type="integer" column="rate_limit_amount" nullable="true" />
     <field name="state" type="string" column="state"/>
-    <field name="stripeConnectRoles" type="json_array" column="stripe_connect_roles"/>
-    <field name="mercadopagoConnectRoles" type="json_array" column="mercadopago_connect_roles" nullable="true"/>
+    <field name="stripeConnectRoles" type="json" column="stripe_connect_roles"/>
+    <field name="mercadopagoConnectRoles" type="json" column="mercadopago_connect_roles" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
     <field name="exclusive" type="boolean" column="exclusive">
       <options>
         <option name="default">0</option>
@@ -73,8 +74,23 @@
     <field name="loopeatAccessToken" type="text" column="loopeat_access_token" nullable="true"/>
     <field name="loopeatRefreshToken" type="text" column="loopeat_refresh_token" nullable="true"/>
     <field name="featured" type="boolean" column="featured"/>
-    <field name="stripePaymentMethods" type="json_array" column="stripe_payment_methods"/>
+    <field name="stripePaymentMethods" type="json" column="stripe_payment_methods"/>
     <field name="edenredMerchantId" type="string" column="edenred_merchant_id" nullable="true"/>
+    <field name="edenredEnabled" type="boolean" column="edenred_enabled" default="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="edenredTRCardEnabled" type="boolean" column="edenred_trcard_enabled" default="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <field name="edenredSyncSent" type="boolean" column="edenred_sync_sent" default="false">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
     <field name="vytalEnabled" type="boolean" column="vytal_enabled">
       <options>
         <option name="default">0</option>
@@ -96,8 +112,12 @@
       </options>
     </field>
     <field name="dabbaCode" type="string" column="dabba_code" nullable="true"/>
-    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
-    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract">
+    <field name="autoAcceptOrdersEnabled" type="boolean" column="auto_accept_orders_enabled">
+      <options>
+        <option name="default">0</option>
+      </options>
+    </field>
+    <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>
       </cascade>
@@ -237,6 +257,14 @@
     </many-to-one>
     <many-to-one field="hub" target-entity="AppBundle\Entity\Hub" inversed-by="restaurants">
       <join-column name="hub_id" referenced-column-name="id" />
+    </many-to-one>
+    <many-to-one field="failureReasonSet" target-entity="AppBundle\Entity\Delivery\FailureReasonSet">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-columns>
+        <join-column name="failure_reason_set_id" referenced-column-name="id"/>
+      </join-columns>
     </many-to-one>
   </entity>
 </doctrine-mapping>

@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\Cart;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
@@ -17,42 +18,20 @@ use Symfony\Component\Security\Core\Security;
 
 final class RestaurantCartContext implements CartContextInterface
 {
-    private $orderFactory;
-
-    /**
-     * @var ChannelContextInterface
-     */
-    private ChannelContextInterface $channelContext;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    private Security $security;
-
     /** @var OrderInterface|null */
     private $cart;
 
     public function __construct(
-        FactoryInterface $orderFactory,
-        SessionStorage $storage,
-        ChannelContextInterface $channelContext,
-        RestaurantResolver $resolver,
-        AuthorizationCheckerInterface $authorizationChecker,
-        Security $security,
+        private OrderFactory $orderFactory,
+        private SessionStorage $storage,
+        private ChannelContextInterface $channelContext,
+        private RestaurantResolver $resolver,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private Security $security,
         private BusinessContext $businessContext,
         private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils
-    )
-    {
-        $this->orderFactory = $orderFactory;
-        $this->storage = $storage;
-        $this->channelContext = $channelContext;
-        $this->resolver = $resolver;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->security = $security;
-    }
+        private LoggingUtils $loggingUtils)
+    {}
 
     /**
      * {@inheritdoc}
@@ -75,10 +54,17 @@ final class RestaurantCartContext implements CartContextInterface
                 try {
                     if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
                         && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
+
+                        $this->checkoutLogger->info('cart is not valid any more',
+                            ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
+
                         $cart = null;
                         $this->storage->remove();
                     }
                 } catch (EntityNotFoundException $e) {
+                    $this->checkoutLogger->info(sprintf('error: %s', $e->getMessage()),
+                        ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
+
                     $cart = null;
                     $this->storage->remove();
                 }
@@ -90,6 +76,9 @@ final class RestaurantCartContext implements CartContextInterface
             if (null !== $cart) {
                 if ($restaurant = $this->resolver->resolve()) {
                     if (!$this->resolver->accept($cart)) {
+                        $this->checkoutLogger->info(sprintf(' cart is not accepted by this restaurant: %d', $restaurant->getId()),
+                            ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
+
                         $cart->clearItems();
                         $cart->setShippingTimeRange(null);
                     }
@@ -108,8 +97,8 @@ final class RestaurantCartContext implements CartContextInterface
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
 
-            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | RestaurantCartContext | called by %s',
-                $cart->getCreatedAt()->format(\DateTime::ATOM), $this->loggingUtils->getBacktrace()));
+            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s)', $cart->getCreatedAt()->format(\DateTime::ATOM)),
+                ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
         }
 
         if (null === $cart->getCustomer()) {

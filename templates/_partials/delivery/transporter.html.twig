@@ -10,12 +10,12 @@
     padding-left: 10px;
   }
 </style>
-{% if delivery.store is not empty and delivery.store.isDBSchenkerEnabled %}
+{% if delivery.store is not empty and delivery.store.isTransporterEnabled %}
 {% set importMessage = delivery.getDropoff().getImportMessage() %}
-{% set ediMessages = delivery.getDropoff().getEdifactMessagesTimeline() %}
+{% set ediMessages = delivery.getEdifactMessagesTimeline() %}
 <div class="panel panel-primary">
   <div class="panel-heading">
-    <h3 class="panel-title">DBSchenker</h3>
+    <h3 class="panel-title">Transporter</h3>
   </div>
   <div class="panel-body">
     {% if importMessage %}
@@ -25,24 +25,9 @@
           jsbarcode-value="{{ importMessage.getReference() }}"/>
     {% endif %}
     <h4>Event timeline</h4>
-    <ul class="list-group transporter-event-timeline">
-      {% for message in ediMessages %}
-        <li class="list-group-item">
-        <span class="label label-{{ message.color }}"><i class="fa {{message.icon}}" aria-hidden="true"></i></span>
-        {{ message.date | date('H:i')}} - {{ message.title }}
-        <!--<span class="actions"><a href="#">Edit</a> - <a href="#">Details</a></span>-->
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-  <div class="panel-footer">
-    <!--<button type="button" class="btn btn-default">
-    Sync <span class="badge">1</span>
-    </button>-->
-    <button type="button" class="btn btn-danger" onclick="alert('Fonctionnalité pas encore disponible')">
-    Report incident
-    </button>
-    <!--<small class="text-muted p-2">Unsynced messages are auto-synced at 10pm</small>-->
+    <div {{ react_component('Transporter/TransporterTimeline', {
+        'ediMessages': ediMessages|serialize
+        }) }}></div>
   </div>
 </div>
 {% endif %}

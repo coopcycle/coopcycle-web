@@ -56,6 +56,12 @@ class Settings
 
     public $sms_enabled;
 
+    /**
+     * @Assert\Expression(
+     *   "!this.sms_enabled or value in ['mailjet', 'twilio']",
+     *   message="This value should not be blank."
+     * )
+     */
     public $sms_gateway;
 
     public $sms_gateway_config;
@@ -115,13 +121,6 @@ class Settings
     public $company_legal_id;
 
     /**
-     * The regex to validate Google API Key was found on https://github.com/odomojuli/RegExAPI
-     *
-     * @Assert\Expression(
-     *   "this.autocomplete_provider != 'google' or this.geocoding_provider != 'google' or value != ''",
-     *   message="This value should not be blank."
-     * )
-     * @Assert\Regex("/AIza[0-9A-Za-z-_]{35}/")
      * @AssertGoogleApiKey()
      */
     public $google_api_key_custom;

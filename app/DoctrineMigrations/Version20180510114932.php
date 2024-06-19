@@ -79,9 +79,9 @@ class Version20180510114932 extends AbstractMigration implements ContainerAwareI
     private function findRestaurantByMenuItem($menuItemId)
     {
         $this->restaurantByMenuItemStmt->bindParam('menu_item_id', $menuItemId);
-        $this->restaurantByMenuItemStmt->execute();
+        $result = $this->restaurantByMenuItemStmt->execute();
 
-        return $this->restaurantByMenuItemStmt->fetch();
+        return $result->fetchAssociative();
     }
 
     public function up(Schema $schema) : void
@@ -115,11 +115,11 @@ class Version20180510114932 extends AbstractMigration implements ContainerAwareI
 
         $this->locale = $this->container->getParameter('coopcycle.locale');
 
-        $stmt['menu_item']->execute();
-        while ($menuItem = $stmt['menu_item']->fetch()) {
+        $result = $stmt['menu_item']->execute();
+        while ($menuItem = $result->fetchAssociative()) {
 
             $stmt['menu_item_modifier']->bindParam('menu_item_id', $menuItem['id']);
-            $stmt['menu_item_modifier']->execute();
+            $result2 = $stmt['menu_item_modifier']->execute();
 
             $restaurant = $this->findRestaurantByMenuItem($menuItem['id']);
 
@@ -128,10 +128,10 @@ class Version20180510114932 extends AbstractMigration implements ContainerAwareI
             }
 
             // A MenuItemModifier is actually a ProductOption
-            while ($menuItemModifier = $stmt['menu_item_modifier']->fetch()) {
+            while ($menuItemModifier = $result2->fetchAssociative()) {
 
                 $stmt['modifier']->bindParam('menu_item_modifier_id', $menuItemModifier['id']);
-                $stmt['modifier']->execute();
+                $result3 = $stmt['modifier']->execute();
 
                 $productOptionCode = sprintf('CPCCL-FDTCH-%d-OPT-%d', $menuItem['id'], $menuItemModifier['id']);
                 $productOptionName = $menuItemModifier['name'];
@@ -154,7 +154,7 @@ class Version20180510114932 extends AbstractMigration implements ContainerAwareI
                 ]);
 
                 // A Modifier is actually a ProductOptionValue
-                while ($modifier = $stmt['modifier']->fetch()) {
+                while ($modifier = $result3->fetchAssociative()) {
 
                     $productOptionValueCode = sprintf('%s-%d', $productOptionCode, $modifier['id']);
                     $productOptionValueName = $modifier['name'];

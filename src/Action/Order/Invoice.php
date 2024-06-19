@@ -30,7 +30,7 @@ class Invoice
 
         $filename = sprintf('%s.pdf', $data->getNumber());
 
-        if (!$this->receiptsFilesystem->has($filename)) {
+        if (!$this->receiptsFilesystem->fileExists($filename)) {
             throw new \Exception(sprintf('File %s.pdf does not exist', $data->getNumber()));
         }
 

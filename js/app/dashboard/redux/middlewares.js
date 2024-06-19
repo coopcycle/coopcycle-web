@@ -12,6 +12,7 @@ import {
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
+import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
 // Check every 30s
 const OFFLINE_TIMEOUT_INTERVAL = (30 * 1000)
@@ -35,16 +36,21 @@ const pulse = _.debounce(() => {
 }, 2000)
 
 export const socketIO = ({ dispatch, getState }) => {
+  /*
+    Synchronization between mobile dispatch or other web dispatch instances.
+  */
 
   if (!centrifuge) {
 
     const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
-    centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+    centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
     centrifuge.setToken(getState().config.centrifugoToken)
 
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
       const { event } = message.data
+
+      console.debug('Received event : ' + event.name)
 
       switch (event.name) {
         case 'task:started':
@@ -53,14 +59,11 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:cancelled':
         case 'task:created':
         case 'task:rescheduled':
+        case 'task:incident-reported':
           dispatch(updateTask(event.data.task))
           break
         case 'task:assigned':
         case 'task:unassigned':
-          // FIXME : for now tours and assignment are handled in two different endpoint
-          // assign is done first
-          // so when the "assign endpoint" is called it doesn't know yet about the tour property setting
-          delete event.data.task['tour']
           dispatch(updateTask(event.data.task))
           break
         case 'task_import:success':
@@ -69,8 +72,14 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
-        case 'task_collections:updated':
-          dispatch(taskListsUpdated(event.data.task_collections))
+        case 'v2:task_list:updated':
+          const currentDate = selectSelectedDate(getState())
+          if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
+            dispatch(taskListsUpdated(event.data.task_list))
+          } else {
+            console.debug('Discarding tasklist event for other day ' + event.data.task_list.date)
+          }
+
           break
       }
     })
@@ -94,10 +103,6 @@ export const socketIO = ({ dispatch, getState }) => {
   }
 }
 
-function getKey(state) {
-  return state.logistics.date.format('YYYY-MM-DD')
-}
-
 export const persistFilters = ({ getState }) => (next) => (action) => {
 
   const result = next(action)
@@ -105,12 +110,12 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
   let state
   if (action.type === SET_FILTER_VALUE) {
     state = getState()
-    window.sessionStorage.setItem(`cpccl__dshbd__fltrs__${getKey(state)}`, JSON.stringify(state.settings.filters))
+    window.localStorage.setItem("cpccl__dshbd__fltrs", JSON.stringify(state.settings.filters))
   }
 
   if (action.type === RESET_FILTERS) {
     state = getState()
-    window.sessionStorage.removeItem(`cpccl__dshbd__fltrs__${getKey(state)}`)
+    window.localStorage.removeItem("cpccl__dshbd__fltrs")
   }
 
   if (action.type === SHOW_RECURRENCE_RULES) {
@@ -120,7 +125,7 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
 
   if (action.type === SET_TOURS_ENABLED) {
     state = getState()
-    window.sessionStorage.setItem(`tours_enabled`, JSON.stringify(state.settings.toursEnabled))
+    window.localStorage.setItem(`cpccl__dshbd__tours_enabled`, JSON.stringify(state.settings.toursEnabled))
   }
 
   return result

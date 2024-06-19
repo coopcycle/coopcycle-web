@@ -14,5 +14,7 @@ class OrderTransitions
 
     public const TRANSITION_ACCEPT  = 'accept';
     public const TRANSITION_REFUSE  = 'refuse';
+    public const TRANSITION_START_PREPARING  = 'start_preparing';
+    public const TRANSITION_FINISH_PREPARING  = 'finish_preparing';
     public const TRANSITION_RESTORE = 'restore';
 }

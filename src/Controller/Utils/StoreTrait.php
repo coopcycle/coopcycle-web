@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Address;
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
@@ -32,6 +33,7 @@ use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
@@ -49,33 +51,35 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait StoreTrait
 {
-    public function storeListAction(Request $request, PaginatorInterface $paginator)
+    use InjectAuthTrait;
+
+    /**
+     * @HideSoftDeleted
+     */
+    public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
         $qb = $this->getDoctrine()
         ->getRepository(Store::class)
-        ->createQueryBuilder('c');
+        ->createQueryBuilder('c')
+        ->orderBy('c.name', 'ASC');
 
         $STORES_PER_PAGE = 20;
 
         $stores = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            $STORES_PER_PAGE,
-            [
-                PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 'c.name',
-                PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
-            ],
+            $STORES_PER_PAGE
         );
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render($request->attributes->get('template'), [
+        return $this->render($request->attributes->get('template'), $this->auth([
             'stores' => $stores,
             'layout' => $request->attributes->get('layout'),
             'store_route' => $routes['store'],
             'store_delivery_new_route' => $routes['store_delivery_new'],
-            'store_deliveries_route' => $routes['store_deliveries'],
-        ]);
+            'store_deliveries_route' => $routes['store_deliveries']
+        ]));
     }
 
     public function storeUsersAction($id, Request $request,
@@ -183,15 +187,24 @@ trait StoreTrait
             $store = $form->getData();
             $objectManager = $this->getDoctrine()->getManagerForClass(Store::class);
 
-            if ($store->isDBSchenkerEnabled()) {
+            if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
+
+                $this->getDoctrine()->getManagerForClass(Store::class)->remove($store);
+                $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+
+                return $this->redirectToRoute($routes['stores']);
+            }
+
+            if ($store->isTransporterEnabled()) {
+                $transporter = $store->getTransporter();
                 $fstore = $objectManager->getRepository(Store::class)->findOneBy([
-                    'DBSchenkerEnabled' => true
+                    'transporter' => $transporter
                 ]);
 
                 if (!is_null($fstore) && $store->getId() != $fstore->getId()) {
                     $this->addFlash(
                         'error',
-                        'DBSchenker is already enabled for another store'
+                        sprintf('%s is already enabled for %s', $transporter, $fstore->getName())
                     );
 
                     return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
@@ -552,7 +565,7 @@ trait StoreTrait
             // while $taskImagesFilesystem is alreay aware of the prefix
             $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-            if (!$taskImagesFilesystem->has($imagePath)) {
+            if (!$taskImagesFilesystem->fileExists($imagePath)) {
                 throw new BadRequestHttpException(sprintf('Image at path "%s" not found', $imagePath));
             }
 

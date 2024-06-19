@@ -86,7 +86,8 @@ Feature: Food Tech
               "order_promotion":[],
               "reusable_packaging":[],
               "tax":@array@,
-              "tip":[]
+              "tip":[],
+              "incident":[]
             },
             "paymentMethod": "CARD",
             "hasReceipt":@boolean@,
@@ -586,10 +587,10 @@ Feature: Food Tech
             "@id":@string@,
             "@type":"OpeningHoursSpecification",
             "id":@integer@,
-            "opens":"00:00",
+            "opens":"23:59",
             "closes":"00:00",
             "validFrom":"2020-10-02",
-            "validThrough":"2020-10-03"
+            "validThrough":"2020-10-02"
           }
         ],
         "image":@string@,
@@ -599,7 +600,12 @@ Feature: Food Tech
         "hub":null,
         "loopeatEnabled":false,
         "tags":@array@,
-        "badges":@array@
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false
       }
       """
 

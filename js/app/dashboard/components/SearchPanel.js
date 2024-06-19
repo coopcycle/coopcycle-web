@@ -67,7 +67,7 @@ class SearchPanel extends React.Component {
               e.preventDefault()
               this.props.toggleSearch()
             }}>
-              <i className="fa fa-close"></i>
+              <i className="fa fa-close" data-cypress-close-search></i>
             </a>
           </span>
         </h4>
@@ -92,7 +92,7 @@ class SearchPanel extends React.Component {
               return (
                 <Task
                   key={ key }
-                  task={ task }
+                  taskId={ task['@id'] }
                   toggleTask={ this.props.toggleTask }
                   selectTask={ this.props.selectTask }
                   taskWithoutDrag

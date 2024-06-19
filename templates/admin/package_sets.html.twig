@@ -15,18 +15,16 @@
 
 <table class="table">
   <thead>
-    <th>#</th>
     <th>{{ 'form.package_set.name.label'|trans }}</th>
     <th>{{ 'form.package_set.packages.label'|trans }}</th>
+    <th></th>
+    {% if is_granted('ROLE_ADMIN') %}<th></th>{% endif %}
   </thead>
   <tbody>
   {% for package_set in package_sets %}
     <tr>
       <td>
-        <a href="{{ path('admin_package', { id: package_set.id }) }}">#{{ package_set.id }}</a>
-      </td>
-      <td>
-        {{ package_set.name }}
+        <a href="{{ path('admin_package', { id: package_set.id }) }}">{{ package_set.name }}</a>
       </td>
       <td>
         {% set packages = [] %}
@@ -35,9 +33,19 @@
         {% endfor %}
         {{ packages|join(', ') }}
       </td>
+      <td>
+        <div {{ react_component('ShowApplications', { objectId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id], fetchUrl: "api_package_sets_applications_item" }) }}></div>
+      </td>
+      {% if is_granted('ROLE_ADMIN') %}
+        <td>
+          <div {{ react_component('DeleteIcon', { objectId: package_set.id, objectName: package_set.name, deleteUrl: 'api_package_sets_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION'}) }}></div>
+        </td>
+      {% endif %}
     </tr>
   {% endfor %}
   </tbody>
 </table>
-
+<div class="text-center">
+  {{ knp_pagination_render(package_sets, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 {% endblock %}

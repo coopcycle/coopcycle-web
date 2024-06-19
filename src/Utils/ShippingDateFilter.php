@@ -3,27 +3,22 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Spatie\OpeningHours\OpeningHours;
 
 class ShippingDateFilter
 {
-    private $orderTimelineCalculator;
-
     public function __construct(
-        OrderTimelineCalculator $orderTimelineCalculator,
-        OrdersRateLimit         $ordersRateLimit,
-        LoggerInterface         $logger = null)
+        private OrderTimelineCalculator $orderTimelineCalculator,
+        private OrdersRateLimit         $ordersRateLimit,
+        private LoggerInterface         $logger,
+        private LoggingUtils $loggingUtils)
     {
-        $this->orderTimelineCalculator = $orderTimelineCalculator;
-        $this->ordersRateLimit = $ordersRateLimit;
-        $this->logger = $logger ?? new NullLogger();
     }
 
     /**
@@ -44,8 +39,12 @@ class ShippingDateFilter
         // Obviously, we can't ship in the past
         if ($dropoff <= $now) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - date "%s" is in the past',
-                $dropoff->format(\DateTime::ATOM))
+            $this->logger->info(sprintf('ShippingDateFilter::accept | dropoff "%s" is in the past',
+                $dropoff->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
@@ -56,20 +55,28 @@ class ShippingDateFilter
 
         if ($preparation <= $now) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - preparation time "%s" is in the past',
-                $preparation->format(\DateTime::ATOM))
+            $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" is in the past',
+                $preparation->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
         }
 
-        $vendor = $order->getVendor();
+        $vendorConditions = $order->getVendorConditions();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
+        if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - closed at "%s"',
-                $preparation->format(\DateTime::ATOM))
+            $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
+                $preparation->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
@@ -79,8 +86,12 @@ class ShippingDateFilter
 
         if ($diffInDays >= 7) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - date "%s" is more than 7 days in the future',
-                $dropoff->format(\DateTime::ATOM))
+            $this->logger->info(sprintf('ShippingDateFilter::accept | date "%s" is more than 7 days in the future',
+                $dropoff->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;

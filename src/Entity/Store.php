@@ -8,12 +8,17 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Delivery\FailureReasonSet;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
+use IncidentableTrait;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -45,6 +50,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={
  *       "method"="GET",
  *       "security"="is_granted('edit', object)"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   subresourceOperations={
@@ -55,10 +64,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
  * @Vich\Uploadable
  */
-class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface
+class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
 {
+    use SoftDeleteable;
     use TaggableTrait;
     use OrganizationAwareTrait;
+    use CustomFailureReasonTrait;
 
     /**
      * @var int
@@ -124,6 +135,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $deliveries;
 
+    private $rrules;
+
     private $owners;
 
     private $prefillPickupAddress = false;
@@ -152,15 +165,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $timeSlots;
 
-    private $failureReasonSet;
 
-    private $DBSchenkerEnabled = false;
+    private ?string $transporter = null;
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->timeSlots = new ArrayCollection();
+        $this->rrules = new ArrayCollection();
     }
 
     /**
@@ -492,23 +505,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->timeSlots->add($timeSlot);
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFailureReasonSet()
-    {
-        return $this->failureReasonSet;
-    }
 
-    /**
-     * @param mixed $failureReasonSet
-     * @return Store
-     */
-    public function setFailureReasonSet($failureReasonSet)
-    {
-        $this->failureReasonSet = $failureReasonSet;
-        return $this;
-    }
 
     /**
      * @SerializedName("packages")
@@ -525,14 +522,29 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return [];
     }
 
-    public function isDBSchenkerEnabled(): bool
+    public function isTransporterEnabled(): bool
     {
-        return $this->DBSchenkerEnabled;
+        return !is_null($this->transporter);
     }
 
-    public function setDBSchenkerEnabled(bool $DBSchenkerEnabled): Store
+    public function getTransporter(): ?string
     {
-        $this->DBSchenkerEnabled = $DBSchenkerEnabled;
+        return $this->transporter;
+    }
+
+    public function setTransporter(?string $transporter): Store
+    {
+        $this->transporter = $transporter;
         return $this;
+    }
+
+
+    /**
+     * Get the recurrence rules linked to this store
+     * @return RecurrenceRule[]
+     */
+    public function getRrules()
+    {
+        return $this->rrules;
     }
 }

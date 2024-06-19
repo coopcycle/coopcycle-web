@@ -22,11 +22,12 @@ class TaskLists extends React.Component {
           { taskListsLoading ?
             (<span className="pull-right"><span className="loader"></span></span>) :
             (<a className="pull-right" onClick={this.props.openAddUserModal}>
-              <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-user"></i>
+              <i className="fa fa-plus" data-cypress-add-to-planning></i>&nbsp;<i className="fa fa-user"></i>
             </a>)
           }
         </h4>
         <Accordion
+          allowMultipleExpanded
           allowZeroExpanded
           id="accordion"
           className="dashboard__panel__scroll"

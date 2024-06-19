@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A TaskCollection is the database representation of a Task\CollectionInterface.
  * It uses Doctrine's Inheritance Mapping to implement a OneToMany relationship with TaskCollectionItem.
- * There are two concrete implementations of TaskCollection: Delivery & TaskList.
+ * There are concrete implementations of TaskCollection: Tour, Delivery & TaskList.
  *
  * @see http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/inheritance-mapping.html
  */

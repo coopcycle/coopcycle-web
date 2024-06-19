@@ -9,6 +9,7 @@ import { extendMoment } from 'moment-range'
 import DatePicker from './DatePicker'
 import TimeSlotPicker from './TimeSlotPicker'
 import { clearDate, changeDate, setDateModalOpen } from '../redux/actions'
+import { selectCartTiming } from '../redux/selectors'
 
 const moment = extendMoment(Moment)
 
@@ -95,7 +96,7 @@ class DateModal extends Component {
               </button>
             </div>
             <div className="col-sm-8 col-xs-6">
-              <button type="button" className="btn btn-block btn-success" onClick={ this._onClickSubmit.bind(this) }>
+              <button type="button" className="btn btn-block btn-success" onClick={ this._onClickSubmit.bind(this) } data-testid="cart.time.submit">
                 { this.props.t('CART_DELIVERY_TIME_SUBMIT') }
               </button>
             </div>
@@ -111,16 +112,18 @@ function mapStateToProps(state) {
   const isPreOrder =
     false === _.isEmpty(state.cart.shippingTimeRange)
 
+  const cartTiming = selectCartTiming(state)
+
   const value =
-    isPreOrder ? state.cart.shippingTimeRange : _.first(state.times.ranges)
+    isPreOrder ? state.cart.shippingTimeRange : _.first(cartTiming.ranges)
 
   return {
     isOpen: state.isDateModalOpen,
     timeSlotInputName: state.datePickerTimeSlotInputName,
     isPreOrder,
     value,
-    ranges: state.times.ranges,
-    behavior: state.times.behavior,
+    ranges: cartTiming.ranges,
+    behavior: cartTiming.behavior,
   }
 }
 

@@ -16,8 +16,8 @@ class Version20180402105001 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $stmt = $this->connection->prepare('SELECT order_id, delivery_id FROM delivery_order_item JOIN sylius_order_item ON delivery_order_item.order_item_id = sylius_order_item.id');
-        $stmt->execute();
-        while ($row = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($row = $result->fetchAssociative()) {
             $this->addSql('UPDATE delivery SET sylius_order_id = :order_id WHERE id = :delivery_id', $row);
         }
 

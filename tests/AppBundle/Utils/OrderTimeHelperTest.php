@@ -5,8 +5,9 @@ namespace Tests\AppBundle\Utils;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Vendor;
+use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\TimeRegistry;
 use AppBundle\Utils\OrderTimeHelper;
@@ -18,6 +19,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use Redis;
 
 class OrderTimeHelperTest extends TestCase
@@ -47,7 +49,9 @@ class OrderTimeHelperTest extends TestCase
             $this->redis->reveal(),
             $this->timeRegistry->reveal(),
             $this->fulfillmentMethodResolver->reveal(),
-            'fr'
+            'fr',
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 
@@ -61,6 +65,10 @@ class OrderTimeHelperTest extends TestCase
         Carbon::setTestNow(Carbon::parse('2020-03-31T14:25:00+02:00'));
 
         $restaurant = $this->prophesize(LocalBusiness::class);
+
+        $restaurant
+            ->getId()
+            ->willReturn(1);
 
         $sameDayChoices = [
             '2020-03-31T14:30:00+02:00',
@@ -96,10 +104,22 @@ class OrderTimeHelperTest extends TestCase
             ->getRestaurant()
             ->willReturn($restaurant->reveal());
         $cart
-            ->getVendor()
+            ->getVendorConditions()
             ->willReturn(
                 $restaurant->reveal()
             );
+
+        $orderVendor = $this->prophesize(OrderVendor::class);
+        $orderVendor
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+
+        $cart
+            ->getVendors()
+            ->willReturn(
+                new ArrayCollection([ $orderVendor->reveal() ])
+            );
+
         $cart
             ->getFulfillmentMethod()
             ->willReturn('delivery');

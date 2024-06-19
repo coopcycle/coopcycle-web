@@ -11,6 +11,7 @@ use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
@@ -512,12 +513,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
     }
 
-    public static function toVroomShipment(Delivery $delivery): VroomShipment
+    public static function toVroomShipment(Delivery $delivery, $pickupIri, $dropoffIri): VroomShipment
     {
         $shipment = new VroomShipment();
 
-        $shipment->pickup = Task::toVroomJob($delivery->getPickup());
-        $shipment->delivery = Task::toVroomJob($delivery->getDropoff());
+        $shipment->pickup = Task::toVroomJob($delivery->getPickup(), $pickupIri);
+        $shipment->delivery = Task::toVroomJob($delivery->getDropoff(), $dropoffIri);
 
         return $shipment;
     }
@@ -538,5 +539,14 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function hasImages()
     {
         return count($this->getImages()) > 0;
+    }
+
+    public function getEdifactMessagesTimeline(): array
+    {
+        $messages = array_merge(...array_map(function (Task $task) {
+            return $task->getEdifactMessages()->toArray();
+        }, $this->getTasks()));
+        usort($messages, fn ($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
+        return $messages;
     }
 }

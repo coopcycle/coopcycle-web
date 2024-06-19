@@ -8,7 +8,6 @@ use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
-use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -20,7 +19,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         StorageInterface $storage,
-        MountManager $mountManager,
         PropertyMappingFactory $propertyMappingFactory,
         CacheManager $cacheManager,
         Filesystem $assetsFilesystem,
@@ -29,7 +27,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
         PlaceholderImageResolver $placeholderImageResolver)
     {
         $this->storage = $storage;
-        $this->mountManager = $mountManager;
         $this->propertyMappingFactory = $propertyMappingFactory;
         $this->cacheManager = $cacheManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -40,10 +37,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
     {
-        $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
-
-        $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
-
         $uri = $this->storage->resolveUri($obj, $fieldName);
 
         if (!$uri) {
@@ -69,19 +62,15 @@ class AssetsRuntime implements RuntimeExtensionInterface
     {
         $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
 
-        $fileSystem = $this->mountManager->getFilesystem($mapping->getUploadDestination());
-
         $uri = $this->storage->resolveUri($obj, $fieldName);
 
         if (!$uri) {
             return '';
         }
 
-        if (!$fileSystem->has($uri)) {
-            return '';
-        }
-
-        return (string) ImageManagerStatic::make($fileSystem->read($uri))->encode('data-url');
+        return (string) ImageManagerStatic::make(
+            stream_get_contents($this->storage->resolveStream($obj, $fieldName))
+        )->encode('data-url');
     }
 
     public function hasCustomBanner(): bool
@@ -91,7 +80,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
             $item->expiresAfter(3600);
 
             try {
-                return $this->assetsFilesystem->has('banner.svg');
+                return $this->assetsFilesystem->fileExists('banner.svg');
             } catch (S3Exception $e) {
                 return false;
             }

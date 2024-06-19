@@ -75,6 +75,7 @@ services:
   coopcycle.domain.task.handler.reschedule:
     class: AppBundle\Domain\Task\Handler\RescheduleHandler
     arguments:
+      - '@doctrine.orm.default_entity_manager'
       - '@event_recorder'
     tags:
       - name: command_handler
@@ -115,7 +116,11 @@ services:
       - name: event_subscriber
         subscribes_to: task_list:updated
       - name: event_subscriber
+        subscribes_to: v2:task_list:updated
+      - name: event_subscriber
         subscribes_to: task:rescheduled
+      - name: event_subscriber
+        subscribes_to: task:incident-reported
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail
@@ -156,6 +161,8 @@ services:
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed
+      - name: event_subscriber
+        subscribes_to: task:incident-reported
 
   coopcycle.domain.task.reactor.notify_urbantz:
     class: AppBundle\Domain\Task\Reactor\NotifyUrbantz

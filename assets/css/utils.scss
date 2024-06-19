@@ -3,6 +3,10 @@
   flex-wrap: wrap;
 }
 
+.display-flex__items-centered {
+  align-items: center;
+}
+
 .display-inline-block {
   display: inline-block;
 }
@@ -58,4 +62,14 @@
 
 .font-weight-semi-bold {
   font-weight: 600 !important;
+}
+
+.cursor--grabbing {
+  cursor: grabbing;
+}
+
+.text-danger,
+li > a.text-danger // very specific selector for bootstrap dropdown
+{
+  color: $red;
 }

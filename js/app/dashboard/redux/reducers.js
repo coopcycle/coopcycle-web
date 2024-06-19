@@ -46,6 +46,8 @@ import {
   CLOSE_EXPORT_MODAL,
   OPEN_CREATE_GROUP_MODAL,
   CLOSE_CREATE_GROUP_MODAL,
+  OPEN_REPORT_INCIDENT_MODAL,
+  CLOSE_REPORT_INCIDENT_MODAL,
   OPEN_ADD_TASK_TO_GROUP_MODAL,
   CLOSE_ADD_TASK_TO_GROUP_MODAL,
   RESTORE_TASK_FAILURE,
@@ -92,6 +94,7 @@ const initialState = {
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
   createGroupModalIsOpen: false,
+  reportIncidentModalIsOpen: false,
   isCreateGroupButtonLoading: false,
   isCreateDeliveryModalVisible: false,
   isCreateTourModalVisible: false,
@@ -132,8 +135,7 @@ export const selectedTasks = (state = [], action) => {
   switch (action.type) {
     case TOGGLE_TASK:
 
-      if (-1 !== state.indexOf(action.taskId)) {
-        // let's remove this task!
+      if (-1 !== state.indexOf(action.taskId)) { // let's remove this task!
         if (!action.multiple) {
           return []
         }
@@ -452,6 +454,17 @@ export const createGroupModalIsOpen = (state = false, action) => {
   case OPEN_CREATE_GROUP_MODAL:
     return true
   case CLOSE_CREATE_GROUP_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const reportIncidentModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_REPORT_INCIDENT_MODAL:
+    return true
+  case CLOSE_REPORT_INCIDENT_MODAL:
     return false
   default:
     return state

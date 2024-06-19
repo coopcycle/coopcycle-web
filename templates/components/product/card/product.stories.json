@@ -1,0 +1,332 @@
+{
+  "title": "Foodtech/2. Product/1. Card",
+  "parameters": {
+    "server": {
+      "id": "product"
+    }
+  },
+  "args": {
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Only name",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Empanadilla De Bonito",
+          "description": "",
+          "variants": [
+            {
+              "price": 295
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "Name with short description",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "COCA-COLA",
+          "description": "500 mL",
+          "variants": [
+            {
+              "price": 280
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "Name with image",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Poke Bowl",
+          "description": "",
+          "variants": [
+            {
+              "price": 1500
+            }
+          ]
+        },
+        "product_images": [
+          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+        ],
+        "card_product_image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+      }
+    },
+    {
+      "name": "Name with image and short description",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Poke Bowl",
+          "description": "Lorem ipsum dolor sit amet.",
+          "variants": [
+            {
+              "price": 1500
+            }
+          ]
+        },
+        "product_images": [
+          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+        ],
+        "card_product_image": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+      }
+    },
+    {
+      "name": "Name with image and long description",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Menu Duobox Gourmet",
+          "description": "34 pièces.\n2 sushis thon, 2 sushis saumon cheese, 6 Salmon roll cheese, 6 California chèvre et miel, 6 greenroll thon, 6 California saumon fumé cheese et 8 tatakis roll, servi avec 2 salades de choux et 2 boissons au choix \"hors alcool\".",
+          "variants": [
+            {
+              "price": 4400
+            }
+          ]
+        },
+        "product_images": [
+          "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+        ],
+        "card_product_image": "https://images.unsplash.com/photo-1611762687807-7cdd09aef422"
+      }
+    },
+    {
+      "name": "Name with image, description and restricted diet",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "description": "Mozzarella (fior di latte), parmesan 24 mois, gorgonzola, taleggio (fromage de vache), mascarpone, origan.",
+          "variants": [
+            {
+              "price": 1520
+            }
+          ],
+          "attributes": [
+            {
+              "attribute": {
+                "code": "ALLERGENS",
+                "storageType": "json"
+              },
+              "value": [
+                "CEREALS_CONTAINING_GLUTEN", "MILK"
+              ]
+            },
+            {
+              "attribute": {
+                "code": "RESTRICTED_DIETS",
+                "storageType": "json"
+              },
+              "value": [
+                "VEGETARIAN_DIET"
+              ]
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": "https://images.unsplash.com/photo-1593560708920-61dd98c46a4e"
+      }
+    },
+    {
+      "name": "Name with image, description, many restricted diets",
+      "args": {
+        "locale": "fr",
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Burger",
+          "description": "Mozzarella (fior di latte), parmesan 24 mois, gorgonzola, taleggio (fromage de vache), mascarpone, origan.",
+          "variants": [
+            {
+              "price": 15200
+            }
+          ],
+          "attributes": [
+            {
+              "attribute": {
+                "code": "ALLERGENS",
+                "storageType": "json"
+              },
+              "value": [
+                "CEREALS_CONTAINING_GLUTEN", "MILK", "MUSTARD", "SESAME_SEEDS", "NUTS"
+              ]
+            },
+            {
+              "attribute": {
+                "code": "RESTRICTED_DIETS",
+                "storageType": "json"
+              },
+              "value": [
+                "VEGETARIAN_DIET", "VEGAN_DIET", "GLUTEN_FREE_DIET"
+              ]
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+      }
+    },
+    {
+      "name": "Long name",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "DOC ORVIETO CLASSICO \"CAMPOGRANDE\" - SANTA CRISTINA Cépage \"Procanico, Grechetto, Verdello, Druppeggio, Malvasia\"",
+          "description": "",
+          "variants": [
+            {
+              "price": 295
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "With allergens (all)",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "variants": [
+            {
+              "price": 500
+            }
+          ],
+          "attributes": [
+            {
+              "attribute": {
+                "code": "ALLERGENS",
+                "storageType": "json"
+              },
+              "value": [
+                "CEREALS_CONTAINING_GLUTEN", "CRUSTACEANS", "EGGS", "FISH", "PEANUTS", "SOYBEANS", "MILK", "NUTS", "CELERY", "MUSTARD", "SESAME_SEEDS", "SULPHUR_DIOXIDE_SULPHITES", "LUPIN", "MOLLUSCS"
+              ]
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "With restricted diets (all)",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "variants": [
+            {
+              "price": 500
+            }
+          ],
+          "attributes": [
+            {
+              "attribute": {
+                "code": "RESTRICTED_DIETS",
+                "storageType": "json"
+              },
+              "value": [
+                "DIABETIC_DIET", "GLUTEN_FREE_DIET", "HALAL_DIET", "HINDU_DIET", "KOSHER_DIET", "LOW_CALORIE_DIET", "LOW_FAT_DIET", "LOW_LACTOSE_DIET", "LOW_SALT_DIET", "VEGAN_DIET", "VEGETARIAN_DIET"
+              ]
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    },
+    {
+      "name": "Reusable packaging",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "variants": [
+            {
+              "price": 500
+            }
+          ],
+          "reusablePackagingEnabled": true
+        },
+        "product_images": [],
+        "card_product_image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd"
+      }
+    },
+    {
+      "name": "Disabled product",
+      "args": {
+        "restaurant_id": "2",
+        "product": {
+          "resource_class": "AppBundle\\Entity\\Sylius\\Product",
+          "currentLocale": "en",
+          "id": 1,
+          "code": "d4d77b2c-6afe-3a26-aeb1-8b7c83953e89",
+          "name": "Pizza",
+          "enabled": false,
+          "variants": [
+            {
+              "price": 500
+            }
+          ]
+        },
+        "product_images": [],
+        "card_product_image": ""
+      }
+    }
+  ]
+}

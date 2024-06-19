@@ -1,10 +1,29 @@
+{% set businessAccountEmployeeError = businessAccountInvitation is not null and not businessAccountInvitation.isInvitationForManager and
+    form.email.vars.errors|filter(e => e.message == 'nucleos_user.email.already_used'|trans({}, 'validators'))|length > 0
+%}
+
 <div class="form-section">
   <div class="header rounded-top">
     <h5>{{ 'registration.step.personal'|trans }}</h5>
   </div>
   <div class="form rounded-bottom">
     {{ form_row(form.username) }}
-    {{ form_row(form.email) }}
+    <div class="form-group">
+      {{form_label(form.email)}}
+      {{form_widget(form.email)}}
+      {% if form.email.vars.errors|length > 0 %}
+        {% if businessAccountEmployeeError %}
+          <div class="alert alert-warning mt-1">
+            <i class="fa fa-warning mr-1"></i>
+            {{ 'registration.email.taken'|trans }}
+            <a id="link_to_login" href="#">{{ 'registration.link.to.login'|trans }}</a>
+            {{ 'registration.email.taken.use.another'|trans }}
+          </div>
+        {% else %}
+          {{form_errors(form.email)}}
+        {% endif %}
+      {% endif %}
+    </div>
     <div class="row">
     <div class="col-md-6">
       {{ form_row(form.plainPassword.first) }}
@@ -47,5 +66,14 @@
 {% endblock %}
 
 {% block scripts %}
+  <script>
+    if ("{{ businessAccountEmployeeError }}") {
+      document.querySelector('#link_to_login').addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector('[name="registration_form"]').remove()
+        document.querySelector('#existing_user_login_form').classList.remove('hidden')
+      })
+    }
+  </script>
   {{ encore_entry_script_tags('register') }}
 {% endblock %}

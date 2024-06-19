@@ -61,6 +61,9 @@ services:
 
   AppBundle\Twig\SettingResolver:
     arguments:
+      # We cache the Google API key validation result,
+      # so we use this cache pool, so that it's cleared
+      # after settings are changed
       $cache: '@craue_config_cache_provider'
 
   Twig\Extra\Html\HtmlExtension:

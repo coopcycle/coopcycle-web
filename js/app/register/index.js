@@ -7,8 +7,6 @@ const emailInput =
 const usernameInput =
   document.querySelector('[id$=_username]')
 
-const formGroup = usernameInput.closest('.form-group')
-
 /* */
 
 const checkUsername = _.debounce(function() {
@@ -18,6 +16,12 @@ const checkUsername = _.debounce(function() {
 
   const username =
     document.querySelector('[id$=_username]').value
+
+  if (!username || username.length < 3) {
+    return
+  }
+
+  const formGroup = usernameInput.closest('.form-group')
 
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')
@@ -44,14 +48,11 @@ const checkUsername = _.debounce(function() {
   feedbackEl.classList.remove('fa-check', 'fa-warning')
   feedbackEl.classList.add('fa-spinner', 'fa-spin')
 
-  usernameInput.setAttribute('disabled', true)
-
   $.getJSON('/register/suggest', { username, email }).then(result => {
 
     feedbackEl.classList.remove('fa-spinner', 'fa-spin')
 
-    usernameInput.setAttribute('disabled', false)
-    usernameInput.removeAttribute('disabled')
+    usernameInput.focus()
 
     if (usernameInput.value) {
       formGroup.classList
@@ -88,7 +89,60 @@ const checkUsername = _.debounce(function() {
 
   })
 
-}, 350)
+}, 500)
+
+const checkEmail = _.debounce(function() {
+
+  const formGroup = emailInput.closest('.form-group')
+
+  formGroup.classList.remove('has-success', 'has-error')
+  formGroup.classList.add('has-feedback')
+
+  let errorEl =
+    formGroup.querySelector('.help-block')
+
+  let feedbackEl =
+    formGroup.querySelector('.form-control-feedback')
+
+  if (!feedbackEl) {
+    feedbackEl = document.createElement('span')
+    feedbackEl.classList.add('fa', 'form-control-feedback')
+    feedbackEl.setAttribute('aria-hidden', 'true')
+    emailInput.parentNode.insertBefore(feedbackEl, emailInput.nextSibling)
+  }
+
+  feedbackEl.classList.remove('fa-check', 'fa-warning')
+  feedbackEl.classList.add('fa-spinner', 'fa-spin')
+
+  $.getJSON('/register/check-email-exists', { email: emailInput.value }).then(result => {
+
+    feedbackEl.classList.remove('fa-spinner', 'fa-spin')
+
+    if (result.exists) {
+      if (!errorEl) {
+        errorEl = document.createElement('span')
+        errorEl.classList.add('help-block')
+
+        const errorSpan = document.createElement('span')
+        errorSpan.classList.add('glyphicon', 'glyphicon-exclamation-sign', 'mr-1')
+
+        errorEl.appendChild(errorSpan)
+
+        const text = document.createTextNode(result.errorMessage)
+        errorEl.appendChild(text)
+
+        formGroup.insertBefore(errorEl, formGroup.querySelector('.help-block'))
+      }
+    }
+
+    errorEl.classList.remove('d-block', 'd-none')
+
+    formGroup.classList.add(result.exists ? 'has-error' : 'has-success')
+    feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
+    errorEl.classList.add(result.exists ? 'd-block' : 'd-none')
+  })
+
+}, 500)
 
 usernameInput
   .addEventListener('input', checkUsername, false)
@@ -96,6 +150,6 @@ usernameInput
 emailInput
   .addEventListener('input', () => {
     if (emailInput.checkValidity()) {
-      checkUsername()
+      checkEmail()
     }
   }, false)

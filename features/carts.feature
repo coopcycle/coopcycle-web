@@ -89,7 +89,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -165,7 +166,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -241,7 +243,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod": "delivery",
         "invitation": "@string@||@null@"
@@ -302,7 +305,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -366,7 +370,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -424,7 +429,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -474,14 +480,14 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":3,
+              "id":2,
               "label":"Livraison",
               "amount":350
             }
           ],
           "delivery_promotion":[
             {
-              "id":1,
+              "id":3,
               "label":"Free delivery",
               "amount":-350
             }
@@ -489,7 +495,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":@array@,
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -547,7 +554,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax": @array@,
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -652,7 +660,8 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -757,7 +766,8 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -862,7 +872,8 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1525,7 +1536,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1647,7 +1659,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1732,7 +1745,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1817,7 +1831,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@"
@@ -1917,7 +1932,8 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "invitation": "@string@||@null@"
       }
@@ -2193,3 +2209,25 @@ Feature: Carts
         }
       }
       """
+
+  Scenario: Don't allow negative tip amount
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/orders/1/tip" with body:
+      """
+      {
+        "tipAmount": -100
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON

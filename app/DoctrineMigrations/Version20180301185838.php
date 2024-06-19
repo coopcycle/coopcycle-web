@@ -20,8 +20,8 @@ class Version20180301185838 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_527EDB2589EEAF91 ON task (assigned_to)');
 
         $stmt = $this->connection->prepare('SELECT task_id, courier_id FROM task_assignment WHERE courier_id IS NOT NULL');
-        $stmt->execute();
-        while ($assignment = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($assignment = $result->fetchAssociative()) {
             $this->addSql('UPDATE task SET assigned_to = :courier_id WHERE id = :task_id', $assignment);
         }
 
@@ -41,8 +41,8 @@ class Version20180301185838 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT t.id AS task_id, t.assigned_to AS courier_id, i.position FROM task t JOIN task_collection_item i ON t.id = i.task_id JOIN task_collection c ON i.parent_id = c.id WHERE c.type = \'task_list\' AND t.assigned_to IS NOT NULL');
 
-        $stmt->execute();
-        while ($taskListItem = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($taskListItem = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO task_assignment (task_id, courier_id, "position", created_at, updated_at) VALUES (:task_id,  :courier_id, :position, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', [
                 $taskListItem['task_id'],
                 $taskListItem['courier_id'],

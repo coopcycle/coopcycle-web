@@ -5,7 +5,7 @@ import OrderNumber from './OrderNumber'
 import Customer from './Customer'
 import ShippingTimeRange from '../../../components/ShippingTimeRange'
 import Avatar from '../../../components/Avatar'
-import PaymentMethodIcon from '../../../components/PaymentMethodIcon'
+import PaymentMethodIcon from '../../../components/Payment/PaymentMethodIcon'
 
 export default withTranslation()(({ order, onClick }) => {
 

@@ -142,9 +142,14 @@ AppBundle\Entity\Sylius\Product:
     slug: chicken-salad
     enabled: true
     reusablePackagingEnabled: true
-    reusablePackagingUnit: 1
-    reusablePackaging: "@packaging_acme"
     variants: [ "@chicken_salad_default" ]
+
+
+AppBundle\Entity\ReusablePackagings:
+  reusable_packagins_for_chicken_salad:
+    reusablePackaging: "@packaging_acme"
+    product: "@chicken_salad"
+    units: 1
 
 # Menus
 
@@ -226,6 +231,9 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_1"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
@@ -241,6 +249,9 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_2"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
     __calls:
       - setMinimumAmount: ['delivery', 1500]
       - setMinimumAmount: ['collection', 1500]
@@ -254,6 +265,9 @@ AppBundle\Entity\LocalBusiness:
     openingHours: ['Mo-Su 09:30-23:30']
     enabled: true
     contract: "@contract_3"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
     depositRefundEnabled: true
     __calls:
       - setMinimumAmount: ['delivery', 1500]
@@ -262,3 +276,15 @@ AppBundle\Entity\LocalBusiness:
       - addProduct: [ "@chicken_salad" ]
       - addTaxon: [ "@zero_waste_menu" ]
       - setMenuTaxon: [ "@zero_waste_menu" ]
+
+AppBundle\Entity\User:
+  default_user:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'resto_1'
+        - 'resto_1'
+        - 'resto_1@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_RESTAURANT' ]
+    restaurants: [ '@crazy_hamburger' ]

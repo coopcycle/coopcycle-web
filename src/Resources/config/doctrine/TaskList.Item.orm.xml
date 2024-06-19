@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\TaskList\Item" table="task_list_item">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="position" type="integer" column="position"/>
+    <many-to-one field="parent" target-entity="AppBundle\Entity\TaskList" inversed-by="items">
+      <join-columns>
+        <join-column name="parent_id" referenced-column-name="id" on-delete="CASCADE"/>
+      </join-columns>
+    </many-to-one>
+    <!-- FIXME this can not be set to one-to-one because we can not enforce unique constraint due to addTask/removeTask calls in the same transaction in EntityChangeSetProcessor -->
+    <many-to-one field="task" target-entity="AppBundle\Entity\Task">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </many-to-one>
+    <one-to-one field="tour" target-entity="AppBundle\Entity\Tour" inversed-by="taskListItem">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-one>
+  </entity>
+</doctrine-mapping>

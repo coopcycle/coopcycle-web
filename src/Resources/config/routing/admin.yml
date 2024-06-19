@@ -74,6 +74,20 @@ admin_restaurants_edenred:
         layout: 'admin.html.twig'
     methods: [ GET, POST ]
 
+admin_add_restaurants_edenred:
+    path: /admin/restaurants/edenred/add
+    defaults:
+        _controller: AppBundle\Controller\AdminController::addRestaurantsEdenredAction
+        layout: 'admin.html.twig'
+    methods: [ GET, POST ]
+
+admin_refresh_restaurant_edenred:
+    path: /admin/restaurants/edenred/refresh/{restaurantId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::refreshRestaurantEdenredAction
+        layout: 'admin.html.twig'
+    methods: [ GET ]
+
 admin_hub_new:
     path: /admin/restaurants/hubs/new
     defaults:
@@ -108,6 +122,12 @@ admin_business_account:
     path: /admin/restaurants/business-account/{id}
     defaults:
         _controller: AppBundle\Controller\AdminController::businessAccountAction
+
+admin_business_account_resend_registration_email:
+    path: /admin/restaurants/business-account-resend-registration-email
+    defaults:
+        _controller: AppBundle\Controller\AdminController::businessAccountResendRegistrationEmailAction
+    methods: [ POST ]
 
 admin_business_restaurant_group_new:
     path: /admin/restaurants/business-restaurant-groups/new
@@ -471,6 +491,36 @@ admin_order_cancel:
     defaults:
         _controller: AppBundle\Controller\AdminController::cancelOrderAction
     methods: [ POST ]
+
+admin_incidents:
+    path: /admin/incidents
+    defaults:
+        _controller: AppBundle\Controller\AdminController::incidentListAction
+        layout: 'admin.html.twig'
+        template: 'admin/incidents.html.twig'
+        routes:
+            incident: admin_incident
+            incident_new: admin_incident_new
+    methods:  [ GET ]
+
+admin_incident:
+    path: /admin/incidents/{id}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::incidentAction
+        layout: 'admin.html.twig'
+        template: 'admin/incident.html.twig'
+        routes:
+            incidents: admin_incidents
+    methods:  [ GET ]
+
+admin_incident_new:
+    path: /admin/incidents/new
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newIncidentAction
+        layout: 'admin.html.twig'
+        routes:
+            incidents: admin_incidents
+    methods:  [ GET, POST ]
 
 admin_stores:
     path: /admin/stores

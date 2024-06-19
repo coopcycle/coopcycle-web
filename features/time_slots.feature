@@ -15,7 +15,7 @@ Feature: Time slots
     And the JSON should match:
       """
       {
-        "@context":@...@,
+        "@context":{"@*@":"@*@"},
         "@type":"TimeSlotChoices",
         "@id":@string@,
         "choices":[

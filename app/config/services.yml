@@ -2,6 +2,7 @@
 # http://symfony.com/doc/current/book/service_container.html
 parameters:
   sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
+  apns_default_is_production_env: true
 
 imports:
   - { resource: services/forms.yml }
@@ -86,6 +87,7 @@ services:
   League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
+  League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
   Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
@@ -156,6 +158,7 @@ services:
       $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
       $orderModifier: '@sylius.order_modifier'
       $serializer: '@serializer'
+      $environment: '%kernel.environment%'
 
   AppBundle\Controller\LoopEatController:
     arguments:
@@ -193,6 +196,13 @@ services:
       $promotionFactory: '@sylius.factory.promotion'
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
+      $edifactFilesystem: '@edi_messages_filesystem'
+
+  AppBundle\Controller\AssetsController:
+    arguments:
+      $taskImagesFilesystem: '@task_images_filesystem'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
 
   AppBundle\Controller\DashboardController:
     arguments:
@@ -246,6 +256,8 @@ services:
     class: AppBundle\Sylius\Taxation\Resolver\TaxRateResolver
     arguments:
       $region: '%region_iso%'
+
+  AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface: '@sylius.tax_rate_resolver'
 
   # IMPORTANT
   # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
@@ -483,6 +495,8 @@ services:
     tags:
       - { name: doctrine.event_subscriber, connection: default }
 
+  AppBundle\EventListener\LogoutSubscriber: ~
+
   AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
@@ -572,6 +586,9 @@ services:
       - method: setRestaurantFilter
         arguments:
             - '@coopcycle.utils.restaurant_filter'
+      - method: setBusinessContext
+        arguments:
+            - '@AppBundle\Business\Context'
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -665,6 +682,12 @@ services:
       $redis: '@snc_redis.shared'
       $service: opencage
 
+ # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
+  AppBundle\Doctrine\EventSubscriber\TourSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 48 }
+
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     arguments:
       $eventBus: '@event_bus'
@@ -674,6 +697,11 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 32 }
 
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     arguments:
       $eventBus: '@event_bus'
     tags:
@@ -721,6 +749,15 @@ services:
         - '@translator'
     tags: [ 'kernel.event_subscriber' ]
 
+  AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
@@ -749,6 +786,9 @@ services:
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
+
+  AppBundle\Transporter\ImportFromPoint: ~
+  AppBundle\Transporter\ReportFromCC: ~
 
   AppBundle\Command\SyncTransportersCommand:
     public: true
@@ -791,12 +831,6 @@ services:
     arguments:
       $state: "%region_iso%"
 
-  AppBundle\Action\TimeSlot\Choices:
-    public: true
-    arguments:
-      $country: "%country_iso%"
-      $locale: '%env(COOPCYCLE_LOCALE)%'
-
   AppBundle\Action\CentrifugoToken:
     public: true
     arguments:
@@ -821,6 +855,12 @@ services:
     public: true
     arguments:
       $appId: "%env(GOOGLE_SIGN_IN_CLIENT_ID)%"
+
+  AppBundle\Action\TimeSlot\Choices:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
@@ -916,6 +956,8 @@ services:
 
   AppBundle\Security\ApiKeyManager: ~
 
+  AppBundle\Security\OrderAccessTokenManager: ~
+
   AppBundle\Mjml\MjmlServerRenderer: ~
 
   AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
@@ -980,7 +1022,15 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
-  AppBundle\Log\RequestResponseProcessor:
+  AppBundle\Log\RequestIdProcessor:
+
+  AppBundle\Log\RequestUriProcessor:
+
+  Symfony\Bridge\Monolog\Processor\RouteProcessor:
+    tags:
+      - { name: monolog.processor }
+
+  AppBundle\Log\ApiRequestResponseProcessor:
     tags:
       - { name: monolog.processor, channel: api }
 
@@ -1039,6 +1089,8 @@ services:
     arguments:
       $country: "%country_iso%"
 
+  AppBundle\Service\InvitationLinkProviderService: ~
+
   AppBundle\Domain\Order\Workflow\Guard:
     public: true
 
@@ -1058,7 +1110,7 @@ services:
 
   Pushok\Client:
     arguments:
-      $isProductionEnv: true
+      $isProductionEnv: "%env(default:apns_default_is_production_env:bool:APNS_IS_PRODUCTION_ENV)%"
 
   AppBundle\Sylius\Taxation\TaxesProvider:
     arguments:
@@ -1363,3 +1415,12 @@ services:
   AppBundle\Utils\RestaurantDecorator: ~
 
   AppBundle\Fulfillment\FulfillmentMethodResolver: ~
+
+  AppBundle\Controller\StorybookController:
+    arguments:
+      $translator: '@translator'
+
+  AppBundle\Edenred\SynchronizerClient:
+    arguments: [
+      '@edenredsynchronizer.client',
+    ]

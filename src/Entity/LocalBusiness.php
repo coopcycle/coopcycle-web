@@ -23,6 +23,8 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsTrait;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
@@ -66,6 +68,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="GET",
  *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_potential_action"}},
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
@@ -120,6 +126,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     OpenCloseInterface,
     OrganizationAwareInterface,
     ShippingOptionsInterface,
+    CustomFailureReasonInterface,
     Vendor
 {
     use Timestampable;
@@ -133,6 +140,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
+    use CustomFailureReasonTrait;
 
     /**
      * @var int
@@ -231,12 +239,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * The roles needed to be able to manage Stripe Connect.
      */
-    protected $stripeConnectRoles = ['ROLE_ADMIN'];
+    protected array $stripeConnectRoles = ['ROLE_ADMIN'];
 
     /**
      * The roles needed to be able to manage Mercadopago connect.
      */
-    protected $mercadopagoConnectRoles = ['ROLE_ADMIN'];
+    protected array $mercadopagoConnectRoles = ['ROLE_ADMIN'];
 
     protected $preparationTimeRules;
 
@@ -246,11 +254,29 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $featured = false;
 
-    protected $stripePaymentMethods = [];
+    protected array $stripePaymentMethods = [];
 
     protected $mercadopagoAccount;
 
+    /**
+     * @Groups({"restaurant"})
+     */
     protected $edenredMerchantId;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredTRCardEnabled = false;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredEnabled = false;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredSyncSent = false;
 
     /**
      * @Groups({"restaurant"})
@@ -271,6 +297,11 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected ?int $rateLimitRangeDuration;
 
     protected ?int $rateLimitAmount;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected bool $autoAcceptOrdersEnabled = false;
 
     public function __construct()
     {
@@ -808,6 +839,36 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->edenredMerchantId = $edenredMerchantId;
     }
 
+    public function isEdenredEnabled()
+    {
+        return $this->edenredEnabled;
+    }
+
+    public function setEdenredEnabled($edenredEnabled)
+    {
+        $this->edenredEnabled = $edenredEnabled;
+    }
+
+    public function isEdenredTRCardEnabled()
+    {
+        return $this->edenredTRCardEnabled;
+    }
+
+    public function setEdenredTRCardEnabled($edenredTRCardEnabled)
+    {
+        $this->edenredTRCardEnabled = $edenredTRCardEnabled;
+    }
+
+    public function getEdenredSyncSent()
+    {
+        return $this->edenredSyncSent;
+    }
+
+    public function setEdenredSyncSent($edenredSyncSent)
+    {
+        $this->edenredSyncSent = $edenredSyncSent;
+    }
+
     public function supportsEdenred(): bool
     {
         return null !== $this->getEdenredMerchantId();
@@ -1117,5 +1178,14 @@ class LocalBusiness extends BaseLocalBusiness implements
         );
     }
 
+    public function isAutoAcceptOrdersEnabled(): bool
+    {
+        return $this->autoAcceptOrdersEnabled;
+    }
+
+    public function setAutoAcceptOrdersEnabled(bool $enabled): void
+    {
+        $this->autoAcceptOrdersEnabled = $enabled;
+    }
 
 }

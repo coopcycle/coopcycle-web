@@ -9,7 +9,7 @@ base.footer.legal: 'Lege oharra'
 base.footer.suggest: 'Proposatu denda bat'
 base.footer.privacy: 'Pribatutasuna'
 base.footer.terms: 'Zerbitzu-baldintzak'
-adminDashboard.title: 'Administrazio panela'
+adminDashboard.title: Dispatch
 adminDashboard.configuration: 'Konfigurazioa'
 adminDashboard.tooltip.orders: 'Kudeatu jatetxeetako eskaerak'
 adminDashboard.tooltip.deliveries: 'Kudeatu banaketak'

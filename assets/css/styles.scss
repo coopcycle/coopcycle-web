@@ -249,11 +249,11 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid darken(#ededed, 10%);
 }
 
-.btn-payment > .fa-spinner {
+.btn > .btn__loading_indicator {
   display:none;
 }
 
-.btn-payment__loading > .fa-spinner {
+.btn--loading > .btn__loading_indicator {
   display:inline-block;
 }
 
@@ -404,4 +404,23 @@ h1, h2, h3, h4, h5, h6 {
   .ant-alert-message {
     color: $alert-info-text !important;
   }
+}
+
+#company_address .form-group {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.btn-primary-red {
+  background-color: #E4022D;
+  color: #F2F2F3;
+
+  .inactive {
+    background-color: #FF7A94;
+  }
+
+  &:hover {
+    color: #F2F2F3;
+  }
+
 }

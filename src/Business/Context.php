@@ -12,20 +12,12 @@ use Symfony\Component\Security\Core\Security;
 
 class Context
 {
-    /**
-     * @var RequestStack
-     */
-    private RequestStack $requestStack;
-
     public const QUERY_PARAM_NAME = 'change_channel';
 
     public const COOKIE_KEY = 'channel_cart';
 
-    public function __construct(RequestStack $requestStack, Security $security)
-    {
-        $this->requestStack = $requestStack;
-        $this->security = $security;
-    }
+    public function __construct(private RequestStack $requestStack, private Security $security)
+    {}
 
     public function isActive(): bool
     {
@@ -40,6 +32,9 @@ class Context
         return false;
     }
 
+    /**
+     * @return BusinessAccount|null
+     */
     public function getBusinessAccount(): ?BusinessAccount
     {
         $user = $this->security->getUser();

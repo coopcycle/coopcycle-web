@@ -7,11 +7,15 @@ parameters:
     level: 4
     paths:
         - src
+        - tests/Behat/FeatureContext.php
+        - app/DoctrineMigrations
     excludePaths:
         # Class AppBundle\Api\DataProvider\RestaurantCollectionDataProvider extends final class ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider
         - src/Api/DataProvider/RestaurantCollectionDataProvider
         - src/Api/DataProvider/TaskListCollectionDataProvider
         - src/Doctrine/EventSubscriber/TaskSubscriber/EntityChangeSetProcessor
+        - app/DoctrineMigrations/Version20171202224801.php
+        - app/DoctrineMigrations/Version20171230131300.php
     ignoreErrors:
         - '#Access to an undefined property #'
         - '#Call to an undefined method Symfony\\Component\\Form\\FormInterface::getClickedButton\(\)#'

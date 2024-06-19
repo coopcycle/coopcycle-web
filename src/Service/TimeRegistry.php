@@ -15,12 +15,13 @@ class TimeRegistry
     const AVERAGE_PREPARATION_CACHE_KEY = 'avg_preparation';
     const AVERAGE_SHIPPING_CACHE_KEY = 'avg_shipping';
 
+    private $entityManager;
+
     public function __construct(
         EntityManagerInterface $entityManager,
-        CacheInterface $appCache)
+        private CacheInterface $appCache)
     {
         $this->entityManager = $entityManager;
-        $this->appCache = $appCache;
     }
 
     public function getAveragePreparationTime(): int
@@ -35,7 +36,7 @@ class TimeRegistry
 
             $stmt = $this->entityManager->getConnection()->prepare($sql);
 
-            return $stmt->executeQuery()->fetchColumn();
+            return $stmt->executeQuery()->fetchOne();
         });
 
         return (int) $result;
@@ -52,7 +53,7 @@ class TimeRegistry
             $sql = 'SELECT ROUND(AVG(tc.duration)) FROM task_collection tc JOIN delivery d ON tc.id = d.id JOIN sylius_order o ON d.order_id = o.id WHERE tc.type = \'delivery\' and o.state = \'fulfilled\'';
 
             $stmt = $this->entityManager->getConnection()->prepare($sql);
-            $result = $stmt->executeQuery()->fetchColumn();
+            $result = $stmt->executeQuery()->fetchOne();
 
             $cascade = CarbonInterval::seconds((int) $result)
                 ->cascade()

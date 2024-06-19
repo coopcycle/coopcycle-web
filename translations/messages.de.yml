@@ -113,7 +113,7 @@ basics.edit: Bearbeiten
 basics.created_at: Erstellt am
 base.footer.legal: Impressum
 base.footer.terms: Allgemeine Geschäftsbedingungen
-adminDashboard.title: Administrator-Übersicht
+adminDashboard.title: Dispatch
 adminDashboard.tooltip.orders: Organisiere Restaurant-Bestellungen
 adminDashboard.tooltip.deliveries: Organisiere Lieferungen
 adminDashboard.tooltip.stores: Verwalte Läden

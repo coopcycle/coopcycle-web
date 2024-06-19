@@ -36,7 +36,7 @@
   {% set packaging_adjustments = order.getAdjustments('reusable_packaging') %}
   {% set tip_adjustments = order.getAdjustments('tip') %}
   {% for adjustment in order.adjustments %}
-    {% if adjustment.type == 'delivery_promotion' or adjustment.type == 'order_promotion' %}
+    {% if adjustment.type == 'delivery_promotion' or adjustment.type == 'order_promotion' or adjustment.type == 'incident' %}
       {% set promotion_adjustments = [ adjustment ]|merge(promotion_adjustments) %}
     {% endif %}
   {% endfor %}

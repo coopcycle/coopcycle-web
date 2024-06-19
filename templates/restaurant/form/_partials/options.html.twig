@@ -17,3 +17,12 @@
 {% if form.cashOnDeliveryEnabled is defined %}
   {{ form_row(form.cashOnDeliveryEnabled) }}
 {% endif %}
+
+{% if form.autoAcceptOrdersEnabled is defined %}
+  {{ form_row(form.autoAcceptOrdersEnabled) }}
+{% endif %}
+
+{% if form.failureReasonSet is defined %}
+  <hr>
+  {{ form_row(form.failureReasonSet) }}
+{% endif %}

@@ -11,6 +11,7 @@ class CustomerNormalizer implements NormalizerInterface
 {
     private $normalizer;
     private $tagManager;
+    private $authorizationChecker;
 
     public function __construct(NormalizerInterface $normalizer, TagManager $tagManager, AuthorizationCheckerInterface $authorizationChecker)
     {

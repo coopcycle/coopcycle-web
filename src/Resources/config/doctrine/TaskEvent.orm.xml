@@ -5,8 +5,8 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
-    <field name="data" type="json_array" column="data"/>
-    <field name="metadata" type="json_array" column="metadata"/>
+    <field name="data" type="json" column="data"/>
+    <field name="metadata" type="json" column="metadata"/>
     <field name="createdAt" type="datetime" column="created_at"/>
     <many-to-one field="task" target-entity="AppBundle\Entity\Task" inversed-by="events">
       <join-columns>

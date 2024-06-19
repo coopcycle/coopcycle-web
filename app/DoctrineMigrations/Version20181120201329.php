@@ -16,8 +16,8 @@ final class Version20181120201329 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT sylius_order_item.id FROM sylius_order_item INNER JOIN sylius_order ON sylius_order_item.order_id = sylius_order.id INNER JOIN sylius_product_variant ON sylius_order_item.variant_id = sylius_product_variant.id INNER JOIN sylius_product ON sylius_product_variant.product_id = sylius_product.id WHERE sylius_order.state = \'cart\' AND sylius_product.deleted_at IS NOT NULL');
 
-        $stmt->execute();
-        while ($cartItem = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($cartItem = $result->fetchAssociative()) {
             $this->addSql('DELETE FROM sylius_order_item WHERE id = :order_item_id', [
                 'order_item_id' => $cartItem['id'],
             ]);

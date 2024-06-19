@@ -12,7 +12,6 @@
 </p>
 <table class="table">
 <thead>
-  <th>#</th>
   <th>{% trans %}adminDashboard.tags.name{% endtrans %}</th>
   <th>{% trans %}adminDashboard.tags.color{% endtrans %}</th>
   {% if is_granted('ROLE_ADMIN') %}
@@ -22,15 +21,16 @@
 <tbody>
 {% for tag in tags %}
 <tr>
-  <td><a href="{{ is_granted("ROLE_ADMIN") ? path('admin_tag', { slug: tag.slug }) : '#' }}">#{{ tag.id }}</a></td>
-  <td>{{ tag.name }}</td>
+  <td><a href="{{ is_granted("ROLE_ADMIN") ? path('admin_tag', { slug: tag.slug }) : '#' }}">{{ tag.name }}</a></td>
   <td><span class="label label-default" style="background-color: {{ tag.color }};">{{ tag.slug }}</span></td>
   {% if is_granted('ROLE_ADMIN') %}
   <td>
   	<form method="POST">
   	 <input type="hidden" name="tag" value="{{ tag.id }}">
      <p class="text-right nomargin">
-  	   <button class="btn btn-danger btn-xs" type="submit" name="delete" onclick="return confirm('{{ 'adminDashboard.tags.confirm_delete'|trans|escape('js') }}')">{{ 'basics.delete'|trans }}
+      {# TODO : uniformize with other delete methods in admin, use DeleteButton icon + API endpoint #}
+  	  <button class="btn btn-danger" type="submit" name="delete" onclick="return confirm('{{ 'adminDashboard.tags.confirm_delete'|trans|escape('js') }}')">
+        <i class="fa fa-trash"></i>
       </button>
      </p>
     </form>

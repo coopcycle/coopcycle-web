@@ -37,6 +37,16 @@ export const selectAcceptedOrders = createSelector(
   orders => _.filter(orders, o => o.state === 'accepted').sort(orderSort)
 )
 
+export const selectStartedOrders = createSelector(
+  selectOrders,
+  orders => _.filter(orders, o => o.state === 'started').sort(orderSort)
+)
+
+export const selectReadyOrders = createSelector(
+  selectOrders,
+  orders => _.filter(orders, o => o.state === 'ready').sort(orderSort)
+)
+
 export const selectFulfilledOrders = createSelector(
   selectOrders,
   orders => _.filter(orders, o => o.state === 'fulfilled').sort(orderSort)
@@ -89,9 +99,19 @@ export const selectOrdersByHourRange = createSelector(
   }
 )
 
-export const selectItems = state => state.order.items
+export const selectItems = state => state.order ? state.order.items : []
 
 export const selectItemsGroups = createSelector(
   selectItems,
   (items) =>  _.groupBy(items, 'vendor.name')
+)
+
+const selectColumnId = (state, id) => id;
+
+const selectCollapsedColumns = state => state.preferences.collapsedColumns
+
+export const selectIsCollapsedColumn = createSelector(
+  selectColumnId,
+  selectCollapsedColumns,
+  (id, collapsedColumns) => collapsedColumns.includes(id)
 )

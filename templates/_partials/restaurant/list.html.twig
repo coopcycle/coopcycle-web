@@ -7,9 +7,8 @@
           <i class="fa fa-circle {% if restaurant.enabled %}text-success{% else %}text-danger{% endif %}"></i>
         </td>
         <td width="1%">{% if restaurant.state == 'rush' %}<i class="fa fa-fire"></i>{% endif %}</td>
-        <td width="5%"><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">#{{ restaurant.id }}</a></td>
         <td width="20%">
-          <span>{{ restaurant.name }}</span>
+          <span><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></span>
           <br>
           <small class="text-muted">{{ restaurant|local_business_type }}</small>
         </td>
@@ -52,11 +51,16 @@
             </ul>
           </div>
         </td>
-        <td class="text-right" width="5%">
+        <td width="5%" class="text-center">
           <a target="_blank" href="{{ path('restaurant', { id: restaurant.id, 'slug': restaurant.name|slugify }) }}">
             <i class="fa fa-external-link" aria-hidden="true"></i>
           </a>
         </td>
+        {% if is_granted('ROLE_ADMIN') %}
+          <td width="5%" class="text-center">
+            <div {{ react_component('DeleteIcon', { objectId: restaurant.id, objectName: restaurant.name, deleteUrl: 'api_restaurants_delete_item'}) }}>
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
     </tbody>

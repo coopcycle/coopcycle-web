@@ -26,8 +26,8 @@ final class OrderModifier implements OrderModifierInterface
      */
     public function addToOrder(OrderInterface $cart, OrderItemInterface $cartItem): void
     {
-        $this->checkoutLogger->info(sprintf('Order %s | OrderModifier | adding %s | itemsTotal: %d (old)',
-            $this->loggingUtils->getOrderId($cart), $cartItem->getVariant()->getCode(), $cart->getItemsTotal()));
+        $this->checkoutLogger->info(sprintf('OrderModifier | adding %s | itemsTotal: %d (old)',
+            $cartItem->getVariant()->getCode(), $cart->getItemsTotal()), ['order' => $this->loggingUtils->getOrderId($cart)]);
 
         if ($this->context->isPlayerOf($cart)) {
             $customer = $this->context->getCustomer();
@@ -47,18 +47,18 @@ final class OrderModifier implements OrderModifierInterface
 
         $this->orderModifier->addToOrder($cart, $cartItem);
 
-        $this->checkoutLogger->info(sprintf('Order %s | OrderModifier | added %s | itemsTotal: %d (new)',
-            $this->loggingUtils->getOrderId($cart), $cartItem->getVariant()->getCode(), $cart->getItemsTotal()));
+        $this->checkoutLogger->info(sprintf('OrderModifier | added %s | itemsTotal: %d (new)',
+            $cartItem->getVariant()->getCode(), $cart->getItemsTotal()), ['order' => $this->loggingUtils->getOrderId($cart)]);
     }
 
     public function removeFromOrder(OrderInterface $cart, OrderItemInterface $item): void
     {
-        $this->checkoutLogger->info(sprintf('Order %s | OrderModifier | removing %s | itemsTotal: %d (old)',
-            $this->loggingUtils->getOrderId($cart), $item->getVariant()->getCode(), $cart->getItemsTotal()));
+        $this->checkoutLogger->info(sprintf('OrderModifier | removing %s | itemsTotal: %d (old)',
+            $item->getVariant()->getCode(), $cart->getItemsTotal()), ['order' => $this->loggingUtils->getOrderId($cart)]);
 
         $this->orderModifier->removeFromOrder($cart, $item);
 
-        $this->checkoutLogger->info(sprintf('Order %s | OrderModifier | removed %s | itemsTotal: %d (new)',
-            $this->loggingUtils->getOrderId($cart), $item->getVariant()->getCode(), $cart->getItemsTotal()));
+        $this->checkoutLogger->info(sprintf('OrderModifier | removed %s | itemsTotal: %d (new)',
+            $item->getVariant()->getCode(), $cart->getItemsTotal()), ['order' => $this->loggingUtils->getOrderId($cart)]);
     }
 }

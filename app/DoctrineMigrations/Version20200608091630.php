@@ -24,9 +24,9 @@ final class Version20200608091630 extends AbstractMigration
                 'SELECT value FROM craue_config_setting WHERE name = \'default_tax_category\''.
             ')');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        $defaultTaxCategory = $stmt->fetch();
+        $defaultTaxCategory = $result->fetchAssociative();
 
         if (!$defaultTaxCategory) {
 

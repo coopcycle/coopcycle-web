@@ -1,4 +1,4 @@
-import React, { StrictMode } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client';
 import { createPortal } from 'react-dom'
 import { Provider } from 'react-redux'
@@ -8,7 +8,11 @@ import _ from 'lodash'
 
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
-import { queueAddItem, openProductOptionsModal } from './redux/actions'
+import {
+  queueAddItem,
+  openProductOptionsModal,
+  fetchRequest,
+} from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
 
@@ -32,7 +36,19 @@ window._paq = window._paq || []
 
 let store
 
-const init = function() {
+function setMenuLoading(isLoading) {
+  if (isLoading) {
+    $('#menu').LoadingOverlay('show', {
+      image: false,
+    })
+  } else {
+    $('#menu').LoadingOverlay('hide', {
+      image: false,
+    })
+  }
+}
+
+function init() {
 
   const container = document.getElementById('cart')
 
@@ -58,12 +74,18 @@ const init = function() {
     })
   })
 
+  $('form[name="cart"]').on('submit', function() {
+    setMenuLoading(true)
+    store.dispatch(fetchRequest()) // will trigger loading state in some react components
+  })
+
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
   const addressesDataElement = document.querySelector('#js-addresses-data')
   const loopeatDataElement = document.querySelector('#js-loopeat')
 
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
-  const times = JSON.parse(restaurantDataElement.dataset.times)
+  const restaurantTiming = JSON.parse(restaurantDataElement.dataset.restaurantTiming)
+  const cartTiming = JSON.parse(restaurantDataElement.dataset.cartTiming)
   const isPlayer = JSON.parse(restaurantDataElement.dataset.isPlayer)
   const isGroupOrdersEnabled = JSON.parse(restaurantDataElement.dataset.isGroupOrdersEnabled)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
@@ -106,7 +128,8 @@ const init = function() {
     },
     isNewAddressFormElement: document.querySelector('#cart_isNewAddress'),
     addresses,
-    times,
+    restaurantTiming,
+    cartTiming,
     country: getCountry(),
     isPlayer,
     isGroupOrdersEnabled,
@@ -121,7 +144,6 @@ const init = function() {
 
   const root = createRoot(container);
   root.render(
-    <StrictMode>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
           {createPortal(<FulfillmentDetails />, fulfilmentDetailsContainer)}
@@ -134,13 +156,8 @@ const init = function() {
           <LoopeatModal />
         </I18nextProvider>
       </Provider>
-    </StrictMode>
   )
-
 }
 
-$('#menu').LoadingOverlay('show', {
-  image: false,
-})
-
+setMenuLoading(true)
 init()

@@ -52,7 +52,7 @@
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
 
     <div class="row">
-      <div class="col-xs-12">
+      <div class="col-xs-12 form-content">
 
         {% include 'order/breadcrumb.html.twig' %}
 
@@ -74,6 +74,12 @@
             </div>
           {% endif %}
         {% endfor %}
+
+        {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
+          {% include 'order/_partials/errors.html.twig' with {
+            errors: pre_submit_errors,
+          } %}
+        {% endif %}
 
         {{ form_errors(form) }}
 
@@ -164,8 +170,8 @@
             {% if form.quote is defined %}
               {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
             {% endif %}
-            <button class="btn btn-lg btn-primary" type="submit">
-              {% trans %}cart.widget.button{% endtrans %}
+            <button class="btn btn-lg btn-primary btn-submit-page" type="submit">
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans %}cart.widget.button{% endtrans %}
             </button>
           </div>
         </div>
@@ -251,13 +257,13 @@
 {% endblock %}
 
 {% block styles %}
-  {{ encore_entry_link_tags('checkout-summary') }}
+  {{ encore_entry_link_tags('order') }}
   {{ encore_entry_link_tags('optins') }}
 {% endblock %}
 
 {% block scripts %}
 {% if not order.empty %}
-{{ encore_entry_script_tags('checkout-summary') }}
+{{ encore_entry_script_tags('order') }}
 {% endif %}
 {{ encore_entry_script_tags('optins') }}
 {% endblock %}

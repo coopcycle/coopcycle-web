@@ -3,12 +3,11 @@
 namespace Tests\AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
-use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
-use AppBundle\Entity\Vendor;
 use AppBundle\Utils\OrdersRateLimit;
 use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\ShippingDateFilter;
@@ -16,6 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 
 class ShippingDateFilterTest extends TestCase
 {
@@ -33,7 +33,9 @@ class ShippingDateFilterTest extends TestCase
 
         $this->filter = new ShippingDateFilter(
             $this->orderTimelineCalculator->reveal(),
-            $this->rateLimiter->reveal()
+            $this->rateLimiter->reveal(),
+            new NullLogger(),
+            new NullLoggingUtils()
         );
     }
 
@@ -174,7 +176,7 @@ class ShippingDateFilterTest extends TestCase
 
         $order = $this->prophesize(Order::class);
         $order
-            ->getVendor()
+            ->getVendorConditions()
             ->willReturn(
                 $this->restaurant->reveal()
             );

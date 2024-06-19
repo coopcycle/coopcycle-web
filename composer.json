@@ -36,7 +36,7 @@
         "symfony/monolog-bundle": "^3.5",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
-        "jsor/doctrine-postgis": "^1.1",
+        "jsor/doctrine-postgis": "^2.3.0",
         "league/geotools": "@stable",
         "gedmo/doctrine-extensions": "^3.0.3",
         "snc/redis-bundle": "4.3.0",
@@ -45,7 +45,7 @@
         "gesdinet/jwt-refresh-token-bundle": "^1.0",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
         "stripe/stripe-php": "^7.7",
-        "vich/uploader-bundle": "^1.13",
+        "vich/uploader-bundle": "^1.23.1",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "guzzlehttp/guzzle": "^7.0",
         "myclabs/php-enum": "^1.8",
@@ -76,7 +76,7 @@
         "symfony/webpack-encore-bundle": "^1.6",
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.3",
-        "oneup/uploader-bundle": "^3.0",
+        "oneup/uploader-bundle": "^4.0.1",
         "sylius/promotion-bundle": "^1.7.5",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.3",
@@ -88,9 +88,9 @@
         "azuyalabs/yasumi": "^2.1",
         "hashids/hashids": "^4.0",
         "sylius/inventory": "^1.7.5",
-        "oneup/flysystem-bundle": "^3.1",
+        "oneup/flysystem-bundle": "^4.11.2",
         "drupal/core-vendor-hardening": "9.2.x-dev",
-        "league/flysystem-aws-s3-v3": "^1.0",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "sylius/resource-bundle": "^1.7.1",
         "kreait/firebase-bundle": "^2.2",
         "phpdocumentor/reflection-docblock": "^5.1",
@@ -141,9 +141,11 @@
         "mtdowling/jmespath.php": "^2.7",
         "php-units-of-measure/php-units-of-measure": "^2.1",
         "symfony/ux-turbo": "^2.10",
-        "coopcycle/db-schenker": "*",
         "twig/html-extra": "^3.7",
-        "symfony/ux-react": "2.10"
+        "symfony/ux-react": "2.10",
+        "league/flysystem": "^3.0",
+        "league/flysystem-ftp": "^3.0",
+        "coopcycle/transporter": "dev-master"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -161,7 +163,8 @@
         "friends-of-behat/mink-browserkit-driver": "^1.4",
         "rector/rector": "^0.17",
         "phpstan/phpstan-doctrine": "^1.0",
-        "aeon-php/calendar": "1.0.6"
+        "aeon-php/calendar": "1.0.6",
+        "league/flysystem-memory": "^3.0"
     },
     "repositories": [
         {
@@ -174,7 +177,7 @@
         },
         {
           "type": "vcs",
-          "url": "https://github.com/coopcycle/DBSchenkerClient"
+          "url": "https://github.com/coopcycle/transporter"
         },
         {
           "type": "vcs",

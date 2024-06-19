@@ -5,46 +5,68 @@ namespace AppBundle\Domain\Order\Reactor;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Message\PushNotification;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use AppBundle\Security\UserManager;
+use AppBundle\Sylius\Order\OrderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendRemotePushNotification
 {
-    private $userManager;
-    private $messageBus;
-    private $iriConverter;
-    private $translator;
-
     public function __construct(
-        UserManagerInterface $userManager,
-        MessageBusInterface $messageBus,
-        IriConverterInterface $iriConverter,
-        TranslatorInterface $translator)
+        private UserManager $userManager,
+        private MessageBusInterface $messageBus,
+        private IriConverterInterface $iriConverter,
+        private TranslatorInterface $translator,
+        private LoggerInterface $pushNotificationLogger)
     {
-        $this->userManager = $userManager;
-        $this->messageBus = $messageBus;
-        $this->iriConverter = $iriConverter;
-        $this->translator = $translator;
     }
 
-    public function __invoke(Event $event)
+    private function shouldSendNotification(Event $event): bool
     {
         $order = $event->getOrder();
 
         if (!$order->hasVendor()) {
+            return false;
+        }
+
+        if ($order->isMultiVendor()) {
+            return $event instanceof Event\OrderAccepted;
+        } else {
+            $vendor = $order->getVendors()->first();
+
+            if ($restaurant = $vendor->getRestaurant()) {
+                if ($restaurant->isAutoAcceptOrdersEnabled()) {
+                    return $event instanceof Event\OrderStateChanged && $event->getOrder()->getState() === OrderInterface::STATE_ACCEPTED;
+                }
+            }
+            return $event instanceof Event\OrderCreated;
+        }
+    }
+
+    public function __invoke(Event $event)
+    {
+        if (!$this->shouldSendNotification($event)) {
             return;
         }
 
-        $shouldSendNotification = $order->isMultiVendor() ?
-            $event instanceof Event\OrderAccepted : $event instanceof Event\OrderCreated;
+        $order = $event->getOrder();
 
-        if (!$shouldSendNotification) {
-            return;
+        $message = '';
+
+        if ($event instanceof Event\OrderCreated) {
+            $message = $this->translator->trans('notifications.restaurant.new_order');
+        } else if ($event instanceof Event\OrderAccepted || ($event instanceof Event\OrderStateChanged && $order->getState() === OrderInterface::STATE_ACCEPTED)) {
+            $message = $this->translator->trans('notifications.restaurant.accepted_order');
         }
 
-        // TODO Send a different message when event is "order:accepted"
-        $message = $this->translator->trans('notifications.restaurant.new_order');
+        if (empty($message)) {
+            $this->pushNotificationLogger->warning('No message to send', [
+                'event' => $event::messageName(),
+                'order' => $order->getId()
+            ]);
+            return;
+        }
 
         // Send to admins
         $admins = array_map(function ($user) {

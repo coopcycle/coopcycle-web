@@ -5,12 +5,12 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="type" type="string" column="type"/>
-    <field name="data" type="json_array" column="data"/>
-    <field name="metadata" type="json_array" column="metadata"/>
+    <field name="data" type="json" column="data"/>
+    <field name="metadata" type="json" column="metadata"/>
     <field name="createdAt" type="datetime" column="created_at"/>
     <many-to-one field="order" target-entity="AppBundle\Entity\Sylius\Order" inversed-by="events">
       <join-columns>
-        <join-column name="aggregate_id" referenced-column-name="id"/>
+        <join-column name="aggregate_id" referenced-column-name="id" on-delete="CASCADE"/>
       </join-columns>
     </many-to-one>
   </entity>

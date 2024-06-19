@@ -21,8 +21,18 @@ class NullLoggingUtils extends LoggingUtils
         return 'GET /';
     }
 
+    public function redact(string $text, int $symbolsAtStart = 4, int $symbolsAtEnd = 4, int $symbolsInMiddle = 4): string
+    {
+        return $text;
+    }
+
     public function getOrderId($order): string
     {
         return '#1234';
+    }
+
+    public function getVendors($order): string
+    {
+        return '1, 2, 3';
     }
 }

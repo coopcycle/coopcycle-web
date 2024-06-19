@@ -21,6 +21,7 @@ use AppBundle\Form\TaskExportType;
 use AppBundle\Form\TaskGroupType;
 use AppBundle\Form\TaskUploadType;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TaskListManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\TaskImageNamer;
 use Cocur\Slugify\SlugifyInterface;
@@ -119,46 +120,6 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        // $allTasks = $this->getDoctrine()
-        //     ->getRepository(Task::class)
-        //     ->findByDate($date)
-        //     ;
-
-        // $taskLists = $this->getDoctrine()
-        //     ->getRepository(TaskList::class)
-        //     ->findByDate($date);
-
-        $tours = $this->getDoctrine()
-            ->getRepository(Tour::class)
-            ->findByDate($date);
-
-        // $allTasksNormalized = array_map(function (Task $task) {
-        //     return $this->get('serializer')->normalize($task, 'jsonld', [
-        //         'resource_class' => Task::class,
-        //         'operation_type' => 'item',
-        //         'item_operation_name' => 'get',
-        //         'groups' => ['task', 'delivery', 'address', sprintf('address_%s', $this->getParameter('country_iso'))]
-        //     ]);
-        // }, $allTasks);
-
-        // $taskListsNormalized = array_map(function (TaskList $taskList) {
-        //     return $this->get('serializer')->normalize($taskList, 'jsonld', [
-        //         'resource_class' => TaskList::class,
-        //         'operation_type' => 'item',
-        //         'item_operation_name' => 'get',
-        //         'groups' => ['task_collection']
-        //     ]);
-        // }, $taskLists);
-
-        $toursNormalized = array_map(function (Tour $tour) {
-            return $this->get('serializer')->normalize($tour, 'jsonld', [
-                'resource_class' => Tour::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['task_collection']
-            ]);
-        }, $tours);
-
         $couriers = $this->getDoctrine()
             ->getRepository(User::class)
             ->createQueryBuilder('u')
@@ -170,6 +131,7 @@ trait AdminDashboardTrait
             ->getArrayResult();
 
         $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+        // insert here all queries for soft deletable that you don't want to show in the dashboard
 
         $recurrenceRules =
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
@@ -182,9 +144,9 @@ trait AdminDashboardTrait
             ]);
         }, $recurrenceRules);
 
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
-
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+
+        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
@@ -214,7 +176,7 @@ trait AdminDashboardTrait
             $qb->getQuery()->getArrayResult()
         );
 
-        return $this->render('admin/dashboard_iframe.html.twig', [
+        return $this->render('admin/dashboard_iframe.html.twig', $this->auth([
             'nav' => $request->query->getBoolean('nav', true),
             'date' => $date,
             'couriers' => $couriers,
@@ -229,7 +191,7 @@ trait AdminDashboardTrait
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
             'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
-        ]);
+        ]));
     }
 
     private function loadPositions(Redis $tile38, $cursor = 0, array $points = [])
@@ -304,57 +266,6 @@ trait AdminDashboardTrait
     }
 
     /**
-     * @Route("/admin/tasks/{date}/{username}", name="admin_task_list_modify",
-     *   methods={"PUT"},
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
-     */
-    public function modifyTaskListAction($date, $username, Request $request,
-        IriConverterInterface $iriConverter,
-        UserManagerInterface $userManager,
-        LoggerInterface $logger)
-    {
-        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
-
-        $date = new \DateTime($date);
-        $user = $userManager->findUserByUsername($username);
-
-        $taskList = $this->getTaskList($date, $user);
-
-        if (null === $taskList->getId()) {
-            $this->getDoctrine()
-                ->getManagerForClass(TaskList::class)
-                ->persist($taskList);
-        }
-
-        // Tasks are sent as JSON payload
-        $data = json_decode($request->getContent(), true);
-
-        $tasksToAssign = [];
-        foreach ($data as $item) {
-            // Sometimes $item['task'] is "/api/tasks/"
-            // @see https://github.com/coopcycle/coopcycle-web/issues/976
-            try {
-                $tasksToAssign[$item['position']] = $iriConverter->getItemFromIri($item['task']);
-            } catch (InvalidArgumentException $e) {
-                $logger->error($e->getMessage());
-            }
-        }
-
-        $taskList->setTasks($tasksToAssign);
-
-        $this->getDoctrine()
-            ->getManagerForClass(TaskList::class)
-            ->flush();
-
-        return new JsonResponse($this->get('serializer')->normalize($taskList, 'jsonld', [
-            'resource_class' => TaskList::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
-            'groups' => ['task_collection']
-        ]));
-    }
-
-    /**
      * @Route("/admin/task-lists/{date}/{username}", name="admin_task_list_create",
      *   methods={"POST"},
      *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
@@ -381,7 +292,7 @@ trait AdminDashboardTrait
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection']
+            'groups' => ['task_list']
         ]);
 
         return new JsonResponse($taskListNormalized);
@@ -411,7 +322,7 @@ trait AdminDashboardTrait
         // while $taskImagesFilesystem is alreay aware of the prefix
         $imagePath = ltrim($storage->resolveUri($image, 'file'), '/');
 
-        if (!$taskImagesFilesystem->has($imagePath)) {
+        if (!$taskImagesFilesystem->fileExists($imagePath)) {
             throw new NotFoundHttpException(sprintf('Image at path "%s" not found', $imagePath));
         }
 
@@ -421,7 +332,7 @@ trait AdminDashboardTrait
             stream_copy_to_stream($fileStream, $outputStream);
         });
 
-        $response->headers->set('Content-Type', $taskImagesFilesystem->getMimetype($imagePath));
+        $response->headers->set('Content-Type', $taskImagesFilesystem->mimeType($imagePath));
 
         $disposition = HeaderUtils::makeDisposition(
             HeaderUtils::DISPOSITION_ATTACHMENT,

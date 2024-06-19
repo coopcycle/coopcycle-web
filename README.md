@@ -17,6 +17,8 @@ You can find a comprehensive list of our repos here : [Our repos comprehensive l
 How to run a local instance
 ---------------------------
 
+Please find below the steps to install the platform locally. You can find additional tips & configurations [in the wiki](https://github.com/coopcycle/coopcycle-web/wiki/Developing).
+
 ### Prerequisites
 
 Install [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/install).
@@ -31,19 +33,19 @@ Use [Docker for Windows](https://www.docker.com/docker-windows) which will provi
 Depending on your platform, Docker could be installed as Native or you have to install Docker toolbox which use VirtualBox instead of Hyper-V causing a lot a differences in implementations.
 If you have the luck to have a CPU that supports native Docker you can [share your hard disk as a virtual volume for your appliances](https://blogs.msdn.microsoft.com/stevelasker/2016/06/14/configuring-docker-for-windows-volumes/).
 
-Docker doesn't work under Windows, you need to install linux in hypervisualization. Follow the recommendations here to activate the necessary features under windows 11 and make sure you have an administrator account 
+Docker doesn't work under Windows, you need to install linux in hypervisualization. Follow the recommendations here to activate the necessary features under windows 11 and make sure you have an administrator account
   https://docs.docker.com/desktop/troubleshoot/topics/
 
-Download docker 
+Download docker
 https://www.docker.com/products/docker-desktop/
-Check in the BIOS that : 
--hypervisualization (HYPER-V) 
--Data Execution Prevention (DEP). 
-You can also use the following procedure for DEP: 
+Check in the BIOS that :
+-hypervisualization (HYPER-V)
+-Data Execution Prevention (DEP).
+You can also use the following procedure for DEP:
 Windows + r
 Search for sysdm.cpl
-Advanced system settings 
-In Performance, select settings data execution prevention  "enable for all except those I select...". click on apply 
+Advanced system settings
+In Performance, select settings data execution prevention  "enable for all except those I select...". click on apply
 
 install, from your PowerShell WSL 2 terminal
  https://learn.microsoft.com/en-us/windows/wsl/install
@@ -133,6 +135,34 @@ make behat
 ```
 make jest
 ```
+
+#### Launch the Cypress tests
+
+Cypress is a JS program for end-to-end testing and integration testing of components. You will launch a server in the test environment and run cypress on your own machine.
+
+```
+npm install -g cypress @cypress/webpack-preprocessor @cypress/react18
+```
+
+Launch php container on his own in the test env:
+```
+docker compose run --service-ports -e APP_ENV=test php
+docker compose up
+# might need to reboot the PHP container here because the link with nginx is not good
+```
+
+(FIXME : it is a pitty to launch with two commands the containers, it is because `docker compose up` doesn't accept `-e APP_ENV=test` arg, you can also set `APP_ENV=test` in your `.env` file)
+
+In the `.env` file you need to set `GEOCODE_EARTH_API_KEY` to a valid API key. You need also Stripe configured on the platform or in the `.env` file (`STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_CLIENT_ID`).
+
+and then this command will lead you to Cypress GUI
+```
+cypress open
+```
+
+The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).
+
+
 Debugging
 ------------------
 #### 1. Install and enable xdebug in the php container

@@ -17,7 +17,7 @@ class ShippingTimeRangeJumpValidator extends ConstraintValidator
 
         [ $displayed, $calculated ] = $value;
 
-        if (!Carbon::instance($displayed->getLower())->isSameDay(Carbon::instance($calculated->getLower()))) {
+        if (null === $calculated || !Carbon::instance($displayed->getLower())->isSameDay(Carbon::instance($calculated->getLower()))) {
             $this->context->buildViolation($constraint->nextDayMessage)
                 ->addViolation();
         }

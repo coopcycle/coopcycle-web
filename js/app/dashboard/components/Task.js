@@ -14,6 +14,7 @@ import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-fronte
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
 import OrderNumber from './OrderNumber'
+import { selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 
 moment.locale($('html').attr('lang'))
 
@@ -188,6 +189,11 @@ class Task extends React.Component {
 
   render() {
 
+    // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+    if (this.props.task === undefined) {
+      return <></>
+    }
+
     const { color, task, selected, isVisible, date } = this.props
 
     const classNames = [
@@ -207,6 +213,10 @@ class Task extends React.Component {
 
     if (selected) {
       classNames.push('task__highlighted')
+    }
+
+    if (task.hasIncidents) {
+      classNames.push('task__has-incidents')
     }
 
     const taskProps = {
@@ -275,20 +285,29 @@ class Task extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
+  let task = selectTaskById(state, ownProps.taskId)
+
+  // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+  if (task === undefined) {
+    console.error("Could not find task at id " + ownProps.taskId)
+    return { task: task}
+  }
+
   const tasksWithColor = selectTasksWithColor(state)
 
-  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, ownProps.task['@id']) ?
-    tasksWithColor[ownProps.task['@id']] : '#ffffff'
+  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, task['@id']) ?
+    tasksWithColor[task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
   const selectedTasks = state.selectedTasks
 
   return {
+    task: task,
     selectedTasks: selectedTasks,
-    selected: -1 !== selectedTasks.indexOf(ownProps.task['@id']),
+    selected: -1 !== selectedTasks.indexOf(task['@id']),
     color,
     date: selectSelectedDate(state),
-    isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),
+    isVisible: _.includes(visibleTaskIds, task['@id']),
   }
 }
 

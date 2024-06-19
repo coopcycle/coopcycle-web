@@ -5,7 +5,7 @@ base.footer.contactUs: Contáctanos
 base.footer.help: Ayuda
 base.footer.legal: Notas legales
 base.footer.privacy: Privacidad
-adminDashboard.title: Panel de administración
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuración
 adminDashboard.tooltip.orders: Gestiona pedidos
 adminDashboard.tooltip.deliveries: Gestiona entregas
@@ -208,6 +208,8 @@ profile.managedStores: Tiendas gestionadas por el usuario
 profile.managedRestaurants: Restaurantes gestionados por el usuario
 profile.accountType: Tipo de cuenta
 profile.businessAccount: Cuenta de empresa
+profile.orders: Pedidos
+profile.configuration: Configuración
 order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
 order.summary.heading: Pedido %number% (#%id%)
@@ -1224,9 +1226,11 @@ form.business_account.restaurants.add: Agregar un restaurante
 form.business_account.employees.add: Agregar un empleado
 form.business_account.manager.email.label: Email del administrador de la cuenta
 form.business_account.manager.email.help: Se enviará un link de invitación a Coopcycle
-form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado
+form.business_account.manager.email_sent.help: Link de invitación a Coopcycle enviado. <a href="#">Haga click aquí</a> para reenviar el email.
 form.business_account.save_and_send_invitation.label: Guardar y enviar invitación
 form.business_acount.send_invitation.confirm: El email de invitación a Coopcycle ha sido enviado
+form.business_acount.resend_invitation.confirm: El email de invitación a Coopcycle ha sido reenviado
+form.business_acount.resend_invitation.failed: Ha ocurrido un error al intentar reenviar el email de registración de la cuenta de empresa
 adminDashboard.business_restaurant_group_list.title: Listado de grupos de restaurantes para empresas
 adminDashboard.business_restaurant_group.title: Group de restaurantes para empresas
 adminDashboard.business_restaurant_group.createNew: Crear un nuevo grupo de restaurantes para empresas
@@ -1400,6 +1404,7 @@ registration.company.address.different.for.billing: "Usar una dirección diferen
 registration.company.billing.address: "Dirección de facturación"
 registration.step.company.name: "Nombre de la empresa"
 registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
+registration.confirm.invitation.link.title: "Usa el siguiente enlace para invitar a tus colegas de trabajo a unirse"
 registration.step.invitation.copy.button: "Copiar el enlace"
 registration.step.invitation.link.copied: "Copiado"
 deliveries.imports: Ficheros importados
@@ -1412,3 +1417,38 @@ form.business_restaurant_group.menu: Menú
 form.product.business_restaurant_group.price_definition.label: Definir precios para grupo de restaurantes para empresas
 form.product.business_restaurant_group.price_definition.placeholder: Por favor seleccione uno
 business_restaurant_group.label: Grupo de restaurantes para empresas
+business_restaurant_group.form.invalid: "Hay errores o datos sin completar, por favor revise todas las secciones de configuración."
+restaurants.edenred.add_restaurants: Agregar restaurantes
+restaurants.edenred.add_list_title: Listado de restaurantes a enviar a Edenred
+restaurants.edenred.added_restaurants: Restaurantes agregados
+restaurants.edenred.already_sent: "Los restaurantes que aparecen tachados es por que\
+  \ ya han sido enviados a Edenred para su incorporación.\
+  \ Por favor <a href=\"%link%\">haga click aquí</a> para ver su estado."
+restaurants.edenred.added_list.name: Nombre
+restaurants.edenred.added_list.merchant_id: Merchant ID
+restaurants.edenred.added_list.tr_card_enabled: TR card habilitada
+restaurants.edenred.sending_success: "Los restaurantes han sido enviados a Edenred con éxito."
+restaurants.edenred.sending_failed: "Hubo un error al enviar los restaurantes a Edenred. Intente nuevamente más tarde."
+restaurants.edenred.sending_failed.errors: "Se han encontrado errores en algunos de los restaurantes:"
+restaurants.edenred.sending_failed.no_siret: "El restaurant '%restaurant_name%' no tiene un Siret definido."
+restaurant.form.edenred_enabled.label: Habilitar Edenred
+restaurants.edenred.refresh.no_updates: "El restaurante '%restaurant_name%' hasta ahora no ha tenido actualizaciones en los servidores de Edenred."
+restaurants.edenred.refresh.has_updates: "El restaurante '%restaurant_name%' ha tenido actualizaciones de los servidores de Edenred."
+restaurants.edenred.added_list.actions: Acciones
+business_restaurant_group.form.fill_all_pages: "Por favor, completar toda la configuración requerida en las tres páginas."
+business_account.registration.user_with_same_email_exists: Ya existe una cuenta con su correo
+  electrónico. Por favor, inicie sesión para continuar con la configuración de su cuenta de empresa.
+registration.email.taken.use.another: O puedes usar otro email si lo deseas.
+registration.link.to.login: Por favor, haga click aquí para iniciar sesión.
+registration.email.taken: El email ingresado ya existe, quieres iniciar sesión con él?
+registration.business_account.loggin.warning_message: Inicie sesión para luego asociar su cuenta con la empresa %name%.
+business_account.employee.associated: Su cuenta ha sido asociada con éxito a la empresa %name%
+business_account.loggedin_employee.association.text: Tenés una sesión iniciada con el email <strong>%user_email%</strong>, deseas asociar tu cuenta a la de la empresa <strong>%business_account_name%</strong>?
+business_account.loggedin_employee.association.title: Invitación para asociar su cuenta a una cuenta de empresa
+topbar.action.admin_business_account: Administrar mi Cuenta de empresa
+basics.order_now: Pedir ahora
+restaurant.businessAccount.notAvilable: "Éste restaurante no está incluído entre los restaurantes disponibles para realizar pedidos con tu empresa.\
+  \ <br> Si quiéres, puedes ver los restaurantes disponibles para tu empresa <a href=\"%path%\"\
+  >haciendo click aquí</a>.\n"
+business_account.switch.order_with_business: Pedir con mi empresa
+business_account.switch.ordering_with_business: Pidiendo con mi empresa

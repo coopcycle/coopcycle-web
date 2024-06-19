@@ -16,6 +16,14 @@
     enabled: is_granted('ROLE_ADMIN'),
   },
   {
+    title: 'adminDashboard.incidents.title' | trans,
+    help: 'adminDashboard.incidents.help' | trans,
+    path: path('admin_incidents'),
+    icon: 'exclamation-triangle',
+    active: ['admin_incidents'],
+    enabled: is_granted('ROLE_DISPATCHER'),
+  },
+  {
     title: 'adminDashboard.pricing.title' | trans,
     help: 'adminDashboard.pricing.help' | trans,
     path: path('admin_deliveries_pricing'),

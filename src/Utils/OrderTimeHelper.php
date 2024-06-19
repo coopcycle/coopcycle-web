@@ -3,61 +3,64 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Form\Type\AsapChoiceLoader;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Form\Type\TsRangeChoice;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\TimeRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\DateUtils;
-use AppBundle\Utils\PreparationTimeCalculator;
-use AppBundle\Utils\ShippingDateFilter;
-use AppBundle\Utils\ShippingTimeCalculator;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 use Redis;
 
 class OrderTimeHelper
 {
-    private $shippingDateFilter;
-    private $preparationTimeCalculator;
-    private $shippingTimeCalculator;
-    private $country;
+    const MAX_CHOICES_LOGGED = 10;
+    const MAX_ACCEPTED_CHOICES_LOGGED = 3;
+
     private $choicesCache = [];
     private $extraTime;
 
     public function __construct(
-        ShippingDateFilter $shippingDateFilter,
-        PreparationTimeCalculator $preparationTimeCalculator,
-        ShippingTimeCalculator $shippingTimeCalculator,
-        Redis $redis,
-        TimeRegistry $timeRegistry,
-        FulfillmentMethodResolver $fulfillmentMethodResolver,
-        string $country,
-        LoggerInterface $logger = null)
+        private ShippingDateFilter $shippingDateFilter,
+        private PreparationTimeCalculator $preparationTimeCalculator,
+        private ShippingTimeCalculator $shippingTimeCalculator,
+        private Redis $redis,
+        private TimeRegistry $timeRegistry,
+        private FulfillmentMethodResolver $fulfillmentMethodResolver,
+        private string $country,
+        private LoggerInterface $logger,
+        private LoggingUtils $loggingUtils)
     {
-        $this->shippingDateFilter = $shippingDateFilter;
-        $this->preparationTimeCalculator = $preparationTimeCalculator;
-        $this->shippingTimeCalculator = $shippingTimeCalculator;
-        $this->redis = $redis;
-        $this->timeRegistry = $timeRegistry;
-        $this->fulfillmentMethodResolver = $fulfillmentMethodResolver;
-        $this->country = $country;
-        $this->logger = $logger ?? new NullLogger();
     }
 
-    private function filterChoices(OrderInterface $cart, array $choices)
+    private function filterChoices(OrderInterface $cart, array $choices): array
     {
-        return array_filter($choices, function (TsRangeChoice $choice) use ($cart) {
+        $choicesLogged = 0;
+        $acceptedChoicesLogged = 0;
+
+        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, &$choicesLogged, &$acceptedChoicesLogged) {
 
             $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() returned %s for %s',
-                var_export($result, true),
-                (string) $choice
-            ));
+            if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
+                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
+                    var_export($result, true),
+                    (string)$choice),
+                    [
+                        'order' => $this->loggingUtils->getOrderId($cart),
+                        'vendor' => $this->loggingUtils->getVendors($cart),
+                    ]);
+
+                if ($result) {
+                    $acceptedChoicesLogged++;
+                }
+
+                $choicesLogged++;
+            }
 
             return $result;
         });
@@ -92,19 +95,30 @@ class OrderTimeHelper
         return $value + $this->getExtraTime();
     }
 
-    private function getChoices(OrderInterface $cart)
+    private function getAsapChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
     {
-        $hash = sprintf('%s-%s', $cart->getFulfillmentMethod(), spl_object_hash($cart));
+        $hash = sprintf('%s-%s-%s',
+            $cart->getFulfillmentMethod(),
+            implode(',', array_map(function($vendor) {
+                return $vendor->getRestaurant()->getId();
+            }, $cart->getVendors()->toArray())),
+            spl_object_hash($cart));
+
+        $this->logger->info(sprintf('OrderTimeHelper::getAsapChoices | is using cached value? %s',
+            var_export(isset($this->choicesCache[$hash]), true)),
+            [
+                'order' => $this->loggingUtils->getOrderId($cart),
+                'vendor' => $this->loggingUtils->getVendors($cart),
+            ]);
 
         if (!isset($this->choicesCache[$hash])) {
 
-            $vendor = $cart->getVendor();
-            $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
+            $vendorConditions = $cart->getVendorConditions();
 
             $choiceLoader = new AsapChoiceLoader(
                 $fulfillmentMethod->getOpeningHours(),
                 $this->timeRegistry,
-                $vendor->getClosingRules(),
+                $vendorConditions->getClosingRules(),
                 $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
                 $fulfillmentMethod->isPreOrderingAllowed()
@@ -122,39 +136,51 @@ class OrderTimeHelper
         return $this->choicesCache[$hash];
     }
 
+    private function getTimeSlotChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
+    {
+        $vendorConditions = $cart->getVendorConditions();
+
+        $choiceLoader = new TimeSlotChoiceLoader(
+            TimeSlot::create($fulfillmentMethod, $vendorConditions),
+            $this->country,
+            $vendorConditions->getClosingRules(),
+            new \DateTime('+7 days')
+        );
+        $choiceList = $choiceLoader->loadChoiceList();
+        return $choiceList->getChoices();
+    }
+
     public function getShippingTimeRanges(OrderInterface $cart)
     {
         $fulfillmentMethod = $this->fulfillmentMethodResolver->resolveForOrder($cart);
 
-        $this->logger->info(sprintf('Cart has fulfillment method "%s" and behavior "%s"',
+        if (!$fulfillmentMethod->isEnabled()) {
+            $this->logger->info(sprintf('OrderTimeHelper::getShippingTimeRanges | fulfillment method "%s" is disabled',
+                $fulfillmentMethod->getType()),
+                [
+                    'order' => $this->loggingUtils->getOrderId($cart),
+                    'vendor' => $this->loggingUtils->getVendors($cart),
+                ]);
+            return [];
+        }
+
+        $this->logger->info(sprintf('OrderTimeHelper::getShippingTimeRanges | for fulfillment method "%s" and behavior "%s"',
             $fulfillmentMethod->getType(),
-            $fulfillmentMethod->getOpeningHoursBehavior()
-        ));
+            $fulfillmentMethod->getOpeningHoursBehavior()),
+            [
+                'order' => $this->loggingUtils->getOrderId($cart),
+                'vendor' => $this->loggingUtils->getVendors($cart),
+            ]);
 
         if ($fulfillmentMethod->getOpeningHoursBehavior() === 'time_slot') {
-
-            $vendor = $cart->getVendor();
-
-            $choiceLoader = new TimeSlotChoiceLoader(
-                TimeSlot::create($fulfillmentMethod, $vendor),
-                $this->country,
-                $vendor->getClosingRules(),
-                new \DateTime('+7 days')
-            );
-            $choiceList = $choiceLoader->loadChoiceList();
-
-            $ranges = [];
-            foreach ($choiceList->getChoices() as $choice) {
-                $ranges[] = $choice->toTsRange();
-            }
-
-            return $ranges;
+            $choices = $this->getTimeSlotChoices($cart, $fulfillmentMethod);
+        } else {
+            $choices = $this->getAsapChoices($cart, $fulfillmentMethod);
         }
 
         return array_map(function ($choice) {
-
             return $choice->toTsRange();
-        }, $this->getChoices($cart));
+        }, $choices);
     }
 
     /**

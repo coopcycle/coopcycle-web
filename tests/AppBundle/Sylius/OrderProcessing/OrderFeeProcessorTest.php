@@ -391,6 +391,29 @@ class OrderFeeProcessorTest extends KernelTestCase
         $this->assertEquals(350, $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT));
     }
 
+    public function testOrderWithTipAdjustment()
+    {
+        $contract = self::createContract(565, 350, 0.1860);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(2500));
+
+        $tipAdjustment = new Adjustment();
+        $tipAdjustment->setType(AdjustmentInterface::TIP_ADJUSTMENT);
+        $tipAdjustment->setLabel('Tip');
+        $tipAdjustment->setAmount(300);
+
+        $order->addAdjustment($tipAdjustment);
+
+        $this->orderFeeProcessor->process($order);
+
+        $this->assertEquals(300, $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT));
+    }
+
     public function testOrderWithDeliveryOfferedByLocalBusinessPromotion()
     {
         $contract = self::createContract(565, 350, 0.1860);
@@ -553,17 +576,11 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $order = $this->prophesize(OrderInterface::class); // new Order();
         $order->hasVendor()->willReturn(true);
-        $order->getVendor()->willReturn($restaurant);
+        $order->getVendorConditions()->willReturn($restaurant);
         $order->isTakeAway()->willReturn(false);
         $order->getItemsTotal()->willReturn(2000);
 
-        $order->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)
-            ->willReturn(new ArrayCollection([]));
-
-        $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
-            ->willReturn(new ArrayCollection([]));
-
-        $order->getAdjustments(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT)
+        $order->getAdjustments(Argument::type('string'))
             ->willReturn(new ArrayCollection([]));
 
         $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
@@ -575,13 +592,15 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
             ->willReturn(90);
 
-        $order->removeAdjustments(Argument::type('string'))->shouldBeCalled();
+        $order->removeAdjustments(Argument::that(function ($adjustment) {
+            return AdjustmentInterface::DELIVERY_ADJUSTMENT === $adjustment;
+        }))->shouldBeCalled();
 
         $this->orderFeeProcessor->process($order->reveal());
 
         $order->addAdjustment(Argument::that(function ($adjustment) {
-            return 590 === $adjustment->getAmount();
-        }))->shouldHaveBeenCalled();
+            return AdjustmentInterface::FEE_ADJUSTMENT === $adjustment->getType() && 590 === $adjustment->getAmount();
+        }))->shouldBeCalledOnce();
     }
 
     public function testOrderWithOrderPromotionDecreasesPlatformFee()

@@ -1,4 +1,186 @@
 Feature: Tasks
+    Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
+      Given the fixtures files are loaded:
+        | sylius_channels.yml |
+        | tasks.yml           |
+      And the courier "bob" is loaded:
+        | email     | bob@coopcycle.org |
+        | password  | 123456            |
+        | telephone | 0033612345678     |
+      And the user "bob" has role "ROLE_DISPATCHER"
+      And the user "bob" is authenticated
+      And the tasks with comments matching "#bob" are assigned to "bob"
+      When I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "GET" request to "/api/tasks?date=2018-04-03"
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Task",
+        "@id": "/api/tasks",
+        "@type": "hydra:Collection",
+        "hydra:totalItems":4,
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"PICKUP",
+            "status":"TODO",
+            "address":{"@*@":"@*@"},
+            "after":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "before":"@string@.isDateTime().startsWith('2018-04-03T10:30:00')",
+            "doneAfter":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "doneBefore":"@string@.isDateTime().startsWith('2018-04-03T10:30:00')",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@,
+            "doorstep":@boolean@,
+            "ref":null,
+            "recurrenceRule":null,
+            "metadata":[],
+            "weight":null,
+            "hasIncidents": false,
+            "incidents": [],
+            "orgName":"",
+            "images":[],
+            "next":null,
+            "packages": [],
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{"@*@":"@*@"},
+            "after":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "before":"@string@.isDateTime().startsWith('2018-04-03T10:30:00')",
+            "doneAfter":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "doneBefore":"@string@.isDateTime().startsWith('2018-04-03T10:30:00')",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@,
+            "doorstep":@boolean@,
+            "ref":null,
+            "recurrenceRule":null,
+            "metadata":[],
+            "weight":null,
+            "hasIncidents": false,
+            "incidents": [],
+            "orgName":"",
+            "images":[],
+            "next":null,
+            "packages":[],
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"PICKUP",
+            "status":"TODO",
+            "address":{"@*@":"@*@"},
+            "after":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "before":"@string@.isDateTime().startsWith('2018-04-03T12:30:00')",
+            "doneAfter":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "doneBefore":"@string@.isDateTime().startsWith('2018-04-03T12:30:00')",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@,
+            "doorstep":@boolean@,
+            "ref":null,
+            "recurrenceRule":null,
+            "metadata":[],
+            "weight":null,
+            "packages": [],
+            "hasIncidents": false,
+            "incidents": [],
+            "orgName":"",
+            "images":[],
+            "next":null,
+            "createdAt":"@string@.isDateTime()"
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{"@*@":"@*@"},
+            "after":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "before":"@string@.isDateTime().startsWith('2018-04-03T12:30:00')",
+            "doneAfter":"@string@.isDateTime().startsWith('2018-04-03T08:00:00')",
+            "doneBefore":"@string@.isDateTime().startsWith('2018-04-03T12:30:00')",
+            "comments":"#bob",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"bob",
+            "previous":null,
+            "group":null,
+            "tags":@array@,
+            "doorstep":@boolean@,
+            "ref":null,
+            "recurrenceRule":null,
+            "metadata":[],
+            "weight":null,
+            "packages": [],
+            "hasIncidents": false,
+            "incidents": [],
+            "orgName":"",
+            "images":[],
+            "next":null,
+            "packages":[],
+            "createdAt":"@string@.isDateTime()"
+          }
+        ],
+        "hydra:view": {
+            "@id": "/api/tasks?date=2018-04-03",
+            "@type": "hydra:PartialCollectionView"
+        },
+        "hydra:search": {
+            "@type": "hydra:IriTemplate",
+            "hydra:template": "/api/tasks{?date,assigned,organization}",
+            "hydra:variableRepresentation": "BasicRepresentation",
+            "hydra:mapping": [
+                {
+                    "@type": "IriTemplateMapping",
+                    "variable": "date",
+                    "property": "date",
+                    "required": false
+                },
+                {
+                    "@type": "IriTemplateMapping",
+                    "variable": "assigned",
+                    "property": "assigned",
+                    "required": false
+                },
+                {
+                    "@type": "IriTemplateMapping",
+                    "variable": "organization",
+                    "property": "organization",
+                    "required": false
+                }
+            ]
+          }
+      }
+      """
+
 
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
@@ -19,16 +201,26 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/2",
+        "@id":"@string@.startsWith('/api/task_lists/')",
         "@type":"TaskList",
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
-            "address":{"@*@":"@*@"},
+            "address":{
+              "streetAddress": "@string@",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":48.846656,
+                "longitude":2.369052
+              },
+              "@*@":"@*@"
+            },
             "after":"@string@.isDateTime().startsWith('2018-03-02T11:30:00')",
             "before":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "doneAfter":"@string@.isDateTime().startsWith('2018-03-02T11:30:00')",
@@ -46,15 +238,16 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
             "packages":[],
-            "position":0,
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":@integer@,
             "type":"DROPOFF",
@@ -77,11 +270,11 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
             "packages":[],
-            "position":1,
             "createdAt":"@string@.isDateTime()"
           }
         ],
@@ -89,6 +282,7 @@ Feature: Tasks
         "items":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":@integer@,
             "type":"DROPOFF",
@@ -111,15 +305,16 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
             "packages":[],
-            "position":0,
             "createdAt":"@string@.isDateTime()"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
+            "@context": "/api/contexts/Task",
             "@type":"Task",
             "id":@integer@,
             "type":"DROPOFF",
@@ -142,11 +337,11 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
             "packages":[],
-            "position":1,
             "createdAt":"@string@.isDateTime()"
           }
         ],
@@ -179,7 +374,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists/5",
+        "@id":"@string@.startsWith('/api/task_lists')",
         "@type":"TaskList",
         "hydra:member":[],
         "hydra:totalItems":0,
@@ -534,6 +729,7 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "hasIncidents": false,
+        "incidents": [],
         "packages": [],
         "createdAt":"@string@.isDateTime()"
       }
@@ -982,6 +1178,7 @@ Feature: Tasks
         "metadata": [],
         "weight": 800,
         "hasIncidents": false,
+        "incidents": [],
         "packages": [],
         "createdAt":"@string@.isDateTime()"
       }
@@ -1063,6 +1260,7 @@ Feature: Tasks
         "metadata": [],
         "weight":null,
         "hasIncidents": false,
+        "incidents": [],
         "packages": [],
         "createdAt":"@string@.isDateTime()"
       }
@@ -1165,7 +1363,7 @@ Feature: Tasks
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@id":"/api/tasks/1",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
             "id":@integer@,
             "type":"DROPOFF",
@@ -1194,11 +1392,12 @@ Feature: Tasks
             },
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "packages": [],
             "createdAt":"@string@.isDateTime()"
           },
           {
-            "@id":"/api/tasks/2",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
             "id":@integer@,
             "type":"DROPOFF",
@@ -1224,6 +1423,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "hasIncidents": false,
+            "incidents": [],
             "packages": [],
             "createdAt":"@string@.isDateTime()"
           }
@@ -1242,11 +1442,11 @@ Feature: Tasks
       }
       """
 
-  Scenario: Retrieve tasks filtered by date for admin
+  Scenario: Retrieve tasks filtered by date for dispatcher
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | dispatch.yml        |
-    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -1260,9 +1460,9 @@ Feature: Tasks
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@id":"/api/tasks/1",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
-            "id":1,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
@@ -1280,9 +1480,9 @@ Feature: Tasks
             "tags":@array@
           },
           {
-            "@id":"/api/tasks/2",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
-            "id":2,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
@@ -1300,9 +1500,9 @@ Feature: Tasks
             "tags":@array@
           },
           {
-            "@id":"/api/tasks/6",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
-            "id":6,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
@@ -1320,9 +1520,9 @@ Feature: Tasks
             "tags":@array@
           },
           {
-            "@id":"/api/tasks/7",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
-            "id":7,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
@@ -1355,11 +1555,11 @@ Feature: Tasks
       }
       """
 
-  Scenario: Retrieve unassigned tasks filtered by date for admin
+  Scenario: Retrieve unassigned tasks filtered by date for dispatcher
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | dispatch.yml        |
-    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -1373,9 +1573,9 @@ Feature: Tasks
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@id":"/api/tasks/6",
+            "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
-            "id":6,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":@...@,
@@ -1396,6 +1596,120 @@ Feature: Tasks
         "hydra:totalItems":1,
         "hydra:view":{
           "@id":"/api/tasks?date=2018-12-01\u0026assigned=no",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve tasks filtered by date for dispatcher+courier (GH #4125)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" has role "ROLE_COURIER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "after":"2018-12-01T10:30:00+01:00",
+            "before":"2018-12-01T11:00:00+01:00",
+            "doneAfter":"2018-12-01T10:30:00+01:00",
+            "doneBefore":"2018-12-01T11:00:00+01:00",
+            "comments":null,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "after":"2018-12-01T11:30:00+01:00",
+            "before":"2018-12-01T12:00:00+01:00",
+            "doneAfter":"2018-12-01T11:30:00+01:00",
+            "doneBefore":"2018-12-01T12:00:00+01:00",
+            "comments":null,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
+            "comments":null,
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":false,
+            "assignedTo":null,
+            "previous":null,
+            "next":null,
+            "group":null,
+            "tags":@array@
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":@...@,
+            "doneAfter":"2018-12-01T12:00:00+01:00",
+            "doneBefore":"2018-12-01T12:30:00+01:00",
+            "comments":"",
+            "updatedAt":"2019-11-14T18:48:59+01:00",
+            "group":null,
+            "images":@array@,
+            "tags":@array@,
+            "isAssigned":true,
+            "after":"2018-12-01T12:00:00+01:00",
+            "before":"2018-12-01T12:30:00+01:00",
+            "assignedTo":"bob",
+            "previous":null,
+            "next":null
+          }
+        ],
+        "hydra:totalItems":4,
+        "hydra:view":{
+          "@id":"/api/tasks?date=2018-12-01",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
@@ -1522,9 +1836,9 @@ Feature: Tasks
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1534,9 +1848,9 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00"
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1573,9 +1887,9 @@ Feature: Tasks
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1585,9 +1899,9 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00"
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1617,9 +1931,9 @@ Feature: Tasks
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1629,9 +1943,9 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00"
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -2400,5 +2714,52 @@ Feature: Tasks
         "@type":"http://schema.org/MediaObject",
         "imageName":@string@,
         "thumbnail":@string@
+      }
+      """
+
+  Scenario: Retrieve failure reasons
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | tasks.yml            |
+      | stores_with_orgs.yml |
+      | failure_reasons.yml  |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the task with id "2" belongs to organization with name "Acme"
+    And the store with name "Acme" has failure reason set "Default"
+    When the user "bob" sends a "GET" request to "/api/tasks/2/failure_reasons"
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"FailureReason",
+            "@id":"@string@",
+            "code":"REFUSED",
+            "description":"Refused",
+            "metadata":[]
+          },
+          {
+            "@type":"FailureReason",
+            "@id":"@string@",
+            "code":"DAMAGED",
+            "description":"Damaged",
+            "metadata":[]
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks/2/failure_reasons{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
       }
       """

@@ -1,60 +1,35 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 import ShippingTimeRange from '../../../components/ShippingTimeRange'
-import { setDateModalOpen } from '../../redux/actions'
+import moment from 'moment'
 
-class Time extends React.Component {
+export default function Time({ timeRange, allowEdit, onClick }) {
+  const { t } = useTranslation()
 
-  _onClick(e) {
-    e.preventDefault()
+  const isToday = moment().isSame(timeRange[0], 'day')
 
-    if (!this.props.loading) {
-      this.props.setDateModalOpen(true)
-    }
+  const cssClasses = [ 'cart__time', 'd-flex', 'justify-content-between' ]
+  if (!isToday) {
+    cssClasses.push('cart__time--not-today')
   }
 
-  render() {
-
-    const cssClasses = [ 'cart__time', 'd-flex', 'justify-content-between' ]
-    if (!this.props.today) {
-      cssClasses.push('cart__time--not-today')
-    }
-
-    return (
-      <div className={ cssClasses.join(' ') }>
+  return (
+    <div className={ cssClasses.join(' ') } data-testid="cart.time">
         <span className="cart__time__text">
-          <ShippingTimeRange value={ this.props.shippingTimeRange } />
+          <ShippingTimeRange value={ timeRange } />
         </span>
-        <a className="pl-3" href="#"
-           onClick={ this._onClick.bind(this) }>
-          <span className="cart__time__edit">{
-            this.props.t('CART_DELIVERY_TIME_EDIT') }
-          </span>
+      { allowEdit ? (
+        <a className="pl-3 text-decoration-none" href="#"
+           onClick={ e => {
+             e.preventDefault()
+             onClick()
+           } }>
+            <span className="cart__time__edit">{
+              t('CART_DELIVERY_TIME_EDIT') }
+            </span>
         </a>
-      </div>
-    )
-  }
+      ) : null }
+    </div>
+  )
 }
-
-function mapStateToProps(state) {
-
-  const { shippingTimeRange } = state.cart
-  const { today, range } = state.times
-
-  return {
-    today,
-    loading: state.isFetching,
-    shippingTimeRange: shippingTimeRange || range,
-  }
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    setDateModalOpen: isOpen => dispatch(setDateModalOpen(isOpen)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(
-  withTranslation()(Time))

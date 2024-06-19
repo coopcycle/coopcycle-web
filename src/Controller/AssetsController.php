@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Incident\IncidentImage;
+use AppBundle\Entity\TaskImage;
 use AppBundle\Pixabay\Client as PixabayClient;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
@@ -15,15 +17,24 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class AssetsController extends AbstractController
 {
+
+    public function __construct(
+        private UploaderHelper $uploaderHelper,
+        private Filesystem $taskImagesFilesystem,
+        private Filesystem $incidentImagesFilesystem,
+    ) { }
+
+
     /**
      * @Route("/assets/banner.svg", name="assets_banner_svg")
      */
     public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
-        if (!$assetsFilesystem->has('banner.svg')) {
+        if (!$assetsFilesystem->fileExists('banner.svg')) {
             throw $this->createNotFoundException();
         }
 
@@ -80,11 +91,11 @@ class AssetsController extends AbstractController
     {
         $path = "placeholders/{$hashid}.jpg";
 
-        if (!$restaurantImagesFilesystem->has($path)) {
+        if (!$restaurantImagesFilesystem->fileExists($path)) {
 
             $results = $pixabay->search('', rand(1, 10));
 
-            $restaurantImagesFilesystem->put(
+            $restaurantImagesFilesystem->write(
                 $path,
                 file_get_contents($results[rand(0, 19)]['webformatURL'])
             );
@@ -94,5 +105,54 @@ class AssetsController extends AbstractController
             'filter' => $filter,
             'path' => $path,
         ], 301);
+    }
+
+
+    /**
+    * @Route("/media/tasks/images/{path}", name="task_image_public", methods={"GET"})
+    */
+    public function taskImagePublicAction($path, Request $request): Response
+    {
+        $object = $this->getDoctrine()->getRepository(TaskImage::class)->findOneBy([
+            'imageName' => $path
+        ]);
+        if (is_null($object)) {
+            throw $this->createNotFoundException();
+        }
+        try {
+            $imagePath = $this->uploaderHelper->asset($object, 'file');
+            $imageBin = $this->taskImagesFilesystem->read($imagePath);
+            $mimeType = $this->taskImagesFilesystem->mimeType($imagePath);
+        } catch (\Exception $e) {
+            throw $this->createNotFoundException(previous: $e);
+        }
+        return new Response($imageBin, 200, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => sprintf('inline; filename="%s"', $path)
+        ]);
+    }
+
+    /**
+    * @Route("/media/incidents/images/{path}", name="incident_image_public", methods={"GET"})
+    */
+    public function incidentImagePublicAction($path, Request $request): Response
+    {
+        $object = $this->getDoctrine()->getRepository(IncidentImage::class)->findOneBy([
+            'imageName' => $path
+        ]);
+        if (is_null($object)) {
+            throw $this->createNotFoundException();
+        }
+        try {
+            $imagePath = $this->uploaderHelper->asset($object, 'file');
+            $imageBin = $this->incidentImagesFilesystem->read($imagePath);
+            $mimeType = $this->incidentImagesFilesystem->mimeType($imagePath);
+        } catch (\Exception $e) {
+            throw $this->createNotFoundException();
+        }
+        return new Response($imageBin, 200, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => sprintf('inline; filename="%s"', $path)
+        ]);
     }
 }

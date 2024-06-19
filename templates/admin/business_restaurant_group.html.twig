@@ -4,6 +4,7 @@
 
 {% set business_restaurant_group = form.vars.data %}
 {% set is_new = (business_restaurant_group.id is null) %}
+{% set formErrors = form.vars.errors.form.getErrors(true)|length > 0 %}
 
 {% block breadcrumb %}
 <li>
@@ -42,6 +43,9 @@
     </div>
     <div class="col-sm-9">
       <div class="tab-content">
+        <div class="alert alert-info">
+          <div class="text-center">{{ 'business_restaurant_group.form.fill_all_pages'|trans }}</div>
+        </div>
         <div role="tabpanel" class="tab-pane active" id="general">
           {{ form_row(form.name) }}
           {{ form_row(form.cutoffTime) }}
@@ -64,6 +68,9 @@
 
   <hr>
 
+  <div name="invalid-form-alert" class="alert alert-danger hidden">
+    <div class="text-center">{{ 'business_restaurant_group.form.invalid'|trans }}</div>
+  </div>
   <button type="submit" class="btn btn-block btn-lg btn-primary">
     {{ 'basics.save'|trans }}
   </button>
@@ -77,6 +84,19 @@
 {% block scripts %}
   {{ encore_entry_script_tags('restaurant-fulfillment-methods') }}
   <script>
+    var submitButton = document.querySelector("button[type='submit']")
+    var form = document.querySelector('[name="business_restaurant_group"]')
+
+    if ({{ formErrors }}) {
+      document.querySelector('[name="invalid-form-alert"]').classList.remove('hidden')
+    }
+
+    submitButton.addEventListener('click', function (e) {
+      if (!form.checkValidity()) {
+        document.querySelector('[name="invalid-form-alert"]').classList.remove('hidden')
+      }
+    })
+
     var $restaurants = $('#business_restaurant_group_restaurantsWithMenu')
     var menusURL = "{{ path('admin_restaurant_menus', { restaurantId: '__ID__' }) }}";
     new CoopCycle.Search(document.querySelector('#restaurant-search'), {

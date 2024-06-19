@@ -218,6 +218,10 @@ framework:
                 base_uri: "https://pixabay.com/api/"
                 query:
                     key: "%env(PIXABAY_API_KEY)%"
+            edenredsynchronizer.client:
+                base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
+                query:
+                    api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
 
 # Twig Configuration
 twig:
@@ -261,6 +265,8 @@ twig:
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+        odoo_url: '%env(ODOO_URL)%'
+        invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
 
     exception_controller: null
 
@@ -278,7 +284,6 @@ doctrine:
         types:
             geography: Jsor\Doctrine\PostGIS\Types\GeographyType
             geometry: Jsor\Doctrine\PostGIS\Types\GeometryType
-            raster: Jsor\Doctrine\PostGIS\Types\RasterType
             geojson: AppBundle\Doctrine\DBAL\Types\GeoJSONType
             uuid: Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
@@ -322,6 +327,8 @@ doctrine:
                 CAST: DoctrineExtensions\Query\Mysql\Cast
                 JSON_GET_FIELD_AS_TEXT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetFieldAsText
                 JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
+                JSON_AGG: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonAgg
+                JSON_BUILD_OBJECT: AppBundle\Doctrine\Functions\JsonBuildObject
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
@@ -490,52 +497,61 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: edi_messages
+        incident_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: incidents
 
     filesystems:
         assets:
             adapter: assets
             alias: assets_filesystem
-            mount: assets_filesystem
+            mount: assets
         product_images:
             adapter: product_images
             alias: product_images_filesystem
-            mount: product_images_filesystem
+            mount: product_images
         restaurant_images:
             adapter: restaurant_images
             alias: restaurant_images_filesystem
-            mount: restaurant_images_filesystem
+            mount: restaurant_images
         store_images:
             adapter: store_images
             alias: store_images_filesystem
-            mount: store_images_filesystem
+            mount: store_images
         task_images:
             adapter: task_images
             alias: task_images_filesystem
-            mount: task_images_filesystem
+            mount: task_images
         receipts:
             adapter: receipts
             alias: receipts_filesystem
-            mount: receipts_filesystem
+            mount: receipts
         task_imports:
             adapter: task_imports
             alias: task_imports_filesystem
-            mount: task_imports_filesystem
+            mount: task_imports
         product_imports:
             adapter: product_imports
             alias: product_imports_filesystem
-            mount: product_imports_filesystem
+            mount: product_imports
         delivery_imports:
             adapter: delivery_imports
             alias: delivery_imports_filesystem
-            mount: delivery_imports_filesystem
+            mount: delivery_imports
         nonprofits_images:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
-            mount: nonprofits_images_filesystem
+            mount: nonprofits_images
         edi_messages:
             adapter: edi_messages
             alias: edi_messages_filesystem
-            mount: edi_messages_filesystem
+            mount: edi_messages
+        incident_images:
+            adapter: incident_images
+            alias: incident_images_filesystem
+            mount: incident_images
 
 vich_uploader:
     db_driver: orm
@@ -543,7 +559,7 @@ vich_uploader:
     mappings:
         restaurant_image:
             uri_prefix: ''
-            upload_destination: restaurant_images_filesystem
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -552,7 +568,7 @@ vich_uploader:
                     dirs: 2
         restaurant_banner_image:
             uri_prefix: ''
-            upload_destination: restaurant_images_filesystem
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -561,7 +577,7 @@ vich_uploader:
                     dirs: 2
         store_image:
             uri_prefix: ''
-            upload_destination: store_images_filesystem
+            upload_destination: oneup_flysystem.store_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -570,7 +586,7 @@ vich_uploader:
                     dirs: 2
         task_image:
             uri_prefix: ''
-            upload_destination: task_images_filesystem
+            upload_destination: oneup_flysystem.task_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -579,7 +595,16 @@ vich_uploader:
                     dirs: 2
         product_image:
             uri_prefix: ''
-            upload_destination: product_images_filesystem
+            upload_destination: oneup_flysystem.product_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        incident_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.incident_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -703,26 +728,31 @@ fos_js_routing:
         - restaurant_cart_address
         - restaurant_cart_clear_time
         - restaurant_modify_cart_item_quantity
+        - admin_deliveries
         - admin_delivery
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings
+        - admin_form
         - admin_metrics
+        - admin_order
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel
         - admin_order_delay
         - admin_order_fulfill
         - admin_restaurant
+        - admin_store
         - admin_restaurant_dashboard
         - admin_restaurant_image_from_url
         - admin_restaurant_stats
+        - admin_business_restaurant_group
         - admin_tags
         - admin_task_image_download
         - admin_task_list_create
-        - admin_task_list_modify
         - admin_task_receipt
         - admin_users_search
+        - admin_user_edit
         - order_continue
         - profile_jwt
         - profile_notifications
@@ -744,6 +774,30 @@ fos_js_routing:
         - order_set_guest_customer_email
         - api_orders_add_player_item
         - api_orders_create_invitation_item
+        - api_orders_validate_item
+        - api_incidents_add_comment_item
+        - api_incidents_action_item
+        - api_tasks_task_failure_reasons_item
+        - api_incident_images_post_collection
+        - api_incidents_get_item
+        - api_incidents_get_collection
+        - api_tasks_get_task_context_item
+        - api_tasks_get_collection
+        - api_tours_get_collection
+        - api_task_lists_v2_collection
+        - api_task_lists_set_items_item
+        - admin_incident
+        - api_stores_get_item
+        - api_restaurants_get_item
+        - api_stores_delete_item
+        - api_restaurants_delete_item
+        - api_delivery_forms_delete_item
+        - api_pricing_rule_sets_delete_item
+        - api_pricing_rule_sets_applications_item
+        - api_package_sets_delete_item
+        - api_package_sets_applications_item
+        - api_time_slots_delete_item
+        - admin_transporter_message
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
@@ -896,6 +950,22 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        incident_image_thumbnail:
+            data_loader: incident_images
+            filters:
+                upscale:
+                    min: [ 768, 768 ]
+                thumbnail:
+                    size: [ 768, 768 ]
+                    mode: outbound
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
@@ -917,6 +987,9 @@ liip_imagine:
         assets:
             flysystem:
                 filesystem_service: oneup_flysystem.assets_filesystem
+        incident_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.incident_images_filesystem
 
 oneup_uploader:
     mappings:

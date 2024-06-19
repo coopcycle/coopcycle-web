@@ -142,7 +142,8 @@ const MapProvider = (props) => {
   React.useEffect(() => {
 
     const LMap = MapHelper.init('map', {
-      onLoad: props.onLoad
+      onLoad: props.onLoad,
+      polygonManagement: true,
     })
 
     const proxy = new MapProxy(LMap, {
@@ -166,9 +167,6 @@ const MapProvider = (props) => {
         }
       },
       onTaskMouseOut: (task) => {
-        if (task.isAssigned) {
-          proxy.hidePolyline(task.assignedTo)
-        }
         toTask.current = null
         proxy.disableConnect(task)
       },

@@ -10,8 +10,6 @@ class EDIFACTMessage
 {
     use Timestampable;
 
-    const TRANSPORTER_DBSCHENKER = 'DBSCHENKER';
-
     const DIRECTION_INBOUND = 'INBOUND';
     const DIRECTION_OUTBOUND = 'OUTBOUND';
 
@@ -28,11 +26,13 @@ class EDIFACTMessage
 
     private string $messageType;
 
-    private ?string $subMessageType;
+    private ?string $subMessageType = null;
 
-    private string $edifactFile;
+    private ?string $edifactFile = null;
 
-    private ?\DateTime $syncedAt;
+    private ?array $metadata = null;
+
+    private ?\DateTime $syncedAt = null;
 
     private $tasks;
 
@@ -106,7 +106,7 @@ class EDIFACTMessage
         return $this;
     }
 
-    public function getEdiMessage(): string
+    public function getEdiMessage(): ?string
     {
         return $this->edifactFile;
     }
@@ -115,6 +115,45 @@ class EDIFACTMessage
     {
         $this->edifactFile = $file;
         return $this;
+    }
+
+    public function getMetadata(): ?array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(?array $metadata): EDIFACTMessage
+    {
+        $this->metadata = $metadata;
+        return $this;
+    }
+
+    /**
+     * @param array<string> $pods
+     */
+    public function setPods(array $pods): EDIFACTMessage
+    {
+        if (!is_array($pods)) {
+            $this->metadata = [];
+        }
+        $this->metadata['pods'] = $pods;
+        return $this;
+    }
+
+    public function getPods(): array
+    {
+        return $this->metadata['pods'] ?? [];
+    }
+
+    public function setAppointment(\DateTime $appointment): EDIFACTMessage
+    {
+        $this->metadata['appointment'] = $appointment->format(\DateTime::ISO8601);
+        return $this;
+    }
+
+    public function getAppointment(): ?\DateTime
+    {
+        return isset($this->metadata['appointment']) ? new \DateTime($this->metadata['appointment']) : null;
     }
 
     public function getSyncedAt(): ?\DateTime

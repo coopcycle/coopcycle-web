@@ -20,7 +20,7 @@ class FailureReason
     /**
      * @Groups({"task"})
      */
-    protected $metadata = [];
+    protected array $metadata = [];
 
     protected $failureReasonSet;
 

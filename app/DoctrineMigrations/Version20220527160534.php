@@ -25,9 +25,9 @@ final class Version20220527160534 extends AbstractMigration
         (
             'SELECT restaurant_id, mercadopago_account_id FROM restaurant_mercadopago_account'
         );
-        $restaurantMPAccounts->execute();
+        $result = $restaurantMPAccounts->execute();
 
-        while ($restaurantMPAccount = $restaurantMPAccounts->fetch())
+        while ($restaurantMPAccount = $result->fetchAssociative())
         {
             $this->addSql('UPDATE mercadopago_account SET restaurant_id=:restaurant_id WHERE id=:mercadopago_account_id', [
                 'restaurant_id' => $restaurantMPAccount['restaurant_id'],
@@ -58,9 +58,9 @@ final class Version20220527160534 extends AbstractMigration
         (
             'SELECT id, restaurant_id FROM mercadopago_account WHERE restaurant_id IS NOT NULL'
         );
-        $mpAccounts->execute();
+        $result = $mpAccounts->execute();
 
-        while ($mpAccount = $mpAccounts->fetch())
+        while ($mpAccount = $result->fetchAssociative())
         {
             $this->addSql('INSERT INTO restaurant_mercadopago_account
                 (restaurant_id, mercadopago_account_id) VALUES

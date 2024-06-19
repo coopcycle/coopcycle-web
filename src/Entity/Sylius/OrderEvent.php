@@ -9,8 +9,8 @@ class OrderEvent
     private $id;
     private $order;
     private $type;
-    private $data = [];
-    private $metadata = [];
+    private array $data = [];
+    private array $metadata = [];
     private $createdAt;
 
     public function __construct(

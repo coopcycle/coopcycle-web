@@ -2,12 +2,13 @@ import React from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
-import {Item, Menu, Submenu, useContextMenu} from 'react-contexify'
+import {Item, Menu, Submenu, Separator, useContextMenu} from 'react-contexify'
 
 import moment from 'moment'
 
 import {
   cancelTasks,
+  createTaskList,
   modifyTaskList,
   moveTasksToNextDay,
   moveTasksToNextWorkingDay,
@@ -17,17 +18,19 @@ import {
   openCreateDeliveryModal,
   openCreateGroupModal,
   openCreateTourModal,
+  openReportIncidentModal,
   openTaskRescheduleModal,
   removeTasksFromGroup,
   restoreTasks,
   setCurrentTask,
+  startTasks,
   unassignTasks
 } from '../../redux/actions'
 import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
-import { selectAllTasks, selectTaskIdToTourIdMap, selectTasksListsWithItems } from '../../../../shared/src/logistics/redux/selectors'
+import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, taskListSelectors } from '../../../../shared/src/logistics/redux/selectors'
 import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
@@ -40,6 +43,7 @@ export const MOVE_TO_TOP = 'MOVE_TO_TOP'
 export const MOVE_TO_BOTTOM = 'MOVE_TO_BOTTOM'
 export const MOVE_TO_NEXT_DAY_MULTI = 'MOVE_TO_NEXT_DAY_MULTI'
 export const MOVE_TO_NEXT_WORKING_DAY_MULTI = 'MOVE_TO_NEXT_WORKING_DAY_MULTI'
+export const START_TASKS_MULTI = 'START_TASKS_MULTI'
 export const CREATE_GROUP = 'CREATE_GROUP'
 export const ADD_TO_GROUP = 'ADD_TO_GROUP'
 export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
@@ -47,19 +51,31 @@ export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
+export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 
 const { hideAll } = useContextMenu({
   id: 'task-contextmenu',
 })
 
-function _assign(tasksToAssign, username, tasksLists,) {
-  const tasksList = _.find(tasksLists, tl => tl.username === username)
-  const newTasksList = [...tasksList.items, ...tasksToAssign]
-  return modifyTaskList(tasksList.username, newTasksList)
+const useAssignAction = function() {
+  const dispatch = useDispatch()
+  const date = useSelector(selectSelectedDate)
+  const taskLists = useSelector(taskListSelectors.selectAll)
+
+  return async function (username, tasksToAssign) {
+    let tasksList = taskLists.find(tl => tl.username)
+
+    if (!tasksList) {
+      tasksList= await dispatch(createTaskList(date, username))
+    }
+
+    const newTasksList = [...tasksList.items, ...tasksToAssign.map(t => t['@id'])]
+    return dispatch(modifyTaskList(tasksList.username, newTasksList))
+  }
 }
 
 function _unassign(tasksToUnassign, unassignTasks) {
-  const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo)
+  const tasksByUsername = _.groupBy(tasksToUnassign, task => task.assignedTo) // legacy : work with tasks selected from several riders, but we limited this case with isValidTasksMultiSelect
   _.forEach(tasksByUsername, (tasks, username) => unassignTasks(username, tasks))
 }
 
@@ -90,6 +106,8 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
     const isMultiple = selectedTasks.length > 1
 
     if (isMultiple) {
+
+      actions.push(START_TASKS_MULTI)
 
       if (tasksToUnassign.length > 0) {
         actions.push(UNASSIGN_MULTI)
@@ -137,10 +155,9 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       }
 
       actions.push(CANCEL_MULTI)
-
-      if (selectedTask.status === 'FAILED' || selectedTask.status === 'CANCELLED') {
-        actions.push(RESCHEDULE)
-      }
+      actions.push(START_TASKS_MULTI)
+      actions.push(RESCHEDULE)
+      actions.push(REPORT_INCIDENT)
 
     }
 
@@ -167,8 +184,6 @@ const DynamicMenu = () => {
   const unassignedTasks = useSelector(selectUnassignedTasks)
   const selectedTasks = useSelector(selectSelectedTasks)
   const allTasks = useSelector(selectAllTasks)
-
-  const tasksLists = useSelector(selectTasksListsWithItems)
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
   const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
@@ -177,9 +192,14 @@ const DynamicMenu = () => {
   const couriers = useSelector(selectCouriersWithExclude)
   const tasksListsLoading = useSelector(selectTaskListsLoading)
 
+  let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
+
+  const assign = useAssignAction()
+  const assignSelectedOrders = (username) => assign(username, selectedOrders)
+  const assignSelectedTasks = (username) => assign(username, selectedTasks)
+
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 
-  let selectedTasksWithLinkedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
   const dispatch = useDispatch()
 
@@ -226,7 +246,7 @@ const DynamicMenu = () => {
                 // hide manually menu and submenu
                 // https://github.com/fkhadra/react-contexify/issues/172
                 hideAll()
-                dispatch(_assign(selectedTasks, c.username, tasksLists))
+                assignSelectedTasks(c.username)
             }}>
               <Avatar username={c.username} />  {c.username}
             </Item>
@@ -240,18 +260,26 @@ const DynamicMenu = () => {
             // hide manually menu and submenu
             // https://github.com/fkhadra/react-contexify/issues/172
             hideAll()
-            dispatch(_assign(selectedTasksWithLinkedTasks, c.username, tasksLists))
+            assignSelectedOrders(c.username)
         }}>
             <Avatar username={c.username} />  {c.username}
           </Item>
       )}
       </Submenu>
+     <Separator />
       <Item
         hidden={ !actions.includes(CANCEL_MULTI) }
         onClick={ () => dispatch(cancelTasks(selectedTasks)) }
       >
         { t('ADMIN_DASHBOARD_CANCEL_TASKS_MULTI', { count: selectedTasks.length }) }
       </Item>
+      <Item
+        hidden={!actions.includes(START_TASKS_MULTI)}
+        onClick={() => dispatch(startTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
+      </Item>
+      <Separator />
       <Item
         hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
         onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
@@ -308,6 +336,12 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(openCreateTourModal()) }
       >
         { t('ADMIN_DASHBOARD_CREATE_TOUR') }
+      </Item>
+      <Item
+            hidden={ !actions.includes(REPORT_INCIDENT) }
+            onClick={ () => dispatch(openReportIncidentModal()) }
+          >
+            {t("ADMIN_DASHBOARD_REPORT_INCIDENT")}
       </Item>
       { selectedTasks.length > 0 && actions.length === 0 && (
         <Item disabled>

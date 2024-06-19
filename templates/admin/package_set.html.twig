@@ -13,11 +13,17 @@
 {% endblock %}
 
 {% block content %}
+{% set package_set = form.vars.value %}
+{% if package_set.id is not null %}
+  <div {{ react_component('ShowApplications', { 'objectId': package_set.id, fetchUrl: 'api_package_sets_applications_item' }) }}>
+    <span class="loader loader--dark"></span>
+  </div>
+{% endif %}
 {{ form_start(form) }}
   {{ form_widget(form) }}
-  <button type="submit" class="btn btn-block btn-primary">
-    {{ 'basics.save'|trans }}
-  </button>
+    <button type="submit" class="btn btn-block btn-primary">
+      {{ 'basics.save'|trans }}
+    </button>
 {{ form_end(form) }}
 {% endblock %}
 
@@ -35,4 +41,3 @@ $('#package_set_packages_add').on('click', function (e) {
 });
 </script>
 {% endblock %}
-

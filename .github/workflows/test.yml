@@ -11,6 +11,7 @@ jobs:
       matrix:
         php_version:
           - '8.1'
+          - '8.2'
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -68,6 +69,8 @@ jobs:
         run: docker-compose logs php
       - name: Create database
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
+      - name: Create typesense collections
+        run: docker-compose exec -T php bin/console typesense:create --env=test
       - name: Validate database schema
         run: docker-compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync
       - name: Run PHPUnit
@@ -76,28 +79,26 @@ jobs:
           docker-compose exec -T php vendor/bin/phpunit
       - name: Run Behat
         run: docker-compose exec -T php vendor/bin/behat -f progress
+      - name: Show Symfony logs on failure
+        if: ${{ failure() }}
+        run: docker-compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep CRITICAL
       - name: Run Jest
         run: docker-compose exec -T webpack npm run jest
   E2E:
-    if: false
-    name: Run End to End tests
+    name: Run end to end tests with cypress
     runs-on: ubuntu-latest
     env:
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_CONNECT_CLIENT_ID: ${{ secrets.STRIPE_CONNECT_CLIENT_ID }}
       AWS_ENDPOINT: ${{ secrets.AWS_ENDPOINT }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
-      ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
-      ALGOLIA_PLACES_ADDRESS_TEMPLATE: county
     steps:
       - uses: actions/checkout@v2
       - name: Create .env file
         run: cp .env.dist .env
-      # - name: Change APP_ENV
-      #   run: sed -i 's/APP_ENV=dev/APP_ENV=test/' .env
       - name: Pull Docker images
         run: docker-compose pull --ignore-pull-failures
       - name: Prepare OSRM data
@@ -119,43 +120,45 @@ jobs:
       - name: Create database
         run: docker-compose exec -T php bin/console doctrine:schema:create --env=test
       - name: Create typesense collections
-        run: docker-compose exec -T php bin/console typesense:collections:create test
+        run: docker-compose exec -T php bin/console typesense:create --env=test
       - name: Setup CoopCycle
         run: docker-compose exec -T php bin/console coopcycle:setup --env=test
       - name: Compile assets
-        run: until docker-compose exec -T webpack node_modules/.bin/encore dev; do sleep 5; done
+        run: docker-compose exec -T webpack node_modules/.bin/encore dev
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
           spec: |
-            cypress/integration/*.spec.js
-      # - name: Print logs
-      #   if: always()
-      #   run: cat var/logs/*.log
-      # - name: Upload screenshots
-      #   if: always()
-      #   run: |
-      #     python -m pip install --upgrade pip
-      #     pip install python-swiftclient python-keystoneclient
-      #     pip install awscli
-      #     tar czvf $GITHUB_SHA.tgz -C cypress/videos .
-      #     aws --endpoint=$AWS_ENDPOINT s3 cp $GITHUB_SHA.tgz s3://cypress/$GITHUB_SHA.tgz --acl private
+            cypress/e2e/**/*.cy.js
+        # after the test run completes store videos and any screenshots
+      - name: Upload images for failed tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
   COMPONENT:
-    if: false
-    name: Run Component tests
+    name: Run component tests with Cypress
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        country: [es]
+        country: [fr]
     env:
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
       COOPCYCLE_COUNTRY: ${{ matrix.country }}
       COOPCYCLE_LOCALE: ${{ matrix.country }}
-      ALGOLIA_PLACES_APP_ID: ${{ secrets.ALGOLIA_PLACES_APP_ID }}
-      ALGOLIA_PLACES_API_KEY: ${{ secrets.ALGOLIA_PLACES_API_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: Run Cypress
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v6
         with:
-          spec: cypress/component/address-autosuggest.spec.js
-          config: baseUrl=https://demo.coopcycle.org
+          component: true
+          spec: cypress/component/**/*.cy.js
+      - name: Upload images for failed tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`

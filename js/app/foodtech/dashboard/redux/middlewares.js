@@ -9,11 +9,13 @@ import {
   orderCancelled,
   orderFulfilled,
   orderDelayed,
+  orderStateChanged,
   ORDER_DELAYED,
   ORDER_CREATED,
   initHttpClient,
   INIT_HTTP_CLIENT,
   refreshTokenSuccess,
+  COLUMN_TOGGLED,
 } from './actions'
 
 import createHttpClient from '../../../client'
@@ -30,7 +32,7 @@ export const socketIO = ({ dispatch, getState }) => {
 
     const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
 
-    centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+    centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
     centrifuge.setToken(token)
     centrifuge.subscribe(`${namespace}_events#${username}`, message => {
       const { event } = message.data
@@ -39,6 +41,16 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'order:created':
           dispatch(orderCreated(event.data.order))
           break
+        case 'order:state_changed': {
+          // used 'order:state_changed' event only for new statuses for now,
+          // but it can be used for some other statuses as well
+          if (event.data.order.state === 'started') {
+            dispatch(orderStateChanged(event.data.order))
+          } else if (event.data.order.state === 'ready') {
+            dispatch(orderStateChanged(event.data.order))
+          }
+          break
+        }
         case 'order:accepted':
           dispatch(orderAccepted(event.data.order))
           break
@@ -188,4 +200,18 @@ export const httpClient = ({ dispatch, getState }) => {
 
     return next(action)
   }
+}
+
+export const persistPreferences = ({ getState }) => (next) => (action) => {
+
+  const result = next(action)
+
+  let state
+  if (action.type === COLUMN_TOGGLED) {
+    state = getState()
+
+    window.localStorage.setItem("cpccl__fdtch_dshbd__cllpsd_clmns", JSON.stringify(state.preferences.collapsedColumns))
+  }
+
+  return result
 }
