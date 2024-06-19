@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.9.3] - 2024-06-19
 
+### Fixed
+
 * Fix right-click assign in dispatch (was assigning to the first rider of the planning)
 
 ## [2.9.2] - 2024-06-19
