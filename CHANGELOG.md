@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.9.4] - 2024-06-20
+
+### Changed
+
+* Improve search results in the dispatch panel by @Atala in https://github.com/coopcycle/coopcycle-web/issues/4369
+
+
 ## [2.9.3] - 2024-06-19
 
 ### Fixed
