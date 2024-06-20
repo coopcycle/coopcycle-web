@@ -197,25 +197,14 @@ export const selectHiddenTaskIds = createSelector(
   }
 )
 
+
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  keys: [{
-    name: 'id',
-    weight: 0.6
-  }, {
-    name: 'tags.slug',
-    weight: 0.1
-  }, {
-    name: 'address.name',
-    weight: 0.1
-  }, {
-    name: 'address.streetAddress',
-    weight: 0.1
-  }, {
-    name: 'comments',
-    weight: 0.1
-  }]
+  threshold: 0.3,
+  minMatchCharLength: 3,
+  ignoreLocation: true,
+  keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']
 }
 
 export const selectFuseSearch = createSelector(

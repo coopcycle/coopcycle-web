@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { Input } from 'antd'
 
 import { toggleSearch } from '../redux/actions'
-import { selectFuseSearch } from '../redux/selectors'
+import { selectFuseSearch, selectSearchIsOn } from '../redux/selectors'
 
 import Task from './Task'
 
@@ -110,7 +110,7 @@ function mapStateToProps(state) {
 
   return {
     fuse: selectFuseSearch(state),
-    searchIsOn: state.searchIsOn
+    searchIsOn: selectSearchIsOn(state)
   }
 }
 
