@@ -37,7 +37,6 @@ export const CREATE_TASK_SUCCESS = 'CREATE_TASK_SUCCESS'
 export const CREATE_TASK_FAILURE = 'CREATE_TASK_FAILURE'
 export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
-export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE'
 
 export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
@@ -439,9 +438,6 @@ export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
 }
 
-export function tokenRefreshSuccess(token) {
-  return { type: TOKEN_REFRESH_SUCCESS, token }
-}
 
 export function openFiltersModal() {
   return { type: OPEN_FILTERS_MODAL }
