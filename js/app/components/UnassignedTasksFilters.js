@@ -2,11 +2,11 @@ import React from 'react'
 
 import { setFilterValue } from '../dashboard/redux/actions'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../dashboard/redux/selectors'
+import { selectAllTags, selectFiltersSetting, selectTagsSelectOptions } from '../dashboard/redux/selectors'
 import IncludeExcludeMultiSelect from './IncludeExcludeMultiSelect'
 import { findTagFromSlug } from '../dashboard/utils'
 import { useTranslation } from 'react-i18next'
-import { selectAllOrganizations } from '../../shared/src/logistics/redux/selectors'
+import { selectOrganizationsLoading, selectOrganizationsSelectOptions } from '../../shared/src/logistics/redux/selectors'
 import { Tooltip } from 'antd'
 
 
@@ -15,12 +15,11 @@ export default () => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
 
-  const allTags = useSelector(selectAllTags),
-    allOrganizations = useSelector(selectAllOrganizations),
-    organizationsLoading = useSelector(selectOrganizationsLoading),
-    tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}}),
-    organizationOptions = allOrganizations.length > 0 ? allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}) : [{value: '', label: `${t('ADMIN_DASHBOARD_LOADING_ORGS')}`, isDisabled: true}],
-    options = Array.prototype.concat(organizationOptions, tagOptions)
+  const allTags = useSelector(selectAllTags)
+  const tagOptions = useSelector(selectTagsSelectOptions)
+  const organizationsLoading = useSelector(selectOrganizationsLoading)
+  const organizationOptions = useSelector(selectOrganizationsSelectOptions)
+  const options = Array.prototype.concat(organizationOptions, tagOptions)
 
   const onChange = (selected) => {
     // dispatch action

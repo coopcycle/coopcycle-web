@@ -4,10 +4,10 @@ import chroma from 'chroma-js'
 
 import IncludeExcludeMultiSelect from '../../components/IncludeExcludeMultiSelect'
 
-import { selectAllTags, selectFiltersSetting, selectOrganizationsLoading } from '../redux/selectors'
+import { selectAllTags, selectFiltersSetting, selectTagsSelectOptions } from '../redux/selectors'
 import { findTagFromSlug } from '../utils'
 import { useTranslation } from 'react-i18next'
-import { selectAllOrganizations } from '../../../shared/src/logistics/redux/selectors'
+import { selectOrganizationsLoading, selectOrganizationsSelectOptions } from '../../../shared/src/logistics/redux/selectors'
 
 
 const styles = {
@@ -56,14 +56,13 @@ const styles = {
 
 export default ({setFieldValue}) => {
 
-  const allTags = useSelector(selectAllTags)
   const { t } = useTranslation()
   const { tags, excludedTags, includedOrgs, excludedOrgs } = useSelector(selectFiltersSetting)
 
-  const tagOptions = allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
-  const allOrganizations = useSelector(selectAllOrganizations)
+  const allTags = useSelector(selectAllTags)
+  const tagOptions = useSelector(selectTagsSelectOptions)
   const organizationsLoading = useSelector(selectOrganizationsLoading)
-  const organizationOptions = allOrganizations.length > 0 ? allOrganizations.map(val => {return {...val, label: val.name, value: val.name}}) : [{value: '', label: `${t('ADMIN_DASHBOARD_LOADING_ORGS')}`, isDisabled: true}]
+  const organizationOptions = useSelector(selectOrganizationsSelectOptions)
 
   const initOptions = Array.prototype.concat(tagOptions, organizationOptions)
 

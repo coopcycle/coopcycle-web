@@ -3,17 +3,20 @@ import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedItemsIds } from './taskListUtils';
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter } from './adapters'
+import i18next from 'i18next';
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
 export const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 const organizationSelectors = organizationAdapter.getSelectors((state) => state.logistics.entities.organizations)
+export const selectAllOrganizations = organizationSelectors.selectAll
+
+export const selectOrganizationsLoading = state => state.logistics.ui.organizationsLoading
 
 export const selectSelectedDate = state => state.logistics.date
 
 export const selectAllTasks = taskSelectors.selectAll
 
-export const selectAllOrganizations = organizationSelectors.selectAll
 
 const selectTaskId = (state, taskId) => taskId
 
@@ -127,3 +130,15 @@ export const selectTaskIdToTourIdMap = createSelector(
   })
   return taskIdToTourIdMap
 })
+
+export const selectOrganizationsSelectOptions = createSelector(
+  selectAllOrganizations,
+  selectOrganizationsLoading,
+  (allOrganizations, isOrganizationsLoading) => {
+    if (!isOrganizationsLoading) {
+      return allOrganizations.map(val => {return {...val, label: val.name, value: val.name}})
+    } else {
+      return [{value: '', label: `${i18next.t('ADMIN_DASHBOARD_LOADING_ORGS')}`, isDisabled: true}]
+    }
+  }
+)
