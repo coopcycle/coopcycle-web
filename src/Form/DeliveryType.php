@@ -113,6 +113,7 @@ class DeliveryType extends AbstractType
                     'with_packages_required' => null !== $store ? $store->isPackagesRequired() : true,
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
+                    'with_position' => true,
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -150,6 +151,28 @@ class DeliveryType extends AbstractType
                     'required' => false,
                 ]);
             }
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+
+            $data = $event->getData();
+            $form = $event->getForm();
+
+            $tasks = $data['tasks'];
+
+            $reordered = [];
+
+            foreach ($tasks as $task) {
+                if (isset($task['position']) && is_numeric($task['position'])) {
+                    $reordered[(int) $task['position']] = $task;
+                } else {
+                    $reordered[] = $task;
+                }
+            }
+
+            $data['tasks'] = $reordered;
+
+            $event->setData($data);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
