@@ -438,7 +438,6 @@ export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
 }
 
-
 export function openFiltersModal() {
   return { type: OPEN_FILTERS_MODAL }
 }
