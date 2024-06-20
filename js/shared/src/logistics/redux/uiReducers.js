@@ -1,4 +1,3 @@
-import { loadOrganizationsSuccess } from '../../../../app/dashboard/redux/actions';
 import {
   CREATE_TASK_LIST_FAILURE,
   CREATE_TASK_LIST_REQUEST,
@@ -35,11 +34,6 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isTourDragging: action.payload,
-      }
-    case loadOrganizationsSuccess.type:
-      return {
-        ...state,
-        organizationsLoading: false,
       }
 
     default:
