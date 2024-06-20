@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
@@ -24,9 +24,10 @@ import {
   restoreTasks,
   setCurrentTask,
   startTasks,
+  toggleTourPanelExpanded,
   unassignTasks
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -177,13 +178,24 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
   return actions
 }
 
+function usePrevious(old) {
+  let ref = useRef()
+
+  useEffect(() => {
+    ref.current = old
+  }, [old])
+
+  return ref.current
+}
+
 const DynamicMenu = () => {
 
   const { t } = useTranslation()
 
-  const unassignedTasks = useSelector(selectUnassignedTasks)
-  const selectedTasks = useSelector(selectSelectedTasks)
   const allTasks = useSelector(selectAllTasks)
+  const selectedTasks = useSelector(selectSelectedTasks)
+  const unassignedTasks = useSelector(selectUnassignedTasks)
+
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
   const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
@@ -191,6 +203,10 @@ const DynamicMenu = () => {
   const isValidMultiselect = isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)
   const couriers = useSelector(selectCouriersWithExclude)
   const tasksListsLoading = useSelector(selectTaskListsLoading)
+
+  // selectors to handle the showing of selected tasks
+  const previouslySelectedTasks = usePrevious(selectedTasks || [])
+  const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
 
   let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
@@ -200,8 +216,23 @@ const DynamicMenu = () => {
 
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 
-
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    const newSelectedTasks = _.differenceBy(selectedTasks, previouslySelectedTasks, '@id')
+
+    if (newSelectedTasks.length > 0) {
+      const taskToShow = newSelectedTasks[0]
+
+      // if task is in a closed tour, open the tour
+      if (taskIdToTourIdMap.has(taskToShow['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap[taskToShow['@id']])) {
+        console.log(expandedTourPanelsIds)
+        dispatch(toggleTourPanelExpanded(taskIdToTourIdMap.get(taskToShow['@id'])))
+      }
+
+      requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+    }
+  }, [selectedTasks])
 
   const tasksToUnassign =
   _.filter(selectedTasks, selectedTask =>
