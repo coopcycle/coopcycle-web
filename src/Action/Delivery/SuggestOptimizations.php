@@ -38,6 +38,8 @@ class SuggestOptimizations
             $id = ($i + 1);
             $registry[$id] = $task;
 
+            Task::fixTimeWindow($task);
+
             $problem->addJob(Task::toVroomJob($task, id: $id));
         }
 
