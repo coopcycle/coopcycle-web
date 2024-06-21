@@ -9,10 +9,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 final class OptimizationSuggestion
 {
     /**
-     * @var string
+     * @var array
      * @Groups({"optimization_suggestions"})
      */
-    public string $gain;
+    public array $gain;
 
     /**
      * @var array

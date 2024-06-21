@@ -76,8 +76,13 @@ class SuggestOptimizations
         if ($distance < $data->getDistance()) {
 
             $suggestion = new OptimizationSuggestion();
-            $suggestion->gain = 'distance';
+
+            $suggestion->gain = [
+                'type' => 'distance',
+                'amount' => $data->getDistance() - $distance,
+            ];
             $suggestion->order = $optimizedOrder;
+
 
             $output->suggestions[] = $suggestion;
         }

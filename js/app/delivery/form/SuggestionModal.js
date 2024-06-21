@@ -1,9 +1,14 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { connect } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import { Timeline } from 'antd'
 
-const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks }) => {
+const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks, suggestedGain }) => {
+
+  console.log(suggestedGain)
+
+  const { t } = useTranslation()
 
   return (
     <Modal
@@ -11,9 +16,11 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
       shouldCloseOnOverlayClick={ false }
       className="ReactModal__Content--optimization-suggestions"
       overlayClassName="ReactModal__Overlay--optimization-suggestions">
-      <p>We have found a more optimized route for your delivery.</p>
+      <p>{ t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE') }</p>
+      <p>{ t('DELIVERY_OPTIMIZATION_SUGGESTION_GAIN', { distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km' }) }</p>
       <div className="d-flex my-4 border-bottom">
         <div className="w-50 mr-3">
+          <strong className="mb-4 d-block">{ t('DELIVERY_OPTIMIZATION_SUGGESTION_CURRENT') }</strong>
           <Timeline>
             { tasks.map((task, index) =>
               <Timeline.Item key={ `current-order-${index}` }>{ task.address?.streetAddress }</Timeline.Item>
@@ -21,6 +28,7 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
           </Timeline>
         </div>
         <div className="w-50">
+          <strong className="mb-4 d-block">{ t('DELIVERY_OPTIMIZATION_SUGGESTION_SUGGESTED') }</strong>
           <Timeline>
             { suggestedTasks.map((task, index) =>
               <Timeline.Item key={ `suggested-order-${index}` }>{ task.address?.streetAddress }</Timeline.Item>
@@ -29,10 +37,14 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
         </div>
       </div>
       <div className="d-flex justify-content-between align-items-center">
-        <span>Apply the optimized route?</span>
+        <span>{ t('DELIVERY_OPTIMIZATION_SUGGESTION_CONFIRM') }</span>
         <div>
-          <button className="btn btn-primary mr-1" type="button" onClick={ onClickYes }>Yes</button>
-          <button className="btn btn-default" type="button" onClick={ onClickNo }>No</button>
+          <button className="btn btn-primary mr-1" type="button" onClick={ onClickYes }>
+            { t('DELIVERY_OPTIMIZATION_SUGGESTION_YES') }
+          </button>
+          <button className="btn btn-default" type="button" onClick={ onClickNo }>
+            { t('DELIVERY_OPTIMIZATION_SUGGESTION_NO') }
+          </button>
         </div>
       </div>
     </Modal>
@@ -42,6 +54,7 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
 function mapStateToProps(state) {
 
   const suggestedOrder = state.suggestions.length > 0 ? state.suggestions[0].order : []
+  const suggestedGain = state.suggestions.length > 0 ? state.suggestions[0].gain : {}
 
   const suggestedTasks = []
   suggestedOrder.forEach((oldIndex, newIndex) => {
@@ -51,6 +64,7 @@ function mapStateToProps(state) {
   return {
     tasks: state.tasks,
     suggestedTasks,
+    suggestedGain,
     isOpen: suggestedTasks.length > 0 && state.showSuggestions,
   }
 }
