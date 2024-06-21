@@ -6,8 +6,6 @@ import { Timeline } from 'antd'
 
 const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks, suggestedGain }) => {
 
-  console.log(suggestedGain)
-
   const { t } = useTranslation()
 
   return (
