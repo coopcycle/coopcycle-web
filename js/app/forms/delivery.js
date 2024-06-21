@@ -472,21 +472,25 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const deleteBtn = taskEl.querySelector('[data-delete="task"]')
 
   if (deleteBtn) {
-    if (taskIndex === 1) {
-      // No delete button for the 1rst dropoff,
-      // we want at least one dropoff
-      deleteBtn.remove()
-    } else {
-      deleteBtn.addEventListener('click', (e) => {
-        e.preventDefault()
-        taskEl.remove()
-        store.dispatch({
-          type: 'REMOVE_DROPOFF',
-          taskIndex,
-        })
-        collectionHolder.dataset.index--
-      })
+
+    // We want at least one dropoff
+    if (collectionHolder.children.length === 2) {
+      document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
     }
+
+    deleteBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      taskEl.remove()
+      store.dispatch({
+        type: 'REMOVE_DROPOFF',
+        taskIndex,
+      })
+      // We want at least one dropoff
+      if (collectionHolder.children.length === 2) {
+        document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+      }
+      collectionHolder.dataset.index--
+    })
   }
 
   const packages = document.querySelector(`#${name}_${taskForm}_packages`)
@@ -624,6 +628,10 @@ export default function(name, options) {
         initSubForm(name, item, null, !!el.dataset.userAdmin)
 
         collectionHolder.dataset.index++
+
+        if (collectionHolder.children.length > 2) {
+          document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.remove('d-none'))
+        }
       })
     }
   }
