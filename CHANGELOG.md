@@ -16,30 +16,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-* Fix right-click assign in dispatch (was assigning to the first rider of the planning)
+* **Fix right-click assign in dispatch (was assigning to the first rider of the planning):** An error in how assignation was working for right-click, now fixed.
 
 ## [2.9.2] - 2024-06-19
 
 ### Changed
 
-* Support multi points in time based pricing functions by @alexsegura in #4422
+* **Support multi points in time based pricing functions by @alexsegura in #4422:** Now we can use the rules "dropoff/pickup time range length" in pricing rules that are activated for multiple-dropoff orders.
 
 ## [2.9.0] - 2024-06-18
 
 ### Fixed
 
-* Fix The ‘Close restaurant for a day’ button closes restaurant for 2 days https://github.com/coopcycle/coopcycle-app/issues/1734
-* Fix A customer can create an order for a disabled (deactivated) restaurant (this fix is only for web orders for now) https://github.com/coopcycle/coopcycle/issues/55
-* Fix Order is created with a preparation scheduled in the past (this fix is only for web orders for now) https://github.com/coopcycle/coopcycle/issues/56
-* Potential Fix for assignment bug when dispatching on two different tabs on two different days (reported by Naofood) by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4433
-* Fix crash when setting "use avatar color" to Yes by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4435
+* **Fix The ‘Close restaurant for a day’ button closes restaurant for 2 days https://github.com/coopcycle/coopcycle-app/issues/1734:** Now when a restaurant uses the "off" button in the CoopCycle app it will only close them until end of that day, reopening the next day automatically
+* **Fix A customer can create an order for a disabled (deactivated) restaurant (this fix is only for web orders for now) https://github.com/coopcycle/coopcycle/issues/55:** Customers could find disabled restaurants and order even though they were closed, but not anymore!
+* **Fix Order is created with a preparation scheduled in the past (this fix is only for web orders for now) https://github.com/coopcycle/coopcycle/issues/56:** We had an issue with incorrect calculations about time ranges for food deliveries that is now fixed.
+* P**otential Fix for assignment bug when dispatching on two different tabs on two different days (reported by Naofood) by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4433:** Since orders can come in for tomorrow, dispatchers had multiple tabs open in food tech. This created problems for the notification system, which we believe we have now fixed. 
+* **Fix crash when setting "use avatar color" to Yes by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4435:** Just a random crash bug
 
 ## [2.8.2] - 2024-06-12
 
 ### Changed
 
-- Allow massively starting tasks | Right click on multiple tasks will have a "start tasks" option. This will be used to inform transporters that we have received correctly the packages to delivery today and alert them if some have not arrived. 
-- Revamp view of EDIFACT messages | Added more information to timeline below the bar code in an order detail page
+- **Allow massively starting tasks:**  Want your last mile provider or local shop to know you have recieved a package or a whole pallet of packages? Right click on multiple tasks now has a "start tasks" option that will inform EDIFACT connected last mile providers that you have correctly recieved these packages, and show an order as started for a shop in their panel.
+- **Revamp view of EDIFACT messages:**  Added more information to timeline below the bar code in an order detail page to add information requested by last mile providers in France
 
 ## [2.8.1] - 2024-06-11
 
