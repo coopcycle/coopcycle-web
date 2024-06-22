@@ -43,7 +43,7 @@ doctrine:
             pool: doctrine.result_cache_pool
 
 monolog:
-    channels: [ 'checkout', 'push_notification' ] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+    channels: [ 'checkout', 'push_notification', 'real_time_message' ] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
         main:
             type: fingers_crossed
@@ -107,6 +107,13 @@ monolog:
             formatter: monolog.formatter.json
             max_files: 7
             channels: [ push_notification ]
+        real_time_message:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/real_time_message.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [ real_time_message ]
         stripe:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
