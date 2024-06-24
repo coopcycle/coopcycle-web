@@ -178,7 +178,8 @@ html, body {
     }
   }
 
-  .accordion__button {
+  .task-list__header {
+    cursor: pointer;
     padding: 1em 0.5em;
     display: flex;
     justify-content: space-between;

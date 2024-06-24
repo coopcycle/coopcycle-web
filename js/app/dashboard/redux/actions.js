@@ -8,7 +8,7 @@ import {
   createTaskListSuccess,
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
+import { selectExpandedTaskListPanelsIds, selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
@@ -115,7 +115,6 @@ export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
-export const TOGGLE_TOUR_PANEL_EXPANDED = 'TOGGLE_EXPANDED_TOUR_PANEL'
 export const TOGGLE_TOUR_LOADING = 'TOGGLE_TOUR_LOADING'
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
@@ -134,6 +133,20 @@ export const startTaskFailure = createAction('START_TASK_FAILURE')
 
 export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
 
+export const toggleTourPanelExpanded = createAction('TOGGLE_TOUR_PANEL_EXPANDED')
+export const toggleTaskListPanelExpanded = createAction('TASKLIST_PANEL_EXPANDED')
+
+export const openTaskTaskList = function(task) {
+  return function(dispatch, getState) {
+    if (task.isAssigned) {
+      const taskList = selectTaskListByUsername(getState(), {username: task.assignedTo})
+      const expandedTaskListPanelsIds = selectExpandedTaskListPanelsIds(getState())
+      if (!expandedTaskListPanelsIds.includes(taskList['@id'])) {
+        dispatch(toggleTaskListPanelExpanded(taskList['@id']))
+      }
+    }
+  }
+}
 
 /**
  * This action assign a task after another when you linked the two markers on the map
@@ -1427,9 +1440,6 @@ export function modifyTourRequestError(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
 }
 
-export function toggleTourPanelExpanded(tourId) {
-  return { type: TOGGLE_TOUR_PANEL_EXPANDED, tourId}
-}
 
 export function toggleTourLoading(tourId) {
   /*
