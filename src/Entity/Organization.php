@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
@@ -22,6 +23,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Organization
 {
+    use SoftDeleteable;
+
     private $id;
 
     /**
