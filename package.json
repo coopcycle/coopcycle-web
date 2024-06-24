@@ -8,7 +8,8 @@
     "sdk:watch": "webpack --config webpack.sdk.config.js --watch",
     "sdk:build": "webpack --config webpack.sdk.config.js --mode production",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "dev": "encore dev"
   },
   "repository": {
     "type": "git",
