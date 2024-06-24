@@ -77,6 +77,11 @@ export function createClient(dispatch) {
   client.paginatedRequest = async (requestConfig) => {
       const firstResp = await client.request(requestConfig)
       const data = [firstResp.data['hydra:member']]
+      console.debug(firstResp.data)
+      if (!Object.hasOwn(firstResp.data, 'hydra:view')) {
+        return data
+      }
+
       const maxPageUrl = new URL(firstResp.data['hydra:view']['hydra:last'], baseURL)
       const maxPage = parseInt(maxPageUrl.searchParams.get('page'))
 
