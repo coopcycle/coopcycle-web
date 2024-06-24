@@ -146,6 +146,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
     logistics: {
       ui: {
         expandedTourPanelsIds: expandedToursIds,
+        expandedTaskListPanelsIds: [],
         loadingTourPanelsIds: [],
         unassignedTasksIdsOrder: [],
         unassignedToursOrGroupsOrderIds: [],

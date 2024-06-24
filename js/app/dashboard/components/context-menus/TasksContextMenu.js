@@ -20,6 +20,7 @@ import {
   openCreateTourModal,
   openReportIncidentModal,
   openTaskRescheduleModal,
+  openTaskTaskList,
   removeTasksFromGroup,
   restoreTasks,
   setCurrentTask,
@@ -225,9 +226,13 @@ const DynamicMenu = () => {
       const taskToShow = newSelectedTasks[0]
 
       // if task is in a closed tour, open the tour
-      if (taskIdToTourIdMap.has(taskToShow['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap[taskToShow['@id']])) {
-        console.log(expandedTourPanelsIds)
+      if (taskIdToTourIdMap.has(taskToShow['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap.get(taskToShow['@id']))) {
         dispatch(toggleTourPanelExpanded(taskIdToTourIdMap.get(taskToShow['@id'])))
+      }
+
+      // if task is in a tasklist
+      if (taskToShow.isAssigned) {
+        dispatch(openTaskTaskList(taskToShow))
       }
 
       requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())

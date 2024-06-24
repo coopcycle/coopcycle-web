@@ -6,19 +6,13 @@ import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
-import {
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from 'react-accessible-accordion'
 import classNames from 'classnames'
 
 import Task from './Task'
 
 import Avatar from '../../components/Avatar'
-import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter } from '../redux/actions'
-import { selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
+import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded } from '../redux/actions'
+import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
@@ -128,6 +122,9 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
     return _.includes(visibleTaskIds, task['@id'])
   })
 
+  const expandedTaskListPanelsIds = useSelector(selectExpandedTaskListPanelsIds)
+  const isExpanded = expandedTaskListPanelsIds.includes(taskList['@id'])
+
   const polylineEnabled = useSelector(selectPolylineEnabledByUsername(username))
 
   const { t } = useTranslation()
@@ -147,9 +144,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
 
   return (
-    <AccordionItem>
-      <AccordionItemHeading>
-        <AccordionItemButton>
+    <div>
+      <div className="task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
           <span>
             <Avatar username={ username } size="24" />
             <small className="text-monospace ml-2">
@@ -191,9 +187,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
               <i className="fa fa-lg fa-times"></i>
             </a>
           </Popconfirm>
-        </AccordionItemButton>
-      </AccordionItemHeading>
-      <AccordionItemPanel>
+      </div>
+      <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})}>
         { tasks.length > 0 && (
           <div className="d-flex justify-content-between align-items-center p-4">
             <div>
@@ -253,8 +248,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
             </div>
           )}
         </Droppable>
-      </AccordionItemPanel>
-    </AccordionItem>
+      </div>
+    </div>
   )
 }
 
