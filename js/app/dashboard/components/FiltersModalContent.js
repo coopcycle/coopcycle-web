@@ -366,12 +366,16 @@ function mapStateToProps(state) {
     timeRange,
     tags,
     excludedTags,
+    includedOrgs,
+    excludedOrgs,
     onlyFilter,
   } = selectFiltersSetting(state);
 
   return {
     tags: selectAllTags(state),
     excludedTags,
+    includedOrgs,
+    excludedOrgs,
     showFinishedTasks,
     showCancelledTasks,
     showIncidentReportedTasks,
