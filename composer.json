@@ -92,7 +92,7 @@
         "drupal/core-vendor-hardening": "9.2.x-dev",
         "league/flysystem-aws-s3-v3": "^3.0",
         "sylius/resource-bundle": "^1.7.1",
-        "kreait/firebase-bundle": "^2.2",
+        "kreait/firebase-bundle": "^5.3",
         "phpdocumentor/reflection-docblock": "^5.1",
         "sylius/customer-bundle": "^1.6",
         "mailjet/mailjet-apiv3-php": "^1.4",
