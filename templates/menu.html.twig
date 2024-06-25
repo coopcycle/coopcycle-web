@@ -18,9 +18,9 @@
       <ul class="nav navbar-nav">
         {% if is_granted('ROLE_DISPATCHER') %}
         <li>
-          <a href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
-            <i class="fa fa-lg fa-lock"></i>
-          </a>
+            <a class="nav--to-dispatch" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
+              <i class="fa fa-lock"></i><span class="hidden-sm ml-2">{{ 'adminDashboard.title'|trans }}</span>
+            </a>
         </li>
         {% endif %}
         {% if coopcycle_has_about_us() %}
