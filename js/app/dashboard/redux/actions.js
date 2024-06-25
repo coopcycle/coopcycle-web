@@ -135,6 +135,7 @@ export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS
 
 export const toggleTourPanelExpanded = createAction('TOGGLE_TOUR_PANEL_EXPANDED')
 export const toggleTaskListPanelExpanded = createAction('TASKLIST_PANEL_EXPANDED')
+export const toggleTasksGroupPanelExpanded = createAction('TASKS_GROUP_PANEL_EXPANDED')
 
 export const openTaskTaskList = function(task) {
   return function(dispatch, getState) {
