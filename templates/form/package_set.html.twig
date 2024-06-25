@@ -10,17 +10,13 @@
 {% endblock %}
 
 {% block _package_set_packages_entry_row %}
-  <div class="row package-entry">
-    <div class="col-sm-5">
+  <div class="row">
+    <div class="col-sm-6">
       {{ form_row(form.name) }}
     </div>
-    <div class="col-sm-5">
+    <div class="col-sm-6">
       {{ form_row(form.volumeUnits) }}
-    </div>
-    <div class="col-sm-2">
-      <a class="text-danger" style="position: relative; top: 30px;">
-        <i class="fa fa-trash delete-package-entry"></i>
-      </a>
     </div>
   </div>
 {% endblock %}
+
