@@ -11,10 +11,9 @@ import './form.scss'
 
 let map
 let polylineLayerGroup
+let markersLayerGroup
 let form
 let pricePreview
-
-let markers = []
 
 JsBarcode('.barcode').init();
 
@@ -56,37 +55,12 @@ function createMarker(location, index, addressType) {
 
   const { icon, color } = markerIcons[addressType]
 
-  removeMarker(index)
-
   const marker = MapHelper.createMarker({
     lat: location.latitude,
     lng: location.longitude
   }, icon, 'marker', color)
 
-  marker.addTo(map)
-
-  markers.splice(index, 0, marker)
-
-  MapHelper.fitToLayers(map, _.filter(markers))
-}
-
-function removeMarker(index) {
-
-  if (!map) {
-    return
-  }
-
-  const marker = markers[index]
-
-  if (!marker) {
-    return
-  }
-
-  marker.removeFrom(map)
-
-  markers.splice(index, 1)
-
-  MapHelper.fitToLayers(map, _.filter(markers))
+  marker.addTo(markersLayerGroup)
 }
 
 function serializeAddress(address) {
@@ -113,6 +87,9 @@ if (document.getElementById('map')) {
   map = MapHelper.init('map')
   polylineLayerGroup = new L.LayerGroup()
   polylineLayerGroup.addTo(map)
+
+  markersLayerGroup = new L.LayerGroup()
+  markersLayerGroup.addTo(map)
 }
 
 form = new DeliveryForm('delivery', {
@@ -125,19 +102,20 @@ form = new DeliveryForm('delivery', {
         }, index, task.type.toLowerCase())
       }
     })
+    MapHelper.fitToLayers(map, markersLayerGroup.getLayers())
   },
   onChange: function(delivery) {
 
+    markersLayerGroup.clearLayers()
     delivery.tasks.forEach((task, index) => {
       if (task.address) {
         createMarker({
           latitude: task.address.geo.latitude,
           longitude: task.address.geo.longitude
         }, index, task.type.toLowerCase())
-      } else {
-        removeMarker(index)
       }
     })
+    MapHelper.fitToLayers(map, markersLayerGroup.getLayers())
 
     if (isValid(delivery)) {
 

@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { Input } from 'antd'
 
 import { toggleSearch } from '../redux/actions'
-import { selectFuseSearch } from '../redux/selectors'
+import { selectFuseSearch, selectSearchIsOn } from '../redux/selectors'
 
 import Task from './Task'
 
@@ -60,7 +60,7 @@ class SearchPanel extends React.Component {
 
     return (
       <div className={ classNames.join(' ') }>
-        <h4>
+        <h4 className="dashboard__panel__header">
           <span>{ this.props.t('ADMIN_DASHBOARD_SEARCH') }</span>
           <span className="pull-right">
             <a href="#" onClick={ e => {
@@ -110,7 +110,7 @@ function mapStateToProps(state) {
 
   return {
     fuse: selectFuseSearch(state),
-    searchIsOn: state.searchIsOn
+    searchIsOn: selectSearchIsOn(state)
   }
 }
 

@@ -10,8 +10,8 @@ jobs:
     strategy:
       matrix:
         php_version:
-          - '8.1'
           - '8.2'
+          - '8.3'
       fail-fast: false
     steps:
       - uses: actions/checkout@v2
@@ -123,11 +123,13 @@ jobs:
         run: docker-compose exec -T php bin/console typesense:create --env=test
       - name: Setup CoopCycle
         run: docker-compose exec -T php bin/console coopcycle:setup --env=test
-      - name: Compile assets
-        run: docker-compose exec -T webpack node_modules/.bin/encore dev
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
+          # Maybe we could run a build step before starting tests
+          # https://symfony.com/doc/current/frontend/encore/installation.html
+          # https://github.com/cypress-io/github-action?tab=readme-ov-file#build-app
+          # build: npm run dev
           spec: |
             cypress/e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots

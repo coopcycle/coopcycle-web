@@ -41,6 +41,7 @@ export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
 export const selectSearchIsOn = state => state.searchIsOn
 export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
+export const selectAllTags = state => state.config.tags
 
 export const getProductNameById = id => store => {
   return store.dashboard.dashboards.filter(({ Id }) => Id === id)[0]
@@ -197,25 +198,14 @@ export const selectHiddenTaskIds = createSelector(
   }
 )
 
+
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  keys: [{
-    name: 'id',
-    weight: 0.6
-  }, {
-    name: 'tags.slug',
-    weight: 0.1
-  }, {
-    name: 'address.name',
-    weight: 0.1
-  }, {
-    name: 'address.streetAddress',
-    weight: 0.1
-  }, {
-    name: 'comments',
-    weight: 0.1
-  }]
+  threshold: 0.3,
+  minMatchCharLength: 3,
+  ignoreLocation: true,
+  keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']
 }
 
 export const selectFuseSearch = createSelector(
@@ -334,4 +324,9 @@ export const selectLinkedTasksIds = createSelector(
     const groups = taskUtils.groupLinkedTasks(tasks)
     return Object.keys(groups)
   }
+)
+
+export const selectTagsSelectOptions = createSelector(
+  selectAllTags,
+  (allTags) => allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
 )

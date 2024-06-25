@@ -72,13 +72,13 @@ class RouteOptimizer
         $items = $taskCollection->getItems();
         $iriConverter = $this->iriConverter;
 
-        $res = array_filter( // eliminate NULL results as in the case of delivery with split pickup/dropoffs
+        $res = array_filter( // eliminate NULL results as in the case of delivery with pickup/dropoffs assigned to different riders
             array_map(
                 function($desc) use ($iriConverter, $items) {
                     $res = $items->filter(function($item) use ($desc, $iriConverter) {
                         return $item->getItemIri($iriConverter) == $desc;
                     });
-                    if (count($res) > 0) { // FIXME : handle the case were we optimized a delivery which pickup and dropoff has been separated
+                    if (count($res) > 0) { // FIXME : handle the case were we optimized a delivery which pickup and dropoff has been assigned to different riders
                         return $res->current();
                     }
                 },

@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import axios from 'axios'
 import moment from 'moment'
 
 import { taskComparator, isInDateRange, withoutItemsIRIs } from './utils'
@@ -12,80 +11,7 @@ import {
 import { selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
-
-
-function createClient(dispatch) {
-
-  const client = axios.create({
-    baseURL: location.protocol + '//' + location.host
-  })
-
-  let subscribers = []
-  let isRefreshingToken = false
-
-  function onTokenFetched(token) {
-    subscribers.forEach(callback => callback(token))
-    subscribers = []
-  }
-
-  function addSubscriber(callback) {
-    subscribers.push(callback)
-  }
-
-  function refreshToken() {
-    return new Promise((resolve) => {
-      // TODO Check response is OK, reject promise
-      $.getJSON(window.Routing.generate('profile_jwt')).then(result => resolve(result.jwt))
-    })
-  }
-
-  // @see https://gist.github.com/Godofbrowser/bf118322301af3fc334437c683887c5f
-  // @see https://www.techynovice.com/setting-up-JWT-token-refresh-mechanism-with-axios/
-  client.interceptors.response.use(
-    response => response,
-    error => {
-
-      if (error.response && error.response.status === 401) {
-
-        try {
-
-          const req = error.config
-
-          const retry = new Promise(resolve => {
-            addSubscriber(token => {
-              req.headers['Authorization'] = `Bearer ${token}`
-              resolve(axios(req))
-            })
-          })
-
-          if (!isRefreshingToken) {
-
-            isRefreshingToken = true
-
-            refreshToken()
-              .then(token => {
-                dispatch(tokenRefreshSuccess(token))
-                return token
-              })
-              .then(token => onTokenFetched(token))
-              .catch(error => Promise.reject(error))
-              .finally(() => {
-                isRefreshingToken = false
-              })
-          }
-
-          return retry
-        } catch (e) {
-          return Promise.reject(e)
-        }
-      }
-
-      return Promise.reject(error)
-    }
-  )
-
-  return client
-}
+import { createClient } from '../utils/client'
 
 export const UPDATE_TASK = 'UPDATE_TASK'
 export const OPEN_ADD_USER = 'OPEN_ADD_USER'
@@ -111,7 +37,6 @@ export const CREATE_TASK_SUCCESS = 'CREATE_TASK_SUCCESS'
 export const CREATE_TASK_FAILURE = 'CREATE_TASK_FAILURE'
 export const COMPLETE_TASK_FAILURE = 'COMPLETE_TASK_FAILURE'
 export const CANCEL_TASK_FAILURE = 'CANCEL_TASK_FAILURE'
-export const TOKEN_REFRESH_SUCCESS = 'TOKEN_REFRESH_SUCCESS'
 export const RESTORE_TASK_FAILURE = 'RESTORE_TASK_FAILURE'
 
 export const OPEN_FILTERS_MODAL = 'OPEN_FILTERS_MODAL'
@@ -205,7 +130,10 @@ export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS'
 export const appendToUnassignedTours = createAction('APPEND_TO_UNASSIGNED_TOURS')
 export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS')
 
-export const startTaskFailure = createAction('START_TASK_FAILURE');
+export const startTaskFailure = createAction('START_TASK_FAILURE')
+
+export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
+
 
 /**
  * This action assign a task after another when you linked the two markers on the map
@@ -406,7 +334,7 @@ export function createTaskList(date, username) {
 
     let response
     try {
-      response =  await axios.post(url, {}, {
+      response =  await createClient(dispatch).post(url, {}, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/ld+json'
@@ -510,9 +438,6 @@ export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
 }
 
-export function tokenRefreshSuccess(token) {
-  return { type: TOKEN_REFRESH_SUCCESS, token }
-}
 
 export function openFiltersModal() {
   return { type: OPEN_FILTERS_MODAL }
@@ -1664,5 +1589,26 @@ export function onlyFilter(filter) {
     dispatch(setFilterValue('onlyFilter', filter))
     dispatch(closeFiltersModal())
 
+  }
+}
+
+
+export function loadOrganizations() {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_organizations_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadOrganizationsSuccess(data))
   }
 }
