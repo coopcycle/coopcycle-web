@@ -225,15 +225,16 @@ const DynamicMenu = () => {
     if (newSelectedTasks.length > 0) {
       const taskToShow = newSelectedTasks[0]
 
-      // if task is in a closed tour, open the tour
-      if (taskIdToTourIdMap.has(taskToShow['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap.get(taskToShow['@id']))) {
-        dispatch(toggleTourPanelExpanded(taskIdToTourIdMap.get(taskToShow['@id'])))
-      }
+      newSelectedTasks.forEach(task => {
+        // if task is in a closed tour, open the tour
+        if (taskIdToTourIdMap.has(task['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap.get(task['@id']))) {
+          dispatch(toggleTourPanelExpanded(taskIdToTourIdMap.get(task['@id'])))
+        }
 
-      // if task is in a tasklist
-      if (taskToShow.isAssigned) {
-        dispatch(openTaskTaskList(taskToShow))
-      }
+        if (task.isAssigned) {
+          dispatch(openTaskTaskList(task))
+        }
+      })
 
       requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
     }
