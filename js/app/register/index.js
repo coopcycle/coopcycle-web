@@ -98,8 +98,11 @@ const checkEmail = _.debounce(function() {
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')
 
-  let errorEl =
-    formGroup.querySelector('.help-block')
+  const errorEl = document.getElementById('existing_user_error')
+
+  if (errorEl) {
+    errorEl.classList.add('hidden')
+  }
 
   let feedbackEl =
     formGroup.querySelector('.form-control-feedback')
@@ -119,27 +122,19 @@ const checkEmail = _.debounce(function() {
     feedbackEl.classList.remove('fa-spinner', 'fa-spin')
 
     if (result.exists) {
-      if (!errorEl) {
-        errorEl = document.createElement('span')
-        errorEl.classList.add('help-block')
+      if (errorEl) {
+        errorEl.classList.remove('hidden')
+      }
 
-        const errorSpan = document.createElement('span')
-        errorSpan.classList.add('glyphicon', 'glyphicon-exclamation-sign', 'mr-1')
+      const usernameEl = document.querySelector('[name="_username"]')
 
-        errorEl.appendChild(errorSpan)
-
-        const text = document.createTextNode(result.errorMessage)
-        errorEl.appendChild(text)
-
-        formGroup.insertBefore(errorEl, formGroup.querySelector('.help-block'))
+      if (usernameEl) {
+        usernameEl.value = emailInput.value
       }
     }
 
-    errorEl.classList.remove('d-block', 'd-none')
-
     formGroup.classList.add(result.exists ? 'has-error' : 'has-success')
     feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
-    errorEl.classList.add(result.exists ? 'd-block' : 'd-none')
   })
 
 }, 500)
