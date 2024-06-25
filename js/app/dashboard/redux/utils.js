@@ -102,14 +102,41 @@ export const isTaskVisible = (task, filters, date) => {
     alwayShowUnassignedTasks,
     tags,
     excludedTags,
+    includedOrgs,
+    excludedOrgs,
     hiddenCouriers,
     timeRange,
     onlyFilter,
+    unassignedTasksFilters
   } = filters
 
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
   const isIncidentReported = task.hasIncidents
+  /**
+   * Action to move task to top or bottom of tasklist
+   * @param {Object} task - Task
+   * @param {string[]} tags - List of tag slugs
+   */
+  const isTaskInTags = (task, tags) => {
+    if (task.tags.length === 0) {
+      return false
+    }
+
+    if (_.intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length === 0) {
+      return false
+    }
+
+    return true
+  }
+  /**
+   * Action to move task to top or bottom of tasklist
+   * @param {Object} task - Task
+   * @param {string[]} orgNames - Names of the orgs
+   */
+  const isTaskInOrgs = (task, orgNames) => {
+    return orgNames.includes(task.orgName)
+  }
 
   if (onlyFilter !== null) {
     switch (onlyFilter) {
@@ -122,11 +149,8 @@ export const isTaskVisible = (task, filters, date) => {
     }
   }
 
-  if (alwayShowUnassignedTasks && !task.isAssigned) {
-    if (!showCancelledTasks && isCancelled) {
-      return false
-    }
-    return true
+  if (!showCancelledTasks && isCancelled) {
+    return false
   }
 
   if (!showFinishedTasks && isFinished) {
@@ -141,26 +165,42 @@ export const isTaskVisible = (task, filters, date) => {
     return false
   }
 
-  if (tags.length > 0) {
+  if (!task.isAssigned) {
+    if (alwayShowUnassignedTasks) {
+      return true
+    }
 
-    if (task.tags.length === 0) {
+    if (unassignedTasksFilters.includedTags.length > 0 && !isTaskInTags(task, unassignedTasksFilters.includedTags)) {
       return false
     }
 
-    if (_.intersectionWith(task.tags, tags, (tag, slug) => tag.slug === slug).length === 0) {
+    if (unassignedTasksFilters.includedOrgs.length > 0 && !isTaskInOrgs(task, unassignedTasksFilters.includedOrgs)) {
+      return false
+    }
+
+    if (unassignedTasksFilters.excludedTags.length > 0 && isTaskInTags(task, unassignedTasksFilters.excludedTags)) {
+      return false
+    }
+
+    if (unassignedTasksFilters.excludedOrgs.length > 0 && isTaskInOrgs(task, unassignedTasksFilters.excludedOrgs)) {
       return false
     }
   }
 
-  if (excludedTags && excludedTags.length > 0) {
+  if (tags.length > 0 && !isTaskInTags(task, tags)) {
+    return false
+  }
 
-    if (task.tags.length === 0) {
-      return true
-    }
+  if (includedOrgs.length > 0 && !isTaskInOrgs(task, includedOrgs)) {
+    return false
+  }
 
-    if (_.intersectionWith(task.tags, excludedTags, (tag, slug) => tag.slug === slug).length > 0) {
-      return false
-    }
+  if (excludedTags.length > 0 && isTaskInTags(task, excludedTags)) {
+    return false
+  }
+
+  if (excludedOrgs.length > 0 && isTaskInOrgs(task, excludedOrgs)) {
+    return false
   }
 
   if (hiddenCouriers.length > 0) {

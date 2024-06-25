@@ -80,7 +80,8 @@ html, body {
   &__panel {
     display: flex;
     flex-direction: column;
-    > h4 {
+
+    .dashboard__panel__header {
       padding: 15px;
       margin: 0;
       background-color: $dark-gray;
@@ -166,7 +167,7 @@ html, body {
     flex-direction: column;
 
     min-width: 275px;
-    font-size: 11px;
+    font-size: 12px;
 
     overflow: hidden;
 
@@ -197,6 +198,10 @@ html, body {
     border-size: 2px;
     margin: 4px; // so it is easier to drag tasks between tours in the dashboard panel
   }
+}
+
+.dashboard__multi-value__label {
+  font-size: 100%;
 }
 
 

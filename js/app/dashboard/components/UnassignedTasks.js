@@ -13,6 +13,7 @@ import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurre
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks, selectUnassignedTasksLoading } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
+import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
 
 const StandaloneTasks =  ({tasks, offset}) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
@@ -111,12 +112,17 @@ export const UnassignedTasks = () => {
 
   return (
     <div className="dashboard__panel">
-      <h4 className="d-flex justify-content-between">
-        <span>{ t('DASHBOARD_UNASSIGNED') }</span>
-        <span>
-          <Buttons />
-        </span>
-      </h4>
+      <div className="dashboard__panel__header">
+        <h4>
+          <span>{ t('DASHBOARD_UNASSIGNED') }</span>
+          <span className="pull-right">
+            <Buttons />
+          </span>
+        </h4>
+        <div>
+          <UnassignedTasksFilters />
+        </div>
+      </div>
       <div
         className="dashboard__panel__scroll"
         style={{ opacity: unassignedTasksLoading ? 0.7 : 1, pointerEvents: unassignedTasksLoading ? 'none' : 'initial' }}

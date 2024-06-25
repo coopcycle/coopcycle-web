@@ -40,7 +40,7 @@ const CollapsedUnassignedTours = ({ unassignedToursCount, splitCollapseAction })
   return <>
     { splitDirection == "vertical" ?
       (<div className="dashboard__panel">
-        <h4 className="d-flex justify-content-between">
+        <h4 className="dashboard__panel__header d-flex justify-content-between">
           <a onClick={() => splitCollapseAction()}>
             <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
             <span className="mr-2">({ unassignedToursCount })</span>
@@ -49,7 +49,7 @@ const CollapsedUnassignedTours = ({ unassignedToursCount, splitCollapseAction })
         </h4>
       </div>) :
       (<div className="dashboard__panel">
-          <h4 className="d-flex justify-content-center dashboard__panel__collapsed">
+          <h4 className="dashboard__panel__header d-flex justify-content-center dashboard__panel__collapsed">
             <a onClick={() => splitCollapseAction()}>
               <Tooltip title={ t('DASHBOARD_UNASSIGNED_TOURS') }>
                 <span>({ unassignedToursCount })</span><br />
@@ -96,7 +96,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
 
   return (
     <div className="dashboard__panel">
-      <h4 className="d-flex justify-content-between">
+      <h4 className="dashboard__panel__header d-flex justify-content-between">
         <a onClick={() => splitCollapseAction()}>
             <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
             <span className="mr-2">({ tours.length + groups.length })</span>

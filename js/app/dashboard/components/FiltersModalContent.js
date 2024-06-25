@@ -5,7 +5,6 @@ import { withTranslation } from "react-i18next";
 import { Form, Slider, Switch } from "antd";
 import { Formik } from "formik";
 
-import TagsSelect from "../../components/TagsSelect";
 import Avatar from "../../components/Avatar";
 import {
   closeFiltersModal,
@@ -13,11 +12,13 @@ import {
   onlyFilter,
 } from "../redux/actions";
 import {
+  selectAllTags,
   selectBookedUsernames,
   selectFiltersSetting,
 } from "../redux/selectors";
 
 import "antd/lib/grid/style/index.css";
+import OrganizationsOrTagsSelect from "./OrganizationsOrTagsSelect";
 
 function isHidden(hiddenCouriers, username) {
   return !!_.find(hiddenCouriers, (u) => u === username);
@@ -68,6 +69,8 @@ class FiltersModalContent extends React.Component {
     );
     this.props.setFilterValue("tags", values.tags);
     this.props.setFilterValue("excludedTags", values.excludedTags);
+    this.props.setFilterValue("includedOrgs", values.includedOrgs);
+    this.props.setFilterValue("excludedOrgs", values.excludedOrgs);
     this.props.setFilterValue("hiddenCouriers", values.hiddenCouriers);
     this.props.setFilterValue("timeRange", values.timeRange);
 
@@ -118,7 +121,7 @@ class FiltersModalContent extends React.Component {
                   role="tab"
                   data-toggle="tab"
                 >
-                  {this.props.t("ADMIN_DASHBOARD_FILTERS_TAB_TAGS")}
+                  {this.props.t("ADMIN_DASHBOARD_FILTERS_TAB_TAGS_AND_ORGS")}
                 </a>
               </li>
               <li role="presentation">
@@ -282,34 +285,9 @@ class FiltersModalContent extends React.Component {
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_tags">
                 <div className="dashboard__modal-filters__tabpane">
-                  <label>
-                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAGS_TO_SELECT') }
-                  </label>
-                  <TagsSelect
-                    tags={this.props.tags}
-                    defaultValue={this.props.selectedTags}
-                    onChange={(tags) =>
-                      setFieldValue(
-                        "tags",
-                        _.map(tags, (tag) => tag.slug),
-                      )
-                    }
+                  <OrganizationsOrTagsSelect
+                    setFieldValue={setFieldValue}
                   />
-                  <hr />
-                  <label>
-                    { this.props.t('ADMIN_DASHBOARD_FILTERS_TAGS_TO_HIDE') }
-                  </label>
-                  <TagsSelect
-                    tags={this.props.tags}
-                    defaultValue={this.props.excludedTags}
-                    onChange={(tags) =>
-                      setFieldValue(
-                        "excludedTags",
-                        _.map(tags, (tag) => tag.slug),
-                      )
-                    }
-                  />
-                  <hr />
                 </div>
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_couriers">
@@ -388,12 +366,16 @@ function mapStateToProps(state) {
     timeRange,
     tags,
     excludedTags,
+    includedOrgs,
+    excludedOrgs,
     onlyFilter,
   } = selectFiltersSetting(state);
 
   return {
-    tags: state.config.tags,
+    tags: selectAllTags(state),
     excludedTags,
+    includedOrgs,
+    excludedOrgs,
     showFinishedTasks,
     showCancelledTasks,
     showIncidentReportedTasks,
