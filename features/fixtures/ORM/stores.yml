@@ -129,3 +129,14 @@ AppBundle\Entity\Store:
     timeSlot: '@time_slot_1'
     __calls:
       - addAddress: [ "@address_2" ]
+  store_6:
+    name: 'Acme 6'
+    address: "@address_2"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_4'
+    timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
+      - '@time_slot_2'
+    __calls:
+      - addAddress: [ "@address_2" ]

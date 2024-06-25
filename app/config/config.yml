@@ -361,11 +361,12 @@ api_platform:
     messenger:
         enabled: false
     formats:
-        jsonld: ['application/ld+json']
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
         csv: ['text/csv']
         html: ['text/html']
     patch_formats:
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
     swagger:
         versions: [3, 2]

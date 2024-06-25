@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Store\UpdateTimeSlots;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
@@ -56,8 +57,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "security"="is_granted('ROLE_ADMIN')"
  *     },
  *     "patch"={
- *      "method"="PATCH",
- *      "security"="is_granted('ROLE_ADMIN')"
+ *       "method"="PATCH",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   subresourceOperations={
@@ -528,9 +529,10 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         }, $this->timeSlots->toArray());
     }
 
-
-    public function setTimeSlots(array $ts): void {
-        die("s");
+    public function setTimeSlots($timeSlots): void
+    {
+        // die("s");
+        /*
         $store_ts_array = array_map(function (TimeSlot $t, $index) {
             $sts = new StoreTimeSlot();
             $sts->setTimeSlot($t);
@@ -539,11 +541,25 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
             return $sts;
         }, $ts);
         $this->timeSlots = $store_ts_array;
+        */
+
+        $this->timeSlots->clear();
+
+        foreach ($timeSlots as $index => $t) {
+
+            $sts = new StoreTimeSlot();
+            $sts->setTimeSlot($t);
+            $sts->setStore($this);
+            $sts->setPosition($index);
+
+            $this->timeSlots->add($sts);
+        }
     }
 
+    /*
     public function addTimeSlot(TimeSlot $timeSlot): void
     {
-        die("t");
+        // die("t");
         $sts = new StoreTimeSlot();
         $sts->setTimeSlot($timeSlot);
         $sts->setStore($this);
@@ -560,6 +576,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
         }
     }
+    */
 
 
 
