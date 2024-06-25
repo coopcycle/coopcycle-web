@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react'
 import { render } from 'react-dom'
-import { createRoot } from 'react-dom/client';
+import { createRoot } from 'react-dom/client'
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -19,9 +19,9 @@ import { checkTimeRange } from '../../utils/order/helpers'
 import { apiSlice } from '../../api/slice'
 
 class CreditCard {
- constructor(config) {
-   this.config = config;
- }
+  constructor(config) {
+    this.config = config
+  }
 }
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
@@ -31,7 +31,9 @@ export default function(form, options) {
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
 
   const orderErrorContainerEl = document.getElementById('order-error-container')
-  const orderErrorContainerRoot = orderErrorContainerEl ? createRoot(orderErrorContainerEl) : null
+  const orderErrorContainerRoot = orderErrorContainerEl
+    ? createRoot(orderErrorContainerEl)
+    : null
 
   function setLoading(isLoading) {
     if (isLoading) {
@@ -91,7 +93,6 @@ export default function(form, options) {
     })
 
     cc.init(form)
-
   }
 
   const handleCardPayment = (savedPaymentMethodId = null) => {
@@ -146,8 +147,7 @@ export default function(form, options) {
     }
   }
 
-  form.addEventListener('submit', async function(event) {
-
+  form.addEventListener('submit', async function (event) {
     event.preventDefault()
 
     setLoading(true)
@@ -159,9 +159,13 @@ export default function(form, options) {
 
       let violations = null
       try {
-        const { error } = await store.dispatch(apiSlice.endpoints.getOrderValidate.initiate(orderNodeId, { forceRefetch: true }))
+        const { error } = await store.dispatch(
+          apiSlice.endpoints.getOrderValidate.initiate(orderNodeId, {
+            subscribe: false,
+            forceRefetch: true,
+          }),
+        )
         violations = error?.data?.violations
-
       } catch (error) {
         // ignore the request error and continue without the validation
         setLoading(false)
@@ -172,9 +176,11 @@ export default function(form, options) {
         orderErrorContainerRoot.render(
           <StrictMode>
             <div className="alert alert-danger">
-              {violations.map((violation, index) => <p key={index}>{violation.message}</p>)}
+              {violations.map((violation, index) => (
+                <p key={index}>{violation.message}</p>
+              ))}
             </div>
-          </StrictMode>
+          </StrictMode>,
         )
         return
       }
@@ -185,7 +191,11 @@ export default function(form, options) {
       // if the customer has already selected the time range, it will be checked on the server side
       if (!shippingTimeRange && persistedTimeRange) {
         try {
-          await checkTimeRange(persistedTimeRange, store.getState, store.dispatch)
+          await checkTimeRange(
+            persistedTimeRange,
+            store.getState,
+            store.dispatch,
+          )
         } catch (error) {
           setLoading(false)
           return

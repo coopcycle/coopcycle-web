@@ -1,8 +1,6 @@
 import moment from 'moment/moment'
 import { apiSlice } from '../../api/slice'
-import {
-  openTimeRangeChangedModal,
-} from '../../components/order/timeRange/reduxSlice'
+import { openTimeRangeChangedModal } from '../../components/order/timeRange/reduxSlice'
 import { selectOrderNodeId } from '../../entities/order/reduxSlice'
 import { updateCartTiming } from '../../restaurant/redux/actions'
 
@@ -13,7 +11,8 @@ export function isTimeRangeSignificantlyDifferent(origRange, latestRange) {
   return latestLowerBound.diff(displayedUpperBound, 'hours') > 2
 }
 
-export const getTimingPathForStorage = (orderNodeId) => `cpccl__chckt__order__${ orderNodeId }__tmng`
+export const getTimingPathForStorage = orderNodeId =>
+  `cpccl__chckt__order__${orderNodeId}__tmng`
 
 export async function checkTimeRange(lastTimeRange, getState, dispatch) {
   if (!lastTimeRange) {
@@ -27,8 +26,11 @@ export async function checkTimeRange(lastTimeRange, getState, dispatch) {
 
   try {
     const result = await dispatch(
-      apiSlice.endpoints.getOrderTiming.initiate(orderNodeId,
-        { forceRefetch: true }))
+      apiSlice.endpoints.getOrderTiming.initiate(orderNodeId, {
+        subscribe: false,
+        forceRefetch: true,
+      }),
+    )
     latestTiming = result.data
   } catch (error) {
     // ignore the request error and continue without the timing check
@@ -54,6 +56,8 @@ export async function checkTimeRange(lastTimeRange, getState, dispatch) {
     throw new Error('Time range is not available')
   }
 
-  window.sessionStorage.setItem(getTimingPathForStorage(orderNodeId),
-    JSON.stringify(latestTiming.range))
+  window.sessionStorage.setItem(
+    getTimingPathForStorage(orderNodeId),
+    JSON.stringify(latestTiming.range),
+  )
 }
