@@ -118,7 +118,7 @@ export const UnassignedTasks = () => {
             <h4><span>{ t('DASHBOARD_UNASSIGNED') }</span></h4>
           </div>
           <div className="col-md-6 col-sm-12">
-            <h4 class="pull-right"><Buttons /></h4>
+            <h4 className="pull-right"><Buttons /></h4>
           </div>
         </div>
         <div>

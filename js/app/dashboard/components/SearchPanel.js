@@ -60,7 +60,7 @@ class SearchPanel extends React.Component {
 
     return (
       <div className={ classNames.join(' ') }>
-        <h4 class="dashboard__panel__header">
+        <h4 className="dashboard__panel__header">
           <span>{ this.props.t('ADMIN_DASHBOARD_SEARCH') }</span>
           <span className="pull-right">
             <a href="#" onClick={ e => {
