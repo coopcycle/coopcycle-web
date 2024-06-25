@@ -27,7 +27,6 @@ export async function checkTimeRange(lastTimeRange, getState, dispatch) {
   try {
     const result = await dispatch(
       apiSlice.endpoints.getOrderTiming.initiate(orderNodeId, {
-        subscribe: false,
         forceRefetch: true,
       }),
     )

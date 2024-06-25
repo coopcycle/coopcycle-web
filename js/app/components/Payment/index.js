@@ -161,7 +161,6 @@ export default function(form, options) {
       try {
         const { error } = await store.dispatch(
           apiSlice.endpoints.getOrderValidate.initiate(orderNodeId, {
-            subscribe: false,
             forceRefetch: true,
           }),
         )
