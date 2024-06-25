@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Entity\Delivery\PricingRule;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvent;
@@ -22,6 +23,11 @@ class PricingRuleType extends AbstractType
             ])
             ->add('position', HiddenType::class, [
                 'required' => false
+            ])
+            ->add('global', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.pricing_rule.global.label',
+                'help' => 'form.pricing_rule.global.help',
             ]);
 
         $builder->addEventListener(
