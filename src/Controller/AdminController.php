@@ -2364,8 +2364,24 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(PackageSetType::class, $packageSet);
 
+        $originalPackages = new ArrayCollection();
+
+        foreach ($packageSet->getPackages() as $package) {
+            $originalPackages->add($package);
+        }
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $packageSet = $form->getData();
+
+            foreach ($originalPackages as $originalPackage) {
+                if (!$packageSet->getPackages()->contains($originalPackage)) {
+                    $objectManager->remove($originalPackage);
+                    // $originalPackage->setPackageSet(null);
+                }
+            }
+
             $objectManager->persist($packageSet);
             $objectManager->flush();
 
@@ -2395,6 +2411,7 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
+
 
         if (!$packageSet) {
             throw $this->createNotFoundException(sprintf('Package set #%d does not exist', $id));

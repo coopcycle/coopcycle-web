@@ -18,6 +18,7 @@
   <div {{ react_component('ShowApplications', { 'objectId': package_set.id, fetchUrl: 'api_package_sets_applications_item' }) }}>
     <span class="loader loader--dark"></span>
   </div>
+  <hr />
 {% endif %}
 {{ form_start(form) }}
   {{ form_widget(form) }}
@@ -39,5 +40,12 @@ $('#package_set_packages_add').on('click', function (e) {
   var newElem = $(newWidget);
   newElem.appendTo($packagesList);
 });
+$('.delete-package-entry').on('click', function (e) {
+  var parent = $(e.target).closest('.package-entry')
+  var counter = $packagesList.data('widget-counter') || $packagesList.children().length;
+  counter--;
+  $packagesList.data('widget-counter', counter);
+  parent.remove();
+})
 </script>
 {% endblock %}
