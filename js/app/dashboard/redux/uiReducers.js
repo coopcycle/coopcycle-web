@@ -13,7 +13,8 @@ import {
   SET_TASK_LIST_GROUP_MODE,
   loadOrganizationsSuccess,
   toggleTourPanelExpanded,
-  toggleTaskListPanelExpanded
+  toggleTaskListPanelExpanded,
+  toggleTasksGroupPanelExpanded
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -58,6 +59,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         expandedTaskListPanelsIds: _.xor([...state.expandedTaskListPanelsIds], [action.payload])
+      }
+    case toggleTasksGroupPanelExpanded.type:
+      return {
+        ...state,
+        expandedTasksGroupPanelIds: _.xor([...state.expandedTasksGroupPanelIds], [action.payload])
       }
     case TOGGLE_TOUR_LOADING:
       return {

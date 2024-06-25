@@ -25,10 +25,11 @@ import {
   restoreTasks,
   setCurrentTask,
   startTasks,
+  toggleTasksGroupPanelExpanded,
   toggleTourPanelExpanded,
   unassignTasks
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -208,6 +209,7 @@ const DynamicMenu = () => {
   // selectors to handle the showing of selected tasks
   const previouslySelectedTasks = usePrevious(selectedTasks || [])
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
+  const expandedGroupPanelsIds = useSelector(selectExpandedTasksGroupsPanelsIds)
 
   let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
@@ -229,6 +231,10 @@ const DynamicMenu = () => {
         // if task is in a closed tour, open the tour
         if (taskIdToTourIdMap.has(task['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap.get(task['@id']))) {
           dispatch(toggleTourPanelExpanded(taskIdToTourIdMap.get(task['@id'])))
+        }
+
+        if (task.group && !task.isAssigned && !expandedGroupPanelsIds.includes(task.group['@id'])) {
+          dispatch(toggleTasksGroupPanelExpanded(task.group['@id']))
         }
 
         if (task.isAssigned) {

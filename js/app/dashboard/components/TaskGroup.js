@@ -1,10 +1,15 @@
 import React from 'react'
+import { connect } from "react-redux";
+
 import { withTranslation } from 'react-i18next'
 import Popconfirm from 'antd/lib/popconfirm'
 
 require('gasparesganga-jquery-loading-overlay')
 
 import Task from './Task'
+import { selectExpandedTasksGroupsPanelsIds } from '../redux/selectors'
+import { toggleTasksGroupPanelExpanded } from '../redux/actions'
+import classNames from 'classnames';
 
 class TaskGroup extends React.Component {
 
@@ -83,7 +88,10 @@ class TaskGroup extends React.Component {
   }
 
   render() {
-    const { tasks } = this.props
+    const { tasks, toggleTasksGroupPanelExpanded, expandedTasksGroupPanelIds } = this.props
+    const { group } = this.state
+
+    const isExpanded = expandedTasksGroupPanelIds.includes(group['@id'])
 
     tasks.sort((a, b) => {
       return a.id > b.id ? 1 : -1
@@ -97,7 +105,7 @@ class TaskGroup extends React.Component {
             {
               !this.state.editName &&
               <>
-                <a role="button" data-toggle="collapse" href={ `#task-group-panel-${this.state.group.id}` } className="ml-2 flex-grow-1 text-truncate">
+                <a role="button" onClick={() => toggleTasksGroupPanelExpanded(group['@id'])} href={ `#task-group-panel-${this.state.group.id}` } className="ml-2 flex-grow-1 text-truncate">
                   { this.state.group.name } <span className="badge">{ tasks.length }</span>
                 </a>
                 <i className="fa fa-arrows cursor--grabbing mr-2"></i>
@@ -125,7 +133,7 @@ class TaskGroup extends React.Component {
             { this.state.editName && this.renderEditNameForm() }
           </h4>
         </div>
-        <div id={ `task-group-panel-${this.state.group.id}` } className="panel-collapse collapse" role="tabpanel">
+        <div id={ `task-group-panel-${this.state.group.id}` } className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
           <ul className="list-group">
             { tasks.map((task) => {
               return (
@@ -143,4 +151,16 @@ class TaskGroup extends React.Component {
   }
 }
 
-export default withTranslation()(TaskGroup)
+function mapStateToProps(state) {
+  return {
+    expandedTasksGroupPanelIds: selectExpandedTasksGroupsPanelsIds(state)
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    toggleTasksGroupPanelExpanded: (groupId) => dispatch(toggleTasksGroupPanelExpanded(groupId)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(TaskGroup))
