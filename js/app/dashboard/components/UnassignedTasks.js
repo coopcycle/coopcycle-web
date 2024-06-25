@@ -113,12 +113,14 @@ export const UnassignedTasks = () => {
   return (
     <div className="dashboard__panel">
       <div className="dashboard__panel__header">
-        <h4>
-          <span>{ t('DASHBOARD_UNASSIGNED') }</span>
-          <span className="pull-right">
-            <Buttons />
-          </span>
-        </h4>
+        <div className="row">
+          <div className="col-md-6 col-sm-12">
+            <h4><span>{ t('DASHBOARD_UNASSIGNED') }</span></h4>
+          </div>
+          <div className="col-md-6 col-sm-12">
+            <h4 class="pull-right"><Buttons /></h4>
+          </div>
+        </div>
         <div>
           <UnassignedTasksFilters />
         </div>
