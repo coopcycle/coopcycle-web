@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f8076f1596ef13e8fd3c4262730b8cb0",
+    "content-hash": "85de49112206f7bcad8fe85b66ba9d46",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1071,25 +1071,25 @@
         },
         {
             "name": "centrifugal/phpcent",
-            "version": "3.1.1",
+            "version": "6.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/centrifugal/phpcent.git",
-                "reference": "3590d26ed2f59f5238f5f9e1842228d3d2aed5af"
+                "reference": "463e991ed7673fd8d1f07be98d806a10bab838da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/centrifugal/phpcent/zipball/3590d26ed2f59f5238f5f9e1842228d3d2aed5af",
-                "reference": "3590d26ed2f59f5238f5f9e1842228d3d2aed5af",
+                "url": "https://api.github.com/repos/centrifugal/phpcent/zipball/463e991ed7673fd8d1f07be98d806a10bab838da",
+                "reference": "463e991ed7673fd8d1f07be98d806a10bab838da",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
-                "php": ">=5.4.0"
+                "php": ">=7.0.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "5.*"
+                "phpunit/phpunit": "9.*"
             },
             "type": "library",
             "autoload": {
@@ -1111,9 +1111,15 @@
             ],
             "support": {
                 "issues": "https://github.com/centrifugal/phpcent/issues",
-                "source": "https://github.com/centrifugal/phpcent/tree/master"
+                "source": "https://github.com/centrifugal/phpcent/tree/v6.0.0"
             },
-            "time": "2020-08-07T18:26:02+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/centrifugal",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-06-20T04:50:37+00:00"
         },
         {
             "name": "clue/stream-filter",
@@ -23710,5 +23716,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
