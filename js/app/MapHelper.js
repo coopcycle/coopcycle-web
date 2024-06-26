@@ -28,6 +28,12 @@ function init(id, options = {}) {
     }
   }
 
+  // fix : reset map when running in strict mode, we render twice
+  var container = L.DomUtil.get('map');
+  if(container !== null){
+    container._leaflet_id = null;
+  }
+
   var map = L.map(id, { scrollWheelZoom: false, zoomControl })
 
   if (options.polygonManagement) {
