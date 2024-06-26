@@ -1,4 +1,4 @@
-import React, { StrictMode, createRef } from 'react'
+import React, { createRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
@@ -163,7 +163,6 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
   const root = createRoot(document.getElementById('dashboard'))
 
   root.render(
-    <StrictMode>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
           <ConfigProvider locale={antdLocale}>
@@ -202,7 +201,6 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
           </ConfigProvider>
         </I18nextProvider>
       </Provider>
-    </StrictMode>,
   )
 
   // hide export modal after button click

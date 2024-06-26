@@ -8,13 +8,14 @@ import { Draggable } from "@hello-pangea/dnd"
 
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectSettings, selectVisibleTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
 import OrderNumber from './OrderNumber'
-import { selectTaskById } from '../../../shared/src/logistics/redux/selectors'
+import { getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
+import { formatVolumeUnits, formatWeight } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
 
@@ -194,7 +195,7 @@ class Task extends React.Component {
       return <></>
     }
 
-    const { color, task, selected, isVisible, date } = this.props
+    const { color, task, selected, isVisible, date, showWeightAndVolumeUnit } = this.props
 
     const classNames = [
       'list-group-item',
@@ -253,6 +254,16 @@ class Task extends React.Component {
             before={ task.before }
             date={ date } />
           <TaskComments task={ task } />
+          { showWeightAndVolumeUnit ?
+            (
+              <div>
+                <span>{ formatWeight(task.weight) }</span>
+                <span className="mx-2">—</span>
+                <span>{ formatVolumeUnits(getTaskVolumeUnits(task)) }</span>
+              </div>
+            )
+            : null
+          }
         </span>
       </span>)
 
@@ -301,6 +312,8 @@ function mapStateToProps(state, ownProps) {
   const visibleTaskIds = selectVisibleTaskIds(state)
   const selectedTasks = state.selectedTasks
 
+  const { showWeightAndVolumeUnit } = selectSettings(state)
+
   return {
     task: task,
     selectedTasks: selectedTasks,
@@ -308,6 +321,7 @@ function mapStateToProps(state, ownProps) {
     color,
     date: selectSelectedDate(state),
     isVisible: _.includes(visibleTaskIds, task['@id']),
+    showWeightAndVolumeUnit: showWeightAndVolumeUnit
   }
 }
 

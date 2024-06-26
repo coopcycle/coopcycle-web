@@ -11,7 +11,7 @@ import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolum
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectSettings } from '../redux/selectors'
-import { formatDistance, formatDuration, formatWeight } from '../redux/utils'
+import { formatDistance, formatDuration, formatVolumeUnits, formatWeight } from '../redux/utils'
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -111,7 +111,7 @@ const Tour = ({ tourId, draggableIndex }) => {
   const durationFormatted = formatDuration(tour.duration)
   const distanceFormatted = formatDistance(tour.distance)
   const weightFormatted = formatWeight(useSelector(state => selectTourWeight(state, tourId)))
-  const volumeUnits = useSelector(state => selectTourVolumeUnits(state, tourId))
+  const volumeUnits = formatVolumeUnits(useSelector(state => selectTourVolumeUnits(state, tourId)))
 
   return (
     <Draggable key={ `tour:${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ draggableIndex }>

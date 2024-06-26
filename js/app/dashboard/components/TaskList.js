@@ -16,8 +16,8 @@ import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selec
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
-import { formatDistance, formatDuration, formatWeight } from '../redux/utils'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
+import { formatDistance, formatDuration, formatVolumeUnits, formatWeight } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
 
@@ -142,6 +142,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const durationFormatted = formatDuration(duration)
   const distanceFormatted = formatDistance(distance)
   const weightFormatted = formatWeight(useSelector(state => selectTaskListWeight(state, {username: username})))
+  const volumeUnits = formatVolumeUnits(useSelector(state => selectTaskListVolumeUnits(state, {username: username})))
 
   return (
     <div>
@@ -198,6 +199,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
                 <>
                   <span className="mx-2">—</span>
                   <span>{ weightFormatted }</span>
+                  <span className="mx-2">—</span>
+                  <span>{ volumeUnits }</span>
                 </>
               )
               : null
