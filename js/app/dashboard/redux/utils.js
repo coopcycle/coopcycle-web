@@ -280,3 +280,27 @@ export const isValidTasksMultiSelect = (selectedTasks, taskIdToTourIdMap) => {
 
   return (isAllAssignedToSameUserOrNotAssigned && isNoneInTour) || isAllInSameTour
 }
+
+/**
+ * @param {Integer} duration - duration in seconds
+ */
+export const formatDuration = (duration) => {
+  return moment.utc()
+    .startOf('day')
+    .add(duration, 'seconds')
+    .format('HH[h]mm[min]')
+}
+
+/**
+ * @param {Integer} distance - duration in meters
+ */
+export const formatDistance = (distance) => {
+  return (distance / 1000).toFixed(2) + ' Km'
+}
+
+/**
+ * @param {Integer} weight - weight in kg
+ */
+export const formatWeight = (weight) => {
+  return weight + ' kg'
+}

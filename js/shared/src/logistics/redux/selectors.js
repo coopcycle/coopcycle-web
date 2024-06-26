@@ -142,3 +142,27 @@ export const selectOrganizationsSelectOptions = createSelector(
     }
   }
 )
+
+export const selectTourWeight = createSelector(
+  selectTourById,
+  selectAllTasks,
+  (tour, allTasks) => tour.items.reduce(
+    (acc, taskId) => {
+      const task = allTasks.find(t => t['@id'] === taskId)
+      if (task.type === 'DROPOFF') {
+        return acc + task.weight
+      }
+      return acc
+    }, 0)
+)
+
+export const selectTaskListWeight = createSelector(
+  selectTaskListTasksByUsername,
+  (taskListTasks) => taskListTasks.reduce(
+    (acc, task) => {
+      if (task.type === 'DROPOFF') {
+        return acc + task.weight
+      }
+      return acc
+    }, 0)
+)

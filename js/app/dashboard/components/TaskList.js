@@ -12,11 +12,12 @@ import Task from './Task'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded } from '../redux/actions'
-import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
+import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectSettings, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername, selectTaskListTasksByUsername } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
+import { formatDistance, formatDuration, formatWeight } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
 
@@ -118,6 +119,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
+  const { showWeightAndVolumeUnit } = useSelector(selectSettings)
+
   const visibleTasks = tasks.filter(task => {
     return _.includes(visibleTaskIds, task['@id'])
   })
@@ -136,68 +139,74 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const cancelledTasks = _.filter(visibleTasks, t => t.status === 'CANCELLED')
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
-  const durationFormatted = moment.utc()
-    .startOf('day')
-    .add(duration, 'seconds')
-    .format('HH:mm')
-
-  const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
+  const durationFormatted = formatDuration(duration)
+  const distanceFormatted = formatDistance(distance)
+  const weightFormatted = formatWeight(useSelector(state => selectTaskListWeight(state, {username: username})))
 
   return (
     <div>
-      <div className="task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
-          <span>
-            <Avatar username={ username } size="24" />
-            <small className="text-monospace ml-2">
-              <strong className="mr-2">{ username }</strong>
-              <span className="text-muted">{ `(${tasks.length})` }</span>
-            </small>
-          </span>
-          { visibleTasks.length > 0 && (
-          <div style={{ width: '33.3333%' }}>
-            <ProgressBarMemo
-                completedTasks={ completedTasks.length }
-                tasks={ visibleTasks.length }
-                inProgressTasks={ inProgressTasks.length }
-                incidentReported={ incidentReported.length }
-                failureTasks={ failureTasks.length }
-                cancelledTasks={ cancelledTasks.length }
-                t={t.bind(this)}
-              />
+      <div className="pl-2 task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
+          <div>
+            <span>
+              <Avatar username={ username } size="24" />
+              <small className="text-monospace ml-2">
+                <strong className="mr-2">{ username }</strong>
+                <span className="text-muted">{ `(${tasks.length})` }</span>
+              </small>
+            </span>
+            { visibleTasks.length > 0 && (
+            <div style={{ width: '33.3333%' }}>
+              <ProgressBarMemo
+                  completedTasks={ completedTasks.length }
+                  tasks={ visibleTasks.length }
+                  inProgressTasks={ inProgressTasks.length }
+                  incidentReported={ incidentReported.length }
+                  failureTasks={ failureTasks.length }
+                  cancelledTasks={ cancelledTasks.length }
+                  t={t.bind(this)}
+                />
+            </div>
+            ) }
+            {incidentReported.length > 0 && <div onClick={(e) => {
+              dispatch(onlyFilter('showIncidentReportedTasks'))
+              e.stopPropagation()
+            }}>
+              <Tooltip title="Incident(s)">
+                <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
+              </Tooltip>
+            </div>}
+            <Popconfirm
+              placement="left"
+              title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
+              onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
+              okText={ t('CROPPIE_CONFIRM') }
+              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
+              <a href="#"
+                className="text-reset mr-2"
+                style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
+                onClick={ e => e.preventDefault() }>
+                <i className="fa fa-lg fa-times"></i>
+              </a>
+            </Popconfirm>
           </div>
-          ) }
-          {incidentReported.length > 0 && <div onClick={(e) => {
-            dispatch(onlyFilter('showIncidentReportedTasks'))
-            e.stopPropagation()
-          }}>
-            <Tooltip title="Incident(s)">
-              <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
-            </Tooltip>
-          </div>}
-          <Popconfirm
-            placement="left"
-            title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
-            onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
-            okText={ t('CROPPIE_CONFIRM') }
-            cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
-            <a href="#"
-              className="text-reset mr-2"
-              style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
-              onClick={ e => e.preventDefault() }>
-              <i className="fa fa-lg fa-times"></i>
-            </a>
-          </Popconfirm>
+          <div>
+            <span>{ durationFormatted }</span>
+            <span className="mx-2">—</span>
+            <span>{ distanceFormatted }</span>
+            { showWeightAndVolumeUnit ?
+              (
+                <>
+                  <span className="mx-2">—</span>
+                  <span>{ weightFormatted }</span>
+                </>
+              )
+              : null
+            }
+          </div>
       </div>
       <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})}>
         { tasks.length > 0 && (
-          <div className="d-flex justify-content-between align-items-center p-4">
-            <div>
-              <strong className="mr-2">{ t('ADMIN_DASHBOARD_DURATION') }</strong>
-              <span>{ durationFormatted }</span>
-              <span className="mx-2">—</span>
-              <strong className="mr-2">{ t('ADMIN_DASHBOARD_DISTANCE') }</strong>
-              <span>{ distanceFormatted }</span>
-            </div>
+          <div className="d-flex justify-content-between align-items-center">
             <div>
               <a href="#"
                 title="Optimize"

@@ -3,11 +3,9 @@ import _ from 'lodash'
 import {
   SET_FILTER_VALUE,
   RESET_FILTERS,
-  SET_CLUSTERS_ENABLED,
-  SET_POLYLINE_STYLE,
   SHOW_RECURRENCE_RULES,
-  SET_USE_AVATAR_COLORS,
   SET_TOURS_ENABLED,
+  setFromSettingsModal,
 } from './actions'
 
 export const defaultFilters = {
@@ -30,14 +28,19 @@ export const defaultFilters = {
   }
 }
 
-export const initialState = {
-  filters: defaultFilters,
-  isDefaultFilters: true,
+export const defaultSettings = {
   clustersEnabled: false,
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
   useAvatarColors: false,
+  showWeightAndVolumeUnit: true
+}
+
+export const initialState = {
+  filters: defaultFilters,
+  isDefaultFilters: true,
   toursEnabled: false,
+  ...defaultSettings
 }
 
 export default (state = initialState, action) => {
@@ -70,25 +73,10 @@ export default (state = initialState, action) => {
       isDefaultFilters: true
     }
 
-  case SET_CLUSTERS_ENABLED:
-
+  case setFromSettingsModal.type:
     return {
       ...state,
-      clustersEnabled: action.enabled
-    }
-
-  case SET_USE_AVATAR_COLORS:
-
-    return {
-      ...state,
-      useAvatarColors: action.useAvatarColors
-    }
-
-  case SET_POLYLINE_STYLE:
-
-    return {
-      ...state,
-      polylineStyle: action.style
+      ...action.payload
     }
 
   case SET_TOURS_ENABLED:

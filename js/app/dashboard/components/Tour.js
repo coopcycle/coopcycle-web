@@ -7,10 +7,11 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
 import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
-import { selectTourById, selectItemAssignedTo } from '../../../shared/src/logistics/redux/selectors'
+import { selectTourById, selectItemAssignedTo, selectTourWeight } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
-import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
+import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectSettings } from '../redux/selectors'
+import { formatDistance, formatDuration, formatWeight } from '../redux/utils'
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -103,7 +104,13 @@ const Tour = ({ tourId, draggableIndex }) => {
   const loadingTourIds = useSelector(selectLoadingTourPanelsIds)
   const isLoading = loadingTourIds.includes(tour['@id'])
 
+  const { showWeightAndVolumeUnit } = useSelector(selectSettings)
+
   const dispatch = useDispatch()
+
+  const durationFormatted = formatDuration(tour.duration)
+  const distanceFormatted = formatDistance(tour.distance)
+  const weightFormatted = formatWeight(useSelector(state => selectTourWeight(state, tourId)))
 
   return (
     <Draggable key={ `tour:${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ draggableIndex }>
@@ -113,16 +120,30 @@ const Tour = ({ tourId, draggableIndex }) => {
             className="panel panel-default panel--tour nomargin task__draggable"
             style={{ opacity: isLoading ? 0.7 : 1, pointerEvents: isLoading ? 'none' : 'initial' }}
           >
-            <div className="panel-heading" role="tab">
+            <div className="panel-heading" role="tab" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))}>
               <h4 className="panel-title d-flex align-items-center">
                 <i className="fa fa-repeat flex-grow-0"></i>
                   <RenderEditNameForm tour={tour} isLoading={isLoading}>
-                    <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
+                    <a role="button" className="ml-2 flex-grow-1 text-truncate">
                       { tour.name } <span className="badge">{ tour.items.length }</span>
                     </a>
                     <i className="fa fa-arrows cursor--grabbing mr-2"></i>
                   </RenderEditNameForm>
               </h4>
+              <div className="d-flex align-items-center">
+                <span>{ durationFormatted }</span>
+                <span className="mx-2">—</span>
+                <span>{ distanceFormatted }</span>
+                { showWeightAndVolumeUnit ?
+                  (
+                    <>
+                      <span className="mx-2">—</span>
+                      <span>{ weightFormatted }</span>
+                    </>
+                  )
+                  : null
+                }
+              </div>
             </div>
             <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
               <Droppable

@@ -15,7 +15,7 @@ class Collection extends Base
 {
     public function __invoke($data, EntityManagerInterface $entityManager)
     {
-
+        // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
         $sql = "
             select
                 t_outer.id,
