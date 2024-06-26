@@ -3,7 +3,7 @@ import L from 'leaflet'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
-import React from 'react'
+import React, { StrictMode } from 'react'
 import ColorHash from 'color-hash'
 
 import MapHelper from '../../MapHelper'
@@ -205,11 +205,14 @@ export default class MapProxy {
       marker.bindPopup(() => {
         popupComponent = React.createRef()
         root.render(
-          <LeafletPopupContent
-            ref={ popupComponent }
-            task={ task }
-            onEditClick={ this.onEditClick }
-          />)
+          <StrictMode>
+            <LeafletPopupContent
+              ref={ popupComponent }
+              task={ task }
+              onEditClick={ this.onEditClick }
+            />
+          </StrictMode>
+          )
         this.taskPopups.set(task['@id'], popupComponent)
         return el
       }).addTo(this.map)
