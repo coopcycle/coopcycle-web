@@ -29,6 +29,30 @@ function removeValue(choices, value) {
   return choices.filter(({ value: v }) => v !== value);
 }
 
+const Row = ({ row, index, setSelectedTS, selectedTS }) => (
+  <Draggable draggableId={index.toString()} index={index}>
+    {(provided) => (
+      <p key={index} ref={provided.innerRef} {...provided.draggableProps}>
+        <i {...provided.dragHandleProps} className="fa fa-bars mr-1"></i>
+        <i
+          className="fa fa-minus-circle"
+          onClick={() => setSelectedTS(removeValue(selectedTS, row.value))}
+          aria-hidden="true"
+        ></i>
+        <span className="mx-2" style={{ display: "inline-flex" }}>
+          {row.label}
+        </span>
+        <a href="#" className="mr-2">
+          <i className="fa fa-external-link" aria-hidden="true"></i>
+        </a>
+        <Radio style={{ float: "right" }} value={row.value}>
+          Set default
+        </Radio>
+      </p>
+    )}
+  </Draggable>
+);
+
 export default function ({ store }) {
 
   const { id, timeSlot, timeSlots } = JSON.parse(store);
@@ -58,30 +82,6 @@ export default function ({ store }) {
   if (!choices && !selectedTS) {
     return <p>Loading...</p>;
   }
-
-  const renderRow = (row, index) => (
-    <Draggable key={index} draggableId={index.toString()} index={index}>
-      {(provided) => (
-        <p key={index} ref={provided.innerRef} {...provided.draggableProps}>
-          <i {...provided.dragHandleProps} className="fa fa-bars mr-1"></i>
-          <i
-            className="fa fa-minus-circle"
-            onClick={() => setSelectedTS(removeValue(selectedTS, row.value))}
-            aria-hidden="true"
-          ></i>
-          <span className="mx-2" style={{ display: "inline-flex" }}>
-            {row.label}
-          </span>
-          <a href="#" className="mr-2">
-            <i className="fa fa-external-link" aria-hidden="true"></i>
-          </a>
-          <Radio style={{ float: "right" }} value={row.value}>
-            Set default
-          </Radio>
-        </p>
-      )}
-    </Draggable>
-  );
 
   return (
     <>
@@ -128,7 +128,10 @@ export default function ({ store }) {
           <Droppable direction="vertical" droppableId="droppable">
             {({ droppableProps, innerRef }) => (
               <div {...droppableProps} ref={innerRef}>
-                {selectedTS.map(renderRow)}
+                { selectedTS.map((row, index) =>
+                  <Row key={ index } row={ row } index={ index }
+                    setSelectedTS={ setSelectedTS } selectedTS={ selectedTS } />
+                )}
               </div>
             )}
           </Droppable>
