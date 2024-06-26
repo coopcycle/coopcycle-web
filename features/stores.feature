@@ -631,7 +631,8 @@ Feature: Stores
         "@id": "/api/stores/6",
         "timeSlots": [
           "/api/time_slots/2",
-          "/api/time_slots/1"
+          "/api/time_slots/1",
+          "/api/time_slots/3"
         ]
       }
       """
@@ -650,7 +651,8 @@ Feature: Stores
           "timeSlot": "/api/time_slots/1",
           "timeSlots": [
               "/api/time_slots/2",
-              "/api/time_slots/1"
+              "/api/time_slots/1",
+              "/api/time_slots/3"
           ]
       }
       """

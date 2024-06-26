@@ -523,62 +523,53 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     public function getTimeSlots()
     {
-        // return $this->timeSlots;
-        return array_map(function(StoreTimeSlot $storeTS) {
-            return $storeTS->getTimeSlot();
-        }, $this->timeSlots->toArray());
+        return $this->timeSlots->map(fn (StoreTimeSlot $sts): TimeSlot => $sts->getTimeSlot());
     }
 
     public function setTimeSlots($timeSlots): void
     {
-        // die("s");
-        /*
-        $store_ts_array = array_map(function (TimeSlot $t, $index) {
+        $originalTimeSlots = new ArrayCollection();
+        foreach ($this->timeSlots as $sts) {
+            $originalTimeSlots->add($sts->getTimeSlot());
+        }
+
+        $newTimeSlots = new ArrayCollection();
+        foreach ($timeSlots as $ts) {
+            $newTimeSlots->add($ts);
+        }
+
+        $timeSlotsToRemove = [];
+        foreach ($originalTimeSlots as $originalTimeSlot) {
+            if (!$newTimeSlots->contains($originalTimeSlot)) {
+                $timeSlotsToRemove[] = $originalTimeSlot;
+            }
+        }
+
+        foreach ($timeSlotsToRemove as $ts) {
+            foreach ($this->timeSlots as $i => $sts) {
+                if ($sts->getTimeSlot() === $ts) {
+                    $this->timeSlots->remove($i);
+                }
+            }
+        }
+
+        foreach ($newTimeSlots as $position => $ts) {
+
+            foreach ($this->timeSlots as $i => $sts) {
+                if ($sts->getTimeSlot() === $ts) {
+                    $sts->setPosition($position);
+                    continue 2;
+                }
+            }
+
             $sts = new StoreTimeSlot();
-            $sts->setTimeSlot($t);
             $sts->setStore($this);
-            $sts->setPosition($index);
-            return $sts;
-        }, $ts);
-        $this->timeSlots = $store_ts_array;
-        */
-
-        $this->timeSlots->clear();
-
-        foreach ($timeSlots as $index => $t) {
-
-            $sts = new StoreTimeSlot();
-            $sts->setTimeSlot($t);
-            $sts->setStore($this);
-            $sts->setPosition($index);
+            $sts->setTimeSlot($ts);
+            $sts->setPosition($position);
 
             $this->timeSlots->add($sts);
         }
     }
-
-    /*
-    public function addTimeSlot(TimeSlot $timeSlot): void
-    {
-        // die("t");
-        $sts = new StoreTimeSlot();
-        $sts->setTimeSlot($timeSlot);
-        $sts->setStore($this);
-        $sts->setPosition($this->timeSlots->last()->getPosition() + 1);
-        $this->timeSlots->add($sts);
-    }
-
-    public function removeTimeSlot(TimeSlot $timeSlot){
-        foreach($this->timeSlots as $item) {
-            if ($item->getTimeSlot() === $timeSlot) {
-                $this->timeSlots->removeElement($timeSlot);
-                break;
-            }
-
-        }
-    }
-    */
-
-
 
     /**
      * @SerializedName("packages")

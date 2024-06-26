@@ -4,6 +4,9 @@
    <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
+    <unique-constraints>
+      <unique-constraint columns="store_id,time_slot_id"/>
+    </unique-constraints>
     <field name="position" type="integer" column="position"/>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store" inversed-by="timeSlots">
       <join-columns>

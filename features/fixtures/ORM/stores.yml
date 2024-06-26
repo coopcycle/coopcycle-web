@@ -72,6 +72,12 @@ AppBundle\Entity\TimeSlot:
       - 'Mo-Sa 10:00-11:00'
       - 'Mo-Sa 11:00-13:00'
       - 'Su 14:00-15:00'
+  time_slot_3:
+    name: 'Another time slot'
+    workingDaysOnly: false
+    openingHours:
+      - 'Mo-Sa 10:00-12:00'
+      - 'Mo-Sa 12:00-14:00'
 
 AppBundle\Entity\PackageSet:
   package_set_1:
