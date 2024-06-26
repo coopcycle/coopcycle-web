@@ -8,6 +8,8 @@ require('beautifymarker')
 
 let settings = {}
 
+let map
+
 function init(id, options = {}) {
 
   let center
@@ -28,13 +30,12 @@ function init(id, options = {}) {
     }
   }
 
-  // fix : reset map when running in strict mode, we render twice
-  var container = L.DomUtil.get('map');
-  if(container !== null){
-    container._leaflet_id = null;
+  // do not init twice the map when running in react's strict mode
+  if(map !== undefined){
+    return map
   }
 
-  var map = L.map(id, { scrollWheelZoom: false, zoomControl })
+  map = L.map(id, { scrollWheelZoom: false, zoomControl })
 
   if (options.polygonManagement) {
     map.pm.addControls({
