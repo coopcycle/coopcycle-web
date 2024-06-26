@@ -1,5 +1,5 @@
-import React, { createRef } from 'react'
-import { render } from 'react-dom'
+import React, { StrictMode, createRef } from 'react'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
@@ -158,61 +158,56 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   const mapRef = createRef()
 
-  render(
-    <Provider store={ store }>
-      <I18nextProvider i18n={ i18n }>
-        <ConfigProvider locale={antdLocale}>
-          <Split
-            sizes={[ 75, 25 ]}
-            style={{ display: 'flex', width: '100%' }}
-            onDrag={ sizes => store.dispatch(updateRightPanelSize(sizes[1])) }
-            onDragEnd={ () => mapRef.current.invalidateSize() }>
-            <div className="dashboard__map">
-              <div className="dashboard__toolbar-container">
-                <Navbar />
-              </div>
-              <div className="dashboard__map-container">
-                <svg xmlns="http://www.w3.org/2000/svg"
-                  className="arrow-container"
-                  style={{ position: 'absolute', top: '0px', left: '0px', width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}
-                >
-                  <defs>
-                    <marker id="custom_arrow" markerWidth="4" markerHeight="4" refX="2" refY="2">
-                      <circle cx="2" cy="2" r="2" stroke="none" fill="#3498DB"/>
-                    </marker>
-                  </defs>
-                </svg>
-                <LeafletMap onLoad={ (e) => {
-                  // It seems like a bad way to get a ref to the map,
-                  // but we can't use the ref prop
-                  mapRef.current = e.target
-                }} />
-              </div>
-            </div>
-            <aside className="dashboard__aside">
-              <RightPanel />
-            </aside>
-          </Split>
-          <Modals />
-        </ConfigProvider>
-      </I18nextProvider>
-    </Provider>,
-    document.getElementById('dashboard'),
-    () => {
-      anim.stop()
-      anim.destroy()
-      document.querySelector('.dashboard__loader').remove()
+  const root = createRoot(document.getElementById('dashboard'))
 
-      // Make sure map is rendered correctly with Split.js
-      // mapRef.current.invalidateSize()
-    }
+  root.render(
+    <StrictMode>
+      <Provider store={ store }>
+        <I18nextProvider i18n={ i18n }>
+          <ConfigProvider locale={antdLocale}>
+            <Split
+              sizes={[ 75, 25 ]}
+              style={{ display: 'flex', width: '100%' }}
+              onDrag={ sizes => store.dispatch(updateRightPanelSize(sizes[1])) }
+              onDragEnd={ () => mapRef.current.invalidateSize() }>
+              <div className="dashboard__map">
+                <div className="dashboard__toolbar-container">
+                  <Navbar />
+                </div>
+                <div className="dashboard__map-container">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                    className="arrow-container"
+                    style={{ position: 'absolute', top: '0px', left: '0px', width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}
+                  >
+                    <defs>
+                      <marker id="custom_arrow" markerWidth="4" markerHeight="4" refX="2" refY="2">
+                        <circle cx="2" cy="2" r="2" stroke="none" fill="#3498DB"/>
+                      </marker>
+                    </defs>
+                  </svg>
+                  <LeafletMap onLoad={ (e) => {
+                    // It seems like a bad way to get a ref to the map,
+                    // but we can't use the ref prop
+                    mapRef.current = e.target
+                  }} />
+                </div>
+              </div>
+              <aside className="dashboard__aside">
+                <RightPanel loadingAnim={loadingAnim} />
+              </aside>
+            </Split>
+            <Modals />
+          </ConfigProvider>
+        </I18nextProvider>
+      </Provider>
+    </StrictMode>,
   )
 
   // hide export modal after button click
   $('#export-modal button').on('click', () => setTimeout(() => $('#export-modal').modal('hide'), 400))
 }
 
-const anim = lottie.loadAnimation({
+const loadingAnim = lottie.loadAnimation({
   container: document.querySelector('#dashboard__loader'),
   renderer: 'svg',
   loop: true,
@@ -220,7 +215,7 @@ const anim = lottie.loadAnimation({
   path: '/img/loading.json'
 })
 
-anim.addEventListener('DOMLoaded', function() {
+loadingAnim.addEventListener('DOMLoaded', function() {
   const headers = {
     'Authorization': `Bearer ${jwtToken}`,
     'Accept': 'application/ld+json',
