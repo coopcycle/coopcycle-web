@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2024-06-26
+
+### Changed
+
+* Propose the user to login when registration email exists by @lucasferraro in https://github.com/coopcycle/coopcycle-web/pull/4411
+
+## [3.0.0] - 2024-06-24
+
+### Changed
+
+* Support PHP 8.3
+* Dispatch : add the ability to filter by tags, stores, restaurants for both global filters and unassigned tasks by @Atala in #4440
+
 ## [2.9.4] - 2024-06-20
 
 ### Changed
