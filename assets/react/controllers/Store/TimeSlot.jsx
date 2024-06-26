@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Radio, notification } from "antd";
+import { Select, Radio, Spin,notification } from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import _ from 'lodash';
 
@@ -61,10 +61,13 @@ export default function ({ store }) {
   const [selectedTS, setSelectedTS] = useState(null);
   const [defaultTS, setDefaultTS] = useState(timeSlot);
   const [selectValue, setSelectValue] = useState(null);
+  const [fetching, setFetching] = useState(false);
 
   useEffect(() => {
     async function _fetch() {
+      setFetching(true)
       const { response, error } = await _fetchTimeSlots();
+      setFetching(false)
       if (!error) {
         const choices = response["hydra:member"].map((ts) => ({
           value: ts["@id"],
@@ -84,11 +87,11 @@ export default function ({ store }) {
   }
 
   return (
-    <>
+    <Spin spinning={fetching}>
       <div className="my-1">Time Slot</div>
       <div>
         <Select
-          className="my-3"
+          className="my-3 mr-2"
           value={selectValue}
           options={choices}
           onChange={(_value, selectedOption) => {
@@ -99,14 +102,19 @@ export default function ({ store }) {
         />
       </div>
       <DragDropContext
-        onDragEnd={async ({ source, destination }) => {
+        onDragEnd={ async ({ source, destination }) => {
+
           const reordered = reOrderRow(
             selectedTS,
             source.index,
             destination.index,
           );
           setSelectedTS(reordered);
-          const { error } = _putTimeSlots(id, { timeSlots: reordered.map(({ value }) => value) });
+
+          setFetching(true)
+          const { error } = await _putTimeSlots(id, { timeSlots: reordered.map(({ value }) => value) });
+          setFetching(false)
+
           if (error) {
             notification.error("cpt");
           }
@@ -116,9 +124,11 @@ export default function ({ store }) {
           style={{ width: "100%", fontSize: "inherit" }}
           onChange={async (e) => {
             setDefaultTS(e.target.value);
+            setFetching(true)
             const { error } = await _putTimeSlots(id, {
               timeSlot: e.target.value,
             });
+            setFetching(false)
             if (error) {
               notification.error("cpt");
             }
@@ -126,17 +136,18 @@ export default function ({ store }) {
           value={defaultTS}
         >
           <Droppable direction="vertical" droppableId="droppable">
-            {({ droppableProps, innerRef }) => (
+            {({ droppableProps, innerRef, placeholder }) => (
               <div {...droppableProps} ref={innerRef}>
                 { selectedTS.map((row, index) =>
                   <Row key={ index } row={ row } index={ index }
                     setSelectedTS={ setSelectedTS } selectedTS={ selectedTS } />
                 )}
+                { placeholder }
               </div>
             )}
           </Droppable>
         </Radio.Group>
       </DragDropContext>
-    </>
+    </Spin>
   );
 }
