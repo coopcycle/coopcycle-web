@@ -3,6 +3,8 @@ import { Select, Radio, Spin,notification } from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import _ from 'lodash';
 
+import 'skeleton-screen-css/dist/index.scss'
+
 async function _fetchTimeSlots() {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
@@ -83,12 +85,20 @@ export default function ({ store }) {
   }, []);
 
   if (!choices && !selectedTS) {
-    return <p>Loading...</p>;
+    return (
+      <div>
+        <h5>Time Slot</h5>
+        <div>
+          <div className="ssc-head-line mb-3" style={{ width: '30%' }}></div>
+          { timeSlots.map((ts, key) => <div key={ key } className="ssc-line mb-2"></div>) }
+        </div>
+      </div>
+    );
   }
 
   return (
     <Spin spinning={fetching}>
-      <div className="my-1">Time Slot</div>
+      <h5>Time Slot</h5>
       <div>
         <Select
           className="my-3 mr-2"

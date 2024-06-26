@@ -38,10 +38,11 @@
   <hr>
 {% endif %}
 {% if form.timeSlot is defined or form.timeSlots is defined or form.packageSet is defined %}
-<div {{ react_component('Store/TimeSlot', {
-      store: form.vars.data|serialize,
-}) }}></div>
-<hr>
+  <div {{ react_component('Store/TimeSlot', {
+    store: form.vars.data|serialize,
+  }) }}>
+  </div>
+  <hr>
   {% if form.packageSet is defined %}
     {{ form_row(form.packageSet) }}
   {% endif %}
