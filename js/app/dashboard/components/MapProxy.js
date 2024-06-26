@@ -143,7 +143,6 @@ export default class MapProxy {
     this.map.selectArea.enable()
 
     this.map.on('areaselected', (e) => {
-      console.debug(e.bounds)
       L.Util.requestAnimFrame(() => {
         const markers = []
         this.map.eachLayer((layer) => {
@@ -227,8 +226,6 @@ export default class MapProxy {
 
     } else {
 
-      console.debug(`Marker for Task #${task['@id']} already exists, updating...`)
-
       // OPTIMIZATION
       // Do *NOT* recreate an icon each time, it's expensive
 
@@ -255,7 +252,6 @@ export default class MapProxy {
     popupComponent = this.taskPopups.get(task['@id'])
 
     if (popupComponent) {
-      console.debug(`Popup for Task #${task['@id']} already exists, updating...`)
       popupComponent.current.updateTask(task)
     }
 
