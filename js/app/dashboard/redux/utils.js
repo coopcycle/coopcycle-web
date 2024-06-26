@@ -299,8 +299,8 @@ export const formatDistance = (distance) => {
 }
 
 /**
- * @param {Integer} weight - weight in kg
+ * @param {Integer} weight - weight in g
  */
 export const formatWeight = (weight) => {
-  return weight + ' kg'
+  return (weight / 1000).toFixed(2) + ' kg'
 }
