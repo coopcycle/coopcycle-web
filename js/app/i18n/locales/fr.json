@@ -466,6 +466,11 @@
         "TRANSPORTER_SITUATION_REN": "Refusé",
         "TRANSPORTER_SITUATION_RST": "Destinataire non livré",
         "TRANSPORTER_SHOW_EDI": "Voir EDI",
-        "TRANSPORTER_SHOW_PODS": "Voir les PODs"
+        "TRANSPORTER_SHOW_PODS": "Voir les PODs",
+        "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "Le créneau horaire sélectionné nʼest plus disponible pour aujourdʼhui",
+        "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "Les horaires dʼouverture ne permettent pas de commander pour aujourdʼhui",
+        "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Sélectionnez un autre créneau horaire",
+        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Modifier le créneau horaire",
+        "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_RESTAURANT_ACTION": "Choisir un autre restaurant"
     }
 }
