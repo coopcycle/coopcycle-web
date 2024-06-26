@@ -67,7 +67,10 @@ const DashboardApp = ({ loadingAnim }) => {
 
     loadingAnim.stop()
     loadingAnim.destroy()
-    document.querySelector('.dashboard__loader').remove()
+    // fix : may already have been remvoed when running in react strict mode
+    if (document.querySelector('.dashboard__loader')) {
+      document.querySelector('.dashboard__loader').remove()
+    }
 
     // return cleanup function
     return () => {
