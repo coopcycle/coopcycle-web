@@ -7,7 +7,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
 import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
-import { selectTourById, selectItemAssignedTo, selectTourWeight } from '../../../shared/src/logistics/redux/selectors'
+import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolumeUnits } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectSettings } from '../redux/selectors'
@@ -111,6 +111,7 @@ const Tour = ({ tourId, draggableIndex }) => {
   const durationFormatted = formatDuration(tour.duration)
   const distanceFormatted = formatDistance(tour.distance)
   const weightFormatted = formatWeight(useSelector(state => selectTourWeight(state, tourId)))
+  const volumeUnits = useSelector(state => selectTourVolumeUnits(state, tourId))
 
   return (
     <Draggable key={ `tour:${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ draggableIndex }>
@@ -139,6 +140,8 @@ const Tour = ({ tourId, draggableIndex }) => {
                     <>
                       <span className="mx-2">—</span>
                       <span>{ weightFormatted }</span>
+                      <span className="mx-2">—</span>
+                      <span>{ volumeUnits }</span>
                     </>
                   )
                   : null

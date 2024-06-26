@@ -166,3 +166,29 @@ export const selectTaskListWeight = createSelector(
       return acc
     }, 0)
 )
+
+const getTaskVolumeUnits = (task) => task.packages.reduce((pt, acc) => acc + pt.quantity * pt.volume_per_package, 0)
+
+export const selectTourVolumeUnits = createSelector(
+  selectTourById,
+  selectAllTasks,
+  (tour, allTasks) => tour.items.reduce(
+    (acc, taskId) => {
+      const task = allTasks.find(t => t['@id'] === taskId)
+      if (task.type === 'DROPOFF') {
+        return acc + getTaskVolumeUnits(task)
+      }
+      return acc
+    }, 0)
+)
+
+export const selectTaskListVolumeUnits = createSelector(
+  selectTaskListTasksByUsername,
+  (taskListTasks) => taskListTasks.reduce(
+    (acc, task) => {
+      if (task.type === 'DROPOFF') {
+        return acc + getTaskVolumeUnits(task)
+      }
+      return acc
+    }, 0)
+)
