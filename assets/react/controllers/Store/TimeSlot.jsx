@@ -30,9 +30,8 @@ function removeValue(choices, value) {
 }
 
 export default function ({ store }) {
-  const { id, timeSlot, timeSlots } = JSON.parse(store);
 
-  console.log(timeSlots)
+  const { id, timeSlot, timeSlots } = JSON.parse(store);
 
   const [choices, setChoices] = useState(null);
   const [selectedTS, setSelectedTS] = useState(null);
@@ -48,7 +47,9 @@ export default function ({ store }) {
           label: ts.name,
         }));
         setChoices(choices);
-        setSelectedTS(choices.filter(({ value }) => timeSlots.includes(value)));
+
+        // Make sure we use the expected order
+        setSelectedTS(timeSlots.map(ts => choices.find(choice => choice.value === ts)));
       }
     }
     _fetch();
