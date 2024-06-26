@@ -111,10 +111,6 @@
   flex-wrap: wrap;
   justify-content: end;
   gap: 0.5rem;
-
-  @media (min-width: $screen-md-min) {
-    margin: 1rem 1.5rem;
-  }
 }
 
 .ReactModal__Html--open {
