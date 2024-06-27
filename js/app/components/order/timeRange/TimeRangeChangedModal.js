@@ -24,6 +24,7 @@ import TimeSlotPicker from '../TimeSlotPicker'
 import DatePicker from '../DatePicker'
 import Button from '../../core/Button'
 import Alert from '../../core/Alert'
+import { useMatomo } from '../../../hooks/useMatomo'
 
 function useChooseRestaurant() {
   const dispatch = useDispatch()
@@ -182,10 +183,14 @@ export default function TimeRangeChangedModal() {
   const isModalOpen = useSelector(selectIsTimeRangeChangedModalOpen)
 
   const { t } = useTranslation()
+  const { trackEvent } = useMatomo()
 
   return (
     <Modal
       isOpen={isModalOpen}
+      onAfterOpen={() => {
+        trackEvent('Checkout', 'openModal', 'timeRangeChanged')
+      }}
       contentLabel={t('CART_CHANGE_TIME_MODAL_LABEL')}
       className="TimeRangeChangedModal__Content">
       <div data-testid="order.timeRangeChangedModal">
