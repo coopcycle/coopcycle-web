@@ -524,7 +524,7 @@ export default class MapProxy {
 
     })
 
-    window.sessionStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
+    window.localStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
 
   }
 }
