@@ -477,7 +477,7 @@ export function closeSettings() {
   return { type: CLOSE_SETTINGS }
 }
 
-export const setFromSettingsModal = createAction('SET_FROM_SETTING_MODAL')
+export const setGeneralSettings = createAction('SET_FROM_SETTING_MODAL')
 
 export function loadTaskEventsRequest() {
   return { type: LOAD_TASK_EVENTS_REQUEST }

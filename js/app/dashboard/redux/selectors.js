@@ -205,7 +205,7 @@ export const selectHiddenTaskIds = createSelector(
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  threshold: 0.3,
+  threshold: 0.4,
   minMatchCharLength: 3,
   ignoreLocation: true,
   keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']

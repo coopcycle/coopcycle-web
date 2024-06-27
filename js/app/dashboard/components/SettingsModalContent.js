@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Form, Radio } from 'antd';
 
 import {
-  closeSettings, setFromSettingsModal,
+  closeSettings, setGeneralSettings,
 
 } from '../redux/actions'
 import { selectSettings } from '../redux/selectors';
@@ -29,7 +29,7 @@ export default () => {
   const { t } = useTranslation()
 
   const handleSubmit = () => {
-    dispatch(setFromSettingsModal({
+    dispatch(setGeneralSettings({
       polylineStyle: polylineStyleValue,
       clustersEnabled: clustersEnabledValue,
       useAvatarColors: useAvatarColorsValue,

@@ -5,7 +5,7 @@ import {
   RESET_FILTERS,
   SHOW_RECURRENCE_RULES,
   SET_TOURS_ENABLED,
-  setFromSettingsModal,
+  setGeneralSettings,
 } from './actions'
 
 export const defaultFilters = {
@@ -33,14 +33,14 @@ export const defaultSettings = {
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
   useAvatarColors: false,
-  showWeightAndVolumeUnit: true
+  showWeightAndVolumeUnit: true,
+  toursEnabled: false // is the tour column expanded
 }
 
 export const initialState = {
+  ...defaultSettings,
   filters: defaultFilters,
   isDefaultFilters: true,
-  toursEnabled: false,
-  ...defaultSettings
 }
 
 export default (state = initialState, action) => {
@@ -73,7 +73,7 @@ export default (state = initialState, action) => {
       isDefaultFilters: true
     }
 
-  case setFromSettingsModal.type:
+  case setGeneralSettings.type:
     return {
       ...state,
       ...action.payload
@@ -88,9 +88,6 @@ export default (state = initialState, action) => {
   }
 
   let isDefaultFilters = initialState.isDefaultFilters
-  if (Object.prototype.hasOwnProperty.call(state, 'filters') && !Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters')) {
-    isDefaultFilters = _.isEqual(state.filters, defaultFilters)
-  }
 
   return {
     ...state,

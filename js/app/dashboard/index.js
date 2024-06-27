@@ -16,7 +16,7 @@ import Navbar from './components/Navbar'
 import Modals from './components/Modals'
 import { updateRightPanelSize } from './redux/actions'
 import { recurrenceRulesAdapter } from './redux/selectors'
-import { initialState as settingsInitialState, defaultFilters } from './redux/settingsReducers'
+import { initialState as settingsInitialState, defaultFilters, defaultSettings } from './redux/settingsReducers'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
@@ -95,46 +95,17 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
   }
 
   const persistedFilters = JSON.parse(window.localStorage.getItem("cpccl__dshbd__fltrs"))
+  const persistedSettings = JSON.parse(window.localStorage.getItem("cpccl__dshbd__settings"))
+
   const initialFilters = {...defaultFilters, ...persistedFilters}
-  if (persistedFilters) {
-    preloadedState = {
-      ...preloadedState,
-      settings: {
-        filters: initialFilters
-      }
-    }
-  }
+  const initialSettings = {...defaultSettings, ...persistedSettings}
 
-  const persistentRules = window.sessionStorage.getItem(`recurrence_rules_visible`)
-  if (persistentRules) {
-    preloadedState = {
-      ...preloadedState,
-      settings: {
-        ...preloadedState.settings,
-        isRecurrenceRulesVisible: JSON.parse(persistentRules)
-      }
-    }
-  }
-
-  const persistedUseAvatarColors = window.localStorage.getItem(`use_avatar_colors`) || true
-  if (persistedUseAvatarColors) {
-    preloadedState = {
-      ...preloadedState,
-      settings: {
-        ...preloadedState.settings,
-        useAvatarColors: JSON.parse(persistedUseAvatarColors)
-      }
-    }
-  }
-
-  const persistedToursEnabled = window.localStorage.getItem(`cpccl__dshbd__tours_enabled`)
-  if (persistedToursEnabled) {
-    preloadedState = {
-      ...preloadedState,
-      settings: {
-        ...preloadedState.settings,
-        toursEnabled: JSON.parse(persistedToursEnabled)
-      }
+  preloadedState = {
+    ...preloadedState,
+    settings: {
+      ...initialSettings,
+      filters: initialFilters,
+      isDefaultFilters: persistedFilters ? _.isEqual(persistedFilters, defaultFilters) : true
     }
   }
 
@@ -226,11 +197,11 @@ loadingAnim.addEventListener('DOMLoaded', function() {
   const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
   const toursRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
 
-  // the 800ms delay is here to avoid a glitch in the animation when there is no tasks to load
+  // the delay is here to avoid a glitch in the animation when there is no tasks to load
   // fire the initial loading requests then wait
   setTimeout(() => start(
     tasksRequest,
     tasksListsRequest,
     toursRequest
-  ), 800)
+  ), 400)
 })
