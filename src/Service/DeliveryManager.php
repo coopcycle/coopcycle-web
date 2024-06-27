@@ -66,8 +66,25 @@ class DeliveryManager
             $matchedAtLeastOne = false;
 
             if (count($delivery->getTasks()) > 2) {
+
+                $deliveryRules = $ruleSet->getRulesForLevel('delivery');
+                $taskRules = $ruleSet->getRulesForLevel('task');
+
+                foreach ($deliveryRules as $rule) {
+                    if ($rule->matches($delivery, $this->expressionLanguage)) {
+
+                        $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+
+                        $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
+
+                        $totalPrice += $price;
+
+                        $matchedAtLeastOne = true;
+                    }
+                }
+
                 foreach ($delivery->getTasks() as $task) {
-                    foreach ($ruleSet->getRules() as $rule) {
+                    foreach ($taskRules as $rule) {
                         if ($task->matchesPricingRule($rule, $this->expressionLanguage)) {
 
                             $price = $task->evaluatePrice($rule, $this->expressionLanguage);
@@ -80,6 +97,7 @@ class DeliveryManager
                         }
                     }
                 }
+
             } else {
                 foreach ($ruleSet->getRules() as $rule) {
                     if ($rule->matches($delivery, $this->expressionLanguage)) {

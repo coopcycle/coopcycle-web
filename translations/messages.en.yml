@@ -1526,3 +1526,5 @@ restaurant.businessAccount.notAvilable: "This restaurant is not included in the 
   >clicking here</a>.\n"
 business_account.switch.order_with_business: Order with my company
 business_account.switch.ordering_with_business: Ordering with my company
+form.pricing_rule.level.delivery.label: Delivery
+form.pricing_rule.level.task.label: Task

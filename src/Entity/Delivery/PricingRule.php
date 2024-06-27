@@ -63,6 +63,11 @@ class PricingRule
 
     protected $ruleSet;
 
+    protected $level;
+
+    public const LEVEL_DELIVERY = 'delivery';
+    public const LEVEL_TASK = 'task';
+
     /**
      * Gets id.
      *
@@ -137,5 +142,15 @@ class PricingRule
         }
 
         return $language->evaluate($this->getExpression(), Delivery::toExpressionLanguageValues($delivery));
+    }
+
+    public function getLevel(): string
+    {
+        return $this->level;
+    }
+
+    public function setLevel(string $level)
+    {
+        $this->level = $level;
     }
 }

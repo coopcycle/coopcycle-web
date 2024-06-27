@@ -147,4 +147,9 @@ class PricingRuleSet
     {
         return in_array($option, $this->options);
     }
+
+    public function getRulesForLevel(string $level)
+    {
+        return array_filter($this->rules->toArray(), fn (PricingRule $r) => $r->getLevel() === $level);
+    }
 }
