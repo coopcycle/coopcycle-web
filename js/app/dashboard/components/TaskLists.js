@@ -17,7 +17,7 @@ class TaskLists extends React.Component {
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
-        <h4>
+        <h4 className="dashboard__panel__header">
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
           { taskListsLoading ?
             (<span className="pull-right"><span className="loader"></span></span>) :

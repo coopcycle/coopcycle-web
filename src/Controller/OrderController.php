@@ -66,7 +66,6 @@ class OrderController extends AbstractController
         FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
-        private OrderTimeHelper $orderTimeHelper,
         private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
     )
@@ -282,27 +281,28 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', array(
+        return $this->render('order/index.html.twig', [
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ));
+        ]);
     }
 
     private function getShippingTimeRange(OrderInterface $order)
     {
-        $range =
-            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
+        $range = $order->getShippingTimeRange();
 
         // Don't forget that $range may be NULL
-        $shippingTimeRange = $range ? implode(' - ', [
+        $shippingTimeRange = $range ? [
             $range->getLower()->format(\DateTime::ATOM),
             $range->getUpper()->format(\DateTime::ATOM),
-        ]) : '';
+        ] : null;
 
         return $shippingTimeRange;
     }
@@ -347,13 +347,13 @@ class OrderController extends AbstractController
         $checkoutPayment = new CheckoutPayment($order);
         $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
 
-        $parameters =  $this->auth([
+        $parameters =  [
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-            'shippingTimeRange' => $this->getShippingTimeRange($order),
-        ]);
+        ];
 
         $form->handleRequest($request);
 
@@ -741,6 +741,7 @@ class OrderController extends AbstractController
             'restaurant' => $order->getRestaurant(),
             'times' => $orderTimeHelper->getTimeInfo($order),
             'cart_form' => $cartForm->createView(),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));

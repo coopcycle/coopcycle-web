@@ -45,6 +45,7 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingRuleMatcherInterface;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
@@ -1191,5 +1192,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
 
         return $this;
+    }
+
+    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
+    {
+        $visitor->visitTask($this);
     }
 }

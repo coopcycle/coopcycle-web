@@ -8,6 +8,8 @@ require('beautifymarker')
 
 let settings = {}
 
+let map
+
 function init(id, options = {}) {
 
   let center
@@ -28,7 +30,12 @@ function init(id, options = {}) {
     }
   }
 
-  var map = L.map(id, { scrollWheelZoom: false, zoomControl })
+  // do not init twice the map when running in react's strict mode
+  if(map !== undefined){
+    return map
+  }
+
+  map = L.map(id, { scrollWheelZoom: false, zoomControl })
 
   if (options.polygonManagement) {
     map.pm.addControls({

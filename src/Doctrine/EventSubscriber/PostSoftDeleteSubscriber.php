@@ -73,6 +73,12 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $unitOfWork->computeChangeSets();
         }
 
+        if ($entity instanceof LocalBusiness || $entity instanceof Store) {
+            $organization = $entity->getOrganization();
+            $objectManager->remove($organization);
+            $objectManager->flush();
+        }
+
         // LocalBusiness and Restaurant case
         if ($entity instanceof LocalBusiness) {
 

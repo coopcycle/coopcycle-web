@@ -1515,6 +1515,7 @@ registration.email.taken.use.another: You can use an other email if you want to.
 registration.link.to.login: Please, click here to login.
 registration.email.taken: This email is already taken, do you want to login with it?
 registration.business_account.loggin.warning_message: Login to associate your account with the company %name%.
+registration.email.taken.loggin.warning_message: Enter your password to login.
 business_account.employee.associated: Your account has been associated successfully with the company %name%
 business_account.loggedin_employee.association.text: You are logged in with the email <strong>%user_email%</strong>. Do you want to associate your account with the company <strong>%business_account_name%</strong>?
 business_account.loggedin_employee.association.title: Invitation to associate your account with a Business Acccount

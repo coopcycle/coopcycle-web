@@ -108,7 +108,7 @@ function getTimeWindowProps(name, type) {
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
   if (timeSlotEl) {
     return {
-      timeSlot: timeSlotEl.val()
+      timeSlot: $(timeSlotEl).val()
     }
   }
 

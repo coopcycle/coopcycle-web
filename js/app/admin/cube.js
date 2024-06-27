@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { QueryBuilder } from '@cubejs-client/playground';
 // import the antd styles from the `@cubejs-client/playground` package as it overrides some variables
 import '@cubejs-client/playground/public/antd.min.css';
@@ -15,7 +15,7 @@ if (el) {
     dimensions:  ['Order.state']
   };
 
-  ReactDOM.render(
+  createRoot(el).render(
     <QueryBuilder
       apiUrl={ el.dataset.apiUrl }
       token={ el.dataset.token }

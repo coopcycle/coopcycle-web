@@ -147,7 +147,7 @@ Cypress.Commands.add('ignoreCookiesOnce', (callback, options) => {
   })
 })
 
-Cypress.Commands.add('closeRestaurant',
+Cypress.Commands.add('closeRestaurantForToday',
   (ownerUsername, ownerPassword) => {
     cy.ignoreCookiesOnce(() => {
       //get API token

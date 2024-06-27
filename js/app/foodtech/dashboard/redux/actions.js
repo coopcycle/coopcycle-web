@@ -206,37 +206,12 @@ export function changeStatus(restaurant, state) {
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  keys: [
-    {
-      name: 'number',
-      weight: 0.4
-    },
-    {
-      name: 'vendor.name',
-      weight: 0.1
-    },
-    {
-      name: 'shippingAddress.streetAddress',
-      weight: 0.1
-    },
-    {
-      name: 'customer.username',
-      weight: 0.1
-    },
-    {
-      name: 'customer.email',
-      weight: 0.1
-    },
-    {
-      name: 'customer.givenName',
-      weight: 0.1
-    },
-    {
-      name: 'customer.familyName',
-      weight: 0.1
-    },
-  ]
+  threshold: 0.4,
+  minMatchCharLength: 3,
+  ignoreLocation: true,
+  keys: ['number', 'vendor.name', 'shippingAddress.streetAddress', 'customer.username', 'customer.email', 'customer.givenName','customer.familyName']
 }
+
 
 export function search(q) {
 

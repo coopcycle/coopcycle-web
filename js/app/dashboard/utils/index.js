@@ -53,3 +53,12 @@ export const isMarkerInsidePolygon = (marker, polygon) => {
   }
   return inside;
 }
+
+
+/**
+ * @param {string} slug - Slug we are searching against
+ * @param {Array.Object} tags - All tags to be searched
+ */
+export const findTagFromSlug = (slug, allTags) => {
+  return _.find(allTags, t => t.slug === slug)
+}

@@ -11,7 +11,8 @@ import {
   insertInUnassignedTasks,
   appendToUnassignedTours,
   insertInUnassignedTours,
-  SET_TASK_LIST_GROUP_MODE
+  SET_TASK_LIST_GROUP_MODE,
+  loadOrganizationsSuccess
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -105,6 +106,11 @@ export default (state = initialState, action) => {
         ...state,
         unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,
       }}
+    case loadOrganizationsSuccess.type:
+      return {
+        ...state,
+        organizationsLoading: false,
+      }
   }
 
   return state

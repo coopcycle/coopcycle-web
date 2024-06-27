@@ -17,9 +17,17 @@ export const defaultFilters = {
   alwayShowUnassignedTasks: false,
   tags: [],
   excludedTags: [],
+  excludedOrgs: [],
+  includedOrgs: [],
   hiddenCouriers: [],
   timeRange: [0, 24],
   onlyFilter: null,
+  unassignedTasksFilters: {
+    excludedTags: [],
+    includedTags: [],
+    excludedOrgs: [],
+    includedOrgs: []
+  }
 }
 
 export const initialState = {

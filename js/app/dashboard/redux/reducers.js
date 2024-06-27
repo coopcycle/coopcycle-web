@@ -16,7 +16,6 @@ import {
   CREATE_TASK_FAILURE,
   COMPLETE_TASK_FAILURE,
   CANCEL_TASK_FAILURE,
-  TOKEN_REFRESH_SUCCESS,
   OPEN_FILTERS_MODAL,
   CLOSE_FILTERS_MODAL,
   TOGGLE_SEARCH,
@@ -69,6 +68,7 @@ import {
 import {
   recurrenceRulesAdapter,
 } from './selectors'
+import { tokenRefreshSuccess } from '../utils/client'
 
 const initialState = {
   addModalIsOpen: false,
@@ -180,9 +180,9 @@ export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
 
 export const jwt = (state = '', action) => {
   switch (action.type) {
-  case TOKEN_REFRESH_SUCCESS:
+  case tokenRefreshSuccess.type:
 
-    return action.token
+    return action.payload
 
   default:
 

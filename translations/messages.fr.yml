@@ -1404,6 +1404,9 @@ registration.company.address: "Adresse"
 registration.company.address.different.for.billing: "Utiliser une adresse différente pour la facturation"
 registration.company.billing.address: "Adresse de facturation"
 business.account.settings.link: Lier avec mon compte
+registration.email.taken.use.another: Vous pouvez vous inscrire avec un autre email.
+registration.link.to.login: Veuillez cliquer ici pour vous connecter.
+registration.email.taken: Cet email est déjà prix, voulez vous vous connecter avec celui-ci ?
 error.404: Page non trouvée.
 error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
 error.504: Le serveur a mis trop de temps à répondre.

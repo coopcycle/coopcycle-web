@@ -5,7 +5,7 @@ import Modal from 'react-modal'
 
 import { retryLastAddItemRequest } from '../redux/actions'
 
-class RestaurantModal extends Component {
+class ChangeRestaurantOnAddProductModal extends Component {
 
   afterOpenModal() {
     window._paq.push(['trackEvent', 'Checkout', 'openModal', 'changeRestaurant'])
@@ -27,7 +27,7 @@ class RestaurantModal extends Component {
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_2') }
           </p>
         </div>
-        <div className="ReactModal__Restaurant__button">
+        <div className="ReactModal__Content__buttons">
           <a className="btn btn-default" href={ continueURL }>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_BTN_NO') }
           </a>
@@ -71,4 +71,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(RestaurantModal))
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ChangeRestaurantOnAddProductModal))

@@ -8,7 +8,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import {
   toggleSearch,
   closeSearch,
-  setToursEnabled
+  setToursEnabled,
+  loadOrganizations
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -19,7 +20,7 @@ import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled, selectSearchIsOn } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 
-const DashboardApp = () => {
+const DashboardApp = ({ loadingAnim }) => {
 
   const dispatch = useDispatch()
 
@@ -62,11 +63,20 @@ const DashboardApp = () => {
     }
     window.addEventListener('keydown', toggleSearchOnKeyDown)
 
+    dispatch(loadOrganizations())
+
+    loadingAnim.stop()
+    loadingAnim.destroy()
+    // fix : may already have been remvoed when running in react strict mode
+    if (document.querySelector('.dashboard__loader')) {
+      document.querySelector('.dashboard__loader').remove()
+    }
+
     // return cleanup function
     return () => {
       window.removeEventListener('keydown', toggleSearchOnKeyDown, false)
     }
-  })
+  }, [])
 
   return (
     <div className="dashboard__aside-container">

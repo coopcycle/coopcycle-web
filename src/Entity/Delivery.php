@@ -19,6 +19,7 @@ use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -548,5 +549,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }, $this->getTasks()));
         usort($messages, fn ($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
         return $messages;
+    }
+
+    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
+    {
+        $visitor->visitDelivery($this);
     }
 }

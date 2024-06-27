@@ -1,0 +1,30 @@
+@import "../../../../assets/css/vars.scss";
+
+.TimeRangeChangedModal__Content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  // @see https://github.com/reactjs/react-modal/issues/177
+  overflow: visible;
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: 80%;
+  }
+}
+
+.cart__date-picker {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  > * {
+    width: 45%;
+  }
+}

@@ -41,6 +41,7 @@ export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
 export const selectSearchIsOn = state => state.searchIsOn
 export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
+export const selectAllTags = state => state.config.tags
 
 export const getProductNameById = id => store => {
   return store.dashboard.dashboards.filter(({ Id }) => Id === id)[0]
@@ -323,4 +324,9 @@ export const selectLinkedTasksIds = createSelector(
     const groups = taskUtils.groupLinkedTasks(tasks)
     return Object.keys(groups)
   }
+)
+
+export const selectTagsSelectOptions = createSelector(
+  selectAllTags,
+  (allTags) => allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
 )
