@@ -63,7 +63,7 @@ class PricingRule
 
     protected $ruleSet;
 
-    protected $level;
+    protected $level = self::LEVEL_DELIVERY;
 
     public const LEVEL_DELIVERY = 'delivery';
     public const LEVEL_TASK = 'task';

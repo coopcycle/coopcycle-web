@@ -21,7 +21,7 @@ final class Version20240627071042 extends AbstractMigration
     {
         $this->addSql('ALTER TABLE pricing_rule ADD level VARCHAR(255) DEFAULT NULL');
 
-        $stmt = $this->connection->prepare('SELECT id, options FROM pricing_rule_set');
+        $stmt = $this->connection->prepare('SELECT id, strategy, options FROM pricing_rule_set');
 
         $result = $stmt->execute();
 

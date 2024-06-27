@@ -16,6 +16,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Security\TokenStoreExtractor;
@@ -495,5 +496,52 @@ class DeliveryManagerTest extends KernelTestCase
         $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
 
         $this->assertEquals(100, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
+    public function testGetMultiPriceWithDistance()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0');
+        $rule1->setPrice('price_range(distance, 150, 1000, 1000)');
+        $rule1->setLevel('delivery');
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.type == "DROPOFF"');
+        $rule2->setPrice(100);
+        $rule2->setLevel('task');
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(
+            new PriceRangeExpressionLanguageProvider()
+        );
+
+        $deliveryManager = new DeliveryManager(
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal()
+        );
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+        $delivery->setDistance(2500);
+
+        $this->assertEquals(500, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 }
