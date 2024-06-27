@@ -25,6 +25,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
@@ -41,7 +42,6 @@ use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -61,7 +61,7 @@ class OrderController extends AbstractController
 
     public function __construct(
         private EntityManagerInterface $objectManager,
-        private FactoryInterface $orderFactory,
+        private OrderFactory $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
         private OrderAccessTokenManager $orderAccessTokenManager,
