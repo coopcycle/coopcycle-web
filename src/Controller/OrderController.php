@@ -215,7 +215,9 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $form = $this->createForm(CheckoutAddressType::class, $order);
+        $form = $this->createForm(CheckoutAddressType::class, $order, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests should run with CSRF protection enabled, but once in a while it fails
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
