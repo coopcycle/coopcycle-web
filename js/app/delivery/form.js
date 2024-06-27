@@ -159,7 +159,6 @@ form = new DeliveryForm('delivery', {
             .then(response => {
               if (response.data.suggestions.length > 0) {
                 this.showSuggestions(response.data.suggestions)
-                // this.reorder(response.data.suggestions[0].order)
               }
               resolve()
             })
