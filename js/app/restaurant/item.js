@@ -12,6 +12,7 @@ import {
   queueAddItem,
   openProductOptionsModal,
   fetchRequest,
+  fetchFailure,
 } from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
@@ -22,15 +23,33 @@ import './item.scss'
 import './header.scss'
 import './menu.scss'
 import './components/Order/index.scss'
+import '../components/order/index.scss'
 
 import ProductOptionsModal
   from './components/ProductDetails/ProductOptionsModal'
-import RestaurantModal from './components/RestaurantModal'
+import ChangeRestaurantOnAddProductModal from './components/ChangeRestaurantOnAddProductModal'
 import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
 import LoopeatModal from './components/LoopeatModal'
 import FulfillmentDetails from './components/Order/FulfillmentDetails'
 import { OrderOverlay, StickyOrder } from './components/Order'
+import {
+  selectCanAddToExistingCart,
+  selectCartShippingTimeRange,
+  selectCartTiming,
+} from './redux/selectors'
+import {
+  checkTimeRange,
+} from '../utils/order/helpers'
+import {
+  timeRangeSlice,
+} from '../components/order/timeRange/reduxSlice'
+import {
+  accountSlice,
+} from '../entities/account/reduxSlice'
+import { buildGuestInitialState } from '../entities/guest/utils'
+import { guestSlice } from '../entities/guest/reduxSlice'
+import { orderSlice } from '../entities/order/reduxSlice'
 
 window._paq = window._paq || []
 
@@ -74,9 +93,33 @@ function init() {
     })
   })
 
-  $('form[name="cart"]').on('submit', function() {
+  const cartForm = document.querySelector('form[name="cart"]')
+
+  cartForm.addEventListener('submit', async function(event) {
+    event.preventDefault()
+
     setMenuLoading(true)
     store.dispatch(fetchRequest()) // will trigger loading state in some react components
+
+    const canAddToExistingCart = selectCanAddToExistingCart(store.getState())
+
+    if (canAddToExistingCart) {
+      const shippingTimeRange = selectCartShippingTimeRange(store.getState())
+      // if the customer has already selected the time range, it will be checked on the server side
+      if (!shippingTimeRange) {
+        const displayedTiming = selectCartTiming(store.getState())
+
+        try {
+          await checkTimeRange(displayedTiming?.range, store.getState, store.dispatch)
+        } catch (error) {
+          setMenuLoading(false)
+          store.dispatch(fetchFailure()) // only to hide loading state in some react components
+          return
+        }
+      }
+    }
+
+    cartForm.submit()
   })
 
   const restaurantDataElement = document.querySelector('#js-restaurant-data')
@@ -86,6 +129,7 @@ function init() {
   const restaurant = JSON.parse(restaurantDataElement.dataset.restaurant)
   const restaurantTiming = JSON.parse(restaurantDataElement.dataset.restaurantTiming)
   const cartTiming = JSON.parse(restaurantDataElement.dataset.cartTiming)
+  const orderAccessToken = restaurantDataElement.dataset.orderAccessToken || null
   const isPlayer = JSON.parse(restaurantDataElement.dataset.isPlayer)
   const isGroupOrdersEnabled = JSON.parse(restaurantDataElement.dataset.isGroupOrdersEnabled)
   const addresses = JSON.parse(addressesDataElement.dataset.addresses)
@@ -116,7 +160,14 @@ function init() {
   }
 
   const state = {
+    [accountSlice.name]: accountSlice.getInitialState(),
+    [guestSlice.name]: buildGuestInitialState(cart['@id'], orderAccessToken),
     cart,
+    [orderSlice.name]: {
+      ...orderSlice.getInitialState(),
+      '@id': cart['@id'],
+      shippingTimeRange: cart.shippingTimeRange,
+    },
     restaurant,
     datePickerTimeSlotInputName: 'cart[timeSlot]',
     addressFormElements: {
@@ -133,6 +184,7 @@ function init() {
     country: getCountry(),
     isPlayer,
     isGroupOrdersEnabled,
+    [timeRangeSlice.name]: timeRangeSlice.getInitialState(),
   }
 
   store = createStoreFromPreloadedState(state)
@@ -150,7 +202,7 @@ function init() {
           <StickyOrder />
           <OrderOverlay />
           <ProductOptionsModal />
-          <RestaurantModal />
+          <ChangeRestaurantOnAddProductModal />
           <InvitePeopleToOrderModal />
           <SetGuestCustomerEmailModal />
           <LoopeatModal />

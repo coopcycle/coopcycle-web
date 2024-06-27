@@ -1,5 +1,3 @@
-import {combineReducers} from 'redux'
-
 import {
   CLEAR_LAST_ADD_ITEM_REQUEST,
   CLOSE_ADDRESS_MODAL,
@@ -30,9 +28,11 @@ import {
   STOP_ASKING_ENABLE_REUSABLE_PACKAGING,
   ENABLE_REUSABLE_PACKAGING,
   DISABLE_REUSABLE_PACKAGING,
+  updateCartTiming,
 } from './actions'
+import { setShippingTimeRange } from '../../entities/order/reduxSlice'
 
-const initialState = {
+export const initialState = {
   cart: {
     items: [],
     itemsTotal: 0,
@@ -100,7 +100,7 @@ const initialState = {
   shouldAskToEnableReusablePackaging: true,
 }
 
-const isFetching = (state = initialState.isFetching, action = {}) => {
+export const isFetching = (state = initialState.isFetching, action = {}) => {
   switch (action.type) {
   case FETCH_REQUEST:
     return true
@@ -114,7 +114,7 @@ const isFetching = (state = initialState.isFetching, action = {}) => {
   }
 }
 
-const errors = (state = initialState.errors, action = {}) => {
+export const errors = (state = initialState.errors, action = {}) => {
   switch (action.type) {
   case FETCH_REQUEST:
 
@@ -136,7 +136,7 @@ const errors = (state = initialState.errors, action = {}) => {
   }
 }
 
-const cart = (state = initialState.cart, action = {}) => {
+export const cart = (state = initialState.cart, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
 
@@ -191,13 +191,20 @@ const cart = (state = initialState.cart, action = {}) => {
       reusablePackagingEnabled: false,
     }
 
+  case setShippingTimeRange.type:
+
+      return {
+        ...state,
+        shippingTimeRange: action.payload,
+      }
+
   default:
 
     return state
   }
 }
 
-const lastAddItemRequest = (state = initialState.lastAddItemRequest, action = {}) => {
+export const lastAddItemRequest = (state = initialState.lastAddItemRequest, action = {}) => {
   switch (action.type) {
   case SET_LAST_ADD_ITEM_REQUEST:
 
@@ -211,14 +218,14 @@ const lastAddItemRequest = (state = initialState.lastAddItemRequest, action = {}
   }
 }
 
-const restaurant = (state = initialState.restaurant) => state
-const addressFormElements = (state = initialState.addressFormElements) => state
-const isNewAddressFormElement = (state = initialState.isNewAddressFormElement) => state
-const datePickerTimeSlotInputName = (state = initialState.datePickerTimeSlotInputName) => state
-const addresses = (state = initialState.addresses) => state
-const country = (state = initialState.country) => state
+export const restaurant = (state = initialState.restaurant) => state
+export const addressFormElements = (state = initialState.addressFormElements) => state
+export const isNewAddressFormElement = (state = initialState.isNewAddressFormElement) => state
+export const datePickerTimeSlotInputName = (state = initialState.datePickerTimeSlotInputName) => state
+export const addresses = (state = initialState.addresses) => state
+export const country = (state = initialState.country) => state
 
-const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = {}) => {
+export const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = {}) => {
   switch (action.type) {
   case TOGGLE_MOBILE_CART:
 
@@ -228,7 +235,7 @@ const isMobileCartVisible = (state = initialState.isMobileCartVisible, action = 
   }
 }
 
-const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
+export const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
   switch (action.type) {
   case SET_DATE_MODAL_OPEN:
 
@@ -239,7 +246,7 @@ const isDateModalOpen = (state = initialState.isDateModalOpen, action = {}) => {
   }
 }
 
-const restaurantTiming = (state = initialState.restaurantTiming, action = {}) => {
+export const restaurantTiming = (state = initialState.restaurantTiming, action = {}) => {
   switch (action.type) {
   case FETCH_SUCCESS:
 
@@ -250,18 +257,21 @@ const restaurantTiming = (state = initialState.restaurantTiming, action = {}) =>
   }
 }
 
-const cartTiming = (state = initialState.cartTiming, action = {}) => {
+export const cartTiming = (state = initialState.cartTiming, action = {}) => {
   switch (action.type) {
     case FETCH_SUCCESS:
 
       return action.payload.cartTiming
+    case updateCartTiming.type:
+
+      return action.payload
     default:
 
       return state
   }
 }
 
-const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}) => {
+export const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}) => {
   switch (action.type) {
   case FETCH_REQUEST:
   case CLOSE_ADDRESS_MODAL:
@@ -285,7 +295,7 @@ const isAddressModalOpen = (state = initialState.isAddressModalOpen, action = {}
   }
 }
 
-const addressModalContext = (state = initialState.addressModalContext, action = {}) => {
+export const addressModalContext = (state = initialState.addressModalContext, action = {}) => {
   switch (action.type) {
   case CLOSE_ADDRESS_MODAL:
 
@@ -299,7 +309,7 @@ const addressModalContext = (state = initialState.addressModalContext, action = 
   return state
 }
 
-const isProductOptionsModalOpen = (state = initialState.isProductOptionsModalOpen, action = {}) => {
+export const isProductOptionsModalOpen = (state = initialState.isProductOptionsModalOpen, action = {}) => {
   switch (action.type) {
   case CLOSE_PRODUCT_OPTIONS_MODAL:
 
@@ -313,7 +323,7 @@ const isProductOptionsModalOpen = (state = initialState.isProductOptionsModalOpe
   return state
 }
 
-const productOptionsModalContext = (state = initialState.productOptionsModalContext, action = {}) => {
+export const productOptionsModalContext = (state = initialState.productOptionsModalContext, action = {}) => {
   switch (action.type) {
   case CLOSE_PRODUCT_OPTIONS_MODAL:
 
@@ -327,7 +337,7 @@ const productOptionsModalContext = (state = initialState.productOptionsModalCont
   return state
 }
 
-const isInvitePeopleToOrderModalOpen = (state = initialState.isInvitePeopleToOrderModalOpen, action = {}) => {
+export const isInvitePeopleToOrderModalOpen = (state = initialState.isInvitePeopleToOrderModalOpen, action = {}) => {
   switch (action.type) {
   case CLOSE_INVITE_PEOPLE_TO_ORDER_MODAL:
     return false
@@ -338,7 +348,7 @@ const isInvitePeopleToOrderModalOpen = (state = initialState.isInvitePeopleToOrd
   }
 }
 
-const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderContext, action = {}) => {
+export const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderContext, action = {}) => {
   switch (action.type) {
     case INVITE_PEOPLE_REQUEST:
       return {
@@ -366,11 +376,11 @@ const invitePeopleToOrderContext = (state = initialState.invitePeopleToOrderCont
   }
 }
 
-const isPlayer = (state = initialState.isPlayer) => {
+export const isPlayer = (state = initialState.isPlayer) => {
   return state
 }
 
-const isSetPlayerEmailModalOpen = (state = initialState.isSetPlayerEmailModalOpen, action = {}) => {
+export const isSetPlayerEmailModalOpen = (state = initialState.isSetPlayerEmailModalOpen, action = {}) => {
 
   switch (action.type) {
   case CLOSE_SET_PLAYER_EMAIL_MODAL:
@@ -382,7 +392,7 @@ const isSetPlayerEmailModalOpen = (state = initialState.isSetPlayerEmailModalOpe
   }
 }
 
-const player = (state = initialState.player, action = {}) => {
+export const player = (state = initialState.player, action = {}) => {
   switch (action.type) {
     case SET_PLAYER_TOKEN:
       return action.payload
@@ -391,11 +401,11 @@ const player = (state = initialState.player, action = {}) => {
   }
 }
 
-const isGroupOrdersEnabled = (state = initialState.isGroupOrdersEnabled) => {
+export const isGroupOrdersEnabled = (state = initialState.isGroupOrdersEnabled) => {
   return state
 }
 
-const shouldAskToEnableReusablePackaging = (state = initialState.shouldAskToEnableReusablePackaging, action = {}) => {
+export const shouldAskToEnableReusablePackaging = (state = initialState.shouldAskToEnableReusablePackaging, action = {}) => {
   switch (action.type) {
   case STOP_ASKING_ENABLE_REUSABLE_PACKAGING:
     return false
@@ -403,31 +413,3 @@ const shouldAskToEnableReusablePackaging = (state = initialState.shouldAskToEnab
     return state
   }
 }
-
-export default combineReducers({
-  isFetching,
-  cart,
-  restaurant,
-  errors,
-  addressFormElements,
-  isNewAddressFormElement,
-  datePickerTimeSlotInputName,
-  isMobileCartVisible,
-  addresses,
-  lastAddItemRequest,
-  restaurantTiming,
-  cartTiming,
-  isDateModalOpen,
-  isAddressModalOpen,
-  country,
-  isProductOptionsModalOpen,
-  productOptionsModalContext,
-  addressModalContext,
-  isInvitePeopleToOrderModalOpen,
-  invitePeopleToOrderContext,
-  isPlayer,
-  isSetPlayerEmailModalOpen,
-  player,
-  isGroupOrdersEnabled,
-  shouldAskToEnableReusablePackaging,
-})

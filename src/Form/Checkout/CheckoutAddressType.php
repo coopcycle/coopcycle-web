@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Nonprofit;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
@@ -10,7 +11,6 @@ use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Dabba\Client as DabbaClient;
 use AppBundle\Dabba\Context as DabbaContext;
 use AppBundle\Dabba\GuestCheckoutAwareAdapter as DabbaAdapter;
-use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\DabbaOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder;
@@ -25,11 +25,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Form\AbstractType;
 
 class CheckoutAddressType extends AbstractType
 {
@@ -41,7 +41,6 @@ class CheckoutAddressType extends AbstractType
     public function __construct(
         TranslatorInterface $translator,
         PriceFormatter $priceFormatter,
-        OrderTimeHelper $orderTimeHelper,
         LoopEatContext $loopeatContext,
         LoopEatContextInitializer $loopeatContextInitializer,
         RequestStack $requestStack,
@@ -59,8 +58,6 @@ class CheckoutAddressType extends AbstractType
         $this->dabbaContext = $dabbaContext;
         $this->nonProfitsEnabled = $nonProfitsEnabled;
         $this->enBoitLePlatUrl = $enBoitLePlatUrl;
-
-        parent::__construct($orderTimeHelper);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -250,7 +247,9 @@ class CheckoutAddressType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
+        $resolver->setDefaults(array(
+            'data_class' => Order::class,
+        ));
 
         $resolver->setDefault('constraints', [
             new LoopEatOrder(),

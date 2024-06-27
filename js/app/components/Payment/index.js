@@ -1,6 +1,6 @@
 import React, { StrictMode } from 'react'
 import { render } from 'react-dom'
-import { createRoot } from 'react-dom/client';
+import { createRoot } from 'react-dom/client'
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -10,12 +10,18 @@ import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
 import PaymentMethodPicker from './PaymentMethodPicker'
-import { isGuest } from './utils'
+import {
+  selectOrderNodeId,
+  selectShippingTimeRange,
+} from '../../entities/order/reduxSlice'
+import { selectPersistedTimeRange } from '../order/timeRange/reduxSlice'
+import { checkTimeRange } from '../../utils/order/helpers'
+import { apiSlice } from '../../api/slice'
 
 class CreditCard {
- constructor(config) {
-   this.config = config;
- }
+  constructor(config) {
+    this.config = config
+  }
 }
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
@@ -25,7 +31,9 @@ export default function(form, options) {
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
 
   const orderErrorContainerEl = document.getElementById('order-error-container')
-  const orderErrorContainerRoot = orderErrorContainerEl ? createRoot(orderErrorContainerEl) : null
+  const orderErrorContainerRoot = orderErrorContainerEl
+    ? createRoot(orderErrorContainerEl)
+    : null
 
   function setLoading(isLoading) {
     if (isLoading) {
@@ -85,7 +93,6 @@ export default function(form, options) {
     })
 
     cc.init(form)
-
   }
 
   const handleCardPayment = (savedPaymentMethodId = null) => {
@@ -140,41 +147,56 @@ export default function(form, options) {
     }
   }
 
-  form.addEventListener('submit', async function(event) {
-
+  form.addEventListener('submit', async function (event) {
     event.preventDefault()
 
     setLoading(true)
 
-    //FIXME: only /order/payment route is tested to provide orderId; guest and account tokens
+    //FIXME: only /order/payment route is tested to provide redux store; add to other routes when needed
+    const store = window._rootStore
+    if (store) {
+      const orderNodeId = selectOrderNodeId(store.getState())
 
-    if (options.orderId) {
-      const httpClient = new window._auth.httpClient();
-
-      if (isGuest(options)) {
-        httpClient.setToken(options.orderAccessToken);
+      let violations = null
+      try {
+        const { error } = await store.dispatch(
+          apiSlice.endpoints.getOrderValidate.initiate(orderNodeId, {
+            forceRefetch: true,
+          }),
+        )
+        violations = error?.data?.violations
+      } catch (error) {
+        // ignore the request error and continue without the validation
+        setLoading(false)
       }
 
-      const hasAccount = window._auth && window._auth.isAuth
+      if (orderErrorContainerRoot && violations) {
+        setLoading(false)
+        orderErrorContainerRoot.render(
+          <StrictMode>
+            <div className="alert alert-danger">
+              {violations.map((violation, index) => (
+                <p key={index}>{violation.message}</p>
+              ))}
+            </div>
+          </StrictMode>,
+        )
+        return
+      }
 
-      if (isGuest(options) || hasAccount) {
-        const validateItemRoute = window.Routing.generate("api_orders_validate_item", { id: options.orderId });
-        const { error } = await httpClient.get(validateItemRoute);
+      const shippingTimeRange = selectShippingTimeRange(store.getState())
+      const persistedTimeRange = selectPersistedTimeRange(store.getState())
 
-        if (error) {
+      // if the customer has already selected the time range, it will be checked on the server side
+      if (!shippingTimeRange && persistedTimeRange) {
+        try {
+          await checkTimeRange(
+            persistedTimeRange,
+            store.getState,
+            store.dispatch,
+          )
+        } catch (error) {
           setLoading(false)
-
-          const violations = error.response?.data?.violations;
-
-          if (orderErrorContainerRoot && violations) {
-            orderErrorContainerRoot.render(
-              <StrictMode>
-                <div className="alert alert-danger">
-                  {violations.map((violation, index) => <p key={index}>{violation.message}</p>)}
-                </div>
-              </StrictMode>
-            )
-          }
           return
         }
       }

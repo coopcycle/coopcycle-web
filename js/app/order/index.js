@@ -2,14 +2,39 @@ import Inputmask from 'inputmask'
 import numbro from 'numbro'
 import _ from 'lodash'
 import React from 'react'
-import { render } from 'react-dom'
-import { getCurrencySymbol } from '../i18n'
+import { createPortal, render } from 'react-dom'
+import Modal from 'react-modal'
+import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { I18nextProvider } from 'react-i18next'
+import i18n, { getCurrencySymbol } from '../i18n'
 import LoopeatModal from './LoopeatModal'
 
-require('gasparesganga-jquery-loading-overlay')
-
 import './index.scss'
+import '../components/order/index.scss'
+
 import { disableBtn, enableBtn } from '../widgets/button'
+import { createStoreFromPreloadedState } from './redux/store'
+import {
+  checkTimeRange,
+  getTimingPathForStorage,
+} from '../utils/order/helpers'
+import TimeRangeChangedModal
+  from '../components/order/timeRange/TimeRangeChangedModal'
+import TimeRange from '../components/order/timeRange/TimeRange'
+import { accountSlice } from '../entities/account/reduxSlice'
+import { guestSlice } from '../entities/guest/reduxSlice'
+import { buildGuestInitialState } from '../entities/guest/utils'
+import {
+  orderSlice,
+  selectShippingTimeRange,
+} from '../entities/order/reduxSlice'
+import {
+  selectPersistedTimeRange,
+  timeRangeSlice,
+} from '../components/order/timeRange/reduxSlice'
+
+require('gasparesganga-jquery-loading-overlay')
 
 const {
   currency,
@@ -231,9 +256,69 @@ window.setNonprofit = function (elem) {
   elem.classList.add("active");
 }
 
+const orderDataElement = document.querySelector('#js-order-data')
+const orderNodeId = orderDataElement.dataset.orderNodeId
+const orderAccessToken = orderDataElement.dataset.orderAccessToken
+
+const buildInitialState = () => {
+  const shippingTimeRange = JSON.parse(orderDataElement.dataset.orderShippingTimeRange || null)
+  const persistedTimeRange = JSON.parse(window.sessionStorage.getItem(getTimingPathForStorage(orderNodeId)))
+
+  return {
+    [accountSlice.name]: accountSlice.getInitialState(),
+    [guestSlice.name]: buildGuestInitialState(orderNodeId, orderAccessToken),
+    [orderSlice.name]: {
+      ...orderSlice.getInitialState(),
+      '@id': orderNodeId,
+      shippingTimeRange: shippingTimeRange,
+    },
+    [timeRangeSlice.name]: {
+      ...timeRangeSlice.getInitialState(),
+      persistedTimeRange: persistedTimeRange,
+    }
+  }
+}
+
+const store = createStoreFromPreloadedState(buildInitialState())
+
 const form = document.querySelector('form[name="checkout_address"]')
 
-form.addEventListener('submit', function() {
+form.addEventListener('submit', async function(event) {
+  event.preventDefault()
+
   submitPageBtn.classList.add('btn--loading')
   setLoading(true)
+
+  const shippingTimeRange = selectShippingTimeRange(store.getState())
+  const persistedTimeRange = selectPersistedTimeRange(store.getState())
+
+  // if the customer has already selected the time range, it will be checked on the server side
+  if (!shippingTimeRange && persistedTimeRange) {
+
+    try {
+      await checkTimeRange(persistedTimeRange, store.getState, store.dispatch)
+    } catch (error) {
+      submitPageBtn.classList.remove('btn--loading')
+      setLoading(false)
+      return
+    }
+  }
+
+  form.submit()
 })
+
+const container = document.getElementById('react-root')
+
+const fulfilmentTimeRangeContainer = document.getElementById('order__fulfilment_time_range__container')
+
+Modal.setAppElement(container)
+
+const root = createRoot(container);
+root.render(
+  <Provider store={ store }>
+    <I18nextProvider i18n={ i18n }>
+      {createPortal(<TimeRange />, fulfilmentTimeRangeContainer) }
+      <TimeRangeChangedModal />
+    </I18nextProvider>
+  </Provider>
+)

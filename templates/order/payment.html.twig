@@ -12,6 +12,8 @@
 
 <div class="container container--full-height">
 
+  <div id="react-root"></div>
+
   {% if not order.empty %}
 
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
@@ -67,10 +69,9 @@
     <nav class="checkout-nav border-top">
       <div class="container">
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
-          <span class="text-success">
-            <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ shippingTimeRange|time_range_for_humans }}</strong>
-          </span>
+          <!-- React component will be inserted here -->
+          <div id="order__fulfilment_time_range__container">
+          </div>
           <div>
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
               <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
@@ -87,13 +88,25 @@
     </div>
   {% endif %}
 </div>
+
+  <div id="js-order-data"
+       data-order-node-id="{{ order|get_iri_from_item }}"
+       data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
+       data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+
 {% endblock %}
 
 {% block footer %}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('order-payment') }}
+{% endblock %}
+
 {% block scripts %}
 {% if not order.empty %}
+
+  {{ encore_entry_script_tags('order-payment') }}
 
 {% set gateway = payment_gateway_resolver.resolve() %}
 {% set gateway_configs = {} %}

@@ -58,7 +58,7 @@ describe('Failed checkout; time range is not valid any more', () => {
     it('show an error message (menu page)', () => {
 
       //simulate expired time range by closing the restaurant
-      cy.closeRestaurant('resto_1', 'resto_1')
+      cy.closeRestaurantForToday('resto_1', 'resto_1')
 
       cy.get('.order-button:visible').click()
 
@@ -78,7 +78,7 @@ describe('Failed checkout; time range is not valid any more', () => {
           .type('John Doe')
 
         //simulate expired time range by closing the restaurant
-        cy.closeRestaurant('resto_1', 'resto_1')
+        cy.closeRestaurantForToday('resto_1', 'resto_1')
 
         cy.contains('Commander').click()
 
@@ -106,7 +106,7 @@ describe('Failed checkout; time range is not valid any more', () => {
         cy.enterCreditCard()
 
         //simulate expired time range by closing the restaurant
-        cy.closeRestaurant('resto_1', 'resto_1')
+        cy.closeRestaurantForToday('resto_1', 'resto_1')
 
         cy.get('form[name="checkout_payment"]').submit()
 

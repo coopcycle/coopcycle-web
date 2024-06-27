@@ -2,8 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import Select from 'react-select'
 import { withTranslation } from 'react-i18next'
-
-import { asText } from '../../components/ShippingTimeRange'
+import { asText } from '../ShippingTimeRange'
 
 const TimeSlotPicker = ({ choices, onChange, t, value }) => {
 

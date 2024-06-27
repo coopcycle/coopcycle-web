@@ -1,5 +1,4 @@
 import React from 'react'
-import { render } from 'react-dom'
 import yaml from 'js-yaml'
 
 import AddressAutosuggest from '../../js/app/components/AddressAutosuggest'
