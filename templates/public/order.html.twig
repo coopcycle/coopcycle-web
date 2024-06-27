@@ -9,7 +9,7 @@
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="{{ path('homepage') }}">
-        <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
+        <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />
       </a>
       <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
     </div>
@@ -90,7 +90,7 @@
 <div style="padding: 20px 0;">
   <div class="container">
     <div class="text-center">
-      <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
+      <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
     </div>
   </div>
 </div>
