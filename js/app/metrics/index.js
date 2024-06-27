@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, ConfigProvider, DatePicker, Select } from 'antd';
@@ -100,7 +100,7 @@ if (rootElement) {
     );
   };
 
-  ReactDOM.render(<ChartRenderer />, rootElement);
+  createRoot(rootElement).render(<ChartRenderer />);
 }
 
 const CustomDatePicker = ({ defaultPickerType, defaultValue, routeName, restaurant }) => {
@@ -136,11 +136,11 @@ const restaurant    = monthPickerEl.dataset.restaurant
 const defaultValue  = monthPickerEl.dataset.defaultValue
 const pickerType    = monthPickerEl.dataset.pickerType
 
-ReactDOM.render(
+createRoot(monthPickerEl).render(
   <CustomDatePicker
     defaultPickerType={ pickerType }
     defaultValue={ defaultValue }
     routeName={ routeName }
-    restaurant={ restaurant } />, monthPickerEl)
+    restaurant={ restaurant } />)
 
 $('[data-toggle="tooltip"]').tooltip()

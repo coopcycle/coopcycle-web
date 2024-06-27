@@ -74,6 +74,7 @@ class OrderActionsVoter extends Voter
             $validStates = [
                 OrderInterface::STATE_NEW,
                 OrderInterface::STATE_ACCEPTED,
+                OrderInterface::STATE_FULFILLED,
             ];
 
             if (!in_array($orderState, $validStates)) {

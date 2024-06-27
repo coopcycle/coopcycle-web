@@ -78,7 +78,7 @@
         "ADMIN_DASHBOARD_FILTERS_ORGS": "Stores, shops",
         "ADMIN_DASHBOARD_FILTERS_TAB_TAGS_AND_ORGS": "Tags, stores, shops",
         "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_HELP_TEXT": "Type \"-\" to exclude.",
-        "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER": "Select a tag, a store, a shop...",
+        "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER": "Select a tag, a store, a restaurant, a shop...",
         "ADMIN_DASHBOARD_FILTERS_TAB_COURIERS": "Couriers",
         "ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE": "Time range",
         "ADMIN_DASHBOARD_FILTERS_SHOW": "Show",

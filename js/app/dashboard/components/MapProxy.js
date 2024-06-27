@@ -3,8 +3,7 @@ import L from 'leaflet'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
-import React from 'react'
-import { render } from 'react-dom'
+import React, { StrictMode } from 'react'
 import ColorHash from 'color-hash'
 
 import MapHelper from '../../MapHelper'
@@ -12,6 +11,8 @@ import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
 import { isMarkerInsidePolygon } from '../utils'
+import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -142,7 +143,6 @@ export default class MapProxy {
     this.map.selectArea.enable()
 
     this.map.on('areaselected', (e) => {
-      console.debug(e.bounds)
       L.Util.requestAnimFrame(() => {
         const markers = []
         this.map.eachLayer((layer) => {
@@ -190,34 +190,31 @@ export default class MapProxy {
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
-    let popupComponent = this.taskPopups.get(task['@id'])
+    let popupComponent
 
     if (!marker) {
 
       marker = MapHelper.createMarker(coords, iconName, 'marker', color)
 
       const el = document.createElement('div')
+      const root = createRoot(el)
 
-      popupComponent = React.createRef()
+      this.taskMarkers.set(task['@id'], marker)
 
-      const cb = () => {
-        this.taskMarkers.set(task['@id'], marker)
+      marker.bindPopup(() => {
+        popupComponent = React.createRef()
+        root.render(
+          <StrictMode>
+            <LeafletPopupContent
+              ref={ popupComponent }
+              task={ task }
+              onEditClick={ this.onEditClick }
+            />
+          </StrictMode>
+          )
         this.taskPopups.set(task['@id'], popupComponent)
-      }
-
-      render(<LeafletPopupContent
-          task={ task }
-          ref={ popupComponent }
-          onEditClick={ this.onEditClick }
-        />,
-        el,
-        cb
-      )
-
-      const popup = L.popup()
-        .setContent(el)
-
-      marker.bindPopup(popup)
+        return el
+      }).addTo(this.map)
 
       marker.on('click', (e) => {
         if(e.originalEvent.ctrlKey) { // e is a leaflet 'click' event
@@ -250,9 +247,12 @@ export default class MapProxy {
       if (!marker.getLatLng().equals(latLng)) {
         marker.setLatLng(latLng).update()
       }
+    }
 
+    popupComponent = this.taskPopups.get(task['@id'])
+
+    if (popupComponent) {
       popupComponent.current.updateTask(task)
-
     }
 
     L.Util.setOptions(marker, { task })
@@ -524,7 +524,7 @@ export default class MapProxy {
 
     })
 
-    window.sessionStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
+    window.localStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
 
   }
 }

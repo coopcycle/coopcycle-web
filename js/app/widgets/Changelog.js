@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import changelogParser from '@release-notes/changelog-parser'
 import axios from 'axios'
@@ -149,6 +149,6 @@ export default function(el) {
       }
     }
 
-    render(<Changelog releases={ releases } newReleasesCount={ newReleasesCount } />, el)
+    createRoot(el).render(<Changelog releases={ releases } newReleasesCount={ newReleasesCount } />)
   })
 }

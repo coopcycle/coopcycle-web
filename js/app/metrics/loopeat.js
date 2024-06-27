@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, Table } from 'antd';
@@ -63,5 +63,5 @@ if (rootElement) {
     );
   };
 
-  ReactDOM.render(<ChartRenderer />, rootElement);
+  createRoot(rootElement).render(<ChartRenderer />);
 }

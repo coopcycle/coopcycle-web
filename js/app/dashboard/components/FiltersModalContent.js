@@ -86,6 +86,8 @@ class FiltersModalContent extends React.Component {
       alwayShowUnassignedTasks: this.props.alwayShowUnassignedTasks,
       tags: this.props.selectedTags,
       excludedTags: this.props.excludedTags,
+      includedOrgs: this.props.includedOrgs,
+      excludedOrgs: this.props.excludedOrgs,
       hiddenCouriers: this.props.hiddenCouriers,
       timeRange: this.props.timeRange,
     };
