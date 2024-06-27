@@ -182,7 +182,7 @@
         "ADMIN_DASHBOARD_FILTERS_TAGS": "Etiquetas",
         "ADMIN_DASHBOARD_FILTERS_ORGS": "Tiendas, comercios",
         "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_HELP_TEXT": "Escribe \"-\" para excluir.",
-        "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER": "Seleccione una etiqueta, una tienda, un comercio...",
+        "ADMIN_DASHBOARD_FILTERS_TAGS_AND_ORGS_PLACEHOLDER": "Seleccione una etiqueta, una tienda, un restaurante, un comercio...",
         "ADMIN_DASHBOARD_FILTERS_TAB_GENERAL": "General",
         "ADMIN_DASHBOARD_FILTERS_APPLY": "Aplicar",
         "ADMIN_DASHBOARD_RUSH": "Hora punta",

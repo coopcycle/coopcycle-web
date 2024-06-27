@@ -116,7 +116,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
     }
   }
 
-  const persistedUseAvatarColors = window.sessionStorage.getItem(`use_avatar_colors`) || true
+  const persistedUseAvatarColors = window.localStorage.getItem(`use_avatar_colors`) || true
   if (persistedUseAvatarColors) {
     preloadedState = {
       ...preloadedState,
