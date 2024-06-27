@@ -242,6 +242,7 @@
         "ENTER_YOUR_POSTCODE": "Entrez votre code postal",
         "RULE_PICKER_LINE_PACKAGES": "Paquets",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Activer les clusters",
+        "ADMIN_DASHBOARD_SETTINGS_SHOW_WEIGHT": "Montrer les volumes et les poids",
         "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Toujours afficher les tâche non assignées",
         "ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT": "Cette commande sera retirée sur place par le client",
         "ADMIN_DASHBOARD_ORDERS_REFUSE_REASON": "Pour quelle raison refusez-vous cette commande ?",
