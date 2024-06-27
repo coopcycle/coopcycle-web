@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -41,7 +43,9 @@ class SeoListener
         SeoPageInterface $seoPage,
         EntityManagerInterface $entityManager,
         FilterService $imagineFilter,
-        UploaderHelper $uploaderHelper)
+        UploaderHelper $uploaderHelper,
+        Packages $packages,
+        UrlHelper $urlHelper)
     {
         $this->translator = $translator;
         $this->settingsManager = $settingsManager;
@@ -49,6 +53,8 @@ class SeoListener
         $this->entityManager = $entityManager;
         $this->imagineFilter = $imagineFilter;
         $this->uploaderHelper = $uploaderHelper;
+        $this->packages = $packages;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -88,7 +94,7 @@ class SeoListener
         $this->seoPage
             ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:type', 'website')
-            ->addMeta('property', 'og:image', 'https://coopcycle.org/images/homepage-banner.jpg')
+            ->addMeta('property', 'og:image', $this->urlHelper->getAbsoluteUrl($this->packages->getUrl('img/homepage-banner.jpg')))
             ->addMeta('property', 'og:url', $request->getUri());
 
         // @see http://ogp.me/#optional
