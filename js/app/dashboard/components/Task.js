@@ -13,7 +13,6 @@ import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-fronte
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
-import OrderNumber from './OrderNumber'
 import { getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 import { formatVolumeUnits, formatWeight } from '../redux/utils'
 
@@ -43,8 +42,12 @@ const TaskCaption = ({ task }) => {
   return (
     <span>
       <span className="mr-1">
-        <span className="text-monospace">#{ task.id }</span>
-        <OrderNumber task={ task } />
+        <span className="text-monospace">
+          { task?.metadata.order_number ?
+            task.metadata.order_number
+            : `#${ task.id }`
+          }
+        </span>
       </span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>

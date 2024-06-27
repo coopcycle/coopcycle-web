@@ -18,6 +18,7 @@ import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
 import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
 import { formatDistance, formatDuration, formatVolumeUnits, formatWeight } from '../redux/utils'
+import PolylineIcon from '../PolylineIcon'
 
 moment.locale($('html').attr('lang'))
 
@@ -190,7 +191,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
               </a>
             </Popconfirm>
           </div>
-          <div>
+          <div className="mt-2">
             <span>{ durationFormatted }</span>
             <span className="mx-2">—</span>
             <span>{ distanceFormatted }</span>
@@ -209,32 +210,29 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
       </div>
       <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})}>
         { tasks.length > 0 && (
-          <div className="d-flex justify-content-between align-items-center">
-            <div>
-              <a href="#"
-                title="Optimize"
-                style={{
-                  color: '#f1c40f',
-                  visibility: tasks.length > 1 ? 'visible' : 'hidden'
-                }}
-                onClick={ e => {
-                  e.preventDefault()
-                  dispatch(optimizeTaskList({'@id': uri, username: username}))
-                }}
-              >
-                <i className="fa fa-2x fa-bolt"></i>
-              </a>
-              <a role="button"
-                className={ classNames({
-                  'ml-3': true,
-                  'invisible': tasks.length < 1,
-                  'text-muted': !polylineEnabled
-                }) }
-                onClick={ () => dispatch(togglePolyline(username)) }
-              >
-                <i className="fa fa-map fa-2x"></i>
-              </a>
-            </div>
+          <div className="d-flex align-items-center mt-2 mb-2">
+            <a
+              className={ classNames({
+                'tasklist__actions--icon': true,
+                'ml-3': true,
+              }) }
+              onClick={ () => dispatch(togglePolyline(username)) }
+            >
+              <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
+            </a>
+            <a
+              className="ml-4 tasklist__actions--icon d-flex align-items-center justify-content-center"
+              title="Optimize"
+              style={{
+                visibility: tasks.length > 1 ? 'visible' : 'hidden'
+              }}
+              onClick={ e => {
+                e.preventDefault()
+                dispatch(optimizeTaskList({'@id': uri, username: username}))
+              }}
+            >
+              <i className="fa fa-2x fa-bolt"></i>
+            </a>
           </div>
         )}
         <Droppable

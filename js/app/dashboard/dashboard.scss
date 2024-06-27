@@ -207,6 +207,19 @@ html, body {
   font-size: 100%;
 }
 
+.tasklist__actions--icon {
+  height: 30px;
+  width: 30px;
+  color: $dark;
+  fill: $dark;
+
+  &:hover {
+    color: $gray-300;
+    fill: $gray-300;
+    text-decoration: none;
+  }
+}
+
 .dashboard__map-container .leaflet-popup-content-wrapper {
   min-width: 200px;
 }
