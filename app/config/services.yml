@@ -646,12 +646,13 @@ services:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
 
-  coopcycle.user_manager:
-    decorates: nucleos_user.user_manager.default
+  AppBundle\Security\UserManager:
     arguments:
-      - '@coopcycle.user_manager.inner'
-      - '@nucleos_user.object_manager'
-    class: AppBundle\Security\UserManager
+      $decorated: '@nucleos_user.user_manager.default'
+      $objectManager: '@nucleos_user.object_manager'
+
+  coopcycle.user_manager:
+    alias: AppBundle\Security\UserManager
 
   AppBundle\Service\SettingsManager:
     arguments:

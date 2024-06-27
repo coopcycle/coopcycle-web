@@ -7,9 +7,9 @@ use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Message\TopBarNotification;
+use AppBundle\Security\UserManager;
 use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Name\NamedMessage;
@@ -27,7 +27,7 @@ class LiveUpdates
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        private UserManagerInterface $userManager,
+        private UserManager $userManager,
         private SerializerInterface $serializer,
         private TranslatorInterface $translator,
         private CentrifugoClient $centrifugoClient,
