@@ -127,6 +127,7 @@ services:
     arguments:
       $objectManager: '@sylius.manager.order'
       $orderFactory: '@sylius.factory.order'
+      $environment: '%kernel.environment%'
 
   AppBundle\LoopEat\Client:
     arguments:

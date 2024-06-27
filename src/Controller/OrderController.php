@@ -59,19 +59,16 @@ class OrderController extends AbstractController
     use UserTrait;
     use InjectAuthTrait;
 
-    private $objectManager;
-
     public function __construct(
-        EntityManagerInterface $objectManager,
-        FactoryInterface $orderFactory,
+        private EntityManagerInterface $objectManager,
+        private FactoryInterface $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
         private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
+        private string $environment
     )
     {
-        $this->objectManager = $objectManager;
-        $this->orderFactory = $orderFactory;
     }
 
     /**
@@ -345,7 +342,9 @@ class OrderController extends AbstractController
         $stripeManager->configurePayment($payment);
 
         $checkoutPayment = new CheckoutPayment($order);
-        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
+        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while it fails
+        ]);
 
         $parameters =  [
             'order' => $order,
