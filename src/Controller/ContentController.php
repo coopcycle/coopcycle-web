@@ -54,9 +54,9 @@ class ContentController extends AbstractController
     {
         $locale = $request->getLocale();
         $files = [
-            'fr' => sprintf('http://coopcycle.org/%s/fr.md', $type),
-            'en' => sprintf('http://coopcycle.org/%s/en.md', $type),
-            'es' => sprintf('http://coopcycle.org/%s/es.md', $type),
+            'fr' => sprintf('https://coopcycle-assets.sfo2.digitaloceanspaces.com/%s/fr.md', $type),
+            'en' => sprintf('https://coopcycle-assets.sfo2.digitaloceanspaces.com/%s/en.md', $type),
+            'es' => sprintf('https://coopcycle-assets.sfo2.digitaloceanspaces.com/%s/es.md', $type),
         ];
 
         $key = array_key_exists($locale, $files) ? $locale : 'en';
