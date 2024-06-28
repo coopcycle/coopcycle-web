@@ -47,13 +47,17 @@ class DeliveryForm {
 
 function reorder(suggestedOrder) {
 
-  // https://stackoverflow.com/questions/5882768/how-to-append-a-childnode-to-a-specific-position
+  // To reorder, we use the removeChild() function,
+  // which removes an element and returns it but preserves event listeners.
+  // Then, we re-add the elements in the expected order.
 
-  const taskEls = collectionHolder.children
+  const taskEls = []
+  while (collectionHolder.firstElementChild) {
+    taskEls.push(collectionHolder.removeChild(collectionHolder.firstElementChild));
+  }
 
-  suggestedOrder.forEach((oldIndex, newIndex) => {
-    const taskEl = taskEls[oldIndex]
-    collectionHolder.insertBefore(taskEl, taskEls[newIndex])
+  suggestedOrder.forEach((oldIndex) => {
+    collectionHolder.appendChild(taskEls[oldIndex])
   })
 
   collectionHolder.children.forEach((el, index) => {
