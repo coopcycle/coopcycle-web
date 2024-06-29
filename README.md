@@ -88,14 +88,19 @@ We have prebuilt some images and uploaded them to [Docker Hub](https://hub.docke
 To avoid building those images locally, you can pull them first.
 
 ```
-docker-compose pull
+docker compose pull
+```
+
+Populate your local `.env` file:
+
+```
+cp .env.dist .env
 ```
 
 #### Start the Docker containers
 
-```
-cp .env.dist .env
-docker-compose up
+```sh
+docker compose up
 ```
 
 At this step, the platform should be up & running, but the database is still empty.
@@ -156,7 +161,7 @@ docker compose up
 In the `.env` file you need to set `GEOCODE_EARTH_API_KEY` to a valid API key. You need also Stripe configured on the platform or in the `.env` file (`STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_CLIENT_ID`).
 
 and then this command will lead you to Cypress GUI
-```
+```sh
 cypress open
 ```
 
