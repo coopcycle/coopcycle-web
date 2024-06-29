@@ -2,28 +2,20 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 trait DeliveryTrait
 {
@@ -61,28 +53,82 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request,
-        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner,
-        array $options = [])
+    public function deliveryAction($id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner,
+    )
     {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery, 'view');
+
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createDeliveryForm($delivery, $options);
+        $form = $this->createDeliveryForm($delivery, [
+            'with_address_props' => true,
+            'with_arbitrary_price' => null === $delivery->getOrder(),
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
 
-            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
-                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
+            $saveAsNew = $form->has('saveAsNew') && $form->get('saveAsNew')->isClicked();
 
-            if ($useArbitraryPrice) {
-                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                    $entityManager, $orderNumberAssigner);
+            if ($saveAsNew) {
+                $previousOrder = $delivery->getOrder();
+
+                // Keep the original objects untouched, creating new ones instead
+                $entityManager->detach($delivery);
+                if (null !== $previousOrder) {
+                    $entityManager->detach($previousOrder);
+                }
+                foreach ($delivery->getTasks() as $task) {
+                    $entityManager->detach($task);
+                }
+
+                $store = $delivery->getStore();
+
+                $newTasks = array_map(function($task){
+                    return $task->duplicate();
+                }, $delivery->getTasks());
+
+                $newDelivery = Delivery::createWithTasks(...$newTasks);
+                $newDelivery->setStore($store);
+
+                if (null !== $previousOrder) {
+                    $newOrder = $this->createOrderForDelivery($orderFactory, $newDelivery, $previousOrder->getItemsTotal(), $previousOrder->getCustomer());
+                    $entityManager->persist($newOrder);
+
+                    // must be done before assigning a number
+                    $entityManager->flush();
+
+                    $orderNumberAssigner->assignNumber($newOrder);
+                    $newOrder->setState(OrderInterface::STATE_ACCEPTED);
+
+                    $entityManager->flush();
+
+                } else {
+                    $entityManager->persist($newDelivery);
+                    $entityManager->flush();
+                }
+
             } else {
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+                $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
+                    $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
+
+                if ($useArbitraryPrice) {
+                    $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
+                        $entityManager, $orderNumberAssigner);
+                } else {
+                    $entityManager->persist($delivery);
+                    $entityManager->flush();
+                }
             }
 
             return $this->redirectToRoute($routes['success']);
@@ -94,25 +140,6 @@ trait DeliveryTrait
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'back_route' => $routes['back'],
-        ]);
-    }
-
-    public function deliveryAction($id,
-        Request $request,
-        OrderFactory $orderFactory,
-        EntityManagerInterface $entityManager,
-        OrderNumberAssignerInterface $orderNumberAssigner
-    )
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        $this->accessControl($delivery, 'view');
-
-        return $this->renderDeliveryForm($delivery, $request, $orderFactory, $entityManager, $orderNumberAssigner, [
-            'with_address_props' => true,
-            'with_arbitrary_price' => null === $delivery->getOrder(),
         ]);
     }
 

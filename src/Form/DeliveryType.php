@@ -11,6 +11,7 @@ use AppBundle\Form\Type\MoneyType;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -150,6 +151,10 @@ class DeliveryType extends AbstractType
                     'mapped' => false,
                     'required' => false,
                 ]);
+            }
+
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && null !== $delivery->getId()) {
+                $form->add('saveAsNew', SubmitType::class, ['label' => 'orders.save_as_new']);
             }
         });
 
