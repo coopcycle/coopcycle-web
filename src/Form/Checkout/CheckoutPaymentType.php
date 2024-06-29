@@ -33,7 +33,7 @@ class CheckoutPaymentType extends AbstractType
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('stripePayment', StripePaymentType::class);
+            ->add('stripePayment', StripePaymentType::class, ['label' => false]);
 
         // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
         if ('mercadopago' === $this->resolver->resolve()) {

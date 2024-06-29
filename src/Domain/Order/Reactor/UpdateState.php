@@ -68,7 +68,7 @@ class UpdateState
             }
         }
 
-        if ($event instanceof Event\OrderFulfilled) {
+        if ($event instanceof Event\OrderFulfilled && $event->shouldCompletePayment()) {
             foreach ($order->getPayments() as $payment) {
                 $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
                 if ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {

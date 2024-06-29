@@ -7,6 +7,7 @@ use AppBundle\Domain\Order\Event\OrderDropped;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Task\Event\TaskDone;
 use SimpleBus\Message\Bus\MessageBus;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 /**
  * Re-triggers an event in the order domain.
@@ -38,8 +39,19 @@ class PickOrDrop
 
         $this->eventBus->handle($task->isDropoff() ? new OrderDropped($order) : new OrderPicked($order));
 
+        // FIXME
+        // The order should be fulfilled when the last dropoff is completed
         if ($task->isDropoff()) {
-            $this->eventBus->handle(new OrderFulfilled($order));
+
+            $shouldCompletePayment = true;
+
+            // In case of last-mile orders, the delivery may be completed *BEFORE* the order is paid.
+            $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+            if (null === $payment && !$order->hasVendor()) {
+                $shouldCompletePayment = false;
+            }
+
+            $this->eventBus->handle(new OrderFulfilled($order, $shouldCompletePayment));
         }
     }
 }
