@@ -22,9 +22,16 @@ class PricingRuleSetManager
             Returns an array of entities related to the pricingRuleSet.
         */
 
+        $contracts = [];
+        foreach ($this->getContracts($pricingRuleSet) as $contract) {
+            if (null !== $contract->getContractor()) {
+                $contracts[] = $contract;
+            }
+        }
+
         return array_merge(
             $this->getStores($pricingRuleSet),
-            $this->getContracts($pricingRuleSet),
+            $contracts,
             $this->getDeliveryForms($pricingRuleSet)
         );
     }
