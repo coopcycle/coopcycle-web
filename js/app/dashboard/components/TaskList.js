@@ -193,14 +193,14 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           </div>
           <div className="mt-2">
             <span>{ durationFormatted }</span>
-            <span className="mx-2">—</span>
+            <span className="mx-2">|</span>
             <span>{ distanceFormatted }</span>
             { showWeightAndVolumeUnit ?
               (
                 <>
-                  <span className="mx-2">—</span>
+                  <span className="mx-2">|</span>
                   <span>{ weightFormatted }</span>
-                  <span className="mx-2">—</span>
+                  <span className="mx-2">|</span>
                   <span>{ volumeUnits }</span>
                 </>
               )

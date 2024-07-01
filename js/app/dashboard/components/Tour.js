@@ -133,14 +133,14 @@ const Tour = ({ tourId, draggableIndex }) => {
               </h4>
               <div className="d-flex align-items-center">
                 <span>{ durationFormatted }</span>
-                <span className="mx-2">—</span>
+                <span className="mx-2">|</span>
                 <span>{ distanceFormatted }</span>
                 { showWeightAndVolumeUnit ?
                   (
                     <>
-                      <span className="mx-2">—</span>
+                      <span className="mx-2">|</span>
                       <span>{ weightFormatted }</span>
-                      <span className="mx-2">—</span>
+                      <span className="mx-2">|</span>
                       <span>{ volumeUnits }</span>
                     </>
                   )

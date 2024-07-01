@@ -261,7 +261,7 @@ class Task extends React.Component {
             (
               <div>
                 <span>{ formatWeight(task.weight) }</span>
-                <span className="mx-2">—</span>
+                <span className="mx-2">|</span>
                 <span>{ formatVolumeUnits(getTaskVolumeUnits(task)) }</span>
               </div>
             )
