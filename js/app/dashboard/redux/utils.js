@@ -295,7 +295,7 @@ export const formatDuration = (duration) => {
  * @param {Integer} distance - duration in meters
  */
 export const formatDistance = (distance) => {
-  return (distance / 1000).toFixed(2) + ' Km'
+  return (distance / 1000).toFixed(2) + ' km'
 }
 
 /**

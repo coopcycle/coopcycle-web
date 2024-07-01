@@ -33,6 +33,7 @@ export const defaultSettings = {
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
   useAvatarColors: false,
+  showDistanceAndTime: true,
   showWeightAndVolumeUnit: true,
   toursEnabled: false // is the tour column expanded
 }

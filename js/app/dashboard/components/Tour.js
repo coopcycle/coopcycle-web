@@ -10,8 +10,8 @@ import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourP
 import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolumeUnits } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
-import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectSettings } from '../redux/selectors'
-import { formatDistance, formatDuration, formatVolumeUnits, formatWeight } from '../redux/utils'
+import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
+import ExtraInformations from './TaskCollectionDetails'
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -104,14 +104,10 @@ const Tour = ({ tourId, draggableIndex }) => {
   const loadingTourIds = useSelector(selectLoadingTourPanelsIds)
   const isLoading = loadingTourIds.includes(tour['@id'])
 
-  const { showWeightAndVolumeUnit } = useSelector(selectSettings)
-
   const dispatch = useDispatch()
 
-  const durationFormatted = formatDuration(tour.duration)
-  const distanceFormatted = formatDistance(tour.distance)
-  const weightFormatted = formatWeight(useSelector(state => selectTourWeight(state, tourId)))
-  const volumeUnits = formatVolumeUnits(useSelector(state => selectTourVolumeUnits(state, tourId)))
+  const weight = useSelector(state => selectTourWeight(state, tourId))
+  const volumeUnits = useSelector(state => selectTourVolumeUnits(state, tourId))
 
   return (
     <Draggable key={ `tour:${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ draggableIndex }>
@@ -131,22 +127,7 @@ const Tour = ({ tourId, draggableIndex }) => {
                     <i className="fa fa-arrows cursor--grabbing mr-2"></i>
                   </RenderEditNameForm>
               </h4>
-              <div className="d-flex align-items-center">
-                <span>{ durationFormatted }</span>
-                <span className="mx-2">|</span>
-                <span>{ distanceFormatted }</span>
-                { showWeightAndVolumeUnit ?
-                  (
-                    <>
-                      <span className="mx-2">|</span>
-                      <span>{ weightFormatted }</span>
-                      <span className="mx-2">|</span>
-                      <span>{ volumeUnits }</span>
-                    </>
-                  )
-                  : null
-                }
-              </div>
+              <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits}/>
             </div>
             <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
               <Droppable

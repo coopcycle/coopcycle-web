@@ -19,11 +19,12 @@ const buttonItemLayout = {
 
 export default () => {
 
-  const { polylineStyle, clustersEnabled, useAvatarColors, showWeightAndVolumeUnit } = useSelector(selectSettings)
+  const { polylineStyle, clustersEnabled, useAvatarColors, showWeightAndVolumeUnit, showDistanceAndTime } = useSelector(selectSettings)
   const [polylineStyleValue, setPolylineStyleLocal] = useState(polylineStyle)
   const [clustersEnabledValue, setClustersEnabledLocal] = useState(clustersEnabled)
   const [useAvatarColorsValue, setUseAvatarColorsLocal] = useState(useAvatarColors)
   const [showWeightAndVolumeUnitValue, setShowWeightAndVolumeUnitLocal] = useState(showWeightAndVolumeUnit)
+  const [showDistanceAndTimeValue, setshowDistanceAndTimeLocal] = useState(showDistanceAndTime)
   const dispatch = useDispatch()
 
   const { t } = useTranslation()
@@ -33,7 +34,8 @@ export default () => {
       polylineStyle: polylineStyleValue,
       clustersEnabled: clustersEnabledValue,
       useAvatarColors: useAvatarColorsValue,
-      showWeightAndVolumeUnit: showWeightAndVolumeUnitValue
+      showWeightAndVolumeUnit: showWeightAndVolumeUnitValue,
+      showDistanceAndTime: showDistanceAndTimeValue
     }))
     dispatch(closeSettings())
   }
@@ -52,6 +54,13 @@ export default () => {
       <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED') } { ...formItemLayout }>
         <Radio.Group defaultValue={ clustersEnabled }
           onChange={ (e) => setClustersEnabledLocal(e.target.value) }>
+          <Radio.Button value={ true }>Yes</Radio.Button>
+          <Radio.Button value={ false }>No</Radio.Button>
+        </Radio.Group>
+      </Form.Item>
+      <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_SHOW_DISTANCE_AND_TIME') } { ...formItemLayout }>
+        <Radio.Group defaultValue={ showDistanceAndTimeValue }
+          onChange={ (e) => setshowDistanceAndTimeLocal(e.target.value) }>
           <Radio.Button value={ true }>Yes</Radio.Button>
           <Radio.Button value={ false }>No</Radio.Button>
         </Radio.Group>

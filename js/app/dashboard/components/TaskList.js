@@ -12,13 +12,13 @@ import Task from './Task'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded } from '../redux/actions'
-import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectSettings, selectVisibleTaskIds } from '../redux/selectors'
+import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
 import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
-import { formatDistance, formatDuration, formatVolumeUnits, formatWeight } from '../redux/utils'
 import PolylineIcon from '../PolylineIcon'
+import ExtraInformations from './TaskCollectionDetails'
 
 moment.locale($('html').attr('lang'))
 
@@ -120,8 +120,6 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
-  const { showWeightAndVolumeUnit } = useSelector(selectSettings)
-
   const visibleTasks = tasks.filter(task => {
     return _.includes(visibleTaskIds, task['@id'])
   })
@@ -140,10 +138,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const cancelledTasks = _.filter(visibleTasks, t => t.status === 'CANCELLED')
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
-  const durationFormatted = formatDuration(duration)
-  const distanceFormatted = formatDistance(distance)
-  const weightFormatted = formatWeight(useSelector(state => selectTaskListWeight(state, {username: username})))
-  const volumeUnits = formatVolumeUnits(useSelector(state => selectTaskListVolumeUnits(state, {username: username})))
+  const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
+  const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
 
   return (
     <div>
@@ -191,22 +187,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
               </a>
             </Popconfirm>
           </div>
-          <div className="mt-2">
-            <span>{ durationFormatted }</span>
-            <span className="mx-2">|</span>
-            <span>{ distanceFormatted }</span>
-            { showWeightAndVolumeUnit ?
-              (
-                <>
-                  <span className="mx-2">|</span>
-                  <span>{ weightFormatted }</span>
-                  <span className="mx-2">|</span>
-                  <span>{ volumeUnits }</span>
-                </>
-              )
-              : null
-            }
-          </div>
+          <ExtraInformations duration={duration} distance={distance} weight={weight} volumeUnits={volumeUnits} />
       </div>
       <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})}>
         { tasks.length > 0 && (
