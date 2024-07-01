@@ -189,14 +189,11 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           </div>
           <ExtraInformations duration={duration} distance={distance} weight={weight} volumeUnits={volumeUnits} />
       </div>
-      <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})}>
+      <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
         { tasks.length > 0 && (
           <div className="d-flex align-items-center mt-2 mb-2">
             <a
-              className={ classNames({
-                'tasklist__actions--icon': true,
-                'ml-3': true,
-              }) }
+              className='tasklist__actions--icon ml-3'
               onClick={ () => dispatch(togglePolyline(username)) }
             >
               <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
@@ -223,11 +220,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
         >
           {(provided, snapshot) => (
             <div ref={ provided.innerRef }
-              className={ classNames({
-                'taskList__tasks': true,
-                'list-group': true,
-                'm-0': true,
-              }) }
+              className='taskList__tasks list-group m-0'
               { ...provided.droppableProps }
               style={getDroppableListStyle(snapshot.isDraggingOver)}
             >

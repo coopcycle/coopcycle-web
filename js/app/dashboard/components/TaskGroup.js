@@ -133,7 +133,7 @@ class TaskGroup extends React.Component {
             { this.state.editName && this.renderEditNameForm() }
           </h4>
         </div>
-        <div id={ `task-group-panel-${this.state.group.id}` } className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
+        <div id={ `task-group-panel-${this.state.group.id}` } className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
           <ul className="list-group">
             { tasks.map((task) => {
               return (

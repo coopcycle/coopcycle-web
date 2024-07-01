@@ -129,7 +129,7 @@ const Tour = ({ tourId, draggableIndex }) => {
               </h4>
               <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits}/>
             </div>
-            <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
+            <div className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
               <Droppable
                   isDropDisabled={isTourDragging || isLoading}
                   droppableId={ `tour:${tour['@id']}` }
@@ -137,13 +137,7 @@ const Tour = ({ tourId, draggableIndex }) => {
                   {(provided, snapshot) => (
                     <div ref={ provided.innerRef } { ...provided.droppableProps }>
                       <div
-                      className={ classNames({
-                        'taskList__tasks': true,
-                        'list-group': true,
-                        'm-0': true,
-                        'p-0': true,
-                        'nomargin': true,
-                      }) }
+                      className="taskList__tasks list-group m-0 p-0 nomargin"
                       style={getDroppableListStyle(snapshot.isDraggingOver)}
                       >
                         { _.map(tour.items, (taskId, index) =>
