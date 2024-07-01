@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
@@ -34,7 +34,7 @@ import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/re
 
 import 'react-contexify/dist/ReactContexify.css'
 import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, taskListSelectors } from '../../../../shared/src/logistics/redux/selectors'
-import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from '../../redux/utils'
+import { isValidTasksMultiSelect, usePrevious, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
 export const ASSIGN_MULTI = 'ASSIGN_MULTI'
@@ -178,16 +178,6 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
   }
 
   return actions
-}
-
-function usePrevious(old) {
-  let ref = useRef()
-
-  useEffect(() => {
-    ref.current = old
-  }, [old])
-
-  return ref.current
 }
 
 const DynamicMenu = () => {
