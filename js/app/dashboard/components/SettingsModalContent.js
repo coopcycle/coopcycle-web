@@ -54,29 +54,29 @@ export default () => {
       <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED') } { ...formItemLayout }>
         <Radio.Group defaultValue={ clustersEnabled }
           onChange={ (e) => setClustersEnabledLocal(e.target.value) }>
-          <Radio.Button value={ true }>Yes</Radio.Button>
-          <Radio.Button value={ false }>No</Radio.Button>
+          <Radio.Button value={ true }>{ t('ADMIN_DASHBOARD_SETTINGS_YES') }</Radio.Button>
+          <Radio.Button value={ false }>{ t('ADMIN_DASHBOARD_SETTINGS_NO') }</Radio.Button>
         </Radio.Group>
       </Form.Item>
       <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_SHOW_DISTANCE_AND_TIME') } { ...formItemLayout }>
         <Radio.Group defaultValue={ showDistanceAndTimeValue }
           onChange={ (e) => setshowDistanceAndTimeLocal(e.target.value) }>
-          <Radio.Button value={ true }>Yes</Radio.Button>
-          <Radio.Button value={ false }>No</Radio.Button>
+          <Radio.Button value={ true }>{ t('ADMIN_DASHBOARD_SETTINGS_YES') }</Radio.Button>
+          <Radio.Button value={ false }>{ t('ADMIN_DASHBOARD_SETTINGS_NO') }</Radio.Button>
         </Radio.Group>
       </Form.Item>
       <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_SHOW_WEIGHT') } { ...formItemLayout }>
         <Radio.Group defaultValue={ showWeightAndVolumeUnitValue }
           onChange={ (e) => setShowWeightAndVolumeUnitLocal(e.target.value) }>
-          <Radio.Button value={ true }>Yes</Radio.Button>
-          <Radio.Button value={ false }>No</Radio.Button>
+          <Radio.Button value={ true }>{ t('ADMIN_DASHBOARD_SETTINGS_YES') }</Radio.Button>
+          <Radio.Button value={ false }>{ t('ADMIN_DASHBOARD_SETTINGS_NO') }</Radio.Button>
         </Radio.Group>
       </Form.Item>
       <Form.Item label={ t('ADMIN_DASHBOARD_SETTINGS_AVATAR_COLORS_ENABLED') } { ...formItemLayout }>
         <Radio.Group defaultValue={ useAvatarColors }
           onChange={ (e) => setUseAvatarColorsLocal(e.target.value) }>
-          <Radio.Button value={ true }>Yes</Radio.Button>
-          <Radio.Button value={ false }>No</Radio.Button>
+          <Radio.Button value={ true }>{ t('ADMIN_DASHBOARD_SETTINGS_YES') }</Radio.Button>
+          <Radio.Button value={ false }>{ t('ADMIN_DASHBOARD_SETTINGS_NO') }</Radio.Button>
         </Radio.Group>
       </Form.Item>
       <Form.Item { ...buttonItemLayout }>

@@ -89,6 +89,8 @@
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "A vuelo de pájaro",
         "ADMIN_DASHBOARD_SETTINGS_SHOW_WEIGHT": "Mostrar volúmenes y pesos",
         "ADMIN_DASHBOARD_SETTINGS_SHOW_DISTANCE_AND_TIME": "Mostrar distancia y tiempo",
+        "ADMIN_DASHBOARD_SETTINGS_YES": "Sí",
+        "ADMIN_DASHBOARD_SETTINGS_NO": "No",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Formatos de archivo admitidos: csv, ods, xlsx",
         "ADMIN_DASHBOARD_PACKAGES": "Paquetes",
         "ADMIN_DASHBOARD_WEIGHT": "Peso",

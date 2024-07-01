@@ -109,6 +109,8 @@
         "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "ID, helbidea…",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Ibilbide-interfazea",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE_AS_THE_CROW_FLIES": "Txoriaren hegaldian",
+        "ADMIN_DASHBOARD_SETTINGS_YES": "Bai",
+        "ADMIN_DASHBOARD_SETTINGS_NO": "Ez",
         "ADMIN_DASHBOARD_CANCEL_TASKS_MULTI": "Utzi {{count}} zeregin",
         "ADMIN_DASHBOARD_NO_ACTION_AVAILABLE": "Ez dago ekintzarik eskuragarri",
         "ADMIN_DASHBOARD_MOVE_TO_TOP": "Mugitu gora",

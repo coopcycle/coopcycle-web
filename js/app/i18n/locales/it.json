@@ -117,6 +117,8 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Segnala un problema",
         "ADMIN_DASHBOARD_SEARCH_PLACEHOLDER": "Identità, indirizzo…",
         "ADMIN_DASHBOARD_SETTINGS_POLYLINE": "Visualizza percorso",
+        "ADMIN_DASHBOARD_SETTINGS_YES": "Sí",
+        "ADMIN_DASHBOARD_SETTINGS_NO": "No",
         "ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING": "Importazione incarichi in corso…",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Mostra con menù a tendina.",
         "USER_EDIT_DISABLED_LABEL": "Disabilitato",
