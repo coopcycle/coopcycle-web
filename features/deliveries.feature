@@ -347,7 +347,8 @@ Feature: Deliveries
             {
               "type": "XL",
               "name": "XL",
-              "quantity": 2
+              "quantity": 2,
+              "volume_per_package": 3
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -380,7 +381,8 @@ Feature: Deliveries
             {
               "type": "XL",
               "name": "XL",
-              "quantity": 2
+              "quantity": 2,
+              "volume_per_package": 3
             }
           ],
           "createdAt":"@string@.isDateTime()"
