@@ -48,13 +48,6 @@ context('Dispatch', () => {
       cy.get('.ReactModal__Content--select-courier button[type="submit"]')
       .click()
 
-      // FIXME : when you click on "add to planning" it opens the search panel I don't know why
-      cy.get('[data-cypress-close-search]')
-      .click()
-
-      cy.get('[data-cypress-close-search]')
-      .click()
-
       cy.wait(500)
 
       cy.get('#accordion .accordion__button').click()
