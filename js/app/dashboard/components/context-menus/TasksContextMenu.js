@@ -24,12 +24,13 @@ import {
   removeTasksFromGroup,
   restoreTasks,
   setCurrentTask,
+  setTaskToShow,
   startTasks,
   toggleTasksGroupPanelExpanded,
   toggleTourPanelExpanded,
   unassignTasks
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -200,6 +201,7 @@ const DynamicMenu = () => {
   const previouslySelectedTasks = usePrevious(selectedTasks || [])
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
   const expandedGroupPanelsIds = useSelector(selectExpandedTasksGroupsPanelsIds)
+  const taskToShow = useSelector(selectTaskToShow)
 
   let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
@@ -232,9 +234,14 @@ const DynamicMenu = () => {
         }
       })
 
-      requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+      dispatch(setTaskToShow(taskToShow))
+
     }
   }, [selectedTasks])
+
+  useEffect(() => {
+    requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+  }, [taskToShow])
 
   const tasksToUnassign =
   _.filter(selectedTasks, selectedTask =>
