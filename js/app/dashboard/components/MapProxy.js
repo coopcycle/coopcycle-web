@@ -233,7 +233,7 @@ export default class MapProxy {
         'textColor',
         'borderColor',
       ])
-      console.log(!_.isEqual(currentOpts, newOpts))
+
       if (!_.isEqual(currentOpts, newOpts)) {
         L.Util.setOptions(marker.options.icon, newOpts)
         marker.setIcon(marker.options.icon)
@@ -366,7 +366,6 @@ export default class MapProxy {
   showPolyline(username, style = 'normal') {
     if (style === 'as_the_crow_flies') {
       this.getPolylineLayerGroup(username).removeFrom(this.map)
-      console.log(this.getPolylineAsTheCrowFliesLayerGroup(username))
       this.getPolylineAsTheCrowFliesLayerGroup(username).addTo(this.map)
     } else {
       this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
