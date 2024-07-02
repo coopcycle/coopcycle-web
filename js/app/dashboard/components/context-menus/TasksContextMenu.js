@@ -240,7 +240,9 @@ const DynamicMenu = () => {
   }, [selectedTasks])
 
   useEffect(() => {
-    requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+    if(taskToShow) {
+      requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+    }
   }, [taskToShow])
 
   const tasksToUnassign =

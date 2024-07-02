@@ -39,6 +39,8 @@ context('Dispatch', () => {
      cy.get('i[data-cypress-add-to-planning]')
      .click()
 
+     cy.wait(1000)
+
       cy.get('.ReactModal__Content--select-courier [data-action="dispatch"] > div')
       .click()
 
@@ -50,6 +52,6 @@ context('Dispatch', () => {
 
       cy.wait(500)
 
-      cy.get('#accordion .accordion__button').click()
+      cy.contains('jane').click()
     })
   })
