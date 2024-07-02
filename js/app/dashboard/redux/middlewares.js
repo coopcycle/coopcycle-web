@@ -9,6 +9,7 @@ import {
   scanPositions,
   SHOW_RECURRENCE_RULES,
   SET_TOURS_ENABLED,
+  setGeneralSettings,
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
@@ -118,14 +119,11 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
     window.localStorage.removeItem("cpccl__dshbd__fltrs")
   }
 
-  if (action.type === SHOW_RECURRENCE_RULES) {
+  if (action.type === setGeneralSettings.type || action.type === SHOW_RECURRENCE_RULES || action.type === SET_TOURS_ENABLED) {
     state = getState()
-    window.sessionStorage.setItem(`recurrence_rules_visible`, JSON.stringify(state.settings.isRecurrenceRulesVisible))
-  }
-
-  if (action.type === SET_TOURS_ENABLED) {
-    state = getState()
-    window.localStorage.setItem(`cpccl__dshbd__tours_enabled`, JSON.stringify(state.settings.toursEnabled))
+    let generalSettings = {...state.settings}
+    delete generalSettings.filters
+    window.localStorage.setItem(`cpccl__dshbd__settings`, JSON.stringify(generalSettings))
   }
 
   return result

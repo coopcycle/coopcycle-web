@@ -35,6 +35,7 @@ export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassign
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 
 // Settings selectors
+export const selectSettings = state => state.settings
 export const selectFiltersSetting = state => state.settings.filters
 export const selectHiddenCouriersSetting = state => state.settings.filters.hiddenCouriers
 export const selectAreToursEnabled = state => state.settings.toursEnabled
@@ -204,7 +205,7 @@ export const selectHiddenTaskIds = createSelector(
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  threshold: 0.3,
+  threshold: 0.4,
   minMatchCharLength: 3,
   ignoreLocation: true,
   keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']

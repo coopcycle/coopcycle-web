@@ -181,28 +181,43 @@ html, body {
   .task-list__header {
     cursor: pointer;
     padding: 1em 0.5em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: darken(#f5f5f5, 10%);
     border-bottom: 1px solid darken(#f5f5f5, 20%);
-    > span {
-      font-size: 16px;
-    }
+
     &:hover {
       background-color: darken(#f5f5f5, 15%);
+    }
+
+    & > div:first-child {
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
   }
 
   .panel--group, .panel--tour {
     border-color: $main-blue-dark;
-    border-size: 2px;
+    border-width: 2px;
     margin: 4px; // so it is easier to drag tasks between tours in the dashboard panel
   }
 }
 
 .dashboard__multi-value__label {
   font-size: 100%;
+}
+
+.tasklist__actions--icon {
+  height: 30px;
+  width: 30px;
+  color: $dark;
+  fill: $dark;
+
+  &:hover {
+    color: $gray-300;
+    fill: $gray-300;
+    text-decoration: none;
+  }
 }
 
 .dashboard__map-container .leaflet-popup-content-wrapper {

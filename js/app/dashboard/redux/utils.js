@@ -302,3 +302,34 @@ export const usePrevious = (newValue) => {
 
   return ref.current
 }
+
+/**
+ * @param {Integer} duration - duration in seconds
+ */
+export const formatDuration = (duration) => {
+  return moment.utc()
+    .startOf('day')
+    .add(duration, 'seconds')
+    .format('HH[h]mm[min]')
+}
+
+/**
+ * @param {Integer} distance - duration in meters
+ */
+export const formatDistance = (distance) => {
+  return (distance / 1000).toFixed(2) + ' km'
+}
+
+/**
+ * @param {Integer} weight - weight in g
+ */
+export const formatWeight = (weight) => {
+  return (weight / 1000).toFixed(2) + ' kg'
+}
+
+/**
+ * @param {Integer} vu - volume units
+ */
+export const formatVolumeUnits = (vu) => {
+  return (vu / 1000).toFixed(2) + ' v.u.'
+}
