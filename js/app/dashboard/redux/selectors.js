@@ -11,7 +11,7 @@ import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdap
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
-import { selectTaskIdToTourIdMap } from '../../../shared/src/logistics/redux/selectors'
+import { selectAllTours, selectTaskIdToTourIdMap } from '../../../shared/src/logistics/redux/selectors'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
@@ -45,6 +45,7 @@ export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
 export const selectSearchIsOn = state => state.searchIsOn
 export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
+export const selectTourPolylinesEnabledById = tourId => state => state.tourPolylinesEnabled[tourId]
 export const selectAllTags = state => state.config.tags
 
 export const getProductNameById = id => store => {
@@ -176,10 +177,11 @@ export const selectPolylines = createSelector(
 export const selectAsTheCrowFlies = createSelector(
   taskSelectors.selectEntities,
   taskListSelectors.selectEntities,
-  (tasksById, taskListsByUsername) => {
-
-    return mapValues(taskListsByUsername, taskList => {
+  tourSelectors.selectEntities,
+  (tasksById, taskListsByUsername, allTours) => {
+    const asTheCrowFliesTaskLists = mapValues(taskListsByUsername, taskList => {
       const polyline = map(taskList.items, itemId => {
+
         const item = tasksById[itemId]
 
         return item ? [
@@ -190,6 +192,21 @@ export const selectAsTheCrowFlies = createSelector(
 
       return filter(polyline, (coords) => coords.length === 2)
     })
+
+    const asTheCrowFliesTours = mapValues(allTours, tour => {
+      const polyline = map(tour.items, itemId => {
+        const item = tasksById[itemId]
+
+        return item ? [
+          item.address.geo.latitude,
+          item.address.geo.longitude
+        ] : []
+      })
+
+      return filter(polyline, (coords) => coords.length === 2)
+    })
+
+    return Object.assign({}, asTheCrowFliesTaskLists, asTheCrowFliesTours)
   }
 )
 
@@ -334,3 +351,15 @@ export const selectTagsSelectOptions = createSelector(
   selectAllTags,
   (allTags) => allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
 )
+
+const tourColorPalette = ["#556b2f","#8b4513","#8b0000","#808000","#483d8b","#008000","#3cb371","#bc8f8f","#b8860b","#4682b4","#d2691e","#9acd32","#20b2aa","#00008b","#32cd32","#8b008b","#d2b48c","#9932cc","#ff0000","#ff8c00","#ffd700","#6a5acd","#c71585","#0000cd","#00ff00","#00fa9a","#dc143c","#00ffff","#f4a460","#0000ff","#a020f0","#adff2f","#ff6347","#da70d6","#ff00ff","#db7093","#f0e68c","#fa8072","#ffff54","#6495ed","#dda0dd","#90ee90","#87cefa","#ff69b4"]
+
+export const selectTourIdToColorMap = createSelector(
+  selectAllTours,
+  (allTours) => {
+    let toColorMap = new Map()
+    allTours.forEach((tour, index) => {
+        toColorMap.set(tour["@id"], tourColorPalette[index % tourColorPalette.length])
+  })
+  return toColorMap
+})

@@ -6,12 +6,14 @@ import _ from 'lodash'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
-import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
+import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded, toggleTourPolyline } from '../redux/actions'
 import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolumeUnits } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
-import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
+import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectTourPolylinesEnabledById, selectTourIdToColorMap } from '../redux/selectors'
 import ExtraInformations from './TaskCollectionDetails'
+import PolylineIcon from '../PolylineIcon'
+
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -104,6 +106,9 @@ const Tour = ({ tourId, draggableIndex }) => {
   const loadingTourIds = useSelector(selectLoadingTourPanelsIds)
   const isLoading = loadingTourIds.includes(tour['@id'])
 
+  const polylineEnabled = useSelector(selectTourPolylinesEnabledById(tourId))
+  const color = useSelector(selectTourIdToColorMap).get(tourId)
+
   const dispatch = useDispatch()
 
   const weight = useSelector(state => selectTourWeight(state, tourId))
@@ -122,7 +127,7 @@ const Tour = ({ tourId, draggableIndex }) => {
                 <i className="fa fa-repeat flex-grow-0"></i>
                   <RenderEditNameForm tour={tour} isLoading={isLoading}>
                     <a role="button" className="ml-2 flex-grow-1 text-truncate">
-                      { tour.name } <span className="badge">{ tour.items.length }</span>
+                      { tour.name } <span className="badge" style={{backgroundColor: color}}>{ tour.items.length }</span>
                     </a>
                     <i className="fa fa-arrows cursor--grabbing mr-2"></i>
                   </RenderEditNameForm>
@@ -130,6 +135,16 @@ const Tour = ({ tourId, draggableIndex }) => {
               <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits}/>
             </div>
             <div className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
+              { tour.items.length > 0 ?
+                <div className="d-flex align-items-center mt-2 mb-2">
+                  <a
+                    className='tasklist__actions--icon ml-3'
+                    onClick={ () => dispatch(toggleTourPolyline(tour['@id'])) }
+                  >
+                    <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
+                  </a>
+                </div>
+              : null }
               <Droppable
                   isDropDisabled={isTourDragging || isLoading}
                   droppableId={ `tour:${tour['@id']}` }

@@ -226,12 +226,6 @@ const MapProvider = (props) => {
 
   }, [])
 
-  React.useEffect(() => {
-    if (map) {
-      map.setUseAvatarColors(props.useAvatarColors)
-    }
-  }, [ props.useAvatarColors ])
-
   return (
     <MapContext.Provider value={ map }>
       <div id="map"></div>
