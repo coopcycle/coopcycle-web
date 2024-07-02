@@ -96,7 +96,7 @@ const DashboardApp = ({ loadingAnim }) => {
           { children }
         </Split>
       </DragDropContext>
-      <SearchPanel />
+      { searchIsOn ? <SearchPanel /> : null }
       <TasksContextMenu />
       <ToastContainer />
     </div>

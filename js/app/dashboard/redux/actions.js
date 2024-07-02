@@ -8,7 +8,7 @@ import {
   createTaskListSuccess,
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
+import { selectExpandedTaskListPanelsIds, selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
@@ -50,9 +50,6 @@ export const CLOSE_SEARCH = 'CLOSE_SEARCH'
 
 export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
-export const SET_POLYLINE_STYLE = 'SET_POLYLINE_STYLE'
-export const SET_CLUSTERS_ENABLED = 'SET_CLUSTERS_ENABLED'
-export const SET_USE_AVATAR_COLORS = 'SET_USE_AVATAR_COLORS'
 
 export const LOAD_TASK_EVENTS_REQUEST = 'LOAD_TASK_EVENTS_REQUEST'
 export const LOAD_TASK_EVENTS_SUCCESS = 'LOAD_TASK_EVENTS_SUCCESS'
@@ -115,7 +112,6 @@ export const CREATE_TOUR_REQUEST_SUCCESS = 'CREATE_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST = 'MODIFY_TOUR_REQUEST'
 export const MODIFY_TOUR_REQUEST_SUCCESS = 'MODIFY_TOUR_REQUEST_SUCCESS'
 export const MODIFY_TOUR_REQUEST_ERROR = 'MODIFY_TOUR_REQUEST_ERROR'
-export const TOGGLE_TOUR_PANEL_EXPANDED = 'TOGGLE_EXPANDED_TOUR_PANEL'
 export const TOGGLE_TOUR_LOADING = 'TOGGLE_TOUR_LOADING'
 export const UPDATE_TOUR = 'UPDATE_TOUR'
 export const DELETE_TOUR_SUCCESS = 'DELETE_TOUR_SUCCESS'
@@ -134,6 +130,22 @@ export const startTaskFailure = createAction('START_TASK_FAILURE')
 
 export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
 
+export const toggleTourPanelExpanded = createAction('TOGGLE_TOUR_PANEL_EXPANDED')
+export const toggleTaskListPanelExpanded = createAction('TASKLIST_PANEL_EXPANDED')
+export const toggleTasksGroupPanelExpanded = createAction('TASKS_GROUP_PANEL_EXPANDED')
+export const setTaskToShow = createAction('SET_TASK_TO_SHOW')
+
+export const openTaskTaskList = function(task) {
+  return function(dispatch, getState) {
+    if (task.isAssigned) {
+      const taskList = selectTaskListByUsername(getState(), {username: task.assignedTo})
+      const expandedTaskListPanelsIds = selectExpandedTaskListPanelsIds(getState())
+      if (!expandedTaskListPanelsIds.includes(taskList['@id'])) {
+        dispatch(toggleTaskListPanelExpanded(taskList['@id']))
+      }
+    }
+  }
+}
 
 /**
  * This action assign a task after another when you linked the two markers on the map
@@ -438,7 +450,6 @@ export function cancelTaskFailure(error) {
   return { type: CANCEL_TASK_FAILURE, error }
 }
 
-
 export function openFiltersModal() {
   return { type: OPEN_FILTERS_MODAL }
 }
@@ -467,17 +478,7 @@ export function closeSettings() {
   return { type: CLOSE_SETTINGS }
 }
 
-export function setPolylineStyle(style) {
-  return {type: SET_POLYLINE_STYLE, style}
-}
-
-export function setClustersEnabled(enabled) {
-  return {type: SET_CLUSTERS_ENABLED, enabled}
-}
-
-export function setUseAvatarColors(useAvatarColors) {
-  return {type: SET_USE_AVATAR_COLORS, useAvatarColors}
-}
+export const setGeneralSettings = createAction('SET_FROM_SETTING_MODAL')
 
 export function loadTaskEventsRequest() {
   return { type: LOAD_TASK_EVENTS_REQUEST }
@@ -1428,9 +1429,6 @@ export function modifyTourRequestError(tour, tasks) {
   return { type: MODIFY_TOUR_REQUEST_ERROR, tour, tasks }
 }
 
-export function toggleTourPanelExpanded(tourId) {
-  return { type: TOGGLE_TOUR_PANEL_EXPANDED, tourId}
-}
 
 export function toggleTourLoading(tourId) {
   /*

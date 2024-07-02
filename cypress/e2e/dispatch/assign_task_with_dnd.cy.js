@@ -39,6 +39,8 @@ context('Dispatch', () => {
      cy.get('i[data-cypress-add-to-planning]')
      .click()
 
+     cy.wait(1000)
+
       cy.get('.ReactModal__Content--select-courier [data-action="dispatch"] > div')
       .click()
 
@@ -48,15 +50,8 @@ context('Dispatch', () => {
       cy.get('.ReactModal__Content--select-courier button[type="submit"]')
       .click()
 
-      // FIXME : when you click on "add to planning" it opens the search panel I don't know why
-      cy.get('[data-cypress-close-search]')
-      .click()
-
-      cy.get('[data-cypress-close-search]')
-      .click()
-
       cy.wait(500)
 
-      cy.get('#accordion .accordion__button').click()
+      cy.contains('jane').click()
     })
   })

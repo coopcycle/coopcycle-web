@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { moment } from '../../coopcycle-frontend-js';
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
+import { useEffect, useRef } from 'react';
 
 export function taskComparator(a, b) {
   return a['@id'] === b['@id']
@@ -266,17 +267,69 @@ export const isInDateRange = (task, date) => {
   return range.overlaps(dateAsRange)
 }
 
+/*
+  In order to keep things "simple" we want :
+    - multi selected tasks all assigned to the same user or not assigned
+    - multi selected tasks all in the same tour or not in a tour
+*/
 export const isValidTasksMultiSelect = (selectedTasks, taskIdToTourIdMap) => {
-  /*
-    In order to keep things "simple" we want :
-      - multi selected tasks all assigned to the same user or not assigned
-      - multi selected tasks all in the same tour or not in a tour
-  */
-
   const isAllAssignedToSameUserOrNotAssigned = selectedTasks.every(t => t.assignedTo === selectedTasks[0].assignedTo)
   const isNoneInTour = selectedTasks.every(t => !taskIdToTourIdMap.has(t['@id']))
   const isAllInTour = selectedTasks.every(t => taskIdToTourIdMap.has(t['@id']))
   const isAllInSameTour = isAllInTour && selectedTasks.every(t => taskIdToTourIdMap.get(t['@id']) === taskIdToTourIdMap.get(selectedTasks[0]['@id']))
 
   return (isAllAssignedToSameUserOrNotAssigned && isNoneInTour) || isAllInSameTour
+}
+
+/*
+  A custom hook to keep track of a prop/state from the previous render in a component
+
+  const selectedTasks = useSelector(selectSelectedTasks)
+  useEffect(() => {
+    const previouslySelectedTasks = usePrevious(selectedTasks || [])
+    const newSelectedTasks = _.differenceBy(selectedTasks, previouslySelectedTasks, '@id')
+    if (newSelectedTasks)
+      ...do something
+    }
+  }, [selectedTasks])
+*/
+export const usePrevious = (newValue) => {
+  let ref = useRef()
+
+  useEffect(() => {
+    ref.current = newValue
+  }, [newValue])
+
+  return ref.current
+}
+
+/**
+ * @param {Integer} duration - duration in seconds
+ */
+export const formatDuration = (duration) => {
+  return moment.utc()
+    .startOf('day')
+    .add(duration, 'seconds')
+    .format('HH[h]mm[min]')
+}
+
+/**
+ * @param {Integer} distance - duration in meters
+ */
+export const formatDistance = (distance) => {
+  return (distance / 1000).toFixed(2) + ' km'
+}
+
+/**
+ * @param {Integer} weight - weight in g
+ */
+export const formatWeight = (weight) => {
+  return (weight / 1000).toFixed(2) + ' kg'
+}
+
+/**
+ * @param {Integer} vu - volume units
+ */
+export const formatVolumeUnits = (vu) => {
+  return (vu / 1000).toFixed(2) + ' v.u.'
 }

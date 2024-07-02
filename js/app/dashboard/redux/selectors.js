@@ -26,6 +26,9 @@ export const recurrenceRulesAdapter = createEntityAdapter({
 export const selectCurrentTask = state => state.logistics.ui.currentTask
 export const selectIsTourDragging = state => state.logistics.ui.isTourDragging
 export const selectExpandedTourPanelsIds = state => state.logistics.ui.expandedTourPanelsIds
+export const selectExpandedTaskListPanelsIds = state => state.logistics.ui.expandedTaskListPanelsIds
+export const selectExpandedTasksGroupsPanelsIds = state => state.logistics.ui.expandedTasksGroupPanelIds
+export const selectTaskToShow = state => state.logistics.ui.taskToShow
 export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTourPanelsIds
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
@@ -33,6 +36,7 @@ export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassign
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 
 // Settings selectors
+export const selectSettings = state => state.settings
 export const selectFiltersSetting = state => state.settings.filters
 export const selectHiddenCouriersSetting = state => state.settings.filters.hiddenCouriers
 export const selectAreToursEnabled = state => state.settings.toursEnabled
@@ -202,7 +206,7 @@ export const selectHiddenTaskIds = createSelector(
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  threshold: 0.3,
+  threshold: 0.4,
   minMatchCharLength: 3,
   ignoreLocation: true,
   keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']

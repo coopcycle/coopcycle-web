@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
@@ -20,18 +20,22 @@ import {
   openCreateTourModal,
   openReportIncidentModal,
   openTaskRescheduleModal,
+  openTaskTaskList,
   removeTasksFromGroup,
   restoreTasks,
   setCurrentTask,
+  setTaskToShow,
   startTasks,
+  toggleTasksGroupPanelExpanded,
+  toggleTourPanelExpanded,
   unassignTasks
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
 import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, taskListSelectors } from '../../../../shared/src/logistics/redux/selectors'
-import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from '../../redux/utils'
+import { isValidTasksMultiSelect, usePrevious, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
 export const ASSIGN_MULTI = 'ASSIGN_MULTI'
@@ -181,9 +185,10 @@ const DynamicMenu = () => {
 
   const { t } = useTranslation()
 
-  const unassignedTasks = useSelector(selectUnassignedTasks)
-  const selectedTasks = useSelector(selectSelectedTasks)
   const allTasks = useSelector(selectAllTasks)
+  const selectedTasks = useSelector(selectSelectedTasks)
+  const unassignedTasks = useSelector(selectUnassignedTasks)
+
   const nextWorkingDay = useSelector(selectNextWorkingDay)
   const linkedTasksIds = useSelector(selectLinkedTasksIds)
   const taskIdToTourIdMap = useSelector(selectTaskIdToTourIdMap)
@@ -191,6 +196,12 @@ const DynamicMenu = () => {
   const isValidMultiselect = isValidTasksMultiSelect(selectedTasks, taskIdToTourIdMap)
   const couriers = useSelector(selectCouriersWithExclude)
   const tasksListsLoading = useSelector(selectTaskListsLoading)
+
+  // selectors to handle the showing of selected tasks
+  const previouslySelectedTasks = usePrevious(selectedTasks || [])
+  const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
+  const expandedGroupPanelsIds = useSelector(selectExpandedTasksGroupsPanelsIds)
+  const taskToShow = useSelector(selectTaskToShow)
 
   let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
 
@@ -200,8 +211,39 @@ const DynamicMenu = () => {
 
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
 
-
   const dispatch = useDispatch()
+
+  useEffect(() => {
+    const newSelectedTasks = _.differenceBy(selectedTasks, previouslySelectedTasks, '@id')
+
+    if (newSelectedTasks.length > 0) {
+      const taskToShow = newSelectedTasks[0]
+
+      newSelectedTasks.forEach(task => {
+        // if task is in a closed tour, open the tour
+        if (taskIdToTourIdMap.has(task['@id']) && !expandedTourPanelsIds.includes(taskIdToTourIdMap.get(task['@id']))) {
+          dispatch(toggleTourPanelExpanded(taskIdToTourIdMap.get(task['@id'])))
+        }
+
+        if (task.group && !task.isAssigned && !expandedGroupPanelsIds.includes(task.group['@id'])) {
+          dispatch(toggleTasksGroupPanelExpanded(task.group['@id']))
+        }
+
+        if (task.isAssigned) {
+          dispatch(openTaskTaskList(task))
+        }
+      })
+
+      dispatch(setTaskToShow(taskToShow))
+
+    }
+  }, [selectedTasks])
+
+  useEffect(() => {
+    if(taskToShow) {
+      requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+    }
+  }, [taskToShow])
 
   const tasksToUnassign =
   _.filter(selectedTasks, selectedTask =>
