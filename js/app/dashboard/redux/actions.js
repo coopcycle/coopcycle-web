@@ -300,6 +300,7 @@ export function modifyTaskList(username, items) {
 export function togglePolyline(username) {
   return { type: TOGGLE_POLYLINE, username }
 }
+export const toggleTourPolyline = createAction('TOGGLE_TOUR_POLYLINE')
 
 export function taskListsUpdated(taskList) {
   return { type: TASK_LISTS_UPDATED, taskList }
