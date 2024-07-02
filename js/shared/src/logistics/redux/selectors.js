@@ -84,6 +84,17 @@ export const selectAllTours = createSelector(
   (allTours) => allTours
 )
 
+export const selectTourPolylines = createSelector(
+  selectAllTours,
+  (allTours) => {
+    let polylines = {}
+    allTours.forEach(tour => {
+      polylines[tour['@id']] = tour.polyline
+    })
+    return polylines
+  }
+)
+
 const selectItemId = (state, itemId) => itemId
 
 
