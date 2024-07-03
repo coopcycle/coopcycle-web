@@ -243,7 +243,7 @@ const DynamicMenu = () => {
   useEffect(() => {
     if(taskToShow) {
       requestAnimationFrame(() => {
-        const htmlEl = document.querySelector(`[data-task-id="${taskToShow['@id']}"]`)
+        const htmlEl = document.querySelector(`.dashboard__aside [data-task-id="${taskToShow['@id']}"]`)
         if (!isInViewport(htmlEl)) {
           htmlEl.scrollIntoView()
         }
