@@ -158,7 +158,6 @@ html, body {
         top: 0;
         border: none;
         background-color: transparent;
-        // font-size: $font-size-large;
         cursor: pointer;
         height: 100%;
         width: $input-height-base;
@@ -168,7 +167,7 @@ html, body {
     &__search-results {
       position: absolute;
       right: 0;
-      z-index: 2000;
+      z-index: 1;
       padding: $base-margin-s;
       max-height: calc(100vh / 3);
       overflow-y: scroll;
