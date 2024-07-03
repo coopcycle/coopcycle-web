@@ -23,8 +23,14 @@ export const selectOrders = createSelector(
   state => state.orders,
   state => state.searchQuery,
   state => state.searchResults,
-  (orders, searchQuery, searchResults) => searchQuery.length > 0 ?
-    _.intersectionWith(orders, searchResults, orderComparator) : orders
+  (orders, searchQuery, searchResults) => {
+    if (searchQuery.length > 0) {
+      // search results are ordered by relevance
+      return searchResults.map(res => orders.find(o => orderComparator(o, res)))
+    } else {
+      return orders
+    }
+  }
 )
 
 export const selectNewOrders = createSelector(
