@@ -2,26 +2,6 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-
-/**
- * @ApiResource(
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *     },
- *     "put"={
- *       "method"="PUT",
- *     },
- *   }
- * )
- * @ApiFilter(SearchFilter::class, properties={"store"})
- */
 class StoreTimeSlot {
     private int $id;
     private Store $store;
