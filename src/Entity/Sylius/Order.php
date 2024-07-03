@@ -37,6 +37,7 @@ use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
+use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -422,6 +423,18 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "denormalization_context"={"groups"={"update_loopeat_returns"}},
  *       "openapi_context"={
  *         "summary"="Update Loopeat returns for an order"
+ *       }
+ *     },
+ *     "update_edenred_credentials"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/edenred_credentials",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=EdenredCredentialsInput::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "denormalization_context"={"groups"={"update_edenred_credentials"}},
+ *       "openapi_context"={
+ *         "summary"="Update Edenred credentials for an order"
  *       }
  *     },
  *   },

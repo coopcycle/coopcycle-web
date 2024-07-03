@@ -1000,6 +1000,7 @@ services:
   AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
   AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
   AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
+  AppBundle\Api\DataTransformer\EdenredCredentialsInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
