@@ -21,26 +21,46 @@ class SearchInput extends React.Component {
 
     this.searchRef = React.createRef()
     this.search = _.debounce(this._search.bind(this), 100)
+
+    this.wrapperRef = React.createRef()
+    this.handleClickOutside = this.handleClickOutside.bind(this)
+    this.toggleSearchOnKeyDown = this.toggleSearchOnKeyDown.bind(this);
   }
 
   componentDidMount() {
-    const toggleSearchOnKeyDown = e => {
-      const isCtrl = (e.ctrlKey || e.metaKey)
-      // 114: F3, 70: f
-      if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
-        e.preventDefault()
-        this.searchRef.focus()
-      }
-      // 27 : escape
-      if (e.keyCode === 27) {
-        this.setState({
-          q: '',
-          results: [],
-        })
-        this.searchRef.blur()
-      }
+    window.addEventListener('keydown', this.toggleSearchOnKeyDown)
+    document.addEventListener("mousedown", this.handleClickOutside)
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClickOutside)
+    window.removeEventListener('keydown', this.toggleSearchOnKeyDown, false)
+  }
+
+  toggleSearchOnKeyDown = e => {
+    const isCtrl = (e.ctrlKey || e.metaKey)
+    // 114: F3, 70: f
+    if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
+      e.preventDefault()
+      this.searchRef.focus()
     }
-    window.addEventListener('keydown', toggleSearchOnKeyDown)
+    // 27 : escape
+    if (e.keyCode === 27) {
+      this.setState({
+        q: '',
+        results: [],
+      })
+      this.searchRef.blur()
+    }
+  }
+
+  handleClickOutside(event) {
+    if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
+      this.setState({
+        results: [],
+      })
+      this.searchRef.blur()
+    }
   }
 
   _search(q) {
@@ -53,7 +73,7 @@ class SearchInput extends React.Component {
   render () {
 
     return (
-      <>
+      <div ref={this.wrapperRef}>
         <div className="dashboard__panel__search-box">
           <div className="dashboard__panel__search-box__input-wrapper">
             <input
@@ -88,7 +108,7 @@ class SearchInput extends React.Component {
           </div> :
           null
         }
-      </>
+      </div>
     )
   }
 }
