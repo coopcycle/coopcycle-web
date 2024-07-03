@@ -7,7 +7,7 @@ import _ from 'lodash'
 
 import { openFiltersModal, resetFilters, openSettings, openImportModal, openExportModal } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
-import SearchPanel from './SearchPanel'
+import SearchInput from './SearchInput'
 
 class Navbar extends React.Component {
 
@@ -136,7 +136,7 @@ class Navbar extends React.Component {
                 </a>
               </li>
               <li className="dashboard__panel__search-nav">
-                <SearchPanel />
+                <SearchInput />
               </li>
               { _.size(this.props.imports) > 0 && _.map(this.props.imports, (message, token) => this.renderImport(token, message))}
               <li>

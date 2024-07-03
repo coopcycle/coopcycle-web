@@ -9,7 +9,7 @@ import Task from './Task'
 
 import 'antd/lib/button/style/index.css'
 
-class SearchPanel extends React.Component {
+class SearchInput extends React.Component {
 
   constructor(props) {
     super(props)
@@ -100,4 +100,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(withTranslation()(SearchPanel))
+export default connect(mapStateToProps)(withTranslation()(SearchInput))
