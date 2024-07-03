@@ -334,7 +334,8 @@ class SyncTransportersCommand extends Command {
                         'username' => $auth_details['user'],
                         'password' => $auth_details['pass'],
                         'port' => $auth_details['port'] ?? 22,
-                    ], $auth_details['path'] ?? '')
+                    ]),
+                    $auth_details['path'] ?? ''
                 );
                 break;
             case 'file':
