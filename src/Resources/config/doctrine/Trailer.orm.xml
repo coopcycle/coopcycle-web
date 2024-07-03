@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\Vehicle" table="vehicle">
+  <entity name="AppBundle\Entity\Trailer" table="trailer">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
-    <field name="volumeUnits" type="integer" column="max_volume_units"/>
+    <field name="maxVolumeUnits" type="integer" column="max_volume_units"/>
     <field name="maxWeight" type="integer" column="max_weight"/>
     <field name="color" length="7" type="string" column="color"/>
     <field name="isElectric" type="boolean" column="is_electric"/>
     <field name="electricRange" type="integer" column="electric_range"/>
-    <many-to-one field="warehouse" target-entity="AppBundle\Entity\Warehouse"></many-to-one>
-    <one-to-many field="compatibleTrailers" target-entity="AppBundle\Entity\Vehicle\Trailer" mapped-by="vehicle"></one-to-many>
+    <one-to-many field="compatibleVehicles" target-entity="AppBundle\Entity\Vehicle\Trailer" mapped-by="trailer"></one-to-many>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

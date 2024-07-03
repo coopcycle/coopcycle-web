@@ -4,42 +4,27 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use AppBundle\Entity\Trailer;
+use AppBundle\Entity\Vehicle;
 
-class Vehicle
+class Trailer
 {
     use Timestampable;
 
     protected $id;
     protected $name;
-    protected $volumeUnits;
+    protected $maxVolumeUnits;
     protected $maxWeight;
     protected $color;
     protected $isElectric;
     protected $electricRange;
-    protected $warehouse;
-    protected $compatibleTrailers;
+    protected $compatibleVehicles;
 
     public function __construct() {
-        $this->compatibleTrailers = new ArrayCollection();
-    }
-
-    public function addCompatibleTrailer(Trailer $trailer)
-    {
-        $trailer->getCompatibleVehicles()->add($this);
-        $this->compatibleTrailers->add($trailer);
-        return $this;
-    }
-
-    public function removeCompatibleTrailer(Trailer $trailer)
-    {
-        $trailer->getCompatibleVehicles()->remove($this);
-        $this->compatibleTrailers->remove($trailer);
-        return $this;
+        $this->compatibleVehicles = new ArrayCollection();
     }
 
     /**
-     * @return mixed
+     * Get the value of id
      */
     public function getId()
     {
@@ -47,7 +32,19 @@ class Vehicle
     }
 
     /**
-     * @return mixed
+     * Set the value of id
+     *
+     * @return  self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of name
      */
     public function getName()
     {
@@ -55,9 +52,9 @@ class Vehicle
     }
 
     /**
-     * @param mixed $name
+     * Set the value of name
      *
-     * @return self
+     * @return  self
      */
     public function setName($name)
     {
@@ -67,27 +64,27 @@ class Vehicle
     }
 
     /**
-     * @return mixed
+     * Get the value of maxVolumeUnits
      */
-    public function getVolumeUnits()
+    public function getMaxVolumeUnits()
     {
-        return $this->volumeUnits;
+        return $this->maxVolumeUnits;
     }
 
     /**
-     * @param mixed $volumeUnits
+     * Set the value of maxVolumeUnits
      *
-     * @return self
+     * @return  self
      */
-    public function setVolumeUnits($volumeUnits)
+    public function setMaxVolumeUnits($maxVolumeUnits)
     {
-        $this->volumeUnits = $volumeUnits;
+        $this->maxVolumeUnits = $maxVolumeUnits;
 
         return $this;
     }
 
     /**
-     * @return mixed
+     * Get the value of maxWeight
      */
     public function getMaxWeight()
     {
@@ -95,9 +92,9 @@ class Vehicle
     }
 
     /**
-     * @param mixed $maxWeight
+     * Set the value of maxWeight
      *
-     * @return self
+     * @return  self
      */
     public function setMaxWeight($maxWeight)
     {
@@ -166,42 +163,34 @@ class Vehicle
         return $this;
     }
 
-    /**
-     * Get the value of warehouse
-     */
-    public function getWarehouse()
+    public function addCompatibleVehicle(Vehicle $vehicle)
     {
-        return $this->warehouse;
+        $vehicle->getCompatibleTrailers()->add($this);
+        return $this->compatibleVehicles->add($vehicle);
+    }
+
+    public function removeCompatibleVehicle(Vehicle $vehicle)
+    {
+        $vehicle->getCompatibleTrailers()->remove($this);
+        return $this->compatibleVehicles->remove($vehicle);
     }
 
     /**
-     * Set the value of warehouse
+     * Get the value of compatibleVehicles
+     */
+    public function getCompatibleVehicles()
+    {
+        return $this->compatibleVehicles;
+    }
+
+    /**
+     * Set the value of compatibleVehicles
      *
      * @return  self
      */
-    public function setWarehouse($warehouse)
+    public function setCompatibleVehicles($compatibleVehicles)
     {
-        $this->warehouse = $warehouse;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of compatibleTrailers
-     */
-    public function getCompatibleTrailers()
-    {
-        return $this->compatibleTrailers;
-    }
-
-    /**
-     * Set the value of compatibleTrailers
-     *
-     * @return  self
-     */
-    public function setCompatibleTrailers($compatibleTrailers)
-    {
-        $this->compatibleTrailers = $compatibleTrailers;
+        $this->compatibleVehicles = $compatibleVehicles;
 
         return $this;
     }
