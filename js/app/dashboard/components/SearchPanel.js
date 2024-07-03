@@ -2,14 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
-import { Input } from 'antd'
 
 import { toggleSearch } from '../redux/actions'
 import { selectFuseSearch, selectSearchIsOn } from '../redux/selectors'
 
 import Task from './Task'
-
-const { Search } = Input
 
 import 'antd/lib/button/style/index.css'
 
@@ -20,24 +17,31 @@ class SearchPanel extends React.Component {
 
     this.state = {
       q: '',
-      results: []
+      results: [],
     }
 
     this.searchRef = React.createRef()
     this.search = _.debounce(this._search.bind(this), 100)
-
   }
 
-  componentDidUpdate(prevProps) {
-    if (!prevProps.searchIsOn && this.props.searchIsOn) {
-      setTimeout(() => this.searchRef.current.focus(), 400)
+  componentDidMount() {
+    const toggleSearchOnKeyDown = e => {
+      const isCtrl = (e.ctrlKey || e.metaKey)
+      // 114: F3, 70: f
+      if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
+        e.preventDefault()
+        this.searchRef.focus()
+      }
+      // 27 : escape
+      if (e.keyCode === 27) {
+        this.setState({
+          q: '',
+          results: [],
+        })
+        this.searchRef.blur()
+      }
     }
-    if (prevProps.searchIsOn && !this.props.searchIsOn) {
-      this.setState({
-        q: '',
-        results: []
-      })
-    }
+    window.addEventListener('keydown', toggleSearchOnKeyDown)
   }
 
   _search(q) {
@@ -49,45 +53,28 @@ class SearchPanel extends React.Component {
 
   render () {
 
-    const classNames = [
-      'dashboard__panel',
-      'dashboard__panel__search'
-    ]
-
-    if (this.props.searchIsOn) {
-      classNames.push('dashboard__panel__search--on')
-    }
-
     return (
-      <div className={ classNames.join(' ') }>
-        <h4 className="dashboard__panel__header">
-          <span>{ this.props.t('ADMIN_DASHBOARD_SEARCH') }</span>
-          <span className="pull-right">
-            <a href="#" onClick={ e => {
-              e.preventDefault()
-              this.props.toggleSearch()
-            }}>
-              <i className="fa fa-close" data-cypress-close-search></i>
-            </a>
-          </span>
-        </h4>
+      <>
         <div className="dashboard__panel__search-box">
-          <Search
-            value={ this.state.q }
-            placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') }
-            onSearch={ value => {
-              this.setState({ q: value })
-              this.search(value)
-            }}
-            onChange={ e => {
-              this.setState({ q: e.target.value })
-              this.search(e.target.value)
-            }}
-            ref={ this.searchRef }
-          />
+          <div className="dashboard__panel__search-box__input-wrapper">
+            <input
+              value={ this.state.q }
+              placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') }
+              onChange={ e => {
+                this.setState({ q: e.target.value })
+                this.search(e.target.value)
+              }}
+              ref={ (input) => this.searchRef = input }
+            />
+            { this.state.q && (
+              <button className="dashboard__panel__search-box__clear" onClick={ () => this.setState({ q: '', results: [] }) }>
+                <i className="fa fa-times-circle"></i>
+              </button>
+            )}
+          </div>
         </div>
-        <div className="dashboard__panel__scroll">
-          <div className="list-group nomargin">
+        { this.state.results.length > 0 ?
+          <div className="dashboard__panel__search-results list-group nomargin">
             { _.map(this.state.results, (task, key) => {
               return (
                 <Task
@@ -99,9 +86,10 @@ class SearchPanel extends React.Component {
                 />
               )
             })}
-          </div>
-        </div>
-      </div>
+          </div> :
+          null
+        }
+      </>
     )
   }
 }
