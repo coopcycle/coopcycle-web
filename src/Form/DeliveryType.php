@@ -134,27 +134,29 @@ class DeliveryType extends AbstractType
 
             // Allow admins to define an arbitrary price
             if (true === $options['with_arbitrary_price'] &&
-                $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
+
+                $arbitraryPrice = $options['arbitrary_price'];
+
                 $form->add('arbitraryPrice', CheckboxType::class, [
                     'label' => 'form.delivery.arbitrary_price.label',
                     'mapped' => false,
                     'required' => false,
+                    'data' => isset($arbitraryPrice),
                 ])
                 ->add('variantName', TextType::class, [
                     'label' => 'form.new_order.variant_name.label',
                     'help' => 'form.new_order.variant_name.help',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $arbitraryPrice ? $arbitraryPrice['productName'] : null,
                 ])
                 ->add('variantPrice', MoneyType::class, [
                     'label' => 'form.new_order.variant_price.label',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $arbitraryPrice ? $arbitraryPrice['amount'] : null,
                 ]);
-            }
-
-            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && null !== $delivery->getId()) {
-                $form->add('saveAsNew', SubmitType::class, ['label' => 'orders.save_as_new']);
             }
         });
 
@@ -213,7 +215,7 @@ class DeliveryType extends AbstractType
         /*
         // See https://github.com/coopcycle/coopcycle-web/issues/3465
         // For admin users we do not show timeslots dropdown, now we show a date picker so they can select a free range
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) { //check if user is administrator
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) { //check if user is administrator
             return null;
         }
         */
@@ -239,7 +241,7 @@ class DeliveryType extends AbstractType
         /*
         // See https://github.com/coopcycle/coopcycle-web/issues/3465
         // For admin users we do not show timeslots dropdown, now we show a date picker so they can select a free range
-        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) { //check if user is administrator
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) { //check if user is administrator
             return null;
         }
         */
@@ -281,7 +283,7 @@ class DeliveryType extends AbstractType
             'data_class' => Delivery::class,
             'with_vehicle' => false,
             'with_weight' => true,
-            'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            'with_tags' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER'),
             'with_dropoff_doorstep' => false,
             'with_time_slot' => null,
             'with_time_slots' => null,
@@ -289,6 +291,7 @@ class DeliveryType extends AbstractType
             'with_remember_address' => false,
             'with_address_props' => false,
             'with_arbitrary_price' => false,
+            'arbitrary_price' => null,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

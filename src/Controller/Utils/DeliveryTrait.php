@@ -78,57 +78,15 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            $saveAsNew = $form->has('saveAsNew') && $form->get('saveAsNew')->isClicked();
+            $useArbitraryPrice = $this->isGranted('ROLE_DISPATCHER') &&
+                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
-            if ($saveAsNew) {
-                $previousOrder = $delivery->getOrder();
-
-                // Keep the original objects untouched, creating new ones instead
-                $entityManager->detach($delivery);
-                if (null !== $previousOrder) {
-                    $entityManager->detach($previousOrder);
-                }
-                foreach ($delivery->getTasks() as $task) {
-                    $entityManager->detach($task);
-                }
-
-                $store = $delivery->getStore();
-
-                $newTasks = array_map(function($task){
-                    return $task->duplicate();
-                }, $delivery->getTasks());
-
-                $newDelivery = Delivery::createWithTasks(...$newTasks);
-                $newDelivery->setStore($store);
-
-                if (null !== $previousOrder) {
-                    $newOrder = $this->createOrderForDelivery($orderFactory, $newDelivery, $previousOrder->getItemsTotal(), $previousOrder->getCustomer());
-                    $entityManager->persist($newOrder);
-
-                    // must be done before assigning a number
-                    $entityManager->flush();
-
-                    $orderNumberAssigner->assignNumber($newOrder);
-                    $newOrder->setState(OrderInterface::STATE_ACCEPTED);
-
-                    $entityManager->flush();
-
-                } else {
-                    $entityManager->persist($newDelivery);
-                    $entityManager->flush();
-                }
-
+            if ($useArbitraryPrice) {
+                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
+                    $entityManager, $orderNumberAssigner);
             } else {
-                $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
-                    $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
-
-                if ($useArbitraryPrice) {
-                    $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                        $entityManager, $orderNumberAssigner);
-                } else {
-                    $entityManager->persist($delivery);
-                    $entityManager->flush();
-                }
+                $entityManager->persist($delivery);
+                $entityManager->flush();
             }
 
             return $this->redirectToRoute($routes['success']);
