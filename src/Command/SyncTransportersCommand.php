@@ -21,6 +21,8 @@ use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Command\Command;
@@ -38,6 +40,7 @@ use Transporter\Transporter;
 use Transporter\TransporterException;
 use Transporter\TransporterImpl;
 use Transporter\TransporterOptions;
+use Transporter\TransporterSyncOptions;
 
 class SyncTransportersCommand extends Command {
 
@@ -146,16 +149,21 @@ class SyncTransportersCommand extends Command {
         }
         $config = $config[$this->transporter];
 
-        $filesystem = $config['sync_uri'];
-        if (!($filesystem instanceof Filesystem)) {
-            $filesystem = $this->initFileSystem($config);
+        if (in_array($config['sync'], ['in', 'out'])) {
+            $inFs = $this->initFileSystem($config['sync']['in']);
+            $outFs = $this->initFileSystem($config['sync']['out']);
+        } elseif (isset($config['sync']['uri'])) {
+            $inFs = $this->initFileSystem($config['sync']);
+            $outFs = $inFs;
+        } else {
+            throw new Exception('Sync not configured');
         }
 
         $opts = new TransporterOptions(
             $transporterName,
             $this->companyLegalName, $this->companyLegalID,
             $config['legal_name'], $config['legal_id'],
-            $filesystem, $config['fs_mask'],
+            $outFs, $inFs
         );
 
         /** @var TransporterSync $sync */
@@ -297,12 +305,12 @@ class SyncTransportersCommand extends Command {
         return $edi;
     }
 
-    private function initFileSystem(array $config = []): Filesystem
+    private function initFileSystem(array $config = []): TransporterSyncOptions
     {
-        $auth_details = parse_url($config['sync_uri']);
+        $auth_details = parse_url($config['uri']);
 
         //Enjoy the ugly hack :)
-        if (!$auth_details && str_starts_with($config['sync_uri'], 'memory://')) {
+        if (!$auth_details && str_starts_with($config['uri'], 'memory://')) {
             $auth_details = ['scheme' => 'memory'];
         }
 
@@ -319,6 +327,16 @@ class SyncTransportersCommand extends Command {
                     ])
                 );
                 break;
+            case 'sftp':
+                $adapter = new SftpAdapter(
+                    SftpConnectionProvider::fromArray([
+                        'host' => $auth_details['host'],
+                        'username' => $auth_details['user'],
+                        'password' => $auth_details['pass'],
+                        'port' => $auth_details['port'] ?? 22,
+                    ], $auth_details['path'] ?? '')
+                );
+                break;
             case 'file':
                 $adapter = new LocalFilesystemAdapter($auth_details['path']);
                 break;
@@ -329,7 +347,10 @@ class SyncTransportersCommand extends Command {
                 throw new Exception(sprintf('Unknown scheme %s', $auth_details['scheme']));
         }
 
-        return new Filesystem($adapter);
+        $fs = new Filesystem($adapter);
+        return new TransporterSyncOptions($fs, [
+            'filemask' => $config['filemask'] ?? null
+        ]);
     }
 
     private function debugPoint(Point $point): void {
