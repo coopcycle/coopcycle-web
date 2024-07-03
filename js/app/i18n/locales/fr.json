@@ -471,6 +471,9 @@
         "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "Les horaires dʼouverture ne permettent pas de commander pour aujourdʼhui",
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Sélectionnez un autre créneau horaire",
         "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Modifier le créneau horaire",
-        "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_RESTAURANT_ACTION": "Choisir un autre restaurant"
+        "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_RESTAURANT_ACTION": "Choisir un autre restaurant",
+        "TIME_SLOTS": "Tranches horaires",
+        "TIME_SLOTS_SELECT": "Sélectionnez une tranche horaire",
+        "TIME_SLOTS_SET_DEFAULT": "Définir comme tranche horaire par défaut"
     }
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Select, Radio, Spin, notification } from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 
 import 'skeleton-screen-css/dist/index.scss'
 
@@ -45,34 +46,41 @@ function removeValue(choices, value) {
   return choices.filter(({ value: v }) => v !== value);
 }
 
-const Row = ({ row, index, setSelectedTS, selectedTS, setFetching, id }) => (
-  <Draggable draggableId={index.toString()} index={index}>
-    {(provided) => (
-      <p key={index} ref={provided.innerRef} {...provided.draggableProps}>
-        <i {...provided.dragHandleProps} className="fa fa-bars mr-1"></i>
-        <i
-          className="fa fa-minus-circle"
-          onClick={() => {
-            const timeSlots = removeValue(selectedTS, row.value)
-            setSelectedTS(timeSlots)
-            _updateTimeSlots(id, timeSlots.map(({ value }) => value), setFetching)
-          }}
-          aria-hidden="true"
-        ></i>
-        <span className="mx-2" style={{ display: "inline-flex" }}>
-          {row.label}
-        </span>
-        <Radio style={{ float: "right" }} value={row.value}>
-          Set default
-        </Radio>
-      </p>
-    )}
-  </Draggable>
-);
+const Row = ({ row, index, setSelectedTS, selectedTS, setFetching, id }) => {
+
+  const { t } = useTranslation()
+
+  return (
+    <Draggable draggableId={index.toString()} index={index}>
+      {(provided) => (
+        <p key={index} ref={provided.innerRef} {...provided.draggableProps}>
+          <i {...provided.dragHandleProps} className="fa fa-bars mr-1"></i>
+          <i
+            className="fa fa-minus-circle"
+            onClick={() => {
+              const timeSlots = removeValue(selectedTS, row.value)
+              setSelectedTS(timeSlots)
+              _updateTimeSlots(id, timeSlots.map(({ value }) => value), setFetching)
+            }}
+            aria-hidden="true"
+          ></i>
+          <span className="mx-2" style={{ display: "inline-flex" }}>
+            {row.label}
+          </span>
+          <Radio style={{ float: "right" }} value={row.value}>
+            { t('TIME_SLOTS_SET_DEFAULT') }
+          </Radio>
+        </p>
+      )}
+    </Draggable>
+  );
+}
 
 export default function ({ store }) {
 
   const { id, timeSlot, timeSlots } = JSON.parse(store);
+
+  const { t } = useTranslation()
 
   const [choices, setChoices] = useState(null);
   const [selectedTS, setSelectedTS] = useState(null);
@@ -102,7 +110,7 @@ export default function ({ store }) {
   if (!choices && !selectedTS) {
     return (
       <div>
-        <h5>Time Slot</h5>
+        <h5>{ t('TIME_SLOTS') }</h5>
         <div>
           <div className="ssc-head-line mb-3" style={{ width: '30%' }}></div>
           { timeSlots.map((ts, key) => <div key={ key } className="ssc-line mb-2"></div>) }
@@ -113,7 +121,7 @@ export default function ({ store }) {
 
   return (
     <Spin spinning={fetching}>
-      <h5>Time Slot</h5>
+      <h5>{ t('TIME_SLOTS') }</h5>
       <div>
         <Select
           className="my-3 mr-2"
@@ -125,7 +133,7 @@ export default function ({ store }) {
             setSelectedTS(timeSlots);
             _updateTimeSlots(id, timeSlots.map(({ value }) => value), setFetching)
           }}
-          placeholder="Select time slot"
+          placeholder={ t('TIME_SLOTS_SELECT') }
         />
       </div>
       <DragDropContext
