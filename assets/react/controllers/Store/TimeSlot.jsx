@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Select, Radio, Spin,notification } from "antd";
+import { Select, Radio, Spin, notification } from "antd";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import _ from 'lodash';
 
@@ -20,6 +20,20 @@ async function _putTimeSlots(id, data) {
   );
 }
 
+async function _updateTimeSlots(id, timeSlots, setFetching) {
+
+  setFetching(true)
+  const { error } = await _putTimeSlots(id, { timeSlots });
+  setFetching(false)
+
+  if (error && error.response) {
+    notification.error({
+      message: error.response.data['hydra:title'],
+      description: error.response.data['hydra:description'],
+    });
+  }
+}
+
 function reOrderRow(array, from, to) {
   const rows = Array.from(array);
   const [removed] = rows.splice(from, 1);
@@ -31,22 +45,23 @@ function removeValue(choices, value) {
   return choices.filter(({ value: v }) => v !== value);
 }
 
-const Row = ({ row, index, setSelectedTS, selectedTS }) => (
+const Row = ({ row, index, setSelectedTS, selectedTS, setFetching, id }) => (
   <Draggable draggableId={index.toString()} index={index}>
     {(provided) => (
       <p key={index} ref={provided.innerRef} {...provided.draggableProps}>
         <i {...provided.dragHandleProps} className="fa fa-bars mr-1"></i>
         <i
           className="fa fa-minus-circle"
-          onClick={() => setSelectedTS(removeValue(selectedTS, row.value))}
+          onClick={() => {
+            const timeSlots = removeValue(selectedTS, row.value)
+            setSelectedTS(timeSlots)
+            _updateTimeSlots(id, timeSlots.map(({ value }) => value), setFetching)
+          }}
           aria-hidden="true"
         ></i>
         <span className="mx-2" style={{ display: "inline-flex" }}>
           {row.label}
         </span>
-        <a href="#" className="mr-2">
-          <i className="fa fa-external-link" aria-hidden="true"></i>
-        </a>
         <Radio style={{ float: "right" }} value={row.value}>
           Set default
         </Radio>
@@ -105,29 +120,23 @@ export default function ({ store }) {
           value={selectValue}
           options={choices}
           onChange={(_value, selectedOption) => {
+            const timeSlots = _.uniqBy([selectedOption, ...selectedTS], 'value');
             setSelectValue(null)
-            setSelectedTS(_.uniqBy([selectedOption, ...selectedTS], 'value'));
+            setSelectedTS(timeSlots);
+            _updateTimeSlots(id, timeSlots.map(({ value }) => value), setFetching)
           }}
           placeholder="Select time slot"
         />
       </div>
       <DragDropContext
         onDragEnd={ async ({ source, destination }) => {
-
           const reordered = reOrderRow(
             selectedTS,
             source.index,
             destination.index,
           );
           setSelectedTS(reordered);
-
-          setFetching(true)
-          const { error } = await _putTimeSlots(id, { timeSlots: reordered.map(({ value }) => value) });
-          setFetching(false)
-
-          if (error) {
-            notification.error("cpt");
-          }
+          _updateTimeSlots(id, reordered.map(({ value }) => value), setFetching)
         }}
       >
         <Radio.Group
@@ -139,8 +148,11 @@ export default function ({ store }) {
               timeSlot: e.target.value,
             });
             setFetching(false)
-            if (error) {
-              notification.error("cpt");
+            if (error && error.response) {
+              notification.error({
+                message: error.response.data['hydra:title'],
+                description: error.response.data['hydra:description'],
+              });
             }
           }}
           value={defaultTS}
@@ -149,8 +161,8 @@ export default function ({ store }) {
             {({ droppableProps, innerRef, placeholder }) => (
               <div {...droppableProps} ref={innerRef}>
                 { selectedTS.map((row, index) =>
-                  <Row key={ index } row={ row } index={ index }
-                    setSelectedTS={ setSelectedTS } selectedTS={ selectedTS } />
+                  <Row key={ index } row={ row } index={ index } id={ id }
+                    setSelectedTS={ setSelectedTS } selectedTS={ selectedTS } setFetching={ setFetching } />
                 )}
                 { placeholder }
               </div>
