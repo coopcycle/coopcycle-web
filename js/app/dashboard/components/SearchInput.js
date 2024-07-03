@@ -83,6 +83,7 @@ class SearchInput extends React.Component {
                 this.setState({ q: e.target.value })
                 this.search(e.target.value)
               }}
+              onFocus={() => this.search(this.state.q)}
               ref={ (input) => this.searchRef = input }
             />
             { this.state.q && (
