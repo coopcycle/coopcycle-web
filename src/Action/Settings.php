@@ -50,7 +50,8 @@ class Settings
         $splitTermsAndConditionsAndPrivacyPolicy,
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $router,
-        Hashids $hashids12)
+        Hashids $hashids12,
+        $edenredClientId)
     {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -63,6 +64,7 @@ class Settings
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->hashids12 = $hashids12;
+        $this->edenredClientId = $edenredClientId;
     }
 
     /**
@@ -114,6 +116,8 @@ class Settings
             $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
         }
         $data['order_confirm_message'] = $orderConfirmMessage;
+
+        $data['edenred_client_id'] = $this->edenredClientId;
         
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));
