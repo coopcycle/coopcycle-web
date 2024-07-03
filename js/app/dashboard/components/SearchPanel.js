@@ -3,8 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import { toggleSearch } from '../redux/actions'
-import { selectFuseSearch, selectSearchIsOn } from '../redux/selectors'
+import { selectFuseSearch } from '../redux/selectors'
 
 import Task from './Task'
 
@@ -98,15 +97,7 @@ function mapStateToProps(state) {
 
   return {
     fuse: selectFuseSearch(state),
-    searchIsOn: selectSearchIsOn(state)
   }
 }
 
-function mapDispatchToProps(dispatch) {
-
-  return {
-    toggleSearch: () => dispatch(toggleSearch())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(SearchPanel))
+export default connect(mapStateToProps)(withTranslation()(SearchPanel))
