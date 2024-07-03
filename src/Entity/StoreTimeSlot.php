@@ -2,6 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
+/**
+ * @ApiResource(
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *     }
+ *   }
+ * )
+ */
 class StoreTimeSlot {
     private int $id;
     private Store $store;
