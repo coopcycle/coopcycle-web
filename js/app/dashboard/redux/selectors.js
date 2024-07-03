@@ -43,7 +43,6 @@ export const selectAreToursEnabled = state => state.settings.toursEnabled
 export const selectIsRecurrenceRulesVisible = state => state.settings.isRecurrenceRulesVisible
 export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
-export const selectSearchIsOn = state => state.searchIsOn
 export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
 export const selectTourPolylinesEnabledById = tourId => state => state.tourPolylinesEnabled[tourId]
 export const selectAllTags = state => state.config.tags

@@ -18,7 +18,6 @@ import {
   CANCEL_TASK_FAILURE,
   OPEN_FILTERS_MODAL,
   CLOSE_FILTERS_MODAL,
-  TOGGLE_SEARCH,
   OPEN_SEARCH,
   CLOSE_SEARCH,
   OPEN_SETTINGS,
@@ -83,7 +82,6 @@ const initialState = {
   completeTaskErrorMessage: null,
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,
-  searchIsOn: false,
   isLoadingTaskEvents: false,
   taskEvents: {},
   imports: {},
@@ -273,22 +271,6 @@ export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, acti
   case OPEN_FILTERS_MODAL:
     return true
   case CLOSE_FILTERS_MODAL:
-    return false
-  default:
-    return state
-  }
-}
-
-export const searchIsOn = (state = initialState.searchIsOn, action) => {
-  switch (action.type) {
-  case TOGGLE_SEARCH:
-
-    return !state
-  case OPEN_SEARCH:
-
-    return true
-  case CLOSE_SEARCH:
-
     return false
   default:
     return state
