@@ -307,6 +307,12 @@ class SyncTransportersCommand extends Command {
 
     private function initFileSystem(array $config = []): TransporterSyncOptions
     {
+        if ($config['uri'] instanceof Filesystem) {
+            return new TransporterSyncOptions($config['uri'], [
+                'filemask' => $config['filemask'] ?? null
+            ]);
+        }
+
         $auth_details = parse_url($config['uri']);
 
         //Enjoy the ugly hack :)
