@@ -91,7 +91,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.name', 'p.volumeUnits')
+                    ->groupBy('p.id', 'p.name', 'p.volumeUnits')
                     ->setParameter('deliveryId', $deliveryId)
                     ->getQuery();
 
