@@ -243,8 +243,15 @@ const DynamicMenu = () => {
   useEffect(() => {
     if(taskToShow) {
       requestAnimationFrame(() => {
+        // detects if the 'task to show' is visible to the user
+        // it is quite fragile as it depends on the layout
         const htmlEl = document.querySelector(`[data-task-id="${taskToShow['@id']}"]`)
-        if (!isInViewport(htmlEl)) {
+        const rect = htmlEl.getBoundingClientRect()
+
+        const parentPanel = $(htmlEl).closest('.dashboard__panel')[0]
+        const parentRect = parentPanel.getBoundingClientRect()
+
+        if (!(rect.top >= parentRect.top - 20 && rect.bottom <= parentRect.bottom + 20)) {
           htmlEl.scrollIntoView()
         }
     })

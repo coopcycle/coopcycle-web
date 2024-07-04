@@ -78,7 +78,6 @@ export const selectTaskListTasksByUsername = createSelector(
 
 )
 
-
 export const selectAllTours = createSelector(
   tourSelectors.selectAll,
   (allTours) => allTours
