@@ -353,7 +353,7 @@ trait StoreTrait
         $delivery = null;
         $previousArbitraryPrice = null;
 
-        if ($this->isGranted('ROLE_DISPATCHER')) {
+        if ($this->isGranted('ROLE_ADMIN')) {
             // pre-fill fields with the data from the previous order
 
             $hashid = $request->query->get('frmrdr');
@@ -381,7 +381,7 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
-            $useArbitraryPrice = $this->isGranted('ROLE_DISPATCHER') &&
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
                 $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($useArbitraryPrice) {

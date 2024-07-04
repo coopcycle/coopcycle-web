@@ -78,7 +78,7 @@ trait DeliveryTrait
 
             $delivery = $form->getData();
 
-            $useArbitraryPrice = $this->isGranted('ROLE_DISPATCHER') &&
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
                 $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($useArbitraryPrice) {
