@@ -63,6 +63,7 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TOUR_REQUEST,
   ADD_TASK_TO_GROUP_REQUEST,
+  toggleTourPolyline,
 } from './actions'
 
 import {
@@ -73,6 +74,7 @@ import { tokenRefreshSuccess } from '../utils/client'
 const initialState = {
   addModalIsOpen: false,
   polylineEnabled: {},
+  tourPolylinesEnabled: {},
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
   selectedTasks: [],
   jwt: '',
@@ -120,6 +122,18 @@ export const polylineEnabled = (state = {}, action) => {
     const { username } = action
     newState[username] = !state[username]
 
+    return newState
+  default:
+    return state
+  }
+}
+
+export const tourPolylinesEnabled = (state = {}, action) => {
+  switch (action.type) {
+  case toggleTourPolyline.type:
+    let newState = { ...state }
+    const tourId = action.payload
+    newState[tourId] = !state[tourId]
     return newState
   default:
     return state

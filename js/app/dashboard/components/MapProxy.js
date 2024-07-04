@@ -4,9 +4,8 @@ import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
 import React, { StrictMode } from 'react'
-import ColorHash from 'color-hash'
 
-import MapHelper from '../../MapHelper'
+import MapHelper, { mapColorHash } from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
@@ -20,12 +19,14 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}) => {
+const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}, tourPolylinesEnabled = {}, taskIdToTourIdMap, tourIdToColorMap) => {
 
   if (selected) {
     return '#EEB516'
+  } else if (taskIdToTourIdMap.get(task['@id']) && tourPolylinesEnabled[taskIdToTourIdMap.get(task['@id'])]) {
+    return tourIdToColorMap.get(taskIdToTourIdMap.get(task['@id']))
   } else if (task.isAssigned && (useAvatarColors || polylineEnabled[task.assignedTo])) {
-    return colorHash.hex(task.assignedTo)
+    return mapColorHash.hex(task.assignedTo)
   } else if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
   } else if (task.tags.length > 0) {
@@ -63,10 +64,6 @@ const polylineOptions = {
   color: '#3498DB',
   opacity: 0.7
 }
-
-const colorHash = new ColorHash({
-  hash: 'bkdr'
-})
 
 export default class MapProxy {
 
@@ -176,16 +173,13 @@ export default class MapProxy {
         map.pm.disableDraw()
       })
     })
-
-    this.useAvatarColors = options.useAvatarColors
-
   }
 
-  addTask(task, selected = false, isRestaurantAddress = false, polylineEnabled = {}) {
+  addTask(task, useAvatarColors, selected = false, isRestaurantAddress = false, polylineEnabled = {}, tourPolylinesEnabled = {}, taskIdToTourIdMap, tourIdToColorMap) {
 
     let marker = this.taskMarkers.get(task['@id'])
 
-    const color = taskColor(task, selected, this.useAvatarColors, polylineEnabled)
+    const color = taskColor(task, selected, useAvatarColors, polylineEnabled, tourPolylinesEnabled, taskIdToTourIdMap, tourIdToColorMap)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
@@ -239,6 +233,7 @@ export default class MapProxy {
         'textColor',
         'borderColor',
       ])
+
       if (!_.isEqual(currentOpts, newOpts)) {
         L.Util.setOptions(marker.options.icon, newOpts)
         marker.setIcon(marker.options.icon)
@@ -348,23 +343,21 @@ export default class MapProxy {
     return layerGroup
   }
 
-  setPolylineAsTheCrowFlies(username, polyline) {
+  setPolylineAsTheCrowFlies(username, polyline, color) {
 
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
-    const color = colorHash.hex(username)
     layerGroup.addLayer(
       MapHelper.createPolylineWithArrows(polyline, color)
     )
   }
 
-  setPolyline(username, polyline) {
+  setPolyline(username, polyline, color) {
 
     const layerGroup = this.getPolylineLayerGroup(username)
     layerGroup.clearLayers()
 
-    const color = colorHash.hex(username)
     layerGroup.addLayer(
       MapHelper.createPolylineWithArrows(polyline, color)
     )
@@ -497,34 +490,5 @@ export default class MapProxy {
 
   hideNext() {
     this.swoopyLayerGroup.clearLayers()
-  }
-
-  setUseAvatarColors(useAvatarColors) {
-
-    this.useAvatarColors = useAvatarColors
-
-    this.taskMarkers.forEach((marker) => {
-
-      const task = marker.options.task
-      const color = taskColor(task, false, useAvatarColors)
-
-      const newOpts = {
-        textColor: color,
-        borderColor: color,
-      }
-      const currentOpts = _.pick(marker.options.icon.options, [
-        'textColor',
-        'borderColor',
-      ])
-
-      if (!_.isEqual(currentOpts, newOpts)) {
-        L.Util.setOptions(marker.options.icon, newOpts)
-        marker.setIcon(marker.options.icon)
-      }
-
-    })
-
-    window.localStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
-
   }
 }
