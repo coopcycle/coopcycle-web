@@ -149,12 +149,12 @@ class SyncTransportersCommand extends Command {
         }
         $config = $config[$this->transporter];
 
-        if (in_array($config['sync'], ['in', 'out'])) {
+        if (isset($config['sync']['uri'])) {
+            $inFs = $outFs = $this->initFileSystem($config['sync']);
+        }
+        elseif (isset($config['sync']['in']) && isset($config['sync']['out'])) {
             $inFs = $this->initFileSystem($config['sync']['in']);
             $outFs = $this->initFileSystem($config['sync']['out']);
-        } elseif (isset($config['sync']['uri'])) {
-            $inFs = $this->initFileSystem($config['sync']);
-            $outFs = $inFs;
         } else {
             throw new Exception('Sync not configured');
         }

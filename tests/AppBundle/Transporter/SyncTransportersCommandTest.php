@@ -617,7 +617,85 @@ class SyncTransportersCommandTest extends KernelTestCase {
             );
         }
 
+    }
 
+    public function testMultipleFilesystemsSync(): void
+    {
+        // Insert edi to sync
+        $this->syncOutBMVFs->write('test.edi', self::EDI_SAMPLE);
+
+        // Valid the file is there
+        $dir_list = $this->syncOutBMVFs->listContents('/')->toArray();
+        $this->assertCount(1, $dir_list);
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'BMV'
+        ]);
+
+        // Check command output
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
+
+        // Check if command removed the file to sync
+        $dir_list = $this->syncOutBMVFs->listContents('/')->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        $this->assertCount(2, $delivery->getTasks());
+
+        /** @var Task $pickup */
+        $pickup = $delivery->getPickup();
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+
+        $ediMessage = $dropoff->getImportMessage();
+
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_INBOUND,
+            $ediMessage->getDirection()
+        );
+
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_SCONTR,
+            $ediMessage->getMessageType()
+        );
+
+
+        $this->assertCount(1, $dropoff->getEdifactMessages());
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $this->assertCount(3, $pickup->getEdifactMessages());
+        $this->assertCount(2, $dropoff->getEdifactMessages());
+
+
+        $commandTester->execute([
+            'transporter' => 'BMV'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
+
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+        $dir_list = $this->syncInBMVFs->listContents('/')->toArray();
+        $this->assertCount(1, $dir_list);
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('BMV');
+        $this->assertCount(0, $unsynced);
     }
 
 }
