@@ -44,10 +44,6 @@ export const CLOSE_FILTERS_MODAL = 'CLOSE_FILTERS_MODAL'
 export const SET_FILTER_VALUE = 'SET_FILTER_VALUE'
 export const RESET_FILTERS = 'RESET_FILTERS'
 
-export const TOGGLE_SEARCH = 'TOGGLE_SEARCH'
-export const OPEN_SEARCH = 'OPEN_SEARCH'
-export const CLOSE_SEARCH = 'CLOSE_SEARCH'
-
 export const OPEN_SETTINGS = 'OPEN_SETTINGS'
 export const CLOSE_SETTINGS = 'CLOSE_SETTINGS'
 
@@ -457,18 +453,6 @@ export function openFiltersModal() {
 
 export function closeFiltersModal() {
   return { type: CLOSE_FILTERS_MODAL }
-}
-
-export function toggleSearch() {
-  return { type: TOGGLE_SEARCH }
-}
-
-export function openSearch() {
-  return { type: OPEN_SEARCH }
-}
-
-export function closeSearch() {
-  return { type: CLOSE_SEARCH }
 }
 
 export function openSettings() {

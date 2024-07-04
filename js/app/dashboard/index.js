@@ -137,37 +137,39 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
           <ConfigProvider locale={antdLocale}>
-            <Split
-              sizes={[ 75, 25 ]}
-              style={{ display: 'flex', width: '100%' }}
-              onDrag={ sizes => store.dispatch(updateRightPanelSize(sizes[1])) }
-              onDragEnd={ () => mapRef.current.invalidateSize() }>
-              <div className="dashboard__map">
-                <div className="dashboard__toolbar-container">
-                  <Navbar />
+            <div className="dashboard__toolbar-container">
+              <Navbar />
+            </div>
+            <div className="dashboard__content">
+              <Split
+                sizes={[ 75, 25 ]}
+                style={{ display: 'flex', width: '100%', height: '100%' }}
+                onDrag={ sizes => store.dispatch(updateRightPanelSize(sizes[1])) }
+                onDragEnd={ () => mapRef.current.invalidateSize() }>
+                <div className="dashboard__map">
+                  <div className="dashboard__map-container">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      className="arrow-container"
+                      style={{ position: 'absolute', top: '0px', left: '0px', width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}
+                    >
+                      <defs>
+                        <marker id="custom_arrow" markerWidth="4" markerHeight="4" refX="2" refY="2">
+                          <circle cx="2" cy="2" r="2" stroke="none" fill="#3498DB"/>
+                        </marker>
+                      </defs>
+                    </svg>
+                    <LeafletMap onLoad={ (e) => {
+                      // It seems like a bad way to get a ref to the map,
+                      // but we can't use the ref prop
+                      mapRef.current = e.target
+                    }} />
+                  </div>
                 </div>
-                <div className="dashboard__map-container">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                    className="arrow-container"
-                    style={{ position: 'absolute', top: '0px', left: '0px', width: '100%', height: '100%', overflow: 'visible', pointerEvents: 'none' }}
-                  >
-                    <defs>
-                      <marker id="custom_arrow" markerWidth="4" markerHeight="4" refX="2" refY="2">
-                        <circle cx="2" cy="2" r="2" stroke="none" fill="#3498DB"/>
-                      </marker>
-                    </defs>
-                  </svg>
-                  <LeafletMap onLoad={ (e) => {
-                    // It seems like a bad way to get a ref to the map,
-                    // but we can't use the ref prop
-                    mapRef.current = e.target
-                  }} />
-                </div>
-              </div>
-              <aside className="dashboard__aside">
-                <RightPanel loadingAnim={loadingAnim} />
-              </aside>
-            </Split>
+                <aside className="dashboard__aside">
+                  <RightPanel loadingAnim={loadingAnim} />
+                </aside>
+              </Split>
+            </div>
             <Modals />
           </ConfigProvider>
         </I18nextProvider>

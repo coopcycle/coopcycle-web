@@ -245,7 +245,7 @@ const DynamicMenu = () => {
       requestAnimationFrame(() => {
         // detects if the 'task to show' is visible to the user
         // it is quite fragile as it depends on the layout
-        const htmlEl = document.querySelector(`[data-task-id="${taskToShow['@id']}"]`)
+        const htmlEl = document.querySelector(`.dashboard__aside [data-task-id="${taskToShow['@id']}"]`)
         const rect = htmlEl.getBoundingClientRect()
 
         const parentPanel = $(htmlEl).closest('.dashboard__panel')[0]

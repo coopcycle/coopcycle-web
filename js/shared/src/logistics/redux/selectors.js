@@ -90,7 +90,6 @@ export const selectTourPolylines = createSelector(
       acc[tour['@id']] = tour.polyline
       return acc
     }, {})
-  }
 )
 
 const selectItemId = (state, itemId) => itemId
