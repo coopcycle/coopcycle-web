@@ -2,22 +2,71 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use AppBundle\Entity\Trailer;
 
+/**
+ * @ApiResource(
+ *   attributes={
+ *     "normalization_context"={"groups"={"vehicle", "warehouse"}},
+ *     "denormalization_context"={"groups"={"vehicle_create"}}
+ *   },
+ *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_ADMIN')",
+ *      },
+ *     "post"={
+ *       "method"="POST",
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *      },
+ *   }
+ * )
+ */
 class Vehicle
 {
     use Timestampable;
 
     protected $id;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $name;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $volumeUnits;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $maxWeight;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $color;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $isElectric;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $electricRange;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $warehouse;
+
     protected $compatibleTrailers;
 
     public function __construct() {

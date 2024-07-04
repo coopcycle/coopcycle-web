@@ -805,6 +805,12 @@ fos_js_routing:
         - api_warehouses_post_collection
         - api_warehouses_get_collection
         - api_warehouses_delete_item
+        - api_trailers_post_collection
+        - api_trailers_get_collection
+        - api_trailers_delete_item
+        - api_vehicles_post_collection
+        - api_vehicles_get_collection
+        - api_vehicles_delete_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

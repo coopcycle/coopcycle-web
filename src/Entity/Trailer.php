@@ -2,21 +2,69 @@
 
 namespace AppBundle\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use AppBundle\Entity\Vehicle;
 
+/**
+ * @ApiResource(
+ *   attributes={
+ *     "normalization_context"={"groups"={"trailer"}},
+ *     "denormalization_context"={"groups"={"trailer_create"}}
+ *   },
+ *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_ADMIN')",
+ *      },
+ *     "post"={
+ *       "method"="POST",
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *      },
+ *   }
+ * )
+ */
 class Trailer
 {
     use Timestampable;
 
     protected $id;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $name;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $maxVolumeUnits;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $maxWeight;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $color;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $isElectric;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $electricRange;
+
+    /**
+    * @Groups({"trailer", "trailer_create"})
+    */
     protected $compatibleVehicles;
 
     public function __construct() {

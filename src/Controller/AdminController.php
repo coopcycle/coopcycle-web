@@ -2977,11 +2977,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
-
-        return $this->render('admin/vehicles.html.twig', [
-            'vehicles' => $vehicles,
-        ]);
+        return $this->render('admin/vehicles.html.twig', $this->auth([]));
     }
 
     /**

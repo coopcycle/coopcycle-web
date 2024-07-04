@@ -16,7 +16,6 @@ use Gedmo\Timestampable\Traits\Timestampable;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_ADMIN')",
- *       "normalization_context"={"groups"={"warehouse", "address"}},
  *      },
  *     "post"={
  *       "method"="POST",
