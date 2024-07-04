@@ -225,7 +225,7 @@ Running migrations
 
 When pulling change from the remote, the database models may have changed. To apply the changes, you will need to run a database migration.
 
-```
+```sh
 make migrations-migrate
 ```
 
