@@ -228,7 +228,7 @@
         "CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_2": "Please add an item to the cart if you want to start a new order and then update this information",
         "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_YES": "OK",
         "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_NO": "Go back to previous order",
-        "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "Selected time range is no longer available for today",
+        "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "Selected time range is no longer available for today anymore",
         "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "The opening hours do not allow the order to be placed today",
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Please choose another time range",
         "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Change delivery time",
