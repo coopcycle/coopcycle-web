@@ -505,8 +505,10 @@
     })
 
     if ($('#settings_sms_gateway').val() === 'mailjet') {
-      var mailjetConfig = JSON.parse($('#settings_sms_gateway_config').val());
-      $('#mailjet_config_api_token').val(''.padStart(mailjetConfig.api_token.length, '•'));
+      try {
+        var mailjetConfig = JSON.parse($('#settings_sms_gateway_config').val());
+        $('#mailjet_config_api_token').val(''.padStart(mailjetConfig.api_token.length, '•'));
+      } catch (e) {}
     }
 
     if ($('#settings_sms_gateway').val() === 'twilio') {

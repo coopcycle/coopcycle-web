@@ -11,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
+use Symfony\Component\Validator\Constraints as Assert;
 
 abstract class LocalBusinessGroup implements OpenCloseInterface, ToggleableInterface, Vendor
 {
@@ -24,6 +25,11 @@ abstract class LocalBusinessGroup implements OpenCloseInterface, ToggleableInter
     protected $id;
     protected $name;
     protected $restaurants;
+
+     /**
+     * @var Contract|null
+     * @Assert\Valid(groups={"Default", "activable"})
+     */
     protected $contract;
 
     public function __construct()

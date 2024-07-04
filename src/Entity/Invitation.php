@@ -12,7 +12,7 @@ class Invitation
 
     protected $sentAt;
 
-    protected $grants = [];
+    protected array $grants = [];
 
     /**
      * @return mixed

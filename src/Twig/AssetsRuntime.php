@@ -8,7 +8,6 @@ use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
 use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
-use League\Flysystem\MountManager;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -20,7 +19,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         StorageInterface $storage,
-        MountManager $mountManager,
         PropertyMappingFactory $propertyMappingFactory,
         CacheManager $cacheManager,
         Filesystem $assetsFilesystem,
@@ -29,7 +27,6 @@ class AssetsRuntime implements RuntimeExtensionInterface
         PlaceholderImageResolver $placeholderImageResolver)
     {
         $this->storage = $storage;
-        $this->mountManager = $mountManager;
         $this->propertyMappingFactory = $propertyMappingFactory;
         $this->cacheManager = $cacheManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -63,17 +60,17 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function assetBase64($obj, string $fieldName, string $filter): ?string
     {
+        $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
+
         $uri = $this->storage->resolveUri($obj, $fieldName);
 
         if (!$uri) {
             return '';
         }
 
-        if (!$this->mountManager->fileExists($uri)) {
-            return '';
-        }
-
-        return (string) ImageManagerStatic::make($this->mountManager->read($uri))->encode('data-url');
+        return (string) ImageManagerStatic::make(
+            stream_get_contents($this->storage->resolveStream($obj, $fieldName))
+        )->encode('data-url');
     }
 
     public function hasCustomBanner(): bool

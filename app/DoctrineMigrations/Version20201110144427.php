@@ -24,9 +24,9 @@ final class Version20201110144427 extends AbstractMigration
         $this->addSql('ALTER TABLE restaurant_fulfillment_method ADD ordering_delay_minutes INT DEFAULT 0 NOT NULL');
 
         $stmt = $this->connection->prepare('SELECT r.ordering_delay_minutes, rfm.method_id FROM restaurant r JOIN restaurant_fulfillment_methods rfm ON r.id = rfm.restaurant_id');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($restaurant = $stmt->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
             $this->addSql('UPDATE restaurant_fulfillment_method SET ordering_delay_minutes = :ordering_delay_minutes WHERE id = :method_id', [
                 'ordering_delay_minutes' => $restaurant['ordering_delay_minutes'],
                 'method_id' => $restaurant['method_id'],
@@ -36,9 +36,9 @@ final class Version20201110144427 extends AbstractMigration
         $this->addSql('ALTER TABLE restaurant DROP ordering_delay_minutes');
 
         $stmt = $this->connection->prepare('SELECT h.ordering_delay_minutes, hfm.method_id FROM hub h JOIN hub_fulfillment_method hfm ON h.id = hfm.hub_id');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($hub = $stmt->fetch()) {
+        while ($hub = $result->fetchAssociative()) {
             $this->addSql('UPDATE restaurant_fulfillment_method SET ordering_delay_minutes = :ordering_delay_minutes WHERE id = :method_id', [
                 'ordering_delay_minutes' => $hub['ordering_delay_minutes'],
                 'method_id' => $hub['method_id'],
@@ -55,9 +55,9 @@ final class Version20201110144427 extends AbstractMigration
         $this->addSql('ALTER TABLE restaurant ADD ordering_delay_minutes INT DEFAULT 0 NOT NULL');
 
         $stmt = $this->connection->prepare('SELECT ordering_delay_minutes, rfm.restaurant_id FROM restaurant r JOIN restaurant_fulfillment_methods rfm ON r.id = rfm.restaurant_id JOIN restaurant_fulfillment_method fm ON rfm.method_id = fm.id WHERE fm.type = \'delivery\'');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($restaurant = $stmt->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
             $this->addSql('UPDATE restaurant SET ordering_delay_minutes = :ordering_delay_minutes WHERE id = :restaurant_id', [
                 'ordering_delay_minutes' => $restaurant['ordering_delay_minutes'],
                 'restaurant_id' => $restaurant['restaurant_id'],
@@ -67,9 +67,9 @@ final class Version20201110144427 extends AbstractMigration
         $this->addSql('ALTER TABLE hub ADD ordering_delay_minutes INT DEFAULT 0 NOT NULL');
 
         $stmt = $this->connection->prepare('SELECT ordering_delay_minutes, hfm.hub_id FROM hub h JOIN hub_fulfillment_method hfm ON h.id = hfm.hub_id JOIN restaurant_fulfillment_method fm ON hfm.method_id = fm.id WHERE fm.type = \'delivery\'');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($hub = $stmt->fetch()) {
+        while ($hub = $result->fetchAssociative()) {
             $this->addSql('UPDATE hub SET ordering_delay_minutes = :ordering_delay_minutes WHERE id = :hub_id', [
                 'ordering_delay_minutes' => $hub['ordering_delay_minutes'],
                 'hub_id' => $hub['hub_id'],

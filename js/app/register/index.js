@@ -7,8 +7,6 @@ const emailInput =
 const usernameInput =
   document.querySelector('[id$=_username]')
 
-const formGroup = usernameInput.closest('.form-group')
-
 /* */
 
 const checkUsername = _.debounce(function() {
@@ -22,6 +20,8 @@ const checkUsername = _.debounce(function() {
   if (!username || username.length < 3) {
     return
   }
+
+  const formGroup = usernameInput.closest('.form-group')
 
   formGroup.classList.remove('has-success', 'has-error')
   formGroup.classList.add('has-feedback')
@@ -48,14 +48,10 @@ const checkUsername = _.debounce(function() {
   feedbackEl.classList.remove('fa-check', 'fa-warning')
   feedbackEl.classList.add('fa-spinner', 'fa-spin')
 
-  usernameInput.setAttribute('disabled', true)
-
   $.getJSON('/register/suggest', { username, email }).then(result => {
 
     feedbackEl.classList.remove('fa-spinner', 'fa-spin')
 
-    usernameInput.setAttribute('disabled', false)
-    usernameInput.removeAttribute('disabled')
     usernameInput.focus()
 
     if (usernameInput.value) {
@@ -95,12 +91,60 @@ const checkUsername = _.debounce(function() {
 
 }, 500)
 
+const checkEmail = _.debounce(function() {
+
+  const formGroup = emailInput.closest('.form-group')
+
+  formGroup.classList.remove('has-success', 'has-error')
+  formGroup.classList.add('has-feedback')
+
+  const errorEl = document.getElementById('existing_user_error')
+
+  if (errorEl) {
+    errorEl.classList.add('hidden')
+  }
+
+  let feedbackEl =
+    formGroup.querySelector('.form-control-feedback')
+
+  if (!feedbackEl) {
+    feedbackEl = document.createElement('span')
+    feedbackEl.classList.add('fa', 'form-control-feedback')
+    feedbackEl.setAttribute('aria-hidden', 'true')
+    emailInput.parentNode.insertBefore(feedbackEl, emailInput.nextSibling)
+  }
+
+  feedbackEl.classList.remove('fa-check', 'fa-warning')
+  feedbackEl.classList.add('fa-spinner', 'fa-spin')
+
+  $.getJSON('/register/check-email-exists', { email: emailInput.value }).then(result => {
+
+    feedbackEl.classList.remove('fa-spinner', 'fa-spin')
+
+    if (result.exists) {
+      if (errorEl) {
+        errorEl.classList.remove('hidden')
+      }
+
+      const usernameEl = document.querySelector('[name="_username"]')
+
+      if (usernameEl) {
+        usernameEl.value = emailInput.value
+      }
+    }
+
+    formGroup.classList.add(result.exists ? 'has-error' : 'has-success')
+    feedbackEl.classList.add(result.exists ? 'fa-warning' : 'fa-check')
+  })
+
+}, 500)
+
 usernameInput
   .addEventListener('input', checkUsername, false)
 
 emailInput
   .addEventListener('input', () => {
     if (emailInput.checkValidity()) {
-      checkUsername()
+      checkEmail()
     }
   }, false)

@@ -7,10 +7,11 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import Task from './Task'
 import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded } from '../redux/actions'
-import { isTourAssigned, tourIsAssignedTo } from '../../../shared/src/logistics/redux/selectors'
+import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolumeUnits } from '../../../shared/src/logistics/redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds } from '../redux/selectors'
+import ExtraInformations from './TaskCollectionDetails'
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {
 
@@ -19,6 +20,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 
   const [tourName, setTourName] = useState(tour.name)
   const [toggleInputForName, setToggleInputForName] = useState(false)
+  const tourAssignedTo = useSelector((state) => selectItemAssignedTo(state, tour['@id']))
 
   const onEditSubmitted = async (e) => {
     e.preventDefault()
@@ -63,9 +65,9 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
           <a role="button" href="#" className="text-reset mr-2" onClick={ () => setToggleInputForName(true) }>
               <i className="fa fa-pencil"></i>
           </a>
-          { isTourAssigned(tour) ?
+          { tourAssignedTo ?
             <a
-              onClick={() => dispatch(unassignTasks(tourIsAssignedTo(tour), tour.items))}
+              onClick={() => dispatch(unassignTasks(tourAssignedTo, [tour]))}
               title={ t('ADMIN_DASHBOARD_UNASSIGN_TOUR', { name: tour.name }) }
               className="text-reset mr-2"
             >
@@ -91,7 +93,9 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 }
 
 
-const Tour = ({ tour, draggableIndex }) => {
+const Tour = ({ tourId, draggableIndex }) => {
+
+  const tour = useSelector(state => selectTourById(state, tourId))
 
   const isTourDragging = useSelector(selectIsTourDragging)
   const expandedTourPanelsIds = useSelector(selectExpandedTourPanelsIds)
@@ -102,6 +106,9 @@ const Tour = ({ tour, draggableIndex }) => {
 
   const dispatch = useDispatch()
 
+  const weight = useSelector(state => selectTourWeight(state, tourId))
+  const volumeUnits = useSelector(state => selectTourVolumeUnits(state, tourId))
+
   return (
     <Draggable key={ `tour:${tour['@id']}` } draggableId={ `tour:${tour['@id']}` } index={ draggableIndex }>
       {(provided) => (
@@ -110,18 +117,19 @@ const Tour = ({ tour, draggableIndex }) => {
             className="panel panel-default panel--tour nomargin task__draggable"
             style={{ opacity: isLoading ? 0.7 : 1, pointerEvents: isLoading ? 'none' : 'initial' }}
           >
-            <div className="panel-heading" role="tab">
+            <div className="panel-heading" role="tab" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))}>
               <h4 className="panel-title d-flex align-items-center">
                 <i className="fa fa-repeat flex-grow-0"></i>
                   <RenderEditNameForm tour={tour} isLoading={isLoading}>
-                    <a role="button" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))} className="ml-2 flex-grow-1 text-truncate">
+                    <a role="button" className="ml-2 flex-grow-1 text-truncate">
                       { tour.name } <span className="badge">{ tour.items.length }</span>
                     </a>
                     <i className="fa fa-arrows cursor--grabbing mr-2"></i>
                   </RenderEditNameForm>
               </h4>
+              <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits}/>
             </div>
-            <div className={classNames({"panel-collapse": true,  "collapse": true, "in": isExpanded})} role="tabpanel">
+            <div className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
               <Droppable
                   isDropDisabled={isTourDragging || isLoading}
                   droppableId={ `tour:${tour['@id']}` }
@@ -129,21 +137,15 @@ const Tour = ({ tour, draggableIndex }) => {
                   {(provided, snapshot) => (
                     <div ref={ provided.innerRef } { ...provided.droppableProps }>
                       <div
-                      className={ classNames({
-                        'taskList__tasks': true,
-                        'list-group': true,
-                        'm-0': true,
-                        'p-0': true,
-                        'nomargin': true,
-                      }) }
+                      className="taskList__tasks list-group m-0 p-0 nomargin"
                       style={getDroppableListStyle(snapshot.isDraggingOver)}
                       >
-                        { _.map(tour.items, (task, index) =>
+                        { _.map(tour.items, (taskId, index) =>
                           <Task
-                            key={ task['@id'] }
-                            task={ task }
+                            key={ taskId }
+                            taskId={ taskId }
                             draggableIndex={ index }
-                            onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove, tourIsAssignedTo(tour)))}
+                            onRemove={ (taskToRemove) => dispatch(removeTasksFromTour(tour, taskToRemove))}
                           />
                         )}
                         { provided.placeholder }

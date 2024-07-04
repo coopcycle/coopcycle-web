@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\AddImagesToTasks;
+use AppBundle\Action\Task\Collection as TaskList;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
@@ -20,9 +21,11 @@ use AppBundle\Action\Task\Restore as TaskRestore;
 use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
+use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
+use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
@@ -30,6 +33,7 @@ use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Task\Group as TaskGroup;
@@ -41,6 +45,7 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingRuleMatcherInterface;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
@@ -62,7 +67,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false
+ *       "pagination"={
+ *          "enabled_parameter_name"="pagination",
+ *          "items_per_page_parameter_name"="itemsPerPage"
+ *         },
+ *       "pagination_client_items_per_page"=true,
+ *       "pagination_enabled"=false,
+ *       "pagination_client_enabled"=true,
+ *       "controller"=TaskList::class
  *     },
  *     "post"={
  *       "method"="POST",
@@ -301,10 +313,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "security"="is_granted('ROLE_OAUTH2_TASKS')",
  *       "input"=BioDeliverInput::class,
  *       "denormalization_context"={"groups"={"task_edit"}}
+ *     },
+ *     "get_task_context"={
+ *       "method"="GET",
+ *       "path"="/tasks/{id}/context",
+ *       "controller"=TaskContext::class,
+ *       "security"="is_granted('view', object)"
  *     }
  *   }
  * )
  * @AssertTask()
+ * @ApiFilter(TaskOrderFilter::class)
  * @ApiFilter(TaskDateFilter::class, properties={"date"})
  * @ApiFilter(TaskFilter::class)
  * @ApiFilter(AssignedFilter::class, properties={"assigned"})
@@ -315,6 +334,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
+
+    /**
+     * We actually don't expose the 'packages' property in the API, we use aggregates :
+     * - DROPOFF : all packages aggregated by package name
+     * - PICKUP : all packages of the delivery aggregated by package name
+    */
     use PackagesAwareTrait;
     use EDIFACTMessageAwareTrait;
 
@@ -439,21 +464,19 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $metadata = [];
 
     /**
-     * @var array
-     */
-    private $tour;
-
-    /**
+     *
+     * We actually don't expose the 'weight' property in the API, we expose :
+     * - DROPOFF : weight property
+     * - PICKUP : sum of weight of all the dropoffs
      * @var int
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      */
     private $weight;
 
     /**
-    * @var bool
     * @Groups({"task"})
     */
-    private $hasIncidents = false;
+    private $incidents;
 
     public function __construct()
     {
@@ -461,7 +484,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->images = new ArrayCollection();
         $this->packages = new ArrayCollection();
         $this->edifactMessages = new ArrayCollection();
+        $this->incidents = new ArrayCollection();
     }
+
+    /**
+    * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
+    * // FIXME : make annotation works with PHPStan
+    * ['weight' => int|null, 'packages' => ['name' => string, 'type' => string, 'quantity' => int]|null]
+    */
+    private $prefetchedPackagesAndWeight;
+
 
     public function getId()
     {
@@ -910,11 +942,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->ref;
     }
 
-    public static function toVroomJob(Task $task): VroomJob
+    public static function toVroomJob(Task $task, $iri): VroomJob
     {
         $job = new VroomJob();
 
         $job->id = $task->getId();
+        $job->description = $iri; // if the task is linked to a tour, this will be the tour iri, otherwise the task iri
         $job->location = [
             $task->getAddress()->getGeo()->getLongitude(),
             $task->getAddress()->getGeo()->getLatitude()
@@ -1058,22 +1091,11 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->setOrganization($store->getOrganization());
     }
 
-    public function getTour()
-    {
-        return $this->tour;
-    }
-
-    public function setTour($tour)
-    {
-        $this->tour = $tour;
-
-        return $this;
-    }
-
     public function toExpressionLanguageObject()
     {
         $taskObject = new \stdClass();
 
+        $taskObject->type = $this->getType();
         $taskObject->address = $this->getAddress();
         $taskObject->createdAt = $this->getCreatedAt();
         $taskObject->after = $this->getAfter();
@@ -1094,14 +1116,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $emptyObject->before = null;
         $emptyObject->doorstep = false;
 
+        $thisObj = $this->toExpressionLanguageObject();
+
         $values['distance'] = -1;
         $values['weight'] = $this->getWeight();
-        $values['pickup'] = $this->isPickup() ? $this->toExpressionLanguageObject() : $emptyObject;
-        $values['dropoff'] = $this->isDropoff() ? $this->toExpressionLanguageObject() : $emptyObject;
+        $values['pickup'] = $this->isPickup() ? $thisObj : $emptyObject;
+        $values['dropoff'] = $this->isDropoff() ? $thisObj : $emptyObject;
         $values['packages'] = new PackagesResolver($this);
 
-        $thisObj = new \stdClass();
-        $thisObj->type = $this->getType();
         $values['task'] = $thisObj;
 
         return $values;
@@ -1132,13 +1154,48 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
-    public function setHasIncidents(bool $hasIncidents): void
-    {
-        $this->hasIncidents = $hasIncidents;
-    }
-
+    /**
+     * @Groups({"task"})
+     */
     public function getHasIncidents(): bool
     {
-        return $this->hasIncidents;
+        return !$this->getIncidents()->filter(function (Incident $incident) {
+            return $incident->getStatus() === Incident::STATUS_OPEN;
+        })->isEmpty();
+    }
+
+    public function getIncidents(): Collection
+    {
+        return $this->incidents;
+    }
+
+    public function addIncident(Incident $incident): void
+    {
+        $this->incidents[] = $incident;
+    }
+
+    /**
+     * Get the value of prefetchedPackagesAndWeight
+     */
+    public function getPrefetchedPackagesAndWeight()
+    {
+        return $this->prefetchedPackagesAndWeight;
+    }
+
+    /**
+     * Set the value of prefetchedPackagesAndWeight
+     *
+     * @return  self
+     */
+    public function setPrefetchedPackagesAndWeight($prefetchedPackagesAndWeight)
+    {
+        $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
+
+        return $this;
+    }
+
+    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
+    {
+        $visitor->visitTask($this);
     }
 }

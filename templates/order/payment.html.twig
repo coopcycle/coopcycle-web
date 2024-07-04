@@ -12,13 +12,24 @@
 
 <div class="container container--full-height">
 
+  <div id="react-root"></div>
+
   {% if not order.empty %}
 
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
     <div class="row">
       <div class="col-xs-12">
         {% include 'order/breadcrumb.html.twig' %}
-        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h4>
+
+        <div id="order-error-container">
+          {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
+            {% include 'order/_partials/errors.html.twig' with {
+              errors: pre_submit_errors,
+            } %}
+          {% endif %}
+        </div>
+
+        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
         <div>
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
@@ -58,13 +69,12 @@
     <nav class="checkout-nav border-top">
       <div class="container">
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
-          <span class="text-success">
-            <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ shippingTimeRange|time_range_for_humans }}</strong>
-          </span>
+          <!-- React component will be inserted here -->
+          <div id="order__fulfilment_time_range__container">
+          </div>
           <div>
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>
         </div>
@@ -78,13 +88,25 @@
     </div>
   {% endif %}
 </div>
+
+  <div id="js-order-data"
+       data-order-node-id="{{ order|get_iri_from_item }}"
+       data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
+       data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+
 {% endblock %}
 
 {% block footer %}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('order-payment') }}
+{% endblock %}
+
 {% block scripts %}
 {% if not order.empty %}
+
+  {{ encore_entry_script_tags('order-payment') }}
 
 {% set gateway = payment_gateway_resolver.resolve() %}
 {% set gateway_configs = {} %}
@@ -115,12 +137,12 @@
 {% endif %}
 
 <script type="text/javascript">
-  // FIXME
-  // 'StripePaymentForm' should be renamed to something more generic like GatewatPaymentForm - @sgobotta
-  new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+  new CoopCycle.PaymentForm(document.querySelector('form[name="checkout_payment"]'), {
     card: "{{ gateway }}",
     amount: {{ order.total }},
+    orderId: "{{ order.id }}",
     orderHasUser: "{{ order.customer.hasUser() }}",
+    orderAccessToken: "{{ order_access_token }}",
     gatewayConfigs: {{ gateway_configs|json_encode|raw }},
     tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
     savedPaymentMethodElement: document.querySelector('#checkout_payment_stripePayment_savedPaymentMethodId'),

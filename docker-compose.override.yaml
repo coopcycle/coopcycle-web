@@ -78,6 +78,7 @@ services:
     build:
       context: '.'
       dockerfile: './docker/php/Dockerfile'
+      target: frankenphp_dev
     restart: unless-stopped
     depends_on:
       php:

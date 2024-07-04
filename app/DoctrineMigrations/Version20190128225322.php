@@ -11,9 +11,9 @@ final class Version20190128225322 extends AbstractMigration
     {
         $stmt = $this->connection->prepare('SELECT id FROM sylius_channel WHERE code = \'web\'');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        if (!$channel = $stmt->fetch()) {
+        if (!$channel = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO sylius_channel (code, name, enabled, created_at, updated_at) VALUES (:code, :name, \'t\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', [
                 'code' => 'web',
                 'name' => 'Web'

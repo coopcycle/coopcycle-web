@@ -30,7 +30,7 @@ export const playerWebsocket = ({dispatch, getState}) => {
 
     if (action.type === SET_PLAYER_TOKEN && prevState.player.token === null && player.token)  {
       const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-      const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`, {
+      const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`, {
         // In this case, we don't refresh the connection
         // https://github.com/centrifugal/centrifuge-js#refreshendpoint
         refreshAttempts: 0,

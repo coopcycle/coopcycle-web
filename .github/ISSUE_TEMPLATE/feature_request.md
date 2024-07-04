@@ -1,8 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: In order to [achieve something] As a [role] I want [something to be added or
-  changed]
+title: A summary of what you want to be added or changed
 labels: enhancement
 assignees: ''
 

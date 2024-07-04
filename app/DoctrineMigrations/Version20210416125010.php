@@ -22,9 +22,9 @@ final class Version20210416125010 extends AbstractMigration
         $this->addSql('ALTER TABLE task ADD image_count INT DEFAULT 0 NOT NULL');
 
         $stmt = $this->connection->prepare('SELECT t.id, COUNT(*) AS image_count FROM task_image i JOIN task t ON t.id = i.task_id GROUP BY t.id');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($task = $stmt->fetch()) {
+        while ($task = $result->fetchAssociative()) {
             $this->addSql('UPDATE task SET image_count = :image_count WHERE id = :id', $task);
         }
     }

@@ -5,6 +5,12 @@
   <div class="form rounded-bottom">
     {{ form_row(form.username) }}
     {{ form_row(form.email) }}
+    <div id="existing_user_error" class="alert alert-warning mt-1 hidden">
+      <i class="fa fa-warning mr-1"></i>
+      {{ 'registration.email.taken'|trans }}
+      <a id="link_to_login" href="#">{{ 'registration.link.to.login'|trans }}</a>
+      {{ 'registration.email.taken.use.another'|trans }}
+    </div>
     <div class="row">
     <div class="col-md-6">
       {{ form_row(form.plainPassword.first) }}
@@ -47,5 +53,16 @@
 {% endblock %}
 
 {% block scripts %}
+  <script>
+    const linkToLoginEl = document.querySelector('#link_to_login')
+
+    if (linkToLoginEl) {
+      linkToLoginEl.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector('[name="registration_form"]').remove()
+        document.querySelector('#existing_user_login_form').classList.remove('hidden')
+      })
+    }
+  </script>
   {{ encore_entry_script_tags('register') }}
 {% endblock %}

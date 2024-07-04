@@ -1,0 +1,15 @@
+AppBundle\Entity\Delivery\FailureReasonSet:
+  default:
+    name: Default
+
+AppBundle\Entity\Delivery\FailureReason:
+  damaged:
+    code: DAMAGED
+    description: Damaged
+    failureReasonSet: "@default"
+  refused:
+    code: REFUSED
+    description: Refused
+    failureReasonSet: "@default"
+
+

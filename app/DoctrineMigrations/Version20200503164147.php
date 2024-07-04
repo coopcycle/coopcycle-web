@@ -28,8 +28,8 @@ final class Version20200503164147 extends AbstractMigration
 
         $this->addSql('ALTER TABLE api_user ADD customer_id INT DEFAULT NULL');
 
-        $stmts['users']->execute();
-        while ($user = $stmts['users']->fetch()) {
+        $result = $stmts['users']->execute();
+        while ($user = $result->fetchAssociative()) {
 
             $this->addSql('INSERT INTO sylius_customer (email, email_canonical, first_name, last_name, phone_number, subscribed_to_newsletter, created_at, updated_at) VALUES (:email, :email_canonical, :first_name, :last_name, :phone_number, \'f\', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)', [
                 'email' => $user['email'],
@@ -60,8 +60,8 @@ final class Version20200503164147 extends AbstractMigration
         $stmts['orders'] =
             $this->connection->prepare('SELECT o.id, c.email_canonical AS user_email_canonical FROM sylius_order o JOIN sylius_customer c ON o.customer_id = c.id');
 
-        $stmts['orders']->execute();
-        while ($order = $stmts['orders']->fetch()) {
+        $result = $stmts['orders']->execute();
+        while ($order = $result->fetchAssociative()) {
             $this->addSql('UPDATE sylius_order SET customer_id = (SELECT id FROM api_user WHERE email_canonical = :email_canonical) WHERE id = :order_id', [
                 'email_canonical' => $order['user_email_canonical'],
                 'order_id' => $order['id'],

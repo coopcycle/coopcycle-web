@@ -3,18 +3,15 @@
 namespace AppBundle\Service;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\SilentEventInterface;
-use AppBundle\Domain\Task\Event as TaskEvent;
-use AppBundle\Entity\User;
 use AppBundle\Message\TopBarNotification;
+use AppBundle\Security\UserManager;
 use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
-use Ramsey\Uuid\Uuid;
+use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Name\NamedMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -26,32 +23,20 @@ class LiveUpdates
 {
     use TokenStorageTrait;
 
-    private $userManager;
-    private $serializer;
-    private $translator;
-    private $centrifugoClient;
-    private $messageBus;
-    private $notificationPreferences;
-    private $namespace;
+    protected $tokenStorage;
 
     public function __construct(
-        UserManagerInterface $userManager,
         TokenStorageInterface $tokenStorage,
-        SerializerInterface $serializer,
-        TranslatorInterface $translator,
-        CentrifugoClient $centrifugoClient,
-        MessageBusInterface $messageBus,
-        NotificationPreferences $notificationPreferences,
-        string $namespace)
+        private UserManager $userManager,
+        private SerializerInterface $serializer,
+        private TranslatorInterface $translator,
+        private CentrifugoClient $centrifugoClient,
+        private MessageBusInterface $messageBus,
+        private NotificationPreferences $notificationPreferences,
+        private LoggerInterface $realTimeMessageLogger,
+        private string $namespace)
     {
-        $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
-        $this->serializer = $serializer;
-        $this->translator = $translator;
-        $this->centrifugoClient = $centrifugoClient;
-        $this->messageBus = $messageBus;
-        $this->notificationPreferences = $notificationPreferences;
-        $this->namespace = $namespace;
     }
 
     public function toAdmins($message, array $data = [])
@@ -86,8 +71,14 @@ class LiveUpdates
             'data' => $data
         ];
 
+        $channel = $this->getOrderChannelName($order);
+
+        $this->realTimeMessageLogger->info(sprintf("Publishing event '%s' on channel %s",
+            $payload['name'],
+            $channel));
+
         $this->centrifugoClient->publish(
-            $this->getOrderChannelName($order),
+            $channel,
             ['event' => $payload]
         );
     }
@@ -117,6 +108,13 @@ class LiveUpdates
         $centrifugoChannels = array_map(function (UserInterface $user) {
             return $this->getEventsChannelName($user);
         }, $users);
+
+        $this->realTimeMessageLogger->info(sprintf("Broadcasting event '%s' on channels %s for users %s",
+            $payload['name'],
+            implode(', ', $centrifugoChannels),
+            implode(', ', array_map(function (UserInterface $user) {
+                return $user->getUserIdentifier();
+            }, $users))));
 
         // We use broadcast to reduce the number of HTTP requests
         $this->centrifugoClient->broadcast(
@@ -184,6 +182,11 @@ class LiveUpdates
     public function publishEvent($user, array $payload)
     {
         $channel = $this->getEventsChannelName($user);
+
+        $this->realTimeMessageLogger->info(sprintf("Publishing event '%s' on channel %s for user %s",
+            $payload['name'],
+            $channel,
+            $user instanceof UserInterface ? $user->getUserIdentifier() : $user));
 
         $this->centrifugoClient->publish($channel, ['event' => $payload]);
     }

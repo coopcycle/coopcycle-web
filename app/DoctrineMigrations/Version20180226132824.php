@@ -35,8 +35,8 @@ class Version20180226132824 extends AbstractMigration
 
         $taskLists = [];
 
-        $stmts['assigned_tasks']->execute();
-        while ($task = $stmts['assigned_tasks']->fetch()) {
+        $result = $stmts['assigned_tasks']->execute();
+        while ($task = $result->fetchAssociative()) {
             $taskLists[$task['date']][$task['courier']][] = $task;
         }
 
@@ -58,9 +58,9 @@ class Version20180226132824 extends AbstractMigration
 
                 $stmts['task_list']->bindParam('date', $date);
                 $stmts['task_list']->bindParam('courier', $courier);
-                $stmts['task_list']->execute();
+                $result = $stmts['task_list']->execute();
 
-                $taskList = $stmts['task_list']->fetch();
+                $taskList = $result->fetchAssociative();
 
                 if ($taskList) {
                     $this->addSql('UPDATE task_list SET id = (SELECT MAX(id) FROM task_collection WHERE type = :type) '

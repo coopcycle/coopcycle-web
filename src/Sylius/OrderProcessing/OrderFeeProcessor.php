@@ -2,7 +2,6 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
-use AppBundle\Entity\Delivery;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Service\DeliveryManager;
@@ -50,30 +49,21 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         Assert::isInstanceOf($order, OrderInterface::class);
 
         if (!$order->hasVendor()) {
-            $this->logger->info(sprintf('Order %s | OrderFeeProcessor | skipped (no vendor)',
-                $this->loggingUtils->getOrderId($order)));
+            $this->logger->info('OrderFeeProcessor | skipped (no vendor)', ['order' => $this->loggingUtils->getOrderId($order)]);
             return;
         }
 
-        $this->logger->info(sprintf('Order %s | OrderFeeProcessor | started | triggered by %s',
-            $this->loggingUtils->getOrderId($order), $this->loggingUtils->getBacktrace()));
+        $this->logger->info('OrderFeeProcessor | started', ['order' => $this->loggingUtils->getOrderId($order)]);
 
-        $originalTipAdjustments = $order->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
-
-        $order->removeAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT);
-        $order->removeAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
-        $order->removeAdjustments(AdjustmentInterface::TIP_ADJUSTMENT);
-
-        $contract = $order->getVendor()->getContract();
-        $feeRate = $contract->getFeeRate();
+        $contract = $order->getVendorConditions()->getContract();
 
         $delivery = null;
         if (!$order->isTakeAway() && ($contract->isVariableDeliveryPriceEnabled() || $contract->isVariableCustomerAmountEnabled())) {
             try {
                 $delivery = $this->getDelivery($order);
             } catch (ShippingAddressMissingException|NoAvailableTimeSlotException $e) {
-                $this->logger->error(sprintf('Order %s | OrderFeeProcessor | error: %s',
-                    $this->loggingUtils->getOrderId($order),  $e->getMessage()));
+                $this->logger->warning(sprintf('OrderFeeProcessor | error: %s',  $e->getMessage()),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
             }
         }
 
@@ -92,11 +82,11 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                 if (null === $customerAmount) {
                     $customerAmount = $contract->getCustomerAmount();
 
-                    $this->logger->error(sprintf('Order %s | OrderFeeProcessor | customer amount: %d | could not calculate price, falling back to flat price',
-                        $this->loggingUtils->getOrderId($order), $customerAmount));
+                    $this->logger->warning(sprintf('OrderFeeProcessor | customer amount: %d | could not calculate price, falling back to flat price', $customerAmount),
+                        ['order' => $this->loggingUtils->getOrderId($order)]);
                 } else {
-                    $this->logger->info(sprintf('Order %s | OrderFeeProcessor | customer amount: %d | price calculated successfully',
-                        $this->loggingUtils->getOrderId($order), $customerAmount));
+                    $this->logger->info(sprintf('OrderFeeProcessor | customer amount: %d | price calculated successfully', $customerAmount),
+                        ['order' => $this->loggingUtils->getOrderId($order)]);
                 }
             }
         }
@@ -115,15 +105,13 @@ final class OrderFeeProcessor implements OrderProcessorInterface
                 if (null === $businessAmount) {
                     $businessAmount = $contract->getFlatDeliveryPrice();
 
-                    $this->logger->error(sprintf('Order %s | OrderFeeProcessor | business amount: %d | could not calculate price, falling back to flat price',
-                        $this->loggingUtils->getOrderId($order), $businessAmount));
+                    $this->logger->warning(sprintf('OrderFeeProcessor | business amount: %d | could not calculate price, falling back to flat price', $businessAmount),
+                        ['order' => $this->loggingUtils->getOrderId($order)]);
                 } else {
-                    $this->logger->info(sprintf('Order %s | OrderFeeProcessor | business amount: %d | price calculated successfully',
-                        $this->loggingUtils->getOrderId($order), $businessAmount));
+                    $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | price calculated successfully', $businessAmount),
+                        ['order' => $this->loggingUtils->getOrderId($order)]);
                 }
             }
-        } else {
-            $feeRate = $contract->getTakeAwayFeeRate();
         }
 
         $deliveryPromotionAdjustments = $order->getAdjustments(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
@@ -131,8 +119,8 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             if ($this->decreasePlatformFee($deliveryPromotionAdjustment)) {
                 $businessAmount += $deliveryPromotionAdjustment->getAmount();
 
-                $this->logger->info(sprintf('Order %s | OrderFeeProcessor | business amount: %d | applied delivery promotion',
-                    $this->loggingUtils->getOrderId($order), $businessAmount));
+                $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | applied delivery promotion', $businessAmount),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
             }
         }
 
@@ -141,44 +129,34 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             if ($this->decreasePlatformFee($orderPromotionAdjustment)) {
                 $businessAmount += $orderPromotionAdjustment->getAmount();
 
-                $this->logger->info(sprintf('Order %s | OrderFeeProcessor | business amount: %d | applied order promotion',
-                    $this->loggingUtils->getOrderId($order), $businessAmount));
+                $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | applied order promotion', $businessAmount),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
             }
         }
 
-        $tipAmount = $order->getTipAmount();
+        $newTipAmount = $order->getTipAmount();
 
-        if (null !== $tipAmount) {
-            if ($tipAmount > 0) {
-                $tipAdjustment = $this->adjustmentFactory->createWithData(
-                    AdjustmentInterface::TIP_ADJUSTMENT,
-                    $this->translator->trans('order.adjustment_type.tip'),
-                    $tipAmount,
-                    $neutral = false
-                );
-                $order->addAdjustment($tipAdjustment);
-
-                $this->logger->info(sprintf('Order %s | OrderFeeProcessor | tip amount: %d | added',
-                    $this->loggingUtils->getOrderId($order), $tipAmount));
-            }
-        } else {
-            if (count($originalTipAdjustments) > 0) {
-                foreach ($originalTipAdjustments as $tipAdjustment) {
-                    $order->addAdjustment($tipAdjustment);
-
-                    $this->logger->info(sprintf('Order %s | OrderFeeProcessor | tip amount: %d | re-used previous tip adjustment',
-                        $this->loggingUtils->getOrderId($order), $tipAdjustment->getAmount()));
-                }
-            }
+        // $order->getTipAmount() is the tip amount set in the current request
+        // preserve the previous tip amount if $newTipAmount is null
+        if (null !== $newTipAmount) {
+            $this->upsertAdjustment(
+                $order,
+                AdjustmentInterface::TIP_ADJUSTMENT,
+                'order.adjustment_type.tip',
+                $newTipAmount,
+                $neutral = false);
         }
 
         // If the order is fulfilled with delivery method,
         // the tip goes to the messenger
         if (!$order->isTakeAway()) {
-            $businessAmount += $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
+            $tipAmount = $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT);
+            if ($tipAmount > 0) {
+                $businessAmount += $tipAmount;
 
-            $this->logger->info(sprintf('Order %s | OrderFeeProcessor | business amount: %d | added tip',
-                $this->loggingUtils->getOrderId($order), $businessAmount));
+                $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | added tip', $businessAmount),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
+            }
         }
 
         // If the order contains LoopEat lunchboxes,
@@ -188,10 +166,12 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             if ($reusablePackagingTotal > 0) {
                 $businessAmount += $reusablePackagingTotal;
 
-                $this->logger->info(sprintf('Order %s | OrderFeeProcessor | business amount: %d | added reusable packaging fees',
-                    $this->loggingUtils->getOrderId($order), $businessAmount));
+                $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | added reusable packaging fees', $businessAmount),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
             }
         }
+
+        $feeRate = $order->isTakeAway() ? $contract->getTakeAwayFeeRate() : $contract->getFeeRate();
 
         $feeAmount = (int) (($order->getItemsTotal() * $feeRate) + $businessAmount);
 
@@ -202,33 +182,23 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $feeAmount = 0;
         }
 
-        $feeAdjustment = $this->adjustmentFactory->createWithData(
+        $this->upsertAdjustment(
+            $order,
             AdjustmentInterface::FEE_ADJUSTMENT,
-            $this->translator->trans('order.adjustment_type.platform_fees'),
+            'order.adjustment_type.platform_fees',
             $feeAmount,
-            $neutral = true
-        );
-        $order->addAdjustment($feeAdjustment);
+            true,
+            [],
+            true);
 
-        $this->logger->info(sprintf('Order %s | OrderFeeProcessor | fee adjustment: %d | added',
-            $this->loggingUtils->getOrderId($order), $feeAdjustment->getAmount()));
+        $this->upsertAdjustment(
+            $order,
+            AdjustmentInterface::DELIVERY_ADJUSTMENT,
+            'order.adjustment_type.delivery',
+            $customerAmount,
+            $neutral = false);
 
-        if ($customerAmount > 0) {
-            $deliveryAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::DELIVERY_ADJUSTMENT,
-                $this->translator->trans('order.adjustment_type.delivery'),
-                $customerAmount,
-                $neutral = false
-            );
-
-            $order->addAdjustment($deliveryAdjustment);
-
-            $this->logger->info(sprintf('Order %s | OrderFeeProcessor | delivery adjustment: %d | added',
-                $this->loggingUtils->getOrderId($order), $deliveryAdjustment->getAmount()));
-        }
-
-        $this->logger->info(sprintf('Order %s | OrderFeeProcessor | finished',
-            $this->loggingUtils->getOrderId($order)));
+        $this->logger->info('OrderFeeProcessor | finished', ['order' => $this->loggingUtils->getOrderId($order)]);
     }
 
     private function decreasePlatformFee(Adjustment $adjustment): bool
@@ -262,5 +232,49 @@ final class OrderFeeProcessor implements OrderProcessorInterface
         }
 
         return $delivery;
+    }
+
+    private function upsertAdjustment(
+        BaseOrderInterface $order,
+        string $type,
+        string $labelId,
+        int $amount,
+        bool $neutral = false,
+        array $details = [],
+        bool $hasZeroValue = false)
+    {
+        if ($amount === 0 && !$hasZeroValue) {
+            $order->removeAdjustments($type);
+        } else {
+            $prevAdjustments = $order->getAdjustments($type);
+
+            if (count($prevAdjustments) === 0) {
+                $adjustment = $this->adjustmentFactory->createWithData(
+                    $type,
+                    $this->translator->trans($labelId),
+                    $amount,
+                    $neutral,
+                    $details
+                );
+
+                $order->addAdjustment($adjustment);
+
+                $this->logger->info(sprintf('OrderFeeProcessor | %s: %d | added', $labelId, $adjustment->getAmount()),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
+            } else {
+                //fixme: invalid state; do some cleanup?
+                if (count($prevAdjustments) !== 1) {
+                    $this->logger->warning(sprintf('OrderFeeProcessor | multiple %s: %d', $labelId, count($prevAdjustments)),
+                        ['order' => $this->loggingUtils->getOrderId($order)]);
+                }
+
+                $adjustment = $prevAdjustments->first();
+                $prevAmount = $adjustment->getAmount();
+                $adjustment->setAmount($amount);
+
+                $this->logger->info(sprintf('OrderFeeProcessor | %s: %d | prev: %d | updated', $labelId, $adjustment->getAmount(), $prevAmount),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
+            }
+        }
     }
 }

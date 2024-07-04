@@ -24,8 +24,8 @@ final class OrderDisabledProductProcessor implements OrderProcessorInterface
         foreach ($order->getItems() as $item) {
             $product = $item->getVariant()->getProduct();
             if (!$product->isEnabled()) {
-                $this->checkoutLogger->info(sprintf('Order %s | OrderDisabledProductProcessor | removing disabled product %s',
-                    $this->loggingUtils->getOrderId($order), $product->getCode()));
+                $this->checkoutLogger->info(sprintf('OrderDisabledProductProcessor | removing disabled product %s', $product->getCode()),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
 
                 $order->removeItem($item);
             }

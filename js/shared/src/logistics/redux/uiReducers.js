@@ -6,6 +6,7 @@ import {
 } from './actions';
 
 const initialState = {
+  organizationsLoading: true,
   taskListsLoading: false,
   isTourDragging: true,
   currentTask: null,

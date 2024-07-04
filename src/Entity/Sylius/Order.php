@@ -12,6 +12,8 @@ use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer as AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
+use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
+use AppBundle\Action\Order\FinishPreparing as OrderFinishPreparing;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
 use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
@@ -193,6 +195,24 @@ use Webmozart\Assert\Assert as WMAssert;
  *         "summary"="Cancels a Order resource."
  *       }
  *     },
+ *     "start_preparing"={
+ *        "method"="PUT",
+ *        "path"="/orders/{id}/start_preparing",
+ *        "controller"=OrderStartPreparing::class,
+ *        "security"="is_granted('start_preparing', object)",
+ *        "openapi_context"={
+ *          "summary"="Starts preparing an Order resource."
+ *        }
+ *      },
+ *     "finish_preparing"={
+ *        "method"="PUT",
+ *        "path"="/orders/{id}/finish_preparing",
+ *        "controller"=OrderFinishPreparing::class,
+ *        "security"="is_granted('finish_preparing', object)",
+ *        "openapi_context"={
+ *          "summary"="Finishes preparing an Order resource."
+ *        }
+ *      },
  *     "restore"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/restore",
@@ -1086,7 +1106,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function setTipAmount(int $tipAmount)
     {
-        $this->tipAmount = $tipAmount;
+        $this->tipAmount = max(0, $tipAmount);
     }
 
     public function getShippingTimeRange(): ?TsRange
@@ -1234,15 +1254,20 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
+    public function getVendorConditions(): ?Vendor
+    {
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
+        }
+
+        return $this->getVendor();
+    }
+
     public function getVendor(): ?Vendor
     {
         if (!$this->hasVendor()) {
 
             return null;
-        }
-
-        if (null !== $this->getBusinessAccount()) {
-            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
         }
 
         $first = $this->getRestaurants()->first();
@@ -1295,6 +1320,8 @@ class Order extends BaseOrder implements OrderInterface
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
         $tipAdjustments =
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)->toArray());
+        $incidentAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::INCIDENT_ADJUSTMENT)->toArray());
 
         return [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
@@ -1303,6 +1330,7 @@ class Order extends BaseOrder implements OrderInterface
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
             AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
             AdjustmentInterface::TIP_ADJUSTMENT => array_values($tipAdjustments),
+            AdjustmentInterface::INCIDENT_ADJUSTMENT => array_values($incidentAdjustments),
         ];
     }
 
@@ -1536,6 +1564,22 @@ class Order extends BaseOrder implements OrderInterface
                 }
             }
         }
+
+        // Make sure same formats do not appear twice
+        $formats = array_reduce($formats, function ($carry, $item) {
+            foreach ($carry as $index => $el) {
+                if ($el['format_id'] === $item['format_id']) {
+                    $carry[$index]['quantity'] += $item['quantity'];
+
+                    return $carry;
+                }
+            }
+
+            $carry[] = $item;
+
+            return $carry;
+
+        }, []);
 
         return $formats;
     }

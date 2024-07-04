@@ -59,7 +59,7 @@ class DeliveryQuote
      * @Groups({"delivery_quote"})
      */
     private $amount;
-    private $payload;
+    private string $payload = '';
 
     /**
      * @Groups({"delivery_quote"})
@@ -144,15 +144,15 @@ class DeliveryQuote
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getPayload()
+    public function getPayload(): string
     {
         return $this->payload;
     }
 
     /**
-     * @param mixed $payload
+     * @param string $payload
      *
      * @return self
      */

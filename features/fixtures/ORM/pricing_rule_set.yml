@@ -1,0 +1,41 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_1"
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+
+AppBundle\Entity\Contract:
+  contract_1:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+    variable_delivery_price: "@pricing_rule_set_1"
+
+AppBundle\Entity\LocalBusiness:
+  restaurant_1:
+    name: 'Good Old Times with variables pricing'
+    address: "@address_1"
+    openingHours: ['Mo-Sa 11:30-14:30']
+    enabled: false
+    contract: "@contract_1"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    rateLimitAmount: null
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'

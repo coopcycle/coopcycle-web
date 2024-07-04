@@ -57,13 +57,13 @@ class Version20171202224801 extends AbstractMigration
         $taxRate->setAmount(0.10);
         $taxRate->setIncludedInPrice(true);
 
-        $stmts['find_all_orders']->execute();
-        while ($order = $stmts['find_all_orders']->fetch()) {
+        $result = $stmts['find_all_orders']->execute();
+        while ($order = $result->fetchAssociative()) {
 
             $stmts['order_items_total']->bindParam('order_id', $order['id']);
-            $stmts['order_items_total']->execute();
+            $result2 = $stmts['order_items_total']->execute();
 
-            $totalIncludingTax = $stmts['order_items_total']->fetchColumn(0);
+            $totalIncludingTax = $result2->fetchFirstColumn();
             $totalTax = $calculator->calculate($totalIncludingTax, $taxRate);
             $totalExcludingTax = $totalIncludingTax - $totalTax;
 
@@ -81,8 +81,8 @@ class Version20171202224801 extends AbstractMigration
         $deliveryTaxRate->setAmount(0.20);
         $deliveryTaxRate->setIncludedInPrice(true);
 
-        $stmts['find_all_deliveries']->execute();
-        while ($delivery = $stmts['find_all_deliveries']->fetch()) {
+        $result = $stmts['find_all_deliveries']->execute();
+        while ($delivery = $result->fetchAssociative()) {
 
             $totalIncludingTax = $delivery['price'];
             $totalTax = $calculator->calculate($totalIncludingTax, $deliveryTaxRate);

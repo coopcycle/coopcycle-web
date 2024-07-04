@@ -1,6 +1,8 @@
 AppBundle\Entity\PackageSet:
   package_set_1:
     name: 'Standard'
+  package_set_2:
+    name: 'Standard'
 
 AppBundle\Entity\Package:
   package_small:
@@ -10,4 +12,30 @@ AppBundle\Entity\Package:
   package_xl:
     name: 'XL'
     volumeUnits: 3.0
+    packageSet: '@package_set_1'
+  package_small2:
+    name: 'SMALL'
+    volumeUnits: 1.0
+    packageSet: '@package_set_2'
+
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_1"
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    packageSet: '@package_set_1'
+
+AppBundle\Entity\DeliveryForm:
+  form_1:
     packageSet: '@package_set_1'

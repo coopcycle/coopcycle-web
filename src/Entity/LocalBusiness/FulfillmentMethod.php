@@ -22,7 +22,7 @@ class FulfillmentMethod implements ToggleableInterface
     private $openingHours = [];
     private $openingHoursBehavior = 'asap';
 
-    private $options = [];
+    private ?array $options = [];
 
     /**
      * @var int

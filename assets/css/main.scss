@@ -1,9 +1,12 @@
 @import "fonts.scss";
 
-@import "~antd/lib/style/index.css";
+@import "~antd/dist/antd.css";
+
 @import "~font-awesome/css/font-awesome.min.css";
 @import "~beautifymarker/leaflet-beautify-marker-icon.css";
+
 @import "~leaflet/dist/leaflet.css";
+@import "~@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 
 @import "~font-awesome/scss/_variables.scss";
 @import "~font-awesome/scss/_mixins.scss";

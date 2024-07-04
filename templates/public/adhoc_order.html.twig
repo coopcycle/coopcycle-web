@@ -45,7 +45,7 @@
 
           <div class="text-center mb-4">
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>
         {% endif %}
@@ -84,7 +84,7 @@
 {% if form.payment is defined and payment.state in ['new', 'cart'] %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="adhoc_order"]'), {
+new CoopCycle.PaymentForm(document.querySelector('form[name="adhoc_order"]'), {
   card: "{{ gateway }}",
   amount: {{ order.total }},
   gatewayConfigs: {{ gateway_configs|json_encode|raw }},

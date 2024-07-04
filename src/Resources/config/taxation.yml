@@ -38,6 +38,9 @@ service:
       standard: 0.085
     co:
       standard: 0.19
+    # https://en.wikipedia.org/wiki/ISO_3166-2:BR
+    br-rs:
+      icms: 0.17
 
 service_tax_exempt:
   rates:
@@ -157,6 +160,9 @@ base_standard:
       standard: 0.085
     co:
       standard: 0.19
+    # https://en.wikipedia.org/wiki/ISO_3166-2:BR
+    br-rs:
+      icms: 0.17
 
 base_intermediary:
   rates:

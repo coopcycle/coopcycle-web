@@ -12,9 +12,6 @@ use Twig\Environment as TwigEnvironment;
 
 class MaintenanceListener
 {
-    private $redis;
-    private $translator;
-    private $templating;
     private $patterns = [
         '#^/login#',
         '#^/api/routing#',
@@ -25,16 +22,11 @@ class MaintenanceListener
     ];
 
     public function __construct(
-        MaintenanceManager $maintenance,
-        Redis $redis,
-        TranslatorInterface $translator,
-        TwigEnvironment $templating)
-    {
-        $this->maintenance = $maintenance;
-        $this->redis = $redis;
-        $this->translator = $translator;
-        $this->templating = $templating;
-    }
+        private MaintenanceManager $maintenance,
+        private Redis $redis,
+        private TranslatorInterface $translator,
+        private TwigEnvironment $templating)
+    {}
 
     public function onKernelRequest(RequestEvent $event)
     {

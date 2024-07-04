@@ -16,7 +16,6 @@ import {
   CREATE_TASK_FAILURE,
   COMPLETE_TASK_FAILURE,
   CANCEL_TASK_FAILURE,
-  TOKEN_REFRESH_SUCCESS,
   OPEN_FILTERS_MODAL,
   CLOSE_FILTERS_MODAL,
   TOGGLE_SEARCH,
@@ -46,6 +45,8 @@ import {
   CLOSE_EXPORT_MODAL,
   OPEN_CREATE_GROUP_MODAL,
   CLOSE_CREATE_GROUP_MODAL,
+  OPEN_REPORT_INCIDENT_MODAL,
+  CLOSE_REPORT_INCIDENT_MODAL,
   OPEN_ADD_TASK_TO_GROUP_MODAL,
   CLOSE_ADD_TASK_TO_GROUP_MODAL,
   RESTORE_TASK_FAILURE,
@@ -67,6 +68,7 @@ import {
 import {
   recurrenceRulesAdapter,
 } from './selectors'
+import { tokenRefreshSuccess } from '../utils/client'
 
 const initialState = {
   addModalIsOpen: false,
@@ -92,6 +94,7 @@ const initialState = {
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
   createGroupModalIsOpen: false,
+  reportIncidentModalIsOpen: false,
   isCreateGroupButtonLoading: false,
   isCreateDeliveryModalVisible: false,
   isCreateTourModalVisible: false,
@@ -177,9 +180,9 @@ export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
 
 export const jwt = (state = '', action) => {
   switch (action.type) {
-  case TOKEN_REFRESH_SUCCESS:
+  case tokenRefreshSuccess.type:
 
-    return action.token
+    return action.payload
 
   default:
 
@@ -451,6 +454,17 @@ export const createGroupModalIsOpen = (state = false, action) => {
   case OPEN_CREATE_GROUP_MODAL:
     return true
   case CLOSE_CREATE_GROUP_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const reportIncidentModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_REPORT_INCIDENT_MODAL:
+    return true
+  case CLOSE_REPORT_INCIDENT_MODAL:
     return false
   default:
     return state

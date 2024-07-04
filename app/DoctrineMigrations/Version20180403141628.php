@@ -40,12 +40,12 @@ class Version20180403141628 extends AbstractMigration
         $stmt['all_orders'] =
             $this->connection->prepare('SELECT order_.id AS order_id, order_.uuid, order_.restaurant_id, order_.customer_id, order_.total_including_tax, order_.total_tax, order_.status, order_.created_at, order_.updated_at, order_.ready_at, delivery.id AS delivery_id, delivery.delivery_address_id, contract.flat_delivery_price FROM order_ JOIN delivery ON order_.id = delivery.order_id JOIN restaurant ON order_.restaurant_id = restaurant.id JOIN contract ON contract.restaurant_id = restaurant.id');
 
-        $stmt['all_orders']->execute();
+        $result = $stmt['all_orders']->execute();
 
-        while ($row = $stmt['all_orders']->fetch()) {
+        while ($row = $result->fetchAssociative()) {
 
             $stmt['order_items']->bindParam('order_id', $row['order_id']);
-            $stmt['order_items']->execute();
+            $result2 = $stmt['order_items']->execute();
 
             $this->addSql('INSERT INTO sylius_order (number, state, items_total, adjustments_total, total, created_at, updated_at, customer_id, restaurant_id, shipping_address_id, shipped_at) VALUES (:number, :state, :items_total, :adjustments_total, :total, :created_at, :updated_at, :customer_id, :restaurant_id, :shipping_address_id, :shipped_at)', [
                 'number' => $row['uuid'],
@@ -69,7 +69,7 @@ class Version20180403141628 extends AbstractMigration
                 'updated_at' => $row['updated_at'],
             ]);
 
-            while ($orderItem = $stmt['order_items']->fetch()) {
+            while ($orderItem = $result2->fetchAssociative()) {
                 $this->addSql('INSERT INTO sylius_order_item (order_id, quantity, unit_price, units_total, adjustments_total, total, is_immutable, variant_id) SELECT currval(\'sylius_order_id_seq\'), :quantity, price, price * :quantity, 0, price * :quantity, \'f\', id FROM sylius_product_variant WHERE code = :product_code', [
                     'quantity' => (int) $orderItem['quantity'],
                     'product_code' => sprintf('CPCCL-FDTCH-%d-001', $orderItem['menu_item_id'])

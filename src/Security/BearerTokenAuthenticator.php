@@ -2,21 +2,13 @@
 
 namespace AppBundle\Security;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\User;
 use AppBundle\Security\ApiKeyManager;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidPayloadException;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\InvalidTokenException;
-use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\JWTAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
 use Psr\Log\LoggerInterface;
@@ -36,16 +28,15 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
  */
 class BearerTokenAuthenticator extends AbstractAuthenticator
 {
-    private $sessionTokenExtractor;
+    private TokenExtractorInterface $sessionTokenExtractor;
 
     public function __construct(
         private ApiKeyManager $apiKeyManager,
         private EntityManagerInterface $entityManager,
         private JWTAuthenticator $jwtAuthenticator,
-        private JWTTokenManagerInterface $jwtManager,
         private OAuth2Authenticator $oauth2Authenticator,
         private TokenExtractorInterface $tokenExtractor,
-        private IriConverterInterface $iriConverter,
+        private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $logger,
         private string $firewallName)
     {
@@ -132,13 +123,8 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         $token = $this->jwtAuthenticator->createAuthenticatedToken($passport, $this->firewallName);
 
         if ($rawSessionToken = $this->sessionTokenExtractor->extract($request)) {
-            $sessionToken = new JWTUserToken();
-            $sessionToken->setRawToken($rawSessionToken);
-
-            if ($payload = $this->jwtManager->decode($sessionToken)) {
-                if ($cart = $this->extractCart($payload)) {
-                    $token->setAttribute('cart', $cart);
-                }
+            if ($cart = $this->orderAccessTokenManager->parse($rawSessionToken)) {
+                $token->setAttribute('cart', $cart);
             }
         }
 
@@ -163,19 +149,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
     private function authenticateWithCartSession(Request $request): Passport {
         $rawToken = $this->tokenExtractor->extract($request);
 
-        try {
-            if (!$payload = $this->jwtManager->parse($rawToken)) {
-                throw new InvalidTokenException('Invalid JWT Token');
-            }
-        } catch (JWTDecodeFailureException $e) {
-            if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {
-                throw new ExpiredTokenException();
-            }
-
-            throw new InvalidTokenException('Invalid JWT Token', 0, $e);
-        }
-
-        if ($cart = $this->extractCart($payload)) {
+        if ($cart = $this->orderAccessTokenManager->parse($rawToken)) {
 
             $user = new User();
             $user->setUsername($rawToken);
@@ -193,17 +167,6 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         }
 
         throw new AuthenticationException();
-    }
-
-    private function extractCart($payload)
-    {
-        if (isset($payload['sub'])) {
-            try {
-                return $this->iriConverter->getItemFromIri($payload['sub']);
-            } catch (InvalidArgumentException | ItemNotFoundException $e) {}
-        }
-
-        return false;
     }
 
     private function logAuthenticationException(Request $request, string $authenticator, AuthenticationException $e)

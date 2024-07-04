@@ -12,5 +12,8 @@ export const taskListAdapter = createEntityAdapter({
 
 export const tourAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
-  // sortComparer: (a, b) => a.title.localeCompare(b.title),
+})
+
+export const organizationAdapter = createEntityAdapter({
+  selectId: (o) => o['@id'],
 })

@@ -11,6 +11,9 @@ use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\Tour;
+use AppBundle\Entity\TourRepository;
 use AppBundle\Entity\User;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\OrderManager;
@@ -62,13 +65,19 @@ class TaskSubscriberTest extends TestCase
             ->getRepository(TaskList::class)
             ->willReturn($this->taskListRepository->reveal());
 
+        $this->tourRepository = $this->prophesize(TourRepository::class);
+
+        $this->entityManager
+            ->getRepository(Tour::class)
+            ->willReturn($this->tourRepository->reveal());
+
         $tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $requestStack = $this->prophesize(RequestStack::class);
 
         $eventStore = new EventStore($tokenStorage->reveal(), $requestStack->reveal());
 
         $taskListProvider = new TaskListProvider($this->entityManager->reveal());
-        $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
+        $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider, null, $this->entityManager->reveal());
 
         $this->geocoder = $this->prophesize(Geocoder::class);
         $this->orderManager = $this->prophesize(OrderManager::class);
@@ -630,7 +639,15 @@ class TaskSubscriberTest extends TestCase
         $taskList = new TaskList();
         $taskList->setCourier($user);
         $taskList->setDate($date);
-        $taskList->setTasks([ $pickup, $dropoff ]);
+
+        $item1 = new Item();
+        $item1->setTask($pickup);
+
+        $item2 = new Item();
+        $item2->setTask($dropoff);
+
+        $taskList->addItem($item1);
+        $taskList->addItem($item2);
 
         $this->taskListRepository
             ->findOneBy([

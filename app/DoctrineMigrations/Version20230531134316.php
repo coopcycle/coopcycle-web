@@ -25,9 +25,9 @@ final class Version20230531134316 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN reusable_packaging.data IS \'(DC2Type:json_array)\'');
 
         $stmt = $this->connection->prepare('SELECT * FROM reusable_packaging');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($row = $stmt->fetch()) {
+        while ($row = $result->fetchAssociative()) {
 
             $name = strtolower($row['name']);
 
@@ -58,9 +58,9 @@ final class Version20230531134316 extends AbstractMigration
         $this->addSql('ALTER TABLE reusable_packagings ADD CONSTRAINT FK_8F963D04B26ADE57 FOREIGN KEY (reusable_packaging_id) REFERENCES reusable_packaging (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
 
         $stmt = $this->connection->prepare('SELECT id AS product_id, reusable_packaging_id, reusable_packaging_unit AS units FROM sylius_product WHERE reusable_packaging_id IS NOT NULL');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($row = $stmt->fetch()) {
+        while ($row = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO reusable_packagings (product_id, reusable_packaging_id, units) VALUES (:product_id, :reusable_packaging_id, :units)', $row);
         }
 

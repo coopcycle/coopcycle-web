@@ -13,13 +13,19 @@ import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurre
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks, selectUnassignedTasksLoading } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
+import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
 
-const StandaloneTasks =  ({tasks, unassignedTasksIdsOrder, offset}) => {
-  return _.map(unassignedTasksIdsOrder, (taskId, index) => {
-    const task = tasks.find(t => t['@id'] === taskId)
-    if (task) {
-      return <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />
-    }
+const StandaloneTasks =  ({tasks, offset}) => {
+  // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
+  // takes into account manual sorting of issues
+  // return _.map(unassignedTasksIdsOrder, (taskId, index) => {
+  //   const task = tasks.find(t => t['@id'] === taskId)
+  //   if (task) {
+  //     return <Task task={ task } draggableIndex={ (offset + index) } key={ task['@id'] } />
+  //   }
+  // })
+  return _.map(tasks, (task, index) => {
+      return <Task taskId={ task['@id'] } draggableIndex={ (offset + index) } key={ task['@id'] } />
   })
 }
 
@@ -106,12 +112,19 @@ export const UnassignedTasks = () => {
 
   return (
     <div className="dashboard__panel">
-      <h4 className="d-flex justify-content-between">
-        <span>{ t('DASHBOARD_UNASSIGNED') }</span>
-        <span>
-          <Buttons />
-        </span>
-      </h4>
+      <div className="dashboard__panel__header">
+        <div className="row">
+          <div className="col-md-6 col-sm-12">
+            <h4><span>{ t('DASHBOARD_UNASSIGNED') }</span></h4>
+          </div>
+          <div className="col-md-6 col-sm-12">
+            <h4 className="pull-right"><Buttons /></h4>
+          </div>
+        </div>
+        <div>
+          <UnassignedTasksFilters />
+        </div>
+      </div>
       <div
         className="dashboard__panel__scroll"
         style={{ opacity: unassignedTasksLoading ? 0.7 : 1, pointerEvents: unassignedTasksLoading ? 'none' : 'initial' }}
@@ -144,7 +157,7 @@ export const UnassignedTasks = () => {
                 >
                   {_.map(groups, (group, index) => {
                       return (
-                        <Draggable key={ `group-${group.id}` } draggableId={ `group:${group.id}` } index={ index }>
+                        <Draggable key={ `group-${group.id}` } draggableId={ `group:${group['@id']}` } index={ index }>
                           {(provided) => (
                             <div
                               ref={ provided.innerRef }

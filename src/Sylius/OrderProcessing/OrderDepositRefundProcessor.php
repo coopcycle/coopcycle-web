@@ -26,13 +26,11 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     public const LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS = 'on_returns';
 
     public function __construct(
-        AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator,
-        int $loopeatProcessingFee = 0,
-        string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS)
+        private AdjustmentFactoryInterface $adjustmentFactory,
+        private TranslatorInterface $translator,
+        private int $loopeatProcessingFee = 0,
+        private string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS)
     {
-        $this->adjustmentFactory = $adjustmentFactory;
-        $this->translator = $translator;
         $this->loopeatProcessingFee = $loopeatProcessingFee;
 
         if (!in_array($loopeatProcessingFeeBehavior, [self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS, self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS])) {

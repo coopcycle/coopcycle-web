@@ -27,8 +27,8 @@ final class Version20200928103614 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
 
         $stmt = $this->connection->prepare('SELECT u.id AS user_id, c.id customer_id, u.telephone AS user_telephone, c.phone_number AS customer_phone_number FROM api_user u JOIN sylius_customer c ON u.customer_id = c.id');
-        $stmt->execute();
-        while ($data = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($data = $result->fetchAssociative()) {
             if (!$data['customer_phone_number'] && $data['user_telephone']) {
                 try {
                     $phoneNumber =
@@ -58,8 +58,8 @@ final class Version20200928103614 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN api_user.telephone IS \'(DC2Type:phone_number)\'');
 
         $stmt = $this->connection->prepare('SELECT c.id AS customer_id, u.id AS user_id, c.phone_number as customer_phone_number FROM sylius_customer c LEFT JOIN api_user u ON c.id = u.customer_id');
-        $stmt->execute();
-        while ($data = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($data = $result->fetchAssociative()) {
             // user_id may be NULL
             if ($data['user_id'] && $data['customer_phone_number']) {
                 $this->addSql('UPDATE api_user SET telephone = :telephone WHERE id = :id' , [

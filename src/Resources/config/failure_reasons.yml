@@ -1,22 +1,52 @@
 failure_reasons:
-  - { code: "DAMAGED", description: "delivery.failure_reason.damaged" }
-  - { code: "LOST", description: "delivery.failure_reason.lost" }
-  - { code: "LATE", description: "delivery.failure_reason.late" }
-  - { code: "WRONG_ADDR", description: "delivery.failure_reason.incorrect_address" }
-  - { code: "REFUSED", description: "delivery.failure_reason.customer_refused" }
-  - { code: "ITEM_MISSING", description: "delivery.failure_reason.item_missing" }
-  - { code: "INCORRECT_ITEM", description: "delivery.failure_reason.incorrect_item" }
-  - { code: "WEATHER", description: "delivery.failure_reason.bad_weather" }
-  - { code: "VEHICLE_BREAKDOWN", description: "delivery.failure_reason.vehicle_breakdown" }
-  - { code: "TRAFFIC", description: "delivery.failure_reason.traffic_delays" }
-  - { code: "ROUTE_ISSUE", description: "delivery.failure_reason.routing_problems" }
-  - { code: "CUSTOMS_ISSUE", description: "delivery.failure_reason.customs_issues" }
-  - { code: "INVENTORY_ISSUE", description: "delivery.failure_reason.inventory_shortage" }
-  - { code: "ADDRESS_UNREACHABLE", description: "delivery.failure_reason.address_unreachable" }
-  - { code: "INSUFFICIENT_FUND", description: "delivery.failure_reason.insufficient_funds" }
-  - { code: "DATA_ERROR", description: "delivery.failure_reason.data_entry_error" }
-  - { code: "PACKAGING_ISSUE", description: "delivery.failure_reason.packaging_problems" }
-  - { code: "CLOSED_STORE", description: "delivery.failure_reason.closed_store" }
-  - { code: "HOLIDAY", description: "delivery.failure_reason.holiday_closure" }
-  - { code: "ADDRESS_REVIEW_NEEDED", description: "delivery.failure_reason.address_review_needed" }
-
+  default:
+    - { code: "DAMAGED", description: "delivery.failure_reason.default.damaged" }
+    - { code: "LOST", description: "delivery.failure_reason.default.lost" }
+    - { code: "LATE", description: "delivery.failure_reason.default.late" }
+    - { code: "NOT_AT_HOME", description: "delivery.failure_reason.default.not_at_home" }
+    - { code: "CLOSED_STORE", description: "delivery.failure_reason.default.closed_store" }
+    - { code: "WRONG_ADDR", description: "delivery.failure_reason.default.incorrect_address" }
+    - { code: "REFUSED", description: "delivery.failure_reason.default.customer_refused" }
+    - { code: "ITEM_MISSING", description: "delivery.failure_reason.default.item_missing" }
+    - { code: "INCORRECT_ITEM", description: "delivery.failure_reason.default.incorrect_item" }
+    - { code: "WEATHER", description: "delivery.failure_reason.default.bad_weather" }
+    - { code: "VEHICLE_BREAKDOWN", description: "delivery.failure_reason.default.vehicle_breakdown" }
+    - { code: "TRAFFIC", description: "delivery.failure_reason.default.traffic_delays" }
+    - { code: "ROUTE_ISSUE", description: "delivery.failure_reason.default.routing_problems" }
+    - { code: "CUSTOMS_ISSUE", description: "delivery.failure_reason.default.customs_issues" }
+    - { code: "INVENTORY_ISSUE", description: "delivery.failure_reason.default.inventory_shortage" }
+    - { code: "ADDRESS_UNREACHABLE", description: "delivery.failure_reason.default.address_unreachable" }
+    - { code: "INSUFFICIENT_FUND", description: "delivery.failure_reason.default.insufficient_funds" }
+    - { code: "DATA_ERROR", description: "delivery.failure_reason.default.data_entry_error" }
+    - { code: "PACKAGING_ISSUE", description: "delivery.failure_reason.default.packaging_problems" }
+    - { code: "HOLIDAY", description: "delivery.failure_reason.default.holiday_closure" }
+    - { code: "ADDRESS_REVIEW_NEEDED", description: "delivery.failure_reason.default.address_review_needed" }
+  dbschenker:
+    - { option: "state", code: "AAR", description: "delivery.failure_reason.transporter.state.aar" }
+    - { option: "state", code: "RAQ", description: "delivery.failure_reason.transporter.state.raq" }
+    - { option: "state", code: "MLV", description: "delivery.failure_reason.transporter.state.mlv" }
+    - { option: "state", code: "LIV", description: "delivery.failure_reason.transporter.state.liv" }
+    - { option: "state", code: "REN", description: "delivery.failure_reason.transporter.state.ren" }
+    - { option: "state", code: "RST", description: "delivery.failure_reason.transporter.state.rst" }
+    - { option: "reason", only: ["AAR", "MLV", "LIV"], code: "CFM", description: "delivery.failure_reason.transporter.reason.cfm" }
+    - { option: "reason", only: ["AAR", "RAQ", "REN"], code: "AVA", description: "delivery.failure_reason.transporter.reason.ava" }
+    - { option: "reason", only: ["AAR", "RAQ", "MLV", "LIV"], code: "MQP", description: "delivery.failure_reason.transporter.reason.mqp" }
+    - { option: "reason", only: ["AAR", "RAQ"], code: "MQT", description: "delivery.failure_reason.transporter.reason.mqt" }
+    - { option: "reason", only: ["AAR", "REN"], code: "OUV", description: "delivery.failure_reason.transporter.reason.ouv" }
+    - { option: "reason", only: ["AAR"], code: "PVE", description: "delivery.failure_reason.transporter.reason.pve" }
+    - { option: "reason", only: ["AAR", "MLV", "LIV"], code: "RCA", description: "delivery.failure_reason.transporter.reason.rca" }
+    - { option: "reason", only: ["RAQ", "RST"], code: "AVI", description: "delivery.failure_reason.transporter.reason.avi" }
+    - { option: "reason", only: ["RAQ", "RST", "RST"], code: "CAD", description: "delivery.failure_reason.transporter.reason.cad" }
+    - { option: "reason", only: ["RAQ", "RST"], code: "DAF", description: "delivery.failure_reason.transporter.reason.daf" }
+    - { option: "reason", only: ["RAQ", "RST"], code: "FHB", description: "delivery.failure_reason.transporter.reason.fhb" }
+    - { option: "reason", only: ["AAR", "MLV", "LIV", "REN"], code: "RMA", description: "delivery.failure_reason.transporter.reason.rma" }
+    - { option: "reason", only: ["LIV", "REN"], code: "DIV", description: "delivery.failure_reason.transporter.reason.div" }
+    - { option: "reason", only: ["REN"], code: "NJU", description: "delivery.failure_reason.transporter.reason.nju" }
+    - { option: "reason", only: ["REN"], code: "SNC", description: "delivery.failure_reason.transporter.reason.snc" }
+    - { option: "reason", only: ["REN"], code: "TAR", description: "delivery.failure_reason.transporter.reason.tar" }
+    - { option: "reason", only: ["REN"], code: "DEM", description: "delivery.failure_reason.transporter.reason.dem" }
+    - { option: "reason", only: ["REN"], code: "DIA", description: "delivery.failure_reason.transporter.reason.dia" }
+    - { option: "reason", only: ["REN"], code: "LNA", description: "delivery.failure_reason.transporter.reason.lna" }
+    - { option: "reason", only: ["REN"], code: "SPD", description: "delivery.failure_reason.transporter.reason.spd" }
+    - { option: "reason", only: ["REN"], code: "SRB", description: "delivery.failure_reason.transporter.reason.srb" }
+    - { option: "reason", only: ["RST"], code: "PVI", description: "delivery.failure_reason.transporter.reason.pvi" }

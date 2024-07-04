@@ -28,8 +28,8 @@ final class Version20201007064820 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT id, customer_id, loopeat_access_token, loopeat_refresh_token FROM api_user WHERE loopeat_access_token IS NOT NULL OR loopeat_refresh_token IS NOT NULL');
 
-        $stmt->execute();
-        while ($user = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($user = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO sylius_customer_loopeat_credentials (customer_id, loopeat_access_token, loopeat_refresh_token, created_at, updated_at) VALUES (:customer_id, :loopeat_access_token, :loopeat_refresh_token, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)' , [
                 'customer_id' => $user['customer_id'],
                 'loopeat_access_token' => $user['loopeat_access_token'],
@@ -51,8 +51,8 @@ final class Version20201007064820 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT customer_id, loopeat_access_token, loopeat_refresh_token FROM sylius_customer_loopeat_credentials');
 
-        $stmt->execute();
-        while ($credentials = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($credentials = $result->fetchAssociative()) {
             $this->addSql('UPDATE api_user SET loopeat_access_token = :loopeat_access_token, loopeat_refresh_token = :loopeat_refresh_token WHERE customer_id = :customer_id', [
                 'loopeat_access_token' => $credentials['loopeat_access_token'],
                 'loopeat_refresh_token' => $credentials['loopeat_refresh_token'],

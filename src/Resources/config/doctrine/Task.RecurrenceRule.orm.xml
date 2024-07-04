@@ -6,9 +6,9 @@
     </id>
     <field name="name" type="string" column="name" nullable="true" />
     <field name="rule" type="rrule" column="rule" nullable="false"/>
-    <field name="template" type="json_array" column="template" nullable="false"/>
+    <field name="template" type="json" column="template" nullable="false"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
-    <many-to-one field="store" target-entity="AppBundle\Entity\Store">
+    <many-to-one field="store" target-entity="AppBundle\Entity\Store" inversed-by="rrules">
       <join-columns>
         <join-column name="store_id" referenced-column-name="id" nullable="false"/>
       </join-columns>

@@ -21,9 +21,6 @@ final class OrderLogFinishProcessor implements OrderProcessorInterface
      */
     public function process(BaseOrderInterface $order): void
     {
-        $this->checkoutLogger->info(sprintf('Order %s | OrderLogFinishProcessor | processing finished | triggered by: %s; at: %s',
-            $this->loggingUtils->getOrderId($order),
-            $this->loggingUtils->getRequest(),
-            $this->loggingUtils->getBacktrace()));
+        $this->checkoutLogger->info('OrderLogFinishProcessor | processing finished', ['order' => $this->loggingUtils->getOrderId($order)]);
     }
 }

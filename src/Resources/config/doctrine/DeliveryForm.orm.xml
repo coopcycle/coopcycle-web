@@ -16,5 +16,10 @@
     <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" />
     <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot" />
     <many-to-one field="packageSet" target-entity="AppBundle\Entity\PackageSet" />
+    <one-to-many field="submissions" target-entity="AppBundle\Entity\DeliveryFormSubmission" mapped-by="deliveryForm">
+      <cascade>
+        <cascade-remove />
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>

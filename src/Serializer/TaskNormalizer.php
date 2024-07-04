@@ -17,24 +17,14 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $iriConverter;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        IriConverterInterface $iriConverter,
-        TagManager $tagManager,
-        UserManagerInterface $userManager,
-        Geocoder $geocoder,
-        EntityManagerInterface $entityManager)
-    {
-        $this->normalizer = $normalizer;
-        $this->iriConverter = $iriConverter;
-        $this->tagManager = $tagManager;
-        $this->userManager = $userManager;
-        $this->geocoder = $geocoder;
-        $this->entityManager = $entityManager;
-    }
+        private ItemNormalizer $normalizer,
+        private IriConverterInterface $iriConverter,
+        private TagManager $tagManager,
+        private UserManagerInterface $userManager,
+        private Geocoder $geocoder,
+        private EntityManagerInterface $entityManager)
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -82,22 +72,26 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
-        if ($object->isPickup()) {
+        if (!is_null($object->getPrefetchedPackagesAndWeight())) {
+            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
+            $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
+        } else if ($object->isPickup()) {
+            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
             $delivery = $object->getDelivery();
 
             if (null !== $delivery) {
                 $deliveryId = $delivery->getId();
 
                 $qb =  $this->entityManager
-                ->getRepository(Task::class)
-                ->createQueryBuilder('t');
+                    ->getRepository(Task::class)
+                    ->createQueryBuilder('t');
 
                 $query = $qb
-                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity')
+                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.volumeUnits AS volume_per_package')
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.name')
+                    ->groupBy('p.name', 'p.volumeUnits')
                     ->setParameter('deliveryId', $deliveryId)
                     ->getQuery();
 
@@ -121,7 +115,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->createQueryBuilder('t');
 
             $data['packages'] = $qb
-                ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity')
+                ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.volumeUnits AS volume_per_package')
                 ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                 ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                 ->andWhere('t.id = :taskId')

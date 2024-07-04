@@ -11,6 +11,7 @@ export const ORDER_REFUSED = 'ORDER_REFUSED'
 export const ORDER_CANCELLED = 'ORDER_CANCELLED'
 export const ORDER_FULFILLED = 'ORDER_FULFILLED'
 export const ORDER_DELAYED = 'ORDER_DELAYED'
+export const ORDER_STATE_CHANGED = 'ORDER_STATE_CHANGED'
 
 export const FETCH_REQUEST = 'FETCH_REQUEST'
 export const ACCEPT_ORDER_REQUEST_SUCCESS = 'ACCEPT_ORDER_REQUEST_SUCCESS'
@@ -37,6 +38,7 @@ export const SET_LOOPEAT_FORMATS = 'SET_LOOPEAT_FORMATS'
 export const UPDATE_LOOPEAT_FORMATS_SUCCESS = 'UPDATE_LOOPEAT_FORMATS_SUCCESS'
 
 export const ACTIVE_TAB = 'ACTIVE_TAB'
+export const COLUMN_TOGGLED = 'COLUMN_TOGGLED'
 
 export const orderCreated = createAction(ORDER_CREATED)
 export const orderAccepted = createAction(ORDER_ACCEPTED)
@@ -44,6 +46,7 @@ export const orderRefused = createAction(ORDER_REFUSED)
 export const orderCancelled = createAction(ORDER_CANCELLED)
 export const orderFulfilled = createAction(ORDER_FULFILLED)
 export const orderDelayed = createAction(ORDER_DELAYED)
+export const orderStateChanged = createAction(ORDER_STATE_CHANGED)
 
 export const fetchRequest = createAction(FETCH_REQUEST)
 export const acceptOrderRequestSuccess = createAction(ACCEPT_ORDER_REQUEST_SUCCESS)
@@ -68,6 +71,7 @@ export const setLoopeatFormats = createAction(SET_LOOPEAT_FORMATS)
 export const updateLoopeatFormatsSuccess = createAction(UPDATE_LOOPEAT_FORMATS_SUCCESS)
 
 export const setActiveTab = createAction(ACTIVE_TAB)
+export const columnToggled = createAction(COLUMN_TOGGLED)
 
 export const initHttpClient = createAction(INIT_HTTP_CLIENT)
 export const refreshTokenSuccess = createAction(REFRESH_TOKEN_SUCCESS)
@@ -202,37 +206,12 @@ export function changeStatus(restaurant, state) {
 const fuseOptions = {
   shouldSort: true,
   includeScore: true,
-  keys: [
-    {
-      name: 'number',
-      weight: 0.4
-    },
-    {
-      name: 'vendor.name',
-      weight: 0.1
-    },
-    {
-      name: 'shippingAddress.streetAddress',
-      weight: 0.1
-    },
-    {
-      name: 'customer.username',
-      weight: 0.1
-    },
-    {
-      name: 'customer.email',
-      weight: 0.1
-    },
-    {
-      name: 'customer.givenName',
-      weight: 0.1
-    },
-    {
-      name: 'customer.familyName',
-      weight: 0.1
-    },
-  ]
+  threshold: 0.4,
+  minMatchCharLength: 3,
+  ignoreLocation: true,
+  keys: ['number', 'vendor.name', 'shippingAddress.streetAddress', 'customer.username', 'customer.email', 'customer.givenName','customer.familyName']
 }
+
 
 export function search(q) {
 

@@ -27,9 +27,9 @@ final class Version20221103103812 extends AbstractMigration
         $stmt = $this->connection->prepare(
             sprintf('select p.delivery_id, p.id as pickup_id, p.weight as pickup_weight, d.total_weight as dropoffs_weight from (%s) p join (%s) d on p.delivery_id = d.delivery_id where p.weight = d.total_weight', $pickupSql, $dropoffSql)
         );
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($row = $stmt->fetch()) {
+        while ($row = $result->fetchAssociative()) {
 
             $this->addSql('UPDATE task SET weight = NULL WHERE id = :id', [
                 'id' => $row['pickup_id']

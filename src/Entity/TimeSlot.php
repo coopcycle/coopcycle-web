@@ -17,7 +17,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *   normalizationContext={"groups"={"time_slot"}},
  *   itemOperations={
- *     "get"={"method"="GET"}
+ *     "get"={"method"="GET"},
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     }
  *   },
  *   collectionOperations={
  *     "choices"={
@@ -61,6 +65,13 @@ class TimeSlot
     private $workingDaysOnly = true;
 
     /**
+     * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
+     * @deprecated
+     * @Groups({"time_slot"})
+     */
+    public $choices = [];
+
+    /**
      * @var string
      * @Groups({"time_slot"})
      */
@@ -78,17 +89,21 @@ class TimeSlot
      */
     private $openingHours = [];
 
-    public function __construct()
-    {
-    	$this->choices = new ArrayCollection();
-    }
-
     /**
      * @return mixed
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
+     * @deprecated
+     */
+    public function getChoices()
+    {
+        return [];
     }
 
     /**
@@ -219,16 +234,6 @@ class TimeSlot
         $this->sameDayCutoff = $sameDayCutoff;
 
         return $this;
-    }
-
-    /**
-     * @deprecated
-     * @SerializedName("choices")
-     * @Groups({"time_slot"})
-     */
-    public function getChoices()
-    {
-        return [];
     }
 
     public static function create(FulfillmentMethod $fulfillmentMethod, ShippingOptionsInterface $options): TimeSlot

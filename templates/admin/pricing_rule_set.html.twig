@@ -8,10 +8,17 @@
 {% endblock %}
 
 {% block content %}
-
+  {% set pricing_rule_set = form.vars.value %}
   {{ form_start(form) }}
 
     {{ form_errors(form) }}
+
+    {% if pricing_rule_set.id %}
+      <div {{ react_component('ShowApplications', { 'objectId': pricing_rule_set.id, fetchUrl: 'api_pricing_rule_sets_applications_item' }) }}>
+        {# server side rendered content; will be replaced by react #}
+        <span class="loader loader--dark"></span>
+      </div>
+    {% endif %}
 
     {{ form_row(form.name) }}
     {{ form_row(form.strategy) }}

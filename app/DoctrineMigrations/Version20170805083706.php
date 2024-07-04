@@ -40,7 +40,7 @@ class Version20170805083706 extends AbstractMigration
         $stmt = [];
 
         $stmt['restaurant'] = $this->connection->prepare("SELECT * FROM restaurant");
-        $stmt['restaurant']->execute();
+        $result = $stmt['restaurant']->execute();
 
         $sql = "SELECT * FROM product p "
              . "JOIN restaurant_product rp ON p.id = rp.product_id "
@@ -52,7 +52,7 @@ class Version20170805083706 extends AbstractMigration
             $this->addSql("INSERT INTO menu_section (name) VALUES (:name)", ['name' => $section]);
         }
 
-        while ($restaurant = $stmt['restaurant']->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
 
             // Create the menu
             $this->addSql("INSERT INTO menu (name) VALUES (:name)", $restaurant);
@@ -64,9 +64,9 @@ class Version20170805083706 extends AbstractMigration
             }
 
             $stmt['product']->bindParam(1, $restaurant['id']);
-            $stmt['product']->execute();
+            $result2 = $stmt['product']->execute();
 
-            while ($product = $stmt['product']->fetch()) {
+            while ($product = $result2->fetchAssociative()) {
 
                 // Create the menu item
                 $this->addSql("INSERT INTO menu_item (name, price) VALUES (:name, :price)", $product);

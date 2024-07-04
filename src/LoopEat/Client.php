@@ -32,15 +32,15 @@ class Client
     const JWT_CLAIM_SUCCESS_REDIRECT = 'https://coopcycle.org/loopeat_success_redirect';
     const JWT_CLAIM_FAILURE_REDIRECT = 'https://coopcycle.org/loopeat_failure_redirect';
 
-    private $logger;
+    private $client;
 
     public function __construct(
-        EntityManagerInterface $objectManager,
-        JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter,
-        UrlGeneratorInterface $urlGenerator,
-        CacheInterface $projectCache,
-        LoggerInterface $logger,
+        private EntityManagerInterface $objectManager,
+        private JWTEncoderInterface $jwtEncoder,
+        private IriConverterInterface $iriConverter,
+        private UrlGeneratorInterface $urlGenerator,
+        private CacheInterface $projectCache,
+        private LoggerInterface $logger,
         array $config = [])
     {
         if (isset($config['handler']) && $config['handler'] instanceof HandlerStack) {

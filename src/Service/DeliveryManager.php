@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -46,61 +47,10 @@ class DeliveryManager
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
-        if ($ruleSet->getStrategy() === 'find') {
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
+        $visitor->visitDelivery($delivery);
 
-            foreach ($ruleSet->getRules() as $rule) {
-                if ($rule->matches($delivery, $this->expressionLanguage)) {
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
-
-                    return $rule->evaluatePrice($delivery, $this->expressionLanguage);
-                }
-            }
-
-            return null;
-        }
-
-        if ($ruleSet->getStrategy() === 'map') {
-
-            $totalPrice = 0;
-            $matchedAtLeastOne = false;
-
-            if (count($delivery->getTasks()) > 2 || $ruleSet->hasOption(PricingRuleSet::OPTION_MAP_ALL_TASKS)) {
-                foreach ($delivery->getTasks() as $task) {
-                    foreach ($ruleSet->getRules() as $rule) {
-                        if ($task->matchesPricingRule($rule, $this->expressionLanguage)) {
-
-                            $price = $task->evaluatePrice($rule, $this->expressionLanguage);
-
-                            $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
-
-                            $totalPrice += $price;
-
-                            $matchedAtLeastOne = true;
-                        }
-                    }
-                }
-            } else {
-                foreach ($ruleSet->getRules() as $rule) {
-                    if ($rule->matches($delivery, $this->expressionLanguage)) {
-
-                        $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
-
-                        $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
-
-                        $totalPrice += $price;
-
-                        $matchedAtLeastOne = true;
-                    }
-                }
-            }
-
-            if ($matchedAtLeastOne) {
-
-                return $totalPrice;
-            }
-        }
-
-        return null;
+        return $visitor->getPrice();
     }
 
     public function createFromOrder(OrderInterface $order)
@@ -174,6 +124,7 @@ class DeliveryManager
             $pickup->setAddress($store->getAddress());
         }
 
+        // If no pickup is specified, estimates pickup time from dropoff address and distance
         if (null !== $dropoff->getBefore() && null !== $dropoff->getAddress()) {
 
             foreach ($delivery->getTasksByType(Task::TYPE_PICKUP) as $p) {

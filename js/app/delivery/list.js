@@ -218,7 +218,7 @@ const deliveryImports = document.querySelector('[data-delivery-imports]')
 if (deliveryImports) {
 
   const protocol = window.location.protocol === 'https:' ? 'wss': 'ws'
-  const centrifuge = new Centrifuge(`${protocol}://${window.location.hostname}/centrifugo/connection/websocket`)
+  const centrifuge = new Centrifuge(`${protocol}://${window.location.host}/centrifugo/connection/websocket`)
   centrifuge.setToken(deliveryImports.dataset.centrifugoToken)
 
   centrifuge.subscribe(deliveryImports.dataset.centrifugoChannel, function(message) {
@@ -248,4 +248,14 @@ if (deliveryImports) {
     addSpreadsheetView(el.querySelector('[data-delivery-import-view]'))
     addRedownload(el.querySelector('[data-delivery-import-redownload]'))
   })
+}
+
+const deliveryImportsDatePicker = document.querySelector('#import-datepicker')
+if (deliveryImportsDatePicker) {
+  new DatePicker(deliveryImportsDatePicker, {
+    defaultValue: deliveryImportsDatePicker.dataset.defaultDate,
+    onChange: function(date) {
+      window.location.href = window.Routing.generate('admin_deliveries', { section: 'imports', date: date.format('YYYY-MM-DD') });
+    }
+  });
 }

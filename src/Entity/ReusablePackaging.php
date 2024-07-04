@@ -38,7 +38,7 @@ class ReusablePackaging implements StockableInterface
     /**
      * @Groups({"restaurant"})
      */
-    protected $data = [];
+    protected array $data = [];
 
     public function getId()
     {

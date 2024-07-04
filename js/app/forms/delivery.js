@@ -1,6 +1,6 @@
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
-import { createStore } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import _ from 'lodash'
 import axios from 'axios'
 import { createSelector } from 'reselect'
@@ -50,20 +50,21 @@ function toPackages(name) {
 function hideRememberAddress(name, type) {
   const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
   if (rememberAddr) {
-    rememberAddr.closest('.checkbox').classList.add('invisible')
+    rememberAddr.closest('.checkbox').classList.add('hidden')
   }
 }
 
 function showRememberAddress(name, type) {
   const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
   if (rememberAddr) {
-    rememberAddr.closest('.checkbox').classList.remove('invisible')
+    rememberAddr.closest('.checkbox').classList.remove('hidden')
   }
 }
 
 function createAddressWidget(name, type, cb) {
 
   new AddressBook(document.querySelector(`#${name}_${type}_address`), {
+    allowSearchSavedAddresses: true,
     existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
     newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
     isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),
@@ -102,25 +103,28 @@ function createAddressWidget(name, type, cb) {
   })
 }
 
-function getDatePickerValue(name, type) {
-  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
+function getTimeWindowProps(name, type) {
 
-  if (timeSlotEl) {
-    return $(`#${name}_${type}_timeSlot`).val()
-  }
-
-  const defaultValue = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
-
-  return moment(defaultValue, 'YYYY-MM-DD HH:mm:ss').format()
-}
-
-function getDatePickerKey(name, type) {
   const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
   if (timeSlotEl) {
-    return 'timeSlot'
+    return {
+      timeSlot: $(timeSlotEl).val()
+    }
   }
 
-  return 'before'
+  const before = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
+
+  const after = $(`#${name}_${type}_doneAfter`).val()
+  if (!after) {
+    return {
+      before: moment(before, 'YYYY-MM-DD HH:mm:ss').format(),
+    }
+  }
+
+  return {
+    after: moment(after, 'YYYY-MM-DD HH:mm:ss').format(),
+    before: moment(before, 'YYYY-MM-DD HH:mm:ss').format(),
+  }
 }
 
 function getTaskType(name, type) {
@@ -432,7 +436,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const task = {
     type: getTaskType(name, taskForm),
     address: null,
-    [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+    ...getTimeWindowProps(name, taskForm),
   }
 
   if (preloadedState) {
@@ -468,21 +472,25 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const deleteBtn = taskEl.querySelector('[data-delete="task"]')
 
   if (deleteBtn) {
-    if (taskIndex === 1) {
-      // No delete button for the 1rst dropoff,
-      // we want at least one dropoff
-      deleteBtn.remove()
-    } else {
-      deleteBtn.addEventListener('click', (e) => {
-        e.preventDefault()
-        taskEl.remove()
-        store.dispatch({
-          type: 'REMOVE_DROPOFF',
-          taskIndex,
-        })
-        collectionHolder.dataset.index--
-      })
+
+    // We want at least one dropoff
+    if (collectionHolder.children.length === 2) {
+      document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
     }
+
+    deleteBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      taskEl.remove()
+      store.dispatch({
+        type: 'REMOVE_DROPOFF',
+        taskIndex,
+      })
+      // We want at least one dropoff
+      if (collectionHolder.children.length === 2) {
+        document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+      }
+      collectionHolder.dataset.index--
+    })
   }
 
   const packages = document.querySelector(`#${name}_${taskForm}_packages`)
@@ -508,6 +516,22 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
         taskIndex,
       })
     }, 350))
+  }
+}
+
+function createOnTasksChanged(onChange) {
+
+  return ({ getState }) => (next) => (action) => {
+
+    const prevState = getState()
+    const result = next(action)
+    const state = getState()
+
+    if (prevState.tasks !== state.tasks) {
+      onChange(state)
+    }
+
+    return result
   }
 }
 
@@ -540,13 +564,16 @@ export default function(name, options) {
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
     taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
 
+    const middlewares = [ createOnTasksChanged(onChange) ]
+    const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
+
     store = createStore(
-      reducer, preloadedState,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+      reducer,
+      preloadedState,
+      composeEnhancers(applyMiddleware(...middlewares))
     )
 
     onReady(preloadedState)
-    store.subscribe(() => onChange(store.getState()))
 
     new ClipboardJS('#copy', {
       text: function() {
@@ -601,6 +628,10 @@ export default function(name, options) {
         initSubForm(name, item, null, !!el.dataset.userAdmin)
 
         collectionHolder.dataset.index++
+
+        if (collectionHolder.children.length > 2) {
+          document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.remove('d-none'))
+        }
       })
     }
   }

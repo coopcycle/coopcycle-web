@@ -51,13 +51,12 @@ class OrderVendorProcessor implements OrderProcessorInterface
     private function processVendors(OrderInterface $order, \SplObjectStorage $restaurants)
     {
         if (count($restaurants) === 0 && $order->isEmpty()) {
-            $this->logger->debug(sprintf('Order %s | is empty, skipping',
-                $this->loggingUtils->getOrderId($order)));
+            $this->logger->debug('OrderVendorProcessor | Order is empty, skipping', ['order' => $this->loggingUtils->getOrderId($order)]);
             return;
         }
 
-        $this->logger->debug(sprintf('Order %s | Adding %d vendors to order',
-            $this->loggingUtils->getOrderId($order), count($restaurants)));
+        $this->logger->debug(sprintf('OrderVendorProcessor | Adding %d vendors to order', count($restaurants)),
+            ['order' => $this->loggingUtils->getOrderId($order)]);
 
         $originalVendors = new ArrayCollection();
         foreach ($order->getVendors() as $vendor) {
@@ -77,8 +76,7 @@ class OrderVendorProcessor implements OrderProcessorInterface
         foreach ($originalVendors as $vendor) {
             // Make sure $vendor is already managed by Doctrine
             if ($this->entityManager->contains($vendor) && !$restaurants->contains($vendor->getRestaurant())) {
-                $this->logger->debug(sprintf('Order %s | Removing vendor from order',
-                    $this->loggingUtils->getOrderId($order)));
+                $this->logger->debug('OrderVendorProcessor | Removing vendor from order', ['order' => $this->loggingUtils->getOrderId($order)]);
                 $order->getVendors()->removeElement($vendor);
                 $this->entityManager->remove($vendor);
             }

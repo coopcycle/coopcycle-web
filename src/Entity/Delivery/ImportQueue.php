@@ -66,7 +66,7 @@ class ImportQueue
     /**
      * @Groups({"delivery_import_queue"})
      */
-    protected $errors = [];
+    protected array $errors = [];
 
     public function getId()
     {

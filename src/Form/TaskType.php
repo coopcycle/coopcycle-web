@@ -18,6 +18,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -304,6 +305,13 @@ class TaskType extends AbstractType
             });
         }
 
+        if (true === $options['with_position']) {
+            $builder
+                ->add('position', HiddenType::class, [
+                    'mapped' => false,
+                ]);
+        }
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
@@ -371,6 +379,7 @@ class TaskType extends AbstractType
             'with_packages_required' => false,
             'with_weight' => true,
             'with_weight_required' => false,
+            'with_position' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

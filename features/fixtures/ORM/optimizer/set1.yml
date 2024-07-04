@@ -58,24 +58,24 @@ AppBundle\Entity\Task:
     address: "@address_1"
     doneAfter: <identity(new \DateTime('2018-03-03 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-03-03 12:30:00'))>
-    comments: "#bob"
+    comments: "addToProblem"
   task_5:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('2018-03-03 13:00:00'))>
     doneBefore: <identity(new \DateTime('2018-03-03 13:30:00'))>
-    comments: "#bob"
+    comments: "addToProblem"
     previous: "@task_4"
   task_6:
     address: "@address_3"
     doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
-    comments: "#bob"
+    comments: "addToProblem"
     status: "CANCELLED"
   task_7:
     address: "@address_3"
     doneAfter: <identity(new \DateTime('2018-02-02 12:00:00'))>
     doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
-    comments: "#bob"
+    comments: "addToProblem"
     status: "DONE"
 
 AppBundle\Entity\User:
@@ -87,12 +87,6 @@ AppBundle\Entity\User:
         - 'bob@demo.coopcycle.org'
         - true
         - false
-
-AppBundle\Entity\TaskList:
-  tasklist_1:
-    courier: "@bob"
-    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
-
 
 AppBundle\Entity\Tour:
   tour_1:
@@ -107,3 +101,37 @@ AppBundle\Entity\Tour:
     date: <identity(new \DateTime('2018-03-02 12:00:00'))>
     tasks:
       - '@task_4'
+
+AppBundle\Entity\TaskList\Item:
+  item_1:
+    tour: "@tour_1"
+    position: 0
+  item_2:
+    tour: "@tour_2"
+    position: 1
+  item_3:
+    task: "@task_5"
+    position: 2
+  item_4:
+    task: "@task_6"
+    position: 3
+  item_5:
+    task: "@task_7"
+    position: 4
+
+
+AppBundle\Entity\TaskList:
+  tasklist_1:
+    courier: "@bob"
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    __calls:
+      - addItem:
+        - "@item_1"
+      - addItem:
+        - "@item_2"
+      - addItem:
+        - "@item_3"
+      - addItem:
+        - "@item_4"
+      - addItem:
+        - "@item_5"

@@ -531,6 +531,13 @@ class AddressAutosuggest extends Component {
     })
   }
 
+  componentDidUpdate(prevProps) {
+    if ((!prevProps.address && this.props.address) ||
+      (_.isObject(prevProps.address) && _.isObject(this.props.address) && prevProps.address["@id"] !== this.props.address["@id"])) {
+        this.setState({ value: this.props.address.streetAddress })
+      }
+  }
+
   onSuggestionsClearRequested() {
 
     let suggestions = []

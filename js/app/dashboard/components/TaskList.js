@@ -6,32 +6,28 @@ import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
-import {
-  AccordionItem,
-  AccordionItemHeading,
-  AccordionItemButton,
-  AccordionItemPanel,
-} from 'react-accessible-accordion'
 import classNames from 'classnames'
 
 import Task from './Task'
 
 import Avatar from '../../components/Avatar'
-import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter } from '../redux/actions'
-import { selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
-import { makeSelectTaskListItemsByUsername } from '../../coopcycle-frontend-js/logistics/redux'
+import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded } from '../redux/actions'
+import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
+import PolylineIcon from '../PolylineIcon'
+import ExtraInformations from './TaskCollectionDetails'
 
 moment.locale($('html').attr('lang'))
 
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
 
-  if (item['@id'].startsWith('/api/tours')) {
-    return (<Tour tour={ item } draggableIndex={ draggableIndex } />)
+  if (item.startsWith('/api/tours')) {
+    return (<Tour tourId={ item } draggableIndex={ draggableIndex } />)
   } else {
-    return (<Task task={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
+    return (<Task taskId={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
   }
 }
 
@@ -51,7 +47,7 @@ class InnerList extends React.Component {
   render() {
     return _.map(this.props.items,
       (item, index) => <TaskOrTour
-        key={ item['@id'] }
+        key={ item }
         item={ item }
         draggableIndex={ index }
         unassignTasksFromTaskList={ this.props.unassignTasksFromTaskList }
@@ -119,26 +115,17 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const dispatch = useDispatch()
   const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
 
-  const selectTaskListItems = makeSelectTaskListItemsByUsername()
+  const taskList = useSelector(state => selectTaskListByUsername(state, {username: username}))
+  const items = taskList.items
+  const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
+  const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
-  const items = useSelector(state => selectTaskListItems(state, {username: username}))
+  const visibleTasks = tasks.filter(task => {
+    return _.includes(visibleTaskIds, task['@id'])
+  })
 
-  // we also need a flattened list of tasks
-  const tasks = items.reduce((acc, item) => {
-    if (item['@type'] === 'Tour') {
-      acc.push(...item.items)
-    } else {
-      acc.push(item)
-    }
-    return acc
-  }, [])
-
-  const visibleTaskIds = _.intersectionWith(
-    useSelector(selectVisibleTaskIds),
-    tasks.map(task => task['@id'])
-  )
-
-  const visibleTasks = tasks.filter(task => _.includes(visibleTaskIds, task['@id']))
+  const expandedTaskListPanelsIds = useSelector(selectExpandedTaskListPanelsIds)
+  const isExpanded = expandedTaskListPanelsIds.includes(taskList['@id'])
 
   const polylineEnabled = useSelector(selectPolylineEnabledByUsername(username))
 
@@ -151,95 +138,79 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const cancelledTasks = _.filter(visibleTasks, t => t.status === 'CANCELLED')
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
-  const durationFormatted = moment.utc()
-    .startOf('day')
-    .add(duration, 'seconds')
-    .format('HH:mm')
-
-  const distanceFormatted = (distance / 1000).toFixed(2) + ' Km'
+  const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
+  const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
 
   return (
-    <AccordionItem>
-      <AccordionItemHeading>
-        <AccordionItemButton>
-          <span>
-            <Avatar username={ username } size="24" />
-            <small className="text-monospace ml-2">
-              <strong className="mr-2">{ username }</strong>
-              <span className="text-muted">{ `(${tasks.length})` }</span>
-            </small>
-          </span>
-          { visibleTasks.length > 0 && (
-          <div style={{ width: '33.3333%' }}>
-            <ProgressBarMemo
-                completedTasks={ completedTasks.length }
-                tasks={ visibleTasks.length }
-                inProgressTasks={ inProgressTasks.length }
-                incidentReported={ incidentReported.length }
-                failureTasks={ failureTasks.length }
-                cancelledTasks={ cancelledTasks.length }
-                t={t.bind(this)}
-              />
-          </div>
-          ) }
-          {incidentReported.length > 0 && <div onClick={(e) => {
-            dispatch(onlyFilter('showIncidentReportedTasks'))
-            e.stopPropagation()
-          }}>
-            <Tooltip title="Incident(s)">
-              <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
-            </Tooltip>
-          </div>}
-          <Popconfirm
-            placement="left"
-            title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
-            onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
-            okText={ t('CROPPIE_CONFIRM') }
-            cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
-            <a href="#"
-              className="text-reset mr-2"
-              style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
-              onClick={ e => e.preventDefault() }>
-              <i className="fa fa-lg fa-times"></i>
-            </a>
-          </Popconfirm>
-        </AccordionItemButton>
-      </AccordionItemHeading>
-      <AccordionItemPanel>
-        { tasks.length > 0 && (
-          <div className="d-flex justify-content-between align-items-center p-4">
-            <div>
-              <strong className="mr-2">{ t('ADMIN_DASHBOARD_DURATION') }</strong>
-              <span>{ durationFormatted }</span>
-              <span className="mx-2">—</span>
-              <strong className="mr-2">{ t('ADMIN_DASHBOARD_DISTANCE') }</strong>
-              <span>{ distanceFormatted }</span>
+    <div>
+      <div className="pl-2 task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
+          <div>
+            <span>
+              <Avatar username={ username } size="24" />
+              <small className="text-monospace ml-2">
+                <strong className="mr-2">{ username }</strong>
+                <span className="text-muted">{ `(${tasks.length})` }</span>
+              </small>
+            </span>
+            { visibleTasks.length > 0 && (
+            <div style={{ width: '33.3333%' }}>
+              <ProgressBarMemo
+                  completedTasks={ completedTasks.length }
+                  tasks={ visibleTasks.length }
+                  inProgressTasks={ inProgressTasks.length }
+                  incidentReported={ incidentReported.length }
+                  failureTasks={ failureTasks.length }
+                  cancelledTasks={ cancelledTasks.length }
+                  t={t.bind(this)}
+                />
             </div>
-            <div>
+            ) }
+            {incidentReported.length > 0 && <div onClick={(e) => {
+              dispatch(onlyFilter('showIncidentReportedTasks'))
+              e.stopPropagation()
+            }}>
+              <Tooltip title="Incident(s)">
+                <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
+              </Tooltip>
+            </div>}
+            <Popconfirm
+              placement="left"
+              title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
+              onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
+              okText={ t('CROPPIE_CONFIRM') }
+              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
               <a href="#"
-                title="Optimize"
-                style={{
-                  color: '#f1c40f',
-                  visibility: tasks.length > 1 ? 'visible' : 'hidden'
-                }}
-                onClick={ e => {
-                  e.preventDefault()
-                  dispatch(optimizeTaskList({'@id': uri, username: username}))
-                }}
-              >
-                <i className="fa fa-2x fa-bolt"></i>
+                className="text-reset mr-2"
+                style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
+                onClick={ e => e.preventDefault() }>
+                <i className="fa fa-lg fa-times"></i>
               </a>
-              <a role="button"
-                className={ classNames({
-                  'ml-3': true,
-                  'invisible': tasks.length < 1,
-                  'text-muted': !polylineEnabled
-                }) }
-                onClick={ () => dispatch(togglePolyline(username)) }
-              >
-                <i className="fa fa-map fa-2x"></i>
-              </a>
-            </div>
+            </Popconfirm>
+          </div>
+          <ExtraInformations duration={duration} distance={distance} weight={weight} volumeUnits={volumeUnits} />
+      </div>
+      <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
+        { tasks.length > 0 && (
+          <div className="d-flex align-items-center mt-2 mb-2">
+            <a
+              className='tasklist__actions--icon ml-3'
+              onClick={ () => dispatch(togglePolyline(username)) }
+            >
+              <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
+            </a>
+            <a
+              className="ml-4 tasklist__actions--icon d-flex align-items-center justify-content-center"
+              title="Optimize"
+              style={{
+                visibility: tasks.length > 1 ? 'visible' : 'hidden'
+              }}
+              onClick={ e => {
+                e.preventDefault()
+                dispatch(optimizeTaskList({'@id': uri, username: username}))
+              }}
+            >
+              <i className="fa fa-2x fa-bolt"></i>
+            </a>
           </div>
         )}
         <Droppable
@@ -249,11 +220,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
         >
           {(provided, snapshot) => (
             <div ref={ provided.innerRef }
-              className={ classNames({
-                'taskList__tasks': true,
-                'list-group': true,
-                'm-0': true,
-              }) }
+              className='taskList__tasks list-group m-0'
               { ...provided.droppableProps }
               style={getDroppableListStyle(snapshot.isDraggingOver)}
             >
@@ -265,8 +232,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
             </div>
           )}
         </Droppable>
-      </AccordionItemPanel>
-    </AccordionItem>
+      </div>
+    </div>
   )
 }
 

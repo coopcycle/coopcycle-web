@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class PlaceholderImageResolver
 {
+    private bool $isPixabayConfigured = false;
+
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private FilterManager $filterManager,

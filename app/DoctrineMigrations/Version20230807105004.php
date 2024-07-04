@@ -26,15 +26,15 @@ final class Version20230807105004 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT id FROM tour');
 
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($tour = $stmt->fetchAssociative()) {
+        while ($tour = $result->fetchAssociative()) {
 
             $tasksStmt->bindParam('tour_id', $tour['id']);
-            $tasksStmt->execute();
+            $result2 = $tasksStmt->execute();
 
             $dates = [];
-            while ($task = $tasksStmt->fetchAssociative()) {
+            while ($task = $result2->fetchAssociative()) {
                 $dates[] = new \DateTime($task['done_after']);
             }
 

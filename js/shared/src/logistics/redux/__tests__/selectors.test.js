@@ -4,8 +4,6 @@ import {
   selectAssignedTasks,
   selectUnassignedTasks,
   selectTasksWithColor,
-  makeSelectTaskListItemsByUsername,
-  selectTasksListsWithItems,
 } from '../selectors';
 
 import moment from '../../../moment';
@@ -47,14 +45,14 @@ describe('Selectors', () => {
         },
         taskLists: {
           ids: [
-            '/api/task_lists/1',
-            '/api/task_lists/2'
+            'bot_1',
+            'bot_2'
           ],
           entities: {
             'bot_1': {
               '@id': '/api/task_lists/1',
               'username': 'bot_1',
-              itemIds: [
+              items: [
                 '/api/tasks/1',
                 '/api/tasks/2',
               ]
@@ -62,7 +60,7 @@ describe('Selectors', () => {
             'bot_2': {
               '@id': '/api/task_lists/2',
               'username': 'bot_2',
-              itemIds: [
+              items: [
                 '/api/tasks/3',
               ]
             },
@@ -79,92 +77,6 @@ describe('Selectors', () => {
     it('should return selected date', () => {
       expect(selectSelectedDate(baseState)).toEqual(date)
     })
-  })
-
-  describe('selectTaskLists', () => {
-    it('should return task lists with tasks', () => {
-      expect(selectTasksListsWithItems(baseState)).toEqual([
-        {
-          '@id': '/api/task_lists/1',
-          'username': 'bot_1',
-          items: [
-            {
-              '@id': '/api/tasks/1',
-              id : 1,
-              next: '/api/tasks/2',
-            },
-            {
-              '@id': '/api/tasks/2',
-              id : 2,
-              previous: '/api/tasks/1',
-            }
-          ],
-        },
-        {
-          '@id': '/api/task_lists/2',
-          'username': 'bot_2',
-          items: [
-            {
-              '@id': '/api/tasks/3',
-              id : 3,
-            }
-          ],
-        }
-      ])
-    })
-
-    it('should return task lists without some tasks if they are not loaded', () => {
-      let baseState = {
-        logistics: {
-          date,
-          entities: {
-            tasks: {
-              ids: [
-                '/api/tasks/1'
-              ],
-              entities: {
-                '/api/tasks/1': {
-                  '@id': '/api/tasks/1',
-                  id : 1,
-                },
-              },
-            },
-            taskLists: {
-              ids: [
-                '/api/task_lists/1'
-              ],
-              entities: {
-                '/api/task_lists/1': {
-                  '@id': '/api/task_lists/1',
-                  'username': 'bot_1',
-                  itemIds: [
-                    '/api/tasks/1',
-                    '/api/tasks/2',
-                  ]
-                },
-              },
-            },
-          },
-          ui: {
-            taskListsLoading: false,
-          }
-        }
-      }
-
-      expect(selectTasksListsWithItems(baseState)).toEqual([
-        {
-          '@id': '/api/task_lists/1',
-          'username': 'bot_1',
-          items: [
-            {
-              '@id': '/api/tasks/1',
-              id : 1,
-            },
-          ],
-        },
-      ])
-    })
-
   })
 
   describe('selectAllTasks', () => {
@@ -195,20 +107,9 @@ describe('Selectors', () => {
   describe('selectAssignedTasks', () => {
     it('should return assigned tasks', () => {
       expect(selectAssignedTasks(baseState)).toEqual([
-        {
-          '@id': '/api/tasks/1',
-          id : 1,
-          next: '/api/tasks/2',
-        },
-        {
-          '@id': '/api/tasks/2',
-          id : 2,
-          previous: '/api/tasks/1',
-        },
-        {
-          '@id': '/api/tasks/3',
-          id : 3,
-        },
+        '/api/tasks/1',
+        '/api/tasks/2',
+        '/api/tasks/3',
       ])
     })
   })
@@ -232,248 +133,4 @@ describe('Selectors', () => {
       })
     })
   })
-
-  describe('makeSelectTaskListItemsByUsername', () => {
-
-    const tasks = {
-      ids: [
-        '/api/tasks/1',
-        '/api/tasks/2',
-        '/api/tasks/3',
-        '/api/tasks/4'
-      ],
-      entities: {
-        '/api/tasks/1': {
-          '@id': '/api/tasks/1',
-          position: 0
-        },
-        '/api/tasks/2': {
-          '@id': '/api/tasks/2',
-
-          position: 1
-        },
-        '/api/tasks/3': {
-          '@id': '/api/tasks/3',
-          position: 2
-        },
-        '/api/tasks/4': {
-          '@id': '/api/tasks/4',
-          position: 3
-        },
-      },
-    }
-
-    const tours = {
-      ids: [
-        '/api/tours/1',
-      ],
-      entities: {
-        '/api/tours/1': {
-          '@id': '/api/tours/1',
-          itemIds: [
-            '/api/tasks/1',
-            '/api/tasks/2',
-          ]
-        }
-      },
-    }
-
-    it('should return mixed items with tasks & tours (tour as first)', () => {
-
-      const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
-
-      let state = {
-        logistics: {
-          date,
-          entities: {
-            tasks,
-            taskLists: {
-              ids: [
-                '/api/task_lists/1',
-              ],
-              entities: {
-                'bot_1': {
-                  '@id': '/api/task_lists/1',
-                  'username': 'bot_1',
-                  itemIds: [
-                    '/api/tasks/1',
-                    '/api/tasks/2',
-                    '/api/tasks/3',
-                    '/api/tasks/4',
-                  ]
-                }
-              },
-            },
-            tours: tours
-          }
-        }
-      }
-
-      const items = selectTaskListItemsByUsername(state, {
-        username: 'bot_1'
-      })
-
-      expect(items).toHaveLength(3)
-      expect(items).toEqual([
-        {
-          '@id': '/api/tours/1',
-          itemIds: [
-            '/api/tasks/1',
-            '/api/tasks/2',
-          ],
-          items: [
-              {
-                "@id": "/api/tasks/1",
-                "position": 0,
-              },
-              {
-                "@id": "/api/tasks/2",
-                "position": 1,
-              },
-            ],
-        },
-        {
-          '@id': '/api/tasks/3',
-          position: 2
-        },
-        {
-          '@id': '/api/tasks/4',
-          position: 3
-        },
-      ])
-    })
-
-    it('should return mixed items with tasks & tours (tour in the middle)', () => {
-
-      const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
-
-      let state = {
-        logistics: {
-          date,
-          entities: {
-            tasks,
-            taskLists: {
-              ids: [
-                '/api/task_lists/1',
-              ],
-              entities: {
-                'bot_1': {
-                  '@id': '/api/task_lists/1',
-                  'username': 'bot_1',
-                  itemIds: [
-                    '/api/tasks/3',
-                    '/api/tasks/1',
-                    '/api/tasks/2',
-                    '/api/tasks/4',
-                  ]
-                }
-              },
-            },
-            tours: tours
-          }
-        }
-      }
-
-      const items = selectTaskListItemsByUsername(state, {
-        username: 'bot_1'
-      })
-
-      expect(items).toHaveLength(3)
-      expect(items).toEqual([
-        {
-          '@id': '/api/tasks/3',
-          position: 0
-        },
-        {
-          '@id': '/api/tours/1',
-          itemIds: [
-            '/api/tasks/1',
-            '/api/tasks/2',
-          ],
-          items: [
-              {
-                "@id": "/api/tasks/1",
-                "position": 1,
-              },
-              {
-                "@id": "/api/tasks/2",
-                "position": 2,
-              },
-            ],
-        },
-        {
-          '@id': '/api/tasks/4',
-          position: 3
-        },
-      ])
-    })
-
-    it('should return mixed items with tasks & tours (tour at the end)', () => {
-
-      const selectTaskListItemsByUsername = makeSelectTaskListItemsByUsername()
-
-      let state = {
-        logistics: {
-          date,
-          entities: {
-            tasks,
-            taskLists: {
-              ids: [
-                '/api/task_lists/1',
-              ],
-              entities: {
-                'bot_1': {
-                  '@id': '/api/task_lists/1',
-                  'username': 'bot_1',
-                  itemIds: [
-                    '/api/tasks/3',
-                    '/api/tasks/4',
-                    '/api/tasks/1',
-                    '/api/tasks/2',
-                  ]
-                }
-              },
-            },
-            tours: tours
-          }
-        }
-      }
-
-      const items = selectTaskListItemsByUsername(state, {
-        username: 'bot_1'
-      })
-
-      expect(items).toHaveLength(3)
-      expect(items).toEqual([
-        {
-          '@id': '/api/tasks/3',
-          position: 0
-        },
-        {
-          '@id': '/api/tasks/4',
-          position: 1
-        },
-        {
-          '@id': '/api/tours/1',
-          itemIds: [
-            '/api/tasks/1',
-            '/api/tasks/2',
-          ],
-          items: [
-              {
-                "@id": "/api/tasks/1",
-                "position": 2,
-              },
-              {
-                "@id": "/api/tasks/2",
-                "position": 3,
-              },
-            ],
-        },
-      ])
-    })
-
-  })
-
-
 })

@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\OrderProcessing;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -12,34 +13,20 @@ use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
 final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInterface
 {
-    private $adjustmentFactory;
-    private $taxRateResolver;
-    private $calculator;
-    private $settingsManager;
-    private $taxCategoryRepository;
-
     public function __construct(
-        AdjustmentFactoryInterface $adjustmentFactory,
-        TaxRateResolverInterface $taxRateResolver,
-        CalculatorInterface $calculator,
-        SettingsManager $settingsManager,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        TranslatorInterface $translator,
-        string $state)
+        private AdjustmentFactoryInterface $adjustmentFactory,
+        private TaxRateResolverInterface $taxRateResolver,
+        private CalculatorInterface $calculator,
+        private SettingsManager $settingsManager,
+        private TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private TranslatorInterface $translator,
+        private string $state)
     {
-        $this->adjustmentFactory = $adjustmentFactory;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->calculator = $calculator;
-        $this->settingsManager = $settingsManager;
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->translator = $translator;
-        $this->state = $state;
     }
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void

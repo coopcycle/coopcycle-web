@@ -12,9 +12,7 @@
     {{ form_widget(form.existingAddress,          { attr: { 'class': (isNewAddress ? 'd-none' : '') } }) }}
     {{ form_widget(form.newAddress.streetAddress, { attr: { 'class': (isNewAddress ? '' : 'd-none') } }) }}
 
-    {% if form.rememberAddress is defined %}
-      {{ form_widget(form.rememberAddress) }}
-    {% endif %}
+    
 
     {{ form_widget(form.newAddress.postalCode, { attr: { 'data-address-prop': 'postalCode' } }) }}
     {{ form_widget(form.newAddress.addressLocality, { attr: { 'data-address-prop': 'addressLocality' } }) }}
@@ -37,4 +35,8 @@
     {{ form_widget(form.duplicateAddress, { attr: { 'class': 'd-none' } }) }}
 
   </div>
+
+  {% if form.rememberAddress is defined %}
+      {{ form_widget(form.rememberAddress) }}
+    {% endif %}
 {% endblock %}

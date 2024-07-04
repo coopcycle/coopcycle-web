@@ -1,0 +1,16 @@
+.order-details-card {
+  h4,
+  h5 {
+    font-weight: 600;
+  }
+  h5 {
+    font-size: 1em;
+  }
+  p {
+    color: #777;
+    span {
+      float: right;
+      color: #000;
+    }
+  }
+}

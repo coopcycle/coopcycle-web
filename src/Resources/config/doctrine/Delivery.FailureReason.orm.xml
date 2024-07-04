@@ -5,7 +5,7 @@
       <generator strategy="NONE" />
     </id>
     <field name="description" type="string" column="description" nullable="false"/>
-    <field name="metadata" type="json_array" column="metadata"/>
+    <field name="metadata" type="json" column="metadata"/>
     <many-to-one field="failureReasonSet" target-entity="AppBundle\Entity\Delivery\FailureReasonSet" inversed-by="reasons">
       <cascade>
         <cascade-persist/>

@@ -2,15 +2,16 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\DataType\TsRange;
+use AppBundle\Domain\Order\Event\OrderAccepted;
+use AppBundle\Domain\Order\Reactor\CreateTasks;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
 use AppBundle\Service\Geocoder;
 use Craue\ConfigBundle\Util\Config;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
 use Fidry\AliceDataFixtures\LoaderInterface;
@@ -27,6 +28,7 @@ use libphonenumber\PhoneNumberUtil;
 use League\Geotools\Coordinate\Coordinate;
 use Redis;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
@@ -38,22 +40,15 @@ use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 class InitDemoCommand extends Command
 {
-    private $userManipulator;
-    private $doctrine;
-    private $faker;
-    private $fixturesLoader;
-    private $redis;
     private $ormPurger;
-    private $craueConfig;
     private $lockFactory;
-    private $taxonFactory;
-    private $phoneNumberUtil;
     private $batchSize = 10;
     private $excludedTables = [
         'craue_config_setting',
         'migration_versions',
         'sylius_locale',
         'sylius_channel',
+        'sylius_payment_method',
         'sylius_tax_category',
         'sylius_tax_rate',
     ];
@@ -78,34 +73,22 @@ class InitDemoCommand extends Command
     }
 
     public function __construct(
-        ManagerRegistry $doctrine,
-        UserManipulator $userManipulator,
-        LoaderInterface $fixturesLoader,
-        Faker\Generator $faker,
-        Redis $redis,
-        Config $craueConfig,
-        string $configEntityName,
-        FactoryInterface $taxonFactory,
-        PhoneNumberUtil $phoneNumberUtil,
-        RepositoryInterface $taxCategoryRepository,
-        Geocoder $geocoder,
-        string $country,
-        string $defaultLocale)
+        private ManagerRegistry $doctrine,
+        private UserManipulator $userManipulator,
+        private LoaderInterface $fixturesLoader,
+        private Faker\Generator $faker,
+        private Redis $redis,
+        private Config $craueConfig,
+        private string $configEntityName,
+        private FactoryInterface $taxonFactory,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private RepositoryInterface $taxCategoryRepository,
+        private Geocoder $geocoder,
+        private OrderProcessorInterface $orderProcessor,
+        private CreateTasks $createTasks,
+        private string $country,
+        private string $defaultLocale)
     {
-        $this->doctrine = $doctrine;
-        $this->userManipulator = $userManipulator;
-        $this->fixturesLoader = $fixturesLoader;
-        $this->faker = $faker;
-        $this->redis = $redis;
-        $this->craueConfig = $craueConfig;
-        $this->configEntityName = $configEntityName;
-        $this->taxonFactory = $taxonFactory;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->geocoder = $geocoder;
-        $this->country = $country;
-        $this->defaultLocale = $defaultLocale;
-
         parent::__construct();
     }
 
@@ -169,6 +152,9 @@ class InitDemoCommand extends Command
             $output->writeln('Creating stores…');
             $this->createStores();
 
+            $output->writeln('Creating orders…');
+            $this->createOrders();
+
             $output->writeln('Removing data from Redis…');
             $keys = $this->redis->keys('*');
             foreach ($keys as $key) {
@@ -184,7 +170,7 @@ class InitDemoCommand extends Command
     private function resetSequences()
     {
         $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
         foreach ($rows as $row) {
 
             $sequenceName = $row['sequence_name'];
@@ -544,7 +530,7 @@ class InitDemoCommand extends Command
 
             if (($i % $this->batchSize) === 0) {
 
-                $output->writeln('Flushing data…');
+                $output->writeln('Creating restaurants… | Flushing data…');
 
                 $em->flush();
                 $em->clear();
@@ -575,5 +561,43 @@ class InitDemoCommand extends Command
         }
 
         $this->doctrine->getManagerForClass(Entity\Store::class)->flush();
+    }
+
+    private function createOrders()
+    {
+        for ($i = 1; $i <= 25; $i++) {
+            $restaurant = $this->doctrine->getRepository(Entity\LocalBusiness::class)->findOneBy(['id' => $i]);
+
+            $this->createOrder('00'.$i, $restaurant);
+        }
+    }
+
+    private function createOrder($id, $restaurant)
+    {
+        $em = $this->doctrine->getManagerForClass(Entity\Sylius\Order::class);
+        $order = new Entity\Sylius\Order();
+        $order->setNumber($id);
+
+        $order->setRestaurant($restaurant);
+
+        $user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => 'user_1']);
+        $order->setCustomer($user->getCustomer());
+        $order->setShippingAddress($user->getCustomer()->getAddresses()->first());
+
+        $from = new \DateTime();
+        $from->setTime(20, 0);
+        $to = new \DateTime();
+        $to->setTime(20, 10);
+        $order->setShippingTimeRange(TsRange::create($from, $to));
+
+        $this->orderProcessor->process($order);
+
+        $order->setState('new');
+
+        $em->persist($order);
+        $em->flush();
+
+        $this->createTasks->__invoke(new OrderAccepted($order));
+        $em->flush();
     }
 }

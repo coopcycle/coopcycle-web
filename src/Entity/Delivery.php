@@ -11,6 +11,7 @@ use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
@@ -18,6 +19,7 @@ use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -512,12 +514,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
     }
 
-    public static function toVroomShipment(Delivery $delivery): VroomShipment
+    public static function toVroomShipment(Delivery $delivery, $dropoff, $pickupIri, $dropoffIri): VroomShipment
     {
         $shipment = new VroomShipment();
 
-        $shipment->pickup = Task::toVroomJob($delivery->getPickup());
-        $shipment->delivery = Task::toVroomJob($delivery->getDropoff());
+        $shipment->pickup = Task::toVroomJob($delivery->getPickup(), $pickupIri);
+        $shipment->delivery = Task::toVroomJob($dropoff, $dropoffIri);
 
         return $shipment;
     }
@@ -538,5 +540,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function hasImages()
     {
         return count($this->getImages()) > 0;
+    }
+
+    public function getEdifactMessagesTimeline(): array
+    {
+        $messages = array_merge(...array_map(function (Task $task) {
+            return $task->getEdifactMessages()->toArray();
+        }, $this->getTasks()));
+        usort($messages, fn ($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
+        return $messages;
+    }
+
+    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
+    {
+        $visitor->visitDelivery($this);
     }
 }

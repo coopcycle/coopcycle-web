@@ -34,10 +34,6 @@ class BusinessAccountRegistrationFlow extends FormFlow
 				'label' => 'registration.step.company',
 				'form_type' => $formType,
 			],
-			[
-				'label' => 'registration.step.invitation',
-				'form_type' => $formType,
-			],
 		];
     }
 

@@ -14,6 +14,7 @@ use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
@@ -617,6 +618,56 @@ class ProfileController extends AbstractController
 
         return $this->render('profile/business_account.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profile/business-account-orders", name="profile_business_account_orders")
+     */
+    public function businessAccountOrdersAction(
+        Request $request,
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
+    {
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS_ACCOUNT');
+
+        $user = $this->getUser();
+
+        $businessAccount = $user->getBusinessAccount();
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException('User does not have a business account associated');
+        }
+
+        $orders = [];
+
+        if (null !== $businessAccount->getId()) {
+            Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
+
+            $qb = $this->orderRepository
+                ->createQueryBuilder('o')
+                ->andWhere('o.businessAccount = :business_account')
+                ->andWhere('o.state != :state')
+                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
+                ->setParameter('business_account', $businessAccount)
+                ->setParameter('state', OrderInterface::STATE_CART);
+
+            $orders = $paginator->paginate(
+                $qb,
+                $request->query->getInt('page', 1),
+                self::ITEMS_PER_PAGE,
+                [
+                    PaginatorInterface::DISTINCT => false,
+                ]
+            );
+        }
+
+        return $this->render('profile/business_account_orders.html.twig', [
+            'orders' => $orders,
+            'routes' => [
+                'restaurant' => 'restaurant',
+                'order' => 'profile_order'
+            ]
         ]);
     }
 }

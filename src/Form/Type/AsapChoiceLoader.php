@@ -3,25 +3,25 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\DataType\TsRange;
-use AppBundle\Entity\LocalBusiness;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Service\TimeRegistry;
-use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Spatie\OpeningHours\OpeningHours;
 use Spatie\OpeningHours\Exceptions\MaximumLimitExceeded;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 
 class AsapChoiceLoader implements ChoiceLoaderInterface
 {
     private $openingHours;
+    private $timeRegistry;
     private $closingRules;
     private $orderingDelayMinutes;
     private $rangeDuration;
+    private $preOrderingAllowed;
 
     public function __construct(
         array $openingHours,
@@ -42,7 +42,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoiceList($value = null)
+    public function loadChoiceList($value = null): ChoiceListInterface
     {
         $now = Carbon::now();
 

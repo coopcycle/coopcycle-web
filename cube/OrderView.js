@@ -10,16 +10,80 @@ view(`OrderView`, {
         `hasVendor`,
         `total`,
         `itemsTotal`,
-        `paymentMethod`,
-        // Measures
-        `itemsTaxTotal`,
-        `deliveryFee`,
+      ]
+    },
+    {
+      join_path: Order.OrderItemTaxAdjustment,
+      includes: [
+        {
+          name: `tax_total`,
+          alias: `itemsTaxTotal`
+        },
+        {
+          name: `tax_total_standard`,
+          alias: `items_tax_total_standard`
+        },
+        {
+          name: `tax_total_intermediary`,
+          alias: `items_tax_total_intermediary`
+        },
+        {
+          name: `tax_total_reduced`,
+          alias: `items_tax_total_reduced`
+        },
+        {
+          name: `total_excl_tax_standard`,
+          alias: `items_total_excl_tax_standard`
+        },
+        {
+          name: `total_excl_tax_intermediary`,
+          alias: `items_total_excl_tax_intermediary`
+        },
+        {
+          name: `total_excl_tax_reduced`,
+          alias: `items_total_excl_tax_reduced`
+        },
+        {
+          name: `total_excl_tax`,
+          alias: `items_total_excl_tax`
+        },
+      ]
+    },
+    {
+      join_path: Order.OrderFee,
+      includes: [
+        {
+          name: `delivery_fee`,
+          alias: `deliveryFee`
+        },
+        {
+          name: `stripe_fee`,
+          alias: `stripeFee`
+        },
+        {
+          name: `platform_fee`,
+          alias: `platformFee`
+        },
+        {
+          name: `packaging_fee`,
+          alias: `packagingFee`
+        },
         `tip`,
-        `packagingFee`,
         `promotions`,
-        `stripeFee`,
-        `platformFee`,
-        `revenue`,
+        `revenue`
+      ]
+    },
+    {
+      join_path: Order.OrderPayment,
+      includes: [
+        {
+          name: `refund_total`,
+          alias: `refundTotal`
+        },
+        {
+          name: `method`,
+          alias: `paymentMethod`
+        },
       ]
     },
     {
@@ -59,51 +123,12 @@ view(`OrderView`, {
       ]
     },
     {
-      join_path: Order.OrderItem,
-      includes: [
-        {
-          name: `total_excl_tax_standard`,
-          alias: `items_total_excl_tax_standard`
-        },
-        {
-          name: `total_excl_tax_intermediary`,
-          alias: `items_total_excl_tax_intermediary`
-        },
-        {
-          name: `total_excl_tax_reduced`,
-          alias: `items_total_excl_tax_reduced`
-        },
-        {
-          name: `total_excl_tax`,
-          alias: `items_total_excl_tax`
-        },
-        {
-          name: `tax_total_standard`,
-          alias: `items_tax_total_standard`
-        },
-        {
-          name: `tax_total_intermediary`,
-          alias: `items_tax_total_intermediary`
-        },
-        {
-          name: `tax_total_reduced`,
-          alias: `items_tax_total_reduced`
-        },
-      ]
-    },
-    {
       join_path: Order.Delivery,
       includes: [
         {
           name: `distance`,
           alias: `delivery_distance`
         }
-      ]
-    },
-    {
-      join_path: Order.Payment,
-      includes: [
-        `refundTotal`
       ]
     },
   ]

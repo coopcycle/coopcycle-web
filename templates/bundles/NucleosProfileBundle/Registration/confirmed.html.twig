@@ -16,8 +16,16 @@
             <img src="{{ asset('img/registration-congrats.svg') }}">
             <h5>{{ 'registration.congratulations'|trans }}</h5>
             <strong>{% trans with { '%username%': user.username } %}registration.confirmed{% endtrans %}</strong>
+            {% set businessAccountManager = is_granted('ROLE_BUSINESS_ACCOUNT') and user.businessAccount is not null %}
             {% set cart = cart_provider.getCart() %}
-            {% if cart is not empty and cart.restaurant is not empty and cart.state == 'cart' %}
+            {% if businessAccountManager %}
+              <div class="text-center">
+                <a href="{{ path('profile_business_account') }}" class="btn btn-md bg-primary mt-3">
+                  <i class="fa fa-gear mr-1" aria-hidden="true"></i>
+                  {{ 'topbar.action.admin_business_account'|trans({}, 'messages') }}
+                </a>
+              </div>
+            {% elseif cart is not empty and cart.restaurant is not empty and cart.state == 'cart' %}
               <div class="text-center">
                 <a href="{{ path('order') }}" class="btn btn-md bg-primary mt-3">
                   {{ 'registration.after_confirmation_continue_order'|trans }}
@@ -38,6 +46,15 @@
             {% endif %}
           </div>
         </div>
+        {% if businessAccountManager %}
+          <div class="d-flex justify-content-end">
+            <div class="info-section rounded mt-0 mr-0">
+              {% include '_partials/profile/invitation_link.html.twig' with {
+                'title': 'registration.confirm.invitation.link.title'
+              } %}
+            </div>
+          </div>
+        {% endif %}
         <div class="d-flex">
           <img src="{{ asset('img/registration-image.svg') }}">
         </div>

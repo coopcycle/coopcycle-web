@@ -57,6 +57,16 @@ class OrderManager
         $this->commandBus->handle(new OrderCommand\CancelOrder($order, $reason));
     }
 
+    public function startPreparing(OrderInterface $order)
+    {
+        $this->commandBus->handle(new OrderCommand\StartPreparingOrder($order));
+    }
+
+    public function finishPreparing(OrderInterface $order)
+    {
+        $this->commandBus->handle(new OrderCommand\FinishPreparingOrder($order));
+    }
+
     public function onDemand(OrderInterface $order)
     {
         $this->commandBus->handle(new OrderCommand\OnDemand($order));

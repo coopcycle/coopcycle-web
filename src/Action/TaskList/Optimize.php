@@ -16,12 +16,12 @@ final class Optimize
 
     public function __invoke($data)
     {
-        $optimizedTasks = $this->optimizer->optimize($data);
+        $optimizedItems = $this->optimizer->optimize($data);
 
-        $data->getItems()->clear();
+        $data->clear();
 
-        foreach ($optimizedTasks as $i => $t) {
-            $data->addTask($t, $i);
+        foreach ($optimizedItems as $item) {
+            $data->addItem($item);
         }
 
         return $data;

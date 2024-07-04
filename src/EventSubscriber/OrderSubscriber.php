@@ -72,6 +72,8 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function validateAccept(RequestEvent $event)
     {
         $request = $event->getRequest();
+
+        // PUT /api/orders/{id}/accept
         if ($request->attributes->get('_route') === 'api_orders_accept_item') {
 
             $order = $request->attributes->get('data');
@@ -125,8 +127,8 @@ final class OrderSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         $routes = [
-            'api_orders_get_cart_timing_item',
-            'api_orders_timing_collection',
+            'api_orders_get_cart_timing_item', // GET /api/orders/{id}/timing
+            'api_orders_timing_collection', // GET /api/orders/timing
         ];
 
         if (!in_array($request->attributes->get('_route'), $routes)) {
@@ -156,6 +158,7 @@ final class OrderSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
+        // GET /api/orders/{id}/validate
         if ($request->attributes->get('_route') !== 'api_orders_validate_item') {
             return;
         }
@@ -169,6 +172,7 @@ final class OrderSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
+        // DELETE /api/orders/{id}/items/{itemId}
         if ($request->attributes->get('_route') !== 'api_orders_delete_item_item') {
             return;
         }

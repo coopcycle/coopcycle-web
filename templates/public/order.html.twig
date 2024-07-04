@@ -9,7 +9,7 @@
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="{{ path('homepage') }}">
-        <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
+        <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />
       </a>
       <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
     </div>
@@ -74,7 +74,7 @@
 
           <div class="text-center">
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>
 
@@ -90,7 +90,7 @@
 <div style="padding: 20px 0;">
   <div class="container">
     <div class="text-center">
-      <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
+      <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
     </div>
   </div>
 </div>
@@ -133,7 +133,7 @@ new CoopCycle.DeliveryMap('map', {
 {% if payment_form is defined %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 <script type="text/javascript">
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
+new CoopCycle.PaymentForm(document.querySelector('form[name="checkout_payment"]'), {
   card: "{{ gateway }}",
   amount: {{ order.total }},
   gatewayConfigs: {{ gateway_configs|json_encode|raw }},

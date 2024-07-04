@@ -5,9 +5,9 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="type" type="string" column="type"/>
-    <field name="openingHours" type="json_array" column="opening_hours"/>
+    <field name="openingHours" type="json" column="opening_hours"/>
     <field name="openingHoursBehavior" type="string" column="opening_hours_behavior" length="16" />
-    <field name="options" type="json_array" column="options" nullable="true"/>
+    <field name="options" type="json" column="options" nullable="true"/>
     <field name="minimumAmount" type="integer" column="minimum_amount"/>
     <field name="orderingDelayMinutes" type="integer" column="ordering_delay_minutes" nullable="false">
       <options>

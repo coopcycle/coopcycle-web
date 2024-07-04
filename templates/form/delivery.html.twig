@@ -66,6 +66,10 @@ col-md-9
     {{ form_widget(form.doneAfter) }}
   {% endif %}
 
+  {% if form.position is defined %}
+    {{ form_widget(form.position, { attr: { 'data-position': '' } }) }}
+  {% endif %}
+
 {% endblock %}
 
 {% block delivery_vehicle_widget %}

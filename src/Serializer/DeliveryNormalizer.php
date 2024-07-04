@@ -23,26 +23,18 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $geocoder;
-    private $doctrine;
+    private Hashids $hashids;
 
     public function __construct(
-        ItemNormalizer $normalizer,
-        Geocoder $geocoder,
-        IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine,
-        UrlGeneratorInterface $urlGenerator,
+        private ItemNormalizer $normalizer,
+        private Geocoder $geocoder,
+        private IriConverterInterface $iriConverter,
+        private ManagerRegistry $doctrine,
+        private UrlGeneratorInterface $urlGenerator,
         Hashids $hashids8,
-        Tile38Helper $tile38Helper)
+        private Tile38Helper $tile38Helper)
     {
-        $this->normalizer = $normalizer;
-        $this->geocoder = $geocoder;
-        $this->iriConverter = $iriConverter;
-        $this->doctrine = $doctrine;
-        $this->urlGenerator = $urlGenerator;
         $this->hashids = $hashids8;
-        $this->tile38Helper = $tile38Helper;
     }
 
     public function normalize($object, $format = null, array $context = array())

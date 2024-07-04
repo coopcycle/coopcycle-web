@@ -92,3 +92,15 @@ services:
   AppBundle\Validator\Constraints\ProductSpreadsheetValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\PricingRuleSetDeleteValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\TimeSlotDeleteValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\PackageSetDeleteValidator:
+    tags:
+      - { name: validator.constraint_validator }

@@ -43,6 +43,8 @@ loopeat.insufficient_balance: Votre cagnotte %name% est insuffisante pour béné
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification
 
+siret.invalid: Numéro SIRET invalide
+
 checkout.user_with_same_email_exists: Un compte avec le même email existe déjà
 
 time_range_jump.next_day: Il n'est plus possible de commander pour aujourd'hui
@@ -51,7 +53,7 @@ order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
 dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
 
-googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide
+googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide. %error%
 
 loopeat.insufficient_stock: Quantité d'emballages zéro déchet insuffisante pour « %name% »
 

@@ -29,6 +29,6 @@ export function createTempTaskList(username, items = []) {
   }
 }
 
-export function assignedTasks(taskLists) {
+export function assignedItemsIds(taskLists) {
   return _.flatMap(taskLists,taskList => taskList.items)
 }

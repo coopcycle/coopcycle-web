@@ -38,7 +38,7 @@ class TaskSubscriber implements EventSubscriber
         EventStore $eventStore,
         EntityChangeSetProcessor $processor,
         LoggerInterface $logger,
-        Geocoder $geocoder,
+        private Geocoder $geocoder,
         private OrderManager $orderManager
     )
     {
@@ -46,7 +46,6 @@ class TaskSubscriber implements EventSubscriber
         $this->eventStore = $eventStore;
         $this->processor = $processor;
         $this->logger = $logger;
-        $this->geocoder = $geocoder;
 
         $this->createdAddresses = new \SplObjectStorage();
     }
@@ -61,6 +60,7 @@ class TaskSubscriber implements EventSubscriber
 
     public function onFlush(OnFlushEventArgs $args)
     {
+
         // Cleanup
         $this->createdTasks = [];
         $this->postFlushEvents = [];

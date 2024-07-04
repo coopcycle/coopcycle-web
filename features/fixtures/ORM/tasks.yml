@@ -74,6 +74,30 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
     comments: "#bob"
     status: "DONE"
+  task_8:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 12:30:00'))>
+    comments: "#bob"
+    type: "DROPOFF"
+  task_9:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 12:30:00'))>
+    comments: "#bob"
+    type: "PICKUP"
+  task_10:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 10:30:00'))>
+    comments: "#bob"
+    type: "PICKUP"
+  task_11:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 10:30:00'))>
+    comments: "#bob"
+    type: "DROPOFF"
 
 AppBundle\Entity\Tour:
   tour_1:

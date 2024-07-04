@@ -3,6 +3,7 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
@@ -72,6 +73,13 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $unitOfWork->computeChangeSets();
         }
 
+        if ($entity instanceof LocalBusiness || $entity instanceof Store) {
+            $organization = $entity->getOrganization();
+            $objectManager->remove($organization);
+            $objectManager->flush();
+        }
+
+        // LocalBusiness and Restaurant case
         if ($entity instanceof LocalBusiness) {
 
             // FIXME Use OrderInterface
@@ -86,6 +94,30 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             foreach ($owners as $owner) {
                 $owner->getRestaurants()->removeElement($entity);
             }
+
+            // unlink the restaurant from PricingRuleSet so we can hard delete PricingRuleSet if we want to
+            $contract = $entity->getContract();
+            $contract->setVariableCustomerAmount(null);
+            $contract->setVariableDeliveryPrice(null);
+
+            $unitOfWork->computeChangeSets();
+        }
+
+        if ($entity instanceof Store) {
+
+            $owners = $entity->getOwners();
+            foreach ($owners as $owner) {
+                $owner->getStores()->removeElement($entity);
+            }
+
+            $rrules = $entity->getRrules();
+            foreach ($rrules as $rrule) {
+                $unitOfWork->scheduleForDelete($rrule);
+            }
+
+            // free these items so the user can delete them afterwards
+            $entity->setPricingRuleSet(null);
+            $entity->setPackageSet(null);
 
             $unitOfWork->computeChangeSets();
         }

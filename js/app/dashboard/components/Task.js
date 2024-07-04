@@ -8,12 +8,13 @@ import { Draggable } from "@hello-pangea/dnd"
 
 
 import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+import { selectSettings, selectVisibleTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
-import OrderNumber from './OrderNumber'
+import { getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
+import { formatVolumeUnits, formatWeight } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
 
@@ -41,8 +42,12 @@ const TaskCaption = ({ task }) => {
   return (
     <span>
       <span className="mr-1">
-        <span className="text-monospace">#{ task.id }</span>
-        <OrderNumber task={ task } />
+        <span className="text-monospace">
+          { task?.metadata.order_number ?
+            task.metadata.order_number
+            : `#${ task.id }`
+          }
+        </span>
       </span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
@@ -188,7 +193,12 @@ class Task extends React.Component {
 
   render() {
 
-    const { color, task, selected, isVisible, date } = this.props
+    // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+    if (this.props.task === undefined) {
+      return <></>
+    }
+
+    const { color, task, selected, isVisible, date, showWeightAndVolumeUnit } = this.props
 
     const classNames = [
       'list-group-item',
@@ -207,6 +217,10 @@ class Task extends React.Component {
 
     if (selected) {
       classNames.push('task__highlighted')
+    }
+
+    if (task.hasIncidents) {
+      classNames.push('task__has-incidents')
     }
 
     const taskProps = {
@@ -243,6 +257,16 @@ class Task extends React.Component {
             before={ task.before }
             date={ date } />
           <TaskComments task={ task } />
+          { showWeightAndVolumeUnit ?
+            (
+              <div>
+                <span>{ formatWeight(task.weight) }</span>
+                <span className="mx-2">|</span>
+                <span>{ formatVolumeUnits(getTaskVolumeUnits(task)) }</span>
+              </div>
+            )
+            : null
+          }
         </span>
       </span>)
 
@@ -275,20 +299,32 @@ class Task extends React.Component {
 
 function mapStateToProps(state, ownProps) {
 
+  let task = selectTaskById(state, ownProps.taskId)
+
+  // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+  if (task === undefined) {
+    console.error("Could not find task at id " + ownProps.taskId)
+    return { task: task}
+  }
+
   const tasksWithColor = selectTasksWithColor(state)
 
-  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, ownProps.task['@id']) ?
-    tasksWithColor[ownProps.task['@id']] : '#ffffff'
+  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, task['@id']) ?
+    tasksWithColor[task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
   const selectedTasks = state.selectedTasks
 
+  const { showWeightAndVolumeUnit } = selectSettings(state)
+
   return {
+    task: task,
     selectedTasks: selectedTasks,
-    selected: -1 !== selectedTasks.indexOf(ownProps.task['@id']),
+    selected: -1 !== selectedTasks.indexOf(task['@id']),
     color,
     date: selectSelectedDate(state),
-    isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),
+    isVisible: _.includes(visibleTaskIds, task['@id']),
+    showWeightAndVolumeUnit: showWeightAndVolumeUnit
   }
 }
 

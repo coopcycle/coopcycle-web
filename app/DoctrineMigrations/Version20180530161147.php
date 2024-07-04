@@ -20,11 +20,11 @@ class Version20180530161147 extends AbstractMigration implements ContainerAwareI
     {
         // this up() migration is auto-generated, please modify it to your needs
         $stmt = $this->connection->prepare("SELECT * FROM restaurant where telephone is not null");
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $phoneNumberUtil = $this->container->get('libphonenumber\PhoneNumberUtil');
 
-        while ($restaurant = $stmt->fetch()) {
+        while ($restaurant = $result->fetchAssociative()) {
             try {
                 $phoneNumber = $phoneNumberUtil->parse($restaurant['telephone'], strtoupper($this->container->getParameter('country_iso')));
             } catch (NumberParseException $e) {

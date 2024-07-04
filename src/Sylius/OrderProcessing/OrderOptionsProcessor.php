@@ -32,8 +32,8 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
     {
         Assert::isInstanceOf($order, OrderInterface::class);
 
-        $this->checkoutLogger->info(sprintf('Order %s | OrderOptionsProcessor | started | itemsTotal: %d (initial) | triggered by %s',
-            $this->loggingUtils->getOrderId($order), $order->getItemsTotal(), $this->loggingUtils->getBacktrace()));
+        $this->checkoutLogger->info(sprintf('OrderOptionsProcessor | started | itemsTotal: %d (initial)', $order->getItemsTotal()),
+            ['order' => $this->loggingUtils->getOrderId($order)]);
 
         foreach ($order->getItems() as $orderItem) {
 
@@ -67,13 +67,13 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                 } catch (EntityNotFoundException $e) {
                     // This happens when an option has been deleted,
                     // but is still attached to a product variant
-                    $this->checkoutLogger->error(sprintf('Order %s | OrderOptionsProcessor | error: %s',
-                        $this->loggingUtils->getOrderId($order), $e->getMessage()), ['exception' => $e]);
+                    $this->checkoutLogger->warning(sprintf('OrderOptionsProcessor | error: %s', $e->getMessage()),
+                        ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
                 }
             }
         }
 
-        $this->checkoutLogger->info(sprintf('Order %s | OrderOptionsProcessor | finished | itemsTotal: %d (updated)',
-            $this->loggingUtils->getOrderId($order), $order->getItemsTotal()));
+        $this->checkoutLogger->info(sprintf('OrderOptionsProcessor | finished | itemsTotal: %d (updated)', $order->getItemsTotal()),
+            ['order' => $this->loggingUtils->getOrderId($order)]);
     }
 }

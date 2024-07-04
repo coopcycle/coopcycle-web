@@ -15,9 +15,9 @@ final class Version20190926124632 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
 
         $stmt = $this->connection->prepare("SELECT * FROM stripe_payment WHERE charge IS NOT NULL");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($payment = $stmt->fetch()) {
+        while ($payment = $result->fetchAssociative()) {
 
             $details = json_decode($payment['details'], true);
 
@@ -39,9 +39,9 @@ final class Version20190926124632 extends AbstractMigration
         $this->addSql('ALTER TABLE stripe_payment ADD charge VARCHAR(255) DEFAULT NULL');
 
         $stmt = $this->connection->prepare("SELECT * FROM stripe_payment");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($payment = $stmt->fetch()) {
+        while ($payment = $result->fetchAssociative()) {
 
             $details = json_decode($payment['details'], true);
 

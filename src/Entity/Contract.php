@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -11,6 +12,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Contract
 {
     private $id;
+
+    private $restaurants;
+
+    private $businessRestaurantGroups;
 
     /**
      * @var int
@@ -83,12 +88,37 @@ class Contract
      */
     private $takeAwayFeeRate = 0.00;
 
+    public function __construct()
+    {
+        $this->restaurants = new ArrayCollection();
+        $this->businessRestaurantGroups = new ArrayCollection();
+
+    }
+
     /**
      * @return int
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @return LocalBusiness|BusinessRestaurantGroup|null
+     */
+    public function getContractor()
+    {
+        // FIXME : here we are making assumption : the contract is either linked to one Restaurant or one Business Restaurant Group
+        // this should be checked on DB or Entity level : https://github.com/coopcycle/coopcycle-web/issues/4254
+        if (count($this->restaurants) > 0) {
+            $restaurants = $this->restaurants->toArray();
+            return array_shift($restaurants);
+        } else if (count($this->businessRestaurantGroups) > 0) {
+            $businessRestaurantGroups = $this->businessRestaurantGroups->toArray();
+            return array_shift($businessRestaurantGroups);
+        }
+
+        return null;
     }
 
     /**

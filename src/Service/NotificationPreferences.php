@@ -11,10 +11,8 @@ class NotificationPreferences
 {
 	private $events = [];
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-    	$this->entityManager = $entityManager;
-
     	$this->events = [
     		OrderEvents\OrderCreated::messageName(),
 	        OrderEvents\OrderAccepted::messageName(),

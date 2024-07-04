@@ -10,6 +10,7 @@
     <field name="messageType" type="string" column="message_type" length="255" nullable="false"/>
     <field name="subMessageType" type="string" column="sub_message_type" length="255" nullable="true"/>
     <field name="edifactFile" type="string" column="edifact_file" nullable="true"/>
+    <field name="metadata" type="json" column="metadata" nullable="true"/>
     <field name="syncedAt" type="datetime" column="synced_at" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>

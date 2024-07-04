@@ -20,8 +20,8 @@ final class Version20200914105344 extends AbstractMigration
     private function createOrganizationsForRestaurants()
     {
         $stmt = $this->connection->prepare('SELECT id, name FROM restaurant');
-        $stmt->execute();
-        while ($restaurant = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($restaurant = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO organization (name) VALUES (:name)', $restaurant);
             $this->addSql('UPDATE restaurant SET organization_id = currval(\'organization_id_seq\') WHERE id = :restaurant_id', [
                 'restaurant_id' => $restaurant['id']
@@ -32,8 +32,8 @@ final class Version20200914105344 extends AbstractMigration
     private function createOrganizationsForStores()
     {
         $stmt = $this->connection->prepare('SELECT id, name FROM store');
-        $stmt->execute();
-        while ($store = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($store = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO organization (name) VALUES (:name)', $store);
             $this->addSql('UPDATE store SET organization_id = currval(\'organization_id_seq\') WHERE id = :store_id', [
                 'store_id' => $store['id']

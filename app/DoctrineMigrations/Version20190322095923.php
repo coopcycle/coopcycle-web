@@ -18,8 +18,8 @@ final class Version20190322095923 extends AbstractMigration
         $this->addSql('ALTER TABLE store_address ADD CONSTRAINT FK_14464E66F5B7AF75 FOREIGN KEY (address_id) REFERENCES address (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
 
         $stmt = $this->connection->prepare('SELECT id, default_address_id FROM store');
-        $stmt->execute();
-        while ($store = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($store = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO store_address (store_id, address_id) VALUES (:store_id, :address_id)', [
                 'store_id' => $store['id'],
                 'address_id' => $store['default_address_id'],

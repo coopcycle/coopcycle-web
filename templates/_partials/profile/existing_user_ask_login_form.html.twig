@@ -1,0 +1,26 @@
+<div class="form-section">
+  {% if warning_message is defined and warning_message is not empty %}
+    <div class="alert alert-warning">
+      <i class="fa fa-warning mr-1"></i>
+      <span>{{ warning_message }}</span>
+    </div>
+  {% endif %}
+
+  <form class="form" action="{{ action_path }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+    <input type="hidden" name="_username" value="{{ form.email.vars.data }}" />
+    <div class="input-group">
+      <input type="password" name="_password"
+        class="form-control" id="guest-checkout-password"
+        placeholder="{{ 'security.login.password'|trans({}, 'NucleosUserBundle') }}">
+      <span class="input-group-btn">
+        <button type="submit" class="btn btn-primary">
+          {{ 'security.login.submit'|trans({}, 'NucleosUserBundle') }}
+        </button>
+      </span>
+    </div>
+    <a class="help-block mb-0" href="{{ path('nucleos_user_resetting_request') }}">
+      {% trans from 'messages' %}authentication.forgot_password{% endtrans %}
+    </a>
+  </form>
+</div>

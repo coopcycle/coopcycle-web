@@ -50,7 +50,7 @@ class PickupExpressionLanguageProviderTest extends TestCase
             'pickup' => $pickup,
         ]);
 
-        $this->assertThat($value, $this->isType('int'));
+        $this->assertIsNumeric($value);
         $this->assertEquals($expectedValue, $value);
     }
 
@@ -62,6 +62,11 @@ class PickupExpressionLanguageProviderTest extends TestCase
             [ '2019-08-19 09:00:00', '2019-08-22 12:00:00', 'diff_days(pickup) >= 3', true ],
             [ '2019-08-19 23:59:59', '2019-08-20 12:00:00', 'diff_days(pickup) in 0..1', true ],
             [ '2019-08-19 09:00:00', '2019-08-19 16:00:00', 'diff_days(pickup) > 0', false ],
+            [ '2019-08-19 09:00:00', '2019-08-20 12:00:00', 'diff_days(pickup, "== 1")', true ],
+            [ '2019-08-19 09:00:00', '2019-08-21 12:00:00', 'diff_days(pickup, "> 1")', true ],
+            [ '2019-08-19 09:00:00', '2019-08-22 12:00:00', 'diff_days(pickup, ">= 3")', true ],
+            [ '2019-08-19 23:59:59', '2019-08-20 12:00:00', 'diff_days(pickup, "in 0..1")', true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 16:00:00', 'diff_days(pickup, "> 0")', false ],
         ];
     }
 
@@ -120,6 +125,9 @@ class PickupExpressionLanguageProviderTest extends TestCase
             [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 'diff_hours(pickup) == 3', true ],
             [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 'diff_hours(pickup) >= 3', true ],
             [ '2019-08-19 09:00:00', '2019-08-19 10:30:00', 'diff_hours(pickup) > 1',  true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 'diff_hours(pickup, "== 3")', true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 12:00:00', 'diff_hours(pickup, ">= 3")', true ],
+            [ '2019-08-19 09:00:00', '2019-08-19 10:30:00', 'diff_hours(pickup, "> 1")',  true ],
         ];
     }
 
@@ -199,6 +207,13 @@ class PickupExpressionLanguageProviderTest extends TestCase
 
         $this->assertIsNumeric($value);
         $this->assertEquals($expectedValue, $value);
+
+        $value = $this->language->evaluate(sprintf('time_range_length(pickup, "hours", "== %s")', $expectedValue), [
+            'pickup' => $pickup,
+        ]);
+
+        $this->assertThat($value, $this->isType('boolean'));
+        $this->assertTrue($value);
     }
 
     public function timeRangeLengthProviderIn()

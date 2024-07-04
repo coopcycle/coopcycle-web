@@ -19,7 +19,9 @@ import {
   exportTasks,
   closeAddTaskToGroupModal,
   closeCreateDeliveryModal,
-  closeCreateTourModal, closeTaskRescheduleModal
+  closeCreateTourModal,
+  closeReportIncidentModal,
+  closeTaskRescheduleModal
 } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
 import FiltersModalContent from './FiltersModalContent'
@@ -33,6 +35,7 @@ import AddTaskToGroupModalContent from './AddTaskToGroupModalContent'
 import CreateDeliveryModalContent from './CreateDeliveryModalContent'
 import CreateTourModalContent from './CreateTourModalContent'
 import TaskRescheduleModalContent from "./TaskRescheduleModalContent";
+import TaskReportIncidentModalContent from './TaskReportIncidentModalContent';
 
 class Modals extends React.Component {
 
@@ -81,8 +84,10 @@ class Modals extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <AddUserModalContent
             onClickClose={ this.props.closeAddUserModal }
-            onClickSubmit={ username => {
-              this.props.createTaskList(this.props.date, username)
+            onClickSubmit={ (selectedCouriers) => {
+              selectedCouriers.forEach((courier) => {
+                this.props.createTaskList(this.props.date, courier.username)
+              })
               this.props.closeAddUserModal()
             }} />
         </Modal>
@@ -146,6 +151,14 @@ class Modals extends React.Component {
           shouldCloseOnOverlayClick={ true }>
           <TaskRescheduleModalContent />
         </Modal>
+        <Modal
+          appElement={ document.getElementById('dashboard') }
+          isOpen={ this.props.reportIncidentModalIsOpen }
+          onRequestClose={ this.props.closeReportIncidentModal }
+          className="ReactModal__Content--task-report-incident"
+          shouldCloseOnOverlayClick={ true }>
+          <TaskReportIncidentModalContent />
+          </Modal>
       </React.Fragment>
     )
   }
@@ -166,7 +179,8 @@ function mapStateToProps(state) {
     addTaskToGroupModalIsOpen: state.addTaskToGroupModalIsOpen,
     isCreateDeliveryModalVisible: state.isCreateDeliveryModalVisible,
     isCreateTourModalVisible: state.isCreateTourModalVisible,
-    isTaskRescheduleModalVisible: state.isTaskRescheduleModalVisible
+    isTaskRescheduleModalVisible: state.isTaskRescheduleModalVisible,
+    reportIncidentModalIsOpen: state.reportIncidentModalIsOpen,
   }
 }
 
@@ -188,7 +202,8 @@ function mapDispatchToProps (dispatch) {
     closeAddTaskToGroupModal: () => dispatch(closeAddTaskToGroupModal()),
     closeCreateDeliveryModal: () => dispatch(closeCreateDeliveryModal()),
     closeCreateTourModal: () => dispatch(closeCreateTourModal()),
-    closeTaskRescheduleModal: () => dispatch(closeTaskRescheduleModal())
+    closeTaskRescheduleModal: () => dispatch(closeTaskRescheduleModal()),
+    closeReportIncidentModal: () => dispatch(closeReportIncidentModal())
   }
 }
 

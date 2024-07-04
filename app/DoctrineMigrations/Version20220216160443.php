@@ -20,10 +20,10 @@ final class Version20220216160443 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $stmt = $this->connection->prepare('SELECT time_slot_id, start_time, end_time FROM time_slot_choice');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $timeSlots = [];
-        while ($timeSlotChoice = $stmt->fetch()) {
+        while ($timeSlotChoice = $result->fetchAssociative()) {
             $timeSlots[$timeSlotChoice['time_slot_id']][] = $timeSlotChoice;
         }
 

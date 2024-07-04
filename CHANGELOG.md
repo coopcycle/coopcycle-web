@@ -5,30 +5,167 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.4] - 2024-06-27
+
+### Added
+
+* FOOD TECH: Timing Modal. Display a modal when the client is about to make an order that's going to be rescheduled to the next shift
+
+## [3.0.2] - 2024-06-27
+
+### Fixed
+
+* In dispatch, save use_avatar_colors between refresh by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4467
+* Add "dispatch" next to the top bar lock icon to go to admin by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4453
+* Improve search in order foodtech dashboard by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4470
+
+## [3.0.1] - 2024-06-26
+
+### Changed
+
+* Propose the user to login when registration email exists by @lucasferraro in https://github.com/coopcycle/coopcycle-web/pull/4411
+
+## [3.0.0] - 2024-06-24
+
+### Changed
+
+* Support PHP 8.3
+* Dispatch : add the ability to filter by tags, stores, restaurants for both global filters and unassigned tasks by @Atala in #4440
+
+## [2.9.4] - 2024-06-20
+
+### Changed
+
+* Improve search results in the dispatch panel
+
+
+## [2.9.3] - 2024-06-19
+
+### Fixed
+
+* **Right-click assign in dispatch:** An error in how assignation was working for right-click (was assigning to the first rider of the planning), now fixed.
+
+## [2.9.2] - 2024-06-19
+
+### Changed
+
+* **Support multi points in time based pricing functions:** Now we can use the rules "dropoff/pickup time range length" in pricing rules that are activated for multiple-dropoff orders.
+
+## [2.9.0] - 2024-06-18
+
+### Fixed
+
+* **The ‘Close restaurant for a day’ button closes restaurant for 2 days:** Now when a restaurant uses the "off" button in the CoopCycle app it will only close them until end of that day, reopening the next day automatically
+* **A customer can create an order for a disabled (deactivated) restaurant:** Customers could order in a restaurant even though they were closed, but not anymore! (only for web orders for now)
+* **Order is created with a preparation scheduled in the past:** We had an issue with incorrect calculations about time ranges for food deliveries that is now fixed. (only for web orders for now)
+* **Potential Fix for assignment bug when dispatching on two different tabs on two different days (reported by Naofood):** Since orders can come in for tomorrow, dispatchers had multiple tabs open in food tech. This created problems for the notification system, which we believe we have now fixed.
+* **Crash when setting "use avatar color" to Yes:** Just a random crash bug
+
+## [2.8.2] - 2024-06-12
+
+### Changed
+
+- **Allow massively starting tasks:**  Want your last mile provider or local shop to know you have recieved a package or a whole pallet of packages? Right click on multiple tasks now has a "start tasks" option that will inform EDIFACT connected last mile providers that you have correctly recieved these packages, and show an order as started for a shop in their panel.
+- **Revamp view of EDIFACT messages:**  Added more information to timeline below the bar code in an order detail page to add information requested by last mile providers in France
+
+## [2.8.1] - 2024-06-11
+
+### Fixed
+
+- Fix for "Unable to drag a group from Unassigned column to rider's assignment" | Assigning groups to riders was broken, we fixed it
+
+## [2.7.7] - 2024-06-06
+
+### Changed
+
+- Enable polygon selection in dispatch | Now we can draw whatever we want, not just rectangles
+- Set marker color to rider color when showing polyline | Points on the map assigned to a rider will change color when the map icon is selected to improve visualisation of the routes assigend to each person in the map
+
+### Fixed
+
+- Fix for assignment not correctly set on dispatch map
+- Fix do not show deleted shops in create delivery/order dropdown
+- Various catering improvements
+
+## [2.7.1] - 2024-06-04
+
+### Added
+
+- Add a filter for "exclude tags" by @Atala in #4353
+
+### Changed
+
+- New method to get setup vendor information
+- Invitation link moved to confirmed registration screen
+- Re-architecture the "TaskList" entity in the backend by @Atala in #4267
+
+### Fixed
+
+- Fix bug in task list live updates that were dispatched to all admins
+
+## [2.6.0] - 2024-05-29
+
+### Added
+
+- Allow auto-accepting orders
+
+## [2.5.3] - 2024-05-20
+
+### Fixed
+
+- Fixes for item deletion in admin
+- Order pickup before dropoff in unassigned tasks
+
+## [2.4.3] - 2024-05-07
+
+### Added
+
+- First version for incidents + ability to report incidents from dispatch
+
+### Changed
+
+- Show unassigned tasks when filtering out by courier in the dispatch
+
 ## [2.3.0] - 2024-04-22
+
+### Added
 
 - Allow synchronizing Edenred merchant IDs.
 
 ## [2.2.1] - 2024-04-16
+
+### Fixed
+
 - Do not add the other tasks of an order when drag'n droping a tour in dispatch
+
+### Added
+
 - Add a link to odoo instance in admin navbar if any
+
+### Changed
+
 - Show incidents as default in dispatch
 - Dispatch filters are persistent
 
 ## [2.2.0] - 2024-04-09
-Tours
-  - Make "optimize rider assignments" not break when they are tours in the rider's assignment
-  - Ability to reorder unassigned tasks and unassigned tours
-  - When adding tasks in tours, sort them in the tour according to their order in "Unassigned tasks
-  - Fix for dispatchers that are also riders not able to see all tasks in the web dispatch
- 
-Foodtech
-  - Fix for "Misleading information about available time slots" #4050
-  - Fix for "Unable to change filters on restaurants list page" #4082
-  - Show some message on restaurants list page when restaurant is unavailable
+
+### Changed
+
+- Make "optimize rider assignments" not break when they are tours in the rider's assignment
+- Ability to reorder unassigned tasks and unassigned tours
+- When adding tasks in tours, sort them in the tour according to their order in "Unassigned tasks
+- Fix for dispatchers that are also riders not able to see all tasks in the web dispatch
+
+### Fixed
+
+- Fix for "Misleading information about available time slots"
+- Fix for "Unable to change filters on restaurants list page"
+- Show some message on restaurants list page when restaurant is unavailable
 
 ## [2.0.2] - 2024-03-19
-Tour fixes :
+
+### Fixed
+
 - Filter out duplicate tasks in "unassigned tasks / unassigned tours" (bug with the options for sorting unassigned tasks)
 - When assigning orders/tasks to a route they continue to appear in the unassigned column as well as the routes column #4067
 - Move order tasks together on drag n drop (even for unassign) #4064
@@ -37,27 +174,39 @@ Tour fixes :
 
 ## [2.0.0] - 2024-03-19
 
+### Changed
+
 - Implement new design for restaurant page ✨
 
 ## [1.31.1] - 2024-03-15
 
-- Enable to highlight several tasks on the map even if no action is available for tasks (Mensakas issue)
+### Changed
+
+- Allow to highlight several tasks on the map even if no action is available for tasks
 
 ## [1.30.1] - 2024-03-05
+
+### Fixed
 
 - Bug fixes for Tours beta feature. Issues #4012, #4013, #4016
 
 ## [1.30.0] - 2024-03-05
 
+### Added
+
 - Introduce DBSchenker automatic import
 
 ## [1.29.1] - 2024-02-15
+
+### Changed
 
 - Use new React18 createRoot to render the dispatch right panel
 
 ## [1.29.0] - 2024-02-15
 
-- Incidents display on the dashboard : in task detail and in assigned tasks
+### Changed
+
+- Incidents display on the dashboard: in task detail and in assigned tasks
 - Fix for creating a tour from several tasks
 - Upgrade to react 18
 
@@ -70,10 +219,14 @@ Tour fixes :
 
 ## [1.25.1] - 2024-01-18
 
+### Fixed
+
 - Ignore empty lines in spreadsheets.
 - Allow restoring cancelled orders that were previously accepted.
 
 ## [1.25.0] - 2024-01-16
+
+### Changed
 
 - Improve orders search
 - Improve dispatch dashboard drag'n'drop

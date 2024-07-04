@@ -8,6 +8,11 @@ class BusinessAccountInvitation
     private $businessAccount;
     private $invitation;
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getBusinessAccount()
     {
         return $this->businessAccount;

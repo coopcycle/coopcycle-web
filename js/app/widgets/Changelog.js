@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import changelogParser from '@release-notes/changelog-parser'
 import axios from 'axios'
 import moment from 'moment'
 import Cookies from 'js-cookie'
 import { compare } from 'compare-versions'
+import { Tag } from 'antd'
 
 import { Badge, Popover } from 'antd'
 
@@ -24,27 +25,51 @@ const getNewReleasesCount = (releases, lastViewedVersion) => {
   return newReleases.length
 }
 
+// Render Markdown without a wrapping <p> tag
+// https://github.com/remarkjs/react-markdown/issues/42
+const UnwrappedMarkdown = (props) => {
+  const { children, ...otherProps } = props
+
+  return (
+    <ReactMarkdown components={{
+      p: React.Fragment,
+    }} { ...otherProps }>{ children }</ReactMarkdown>
+  )
+}
+
+const ReleaseSection = ({ section, type, color }) => {
+
+  if (section.length === 0) {
+    return null
+  }
+
+  return (
+    <div>
+      <div className="mb-2">
+        <Tag color={ color }>{ type }</Tag>
+      </div>
+      <ul className="list-unstyled mb-2">
+      { section.map((content, index) => (
+        <li key={ `${type}-${index}` }>
+          <UnwrappedMarkdown>{ content }</UnwrappedMarkdown>
+        </li>
+      )) }
+      </ul>
+    </div>
+  )
+}
+
 const Release = ({ release }) => {
 
   return (
     <li>
-      <h5>{ `${release.version} – ${moment(release.date).format('LL')}` }</h5>
+      <h5 className="font-weight-bold">{ `${release.version} – ${moment(release.date).format('LL')}` }</h5>
       <div>
-        { release.added.map((content, index) => (
-          <ReactMarkdown key={ `added-${index}` }>{ content }</ReactMarkdown>
-        )) }
-        { release.changed.map((content, index) => (
-          <ReactMarkdown key={ `changed-${index}` }>{ content }</ReactMarkdown>
-        )) }
-        { release.deprecated.map((content, index) => (
-          <ReactMarkdown key={ `deprecated-${index}` }>{ content }</ReactMarkdown>
-        )) }
-        { release.fixed.map((content, index) => (
-          <ReactMarkdown key={ `fixed-${index}` }>{ content }</ReactMarkdown>
-        )) }
-        { release.removed.map((content, index) => (
-          <ReactMarkdown key={ `removed-${index}` }>{ content }</ReactMarkdown>
-        )) }
+        <ReleaseSection type="added"      color="green"   section={ release.added } />
+        <ReleaseSection type="changed"    color="blue"  section={ release.changed } />
+        <ReleaseSection type="deprecated" color="orange" section={ release.deprecated } />
+        <ReleaseSection type="fixed"      color="purple" section={ release.fixed } />
+        <ReleaseSection type="removed"    color="red"    section={ release.removed } />
       </div>
     </li>
   )
@@ -97,6 +122,7 @@ const Changelog = ({ releases, newReleasesCount }) => {
     >
       <a href="#">
         <Badge count={ releasesCount } showZero { ...badgeProps } title={ `${releasesCount} new release(s)` } />
+        <span className="ml-2">Whatʼs new?</span>
       </a>
     </Popover>
   )
@@ -123,6 +149,6 @@ export default function(el) {
       }
     }
 
-    render(<Changelog releases={ releases } newReleasesCount={ newReleasesCount } />, el)
+    createRoot(el).render(<Changelog releases={ releases } newReleasesCount={ newReleasesCount } />)
   })
 }

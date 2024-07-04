@@ -29,7 +29,7 @@ class TaskListUpdated extends BaseEvent implements SerializableEventInterface
             'resource_class' => TaskList::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
-            'groups' => ['task_collection', 'task', 'delivery', 'address']
+            'groups' => ['task_list', "task_collection", "task", "delivery", "address"]
         ]);
 
         return [

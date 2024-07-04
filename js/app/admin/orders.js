@@ -1,4 +1,4 @@
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
@@ -91,5 +91,5 @@ if (rootElement) {
     );
   };
 
-  ReactDOM.render(<ChartRenderer />, rootElement);
+  createRoot(rootElement).render(<ChartRenderer />);
 }

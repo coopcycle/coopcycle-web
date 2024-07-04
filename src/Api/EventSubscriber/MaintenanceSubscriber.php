@@ -14,18 +14,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class MaintenanceSubscriber implements EventSubscriberInterface
 {
-    private $redis;
-    private $translator;
-
     public function __construct(
-        Redis $redis,
-        TranslatorInterface $translator,
-        MaintenanceManager $maintenance
-    ) {
-        $this->redis = $redis;
-        $this->translator = $translator;
-        $this->maintenance = $maintenance;
-    }
+        private Redis $redis,
+        private TranslatorInterface $translator,
+        private MaintenanceManager $maintenance)
+    {}
 
     /**
      * @return array

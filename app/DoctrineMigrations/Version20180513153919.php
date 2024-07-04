@@ -104,16 +104,16 @@ class Version20180513153919 extends AbstractMigration
 
         $this->setBuilder = new CartesianSetBuilder();
 
-        $stmt['menu_item']->execute();
-        while ($menuItem = $stmt['menu_item']->fetch()) {
+        $result = $stmt['menu_item']->execute();
+        while ($menuItem = $result->fetchAssociative()) {
 
             $productCode = sprintf('CPCCL-FDTCH-%d', $menuItem['id']);
 
             $stmt['menu_item_modifier']->bindParam('menu_item_id', $menuItem['id']);
-            $stmt['menu_item_modifier']->execute();
+            $result2 = $stmt['menu_item_modifier']->execute();
 
             // Skip menu items with no menu item modifier
-            if ($stmt['menu_item_modifier']->rowCount() === 0) {
+            if ($result2->rowCount() === 0) {
                 continue;
             }
 
@@ -121,22 +121,22 @@ class Version20180513153919 extends AbstractMigration
             $modifierMap = []; // Maps product option code with modifier id
 
             $i = 0;
-            while ($menuItemModifier = $stmt['menu_item_modifier']->fetch()) {
+            while ($menuItemModifier = $result2->fetchAssociative()) {
 
                 $productOptionCode = sprintf('CPCCL-FDTCH-%d-OPT-%d', $menuItem['id'], $menuItemModifier['id']);
 
                 $this->associateProductAndOption($productCode, $productOptionCode);
 
                 $stmt['product_variant']->bindParam('code', $productCode);
-                $stmt['product_variant']->execute();
+                $result3 = $stmt['product_variant']->execute();
 
-                while ($productVariant = $stmt['product_variant']->fetch()) {
+                while ($productVariant = $result3->fetchAssociative()) {
 
                     $stmt['product_variant_option_value']->bindParam('code', $productVariant['code']);
-                    $stmt['product_variant_option_value']->execute();
+                    $result4 = $stmt['product_variant_option_value']->execute();
 
                     // Delete default variant created on previous migration
-                    if ($stmt['product_variant_option_value']->rowCount() === 0) {
+                    if ($result4->rowCount() === 0) {
                         // FIXME Find a way to change the variant instead of deleting it
                         $this->addSql('DELETE FROM sylius_order_item USING sylius_product_variant WHERE sylius_product_variant.id = sylius_order_item.variant_id AND sylius_product_variant.code = :code', [
                             'code' => $productVariant['code'],
@@ -148,10 +148,10 @@ class Version20180513153919 extends AbstractMigration
                 }
 
                 $stmt['modifier']->bindParam('menu_item_modifier_id', $menuItemModifier['id']);
-                $stmt['modifier']->execute();
+                $result4 = $stmt['modifier']->execute();
 
                 $modifiersIds = [];
-                while ($modifier = $stmt['modifier']->fetch()) {
+                while ($modifier = $result4->fetchAssociative()) {
                     $productOptionValueCode = sprintf('%s-%d', $productOptionCode, $modifier['id']);
                     $optionSet[$i][] = $productOptionValueCode;
                     $modifierMap[$productOptionValueCode] = $modifier['id'];

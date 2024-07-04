@@ -27,18 +27,18 @@ final class Version20191113125855 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_D9191BD48D9F6D38 ON sylius_payment (order_id)');
 
         $stmt = $this->connection->prepare("SELECT id FROM sylius_payment_method WHERE code = 'STRIPE'");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        $stripeMethod = $stmt->fetch();
+        $stripeMethod = $result->fetchAssociative();
 
         $this->addSql('INSERT INTO sylius_payment (id, method_id, currency_code, amount, state, details, created_at, updated_at, order_id) SELECT id, :stripe_payment_method_id, currency_code, amount, state, details, created_at, updated_at, order_id FROM stripe_payment', [
             'stripe_payment_method_id' => $stripeMethod['id']
         ]);
 
         $stmt = $this->connection->prepare("SELECT last_value FROM stripe_payment_id_seq");
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        $latestId = $stmt->fetchColumn();
+        $latestId = $result->fetchOne();
         $latestId = intval($latestId);
 
         $this->addSql("SELECT SETVAL('sylius_payment_id_seq', {$latestId}, true)");

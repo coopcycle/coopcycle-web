@@ -20,9 +20,9 @@ final class Version20221013115138 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $stmt = $this->connection->prepare('SELECT * FROM task_rrule');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($rrule = $stmt->fetch()) {
+        while ($rrule = $result->fetchAssociative()) {
 
             $template = json_decode($rrule['template'], true);
 

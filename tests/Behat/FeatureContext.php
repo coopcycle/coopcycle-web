@@ -13,6 +13,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\DeliveryAddress;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
@@ -38,7 +39,6 @@ use Behat\Testwork\Tester\Result\ExceptionResult;
 use Behat\Behat\Tester\Exception\PendingException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
-use Doctrine\ORM\Tools\SchemaTool;
 use Faker\Generator as FakerGenerator;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
@@ -68,40 +68,19 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
 
+
 /**
  * Defines application features from the specific context.
  */
 class FeatureContext implements Context, SnippetAcceptingContext
 {
-    /**
-     * @var ManagerRegistry
-     */
-    private $doctrine;
-
-    /**
-     * @var \Doctrine\Common\Persistence\ObjectManager
-     */
-    private $manager;
-
-    /**
-     * @var SchemaTool
-     */
-    private $schemaTool;
-
-    /**
-     * @var array
-     */
-    private $classes;
-
-    private $kernel;
-
     private $restContext;
+
+    private $minkContext;
 
     private $tokens;
 
     private $oAuthTokens;
-
-    private $fixturesLoader;
 
     private $apiKeys;
 
@@ -113,44 +92,26 @@ class FeatureContext implements Context, SnippetAcceptingContext
      * context constructor through behat.yml.
      */
     public function __construct(
-        ManagerRegistry $doctrine,
-        PhoneNumberUtil $phoneNumberUtil,
-        LoaderInterface $fixturesLoader,
-        SettingsManager $settingsManager,
-        OrderTimelineCalculator $orderTimelineCalculator,
-        UserManipulator $userManipulator,
-        AuthorizationServer $authorizationServer,
-        Redis $redis,
-        IriConverterInterface $iriConverter,
-        HttpMessageFactoryInterface $httpMessageFactory,
-        Redis $tile38,
-        FakerGenerator $faker,
-        OrderProcessorInterface $orderProcessor,
-        KernelInterface $kernel,
-        UserManager $userManager,
-        CollectionManager $typesenseCollectionManager)
+        protected ManagerRegistry $doctrine,
+        protected PhoneNumberUtil $phoneNumberUtil,
+        protected LoaderInterface $fixturesLoader,
+        protected SettingsManager $settingsManager,
+        protected OrderTimelineCalculator $orderTimelineCalculator,
+        protected UserManipulator $userManipulator,
+        protected AuthorizationServer $authorizationServer,
+        protected Redis $redis,
+        protected IriConverterInterface $iriConverter,
+        protected HttpMessageFactoryInterface $httpMessageFactory,
+        protected Redis $tile38,
+        protected FakerGenerator $faker,
+        protected OrderProcessorInterface $orderProcessor,
+        protected KernelInterface $kernel,
+        protected UserManager $userManager,
+        protected CollectionManager $typesenseCollectionManager)
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
         $this->apiKeys = [];
-        $this->doctrine = $doctrine;
-        $this->manager = $doctrine->getManager();
-        $this->schemaTool = new SchemaTool($this->manager);
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->fixturesLoader = $fixturesLoader;
-        $this->settingsManager = $settingsManager;
-        $this->orderTimelineCalculator = $orderTimelineCalculator;
-        $this->userManipulator = $userManipulator;
-        $this->authorizationServer = $authorizationServer;
-        $this->redis = $redis;
-        $this->iriConverter = $iriConverter;
-        $this->httpMessageFactory = $httpMessageFactory;
-        $this->tile38 = $tile38;
-        $this->faker = $faker;
-        $this->orderProcessor = $orderProcessor;
-        $this->kernel = $kernel;
-        $this->userManager = $userManager;
-        $this->typesenseCollectionManager = $typesenseCollectionManager;
     }
 
     protected function getContainer()
@@ -163,6 +124,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function gatherContexts(BeforeScenarioScope $scope)
     {
+        /** @var \Behat\Behat\Context\Environment\InitializedContextEnvironment */
         $environment = $scope->getEnvironment();
 
         $this->restContext = $environment->getContext('Behatch\Context\RestContext');
@@ -184,7 +146,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function resetSequences()
     {
         $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAll('SELECT sequence_name FROM information_schema.sequences');
+        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
         foreach ($rows as $row) {
             $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
         }
@@ -1257,6 +1219,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $data = json_decode($contents, true);
 
+        /** @var \GeoJson\Feature\FeatureCollection */
         $geojson = GeoJson::jsonUnserialize($data);
 
         foreach ($geojson as $feature) {
@@ -1282,6 +1245,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the store with name :storeName has order creation enabled
+     */
+    public function theStoreWithNameHasOrderCreationEnabled($storeName)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+        $store->setCreateOrders(true);
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
      * @Given stripe client is ready to use
      */
     public function theStripeClientIsReadyToUse()
@@ -1293,5 +1266,31 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         Stripe::$apiBase = $stripeMockApiBase;
+    }
+
+    /**
+     * @Given the task with id :taskId belongs to organization with name :orgName
+     */
+    public function theTaskWithIdBelongsToOrganizationWithName($taskId, $orgName)
+    {
+        $task = $this->doctrine->getRepository(Task::class)->find($taskId);
+        $organization = $this->doctrine->getRepository(Organization::class)->findOneByName($orgName);
+
+        $task->setOrganization($organization);
+
+        $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :storeName has failure reason set :failureReasonSet
+     */
+    public function theStoreWithNameHasFailureReasonSet($storeName, $failureReasonSet)
+    {
+        $failureReasonSet = $this->doctrine->getRepository(FailureReasonSet::class)->findOneByName($failureReasonSet);
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $store->setFailureReasonSet($failureReasonSet);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 }

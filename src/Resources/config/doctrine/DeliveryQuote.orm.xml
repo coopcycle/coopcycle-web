@@ -6,7 +6,7 @@
     </id>
     <field name="state" type="string" column="state"/>
     <field name="amount" type="integer" column="amount"/>
-    <field name="payload" type="json_array" column="payload"/>
+    <field name="payload" type="text" column="payload"/>
     <field name="expiresAt" type="datetime" column="expires_at"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>

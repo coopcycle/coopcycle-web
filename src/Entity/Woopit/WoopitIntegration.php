@@ -50,7 +50,7 @@ class WoopitIntegration
     /**
      * @var array Product types supported for the integration.
      */
-    private $productTypes;
+    private ?array $productTypes;
 
     /**
      * @var string Woopit Store identifier.

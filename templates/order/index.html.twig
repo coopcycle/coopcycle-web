@@ -9,6 +9,8 @@
 {% block body %}
 <div class="container container--full-height">
 
+  <div id="react-root"></div>
+
   {% if not order.empty %}
 
     {% set user_with_same_email_exists_code =
@@ -52,7 +54,7 @@
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
 
     <div class="row">
-      <div class="col-xs-12">
+      <div class="col-xs-12 form-content">
 
         {% include 'order/breadcrumb.html.twig' %}
 
@@ -74,6 +76,12 @@
             </div>
           {% endif %}
         {% endfor %}
+
+        {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
+          {% include 'order/_partials/errors.html.twig' with {
+            errors: pre_submit_errors,
+          } %}
+        {% endif %}
 
         {{ form_errors(form) }}
 
@@ -156,16 +164,15 @@
     <nav class="checkout-nav border-top">
       <div class="container">
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
-          <span class="text-success">
-            <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
-          </span>
+          <!-- React component will be inserted here -->
+          <div id="order__fulfilment_time_range__container">
+          </div>
           <div>
             {% if form.quote is defined %}
               {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
             {% endif %}
-            <button class="btn btn-lg btn-primary" type="submit">
-              {% trans %}cart.widget.button{% endtrans %}
+            <button class="btn btn-lg btn-primary btn-submit-page" type="submit">
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans %}cart.widget.button{% endtrans %}
             </button>
           </div>
         </div>
@@ -242,6 +249,11 @@
   {% endif %}
 </div>
 
+<div id="js-order-data"
+     data-order-node-id="{{ order|get_iri_from_item }}"
+     data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
+     data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+
 <div id="optins"
   data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>
 
@@ -251,13 +263,13 @@
 {% endblock %}
 
 {% block styles %}
-  {{ encore_entry_link_tags('checkout-summary') }}
+  {{ encore_entry_link_tags('order-index') }}
   {{ encore_entry_link_tags('optins') }}
 {% endblock %}
 
 {% block scripts %}
 {% if not order.empty %}
-{{ encore_entry_script_tags('checkout-summary') }}
+{{ encore_entry_script_tags('order-index') }}
 {% endif %}
 {{ encore_entry_script_tags('optins') }}
 {% endblock %}

@@ -176,7 +176,8 @@ class GeofencingCommand extends Command
 
                     $customer = $order->getCustomer();
 
-                    if (!$customer->hasUser()) {
+                    // a store with no owner may create order without customer
+                    if (is_null($customer) || !$customer->hasUser()) {
                         return;
                     }
 

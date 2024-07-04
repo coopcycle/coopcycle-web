@@ -9,6 +9,15 @@ use AppBundle\Sylius\Order\OrderInterface;
 
 class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
 {
+    private $shouldCompletePayment = true;
+
+    public function __construct(OrderInterface $order, bool $shouldCompletePayment = true)
+    {
+        parent::__construct($order);
+
+        $this->shouldCompletePayment = $shouldCompletePayment;
+    }
+
     public static function messageName(): string
     {
         return 'order:fulfilled';
@@ -17,6 +26,11 @@ class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
     public static function iconName()
     {
         return 'check';
+    }
+
+    public function shouldCompletePayment(): bool
+    {
+        return $this->shouldCompletePayment;
     }
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core'
 import { Provider } from 'react-redux'
 
@@ -27,10 +27,9 @@ if (rootElement) {
     { apiUrl: rootElement.dataset.apiUrl }
   );
 
-  render(
+  createRoot(rootElement).render(
     <Provider store={ store }>
       <Dashboard cubejsApi={ cubejsApi } />
-    </Provider>,
-    rootElement
+    </Provider>
   )
 }

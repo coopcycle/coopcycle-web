@@ -6,10 +6,11 @@ use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Event\SchemaAlterTableChangeColumnEventArgs;
 use Doctrine\DBAL\Event\SchemaColumnDefinitionEventArgs;
 use Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber as BaseORMSchemaEventSubscriber;
+use Jsor\Doctrine\PostGIS\Types\PostGISType;
 
 class ORMSchemaEventSubscriber extends BaseORMSchemaEventSubscriber
 {
-    public function onSchemaColumnDefinition(SchemaColumnDefinitionEventArgs $args)
+    public function onSchemaColumnDefinition(SchemaColumnDefinitionEventArgs $args): void
     {
         parent::onSchemaColumnDefinition($args);
 
@@ -19,7 +20,7 @@ class ORMSchemaEventSubscriber extends BaseORMSchemaEventSubscriber
             return;
         }
 
-        if (!$this->isSpatialColumnType($column)) {
+        if (!$column->getType() instanceof PostGISType) {
             return;
         }
 
@@ -29,7 +30,7 @@ class ORMSchemaEventSubscriber extends BaseORMSchemaEventSubscriber
             return;
         }
 
-        $geoJSONComment = $args->getDatabasePlatform()->getDoctrineTypeComment(Type::getType('geojson'));
+        $geoJSONComment = $args->getConnection()->getDriver()->getDatabasePlatform()->getDoctrineTypeComment(Type::getType('geojson'));
 
         if ($comment === $geoJSONComment) {
             $args->getColumn()->setType(Type::getType('geojson'));

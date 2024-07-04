@@ -142,7 +142,8 @@ const MapProvider = (props) => {
   React.useEffect(() => {
 
     const LMap = MapHelper.init('map', {
-      onLoad: props.onLoad
+      onLoad: props.onLoad,
+      polygonManagement: true,
     })
 
     const proxy = new MapProxy(LMap, {

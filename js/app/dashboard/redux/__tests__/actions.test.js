@@ -68,7 +68,6 @@ describe('removeTaskFromTour', () => {
     const store = mockStore(storeFixture)
 
     const dispatch = jest.fn(),
-      mockUnassignTasks = jest.fn(),
       mockModifyTour = jest.fn()
 
     const tour = {
@@ -90,15 +89,7 @@ describe('removeTaskFromTour', () => {
     }
     const task = {'@id': '/api/tasks/730', isAssigned: true}
 
-    removeTasksFromTour(tour, task, 'admin',  mockUnassignTasks, mockModifyTour)(dispatch, store.getState)
-
-    expect(mockUnassignTasks).toHaveBeenCalledTimes(1)
-    expect(mockUnassignTasks).toHaveBeenCalledWith(
-      "admin",
-      expect.arrayContaining([
-        expect.objectContaining({"@id": '/api/tasks/730'}),
-      ])
-    )
+    removeTasksFromTour(tour, task, mockModifyTour)(dispatch, store.getState)
 
     expect(mockModifyTour).toHaveBeenCalledTimes(1)
     expect(mockModifyTour).toHaveBeenLastCalledWith(

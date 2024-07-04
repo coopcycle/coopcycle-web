@@ -3,32 +3,45 @@ import _ from 'lodash'
 import {
   SET_FILTER_VALUE,
   RESET_FILTERS,
-  SET_CLUSTERS_ENABLED,
-  SET_POLYLINE_STYLE,
   SHOW_RECURRENCE_RULES,
-  SET_USE_AVATAR_COLORS,
   SET_TOURS_ENABLED,
+  setGeneralSettings,
 } from './actions'
 
-const defaultFilters = {
+export const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
   showIncidentReportedTasks: true,
   alwayShowUnassignedTasks: false,
   tags: [],
+  excludedTags: [],
+  excludedOrgs: [],
+  includedOrgs: [],
   hiddenCouriers: [],
   timeRange: [0, 24],
   onlyFilter: null,
+  unassignedTasksFilters: {
+    excludedTags: [],
+    includedTags: [],
+    excludedOrgs: [],
+    includedOrgs: []
+  }
 }
 
-export const initialState = {
-  filters: defaultFilters,
-  isDefaultFilters: true,
+export const defaultSettings = {
   clustersEnabled: false,
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
   useAvatarColors: false,
-  toursEnabled: false,
+  showDistanceAndTime: true,
+  showWeightAndVolumeUnit: true,
+  toursEnabled: false // is the tour column expanded
+}
+
+export const initialState = {
+  ...defaultSettings,
+  filters: defaultFilters,
+  isDefaultFilters: true,
 }
 
 export default (state = initialState, action) => {
@@ -61,25 +74,10 @@ export default (state = initialState, action) => {
       isDefaultFilters: true
     }
 
-  case SET_CLUSTERS_ENABLED:
-
+  case setGeneralSettings.type:
     return {
       ...state,
-      clustersEnabled: action.enabled
-    }
-
-  case SET_USE_AVATAR_COLORS:
-
-    return {
-      ...state,
-      useAvatarColors: action.useAvatarColors
-    }
-
-  case SET_POLYLINE_STYLE:
-
-    return {
-      ...state,
-      polylineStyle: action.style
+      ...action.payload
     }
 
   case SET_TOURS_ENABLED:
@@ -91,9 +89,6 @@ export default (state = initialState, action) => {
   }
 
   let isDefaultFilters = initialState.isDefaultFilters
-  if (Object.prototype.hasOwnProperty.call(state, 'filters') && !Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters')) {
-    isDefaultFilters = _.isEqual(state.filters, defaultFilters)
-  }
 
   return {
     ...state,

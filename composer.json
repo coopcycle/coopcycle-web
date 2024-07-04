@@ -37,7 +37,7 @@
         "symfony/monolog-bundle": "^3.5",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
-        "jsor/doctrine-postgis": "^1.1",
+        "jsor/doctrine-postgis": "^2.3.0",
         "league/geotools": "@stable",
         "gedmo/doctrine-extensions": "^3.0.3",
         "snc/redis-bundle": "4.3.0",
@@ -146,7 +146,7 @@
         "symfony/ux-react": "2.10",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
-        "coopcycle/db-schenker": "dev-master",
+        "coopcycle/transporter": "dev-master",
         "runtime/frankenphp-symfony": "^0.2.0"
     },
     "require-dev": {
@@ -165,7 +165,8 @@
         "friends-of-behat/mink-browserkit-driver": "^1.4",
         "rector/rector": "^0.17",
         "phpstan/phpstan-doctrine": "^1.0",
-        "aeon-php/calendar": "1.0.6"
+        "aeon-php/calendar": "1.0.6",
+        "league/flysystem-memory": "^3.0"
     },
     "repositories": [
         {
@@ -178,7 +179,7 @@
         },
         {
           "type": "vcs",
-          "url": "https://github.com/coopcycle/DBSchenkerClient"
+          "url": "https://github.com/coopcycle/transporter"
         },
         {
           "type": "vcs",

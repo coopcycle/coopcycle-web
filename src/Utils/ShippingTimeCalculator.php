@@ -10,15 +10,11 @@ use Carbon\CarbonInterval;
 
 class ShippingTimeCalculator
 {
-    private $routing;
-    private $fallback;
-
-    public function __construct(RoutingInterface $routing, RouteOptimizer $optimizer, $fallback = '10 minutes')
-    {
-        $this->routing = $routing;
-        $this->optimizer = $optimizer;
-        $this->fallback = $fallback;
-    }
+    public function __construct(
+        private RoutingInterface $routing,
+        private RouteOptimizer $optimizer,
+        private string $fallback = '10 minutes')
+    {}
 
     public function calculate(OrderInterface $order): string
     {

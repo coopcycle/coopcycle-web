@@ -55,16 +55,13 @@
       title: 'deliveries.section.past'|trans,
       active: (deliveries.params.section is defined and deliveries.params.section == 'past'),
       path: path('admin_deliveries', { section: 'past' })
-    }
-  ] %}
-
-  {% if import_queues|length > 0 %}
-    {% set tab_items = tab_items|merge([{
+    },
+    {
       title: 'deliveries.imports'|trans,
       active: app.request.query.get('section', 'today') == 'imports',
       path: path('admin_deliveries', { section: 'imports' })
-    }]) %}
-  {% endif %}
+    },
+  ] %}
 
   <ul class="nav nav-tabs">
     {% if filters is defined and filters.query %}
@@ -116,7 +113,10 @@
       'completed': 'check',
       'failed': 'exclamation-circle'
     } %}
-    <table class="table mt-4"
+    <div class="text-right my-2">
+      <div id="import-datepicker" data-default-date="{{ import_date|date('Y-m-d') }}"></div>
+    </div>
+    <table class="table mb-4"
       data-delivery-imports
       data-centrifugo-token="{{ centrifugo_token }}"
       data-centrifugo-channel="{{ centrifugo_channel }}">
@@ -141,7 +141,7 @@
               <a href="#" class="mr-3 {% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-view>
                 <i class="fa fa-eye"></i>
               </a>
-              <a href="#" class="{% if import_queue.status != 'failed' %}d-none{% endif %}" data-delivery-import-redownload>
+              <a href="#" data-delivery-import-redownload>
                 <i class="fa fa-download"></i>
               </a>
             </td>
@@ -152,11 +152,10 @@
     <div id="delivery_import_spreadsheet"></div>
   {% else %}
     {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
+    <nav class="text-center">
+      {{ knp_pagination_render(deliveries) }}
+    </nav>
   {% endif %}
-
-  <nav class="text-center">
-    {{ knp_pagination_render(deliveries) }}
-  </nav>
 
   <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="choose-store-modal-label" id="choose-store-modal">
     <div class="modal-dialog" role="document">

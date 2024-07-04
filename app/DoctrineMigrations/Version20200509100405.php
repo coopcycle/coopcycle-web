@@ -27,8 +27,8 @@ final class Version20200509100405 extends AbstractMigration
         $stmts = [];
         $stmts['restaurants'] = $this->connection->prepare('SELECT id, opening_hours, opening_hours_behavior, takeaway_enabled FROM restaurant');
 
-        $stmts['restaurants']->execute();
-        while ($restaurant = $stmts['restaurants']->fetch()) {
+        $result = $stmts['restaurants']->execute();
+        while ($restaurant = $result->fetchAssociative()) {
 
             $fulfillmentMethods = ['delivery'];
             if ($restaurant['takeaway_enabled']) {
@@ -64,15 +64,15 @@ final class Version20200509100405 extends AbstractMigration
         $stmts['restaurants'] = $this->connection->prepare('SELECT * FROM restaurant');
         $stmts['fulfillment_methods'] = $this->connection->prepare('SELECT * FROM restaurant_fulfillment_method WHERE restaurant_id = :restaurant_id');
 
-        $stmts['restaurants']->execute();
-        while ($restaurant = $stmts['restaurants']->fetch()) {
+        $result = $stmts['restaurants']->execute();
+        while ($restaurant = $result->fetchAssociative()) {
 
             $stmts['fulfillment_methods']->bindParam('restaurant_id', $restaurant['id']);
-            $stmts['fulfillment_methods']->execute();
+            $result2 = $stmts['fulfillment_methods']->execute();
 
             $fulfillmentMethods = [];
             $takeawayEnabled = false;
-            while ($fulfillmentMethod = $stmts['fulfillment_methods']->fetch()) {
+            while ($fulfillmentMethod = $result2->fetchAssociative()) {
                 $fulfillmentMethods[] = $fulfillmentMethod;
                 if ($fulfillmentMethod['type'] === 'collection') {
                     $takeawayEnabled = true;

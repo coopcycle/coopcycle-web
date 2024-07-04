@@ -22,6 +22,8 @@ class OrderActionsVoter extends Voter
     const DELAY   = 'delay';
     const FULFILL = 'fulfill';
     const CANCEL  = 'cancel';
+    const START_PREPARING  = 'start_preparing';
+    const FINISH_PREPARING  = 'finish_preparing';
     const RESTORE = 'restore';
     const VIEW    = 'view';
     const VIEW_PUBLIC = 'view_public';
@@ -33,6 +35,8 @@ class OrderActionsVoter extends Voter
         self::DELAY,
         self::FULFILL,
         self::CANCEL,
+        self::START_PREPARING,
+        self::FINISH_PREPARING,
         self::RESTORE,
         self::VIEW,
         self::VIEW_PUBLIC,
@@ -70,6 +74,7 @@ class OrderActionsVoter extends Voter
             $validStates = [
                 OrderInterface::STATE_NEW,
                 OrderInterface::STATE_ACCEPTED,
+                OrderInterface::STATE_FULFILLED,
             ];
 
             if (!in_array($orderState, $validStates)) {

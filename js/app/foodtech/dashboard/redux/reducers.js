@@ -12,6 +12,7 @@ import {
   ORDER_CANCELLED,
   ORDER_FULFILLED,
   ORDER_DELAYED,
+  ORDER_STATE_CHANGED,
   FETCH_REQUEST,
   ACCEPT_ORDER_REQUEST_SUCCESS,
   ACCEPT_ORDER_REQUEST_FAILURE,
@@ -34,6 +35,7 @@ import {
   CLOSE_LOOPEAT_SECTION,
   SET_LOOPEAT_FORMATS,
   UPDATE_LOOPEAT_FORMATS_SUCCESS,
+  COLUMN_TOGGLED,
 } from './actions'
 
 export const initialState = {
@@ -62,6 +64,9 @@ export const initialState = {
   isLoopeatSectionOpen: false,
   loopeatFormats: [],
   errorMessage: '',
+  preferences: {
+    collapsedColumns: [],
+  },
 }
 
 // The "force" parameter is useful for multi vendor orders,
@@ -215,6 +220,13 @@ export default (state = initialState, action = {}) => {
       orders: replaceOrder(state.orders, Object.assign({}, action.payload), true),
     }
 
+  case ORDER_STATE_CHANGED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload)),
+    }
+
   case SET_CURRENT_ORDER:
 
     return {
@@ -293,6 +305,29 @@ export default (state = initialState, action = {}) => {
       order: action.payload,
     }
 
+  case COLUMN_TOGGLED: {
+    const columnId = action.payload
+
+    const collapsedColumns = state.preferences.collapsedColumns
+
+    if (collapsedColumns.includes(columnId)) {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          collapsedColumns: collapsedColumns.filter(col => col !== columnId)
+        }
+      }
+    } else {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          collapsedColumns: collapsedColumns.concat(columnId)
+        }
+      }
+    }
+  }
   }
 
   return state

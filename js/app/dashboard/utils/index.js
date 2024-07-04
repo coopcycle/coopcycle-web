@@ -37,3 +37,28 @@ export const getDroppableListStyle = (isDraggingOver) => ({
   background: isDraggingOver ? "lightblue" : "white",
   borderWidth: isDraggingOver ? "4px" : "3px"
 })
+
+// copy-pasted from https://stackoverflow.com/questions/31790344/determine-if-a-point-reside-inside-a-leaflet-polygon
+export const isMarkerInsidePolygon = (marker, polygon) => {
+  var polyPoints = polygon.getLatLngs()[0]; // getLatLngs returns an array of array
+  var x = marker.getLatLng().lat, y = marker.getLatLng().lng;
+  var inside = false;
+  for (var i = 0, j = polyPoints.length - 1; i < polyPoints.length; j = i++) {
+      var xi = polyPoints[i].lat, yi = polyPoints[i].lng;
+      var xj = polyPoints[j].lat, yj = polyPoints[j].lng;
+
+      var intersect = ((yi > y) != (yj > y))
+          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+      if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+
+/**
+ * @param {string} slug - Slug we are searching against
+ * @param {Array.Object} tags - All tags to be searched
+ */
+export const findTagFromSlug = (slug, allTags) => {
+  return _.find(allTags, t => t.slug === slug)
+}

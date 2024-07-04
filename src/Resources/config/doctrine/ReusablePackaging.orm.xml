@@ -10,7 +10,7 @@
     <field name="onHand" type="integer" column="on_hand"/>
     <field name="tracked" type="boolean" column="tracked"/>
     <field name="type" type="string" column="type"/>
-    <field name="data" type="json_array" column="data"/>
+    <field name="data" type="json" column="data"/>
     <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="reusablePackagings">
       <join-columns>
         <join-column name="restaurant_id" referenced-column-name="id"/>

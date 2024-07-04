@@ -13,7 +13,8 @@ class TaskIncidentReported extends Event implements DomainEvent, HasIconInterfac
     public function __construct(
         Task $task,
         private string $reason,
-        private ?string $notes = null
+        private ?string $notes = null,
+        private array $data = []
     )
     {
         parent::__construct($task);
@@ -21,10 +22,10 @@ class TaskIncidentReported extends Event implements DomainEvent, HasIconInterfac
 
     public function toPayload()
     {
-        return [
+        return array_merge([
             'reason' => $this->reason,
             'notes' => $this->notes
-        ];
+        ], $this->data);
     }
 
     public static function messageName(): string

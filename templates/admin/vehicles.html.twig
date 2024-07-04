@@ -12,7 +12,6 @@
 </p>
 <table class="table">
   <thead>
-    <th>#</th>
     <th>{{ 'basics.name'|trans }}</th>
     <th>{{ 'form.vehicle.volume_units.label'|trans }}</th>
     <th>{{ 'form.vehicle.max_weight.label'|trans }}</th>
@@ -21,7 +20,6 @@
   <tbody>
   {% for vehicle in vehicles %}
     <tr>
-      <td>{{ vehicle.id }}</td>
       <td>{{ vehicle.name }}</td>
       <td>{{ vehicle.volumeUnits }}</td>
       <td>{{ vehicle.maxWeight }}</td>

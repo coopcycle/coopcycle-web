@@ -1,25 +1,28 @@
 {% if stores|length > 0 %}
   <table class="table">
     <thead>
-      <th></th>
       <th>{{ 'basics.name'|trans }}</th>
       {% if is_granted('ROLE_ADMIN') %}
-      <th>{{ 'stores.pricing_rule_set'|trans }}</th>
+        <th></th>
+        <th></th>
       {% endif %}
       <th></th>
     </thead>
     <tbody>
     {% for store in stores %}
       <tr>
-        <td><a href="{{ path(store_route, { id: store.id }) }}">#{{ store.id }}</a></td>
-        <td>{{ store.name }}</td>
+        <td><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></td>
         {% if is_granted('ROLE_ADMIN') %}
         <td>
           {% if store.pricingRuleSet is not null %}
             <a href="{{ path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id }) }}">
               {{ store.pricingRuleSet.name }}
-            </a>
-            {% if store.prefillPickupAddress or store.createOrders or store.timeSlot is not empty or store.packageSet is not empty %}
+            </a><br>
+          {% endif %}
+          {% if store.packageSet is not empty %}
+            <a href="{{ path('admin_packages', { id: store.packageSet.id }) }}">{{ 'form.store_type.package_set.label'|trans }} {{ store.packageSet.name }}</a>
+          {% endif %}
+          {% if store.prefillPickupAddress or store.createOrders or store.timeSlot is not empty or store.packageSet is not empty %}
             <ul class="list-unstyled nomargin">
               {% if store.prefillPickupAddress %}
                 <li>
@@ -36,13 +39,7 @@
                   <small class="text-muted">{{ 'form.store_type.time_slot.label'|trans }} {{ store.timeSlot.name }}</small>
                 </li>
               {% endif %}
-              {% if store.packageSet is not empty %}
-                <li>
-                  <small class="text-muted">{{ 'form.store_type.package_set.label'|trans }} {{ store.packageSet.name }}</small>
-                </li>
-              {% endif %}
             </ul>
-            {% endif %}
           {% endif %}
         </td>
         {% endif %}
@@ -62,30 +59,39 @@
                   {% trans %}stores.deliveries{% endtrans %}
                 </a>
               </li>
-              {% if is_granted('ROLE_ADMIN') %}
-              <li>
-                <a href="{{ path('admin_store_users', { id: store.id }) }}">
-                  {% trans %}stores.users{% endtrans %}
-                </a>
-              </li>
-              {% endif %}
               <li>
                 <a href="{{ path(store_delivery_new_route, { id: store.id }) }}">
                   {% trans %}stores.createNewDelivery{% endtrans %}
                 </a>
               </li>
+              {% if is_granted('ROLE_ADMIN') %}
+                <li>
+                  <a href="{{ path('admin_store_users', { id: store.id }) }}">
+                    {% trans %}stores.users{% endtrans %}
+                  </a>
+                </li>
+              {% endif %}
             </ul>
           </div>
+        </td>
+        <td>
+          <a class="text-danger">
+             <i data-store-name="{{ store.name }}" data-store-id="{{ store.id }}" class="fa fa-trash delete-store"></i>
+          </a>
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table>
-  <nav class="text-center"> 
-   {{ knp_pagination_render(stores) }} 
-  </nav> 
+  <nav class="text-center">
+   {{ knp_pagination_render(stores) }}
+  </nav>
 {% else %}
   <div class="alert alert-info">
   {% trans %}stores.list.noStores{% endtrans %}
   </div>
 {% endif %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('stores-list') }}
+{% endblock %}

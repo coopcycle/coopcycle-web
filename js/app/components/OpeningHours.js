@@ -12,6 +12,7 @@ import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
 import { timePickerProps } from '../utils/antd'
 import { antdLocale } from '../i18n'
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 let minutes = []
 for (let i = 0; i <= 60; i++) {
@@ -158,46 +159,52 @@ class OpeningHours extends React.Component {
     const endValue = row.end ? moment(row.end + ':00', 'HH:mm:ss') : null
 
     return (
-      <tr key={ `${index}-${rev}` }
-        className={ classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) }) }>
-        <td width="50%">
-          <span className="d-block mr-3">
-            <TimePicker.RangePicker
-              { ...timePickerProps }
-              defaultValue={[startValue, endValue]}
-              disabledMinutes={this.disabledMinutes}
-              disabled={ this.state.disabled }
-              hideDisabledOptions
-              placeholder={["Heure","Heure"]}
-              onChange={(value) => {
-                this.onRangeChange(index, value)
-              }}
-            />
-          </span>
-          <small className="text-muted">{ openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior) }</small>
-        </td>
-        {_.map(weekdays, (weekday) => (
-          <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
-            <input type="checkbox"
-              disabled={ this.state.disabled }
-              onChange={this.onCheckboxChange.bind(this, index, weekday.key)}
-              checked={this.isWeekdayChecked(row, weekday.key)}
-              className="form-input" />
-          </td>
-        ))}
-        <td className="text-center">
-          { !this.state.disabled && (
-          <button type="button" className="button-icon" onClick={this.removeRow.bind(this, index)}>
-            <i className="fa fa-times"></i>
-          </button>
-          )}
-          { this.state.disabled && (
-          <button type="button" className="button-icon">
-            <i className="fa fa-times text-muted"></i>
-          </button>
-          )}
-        </td>
-      </tr>
+      <Draggable key={index} draggableId={index.toString()} index={index}>
+        {(provided) => (
+          <tr key={ `${index}-${rev}` } ref={provided.innerRef} { ...provided.draggableProps }
+            className={ classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) }) }>
+            <td width="50%">
+              <span className="d-block">
+                <i {...provided.dragHandleProps} className="fa fa-bars mr-3"></i>
+                <TimePicker.RangePicker
+                  { ...timePickerProps }
+                  defaultValue={[startValue, endValue]}
+                  disabledMinutes={this.disabledMinutes}
+                  disabled={ this.state.disabled }
+                  hideDisabledOptions
+                  placeholder={["Heure","Heure"]}
+                  onChange={(value) => {
+                    this.onRangeChange(index, value)
+                  }}
+                />
+              </span>
+              <small className="text-muted">{ openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior) }</small>
+            </td>
+            {_.map(weekdays, (weekday) => (
+              <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
+                <input type="checkbox"
+                  disabled={ this.state.disabled }
+                  onChange={this.onCheckboxChange.bind(this, index, weekday.key)}
+                  checked={this.isWeekdayChecked(row, weekday.key)}
+                  className="form-input" />
+              </td>
+            ))}
+            <td className="text-center">
+              { !this.state.disabled && (
+                <button type="button" className="button-icon" onClick={this.removeRow.bind(this, index)}>
+                  <i className="fa fa-times"></i>
+                </button>
+              )}
+              { this.state.disabled && (
+                <button type="button" className="button-icon">
+                  <i className="fa fa-times text-muted"></i>
+                </button>
+              )}
+            </td>
+          </tr>
+
+        )}
+      </Draggable>
     )
   }
 
@@ -228,6 +235,14 @@ class OpeningHours extends React.Component {
     this.props.onRowRemove(index)
   }
 
+  reOrderRows(from, to) {
+    const rows = Array.from(this.state.rows);
+    const [removed] = rows.splice(from, 1);
+    rows.splice(to, 0, removed);
+    this.setState({ rows, rev: this.state.rev + 1 })
+    this.props.onChange(_.map(rows, (row) => this.rowToString(row)))
+  }
+
   render() {
     const { weekdays } = this.state
     return (
@@ -243,9 +258,17 @@ class OpeningHours extends React.Component {
                 <th></th>
               </tr>
             </thead>
-            <tbody>
-              {_.map(this.state.rows, (row, index) => this.renderRow(row, index))}
-            </tbody>
+            <DragDropContext onDragEnd={({ source, destination }) => this.reOrderRows(source.index, destination.index)}>
+              <Droppable direction='vertical' droppableId='droppable'>
+                {({ droppableProps, innerRef }) => (
+                  <tbody
+                    {...droppableProps}
+                    ref={innerRef}>
+                    {_.map(this.state.rows, (row, index) => this.renderRow(row, index))}
+                  </tbody>
+                )}
+              </Droppable>
+            </DragDropContext>
           </table>
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>

@@ -4,6 +4,9 @@ namespace AppBundle\DataType;
 
 class TsRange
 {
+    public $lower;
+    public $upper;
+
     const TIME_RANGE_PATTERN = '/^(?<lower>[0-9-T:\+]+) - (?<upper>[0-9-T:\+]+)$/';
 
     /**

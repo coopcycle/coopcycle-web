@@ -39,7 +39,6 @@ class MarkAsFailedHandler
 
         if (!is_null($command->getReason())) {
             $this->eventRecorder->record(new Event\TaskIncidentReported($task, $command->getReason(), $command->getNotes()));
-            $task->setHasIncidents(true);
         }
 
         $this->eventRecorder->record(new Event\TaskFailed($task, $command->getNotes(), $command->getReason()));

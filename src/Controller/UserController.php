@@ -32,7 +32,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
@@ -100,6 +103,28 @@ class UserController extends AbstractController
         }
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * @Route("/register/check-email-exists", name="register_check_email_exists")
+     */
+    public function emailExistsAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator)
+    {
+        if (!$request->query->has('email')) {
+            throw new BadRequestHttpException('Missing "email" parameter');
+        }
+
+        $email = $request->query->get('email');
+
+        $user = null;
+        if (!empty($email)) {
+            $user = $userManager->findUserByEmail($email);
+        }
+
+        return new JsonResponse([
+            'exists' => null !== $user,
+            'errorMessage' => null !== $user ? $translator->trans('nucleos_user.email.already_used', [], 'validators') : ''
+        ]);
     }
 
     /**
@@ -171,7 +196,9 @@ class UserController extends AbstractController
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
         Canonicalizer $canonicalizer,
-        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow)
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        Security $security,
+        TokenGeneratorInterface $tokenGenerator)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -193,10 +220,20 @@ class UserController extends AbstractController
             ]);
             if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
                 return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
-                    $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer);
+                    $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer, $tokenGenerator);
             } else {
-                // The email has to be entered by the invited user in the form
-                $user->setEmail('');
+                $loggedInUser = $security->getUser();
+
+                if ($loggedInUser) {
+                    return $this->render('profile/associate_loggedin_user_to_business_account.html.twig', [
+                        'show_left_menu' => false,
+                        'businessAccountInvitation' => $businessAccountInvitation
+                    ]);
+                }
+
+                // Reset object for a new user
+                $user = $userManager->createUser();
+                $user->setEnabled(true);
             }
         }
 
@@ -219,6 +256,46 @@ class UserController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/invitation/associate-loggedin-user-to-business-account/{code}", name="associate-loggedin-user-to-business-account")
+     */
+    public function associateLoggedinUserToBusinessAccount(
+        string $code,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        TranslatorInterface $translator)
+    {
+        $user = $this->getUser();
+
+        $repository = $objectManager->getRepository(Invitation::class);
+
+        if (null === $invitation = $repository->findOneByCode($code)) {
+            throw $this->createNotFoundException();
+        }
+
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation) {
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+            }
+        }
+
+        $userManager->updateUser($user);
+        $objectManager->flush();
+
+        $this->addFlash(
+            'notice',
+            $translator->trans('business_account.employee.associated', [
+                '%name%' => $businessAccountInvitation->getBusinessAccount()->getName()
+            ])
+        );
+
+        return $this->redirectToRoute('homepage');
+    }
+
     private function loadBusinessAccountRegistrationFlow(Request $request,
         BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
         User $user,
@@ -226,7 +303,8 @@ class UserController extends AbstractController
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
-        Canonicalizer $canonicalizer
+        Canonicalizer $canonicalizer,
+        TokenGeneratorInterface $tokenGenerator
     )
     {
         $flowData = new BusinessAccountRegistration($user, $businessAccountInvitation->getBusinessAccount());
@@ -243,7 +321,7 @@ class UserController extends AbstractController
                 $invitation = new Invitation();
                 $invitation->setEmail($canonicalizer->canonicalize($user->getEmail()));
                 $invitation->setUser($user);
-                $invitation->setCode($flowData->code);
+                $invitation->setCode($tokenGenerator->generateToken());
 
                 $businessAccountEmployeeInvitation = new BusinessAccountInvitation();
                 $businessAccountEmployeeInvitation->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
@@ -265,7 +343,7 @@ class UserController extends AbstractController
         return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
             'form' => $form->createView(),
             'flow' => $businessAccountRegistrationFlow,
-            'invitationUser' => $businessAccountInvitation->getInvitation()->getUser(),
+            'businessAccountInvitation' => $businessAccountInvitation,
         ]);
     }
 
@@ -336,7 +414,13 @@ class UserController extends AbstractController
             $objectManager->flush();
         }
 
-        $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
+        $parameters = [];
+
+        if ($businessAccountInvitation) {
+            $parameters['_business'] = true;
+        }
+
+        $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed', $parameters));
 
         $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
 

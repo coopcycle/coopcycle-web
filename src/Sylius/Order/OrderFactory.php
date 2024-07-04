@@ -43,6 +43,11 @@ class OrderFactory implements FactoryInterface
     private $orderItemQuantityModifier;
 
     /**
+     * @var OrderModifierInterface $orderModifier
+     */
+    private $orderModifier;
+
+    /**
      * @param FactoryInterface $factory
      */
     public function __construct(

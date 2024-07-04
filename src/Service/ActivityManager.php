@@ -50,9 +50,9 @@ class ActivityManager
 
         $stmt = $connection->prepare('SELECT e.name, e.created_at, e.data, e.metadata, e.task_id AS aggregate_id FROM task_event e WHERE DATE(e.created_at) = :date');
         $stmt->bindParam('date', $dateAsString);
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
 
     private function getOrderEvents(\DateTime $date)
@@ -64,18 +64,18 @@ class ActivityManager
             'order:checkout_succeeded'
         ];
 
-        $stmt = $connection->executeQuery('SELECT e.type AS name, e.created_at, e.data, e.metadata, e.aggregate_id FROM sylius_order_event e WHERE e.type NOT IN (:excluded) and DATE(e.created_at) = :date',
+        $result = $connection->executeQuery('SELECT e.type AS name, e.created_at, e.data, e.metadata, e.aggregate_id FROM sylius_order_event e WHERE e.type NOT IN (:excluded) and DATE(e.created_at) = :date',
             [
                 'excluded' => $excluded,
                 'date' => $date
             ],
             [
                 'excluded' => Connection::PARAM_STR_ARRAY,
-                'date' => Type::DATE
+                'date' => Type::getType('date')
             ]
         );
 
-        return $stmt->fetchAll();
+        return $result->fetchAllAssociative();
     }
 
     public function getEventsByDate(\DateTime $date)

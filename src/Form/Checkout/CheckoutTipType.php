@@ -5,6 +5,7 @@ namespace AppBundle\Form\Checkout;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class CheckoutTipType extends AbstractType
 {
@@ -20,6 +21,9 @@ class CheckoutTipType extends AbstractType
                     'min'  => 0,
                     'step' => 0.5,
                 ),
+                'constraints' => [
+                    new Assert\GreaterThanOrEqual(0),
+                ],
             ]);
     }
 }

@@ -21,17 +21,11 @@ class BusinessAccountRegistration
 	/**
 	 * @Assert\Valid
 	 */
-	public $invitationLink;
-
-	/**
-	 * @Assert\Valid
-	 */
 	public $code;
 
-    public function __construct(User $user, BusinessAccount $businessAccount, $invitationLink = null, $code = null) {
+    public function __construct(User $user, BusinessAccount $businessAccount, $code = null) {
 		$this->user = $user;
 		$this->businessAccount = $businessAccount;
-		$this->invitationLink = $invitationLink;
 		$this->code = $code;
 	}
 }

@@ -15,26 +15,16 @@ use Pushok;
 
 class RemotePushNotificationManager
 {
-    private $firebaseFactory;
-    private $apnsClient;
-    private $entityManager;
-    private $translator;
-    private $logger;
-
     private static $enabled = true;
 
     public function __construct(
-        FirebaseFactory $firebaseFactory,
-        Pushok\Client $apnsClient,
-        EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        LoggerInterface $logger)
+        private FirebaseFactory $firebaseFactory,
+        private Pushok\Client $apnsClient,
+        private EntityManagerInterface $entityManager,
+        private TranslatorInterface $translator,
+        private LoggerInterface $pushNotificationLogger,
+        private LoggingUtils $loggingUtils)
     {
-        $this->firebaseFactory = $firebaseFactory;
-        $this->apnsClient = $apnsClient;
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
-        $this->logger = $logger;
     }
 
     public static function isEnabled()
@@ -64,7 +54,7 @@ class RemotePushNotificationManager
         try {
             $firebaseMessaging = $this->firebaseFactory->createMessaging();
         } catch (ServiceAccountDiscoveryFailed $e) {
-            $this->logger->error($e);
+            $this->pushNotificationLogger->error($e);
             return;
         }
 
@@ -124,8 +114,8 @@ class RemotePushNotificationManager
 
                 if ($failure->target()->type() === MessageTarget::TOKEN) {
 
-                    $this->logger->error(sprintf('Error sending FCM message to token "%s": %s',
-                        $failure->target()->value(),
+                    $this->pushNotificationLogger->error(sprintf('FCM: Error sending message to token "%s": %s',
+                        $this->loggingUtils->redact($failure->target()->value()),
                         $failure->error()->getMessage()
                     ));
 
@@ -135,8 +125,8 @@ class RemotePushNotificationManager
                         foreach ($tokens as $token) {
                             if ($token->getToken() === $failure->target()->value()) {
 
-                                $this->logger->info(sprintf('Removing remote push token "%s"',
-                                    $failure->target()->value()
+                                $this->pushNotificationLogger->info(sprintf('FCM: Removing remote push token "%s"',
+                                    $this->loggingUtils->redact($failure->target()->value()),
                                 ));
 
                                 $this->entityManager->remove($token);
@@ -147,6 +137,12 @@ class RemotePushNotificationManager
                     }
                 }
             }
+        } else {
+            $this->pushNotificationLogger->info(sprintf('FCM: Message sent to %d devices; tokens: %s',
+                count($deviceTokens),
+                implode(', ', array_map(function ($token) {
+                    return $this->loggingUtils->redact($token);
+                }, $deviceTokens))));
         }
     }
 
@@ -192,13 +188,16 @@ class RemotePushNotificationManager
 
         foreach ($responses as $response) {
             if (200 !== $response->getStatusCode()) {
-                $this->logger->error(sprintf('APNS returned "%s" "%s" "%s"',
+                $this->pushNotificationLogger->error(sprintf('APNS: Error sending message to token "%s; returned "%s" "%s" "%s"',
+                    $this->loggingUtils->redact($response->getDeviceToken()),
                     $response->getStatusCode(),
                     $response->getErrorReason(),
                     $response->getErrorDescription()
                 ));
             } else {
-                $this->logger->info(sprintf('APNS returned "%s"', $response->getReasonPhrase()));
+                $this->pushNotificationLogger->info(sprintf('APNS: Message sent to token: %s; response: %s',
+                    $this->loggingUtils->redact($response->getDeviceToken()),
+                    $response->getReasonPhrase()));
             }
         }
     }
@@ -229,6 +228,21 @@ class RemotePushNotificationManager
                 }
             }
         }
+
+        $this->pushNotificationLogger->info(sprintf('Sending push notification to %s; found tokens: %s',
+            implode(', ', array_map(function ($recipient) {
+                if ($recipient instanceof RemotePushToken) {
+                    return 'token: '.$this->loggingUtils->redact($recipient->getToken());
+                } else if ($recipient instanceof User) {
+                    return 'user: '.$recipient->getId();
+                } else {
+                    return 'unknown recipient';
+                }
+            }, $recipients)),
+            implode(', ', array_map(function (RemotePushToken $token) {
+                return $this->loggingUtils->redact($token->getToken());
+            }, $tokens))));
+
 
         $fcmTokens = array_filter($tokens, function (RemotePushToken $token) {
             return $token->getPlatform() === 'android';

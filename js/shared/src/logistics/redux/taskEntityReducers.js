@@ -8,6 +8,7 @@ const initialState = taskAdapter.getInitialState()
 export default (state = initialState, action) => {
   switch (action.type) {
     case CREATE_TASK_LIST_SUCCESS:
+      // ALOIS : this does nothing
       return taskAdapter.upsertMany(state, action.payload.items)
   }
 

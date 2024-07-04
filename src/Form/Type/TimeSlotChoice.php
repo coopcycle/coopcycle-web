@@ -122,8 +122,8 @@ class TimeSlotChoice
         $upper->setTime($endHour, $endMinute);
 
         $range = new TsRange();
-        $range->setLower($lower);
-        $range->setUpper($upper);
+        $range->lower = $lower;
+        $range->upper = $upper;
 
         return $range;
     }

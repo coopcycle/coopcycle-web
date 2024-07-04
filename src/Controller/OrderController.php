@@ -20,13 +20,16 @@ use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Order\CartType;
+use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -39,7 +42,6 @@ use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -57,19 +59,16 @@ class OrderController extends AbstractController
     use UserTrait;
     use InjectAuthTrait;
 
-    private $objectManager;
-
     public function __construct(
-        EntityManagerInterface $objectManager,
-        FactoryInterface $orderFactory,
+        private EntityManagerInterface $objectManager,
+        private OrderFactory $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private ValidatorInterface $validator,
-        private OrderTimeHelper $orderTimeHelper,
+        private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
+        private string $environment
     )
     {
-        $this->objectManager = $objectManager;
-        $this->orderFactory = $orderFactory;
     }
 
     /**
@@ -97,10 +96,10 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $errors = $this->validator->validate($order);
+        $orderErrors = $this->validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
-        if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
+        if (count($orderErrors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
             $routeName = $order->isMultiVendor() ? 'hub' : 'restaurant';
@@ -146,7 +145,7 @@ class OrderController extends AbstractController
         $tipForm = $this->createForm(CheckoutTipType::class);
         $tipForm->handleRequest($request);
 
-        if ($tipForm->isSubmitted()) {
+        if ($tipForm->isSubmitted() && $tipForm->isValid()) {
 
             $tipAmount = $tipForm->get('amount')->getData();
             $order->setTipAmount((int) ($tipAmount * 100));
@@ -216,7 +215,9 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $form = $this->createForm(CheckoutAddressType::class, $order);
+        $form = $this->createForm(CheckoutAddressType::class, $order, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests should run with CSRF protection enabled, but once in a while it fails
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -249,7 +250,7 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if ($form->isValid()) {
+            if ($orderErrors->count() === 0 && $form->isValid()) {
 
                 // https://github.com/coopcycle/coopcycle-web/issues/1910
                 // Maybe a better would be to use "empty_data" option in CheckoutAddressType
@@ -279,14 +280,30 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', array(
+        return $this->render('order/index.html.twig', [
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ));
+        ]);
+    }
+
+    private function getShippingTimeRange(OrderInterface $order)
+    {
+        $range = $order->getShippingTimeRange();
+
+        // Don't forget that $range may be NULL
+        $shippingTimeRange = $range ? [
+            $range->getLower()->format(\DateTime::ATOM),
+            $range->getUpper()->format(\DateTime::ATOM),
+        ] : null;
+
+        return $shippingTimeRange;
     }
 
     /**
@@ -317,6 +334,8 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
+        $orderErrors = $this->validator->validate($order);
+
         $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         // Make sure to call StripeManager::configurePayment()
@@ -325,21 +344,16 @@ class OrderController extends AbstractController
         $stripeManager->configurePayment($payment);
 
         $checkoutPayment = new CheckoutPayment($order);
-        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
-
-        $range =
-            $order->getShippingTimeRange() ?? $this->orderTimeHelper->getShippingTimeRange($order);
-
-        // Don't forget that $range may be NULL
-        $shippingTimeRange = $range ? implode(' - ', [
-            $range->getLower()->format(\DateTime::ATOM),
-            $range->getUpper()->format(\DateTime::ATOM),
-        ]) : '';
+        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while it fails
+        ]);
 
         $parameters =  [
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'payment' => $payment,
-            'shippingTimeRange' => $shippingTimeRange,
         ];
 
         $form->handleRequest($request);
@@ -728,6 +742,7 @@ class OrderController extends AbstractController
             'restaurant' => $order->getRestaurant(),
             'times' => $orderTimeHelper->getTimeInfo($order),
             'cart_form' => $cartForm->createView(),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));

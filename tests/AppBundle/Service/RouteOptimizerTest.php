@@ -2,19 +2,23 @@
 
 namespace Tests\AppBundle\Service;
 
+use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\Tour;
 use AppBundle\Service\RouteOptimizer;
 use AppBundle\Service\SettingsManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Doctrine\ORM\EntityManagerInterface;
-
+use Psr\Log\LoggerInterface;
 
 class RouteOptimizerTest extends KernelTestCase
 {
@@ -25,6 +29,8 @@ class RouteOptimizerTest extends KernelTestCase
     protected $settingsManager;
     protected $client;
     protected $fixturesLoader;
+    protected $logger;
+    protected $iriConverter;
 
     public function setUp(): void
     {
@@ -39,6 +45,10 @@ class RouteOptimizerTest extends KernelTestCase
         $this->client = self::$container->get('vroom.client');
 
         $this->entityManager = self::$container->get(EntityManagerInterface::class);
+
+        $this->logger = self::$container->get(LoggerInterface::class);
+
+        $this->iriConverter = self::$container->get(IriConverterInterface::class);
 
         $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
     }
@@ -65,6 +75,7 @@ class RouteOptimizerTest extends KernelTestCase
         ];
 
         $taskList = [];
+        $itemsList = [];
         $task_id = 0;
         $address1 = new Address();
         $address1->setGeo($coords[0]);
@@ -94,28 +105,103 @@ class RouteOptimizerTest extends KernelTestCase
             if (0 === $task_id) {
                 $delivery->getPickup()->willReturn($task_proph->reveal());
                 $task_proph->getDelivery()->willReturn($delivery->reveal());
+                $task_proph->isDropoff()->willReturn(false);
             } elseif (1 === $task_id) {
                 $delivery->getDropoff()->willReturn($task_proph->reveal());
                 $task_proph->getDelivery()->willReturn($delivery->reveal());
+                $task_proph->isDropoff()->willReturn(true);
             } else {
                 $task_proph->getDelivery()->willReturn(null);
             }
 
-            $task_proph->getTour()->willReturn(null);
-
-            $taskList[] = $task_proph->reveal();
+            $task = $task_proph->reveal();
+            $item = new Item();
+            $item->setTask($task);
+            $taskList[] = $task;
+            $itemsList[] = $item;
             $task_id += 1;
         }
 
-        $taskCollection = $this->prophesize(TaskCollection::class);
+        $taskCollection = $this->prophesize(TaskList::class);
+        $taskCollection->getItems()->willReturn($itemsList);
         $taskCollection->getTasks()->willReturn($taskList);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
 
         $problem = $optimizer->createRoutingProblem($taskCollection->reveal());
 
         $this->assertCount(1, $problem->getShipments());
         $this->assertCount(1, $problem->getJobs());
+    }
+
+    public function testCreateRoutingProblemWithMultiDropoffDeliveries()
+    {
+        $coords = [
+            new GeoCoordinates(48.87261892829001,  2.3363113403320312),
+            new GeoCoordinates(48.86923158125418,  2.3548507690429683),
+            new GeoCoordinates(48.876006045998984, 2.3466110229492188)
+        ];
+
+        $taskList = [];
+        $itemsList = [];
+        $task_id = 0;
+        $address1 = new Address();
+        $address1->setGeo($coords[0]);
+
+        $now = new \DateTime();
+
+        $after = clone $now;
+        $after->setTime(0, 0, 0);
+
+        $before = clone $now;
+        $before->setTime(23, 59, 59);
+
+        $delivery = $this->prophesize(Delivery::class);
+
+        // create list of task prophecies
+        foreach($coords as $coord)
+        {
+            $address = new Address();
+            $address->setGeo($coord);
+
+            $task_proph = $this->prophesize(Task::class);
+            $task_proph->getId()->willReturn($task_id);
+            $task_proph->getAddress()->willReturn($address);
+            $task_proph->getAfter()->willReturn($after);
+            $task_proph->getBefore()->willReturn($before);
+
+            if (0 === $task_id) {
+                $delivery->getPickup()->willReturn($task_proph->reveal());
+                $task_proph->getDelivery()->willReturn($delivery->reveal());
+                $task_proph->isDropoff()->willReturn(false);
+            } elseif (1 === $task_id) {
+                $delivery->getDropoff()->willReturn($task_proph->reveal());
+                $task_proph->getDelivery()->willReturn($delivery->reveal());
+                $task_proph->isDropoff()->willReturn(true);
+            } else {
+                $delivery->getDropoff()->willReturn($task_proph->reveal());
+                $task_proph->getDelivery()->willReturn($delivery->reveal());
+                $task_proph->isDropoff()->willReturn(true);
+            }
+
+            $task = $task_proph->reveal();
+            $item = new Item();
+            $item->setTask($task);
+            $taskList[] = $task;
+            $itemsList[] = $item;
+            $task_id += 1;
+        }
+
+        $taskCollection = $this->prophesize(TaskList::class);
+        $taskCollection->getItems()->willReturn($itemsList);
+        $taskCollection->getTasks()->willReturn($taskList);
+
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
+
+        $problem = $optimizer->createRoutingProblem($taskCollection->reveal());
+
+        $this->assertCount(2, $problem->getShipments());
+        $this->assertCount(0, $problem->getJobs());
     }
 
     public function testCreateRoutingProblemWithTour()
@@ -125,25 +211,32 @@ class RouteOptimizerTest extends KernelTestCase
             __DIR__.'/../../../features/fixtures/ORM/optimizer/set1.yml'
         ]);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        foreach($this->entityManager->getRepository(Task::class)->findAll() as $task) {
-            $taskList->addTask($task);
-        }
-
         $problem = $optimizer->createRoutingProblem($taskList);
 
-        $this->assertCount(1, $problem->getShipments());
+        $this->assertCount(0, $problem->getShipments());
+        $this->assertCount(5, $problem->getJobs());
+    }
 
-        $tourShipment = $problem->getShipments()[0];
+    public function testOptimizeWithMultiDropoffDelivery()
+    {
 
-        $this->assertEquals($tourShipment->pickup->location,[2.3681042, 48.8532461]);
-        $this->assertEquals($tourShipment->delivery->location, [2.362811, 48.867598]);
-        $tourShipment->delivery->location = [];
+        // this fixture load a tour in the centre of paris with 3 tasks and 3 tasks in the outskirts of Paris
+        // we want to make sure the tour tasks are kept together
+        $this->fixturesLoader->load([
+            __DIR__.'/../../../features/fixtures/ORM/optimizer/set3.yml'
+        ]);
 
-        $this->assertCount(4, $problem->getJobs());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
+
+        $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
+
+        $solution = $optimizer->optimize($taskList);
+
+        $this->assertEquals(Task::TYPE_PICKUP, $solution[0]->getTask()->getType());
     }
 
     public function testOptimizeWithTour()
@@ -155,25 +248,16 @@ class RouteOptimizerTest extends KernelTestCase
             __DIR__.'/../../../features/fixtures/ORM/optimizer/set2.yml'
         ]);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        foreach($this->entityManager->getRepository(Task::class)->findAll() as $task) {
-            $taskList->addTask($task);
-        }
-
         $solution = $optimizer->optimize($taskList);
 
-        // tour first task was at the beginning in the fixture, and still at the beginning here because it is used as the starting point in the vroom problem
-        $this->assertEquals(48.8704288, $solution[0]->getAddress()->getGeo()->getLatitude());
+        $this->assertEquals("tour_1", $solution[0]->getTour()->getName());
 
-        // other steps of the tour, in the same order as it was given
-        $this->assertEquals(48.8669865, $solution[1]->getAddress()->getGeo()->getLatitude());
-        $this->assertEquals(48.8655514, $solution[2]->getAddress()->getGeo()->getLatitude());
-
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
+        $this->assertEquals(48.8501504, $solution[1]->getTask()->getAddress()->getGeo()->getLatitude());
+        $this->assertEquals(48.8696315, $solution[2]->getTask()->getAddress()->getGeo()->getLatitude());
     }
 
     public function testOptimize()
@@ -184,6 +268,7 @@ class RouteOptimizerTest extends KernelTestCase
             new GeoCoordinates(48.876006045998984, 2.3466110229492188)
         ];
 
+        $itemList = new ArrayCollection();
         $taskList = [];
         $task_id = 0;
         $address1 = new Address();
@@ -209,22 +294,26 @@ class RouteOptimizerTest extends KernelTestCase
             $task_proph->getAfter()->willReturn($after);
             $task_proph->getBefore()->willReturn($before);
             $task_proph->getDelivery()->willReturn(null);
-            $task_proph->getTour()->willReturn(null);
 
-            $taskList[] = $task_proph->reveal();
+            $task = $task_proph->reveal();
+            $item = new Item();
+            $item->setTask($task);
+            $itemList->add($item);
+            $taskList[] = $task;
             $task_id += 1;
         }
 
-        $taskCollection = $this->prophesize(TaskCollection::class);
+        $taskCollection = $this->prophesize(TaskList::class);
         $taskCollection->getTasks()->willReturn($taskList);
+        $taskCollection->getItems()->willReturn($itemList);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
 
         $result = $optimizer->optimize($taskCollection->reveal());
 
-        $this->assertSame($result[0], $taskList[0]);
-        $this->assertSame($result[1], $taskList[2]);
-        $this->assertSame($result[2], $taskList[1]);
+        $this->assertSame($result[0]->getTask(), $taskList[0]);
+        $this->assertSame($result[1]->getTask(), $taskList[2]);
+        $this->assertSame($result[2]->getTask(), $taskList[1]);
     }
 
     public function testOptimizePickupsAndDelivery()
@@ -251,7 +340,7 @@ class RouteOptimizerTest extends KernelTestCase
         $dropoff = new Address();
         $dropoff->setGeo($dropoffCoords);
 
-        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal());
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
 
         $addresses = $optimizer->optimizePickupsAndDelivery($pickups, $dropoff);
 

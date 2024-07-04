@@ -7,12 +7,10 @@ export * from './adapters'
 
 export {
   selectSelectedDate,
-  selectTasksListsWithItems as selectTaskLists,
   selectAssignedTasks,
   selectUnassignedTasks,
   selectAllTasks,
   selectTasksWithColor,
-  makeSelectTaskListItemsByUsername,
 } from './selectors'
 
 export * from './actions'

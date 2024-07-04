@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity repository-class="AppBundle\Entity\Incident\IncidentRepository" name="AppBundle\Entity\Incident\Incident" table="incident">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+      </id>
+    <field name="title" type="string" column="title" length="255"/>
+    <field name="status" type="string" column="status" length="32"/>
+    <field name="priority" type="integer" column="priority" />
+    <field name="failureReasonCode" type="string" column="failure_reason_code" length="32" nullable="true" />
+    <field name="description" type="string" column="description" length="65535" nullable="true" />
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+      </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+      </field>
+    <many-to-one field="task" target-entity="AppBundle\Entity\Task" inversed-by="incidents" fetch="EAGER">
+      <join-columns>
+        <join-column name="task_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <one-to-many field="images" target-entity="AppBundle\Entity\Incident\IncidentImage" mapped-by="incident" />
+    <one-to-many field="events" target-entity="AppBundle\Entity\Incident\IncidentEvent" mapped-by="incident">
+      <cascade>
+        <cascade-persist />
+      </cascade>
+      <order-by>
+        <order-by-field name="createdAt" direction="ASC" />
+        </order-by>
+      </one-to-many>
+    <many-to-one field="createdBy" target-entity="AppBundle\Entity\User" />
+    </entity>
+  </doctrine-mapping>

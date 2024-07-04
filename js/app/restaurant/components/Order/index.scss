@@ -239,16 +239,6 @@ $card-padding-lg: 2rem;
   }
 }
 
-.cart__date-picker {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  > * {
-    width: 45%;
-  }
-}
-
 .button-composite {
   display: inline-flex;
   gap: 0.5rem;

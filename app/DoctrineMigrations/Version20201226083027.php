@@ -22,9 +22,9 @@ final class Version20201226083027 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
 
         $stmt = $this->connection->prepare('SELECT id, options FROM restaurant_fulfillment_method');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($fm = $stmt->fetch()) {
+        while ($fm = $result->fetchAssociative()) {
 
             if (empty($fm['options'])) {
                 continue;

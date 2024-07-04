@@ -21,8 +21,8 @@ final class Version20180922164908 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT * FROM task WHERE previous_task_id IS NOT NULL');
 
-        $stmt->execute();
-        while ($task = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($task = $result->fetchAssociative()) {
             $this->addSql('UPDATE task SET next_task_id = :next_task_id WHERE id = :id', [
                 'next_task_id' => $task['id'],
                 'id' => $task['previous_task_id']

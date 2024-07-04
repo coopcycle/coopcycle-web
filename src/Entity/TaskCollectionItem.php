@@ -42,6 +42,9 @@ class TaskCollectionItem
         return $this;
     }
 
+    /**
+     * @return Task
+     */
     public function getTask()
     {
         return $this->task;

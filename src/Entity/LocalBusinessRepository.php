@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
@@ -17,6 +18,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class LocalBusinessRepository extends EntityRepository
 {
+    private $businessContext;
     private $restaurantFilter;
     private $context = FoodEstablishment::class;
     private $typeFilter = FoodEstablishment::RESTAURANT;
@@ -32,6 +34,13 @@ class LocalBusinessRepository extends EntityRepository
     public function setRestaurantFilter(RestaurantFilter $restaurantFilter)
     {
         $this->restaurantFilter = $restaurantFilter;
+
+        return $this;
+    }
+
+    public function setBusinessContext(BusinessContext $businessContext)
+    {
+        $this->businessContext = $businessContext;
 
         return $this;
     }
@@ -170,6 +179,8 @@ class LocalBusinessRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('o');
 
+        $this->addBusinessContextClause($qb, 'o');
+
         if (null !== $this->typeFilter) {
             $types[] = $this->typeFilter;
             $qb->add('where', $qb->expr()->in('o.type', $types));
@@ -221,6 +232,8 @@ class LocalBusinessRepository extends EntityRepository
             ->andWhere('r.featured = :featured')
             ->setParameter('featured', true);
 
+        $this->addBusinessContextClause($qb, 'r');
+
         return $qb->getQuery()->getResult();
     }
 
@@ -230,12 +243,18 @@ class LocalBusinessRepository extends EntityRepository
             ->andWhere('r.exclusive = :exclusive')
             ->setParameter('exclusive', true);
 
+        $this->addBusinessContextClause($qb, 'r');
+
         return $qb->getQuery()->getResult();
     }
 
     public function findLatest($limit)
     {
-        $qb = $this->createQueryBuilder('r')
+        $qb = $this->createQueryBuilder('r');
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        $qb
             ->setMaxResults($limit)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -248,7 +267,11 @@ class LocalBusinessRepository extends EntityRepository
             ->select('COUNT(r.id) AS cnt')
             ->addSelect('c.id')
             ->addSelect('c.name')
-            ->innerJoin('r.servesCuisine', 'c')
+            ->innerJoin('r.servesCuisine', 'c');
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        $qb
             ->groupBy('c.id')
             ->orderBy('cnt', 'DESC');
 
@@ -263,6 +286,8 @@ class LocalBusinessRepository extends EntityRepository
             ->andWhere('c.id = :cuisine_id')
             ->setParameter('cuisine_id', $cuisine);
 
+        $this->addBusinessContextClause($qb, 'r');
+
         return $qb->getQuery()->getResult();
     }
 
@@ -270,8 +295,11 @@ class LocalBusinessRepository extends EntityRepository
         $qb = $this->createQueryBuilder('r')
             ->select('c')
             ->from(Cuisine::class, 'c')
-            ->innerJoin('c.restaurants', 'cr')
-            ->orderBy('c.name');
+            ->innerJoin('c.restaurants', 'cr');
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        $qb->orderBy('c.name');
 
         $result = $qb->getQuery()->getResult();
 
@@ -281,6 +309,8 @@ class LocalBusinessRepository extends EntityRepository
     public function findByFilters($filters)
     {
         $qb = $this->createQueryBuilder('r');
+
+        $this->addBusinessContextClause($qb, 'r');
 
         if (count($filters) > 0) {
             foreach ($filters as $key => $value) {
@@ -339,6 +369,8 @@ class LocalBusinessRepository extends EntityRepository
         $qb
             ->select('COUNT(r.id)');
 
+        $this->addBusinessContextClause($qb, 'r');
+
         return $qb->getQuery()
             ->getSingleScalarResult();
     }
@@ -348,10 +380,13 @@ class LocalBusinessRepository extends EntityRepository
         $qb = $this->createQueryBuilder('r');
         $qb
             ->select('r.type')
-            ->addSelect('COUNT(r.id) AS cnt')
+            ->addSelect('COUNT(r.id) AS cnt');
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        $qb
             ->groupBy('r.type')
-            ->orderBy('cnt', 'DESC')
-            ;
+            ->orderBy('cnt', 'DESC');
 
         $result = $qb->getQuery()->getArrayResult();
 
@@ -394,5 +429,27 @@ class LocalBusinessRepository extends EntityRepository
             ->orderBy('r.createdAt', 'DESC');
 
         return array_map(fn ($result) => $result['id'], $qb->getQuery()->getArrayResult());
+    }
+
+    public function isRestaurantAvailableInBusinessAccount(LocalBusiness $restaurant)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        $this->addBusinessContextClause($qb,'r');
+
+        $qb
+            ->andWhere('r.id = :restaurant')
+            ->setParameter('restaurant', $restaurant);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function addBusinessContextClause(QueryBuilder $qb, string $alias)
+    {
+        if (null !== $this->businessContext && $this->businessContext->isActive()) {
+            $qb->innerJoin(BusinessRestaurantGroupRestaurantMenu::class, 'g', Expr\Join::WITH, sprintf('g.restaurant = %s', $alias))
+                ->innerJoin(BusinessAccount::class, 'ba', Expr\Join::WITH, 'ba.businessRestaurantGroup = g.businessRestaurantGroup and ba.id = :business_account')
+                ->setParameter(':business_account', $this->businessContext->getBusinessAccount());
+        }
     }
 }

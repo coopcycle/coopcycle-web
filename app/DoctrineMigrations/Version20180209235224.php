@@ -24,8 +24,8 @@ class Version20180209235224 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT * FROM task WHERE delivery_id IS NOT NULL');
 
-        $stmt->execute();
-        while ($task = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($task = $result->fetchAssociative()) {
             $tasks[$task['delivery_id']][$task['type']] = $task;
         }
 
