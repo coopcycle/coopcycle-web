@@ -40,10 +40,13 @@ import TaskReportIncidentModalContent from './TaskReportIncidentModalContent';
 class Modals extends React.Component {
 
   render () {
+    const customStyle = {overlay: {zIndex: 2}} // higher than search results
+
     return (
       <React.Fragment>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.taskModalIsOpen }
           onRequestClose={ () => {
             this.props.setCurrentTask(null)
@@ -54,6 +57,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.filtersModalIsOpen }
           onRequestClose={ () => this.props.closeFiltersModal() }
           className="ReactModal__Content--filters"
@@ -62,6 +66,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.settingsModalIsOpen }
           onRequestClose={ () => this.props.closeSettings() }
           className="ReactModal__Content--settings"
@@ -70,6 +75,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.importModalIsOpen }
           onRequestClose={ () => this.props.closeImportModal() }
           className="ReactModal__Content--import"
@@ -78,6 +84,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.addModalIsOpen }
           onRequestClose={ () => this.props.closeAddUserModal() }
           className="ReactModal__Content--select-courier"
@@ -93,6 +100,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.recurrenceRuleModalIsOpen }
           onRequestClose={ () => this.props.closeRecurrenceRuleModal() }
           className="ReactModal__Content--recurrence"
@@ -101,6 +109,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.exportModalIsOpen }
           onRequestClose={ this.props.closeExportModal }
           className="ReactModal__Content--select-courier"
@@ -111,6 +120,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.createGroupModalIsOpen }
           onRequestClose={ this.props.closeCreateGroupModal }
           className="ReactModal__Content--select-courier"
@@ -120,6 +130,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.addTaskToGroupModalIsOpen }
           onRequestClose={ this.props.closeAddTaskToGroupModal }
           className="ReactModal__Content--select-courier"
@@ -129,6 +140,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.isCreateDeliveryModalVisible }
           onRequestClose={ this.props.closeCreateDeliveryModal }
           className="ReactModal__Content--select-courier"
@@ -137,6 +149,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.isCreateTourModalVisible }
           onRequestClose={ this.props.closeCreateTourModal }
           className="ReactModal__Content--select-courier"
@@ -145,6 +158,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.isTaskRescheduleModalVisible }
           onRequestClose={ this.props.closeTaskRescheduleModal }
           className="ReactModal__Content--task-reschedule"
@@ -153,6 +167,7 @@ class Modals extends React.Component {
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
+          style={customStyle}
           isOpen={ this.props.reportIncidentModalIsOpen }
           onRequestClose={ this.props.closeReportIncidentModal }
           className="ReactModal__Content--task-report-incident"

@@ -331,5 +331,5 @@ export const formatWeight = (weight) => {
  * @param {Integer} vu - volume units
  */
 export const formatVolumeUnits = (vu) => {
-  return (vu / 1000).toFixed(2) + ' v.u.'
+  return (vu).toFixed(2) + ' v.u.'
 }

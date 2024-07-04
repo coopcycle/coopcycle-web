@@ -4,7 +4,15 @@ import '@geoman-io/leaflet-geoman-free'
 import 'leaflet-arrowheads'
 
 import Polyline from '@mapbox/polyline'
+
+import ColorHash from 'color-hash'
+
 require('beautifymarker')
+
+export const mapColorHash = new ColorHash({
+  hash: 'bkdr'
+})
+
 
 let settings = {}
 
