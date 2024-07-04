@@ -383,6 +383,21 @@ trait StoreTrait
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
 
+                if ($form->has('bookmark')) {
+                    $isBookmarked = true === $form->get('bookmark')->getData();
+                    $order = $delivery->getOrder();
+
+                    //FIXME a hack to force Doctrine to flush the Order, otherwise tags are not persisted (see TaggableSubscriber)
+                    $order->setShippingTimeRange(clone $order->getShippingTimeRange());
+
+                    if ($isBookmarked) {
+                        $order->addTag('__bookmark');
+                    } else {
+                        $order->removeTag('__bookmark');
+                    }
+                    $entityManager->flush();
+                }
+
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
             } elseif ($store->getCreateOrders()) {
@@ -393,6 +408,15 @@ trait StoreTrait
                     $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
 
                     $this->handleRememberAddress($store, $form);
+
+                    if ($form->has('bookmark')) {
+                        $isBookmarked = true === $form->get('bookmark')->getData();
+                        if ($isBookmarked) {
+                            $order->addTag('__bookmark');
+                        } else {
+                            $order->removeTag('__bookmark');
+                        }
+                    }
 
                     $entityManager->persist($order);
                     $entityManager->flush();

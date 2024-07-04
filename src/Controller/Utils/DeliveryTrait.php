@@ -89,6 +89,24 @@ trait DeliveryTrait
                 $entityManager->flush();
             }
 
+            if ($form->has('bookmark')) {
+                $isBookmarked = true === $form->get('bookmark')->getData();
+
+                $order = $delivery->getOrder();
+
+                if (null !== $order) {
+                    //FIXME a hack to force Doctrine to flush the Order, otherwise tags are not persisted (see TaggableSubscriber)
+                    $order->setShippingTimeRange(clone $order->getShippingTimeRange());
+
+                    if ($isBookmarked) {
+                        $order->addTag('__bookmark');
+                    } else {
+                        $order->removeTag('__bookmark');
+                    }
+                    $entityManager->flush();
+                }
+            }
+
             return $this->redirectToRoute($routes['success']);
         }
 

@@ -16,38 +16,24 @@ use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DeliveryType extends AbstractType
 {
-    protected $routing;
-    protected $translator;
-    protected $authorizationChecker;
-    protected $country;
-    protected $locale;
 
     public function __construct(
-        RoutingInterface $routing,
-        TranslatorInterface $translator,
-        AuthorizationCheckerInterface $authorizationChecker,
-        string $country,
-        string $locale)
+        protected RoutingInterface $routing,
+        protected TranslatorInterface $translator,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected string $country,
+        protected string $locale)
     {
-        $this->routing = $routing;
-        $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->country = $country;
-        $this->locale = $locale;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -157,12 +143,20 @@ class DeliveryType extends AbstractType
                     'data' => $arbitraryPrice ? $arbitraryPrice['amount'] : null,
                 ]);
             }
+
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $form->add('bookmark', CheckboxType::class, [
+                    'label' => 'form.delivery.bookmark.label',
+                    'mapped' => false,
+                    'required' => false,
+                    'data' => $delivery->getOrder() && $delivery->getOrder()->hasTag('__bookmark'),
+                ]);
+            }
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
             $data = $event->getData();
-            $form = $event->getForm();
 
             $tasks = $data['tasks'];
 

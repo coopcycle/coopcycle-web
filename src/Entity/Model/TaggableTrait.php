@@ -31,6 +31,11 @@ trait TaggableTrait
         return $this->tags;
     }
 
+    public function hasTag($tag): bool
+    {
+        return in_array($tag, $this->getTags());
+    }
+
     /**
      * @SerializedName("tags")
      * @Groups({"task_create", "task_edit"})
@@ -48,5 +53,15 @@ trait TaggableTrait
             is_array($tags) ? $tags : explode(' ', $tags)
         );
         $this->tags = array_unique($this->tags);
+    }
+
+    public function addTag($tag): void
+    {
+        $this->addTags([$tag]);
+    }
+
+    public function removeTag($tag): void
+    {
+        $this->setTags(array_diff($this->getTags(), [$tag]));
     }
 }
