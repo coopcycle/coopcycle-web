@@ -168,6 +168,12 @@ cypress open
 The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).
 
 
+#### Run linters (phpStan)
+
+```sh
+docker compose exec php php vendor/bin/phpstan analyse -v
+```
+
 Debugging
 ------------------
 #### 1. Install and enable xdebug in the php container
