@@ -37,6 +37,7 @@ import 'react-contexify/dist/ReactContexify.css'
 import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, taskListSelectors } from '../../../../shared/src/logistics/redux/selectors'
 import { isValidTasksMultiSelect, usePrevious, withOrderTasksForDragNDrop } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
+import { isInViewport } from '../../utils'
 
 export const ASSIGN_MULTI = 'ASSIGN_MULTI'
 export const ASSIGN_WITH_LINKED_TASKS_MULTI = 'ASSIGN_WITH_LINKED_TASKS_MULTI'
@@ -241,7 +242,12 @@ const DynamicMenu = () => {
 
   useEffect(() => {
     if(taskToShow) {
-      requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+      requestAnimationFrame(() => {
+        const htmlEl = document.querySelector(`[data-task-id="${taskToShow['@id']}"]`)
+        if (!isInViewport(htmlEl)) {
+          htmlEl.scrollIntoView()
+        }
+    })
     }
   }, [taskToShow])
 

@@ -62,3 +62,16 @@ export const isMarkerInsidePolygon = (marker, polygon) => {
 export const findTagFromSlug = (slug, allTags) => {
   return _.find(allTags, t => t.slug === slug)
 }
+
+/**
+ * Check if an element is really visible to the user
+ */
+export const isInViewport = (htmlElement) => {
+  const rect = htmlElement.getBoundingClientRect();
+  return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+}
