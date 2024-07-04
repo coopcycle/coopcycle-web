@@ -113,9 +113,6 @@
   gap: 0.5rem;
 }
 
-.ReactModal__Html--open {
-}
-
 // Prevent scroll
 // https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
 .ReactModal__Body--open,
@@ -128,4 +125,8 @@
     // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
     padding-right: 15px;
   }
+}
+
+.ReactModal__Content--warehouse-form {
+  min-width: 40%;
 }

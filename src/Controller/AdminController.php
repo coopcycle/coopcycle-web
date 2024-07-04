@@ -43,6 +43,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Warehouse;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -2981,6 +2982,16 @@ class AdminController extends AbstractController
         return $this->render('admin/vehicles.html.twig', [
             'vehicles' => $vehicles,
         ]);
+    }
+
+    /**
+     * @Route("/admin/warehouses", name="admin_warehouses")
+     */
+    public function warehousesAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
     /**

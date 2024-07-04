@@ -882,6 +882,7 @@ basics.send_invitation.confirm: Your invitation has been sent! You can now edit 
 basics.configure: Configure
 basics.select_all: Select all
 basics.delete_selected: Delete selected
+basics.address: Address
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?

@@ -7,7 +7,11 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
-    <many-to-one field="address" target-entity="AppBundle\Entity\Address"></many-to-one>
+    <many-to-one field="address" target-entity="AppBundle\Entity\Address" >
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </many-to-one>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
