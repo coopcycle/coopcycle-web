@@ -266,21 +266,16 @@ trait StoreTrait
         ]);
     }
 
-    private function duplicatePreviousOrder(EntityManagerInterface $entityManager, $store, $hashid): array
+    private function duplicatePreviousOrder(EntityManagerInterface $entityManager, $store, $hashid): array | null
     {
-        $data = [
-            'delivery' => null,
-            'previousArbitraryPrice' => null,
-        ];
-
         if (null === $hashid) {
-            return $data;
+            return null;
         }
 
         $hashids = new Hashids($this->getParameter('secret'), 16);
         $decoded = $hashids->decode($hashid);
         if (count($decoded) !== 1) {
-            return $data;
+            return null;
         }
 
         $fromOrder = current($decoded);
@@ -290,18 +285,17 @@ trait StoreTrait
             ->find($fromOrder);
 
         if (null === $previousOrder) {
-            return $data;
+            return null;
         }
 
         $previousDelivery = $previousOrder->getDelivery();
 
         if (null === $previousDelivery) {
-            return $data;
+            return null;
         }
 
-
         if ($store !== $previousDelivery->getStore()) {
-            return $data;
+            return null;
         }
 
         // Keep the original objects untouched, creating new ones instead
@@ -327,11 +321,10 @@ trait StoreTrait
             ];
         }
 
-        $data = [
+        return [
             'delivery' => $delivery,
             'previousArbitraryPrice' => $previousArbitraryPrice,
         ];
-        return $data;
     }
 
     public function newStoreDeliveryAction($id, Request $request,
@@ -359,9 +352,10 @@ trait StoreTrait
             $hashid = $request->query->get('frmrdr');
 
             $data = $this->duplicatePreviousOrder($entityManager, $store, $hashid);
-
-            $delivery = $data['delivery'];
-            $previousArbitraryPrice = $data['previousArbitraryPrice'];
+            if (null !== $data) {
+                $delivery = $data['delivery'];
+                $previousArbitraryPrice = $data['previousArbitraryPrice'];
+            }
         }
 
         if (null === $delivery) {
