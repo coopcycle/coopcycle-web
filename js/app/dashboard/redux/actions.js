@@ -1422,8 +1422,8 @@ export function modifyTourRequest(tour, items) {
   return { type: MODIFY_TOUR_REQUEST, tour, items }
 }
 
-export function modifyTourRequestSuccess(tour, tasks) {
-  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour, tasks }
+export function modifyTourRequestSuccess(tour) {
+  return { type: MODIFY_TOUR_REQUEST_SUCCESS, tour }
 }
 
 export function modifyTourRequestError(tour, tasks) {
@@ -1520,7 +1520,7 @@ export function modifyTour(tour, tasks) {
     }
 
     let _tour = response.data
-    dispatch(modifyTourRequestSuccess(_tour, tasks))
+    dispatch(modifyTourRequestSuccess(_tour))
     dispatch(toggleTourLoading(tour['@id']))
 
     return _tour

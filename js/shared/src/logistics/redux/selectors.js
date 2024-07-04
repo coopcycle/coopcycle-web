@@ -87,11 +87,10 @@ export const selectAllTours = createSelector(
 export const selectTourPolylines = createSelector(
   selectAllTours,
   (allTours) => {
-    let polylines = {}
-    allTours.forEach(tour => {
-      polylines[tour['@id']] = tour.polyline
-    })
-    return polylines
+    return allTours.reduce((acc, tour) => {
+      acc[tour['@id']] = tour.polyline
+      return acc
+    }, {})
   }
 )
 
