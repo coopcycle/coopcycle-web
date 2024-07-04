@@ -313,7 +313,7 @@ trait StoreTrait
         $delivery->setStore($store);
 
         $orderItem = $previousOrder->getItems()->first();
-        $productVariant = $orderItem->getVariant();
+        $productVariant = $orderItem->getVariant(); // @phpstan-ignore method.nonObject
 
         $previousArbitraryPrice = null;
 
