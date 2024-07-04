@@ -266,6 +266,74 @@ trait StoreTrait
         ]);
     }
 
+    private function duplicatePreviousOrder(EntityManagerInterface $entityManager, $store, $hashid): array
+    {
+        $data = [
+            'delivery' => null,
+            'previousArbitraryPrice' => null,
+        ];
+
+        if (null === $hashid) {
+            return $data;
+        }
+
+        $hashids = new Hashids($this->getParameter('secret'), 16);
+        $decoded = $hashids->decode($hashid);
+        if (count($decoded) !== 1) {
+            return $data;
+        }
+
+        $fromOrder = current($decoded);
+
+        $previousOrder = $entityManager
+            ->getRepository(Order::class)
+            ->find($fromOrder);
+
+        if (null === $previousOrder) {
+            return $data;
+        }
+
+        $previousDelivery = $previousOrder->getDelivery();
+
+        if (null === $previousDelivery) {
+            return $data;
+        }
+
+
+        if ($store !== $previousDelivery->getStore()) {
+            return $data;
+        }
+
+        // Keep the original objects untouched, creating new ones instead
+        $newTasks = array_map(function($task){
+            return $task->duplicate();
+        }, $previousDelivery->getTasks());
+
+        $delivery = Delivery::createWithTasks(...$newTasks);
+        $delivery->setStore($store);
+
+        $orderItem = $previousOrder->getItems()->first();
+        $productVariant = $orderItem->getVariant();
+
+        $previousArbitraryPrice = null;
+
+        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
+            // price based on the PricingRuleSet; will be recalculated based on the latest rules
+        } else {
+            // arbitrary price
+            $previousArbitraryPrice = [
+                'productName' => $productVariant->getName(),
+                'amount' => $productVariant->getPrice(),
+            ];
+        }
+
+        $data = [
+            'delivery' => $delivery,
+            'previousArbitraryPrice' => $previousArbitraryPrice,
+        ];
+        return $data;
+    }
+
     public function newStoreDeliveryAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
@@ -285,37 +353,15 @@ trait StoreTrait
         $delivery = null;
         $previousArbitraryPrice = null;
 
-        $fromOrder = $request->query->get('fromOrder');
-        // pre-fill fields with the data from the past order
-        if ($fromOrder && $this->isGranted('ROLE_DISPATCHER')) {
-            $previousOrder = $entityManager
-                ->getRepository(Order::class)
-                ->find($fromOrder);
+        if ($this->isGranted('ROLE_DISPATCHER')) {
+            // pre-fill fields with the data from the previous order
 
-            if (null !== $previousOrder) {
-                $previousDelivery = $previousOrder->getDelivery();
-                if (null !== $previousDelivery && $store === $previousDelivery->getStore()) {
-                    // Keep the original objects untouched, creating new ones instead
-                    $newTasks = array_map(function($task){
-                        return $task->duplicate();
-                    }, $previousDelivery->getTasks());
+            $hashid = $request->query->get('frmrdr');
 
-                    $delivery = Delivery::createWithTasks(...$newTasks);
-                    $delivery->setStore($store);
+            $data = $this->duplicatePreviousOrder($entityManager, $store, $hashid);
 
-                    $orderItem = $previousOrder->getItems()->first();
-                    $productVariant = $orderItem->getVariant();
-                    if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
-                        // price based on the PricingRuleSet; will be recalculated based on the latest rules
-                    } else {
-                        // arbitrary price
-                        $previousArbitraryPrice = [
-                            'productName' => $productVariant->getName(),
-                            'amount' => $productVariant->getPrice(),
-                        ];
-                    }
-                }
-            }
+            $delivery = $data['delivery'];
+            $previousArbitraryPrice = $data['previousArbitraryPrice'];
         }
 
         if (null === $delivery) {

@@ -123,7 +123,7 @@
       </button>
       {% if is_granted('ROLE_DISPATCHER') and not is_new and delivery.order is not empty %}
         <a href="{{ path('admin_store_delivery_new',
-          { id: delivery.store.id, fromOrder: delivery.order.id }
+          { id: delivery.store.id, frmrdr: delivery.order|hashid(16) }
         ) }}" class="btn btn-block btn-lg btn-secondary">
           {% trans %}orders.duplicate{% endtrans %}
         </a>
