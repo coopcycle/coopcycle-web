@@ -169,6 +169,12 @@ For example, to run only the tests in the `features/authentication.feature` file
 sh ./bin/behat features/authentication.feature
 ```
 
+To run only the tests with the `@activeScenario` tag:
+
+```sh
+sh ./bin/behat --tags=activeScenario
+```
+
 See more command line options [here](https://behat.org/en/latest/user_guide/command_line_tool.html).
 
 ### Launch the Jest tests
