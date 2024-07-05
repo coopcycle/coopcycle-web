@@ -150,11 +150,11 @@ class SyncTransportersCommand extends Command {
         $config = $config[$this->transporter];
 
         if (isset($config['sync']['uri'])) {
-            $inFs = $outFs = $this->initFileSystem($config['sync']);
+            $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
         }
         elseif (isset($config['sync']['in']) && isset($config['sync']['out'])) {
-            $inFs = $this->initFileSystem($config['sync']['in']);
-            $outFs = $this->initFileSystem($config['sync']['out']);
+            $inFs = $this->initTransporterSyncOptions($config['sync']['in']);
+            $outFs = $this->initTransporterSyncOptions($config['sync']['out']);
         } else {
             throw new Exception('Sync not configured');
         }
@@ -305,8 +305,9 @@ class SyncTransportersCommand extends Command {
         return $edi;
     }
 
-    private function initFileSystem(array $config = []): TransporterSyncOptions
+    private function initTransporterSyncOptions(array $config = []): TransporterSyncOptions
     {
+        // This is used for testing purposes
         if ($config['uri'] instanceof Filesystem) {
             return new TransporterSyncOptions($config['uri'], [
                 'filemask' => $config['filemask'] ?? null
