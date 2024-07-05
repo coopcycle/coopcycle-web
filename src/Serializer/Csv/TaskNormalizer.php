@@ -47,7 +47,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
             if (isset($item['tags'])) {
-                $item['tags'] = explode(' ', $item['tags']);
+                $item['tags'] = is_array($item['tags']) ? $item['tags'] : explode(' ', $item['tags']);
             }
 
             return $this->normalizer->denormalize($item, Task::class, 'jsonld', $context);
