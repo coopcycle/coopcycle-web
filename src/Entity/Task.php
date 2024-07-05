@@ -1221,7 +1221,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @SerializedName("tags")
      * @Groups({"task_create", "task_edit"})
      */
-    public function setTags($tags)
+    public function setTags(array|string $tags): void
     {
         $this->traitSetTags($tags);
     }
