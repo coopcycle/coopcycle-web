@@ -123,25 +123,61 @@ Testing
 docker-compose run php bin/console doctrine:schema:create --env=test
 ```
 
-#### Launch the PHPUnit tests
+### Launch the PHPUnit tests
 
-```
+#### All Tests:
+
+```sh
 make phpunit
 ```
 
-#### Launch the Behat tests
+or
 
+```sh
+sh ./bin/phpunit
 ```
+
+#### One package/test:
+
+For example, to run only the tests in the `AppBundle\Sylius\OrderProcessing` folder:
+
+```sh
+sh ./bin/phpunit /var/www/html/tests/AppBundle/Sylius/OrderProcessing
+```
+
+See more command line options [here](https://docs.phpunit.de/en/9.6/textui.html#command-line-options).
+
+### Launch the Behat tests
+
+#### All Tests:
+
+```sh
 make behat
 ```
 
-#### Launch the Jest tests
+or
+
+```sh
+sh ./bin/behat
+```
+
+#### One package/test:
+
+For example, to run only the tests in the `features/authentication.feature` file:
+
+```sh
+sh ./bin/behat features/authentication.feature
+```
+
+See more command line options [here](https://behat.org/en/latest/user_guide/command_line_tool.html).
+
+### Launch the Jest tests
 
 ```
 make jest
 ```
 
-#### Launch the Cypress tests
+### Launch the Cypress tests
 
 Cypress is a JS program for end-to-end testing and integration testing of components. You will launch a server in the test environment and run cypress on your own machine.
 
@@ -168,7 +204,7 @@ cypress open
 The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).
 
 
-#### Run linters (phpStan)
+### Run linters (phpStan)
 
 ```sh
 docker compose exec php php vendor/bin/phpstan analyse -v
