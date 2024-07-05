@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createRef } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
@@ -7,7 +7,8 @@ import { selectFuseSearch } from '../redux/selectors'
 
 import Task from './Task'
 
-import 'antd/lib/button/style/index.css'
+import { AutoComplete, Input, Select } from 'antd'
+
 
 class SearchInput extends React.Component {
 
@@ -19,21 +20,16 @@ class SearchInput extends React.Component {
       results: [],
     }
 
-    this.searchRef = React.createRef()
+    this.searchRef = createRef()
     this.search = _.debounce(this._search.bind(this), 100)
-
-    this.wrapperRef = React.createRef()
-    this.handleClickOutside = this.handleClickOutside.bind(this)
     this.toggleSearchOnKeyDown = this.toggleSearchOnKeyDown.bind(this);
   }
 
   componentDidMount() {
     window.addEventListener('keydown', this.toggleSearchOnKeyDown)
-    document.addEventListener("mousedown", this.handleClickOutside)
   }
 
   componentWillUnmount() {
-    document.removeEventListener("mousedown", this.handleClickOutside)
     window.removeEventListener('keydown', this.toggleSearchOnKeyDown, false)
   }
 
@@ -54,15 +50,6 @@ class SearchInput extends React.Component {
     }
   }
 
-  handleClickOutside(event) {
-    if (this.wrapperRef && !this.wrapperRef.current.contains(event.target)) {
-      this.setState({
-        results: [],
-      })
-      this.searchRef.blur()
-    }
-  }
-
   _search(q) {
     const results = this.props.fuse.search(q)
     this.setState({
@@ -71,45 +58,33 @@ class SearchInput extends React.Component {
   }
 
   render () {
+    const resultsDisplay = _.map(this.state.results, (task, index) => {
+      return (
+        <Select.Option key={index} className="dashboard__search-result">
+          <Task
+            key={ index }
+            taskId={ task['@id'] }
+            toggleTask={ this.props.toggleTask }
+            selectTask={ this.props.selectTask }
+            taskWithoutDrag
+          />
+        </Select.Option>
+      )})
 
     return (
-      <div ref={this.wrapperRef}>
-        <div className="dashboard__panel__search-box">
-          <div className="dashboard__panel__search-box__input-wrapper">
-            <input
-              value={ this.state.q }
-              placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') }
-              onChange={ e => {
-                this.setState({ q: e.target.value })
-                this.search(e.target.value)
-              }}
-              onFocus={() => this.search(this.state.q)}
-              ref={ (input) => this.searchRef = input }
-            />
-            { this.state.q && (
-              <button className="dashboard__panel__search-box__clear" onClick={ () => this.setState({ q: '', results: [] }) }>
-                <i className="fa fa-times-circle"></i>
-              </button>
-            )}
-          </div>
-        </div>
-        { this.state.results.length > 0 ?
-          <div className="dashboard__panel__search-results list-group nomargin">
-            { _.map(this.state.results, (task, key) => {
-              return (
-                <Task
-                  key={ key }
-                  taskId={ task['@id'] }
-                  toggleTask={ this.props.toggleTask }
-                  selectTask={ this.props.selectTask }
-                  taskWithoutDrag
-                />
-              )
-            })}
-          </div> :
-          null
-        }
-      </div>
+      <AutoComplete
+        ref={this.searchRef}
+        style={{"minWidth":"300px"}}
+        value={ this.state.q }
+        onSearch={ value => {
+          this.setState({ q: value })
+          this.search(value)
+        }}
+        dataSource={resultsDisplay}
+        dropdownStyle={{zIndex: 1, height: "30vh"}}
+      >
+        <Input.Search placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') } />
+      </AutoComplete>
     )
   }
 }
