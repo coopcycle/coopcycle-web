@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 trait TaggableTrait
 {
-    protected $tags;
+    protected array $tags = [];
 
     /**
      * {@inheritdoc}
@@ -22,12 +22,8 @@ trait TaggableTrait
      * @SerializedName("tags")
      * @Groups({"task", "order", "order_minimal"})
      */
-    public function getTags()
+    public function getTags(): array
     {
-        if (null === $this->tags) {
-            $this->tags = [];
-        }
-
         return $this->tags;
     }
 

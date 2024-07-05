@@ -806,6 +806,7 @@ stores.api_keys: API keys
 stores.deliveries: Deliveries
 stores.deliveries.heading: 'Delivery #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: Unassigned
+stores.deliveries.bookmarks: Saved orders
 stores.addresses: Addresses
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
