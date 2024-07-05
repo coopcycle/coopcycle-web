@@ -332,7 +332,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, PricingRuleMatcherInterface
 {
-    use TaggableTrait;
+    use TaggableTrait {
+        getTags as protected traitGetTags;
+        setTags as protected traitSetTags;
+    }
     use OrganizationAwareTrait;
 
     /**
@@ -1203,5 +1206,23 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitTask($this);
+    }
+
+    /**
+     * @SerializedName("tags")
+     * @Groups({"task"})
+     */
+    public function getTags(): array
+    {
+        return $this->traitGetTags();
+    }
+
+    /**
+     * @SerializedName("tags")
+     * @Groups({"task_create", "task_edit"})
+     */
+    public function setTags($tags)
+    {
+        $this->traitSetTags($tags);
     }
 }
