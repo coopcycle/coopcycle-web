@@ -591,6 +591,12 @@ trait StoreTrait
         EntityManagerInterface $entityManager,
         DeliveryRepository $deliveryRepository)
     {
+        /**
+         * Currently we only support bookmarks for admin users,
+         * if (when) we need to support bookmarks for store owners,
+         * make sure that admin users and store owners can't see each other's bookmarks
+         */
+
         $store = $entityManager
             ->getRepository(Store::class)
             ->find($id);
