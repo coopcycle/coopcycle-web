@@ -144,7 +144,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && $delivery->getStore()) {
                 $form->add('bookmark', CheckboxType::class, [
                     'label' => 'form.delivery.bookmark.label',
                     'mapped' => false,
