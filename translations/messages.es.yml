@@ -955,6 +955,7 @@ activity.task.started: "@%owner% comenzó tarea #task/%aggregate_id%\n"
 basics.updated_at: Actualizado en %date%
 deliveries.sort.oldest: Los más viejos primero
 orders.new: Nuevo pedido
+orders.duplicate: Duplicar un pedido
 orders.payment_link.send_by_email: Enviar enlace de pago por correo electrónico
 orders.payment_link.sent: Email enviado con éxito
 form.min_max.upper.label: Número máximo
