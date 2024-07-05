@@ -27,44 +27,22 @@ use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 final class UploadListener
 {
-    private $entityManager;
-    private $mappingFactory;
-    private $uploadHandler;
-    private $settingsManager;
-    private $messageBus;
-    private $productSpreadsheetParser;
-    private $secret;
-    private $isDemo;
-    private $logger;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        PropertyMappingFactory $mappingFactory,
-        UploadHandler $uploadHandler,
-        SettingsManager $settingsManager,
-        MessageBusInterface $messageBus,
-        ProductSpreadsheetParser $productSpreadsheetParser,
-        SerializerInterface $serializer,
-        IriConverterInterface $iriConverter,
-        CacheInterface $projectCache,
-        ValidatorInterface $validator,
-        string $secret,
-        bool $isDemo,
-        LoggerInterface $logger)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PropertyMappingFactory $mappingFactory,
+        private readonly UploadHandler $uploadHandler,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageBusInterface $messageBus,
+        private readonly ProductSpreadsheetParser $productSpreadsheetParser,
+        private readonly SerializerInterface $serializer,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly CacheInterface $projectCache,
+        private readonly ValidatorInterface $validator,
+        private readonly string $secret,
+        private readonly bool $isDemo,
+        private readonly LoggerInterface $logger)
     {
-        $this->entityManager = $entityManager;
-        $this->mappingFactory = $mappingFactory;
-        $this->uploadHandler = $uploadHandler;
-        $this->settingsManager = $settingsManager;
-        $this->messageBus = $messageBus;
-        $this->productSpreadsheetParser = $productSpreadsheetParser;
-        $this->serializer = $serializer;
-        $this->iriConverter = $iriConverter;
-        $this->projectCache = $projectCache;
-        $this->validator = $validator;
-        $this->secret = $secret;
-        $this->isDemo = $isDemo;
-        $this->logger = $logger;
     }
 
     public function onUpload(PostPersistEvent $event)
