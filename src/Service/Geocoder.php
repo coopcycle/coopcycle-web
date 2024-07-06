@@ -20,6 +20,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Http\Adapter\Guzzle7\Client;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
 use Webmozart\Assert\Assert;
@@ -38,8 +39,8 @@ class Geocoder
         private readonly string $country,
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
-        private readonly LoggerInterface $logger,
-        private readonly bool $autoconfigure = true)
+        private readonly bool $autoconfigure = true,
+        private readonly LoggerInterface $logger = new NullLogger())
     {
     }
 
