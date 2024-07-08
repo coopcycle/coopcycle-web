@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
@@ -68,28 +69,31 @@ class EdenredController extends AbstractController
             return $this->redirectToRoute('profile_edit');
         }
 
-        $data = $this->authentication->authorizationCode($request->query->get('code'));
+        try {
 
-        if (false === $data) {
+            $data = $this->authentication->authorizationCode($request->query->get('code'));
+
+            $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
+
+            Assert::isInstanceOf($customer, CustomerInterface::class);
+
+            $customer->setEdenredAccessToken($data['access_token']);
+            $customer->setEdenredRefreshToken($data['refresh_token']);
+
+            $entityManager->flush();
+
+            $this->addFlash('notice', $translator->trans('edenred.oauth_connect.success'));
+
+            return $this->redirectToRoute(
+                $subject instanceof Order ? 'order_payment' : 'profile_edit'
+            );
+
+        } catch (HttpExceptionInterface $e) {
+
             $this->addFlash('error', 'There was an error while trying to connect your Edenred account.');
 
             // TODO Redirect depending on context
             return $this->redirectToRoute('profile_edit');
         }
-
-        $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
-
-        Assert::isInstanceOf($customer, CustomerInterface::class);
-
-        $customer->setEdenredAccessToken($data['access_token']);
-        $customer->setEdenredRefreshToken($data['refresh_token']);
-
-        $entityManager->flush();
-
-        $this->addFlash('notice', $translator->trans('edenred.oauth_connect.success'));
-
-        return $this->redirectToRoute(
-            $subject instanceof Order ? 'order_payment' : 'profile_edit'
-        );
     }
 }
