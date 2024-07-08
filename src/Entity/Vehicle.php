@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use AppBundle\Entity\Trailer;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -34,26 +35,35 @@ class Vehicle
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\NotBlank
+    * @Assert\Type("string")
     */
     protected $name;
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\NotBlank
+    * @Assert\Type("integer")
     */
     protected $volumeUnits;
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\NotBlank
+    * @Assert\Type("integer")
     */
     protected $maxWeight;
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\NotBlank
+    * @Assert\CssColor
     */
     protected $color;
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\NotBlank
     */
     protected $isElectric;
 
@@ -64,6 +74,8 @@ class Vehicle
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\NotBlank
+    * @Assert\Type(Warehouse::class)]
     */
     protected $warehouse;
 

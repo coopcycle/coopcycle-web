@@ -1,6 +1,9 @@
-import { Table } from 'antd'
 import React, { useEffect, useState } from 'react'
+
+import { Table } from 'antd'
+import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
+import VehicleForm from './VehicleForm'
 
 
 export default () => {
@@ -8,7 +11,8 @@ export default () => {
   const { t } = useTranslation()
 
   const [isLoading, setIsLoading] = useState(true)
-  const setWarehouses = useState([])[1]
+  const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false)
+  const [warehouses, setWarehouses] = useState([])
   const [trailers, setTrailers] = useState([])
   const [vehicles, setVehicles] = useState([])
 
@@ -33,75 +37,81 @@ export default () => {
     {
       title: t("NAME"),
       dataIndex: "name",
-      key: "name",
     },
     {
       title: t("MAX_VOLUME_UNITS"),
       dataIndex: "volumeUnits",
-      key: "volumeUnits",
     },
     {
       title: t("MAX_WEIGHT"),
       dataIndex: "maxWeight",
-      key: "maxWeight",
     },
     {
       title: t("COLOR"),
       dataIndex: "color",
-      key: "color",
     },
     {
       title: t("IS_ELECTRIC"),
       dataIndex: "isElectric",
-      key: "isElectric",
+      render: (isElectric) => {
+        return isElectric ? <i className='fa fa-check'></i> : <i className='fa fa-close'></i>
+      }
     },
     {
-      title: t("ELETRIC_RANGE"),
+      title: t("ELECTRIC_RANGE"),
       dataIndex: "electricRange",
-      key: "electricRange",
     },
     {
       title: t("WAREHOUSE"),
       dataIndex: "warehouse",
-      key: "warehouse",
     },
   ]
+
+  const onSubmitVehicle = async (values) => {
+    const url = window.Routing.generate("api_vehicles_post_collection")
+
+    const { error } = await httpClient.post(url, values);
+
+    if (error)
+    {
+      alert(t('ERROR'))
+      return;
+    } else {
+      setIsLoading(true)
+      const { response } = await httpClient.get(window.Routing.generate("api_vehicles_get_collection"))
+      setVehicles(response["hydra:member"])
+      setIsLoading(false)
+    }
+  }
 
   const trailerColumns = [
     {
       title: t("NAME"),
       dataIndex: "name",
-      key: "name",
     },
     {
       title: t("MAX_VOLUME_UNITS"),
       dataIndex: "maxVolumeUnits",
-      key: "maxVolumeUnits",
     },
     {
       title: t("MAX_WEIGHT"),
       dataIndex: "maxWeight",
-      key: "maxWeight",
     },
     {
       title: t("COLOR"),
       dataIndex: "color",
-      key: "color",
     },
     {
       title: t("IS_ELECTRIC"),
       dataIndex: "isElectric",
-      key: "isElectric",
     },
     {
       title: t("ELETRIC_RANGE"),
       dataIndex: "electricRange",
-      key: "electricRange",
     },
     {
       title: t("COMPATIBLE_VEHICLES"),
       dataIndex: "compatibleVehicles",
-      key: "compatibleVehicles",
     },
   ]
 
@@ -126,6 +136,27 @@ export default () => {
           className="tab-pane active p-3"
           id="vehicles"
         >
+          <div className="row pull-right mb-2">
+            { isLoading ?
+              (<span className="loader loader--dark"></span>) :
+              <a onClick={() => setIsVehicleModalOpen(true)} className="btn btn-success">
+                <i className="fa fa-plus"></i> { t('ADD') }
+              </a>
+            }
+          </div>
+          <Modal
+            isOpen={isVehicleModalOpen}
+            appElement={document.getElementById('vehicles-admin-app')} className="ReactModal__Content--warehouse-form"
+            shouldCloseOnOverlayClick={true}
+            shouldCloseOnEsc={true}
+          >
+            <VehicleForm
+              initialValues={{}}
+              onSubmit={onSubmitVehicle}
+              closeModal={() => setIsVehicleModalOpen(false)}
+              warehouses={warehouses}
+            />
+          </Modal>
           <Table
             columns={vehicleColumns}
             loading={isLoading}

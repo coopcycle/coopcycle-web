@@ -2,7 +2,7 @@
 
 @mixin modal-content-border() {
   border-radius: 8px;
-  box-shadow: 0 4px 64px 0 #0000000D;
+  box-shadow: 4px 4px 4px 0 $dark-gray;
 }
 
 /* Vertically centered modal */
@@ -127,6 +127,8 @@
   }
 }
 
-.ReactModal__Content--warehouse-form {
-  min-width: 40%;
+.ReactModal__Content {
+  @include modal-content-border();
+  min-width: 60%;
+  border: 1px solid $dark-gray;
 }
