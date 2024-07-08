@@ -1807,6 +1807,7 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
+<<<<<<< HEAD
      * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
      * @return Collection all bookmarks set by different users
      */
@@ -1833,6 +1834,23 @@ class Order extends BaseOrder implements OrderInterface
     public function setSubscription(?RecurrenceRule $subscription): void
     {
         $this->subscription = $subscription;
+
+    }
+
+    /**
+     * @SerializedName("hasEdenredCredentials")
+     * @Groups({"order", "order_update", "cart"})
+     */
+    public function hasEdenredCredentials(): bool
+    {
+        /** @var \AppBundle\Sylius\Customer\CustomerInterface|null */
+        $customer = $this->getCustomer();
+
+        if (null === $customer) {
+            return false;
+        }
+
+        return $customer->hasEdenredCredentials();
     }
 
     /**
