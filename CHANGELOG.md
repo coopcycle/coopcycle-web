@@ -8,11 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.4.0] - 2024-07-08
 
 ### Added
-* Show volumes and weight in the dispatch for task, tours, rider assignment (+ add setting) by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4469
-* As a dispatcher, I can show a line for tours + the line has a specific color & markers change colors by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4479
-* Move the search input from right panel to top bar by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4482
-* Allow dispatch to reorder timeslots on Store settings by @r0xsh in https://github.com/coopcycle/coopcycle-web/pull/4417
-* In foodtech orders live panel, fix search + show search result on top of column
+* Show volumes and weight in the dispatch for individual tasks, and sum for tours/routes and for what is assigned to a messenger. Includes a toggle setting. By @Atala in https://github.com/coopcycle/coopcycle-web/pull/4469
+* As a dispatcher, I can change the color of the dropoff markers, or show a colored line that demostrates the way the tasks are arranged into a route by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4479
+* Move the search input from right panel to top bar to improve usability and show results better by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4482
+* Allow dispatch to reorder timeslots on Store settings, which changes the way they are shown to a store when they use the order creation form by @r0xsh in https://github.com/coopcycle/coopcycle-web/pull/4417
+* In foodtech orders dashboard, fix search + show search result on top of column
 * Show task(s) in the right hand columns when selecting a task on the map by @Atala in #4455
 
 ### Fixed
