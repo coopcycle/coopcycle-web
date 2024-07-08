@@ -6,7 +6,7 @@
         "OPENING_HOURS_SINGLE": "Offen am {{day}} von {{open}} bis {{close}}",
         "OPENING_HOURS_RANGE": "Offen von {{fromDay}} bis {{toDay}}, von {{open}} bis {{close}}",
         "OPENING_HOURS_TITLE": "Öffnungszeiten",
-        "ADD_BUTON": "Hinzufügen",
+        "ADD_BUTTON": "Hinzufügen",
         "DATEPICKER_TODAY": "[Heute]",
         "DATEPICKER_TOMORROW": "[Morgen]",
         "DASHBOARD_UNASSIGNED": "Nicht zugeteilt",

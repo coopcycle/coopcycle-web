@@ -1302,6 +1302,8 @@ form.vehicle.volume_units.label: Volume units
 form.vehicle.max_weight.label: Maximum weight (kg)
 vehicles.breadcrumb: Vehicles
 vehicles.breadcrumb.help: Define fleet of vehicles
+warehouses.breadcrumb: Warehouses
+warehouses.breadcrumb.help: Define warehouses
 form.task_export.dv4cul.label: Export using DV4CUL format
 restaurant.form.section.dabba: Dabba
 restaurant.form.dabba_enabled.label: Enable Dabba deposit-refund system

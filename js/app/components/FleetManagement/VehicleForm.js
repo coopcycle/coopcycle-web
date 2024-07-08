@@ -39,7 +39,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
     <div>
       <div className="modal-header">
         <h4 className="modal-title">
-          { t('ADMIN_DASHBOARD_VEHICLE_FORM_TITLE') }
+          { t('ADMIN_VEHICLE_FORM_TITLE') }
           <a className="pull-right" onClick={ () => closeModal() }><i className="fa fa-close"></i></a>
         </h4>
       </div>
@@ -129,7 +129,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                 </div>
                 <div className="col-md-offset-4 col-md-2">
                   <div className={ `form-group ${errors.volumeUnits ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="volumeUnits">{ 'ADMIN_VEHICLE_VOLUME_UNITS_LABEL' }</label>
+                    <label className="control-label" htmlFor="volumeUnits">{ 'ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -208,7 +208,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               <div className="col-md-8 col-md-offset-2 text-center">
                 <div className="input-group-btn">
                   <button className="btn btn-primary" type="submit" disabled={isLoading}>
-                    { 'ADMIN_DASHBOARD_SAVE' }
+                    { 'SAVE_BUTTON' }
                   </button>
                 </div>
               </div>

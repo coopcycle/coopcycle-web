@@ -8,7 +8,7 @@
         "OPENING_HOURS_SINGLE_TIME_SLOT": "{{day}} egunean, {{open}} eta {{close}} artean",
         "OPENING_HOURS_RANGE_TIME_SLOT": "{{fromDay}} egunetik {{toDay}} egunera, {{open}} eta {{close}} artean",
         "DELIVERY_TIME_SLOTS": "Entrega denbora-tarteak",
-        "ADD_BUTON": "Gehitu",
+        "ADD_BUTTON": "Gehitu",
         "DATEPICKER_TODAY": "[Gaur]",
         "DATEPICKER_TOMORROW": "[Bihar]",
         "DASHBOARD_UNASSIGNED": "Esleitu gabe",

@@ -24,6 +24,10 @@ const IsElectric = ({isElectric}) => {
   </>
 }
 
+const Color = ({color}) => {
+  return (<span style={{width: '20px', height: '20px', borderRadius: '40px', backgroundColor: color, display: 'inline-block'}}></span>)
+}
+
 export default () => {
 
   const { t } = useTranslation()
@@ -54,66 +58,79 @@ export default () => {
 
   const vehicleColumns = [
     {
-      title: t("NAME"),
+      title: t("ADMIN_VEHICLE_NAME_LABEL"),
       dataIndex: "name",
     },
     {
-      title: t("MAX_VOLUME_UNITS"),
-      dataIndex: "volumeUnits",
-    },
-    {
-      title: t("MAX_WEIGHT"),
-      dataIndex: "maxWeight",
-    },
-    {
-      title: t("COLOR"),
+      title: t("ADMIN_VEHICLE_COLOR_LABEL"),
       dataIndex: "color",
+      align: "center",
+      render: (color) => <Color color={color} />
     },
     {
-      title: t("IS_ELECTRIC"),
+      title: t("ADMIN_VEHICLE_MAX_WEIGHT_LABEL"),
+      dataIndex: "maxWeight",
+      align: "center"
+    },
+    {
+      title: t("ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL"),
+      dataIndex: "volumeUnits",
+      align: "center"
+    },
+    {
+      title: t("ADMIN_VEHICLE_IS_ELECTRIC_LABEL"),
       dataIndex: "isElectric",
+      align: "center",
       render: (isElectric) => <IsElectric isElectric={isElectric} />
     },
     {
-      title: t("ELECTRIC_RANGE"),
+      title: t("ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL"),
       dataIndex: "electricRange",
+      align: "center"
     },
     {
-      title: t("WAREHOUSE"),
-      dataIndex: "warehouse",
+      title: t("ADMIN_VEHICLE_WAREHOUSE_LABEL"),
+      dataIndex: ["warehouse", "name"],
+      align: "center"
     },
   ]
 
   const trailerColumns = [
     {
-      title: t("NAME"),
+      title: t("ADMIN_VEHICLE_NAME_LABEL"),
       dataIndex: "name",
     },
     {
-      title: t("MAX_VOLUME_UNITS"),
-      dataIndex: "maxVolumeUnits",
-    },
-    {
-      title: t("MAX_WEIGHT"),
-      dataIndex: "maxWeight",
-    },
-    {
-      title: t("COLOR"),
+      title: t("ADMIN_VEHICLE_COLOR_LABEL"),
       dataIndex: "color",
+      render: (color) => <Color color={color} />,
+      align: "center"
     },
     {
-      title: t("IS_ELECTRIC"),
+      title: t("ADMIN_VEHICLE_MAX_WEIGHT_LABEL"),
+      dataIndex: "maxWeight",
+      align: "center"
+    },
+    {
+      title: t("ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL"),
+      dataIndex: "maxVolumeUnits",
+      align: "center"
+    },
+    {
+      title: t("ADMIN_VEHICLE_IS_ELECTRIC_LABEL"),
       dataIndex: "isElectric",
-      render: (isElectric) => <IsElectric isElectric={isElectric} />
+      render: (isElectric) => <IsElectric isElectric={isElectric} />,
+      align: "center"
     },
     {
-      title: t("ELETRIC_RANGE"),
+      title: t("ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL"),
       dataIndex: "electricRange",
+      align: "center"
     },
     {
-      title: t("COMPATIBLE_VEHICLES"),
+      title: t("ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL"),
       dataIndex: "compatibleVehicles",
-      render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} />
+      render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} />,
     },
   ]
 
@@ -176,7 +193,7 @@ export default () => {
             { isLoading ?
               (<span className="loader loader--dark"></span>) :
               <a onClick={() => setIsVehicleModalOpen(true)} className="btn btn-success">
-                <i className="fa fa-plus"></i> { t('ADD') }
+                <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
               </a>
             }
           </div>
@@ -210,7 +227,7 @@ export default () => {
             { isLoading ?
               (<span className="loader loader--dark"></span>) :
               <a onClick={() => setIsTrailerModalOpen(true)} className="btn btn-success">
-                <i className="fa fa-plus"></i> { t('ADD') }
+                <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
               </a>
             }
           </div>

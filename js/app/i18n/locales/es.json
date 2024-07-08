@@ -9,7 +9,7 @@
         "OPENING_HOURS_SINGLE_TIME_SLOT": "El {{day}} entre {{open}} y {{close}}",
         "OPENING_HOURS_RANGE_TIME_SLOT": "De {{fromDay}} a {{toDay}}, entre {{open}} y {{close}}",
         "DELIVERY_TIME_SLOTS": "Horarios de entrega",
-        "ADD_BUTON": "Añadir",
+        "ADD_BUTTON": "Añadir",
         "DATEPICKER_TODAY": "[Hoy]",
         "DATEPICKER_TOMORROW": "[Mañana]",
         "DASHBOARD_UNASSIGNED": "No asignado",

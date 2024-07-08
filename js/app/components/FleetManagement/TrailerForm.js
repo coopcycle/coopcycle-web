@@ -29,7 +29,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
     const errors = {}
 
     if(!values.color || (values.isElectric && !values.electricRange)) {
-      errors.electricRange = t('ADMIN_FORM_REQUIRED')
+      errors.electricRange = t('FORM_REQUIRED')
     }
   }
 
@@ -37,7 +37,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
     <div>
       <div className="modal-header">
         <h4 className="modal-title">
-          { t('ADMIN_DASHBOARD_VEHICLE_FORM_TITLE') }
+          { t('ADMIN_VEHICLE_TRAILER_FORM_TITLE') }
           <a className="pull-right" onClick={ () => closeModal() }><i className="fa fa-close"></i></a>
         </h4>
       </div>
@@ -63,7 +63,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
             <div className={ `form-group${errors.name ? 'has-error': ''}` }>
               <div className="row">
                 <div className="col-md-8">
-                <label className="control-label" htmlFor="name">{ 'ADMIN_TRAILER_NAME_LABEL' }</label>
+                <label className="control-label" htmlFor="name">{ 'ADMIN_VEHICLE_NAME_LABEL' }</label>
                   <Field
                     className="form-control"
                     type="text"
@@ -81,7 +81,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               </div>
             </div>
             <div className={ `form-group ${errors.color ? 'has-error': ''}` }>
-              <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_TRAILER_COLOR_LABEL' }</label>
+              <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_COLOR_LABEL' }</label>
               <Field
                 name="color"
                 minLength="7"
@@ -106,7 +106,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               <div className="row form-inline">
                 <div className="col-md-2">
                   <div className={ `form-group ${errors.maxWeight ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_TRAILER_MAX_WEIGHT_LABEL' }</label>
+                    <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_MAX_WEIGHT_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -123,7 +123,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                 </div>
                 <div className="col-md-offset-4 col-md-2">
                   <div className={ `form-group ${errors.maxVolumeUnits ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="maxVolumeUnits">{ 'ADMIN_TRAILER_VOLUME_UNITS_LABEL' }</label>
+                    <label className="control-label" htmlFor="maxVolumeUnits">{ 'ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -142,7 +142,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
             <div className="row">
               <div className="col-md-2">
                 <div className={ `form-group ${errors.isElectric ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="isElectric">{ 'ADMIN_TRAILER_IS_ELECTRIC_LABEL' }</label>
+                  <label className="control-label" htmlFor="isElectric">{ 'ADMIN_VEHICLE_IS_ELECTRIC_LABEL' }</label>
                   <Field
                     type="checkbox"
                     name="isElectric"
@@ -157,7 +157,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               <div className="col-md-4 col-md-offset-2">
                 { values.isElectric ?
                   <div className={ `form-group ${errors.electricRange ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="electricRange">{ 'ADMIN_TRAILER_ELECTRIC_RANGE_LABEL' }</label>
+                    <label className="control-label" htmlFor="electricRange">{ 'ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -177,7 +177,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
             <div className="row">
               <div className="col-md-8">
                 <div className={ `form-group ${errors.compatibleVehicles ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="compatibleVehicles">{ 'ADMIN_TRAILER_COMPATIBLE_VEHICLES_LABEL' }</label>
+                  <label className="control-label" htmlFor="compatibleVehicles">{ 'ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL' }</label>
                   <Field
                     className="form-control"
                     name="compatibleVehicles"
@@ -190,7 +190,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                       menuPortalTarget={document.body}
                       options={vehicles.map(vehicle => {return {value: vehicle['@id'], label: vehicle.name}})}
                       onChange={(selected) => { setFieldValue('compatibleVehicles', selected.map(opt => opt.value)) }}
-                      placeholder={ t('ADMIN_TRAILER_COMPATIBLE_VEHICLES_LABEL') }
+                      placeholder={ t('ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL') }
                     />
                   }
                   </Field>
@@ -206,7 +206,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               <div className="col-md-8 col-md-offset-2 text-center">
                 <div className="input-group-btn">
                   <button className="btn btn-primary" type="submit" disabled={isLoading}>
-                    { 'ADMIN_DASHBOARD_SAVE' }
+                    { 'SAVE_BUTTON' }
                   </button>
                 </div>
               </div>

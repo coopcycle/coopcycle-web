@@ -9,7 +9,6 @@ export default () => {
 
   const { t } = useTranslation()
 
-
   const [isModalOpen, setModalOpen] = useState(false)
   const [warehouses, setWarehouses] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -25,12 +24,12 @@ export default () => {
 
   const columns = [
     {
-      title: t("NAME"),
+      title: t("ADMIN_WAREHOUSE_NAME_LABEL"),
       dataIndex: "name",
       key: "name",
     },
     {
-      title: t("ADDRESS"),
+      title: t("ADMIN_WAREHOUSE_ADDRESS_LABEL"),
       dataIndex: ["address", "streetAddress"],
       key: "address.streetAddress",
     },
@@ -59,7 +58,7 @@ export default () => {
       <div className="row pull-right mb-2">
         <div className="col-md-12">
           <a onClick={() => setModalOpen(true)} className="btn btn-success">
-              <i className="fa fa-plus"></i> { t('ADD') }
+              <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
           </a>
         </div>
       </div>
@@ -77,7 +76,15 @@ export default () => {
         isOpen={isModalOpen}
         appElement={document.getElementById('warehouse')}
         className="ReactModal__Content--no-default" // disable additional inline style from react-modal
+        shouldCloseOnOverlayClick={true}
+        shouldCloseOnEsc={true}
       >
+        <div className="modal-header">
+          <h4 className="modal-title">
+            { t('ADMIN_WAREHOUSE_FORM_TITLE') }
+            <a className="pull-right" onClick={ () => setModalOpen(false) }><i className="fa fa-close"></i></a>
+          </h4>
+        </div>
         <WarehouseForm initialValues={initialValues} onSubmit={onSubmit}/>
       </Modal>
     </div>
