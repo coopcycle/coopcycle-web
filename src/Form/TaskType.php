@@ -74,16 +74,10 @@ class TaskType extends AbstractType
         && null !== $options['with_time_slots']
         && count($options['with_time_slots']) > 1) {
 
-            $iterator = $options['with_time_slots']->getIterator();
-            $iterator->uasort(function (TimeSlot $a, TimeSlot $b) {
-                return ($a->getName() < $b->getName()) ? -1 : 1;
-            });
-            $choices = new ArrayCollection(iterator_to_array($iterator));
-
             $builder
                 ->add('switchTimeSlot', EntityType::class, [
                     'class' => TimeSlot::class,
-                    'choices' => $choices,
+                    'choices' => $options['with_time_slots'],
                     'choice_label' => 'name',
                     'choice_attr' => function($choice, $key, $value) {
 

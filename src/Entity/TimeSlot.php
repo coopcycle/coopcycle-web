@@ -24,6 +24,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     }
  *   },
  *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "choices"={
  *       "method"="GET",
  *       "path"="/time_slots/choices",
