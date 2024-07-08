@@ -1002,6 +1002,7 @@ services:
   AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
   AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
   AppBundle\Api\DataTransformer\EdenredCredentialsInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\ConfigurePaymentInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
