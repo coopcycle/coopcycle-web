@@ -49,6 +49,11 @@ class Client
 
     public function getBalance(Customer $customer): int
     {
+        if (!$customer->hasEdenredCredentials()) {
+
+            return 0;
+        }
+
         try {
 
             $userInfo = $this->authentication->userInfo($customer);
