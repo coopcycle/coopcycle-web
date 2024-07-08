@@ -70,6 +70,11 @@
           {{ form_row(form.variantPrice) }}
           </div>
         {% endif %}
+
+        {% if form.bookmark is defined %}
+          <hr>
+          {{ form_row(form.bookmark) }}
+        {% endif %}
       </div>
     </div>
   </div>
@@ -116,11 +121,18 @@
         </div>
       {% endif %}
     </div>
-    <div class="col-md-5">
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary h-100">
+    <div class="col-md-5 delivery__form__buttons">
+      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
         <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
         {% trans %}basics.save{% endtrans %}
       </button>
+      {% if is_granted('ROLE_ADMIN') and not is_new and delivery.store is not empty and delivery.order is not empty %}
+        <a href="{{ path('admin_store_delivery_new',
+          { id: delivery.store.id, frmrdr: delivery.order|hashid(16) }
+        ) }}" class="btn btn-block btn-lg btn-secondary">
+          {% trans %}orders.duplicate{% endtrans %}
+        </a>
+      {% endif %}
     </div>
   </div>
 

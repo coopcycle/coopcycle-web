@@ -47,10 +47,50 @@ function workMyCollection(items, payload, token) {
   }, Promise.resolve())
 }
 
+function createPricingPromise(delivery, token, $container) {
+  return new Promise((resolve) => {
+    axios({
+      method: 'post',
+      url: baseURL + '/api/retail_prices/calculate',
+      data: delivery,
+      headers: {
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(response => resolve({ success: true, data: response.data }))
+      .catch(e => {
+        let message = ''
+
+        if (e.response && e.response.status === 400) {
+          if (Object.prototype.hasOwnProperty.call(e.response.data, '@type') && e.response.data['@type'] === 'hydra:Error') {
+            $container.addClass('delivery-price--error')
+            message = e.response.data['hydra:description']
+          }
+        }
+
+        resolve({ success: false, message })
+      })
+  })
+}
+
 class PricePreview {
-  constructor(uris, token) {
+  constructor(uris) {
     this.uris = uris
-    this.token = token
+    this.token = null
+  }
+  getToken() {
+    if (this.token) {
+      return Promise.resolve(this.token)
+    } else {
+      return  $.getJSON(window.Routing.generate('profile_jwt'))
+        .then(result => {
+          const token = result.jwt
+          this.token = token
+          return token
+        })
+    }
   }
   update(delivery) {
 
@@ -67,61 +107,39 @@ class PricePreview {
       .removeClass('list-group-item-success')
       .removeClass('list-group-item-danger')
 
-    const pricingPromise = new Promise((resolve) => {
-      axios({
-        method: 'post',
-        url: baseURL + '/api/retail_prices/calculate',
-        data: delivery,
-        headers: {
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json',
-          Authorization: `Bearer ${this.token}`
-        }
-      })
-        .then(response => resolve({ success: true, data: response.data }))
-        .catch(e => {
-          let message = ''
+    return this.getToken().then((token) => {
+      const pricingPromise = createPricingPromise(delivery, token, $container)
+      const debugPromise = workMyCollection(this.uris, delivery, token)
 
-          if (e.response && e.response.status === 400) {
-            if (Object.prototype.hasOwnProperty.call(e.response.data, '@type') && e.response.data['@type'] === 'hydra:Error') {
-              $container.addClass('delivery-price--error')
-              message = e.response.data['hydra:description']
-            }
-          }
-
-          resolve({ success: false, message })
-        })
+      return Promise
+        .all([ pricingPromise, debugPromise ])
     })
-    const debugPromise = workMyCollection(this.uris, delivery, this.token)
+   .then(values => {
 
-    return Promise
-      .all([ pricingPromise, debugPromise ])
-      .then(values => {
+     const priceResult = values[0]
 
-        const priceResult = values[0]
+     if (priceResult.success) {
 
-        if (priceResult.success) {
+       const { data } = priceResult
+       const taxExcluded = data.amount - data.tax.amount
 
-          const { data } = priceResult
-          const taxExcluded = data.amount - data.tax.amount
+       $('#delivery_price')
+         .find('[data-tax="included"]')
+         .text((data.amount / 100).formatMoney())
+       $('#delivery_price')
+         .find('[data-tax="excluded"]')
+         .text((taxExcluded / 100).formatMoney())
 
-          $('#delivery_price')
-            .find('[data-tax="included"]')
-            .text((data.amount / 100).formatMoney())
-          $('#delivery_price')
-            .find('[data-tax="excluded"]')
-            .text((taxExcluded / 100).formatMoney())
+     } else {
+       $('#delivery_price_error').text(priceResult.message)
+     }
 
-        } else {
-          $('#delivery_price_error').text(priceResult.message)
-        }
-
-        $container.removeClass('delivery-price--loading')
-      })
+     $container.removeClass('delivery-price--loading')
+   })
   }
 }
 
-export default function(el, options) {
+export default function(el) {
 
   const uris = $(el).find('ul li').map(function() {
     return {
@@ -130,5 +148,5 @@ export default function(el, options) {
     }
   }).toArray()
 
-  return new PricePreview(uris, options.token)
+  return new PricePreview(uris)
 }

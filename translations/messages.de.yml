@@ -671,6 +671,7 @@ orders.payment_link.sent: Email erfolgreich gesendet
 orders.payment_link.send_by_email: Link für die Zahlung per Email senden
 basics.copy: Kopie
 orders.new: Neue Bestellung
+orders.duplicate: Einen Auftrag duplizieren
 restaurant.form.cuisines.label: Küchenrichtung
 restaurant.form.fulfillment_methods.label: Möglichkeiten zur Auftragsausführung
 restaurant.form.loopeat_enabled.label: LoopEat System einschalten

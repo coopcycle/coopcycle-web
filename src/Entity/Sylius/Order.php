@@ -43,6 +43,8 @@ use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
@@ -436,9 +438,10 @@ use Webmozart\Assert\Assert as WMAssert;
  * @AssertLoopEatOrder(groups={"loopeat"})
  * @AssertDabbaOrder(groups={"dabba"})
  */
-class Order extends BaseOrder implements OrderInterface
+class Order extends BaseOrder implements OrderInterface, TaggableInterface
 {
     use VytalCodeAwareTrait;
+    use TaggableTrait;
 
     protected $customer;
 

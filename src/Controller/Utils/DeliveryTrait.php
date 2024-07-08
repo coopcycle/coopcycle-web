@@ -2,28 +2,20 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 trait DeliveryTrait
 {
@@ -61,13 +53,25 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
-    private function renderDeliveryForm(Delivery $delivery, Request $request,
-        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner,
-        array $options = [])
+    public function deliveryAction($id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner,
+    )
     {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery, 'view');
+
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createDeliveryForm($delivery, $options);
+        $form = $this->createDeliveryForm($delivery, [
+            'with_address_props' => true,
+            'with_arbitrary_price' => null === $delivery->getOrder(),
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -81,8 +85,26 @@ trait DeliveryTrait
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
             } else {
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+                $entityManager->persist($delivery);
+                $entityManager->flush();
+            }
+
+            if ($form->has('bookmark')) {
+                $isBookmarked = true === $form->get('bookmark')->getData();
+
+                $order = $delivery->getOrder();
+
+                if (null !== $order) {
+                    //FIXME a hack to force Doctrine to flush the Order, otherwise tags are not persisted (see TaggableSubscriber)
+                    $order->setShippingTimeRange(clone $order->getShippingTimeRange());
+
+                    if ($isBookmarked) {
+                        $order->addTag('__bookmark');
+                    } else {
+                        $order->removeTag('__bookmark');
+                    }
+                    $entityManager->flush();
+                }
             }
 
             return $this->redirectToRoute($routes['success']);
@@ -94,25 +116,6 @@ trait DeliveryTrait
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'back_route' => $routes['back'],
-        ]);
-    }
-
-    public function deliveryAction($id,
-        Request $request,
-        OrderFactory $orderFactory,
-        EntityManagerInterface $entityManager,
-        OrderNumberAssignerInterface $orderNumberAssigner
-    )
-    {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
-
-        $this->accessControl($delivery, 'view');
-
-        return $this->renderDeliveryForm($delivery, $request, $orderFactory, $entityManager, $orderNumberAssigner, [
-            'with_address_props' => true,
-            'with_arbitrary_price' => null === $delivery->getOrder(),
         ]);
     }
 
