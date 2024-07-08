@@ -133,6 +133,14 @@
         "TRANSPORTER_SITUATION_REN": "Abgelehnt",
         "TRANSPORTER_SITUATION_RST": "Empfänger nicht zugestellt",
         "TRANSPORTER_SHOW_EDI": "EDI anzeigen",
-        "TRANSPORTER_SHOW_PODS": "PODs anzeigen"
+        "TRANSPORTER_SHOW_PODS": "PODs anzeigen",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_1": "Sie haben eine Bestellung in einem anderen Restaurant begonnen",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_2": "Bitte fügen Sie einen Artikel zum Warenkorb hinzu, wenn Sie eine neue Bestellung beginnen möchten, und aktualisieren Sie dann diese Informationen",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_YES": "OK",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_NO": "Zurück zur vorherigen Bestellung",
+        "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "Der ausgewählte Zeitraum ist heute nicht mehr verfügbar",
+        "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "Die Öffnungszeiten erlauben es nicht, die Bestellung heute aufzugeben",
+        "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Bitte wählen Sie einen anderen Zeitraum",
+        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Lieferzeit ändern"
     }
 }
