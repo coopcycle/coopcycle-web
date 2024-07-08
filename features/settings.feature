@@ -34,6 +34,7 @@ Feature: Settings
         "average_shipping_time": @number@,
         "motto": "@string@||@null@",
         "order_confirm_message": @string@,
-        "edenred_client_id": "@string@"
+        "edenred_client_id": "@string@",
+        "edenred_authorization_endpoint": "@string@"
       }
       """
