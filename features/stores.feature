@@ -124,7 +124,8 @@ Feature: Stores
           "telephone":null,
           "name":null
         },
-        "timeSlot":"/api/time_slots/1"
+        "timeSlot":"/api/time_slots/1",
+        "timeSlots":[]
       }
       """
 
@@ -160,7 +161,8 @@ Feature: Stores
           "telephone":null,
           "name":null
         },
-        "timeSlot":"/api/time_slots/1"
+        "timeSlot":"/api/time_slots/1",
+        "timeSlots":[]
       }
       """
 
