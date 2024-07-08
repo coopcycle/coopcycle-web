@@ -37,6 +37,7 @@ class PaymentMethods
         }
 
         if ($this->edenredEnabled || $data->supportsEdenred()) {
+            // TODO Also check if balance is > 0
             $output->addMethod('edenred+card');
         }
 
