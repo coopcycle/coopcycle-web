@@ -76,6 +76,7 @@ Feature: Stores
         "hydra:member":[
           {
             "@id":"/api/stores/1",
+            "id":1,
             "@type":"http://schema.org/Store",
             "name":"Acme",
             "enabled":true,
@@ -108,6 +109,7 @@ Feature: Stores
         "@context":"/api/contexts/Store",
         "@id":"/api/stores/1",
         "@type":"http://schema.org/Store",
+        "id":1,
         "name":"Acme",
         "enabled":true,
         "address":{
@@ -143,6 +145,7 @@ Feature: Stores
         "@context":"/api/contexts/Store",
         "@id":"/api/stores/1",
         "@type":"http://schema.org/Store",
+        "id":1,
         "name":"Acme",
         "enabled":true,
         "address":{
