@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import CompactPicker from 'react-color/lib/Compact'
 
 import { Field, Formik } from 'formik'
-import _ from 'lodash'
+import Select from 'react-select'
 import { useTranslation } from 'react-i18next'
 
-export default ({initialValues, onSubmit, warehouses, closeModal}) => {
+export default ({initialValues, onSubmit, vehicles, closeModal}) => {
 
   const { t } = useTranslation()
 
@@ -22,7 +22,6 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
     ...initialValues,
     // FIXME : not 100% sure it is the correct way to do this...
     isElectric: initialValues.isElectric || false,
-    warehouse: initialValues.warehouse || warehouses[0]['@id']
   }
 
   const validate = (values) => {
@@ -32,7 +31,6 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
     if(!values.color || (values.isElectric && !values.electricRange)) {
       errors.electricRange = t('ADMIN_FORM_REQUIRED')
     }
-
   }
 
   return (
@@ -65,7 +63,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
             <div className={ `form-group${errors.name ? 'has-error': ''}` }>
               <div className="row">
                 <div className="col-md-8">
-                <label className="control-label" htmlFor="name">{ 'ADMIN_VEHICLE_NAME_LABEL' }</label>
+                <label className="control-label" htmlFor="name">{ 'ADMIN_TRAILER_NAME_LABEL' }</label>
                   <Field
                     className="form-control"
                     type="text"
@@ -83,36 +81,32 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               </div>
             </div>
             <div className={ `form-group ${errors.color ? 'has-error': ''}` }>
-              <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_COLOR_LABEL' }</label>
-                <div className="row">
-                  <div className="col-md-8">
-                    <Field
-                      name="color"
-                      minLength="7"
-                      maxlength="7"
-                      pattern="#[\d\w]{6}"
-                      required
-                    >
-                      {() => (
-                        <CompactPicker
-                          color={ values.color }
-                          onChangeComplete={ color => {
-                            setFieldValue('color', color.hex)
-                          }} />
-                      )}
-                    </Field>
-                    { errors.color && touched.color && (
-                      <div className="has-error px-4">
-                        <small className="help-block">{ errors.color }</small>
-                      </div>
-                    )}
-                  </div>
+              <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_TRAILER_COLOR_LABEL' }</label>
+              <Field
+                name="color"
+                minLength="7"
+                maxlength="7"
+                pattern="#[\d\w]{6}"
+                required
+              >
+                {() => (
+                  <CompactPicker
+                    color={ values.color }
+                    onChangeComplete={ color => {
+                      setFieldValue('color', color.hex)
+                    }} />
+                )}
+              </Field>
+              { errors.color && touched.color && (
+                <div className="has-error px-4">
+                  <small className="help-block">{ errors.color }</small>
                 </div>
+              )}
               </div>
               <div className="row form-inline">
                 <div className="col-md-2">
                   <div className={ `form-group ${errors.maxWeight ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_MAX_WEIGHT_LABEL' }</label>
+                    <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_TRAILER_MAX_WEIGHT_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -128,18 +122,18 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                   </div>
                 </div>
                 <div className="col-md-offset-4 col-md-2">
-                  <div className={ `form-group ${errors.volumeUnits ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="volumeUnits">{ 'ADMIN_VEHICLE_VOLUME_UNITS_LABEL' }</label>
+                  <div className={ `form-group ${errors.maxVolumeUnits ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="maxVolumeUnits">{ 'ADMIN_TRAILER_VOLUME_UNITS_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
-                      value={ values.volumeUnits }
-                      name="volumeUnits"
+                      value={ values.maxVolumeUnits }
+                      name="maxVolumeUnits"
                       required
                     />
-                    { errors.volumeUnits && touched.volumeUnits && (
+                    { errors.maxVolumeUnits && touched.maxVolumeUnits && (
                       <div className="has-error px-4">
-                        <small className="help-block">{ errors.volumeUnits }</small>
+                        <small className="help-block">{ errors.maxVolumeUnits }</small>
                       </div>
                     )}
                   </div>
@@ -148,7 +142,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
             <div className="row">
               <div className="col-md-2">
                 <div className={ `form-group ${errors.isElectric ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="isElectric">{ 'ADMIN_VEHICLE_IS_ELECTRIC_LABEL' }</label>
+                  <label className="control-label" htmlFor="isElectric">{ 'ADMIN_TRAILER_IS_ELECTRIC_LABEL' }</label>
                   <Field
                     type="checkbox"
                     name="isElectric"
@@ -163,7 +157,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               <div className="col-md-4 col-md-offset-2">
                 { values.isElectric ?
                   <div className={ `form-group ${errors.electricRange ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="electricRange">{ 'ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL' }</label>
+                    <label className="control-label" htmlFor="electricRange">{ 'ADMIN_TRAILER_ELECTRIC_RANGE_LABEL' }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -182,23 +176,27 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
             </div>
             <div className="row">
               <div className="col-md-8">
-                <div className={ `form-group ${errors.warehouse ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="warehouse">{ 'ADMIN_VEHICLE_WAREHOUSE_LABEL' }</label>
+                <div className={ `form-group ${errors.compatibleVehicles ? 'has-error': ''}` }>
+                  <label className="control-label" htmlFor="compatibleVehicles">{ 'ADMIN_TRAILER_COMPATIBLE_VEHICLES_LABEL' }</label>
                   <Field
                     className="form-control"
-                    as="select"
-                    value={ values.warehouse }
-                    name="warehouse"
+                    name="compatibleVehicles"
                   >
-                    {_.map(warehouses, (warehouse) => {
-                      return (
-                        <option key={warehouse['@id']} value={warehouse['@id']}>{warehouse.name}</option>
-                      )
-                    })}
+                  { () =>
+                    <Select
+                      isMulti={true}
+                      // https://github.com/coopcycle/coopcycle-web/issues/774
+                      // https://github.com/JedWatson/react-select/issues/3030
+                      menuPortalTarget={document.body}
+                      options={vehicles.map(vehicle => {return {value: vehicle['@id'], label: vehicle.name}})}
+                      onChange={(selected) => { setFieldValue('compatibleVehicles', selected.map(opt => opt.value)) }}
+                      placeholder={ t('ADMIN_TRAILER_COMPATIBLE_VEHICLES_LABEL') }
+                    />
+                  }
                   </Field>
-                  { errors.warehouse && touched.warehouse && (
+                  { errors.compatibleVehicles && touched.compatibleVehicles && (
                     <div className="has-error px-4">
-                      <small className="help-block">{ errors.warehouse }</small>
+                      <small className="help-block">{ errors.compatibleVehicles }</small>
                     </div>
                   )}
                 </div>

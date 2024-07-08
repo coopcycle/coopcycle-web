@@ -20,7 +20,7 @@ final class Version20240703123801 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE TABLE trailer (id SERIAL NOT NULL, name VARCHAR(255) NOT NULL, max_volume_units INT NOT NULL, max_weight INT NOT NULL, color VARCHAR(7) NOT NULL, is_electric BOOLEAN NOT NULL, electric_range INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE trailer (id SERIAL NOT NULL, name VARCHAR(255) NOT NULL, max_volume_units INT NOT NULL, max_weight INT NOT NULL, color VARCHAR(7) NOT NULL, is_electric BOOLEAN NOT NULL, electric_range INT, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE TABLE vehicle_trailer (id SERIAL NOT NULL, trailer_id INT NOT NULL, vehicle_id INT NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_D9E28121B6C04CFD ON vehicle_trailer (trailer_id)');
         $this->addSql('CREATE INDEX IDX_D9E28121545317D1 ON vehicle_trailer (vehicle_id)');

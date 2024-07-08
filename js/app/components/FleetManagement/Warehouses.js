@@ -73,7 +73,11 @@ export default () => {
           />
         </div>
       </div>
-      <Modal isOpen={isModalOpen} appElement={document.getElementById('warehouse')} className="ReactModal__Content--warehouse-form">
+      <Modal
+        isOpen={isModalOpen}
+        appElement={document.getElementById('warehouse')}
+        className="ReactModal__Content--no-default" // disable additional inline style from react-modal
+      >
         <WarehouseForm initialValues={initialValues} onSubmit={onSubmit}/>
       </Modal>
     </div>

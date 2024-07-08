@@ -85,20 +85,6 @@ class Vehicle
         $this->compatibleTrailers = new ArrayCollection();
     }
 
-    public function addCompatibleTrailer(Trailer $trailer)
-    {
-        $trailer->getCompatibleVehicles()->add($this);
-        $this->compatibleTrailers->add($trailer);
-        return $this;
-    }
-
-    public function removeCompatibleTrailer(Trailer $trailer)
-    {
-        $trailer->getCompatibleVehicles()->remove($this);
-        $this->compatibleTrailers->remove($trailer);
-        return $this;
-    }
-
     /**
      * @return mixed
      */

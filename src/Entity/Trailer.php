@@ -11,7 +11,7 @@ use AppBundle\Entity\Vehicle;
 /**
  * @ApiResource(
  *   attributes={
- *     "normalization_context"={"groups"={"trailer"}},
+ *     "normalization_context"={"groups"={"trailer", "vehicle"}},
  *     "denormalization_context"={"groups"={"trailer_create"}}
  *   },
  *   collectionOperations={
@@ -63,7 +63,7 @@ class Trailer
     protected $electricRange;
 
     /**
-    * @Groups({"trailer", "trailer_create"})
+    * @Groups({"trailer", "trailer_create", "vehicle"})
     */
     protected $compatibleVehicles;
 
@@ -211,35 +211,28 @@ class Trailer
         return $this;
     }
 
-    public function addCompatibleVehicle(Vehicle $vehicle)
-    {
-        $vehicle->getCompatibleTrailers()->add($this);
-        return $this->compatibleVehicles->add($vehicle);
-    }
-
-    public function removeCompatibleVehicle(Vehicle $vehicle)
-    {
-        $vehicle->getCompatibleTrailers()->remove($this);
-        return $this->compatibleVehicles->remove($vehicle);
-    }
-
-    /**
-     * Get the value of compatibleVehicles
-     */
-    public function getCompatibleVehicles()
-    {
+    public function getCompatibleVehicles() {
         return $this->compatibleVehicles;
     }
 
-    /**
-     * Set the value of compatibleVehicles
-     *
-     * @return  self
-     */
-    public function setCompatibleVehicles($compatibleVehicles)
+    public function hasVehicleCompat(Vehicle\Trailer $vehicleTrailer): bool
     {
-        $this->compatibleVehicles = $compatibleVehicles;
+        return $this->getCompatibleVehicles()->contains($vehicleTrailer);
+    }
 
-        return $this;
+    public function addCompatibleVehicle(Vehicle\Trailer $vehicleTrailer)
+    {
+        $vehicleTrailer->setTrailer($this);
+        if (!$this->hasVehicleCompat($vehicleTrailer)) {
+            $this->compatibleVehicles->add($vehicleTrailer);
+        }
+    }
+
+    public function removeCompatibleVehicle(Vehicle\Trailer $vehicleTrailer)
+    {
+        $vehicleTrailer->setTrailer($this);
+        if ($this->hasVehicleCompat($vehicleTrailer)) {
+            $this->compatibleVehicles->removeElement($vehicleTrailer);
+        }
     }
 }

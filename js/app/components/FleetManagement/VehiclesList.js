@@ -4,7 +4,25 @@ import { Table } from 'antd'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import VehicleForm from './VehicleForm'
+import TrailerForm from './TrailerForm'
 
+const CompatibleVehicles = ({compatibleVehicles}) => {
+  return (
+    <ul>
+      {
+        compatibleVehicles.map((vehicleCompat) => {
+          return <li key={vehicleCompat['@id']}>{ vehicleCompat.vehicle.name }</li>
+        })
+      }
+    </ul>
+  )
+}
+
+const IsElectric = ({isElectric}) => {
+  return <>
+    { isElectric ? <i className='fa fa-check'></i> : <i className='fa fa-close'></i> }
+  </>
+}
 
 export default () => {
 
@@ -12,6 +30,7 @@ export default () => {
 
   const [isLoading, setIsLoading] = useState(true)
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false)
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false)
   const [warehouses, setWarehouses] = useState([])
   const [trailers, setTrailers] = useState([])
   const [vehicles, setVehicles] = useState([])
@@ -53,9 +72,7 @@ export default () => {
     {
       title: t("IS_ELECTRIC"),
       dataIndex: "isElectric",
-      render: (isElectric) => {
-        return isElectric ? <i className='fa fa-check'></i> : <i className='fa fa-close'></i>
-      }
+      render: (isElectric) => <IsElectric isElectric={isElectric} />
     },
     {
       title: t("ELECTRIC_RANGE"),
@@ -66,23 +83,6 @@ export default () => {
       dataIndex: "warehouse",
     },
   ]
-
-  const onSubmitVehicle = async (values) => {
-    const url = window.Routing.generate("api_vehicles_post_collection")
-
-    const { error } = await httpClient.post(url, values);
-
-    if (error)
-    {
-      alert(t('ERROR'))
-      return;
-    } else {
-      setIsLoading(true)
-      const { response } = await httpClient.get(window.Routing.generate("api_vehicles_get_collection"))
-      setVehicles(response["hydra:member"])
-      setIsLoading(false)
-    }
-  }
 
   const trailerColumns = [
     {
@@ -104,6 +104,7 @@ export default () => {
     {
       title: t("IS_ELECTRIC"),
       dataIndex: "isElectric",
+      render: (isElectric) => <IsElectric isElectric={isElectric} />
     },
     {
       title: t("ELETRIC_RANGE"),
@@ -112,8 +113,43 @@ export default () => {
     {
       title: t("COMPATIBLE_VEHICLES"),
       dataIndex: "compatibleVehicles",
+      render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} />
     },
   ]
+
+  const onSubmitVehicle = async (values) => {
+    const url = window.Routing.generate("api_vehicles_post_collection")
+
+    const { error } = await httpClient.post(url, values);
+
+    if (error)
+    {
+      alert(t('ERROR'))
+      return;
+    } else {
+      setIsLoading(true)
+      const { response } = await httpClient.get(window.Routing.generate("api_vehicles_get_collection"))
+      setVehicles(response["hydra:member"])
+      setIsLoading(false)
+    }
+  }
+
+  const onSubmitTrailer = async (values) => {
+    const url = window.Routing.generate("api_trailers_post_collection")
+
+    const { error } = await httpClient.post(url, values);
+
+    if (error)
+    {
+      alert(t('ERROR'))
+      return;
+    } else {
+      setIsLoading(true)
+      const { response } = await httpClient.get(window.Routing.generate("api_trailers_get_collection"))
+      setTrailers(response["hydra:member"])
+      setIsLoading(false)
+    }
+  }
 
   return (
 
@@ -146,9 +182,10 @@ export default () => {
           </div>
           <Modal
             isOpen={isVehicleModalOpen}
-            appElement={document.getElementById('vehicles-admin-app')} className="ReactModal__Content--warehouse-form"
+            appElement={document.getElementById('vehicles-admin-app')}
             shouldCloseOnOverlayClick={true}
             shouldCloseOnEsc={true}
+            className="ReactModal__Content--no-default" // disable additional inline style from react-modal
           >
             <VehicleForm
               initialValues={{}}
@@ -169,12 +206,34 @@ export default () => {
           className="tab-pane p-3"
           id="trailers"
         >
+          <div className="row pull-right mb-2">
+            { isLoading ?
+              (<span className="loader loader--dark"></span>) :
+              <a onClick={() => setIsTrailerModalOpen(true)} className="btn btn-success">
+                <i className="fa fa-plus"></i> { t('ADD') }
+              </a>
+            }
+          </div>
           <Table
             columns={trailerColumns}
             loading={isLoading}
             dataSource={trailers}
             rowKey="@id"
           />
+          <Modal
+            isOpen={isTrailerModalOpen}
+            appElement={document.getElementById('vehicles-admin-app')}
+            shouldCloseOnOverlayClick={true}
+            shouldCloseOnEsc={true}
+            className="ReactModal__Content--no-default" // disable additional inline style from react-modal
+          >
+            <TrailerForm
+              initialValues={{}}
+              onSubmit={onSubmitTrailer}
+              closeModal={() => setIsTrailerModalOpen(false)}
+              vehicles={vehicles}
+            />
+          </Modal>
         </div>
       </div>
     </div>

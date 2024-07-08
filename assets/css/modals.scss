@@ -131,4 +131,6 @@
   @include modal-content-border();
   min-width: 60%;
   border: 1px solid $dark-gray;
+  padding: 15px;
+  max-height: calc(100vh - 30px);
 }

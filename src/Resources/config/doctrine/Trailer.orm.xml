@@ -9,8 +9,12 @@
     <field name="maxWeight" type="integer" column="max_weight"/>
     <field name="color" length="7" type="string" column="color"/>
     <field name="isElectric" type="boolean" column="is_electric"/>
-    <field name="electricRange" type="integer" column="electric_range"/>
-    <one-to-many field="compatibleVehicles" target-entity="AppBundle\Entity\Vehicle\Trailer" mapped-by="trailer"></one-to-many>
+    <field name="electricRange" type="integer" column="electric_range" nullable="true" />
+    <one-to-many field="compatibleVehicles" target-entity="AppBundle\Entity\Vehicle\Trailer" mapped-by="trailer">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
