@@ -1785,4 +1785,20 @@ class Order extends BaseOrder implements OrderInterface
     {
         return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
     }
+
+    /**
+     * @SerializedName("hasEdenredCredentials")
+     * @Groups({"order", "order_update", "cart"})
+     */
+    public function hasEdenredCredentials(): bool
+    {
+        /** @var \AppBundle\Sylius\Customer\CustomerInterface|null */
+        $customer = $this->getCustomer();
+
+        if (null === $customer) {
+            return false;
+        }
+
+        return $customer->hasEdenredCredentials();
+    }
 }
