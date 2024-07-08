@@ -38,10 +38,13 @@ class ConfigurePaymentInputDataTransformer implements DataTransformerInterface
         $payment->setMethod($paymentMethod);
 
         switch ($code) {
+            // At this step, the customer may not have connected the Edenred account yet
             case 'EDENRED+CARD':
             case 'EDENRED':
-                $breakdown = $this->edenredClient->splitAmounts($order);
-                $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
+                if ($order->getCustomer()->hasEdenredCredentials()) {
+                    $breakdown = $this->edenredClient->splitAmounts($order);
+                    $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
+                }
                 break;
             default:
                 $payment->clearAmountBreakdown();
