@@ -33,6 +33,7 @@ use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
@@ -126,6 +127,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
+ *       "normalization_context"={"api_sub_level"=true},
  *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
@@ -435,6 +437,16 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "denormalization_context"={"groups"={"update_edenred_credentials"}},
  *       "openapi_context"={
  *         "summary"="Update Edenred credentials for an order"
+ *       }
+ *     },
+ *     "configure_payment"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/payment",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=ConfigurePaymentInput::class,
+ *       "denormalization_context"={"groups"={"order_configure_payment"}},
+ *       "openapi_context"={
+ *         "summary"="Configure payment for a Order resource."
  *       }
  *     },
  *   },
