@@ -102,6 +102,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     paymentMethod:
       groups: ['order', 'order_update', 'order_minimal']
+    hasEdenredCredentials:
+      groups: ['cart', 'order', 'order_update']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
