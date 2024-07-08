@@ -18,6 +18,7 @@ use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use IncidentableTrait;
 use Symfony\Component\HttpFoundation\File\File;
@@ -170,6 +171,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     private $multiDropEnabled = false;
 
     /**
+     * @var Collection<int, StoreTimeSlot>
      * @Groups({"store"})
      */
     private $timeSlots;
@@ -533,11 +535,13 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
             $originalTimeSlots->add($sts->getTimeSlot());
         }
 
+        /** @var Collection<int, TimeSlot> */
         $newTimeSlots = new ArrayCollection();
         foreach ($timeSlots as $ts) {
             $newTimeSlots->add($ts);
         }
 
+        /** @var TimeSlot[] */
         $timeSlotsToRemove = [];
         foreach ($originalTimeSlots as $originalTimeSlot) {
             if (!$newTimeSlots->contains($originalTimeSlot)) {
