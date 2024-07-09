@@ -76,7 +76,6 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
-use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
@@ -2938,35 +2937,6 @@ class AdminController extends AbstractController
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
-        ]);
-    }
-
-    /**
-     * @Route("/admin/vehicles/new", name="admin_new_vehicle")
-     */
-    public function newVehicleAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $vehicle = new Vehicle();
-
-        $form = $this->createForm(VehicleType::class, $vehicle);
-
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-
-            $this->getDoctrine()->getManager()->persist($vehicle);
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute('admin_vehicles');
-        }
-
-        return $this->render('admin/vehicle.html.twig', [
-            'form' => $form->createView(),
         ]);
     }
 
