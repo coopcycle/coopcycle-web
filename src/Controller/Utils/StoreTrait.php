@@ -220,7 +220,7 @@ trait StoreTrait
             return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
         }
 
-        return $this->render('store/form.html.twig', [
+        return $this->render('store/form.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -229,7 +229,7 @@ trait StoreTrait
             'store_delivery_new_route' => $routes['store_delivery_new'],
             'store_deliveries_route' => $routes['store_deliveries'],
             'store_addresses_route' => $routes['store_addresses'],
-        ]);
+        ]));
     }
 
     protected function renderStoreAddressForm(Store $store, Address $address, Request $request, TranslatorInterface $translator)

@@ -317,6 +317,14 @@
         "TRANSPORTER_SITUATION_REN": "Rifiutato",
         "TRANSPORTER_SITUATION_RST": "Destinatario non consegnato",
         "TRANSPORTER_SHOW_EDI": "Vedi EDI",
-        "TRANSPORTER_SHOW_PODS": "Vedi PODs"
+        "TRANSPORTER_SHOW_PODS": "Vedi PODs",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_1": "Hai iniziato un ordine in un altro ristorante",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_TEXT_LINE_2": "Per favore, aggiungi un articolo al carrello se vuoi iniziare un nuovo ordine e poi aggiorna queste informazioni",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_YES": "OK",
+        "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_NO": "Torna all'ordine precedente",
+        "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "L'intervallo di tempo selezionato non è più disponibile per oggi",
+        "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "L'orario di apertura non consente di effettuare l'ordine oggi",
+        "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Per favore, scegli un altro intervallo di tempo",
+        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambia orario di consegna"
     }
 }

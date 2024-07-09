@@ -108,73 +108,6 @@ html, body {
     &__scroll {
       overflow: auto;
     }
-
-    &__search-nav {
-      position: relative;
-    }
-
-    &__search-box {
-      margin: ($navbar-height - $input-height-small) / 2 0;
-      display: inline-block;
-
-      &__input-wrapper {
-        display: flex;
-        position: relative;
-        line-height: $input-height-small;
-        height: $input-height-small;
-
-        input {
-          text-indent: $input-height-small;
-          padding-right: $input-height-small;
-          &--addon {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-          }
-        }
-
-        &:before {
-          font-family: 'FontAwesome';
-          content: '\F002';
-          color: white;
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-
-          font-size: $font-size-base;
-          text-align: center;
-          width: $input-height-small;
-          line-height: $input-height-small;
-          background-color: $main-blue;
-
-          border-top-left-radius: $input-border-radius;
-          border-bottom-left-radius: $input-border-radius;
-        }
-      }
-
-      &__clear {
-        position: absolute;
-        right: 0;
-        top: 0;
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
-        height: 100%;
-        width: $input-height-base;
-      }
-    }
-
-    &__search-results {
-      position: absolute;
-      right: 0;
-      z-index: 1;
-      padding: $base-margin-s;
-      max-height: calc(100vh / 3);
-      overflow-y: scroll;
-      background-color: white;
-      width: 300px;
-    }
-
   }
 
   &__date {
@@ -182,13 +115,24 @@ html, body {
     padding-right: 15px;
   }
 
-  &__date-picker {
+  &__date-picker, &__search-input {
     margin: 9px 0;
     display: inline-block;
 
     .ant-calendar-picker {
       margin: 0;
     }
+  }
+
+  &__search-result {
+    padding: 2px;
+    text-wrap: wrap;
+  }
+
+  &__search-result .ant-select-item-option-content {
+    overflow: unset;
+    white-space: unset;
+    text-overflow: unset;
   }
 
   &__date-link {

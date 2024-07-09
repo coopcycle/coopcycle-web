@@ -66,22 +66,6 @@ class StoreType extends LocalBusinessType
                     'help' => 'form.store_type.multi_drop_enabled.help',
                     'required' => false,
                 ])
-                ->add('timeSlot', EntityType::class, [
-                    'label' => 'form.store_type.time_slot.label',
-                    'class' => TimeSlot::class,
-                    'choice_label' => 'name',
-                    'required' => false,
-                    'query_builder' => new OrderByNameQueryBuilder(),
-                ])
-                ->add('timeSlots', EntityType::class, [
-                    'label' => 'form.store_type.time_slots.label',
-                    'class' => TimeSlot::class,
-                    'choice_label' => 'name',
-                    'required' => false,
-                    'expanded' => true,
-                    'multiple' => true,
-                    'query_builder' => new OrderByNameQueryBuilder(),
-                ])
                 ->add('tags', TagsType::class)
                 ->add('failureReasonSet', EntityType::class, array(
                     'label' => 'form.store_type.failure_reason_set.label',

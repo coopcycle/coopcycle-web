@@ -69,7 +69,10 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 3800,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 3800,
+                    ]
                 ]
             ]))
         );
@@ -99,7 +102,10 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 3800,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 3800,
+                    ]
                 ]
             ]))
         );
@@ -132,7 +138,10 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 3800,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 3800,
+                    ]
                 ]
             ]))
         );
@@ -165,7 +174,10 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 1200,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 1200
+                    ]
                 ]
             ]))
         );

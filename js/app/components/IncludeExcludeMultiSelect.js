@@ -39,7 +39,9 @@ export default ({placeholder, onChange, selectOptions, defaultValue, isLoading})
       isMulti={true}
       // https://github.com/coopcycle/coopcycle-web/issues/774
       // https://github.com/JedWatson/react-select/issues/3030
+      // https://react-select.com/advanced#portaling
       menuPortalTarget={document.body}
+      styles={{ menuPortal: (base) => ({ ...base, zIndex: 9999 }) }}
       options={options}
       onChange={(selected) => { onChangeHandler(selected) }}
       placeholder={ placeholder }

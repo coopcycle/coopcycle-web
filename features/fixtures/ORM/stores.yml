@@ -72,6 +72,12 @@ AppBundle\Entity\TimeSlot:
       - 'Mo-Sa 10:00-11:00'
       - 'Mo-Sa 11:00-13:00'
       - 'Su 14:00-15:00'
+  time_slot_3:
+    name: 'Another time slot'
+    workingDaysOnly: false
+    openingHours:
+      - 'Mo-Sa 10:00-12:00'
+      - 'Mo-Sa 12:00-14:00'
 
 AppBundle\Entity\PackageSet:
   package_set_1:
@@ -127,5 +133,16 @@ AppBundle\Entity\Store:
     transporter: 'DBSCHENKER'
     pricingRuleSet: '@pricing_rule_set_4'
     timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@address_2" ]
+  store_6:
+    name: 'Acme 6'
+    address: "@address_2"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_4'
+    timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
+      - '@time_slot_2'
     __calls:
       - addAddress: [ "@address_2" ]

@@ -42,7 +42,7 @@ const TaskCaption = ({ task }) => {
   return (
     <span>
       <span className="mr-1">
-        <span className="text-monospace">
+        <span className="text-monospace font-weight-bold">
           { task?.metadata.order_number ?
             task.metadata.order_number
             : `#${ task.id }`
@@ -51,7 +51,7 @@ const TaskCaption = ({ task }) => {
       </span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
-          <span className="font-weight-bold">{ task.orgName }</span>
+          <span>{ task.orgName }</span>
           <span className="mx-1">›</span>
         </span>
       ) }
@@ -173,6 +173,7 @@ class Task extends React.Component {
   // @see https://css-tricks.com/snippets/javascript/bind-different-events-to-click-and-double-click/
 
   onClick(e) {
+    e.stopPropagation()
     const multiple = (e.ctrlKey || e.metaKey)
     this.timer = setTimeout(() => {
       if (!this.prevent) {
@@ -183,7 +184,8 @@ class Task extends React.Component {
     }, 250)
   }
 
-  onDoubleClick() {
+  onDoubleClick(e) {
+    e.stopPropagation()
     clearTimeout(this.timer)
     this.prevent = true
 
