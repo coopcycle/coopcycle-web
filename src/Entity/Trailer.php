@@ -7,12 +7,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use AppBundle\Entity\Vehicle;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 
 /**
  * @ApiResource(
  *   attributes={
  *     "normalization_context"={"groups"={"trailer", "vehicle"}},
- *     "denormalization_context"={"groups"={"trailer_create"}}
+ *     "denormalization_context"={"groups"={"trailer_create"}},
  *   },
  *   collectionOperations={
  *     "get"={
@@ -23,13 +24,18 @@ use AppBundle\Entity\Vehicle;
  *       "method"="POST",
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *      },
- *   }
+ *   },
+ *   order={"name": "ASC"},
  * )
  */
 class Trailer
 {
     use Timestampable;
+    use SoftDeleteable;
 
+    /**
+    * @Groups({"trailer"})
+    */
     protected $id;
 
     /**

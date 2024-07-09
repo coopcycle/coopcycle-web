@@ -15,7 +15,6 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
     setLoading(true)
     await onSubmit(values)
     setLoading(false)
-    closeModal()
   }
 
   initialValues = {
@@ -65,7 +64,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
             <div className={ `form-group${errors.name ? 'has-error': ''}` }>
               <div className="row">
                 <div className="col-md-8">
-                <label className="control-label" htmlFor="name">{ 'ADMIN_VEHICLE_NAME_LABEL' }</label>
+                <label className="control-label" htmlFor="name">{ t('ADMIN_VEHICLE_NAME_LABEL') }</label>
                   <Field
                     className="form-control"
                     type="text"
@@ -83,7 +82,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               </div>
             </div>
             <div className={ `form-group ${errors.color ? 'has-error': ''}` }>
-              <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_COLOR_LABEL' }</label>
+              <label className="control-label" htmlFor="color">{ t('ADMIN_VEHICLE_COLOR_LABEL') }</label>
                 <div className="row">
                   <div className="col-md-8">
                     <Field
@@ -109,10 +108,10 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                   </div>
                 </div>
               </div>
-              <div className="row form-inline">
-                <div className="col-md-2">
-                  <div className={ `form-group ${errors.maxWeight ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_MAX_WEIGHT_LABEL' }</label>
+              <div className="row form-group">
+                <div className="col-md-3">
+                  <div className={ `${errors.maxWeight ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="maxWeight">{ t('ADMIN_VEHICLE_MAX_WEIGHT_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -127,9 +126,9 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                     )}
                   </div>
                 </div>
-                <div className="col-md-offset-4 col-md-2">
-                  <div className={ `form-group ${errors.volumeUnits ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="volumeUnits">{ 'ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL' }</label>
+                <div className="col-md-offset-3 col-md-3">
+                  <div className={ `${errors.volumeUnits ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="volumeUnits">{ t('ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -145,10 +144,10 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                   </div>
                 </div>
             </div>
-            <div className="row">
+            <div className="row form-group">
               <div className="col-md-2">
-                <div className={ `form-group ${errors.isElectric ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="isElectric">{ 'ADMIN_VEHICLE_IS_ELECTRIC_LABEL' }</label>
+                <div className={ `${errors.isElectric ? 'has-error': ''}` }>
+                  <label className="control-label pr-2" htmlFor="isElectric">{ t('ADMIN_VEHICLE_IS_ELECTRIC_LABEL') }</label>
                   <Field
                     type="checkbox"
                     name="isElectric"
@@ -162,8 +161,8 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               </div>
               <div className="col-md-4 col-md-offset-2">
                 { values.isElectric ?
-                  <div className={ `form-group ${errors.electricRange ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="electricRange">{ 'ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL' }</label>
+                  <div className={ `${errors.electricRange ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="electricRange">{ t('ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -180,10 +179,10 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                 }
               </div>
             </div>
-            <div className="row">
+            <div className="row form-group">
               <div className="col-md-8">
-                <div className={ `form-group ${errors.warehouse ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="warehouse">{ 'ADMIN_VEHICLE_WAREHOUSE_LABEL' }</label>
+                <div className={ `${errors.warehouse ? 'has-error': ''}` }>
+                  <label className="control-label" htmlFor="warehouse">{ t('ADMIN_VEHICLE_WAREHOUSE_LABEL') }</label>
                   <Field
                     className="form-control"
                     as="select"
@@ -208,7 +207,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               <div className="col-md-8 col-md-offset-2 text-center">
                 <div className="input-group-btn">
                   <button className="btn btn-primary" type="submit" disabled={isLoading}>
-                    { 'SAVE_BUTTON' }
+                    { t('SAVE_BUTTON') }
                   </button>
                 </div>
               </div>

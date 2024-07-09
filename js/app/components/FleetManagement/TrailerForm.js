@@ -63,7 +63,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
             <div className={ `form-group${errors.name ? 'has-error': ''}` }>
               <div className="row">
                 <div className="col-md-8">
-                <label className="control-label" htmlFor="name">{ 'ADMIN_VEHICLE_NAME_LABEL' }</label>
+                <label className="control-label" htmlFor="name">{ t('ADMIN_VEHICLE_NAME_LABEL') }</label>
                   <Field
                     className="form-control"
                     type="text"
@@ -81,32 +81,36 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               </div>
             </div>
             <div className={ `form-group ${errors.color ? 'has-error': ''}` }>
-              <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_COLOR_LABEL' }</label>
-              <Field
-                name="color"
-                minLength="7"
-                maxlength="7"
-                pattern="#[\d\w]{6}"
-                required
-              >
-                {() => (
-                  <CompactPicker
-                    color={ values.color }
-                    onChangeComplete={ color => {
-                      setFieldValue('color', color.hex)
-                    }} />
-                )}
-              </Field>
-              { errors.color && touched.color && (
-                <div className="has-error px-4">
-                  <small className="help-block">{ errors.color }</small>
+              <label className="control-label" htmlFor="maxWeight">{ t('ADMIN_VEHICLE_COLOR_LABEL') }</label>
+                <div className="row">
+                  <div className="col-md-8">
+                    <Field
+                      name="color"
+                      minLength="7"
+                      maxlength="7"
+                      pattern="#[\d\w]{6}"
+                      required
+                    >
+                      {() => (
+                        <CompactPicker
+                          color={ values.color }
+                          onChangeComplete={ color => {
+                            setFieldValue('color', color.hex)
+                          }} />
+                      )}
+                    </Field>
+                    { errors.color && touched.color && (
+                      <div className="has-error px-4">
+                        <small className="help-block">{ errors.color }</small>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              )}
               </div>
-              <div className="row form-inline">
-                <div className="col-md-2">
-                  <div className={ `form-group ${errors.maxWeight ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="maxWeight">{ 'ADMIN_VEHICLE_MAX_WEIGHT_LABEL' }</label>
+              <div className="row form-group">
+                <div className="col-md-3">
+                  <div className={ `${errors.maxWeight ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="maxWeight">{ t('ADMIN_VEHICLE_MAX_WEIGHT_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -121,9 +125,9 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                     )}
                   </div>
                 </div>
-                <div className="col-md-offset-4 col-md-2">
-                  <div className={ `form-group ${errors.maxVolumeUnits ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="maxVolumeUnits">{ 'ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL' }</label>
+                <div className="col-md-offset-3 col-md-3">
+                  <div className={ `${errors.maxVolumeUnits ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="maxVolumeUnits">{ t('ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -139,10 +143,10 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                   </div>
                 </div>
             </div>
-            <div className="row">
+            <div className="row form-group">
               <div className="col-md-2">
-                <div className={ `form-group ${errors.isElectric ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="isElectric">{ 'ADMIN_VEHICLE_IS_ELECTRIC_LABEL' }</label>
+                <div className={ `${errors.isElectric ? 'has-error': ''}` }>
+                  <label className="control-label pr-2" htmlFor="isElectric">{ t('ADMIN_VEHICLE_IS_ELECTRIC_LABEL') }</label>
                   <Field
                     type="checkbox"
                     name="isElectric"
@@ -156,8 +160,8 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               </div>
               <div className="col-md-4 col-md-offset-2">
                 { values.isElectric ?
-                  <div className={ `form-group ${errors.electricRange ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="electricRange">{ 'ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL' }</label>
+                  <div className={ `${errors.electricRange ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="electricRange">{ t('ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
@@ -174,10 +178,10 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                 }
               </div>
             </div>
-            <div className="row">
+            <div className="row form-group">
               <div className="col-md-8">
-                <div className={ `form-group ${errors.compatibleVehicles ? 'has-error': ''}` }>
-                  <label className="control-label" htmlFor="compatibleVehicles">{ 'ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL' }</label>
+                <div className={ `${errors.compatibleVehicles ? 'has-error': ''}` }>
+                  <label className="control-label" htmlFor="compatibleVehicles">{ t('ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL') }</label>
                   <Field
                     className="form-control"
                     name="compatibleVehicles"
@@ -189,7 +193,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                       // https://github.com/JedWatson/react-select/issues/3030
                       menuPortalTarget={document.body}
                       options={vehicles.map(vehicle => {return {value: vehicle['@id'], label: vehicle.name}})}
-                      onChange={(selected) => { setFieldValue('compatibleVehicles', selected.map(opt => opt.value)) }}
+                      onChange={(selected) => { setFieldValue('compatibleVehicles', selected.map(opt => {return {vehicle: opt.value}})) }}
                       placeholder={ t('ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL') }
                     />
                   }
@@ -206,7 +210,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               <div className="col-md-8 col-md-offset-2 text-center">
                 <div className="input-group-btn">
                   <button className="btn btn-primary" type="submit" disabled={isLoading}>
-                    { 'SAVE_BUTTON' }
+                    { t('SAVE_BUTTON') }
                   </button>
                 </div>
               </div>

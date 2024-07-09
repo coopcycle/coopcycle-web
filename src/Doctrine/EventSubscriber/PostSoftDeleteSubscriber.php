@@ -8,6 +8,8 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Vehicle\Trailer;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\Common\EventSubscriber;
@@ -119,6 +121,15 @@ class PostSoftDeleteSubscriber implements EventSubscriber
             $entity->setPricingRuleSet(null);
             $entity->setPackageSet(null);
 
+            $unitOfWork->computeChangeSets();
+        }
+
+        if ($entity instanceof Vehicle) {
+
+            $trailers = $entity->getCompatibleTrailers();
+            foreach ($trailers as $trailer) {
+                $trailer->getCompatibleVehicles()->removeElement($entity);
+            }
             $unitOfWork->computeChangeSets();
         }
     }

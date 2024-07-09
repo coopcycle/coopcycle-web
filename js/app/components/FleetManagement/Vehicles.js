@@ -5,10 +5,11 @@ import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import VehicleForm from './VehicleForm'
 import TrailerForm from './TrailerForm'
+import DeleteIcon from '../DeleteIcon'
 
 const Loader = () => {
   return (
-    <div className="text-center">
+    <div className="text-center my-4">
       <span className="loader loader--lg loader--dark"></span>
     </div>
   )
@@ -49,6 +50,21 @@ export default () => {
 
   const httpClient = new window._auth.httpClient()
 
+  const fetchVehicles = () => {
+    setIsLoading(true)
+    httpClient.get(window.Routing.generate("api_vehicles_get_collection")).then(({response}) => {
+      setVehicles(response["hydra:member"])
+      setIsLoading(false)
+    })
+  }
+
+  const fetchTrailers = () => {
+    setIsLoading(true)
+    httpClient.get(window.Routing.generate("api_trailers_get_collection")).then(({response}) => {
+      setTrailers(response["hydra:member"])
+      setIsLoading(false)
+    })
+  }
 
   useEffect(() => {
     Promise.all([
@@ -101,6 +117,11 @@ export default () => {
       dataIndex: ["warehouse", "name"],
       align: "center"
     },
+    {
+      key: "action",
+      align: "right",
+      render: (record) => <DeleteIcon deleteUrl={"api_vehicles_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchVehicles} />,
+    },
   ]
 
   const trailerColumns = [
@@ -140,6 +161,11 @@ export default () => {
       dataIndex: "compatibleVehicles",
       render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} />,
     },
+    {
+      key: "action",
+      align: "right",
+      render: (record) => <DeleteIcon deleteUrl={"api_trailers_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchTrailers} />,
+    },
   ]
 
   const onSubmitVehicle = async (values) => {
@@ -152,10 +178,8 @@ export default () => {
       alert(t('ERROR'))
       return;
     } else {
-      setIsLoading(true)
-      const { response } = await httpClient.get(window.Routing.generate("api_vehicles_get_collection"))
-      setVehicles(response["hydra:member"])
-      setIsLoading(false)
+      fetchVehicles()
+      setIsVehicleModalOpen(false)
     }
   }
 
@@ -238,37 +262,43 @@ export default () => {
         </div>
         <div
           role="tabpanel"
-          className="tab-pane p-3"
+          className="tab-pane p-4"
           id="trailers"
         >
-          <div className="row pull-right mb-2">
-            { isLoading ?
-              (<span className="loader loader--dark"></span>) :
-              <a onClick={() => setIsTrailerModalOpen(true)} className="btn btn-success">
-                <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
-              </a>
-            }
-          </div>
-          <Table
-            columns={trailerColumns}
-            loading={isLoading}
-            dataSource={trailers}
-            rowKey="@id"
-          />
-          <Modal
-            isOpen={isTrailerModalOpen}
-            appElement={document.getElementById('vehicles-admin-app')}
-            shouldCloseOnOverlayClick={true}
-            shouldCloseOnEsc={true}
-            className="ReactModal__Content--no-default" // disable additional inline style from react-modal
-          >
-            <TrailerForm
-              initialValues={{}}
-              onSubmit={onSubmitTrailer}
-              closeModal={() => setIsTrailerModalOpen(false)}
-              vehicles={vehicles}
-            />
-          </Modal>
+          { isLoading ?
+            <Loader /> :
+              vehicles.length === 0 ?
+                <div className='text-center'>
+                  <p className="my-2">{ t('ADMIN_VEHICLE_NO_VEHICLE') }</p>
+                </div> :
+                <>
+                  <div className="pull-right mb-2">
+                      <a onClick={() => setIsTrailerModalOpen(true)} className="btn btn-success">
+                        <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
+                      </a>
+                  </div>
+                  <Table
+                    columns={trailerColumns}
+                    loading={isLoading}
+                    dataSource={trailers}
+                    rowKey="@id"
+                  />
+                  <Modal
+                    isOpen={isTrailerModalOpen}
+                    appElement={document.getElementById('vehicles-admin-app')}
+                    shouldCloseOnOverlayClick={true}
+                    shouldCloseOnEsc={true}
+                    className="ReactModal__Content--no-default" // disable additional inline style from react-modal
+                  >
+                    <TrailerForm
+                      initialValues={{}}
+                      onSubmit={onSubmitTrailer}
+                      closeModal={() => setIsTrailerModalOpen(false)}
+                      vehicles={vehicles}
+                    />
+                  </Modal>
+                </>
+          }
         </div>
       </div>
     </div>

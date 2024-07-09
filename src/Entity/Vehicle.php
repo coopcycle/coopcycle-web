@@ -7,13 +7,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use AppBundle\Entity\Trailer;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
  *   attributes={
  *     "normalization_context"={"groups"={"vehicle", "warehouse"}},
- *     "denormalization_context"={"groups"={"vehicle_create"}}
+ *     "denormalization_context"={"groups"={"vehicle_create"}},
  *   },
  *   collectionOperations={
  *     "get"={
@@ -24,13 +25,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="POST",
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *      },
- *   }
+ *   },
+ *   order={"name": "ASC"},
  * )
  */
 class Vehicle
 {
     use Timestampable;
+    use SoftDeleteable;
 
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
+    */
     protected $id;
 
     /**

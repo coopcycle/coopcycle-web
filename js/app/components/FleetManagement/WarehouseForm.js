@@ -43,6 +43,8 @@ export default ({initialValues, onSubmit}) => {
                 type="text"
                 value={ values.name }
                 name="name"
+                required
+                minLength="2"
               />
             </div>
           </div>
@@ -56,7 +58,6 @@ export default ({initialValues, onSubmit}) => {
                         autofocus={ false }
                         address={ values.address }
                         onAddressSelected={ (value, address) => {
-                          console.log(address)
                           const cleanAddress =
                             _.omit(address, ['isPrecise', 'latitude', 'longitude', 'addressRegion', 'geohash', 'needsGeocoding'])
 

@@ -16,11 +16,16 @@ export default () => {
 
   const httpClient = new window._auth.httpClient()
 
-  useEffect(() => {
+  const fetchWarehouses = () => {
+    setIsLoading(true)
     httpClient.get(window.Routing.generate("api_warehouses_get_collection")).then(({ response }) => {
       setWarehouses(response["hydra:member"])
       setIsLoading(false)
     })
+  }
+
+  useEffect(() => {
+    fetchWarehouses()
   }, [])
 
   const columns = [
@@ -37,7 +42,7 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"api_warehouses_delete_item"}  objectId={record.id} objectName={record.name} />,
+      render: (record) => <DeleteIcon deleteUrl={"api_warehouses_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchWarehouses} />,
     },
   ]
 
@@ -51,7 +56,8 @@ export default () => {
       alert(t('ERROR'))
       return;
     } else {
-      window.location.reload()
+      setModalOpen(false)
+      fetchWarehouses()
     }
   }
   const initialValues = {
@@ -84,6 +90,7 @@ export default () => {
         className="ReactModal__Content--no-default" // disable additional inline style from react-modal
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}
+        style={{content: {overflow: "unset"}}}
       >
         <div className="modal-header">
           <h4 className="modal-title">

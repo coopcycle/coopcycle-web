@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 
-export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessage }) {
+export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessage, afterDeleteFetch }) {
 
   errorMessage = errorMessage || "ADMIN_DEFAULT_DELETION_ERROR_MESSAGE"
+  afterDeleteFetch = afterDeleteFetch || window.location.reload
 
   const { t } = useTranslation(),
     [loading, setLoading] = useState(false),
@@ -27,7 +28,7 @@ export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessa
         alert(t(errorMessage))
         return;
       } else {
-        window.location.reload()
+        afterDeleteFetch()
       }
     }
 
