@@ -6,6 +6,14 @@ import { useTranslation } from 'react-i18next'
 import VehicleForm from './VehicleForm'
 import TrailerForm from './TrailerForm'
 
+const Loader = () => {
+  return (
+    <div className="text-center">
+      <span className="loader loader--lg loader--dark"></span>
+    </div>
+  )
+}
+
 const CompatibleVehicles = ({compatibleVehicles}) => {
   return (
     <ul>
@@ -185,49 +193,47 @@ export default () => {
       <div className="tab-content">
         <div
           role="tabpanel"
-          className="tab-pane active p-3"
+          className="tab-pane active p-4"
           id="vehicles"
         >
           { isLoading ?
-            <span className="loader loader--dark"></span> :
-            null
-          }
-          { !isLoading && warehouses.length === 0 ?
-            <span>
-              { t('ADMIN_VEHICLE_NO_WAREHOUSE') }
-              <a
-                className="btn btn-primary"
-                href={ window.Routing.generate('admin_warehouses') }>
-                  { t('ADMIN_VEHICLE_TO_WAREHOUSE_PAGE') }
-              </a>
-            </span> :
-            <>
-              <div className="pull-right mb-2">
-                  <a onClick={() => setIsVehicleModalOpen(true)} className="btn btn-success">
-                    <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
+            <Loader /> :
+              warehouses.length === 0 ?
+                <div className='text-center'>
+                  <p className="mb-2">{ t('ADMIN_VEHICLE_NO_WAREHOUSE') }</p>
+                  <a
+                    className="btn btn-default"
+                    href={ window.Routing.generate('admin_warehouses') }>
+                      { t('ADMIN_VEHICLE_TO_WAREHOUSE_PAGE') }
                   </a>
-              </div>
-              <Modal
-                isOpen={isVehicleModalOpen}
-                appElement={document.getElementById('vehicles-admin-app')}
-                shouldCloseOnOverlayClick={true}
-                shouldCloseOnEsc={true}
-                className="ReactModal__Content--no-default" // disable additional inline style from react-modal
-              >
-                <VehicleForm
-                  initialValues={{}}
-                  onSubmit={onSubmitVehicle}
-                  closeModal={() => setIsVehicleModalOpen(false)}
-                  warehouses={warehouses}
-                />
-              </Modal>
-              <Table
-                columns={vehicleColumns}
-                loading={isLoading}
-                dataSource={vehicles}
-                rowKey="@id"
-              />
-            </>
+                </div> :
+                <>
+                  <div className="pull-right mb-2">
+                      <a onClick={() => setIsVehicleModalOpen(true)} className="btn btn-success">
+                        <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
+                      </a>
+                  </div>
+                  <Modal
+                    isOpen={isVehicleModalOpen}
+                    appElement={document.getElementById('vehicles-admin-app')}
+                    shouldCloseOnOverlayClick={true}
+                    shouldCloseOnEsc={true}
+                    className="ReactModal__Content--no-default" // disable additional inline style from react-modal
+                  >
+                    <VehicleForm
+                      initialValues={{}}
+                      onSubmit={onSubmitVehicle}
+                      closeModal={() => setIsVehicleModalOpen(false)}
+                      warehouses={warehouses}
+                    />
+                  </Modal>
+                  <Table
+                    columns={vehicleColumns}
+                    loading={isLoading}
+                    dataSource={vehicles}
+                    rowKey="@id"
+                  />
+                </>
           }
         </div>
         <div
