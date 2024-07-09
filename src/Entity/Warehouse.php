@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 
 /**
@@ -27,7 +28,11 @@ use Gedmo\Timestampable\Traits\Timestampable;
 class Warehouse
 {
     use Timestampable;
+    use SoftDeleteable;
 
+    /**
+     * @Groups({"warehouse"})
+     */
     protected $id;
 
     /**

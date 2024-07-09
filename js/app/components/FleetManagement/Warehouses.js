@@ -4,6 +4,7 @@ import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import WarehouseForm from './WarehouseForm'
 import { Table } from 'antd'
+import DeleteIcon from '../DeleteIcon'
 
 export default () => {
 
@@ -32,6 +33,11 @@ export default () => {
       title: t("ADMIN_WAREHOUSE_ADDRESS_LABEL"),
       dataIndex: ["address", "streetAddress"],
       key: "address.streetAddress",
+    },
+    {
+      key: "action",
+      align: "right",
+      render: (record) => <DeleteIcon deleteUrl={"api_warehouses_delete_item"}  objectId={record.id} objectName={record.name} />,
     },
   ]
 
