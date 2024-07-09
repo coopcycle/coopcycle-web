@@ -528,6 +528,9 @@
         "TRANSPORTER_SITUATION_REN": "Refused",
         "TRANSPORTER_SITUATION_RST": "Recipient not delivered",
         "TRANSPORTER_SHOW_EDI": "Show EDI",
-        "TRANSPORTER_SHOW_PODS": "Show PODs"
+        "TRANSPORTER_SHOW_PODS": "Show PODs",
+        "TIME_SLOTS": "Time slots",
+        "TIME_SLOTS_SELECT": "Select a time slot",
+        "TIME_SLOTS_SET_DEFAULT": "Set as default time slot"
     }
 }

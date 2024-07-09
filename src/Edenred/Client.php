@@ -54,8 +54,8 @@ class Client
 
             $credentials = $customer->getEdenredCredentials();
 
-            // https://documenter.getpostman.com/view/10405248/TVewaQQX#82e953fc-9110-4246-8a78-aba888b70b31
-            $response = $this->client->request('GET', sprintf('/v2/users/%s', $userInfo['username']), [
+            // https://anypoint.mulesoft.com/exchange/portals/edenred-corporate/f02a5569-24ac-491a-964a-0950ab318728/edenred-payment-services-api/minor/2.0/console/method/%231390/
+            $response = $this->client->request('GET', sprintf('/v2/users/%s/balances', $userInfo['username']), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,
@@ -66,7 +66,13 @@ class Client
 
             $data = json_decode((string) $response->getBody(), true);
 
-            return $data['data']['available_amount'] ?? 0;
+            foreach ($data['data'] as $balance) {
+                if ($balance['product_class'] === 'ETR') {
+                    return $balance['available_amount'];
+                }
+            }
+
+            return 0;
 
         } catch (BadResponseException $e) {
             // This means the refresh token has expired

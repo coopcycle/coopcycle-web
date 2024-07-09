@@ -135,7 +135,7 @@ class Navbar extends React.Component {
                   <i className="fa fa-upload" aria-hidden="true"></i> { this.props.t('ADMIN_DASHBOARD_NAV_IMPORT') }
                 </a>
               </li>
-              <li className="dashboard__panel__search-nav">
+              <li className="dashboard__search-input ml-2">
                 <SearchInput />
               </li>
               { _.size(this.props.imports) > 0 && _.map(this.props.imports, (message, token) => this.renderImport(token, message))}

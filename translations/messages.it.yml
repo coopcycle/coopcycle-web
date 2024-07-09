@@ -372,6 +372,7 @@ deliveries.sort.newest: Prima i più recenti
 deliveries.sort.oldest: Prima i più vecchi
 deliveries.filter.clear: Mostra tutti
 orders.new: Nuovo ordine
+orders.duplicate: Duplicare un ordine
 orders.payment_link.sent: Email inviata con successo
 form.min_max.upper.label: Numero massimo
 form.min_max.infinity.label: Nessun massimo

@@ -788,6 +788,8 @@ services:
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
+      $edenredClientId: '%env(EDENRED_AUTHENTICATION_CLIENT_ID)%'
+      $edenredAuthorizationEndpoint: '%env(EDENRED_AUTHENTICATION_BASE_URL)%'
 
   AppBundle\Transporter\ImportFromPoint: ~
   AppBundle\Transporter\ReportFromCC: ~

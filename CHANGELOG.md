@@ -5,11 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2024-07-08
+
+### Added
+* Show volumes and weight in the dispatch for individual tasks, and sum for tours/routes and for what is assigned to a messenger. Includes a toggle setting. By @Atala in https://github.com/coopcycle/coopcycle-web/pull/4469
+* As a dispatcher, I can change the color of the dropoff markers, or show a colored line that demostrates the way the tasks are arranged into a route by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4479
+* Move the search input from right panel to top bar to improve usability and show results better by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4482
+* Allow dispatch to reorder timeslots on Store settings, which changes the way they are shown to a store when they use the order creation form by @r0xsh in https://github.com/coopcycle/coopcycle-web/pull/4417
+* In foodtech orders dashboard, fix search + show search result on top of column
+* Show task(s) in the right hand columns when selecting a task on the map by @Atala in #4455
+
+### Fixed
+* Allow last-mile orders to be paid after the delivery has been completed
+
 ## [3.0.4] - 2024-06-27
 
 ### Added
 
-* FOOD TECH: Timing Modal. Display a modal when the client is about to make an order that's going to be rescheduled to the next shift
+* FOOD TECH: Timing Modal (web only). Display a modal when the client is about to make an order that's going to be rescheduled to the next shift
 
 ## [3.0.2] - 2024-06-27
 

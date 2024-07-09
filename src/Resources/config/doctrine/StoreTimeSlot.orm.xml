@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\StoreTimeSlot" table="store_time_slot">
+   <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <unique-constraints>
+      <unique-constraint columns="store_id,time_slot_id"/>
+    </unique-constraints>
+    <field name="position" type="integer" column="position"/>
+    <many-to-one field="store" target-entity="AppBundle\Entity\Store" inversed-by="timeSlots">
+      <join-columns>
+        <join-column name="store_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+    <many-to-one field="timeSlot" target-entity="AppBundle\Entity\TimeSlot">
+      <join-columns>
+        <join-column name="time_slot_id" referenced-column-name="id"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

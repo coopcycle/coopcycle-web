@@ -119,6 +119,12 @@
   }
 }
 
+.delivery__form__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
 .ant-picker + .ant-picker {
   margin-left: 0.5em;
 }
