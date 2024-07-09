@@ -1,16 +1,23 @@
+import React from 'react'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import _ from 'lodash'
 import axios from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
+import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { I18nextProvider } from 'react-i18next'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import DateRangePicker from '../widgets/DateRangePicker'
 import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
+import i18n from '../i18n'
+import { RecurrenceRules } from './components/RecurrenceRules'
 import tasksSlice from './redux/tasksSlice'
+import { recurrenceRulesSlice } from './redux/recurrenceRulesSlice'
 import { storeSlice } from './redux/storeSlice'
 
 const selectTasks = state => state.tasks
@@ -487,6 +494,16 @@ export default function(name, options) {
       }
     }
 
+    if (el.dataset.recurrenceRules) {
+      preloadedState = {
+        ...preloadedState,
+        recurrenceRules: {
+          ...recurrenceRulesSlice.getInitialState(),
+          recurrenceRule: JSON.parse(el.dataset.recurrenceRules),
+        }
+      }
+    }
+
     // tasks_0, tasks_1...
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
     taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
@@ -495,6 +512,7 @@ export default function(name, options) {
       reducer: {
         [storeSlice.name]: storeSlice.reducer,
         "tasks": tasksSlice.reducer,
+        [recurrenceRulesSlice.name]: recurrenceRulesSlice.reducer,
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
@@ -562,6 +580,18 @@ export default function(name, options) {
         }
       })
     }
+  }
+
+  const recurrenceRulesContainer = document.querySelector('#delivery_form__recurrence_rules__container')
+  if (recurrenceRulesContainer) {
+    const root = createRoot(recurrenceRulesContainer);
+    root.render(
+      <Provider store={ reduxStore }>
+        <I18nextProvider i18n={ i18n }>
+          <RecurrenceRules />
+        </I18nextProvider>
+      </Provider>
+    )
   }
 
   return form
