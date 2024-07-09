@@ -1,8 +1,8 @@
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
-import { createStore, applyMiddleware, compose } from 'redux'
 import _ from 'lodash'
 import axios from 'axios'
+import { configureStore } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
 
 import AddressBook from '../delivery/AddressBook'
@@ -10,6 +10,8 @@ import DateTimePicker from '../widgets/DateTimePicker'
 import DateRangePicker from '../widgets/DateRangePicker'
 import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
+import tasksSlice from './redux/tasksSlice'
+import { storeSlice } from './redux/storeSlice'
 
 const selectTasks = state => state.tasks
 
@@ -34,7 +36,7 @@ class DeliveryForm {
   }
 }
 
-let store
+let reduxStore
 
 function toPackages(name) {
   const packages = []
@@ -88,7 +90,7 @@ function createAddressWidget(name, type, cb) {
         showRememberAddress(name, type)
       }
 
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_ADDRESS',
         taskIndex: getTaskIndex(type),
         value: address
@@ -96,7 +98,7 @@ function createAddressWidget(name, type, cb) {
     },
     onClear: () => {
       showRememberAddress(name, type)
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'CLEAR_ADDRESS',
         taskIndex: getTaskIndex(type),
       })
@@ -113,7 +115,7 @@ function getTimeWindowProps(name, type) {
     }
   }
 
-  const before = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
+  const before = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(reduxStore.getState()).before
 
   const after = $(`#${name}_${type}_doneAfter`).val()
   if (!after) {
@@ -136,7 +138,7 @@ function createDateRangePickerWidget(name, type) {
   const doneBeforePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
   const doneAfterPickerEl = document.querySelector(`#${name}_${type}_doneAfter`)
 
-  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(store.getState()).before
+  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
   const afterDefaultValue = doneAfterPickerEl.value || moment().set({ hour: 0, minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss')
 
   // When adding a new task, initialize hidden input value
@@ -160,13 +162,13 @@ function createDateRangePickerWidget(name, type) {
       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
 
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_BEFORE',
         taskIndex: getTaskIndex(type),
         value: before.format()
       })
 
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_AFTER',
         taskIndex: getTaskIndex(type),
         value: after.format()
@@ -182,7 +184,7 @@ function createDatePickerWidget(name, type, isAdmin = false) {
 
   if (timeSlotEl) {
     timeSlotEl.addEventListener('change', e => {
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_TIME_SLOT',
         taskIndex: getTaskIndex(type),
         value: e.target.value
@@ -196,7 +198,7 @@ function createDatePickerWidget(name, type, isAdmin = false) {
     return
   }
 
-  const defaultValue = datePickerEl.value || selectLastDropoff(store.getState()).before
+  const defaultValue = datePickerEl.value || selectLastDropoff(reduxStore.getState()).before
 
   // When adding a new task, initialize hidden input value
   if (!datePickerEl.value) {
@@ -207,7 +209,7 @@ function createDatePickerWidget(name, type, isAdmin = false) {
     defaultValue,
     onChange: function(date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_BEFORE',
         taskIndex: getTaskIndex(type),
         value: date.format()
@@ -245,7 +247,7 @@ function createSwitchTimeSlotWidget(name, taskForm) {
           timeSlotEl.appendChild(opt)
         })
 
-        store.dispatch({
+        reduxStore.dispatch({
           type: 'SET_TIME_SLOT',
           taskIndex: getTaskIndex(taskForm),
           value: timeSlotEl.value
@@ -335,82 +337,7 @@ function parseWeight(value) {
   return parseInt((floatValue * 1000), 10)
 }
 
-function replaceTasks(state, index, key, value) {
-  const newTasks = state.tasks.slice()
-  newTasks[index] = {
-    ...newTasks[index],
-    [key]: value
-  }
-
-  return newTasks
-}
-
-function removeTasks(state, index) {
-  const newTasks = state.tasks.slice()
-  newTasks.splice(index, 1)
-
-  return newTasks
-}
-
 const getTaskIndex = (key) => parseInt(key.replace('tasks_', ''), 10)
-
-function reducer(state = {}, action) {
-  switch (action.type) {
-  case 'SET_ADDRESS':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'address', action.value),
-    }
-  case 'SET_TIME_SLOT':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'timeSlot', action.value),
-    }
-  case 'SET_BEFORE':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'before', action.value),
-    }
-  case 'SET_AFTER':
-      return {
-        ...state,
-        tasks: replaceTasks(state, action.taskIndex, 'after', action.value),
-      }
-  case 'SET_WEIGHT':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'weight', action.value)
-    }
-  case 'SET_TASK_PACKAGES':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'packages', action.packages)
-    }
-  case 'CLEAR_ADDRESS':
-    return {
-      ...state,
-      tasks: state.tasks.map((task, index) => {
-        if (index === action.taskIndex) {
-          return _.omit({ ...task }, ['address'])
-        }
-
-        return task
-      }),
-    }
-  case 'ADD_DROPOFF':
-    return {
-      ...state,
-      tasks: state.tasks.concat([ action.value ]),
-    }
-  case 'REMOVE_DROPOFF':
-    return {
-      ...state,
-      tasks: removeTasks(state, action.taskIndex)
-    }
-  default:
-    return state
-  }
-}
 
 const loadTags = _.once(() => {
 
@@ -443,7 +370,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   if (preloadedState) {
     preloadedState.tasks.push(task)
   } else {
-    store.dispatch({
+    reduxStore.dispatch({
       type: 'ADD_DROPOFF',
       taskIndex,
       value: task
@@ -482,7 +409,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault()
       taskEl.remove()
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'REMOVE_DROPOFF',
         taskIndex,
       })
@@ -497,7 +424,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const packages = document.querySelector(`#${name}_${taskForm}_packages`)
   if (packages) {
     const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-    createPackagesWidget(`${name}_${taskForm}`, packagesRequired, packages => store.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex, packages }))
+    createPackagesWidget(`${name}_${taskForm}`, packagesRequired, packages => reduxStore.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex, packages }))
   }
 
   const weightEl = document.querySelector(`#${name}_${taskForm}_weight`)
@@ -511,7 +438,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
 
   if (weightEl) {
     weightEl.addEventListener('input', _.debounce(e => {
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_WEIGHT',
         value: parseWeight(e.target.value),
         taskIndex,
@@ -551,7 +478,6 @@ export default function(name, options) {
     // Intialize Redux store
     let preloadedState = {
       tasks: [],
-      packages: []
     }
 
     if (el.dataset.store) {
@@ -565,14 +491,15 @@ export default function(name, options) {
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
     taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
 
-    const middlewares = [ createOnTasksChanged(onChange) ]
-    const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
-
-    store = createStore(
-      reducer,
+    reduxStore = configureStore({
+      reducer: {
+        [storeSlice.name]: storeSlice.reducer,
+        "tasks": tasksSlice.reducer,
+      },
       preloadedState,
-      composeEnhancers(applyMiddleware(...middlewares))
-    )
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange)]),
+    })
 
     onReady(preloadedState)
 
