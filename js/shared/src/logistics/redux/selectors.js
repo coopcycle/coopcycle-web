@@ -9,8 +9,10 @@ const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entiti
 export const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 const organizationSelectors = organizationAdapter.getSelectors((state) => state.logistics.entities.organizations)
-export const selectAllOrganizations = organizationSelectors.selectAll
+const vehiclesSelectors = organizationAdapter.getSelectors((state) => state.logistics.entities.organizations)
 
+export const selectVehicleById = vehiclesSelectors.selectById
+export const selectAllOrganizations = organizationSelectors.selectAll
 export const selectOrganizationsLoading = state => state.logistics.ui.organizationsLoading
 
 export const selectSelectedDate = state => state.logistics.date

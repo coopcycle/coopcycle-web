@@ -15,7 +15,9 @@ import {
   toggleTourPanelExpanded,
   toggleTaskListPanelExpanded,
   toggleTasksGroupPanelExpanded,
-  setTaskToShow
+  setTaskToShow,
+  loadVehiclesSuccess,
+  loadTrailersSuccess
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -128,6 +130,16 @@ export default (state = initialState, action) => {
       return {
         ...state,
         organizationsLoading: false,
+      }
+    case loadVehiclesSuccess.type:
+      return {
+        ...state,
+        vehiclesLoading: false,
+      }
+    case loadTrailersSuccess.type:
+      return {
+        ...state,
+        trailersLoading: false,
       }
   }
 

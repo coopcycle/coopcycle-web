@@ -125,6 +125,9 @@ export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS'
 export const startTaskFailure = createAction('START_TASK_FAILURE')
 
 export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
+export const loadVehiclesSuccess = createAction('LOAD_VEHICLES_SUCCESS')
+export const loadTrailersSuccess = createAction('LOAD_TRAILERS_SUCCESS')
+
 
 export const toggleTourPanelExpanded = createAction('TOGGLE_TOUR_PANEL_EXPANDED')
 export const toggleTaskListPanelExpanded = createAction('TASKLIST_PANEL_EXPANDED')
@@ -1593,5 +1596,45 @@ export function loadOrganizations() {
       }
     })
     dispatch(loadOrganizationsSuccess(data))
+  }
+}
+
+export function loadVehicles() {
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_vehicles_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    console.log(data)
+    dispatch(loadVehiclesSuccess(data))
+  }
+}
+
+export function loadTrailers() {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_trailers_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadTrailersSuccess(data))
   }
 }

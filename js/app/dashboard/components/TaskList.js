@@ -17,8 +17,9 @@ import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
 import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
-import PolylineIcon from '../PolylineIcon'
+import PolylineIcon from './icons/PolylineIcon'
 import ExtraInformations from './TaskCollectionDetails'
+import Vehicle from './Vehicle'
 
 moment.locale($('html').attr('lang'))
 
@@ -147,6 +148,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           <div>
             <span>
               <Avatar username={ username } size="24" />
+              <Vehicle vehicleId={taskList.vehicle} />
               <small className="text-monospace ml-2">
                 <strong className="mr-2">{ username }</strong>
                 <span className="text-muted">{ `(${tasks.length})` }</span>

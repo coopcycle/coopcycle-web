@@ -7,7 +7,9 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import {
   setToursEnabled,
-  loadOrganizations
+  loadOrganizations,
+  loadVehicles,
+  loadTrailers
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -46,6 +48,8 @@ const DashboardApp = ({ loadingAnim }) => {
 
   useEffect(() => {
     dispatch(loadOrganizations())
+    dispatch(loadVehicles())
+    dispatch(loadTrailers())
 
     loadingAnim.stop()
     loadingAnim.destroy()

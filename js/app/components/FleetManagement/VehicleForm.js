@@ -13,6 +13,10 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
 
   const handleSubmit = async (values) => {
     setLoading(true)
+
+    // convert to gramms
+    values.maxWeight = values.maxWeight * 1000
+
     await onSubmit(values)
     setLoading(false)
   }
