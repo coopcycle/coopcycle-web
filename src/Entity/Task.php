@@ -833,6 +833,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $task->setDoneBefore($this->getDoneBefore());
         $task->setTags($this->getTags());
 
+        foreach ($this->getPackages() as $package) {
+            $task->addPackageWithQuantity($package->getPackage(), $package->getQuantity());
+        }
+
+        $task->setWeight($this->getWeight());
+
         return $task;
     }
 

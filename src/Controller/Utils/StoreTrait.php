@@ -9,32 +9,26 @@ use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Task;
-use AppBundle\Entity\TaskCollectionItem;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
-use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
-use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -272,6 +266,67 @@ trait StoreTrait
         ]);
     }
 
+    private function duplicatePreviousOrder(EntityManagerInterface $entityManager, $store, $hashid): array | null
+    {
+        if (null === $hashid) {
+            return null;
+        }
+
+        $hashids = new Hashids($this->getParameter('secret'), 16);
+        $decoded = $hashids->decode($hashid);
+        if (count($decoded) !== 1) {
+            return null;
+        }
+
+        $fromOrder = current($decoded);
+
+        $previousOrder = $entityManager
+            ->getRepository(Order::class)
+            ->find($fromOrder);
+
+        if (null === $previousOrder) {
+            return null;
+        }
+
+        $previousDelivery = $previousOrder->getDelivery();
+
+        if (null === $previousDelivery) {
+            return null;
+        }
+
+        if ($store !== $previousDelivery->getStore()) {
+            return null;
+        }
+
+        // Keep the original objects untouched, creating new ones instead
+        $newTasks = array_map(function($task){
+            return $task->duplicate();
+        }, $previousDelivery->getTasks());
+
+        $delivery = Delivery::createWithTasks(...$newTasks);
+        $delivery->setStore($store);
+
+        $orderItem = $previousOrder->getItems()->first();
+        $productVariant = $orderItem->getVariant(); // @phpstan-ignore method.nonObject
+
+        $previousArbitraryPrice = null;
+
+        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
+            // price based on the PricingRuleSet; will be recalculated based on the latest rules
+        } else {
+            // arbitrary price
+            $previousArbitraryPrice = [
+                'productName' => $productVariant->getName(),
+                'amount' => $productVariant->getPrice(),
+            ];
+        }
+
+        return [
+            'delivery' => $delivery,
+            'previousArbitraryPrice' => $previousArbitraryPrice,
+        ];
+    }
+
     public function newStoreDeliveryAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
@@ -282,19 +337,37 @@ trait StoreTrait
     {
         $routes = $request->attributes->get('routes');
 
-        $store = $this->getDoctrine()
+        $store = $entityManager
             ->getRepository(Store::class)
             ->find($id);
 
         $this->accessControl($store, 'edit_delivery');
 
-        $delivery = $store->createDelivery();
+        $delivery = null;
+        $previousArbitraryPrice = null;
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            // pre-fill fields with the data from the previous order
+
+            $hashid = $request->query->get('frmrdr');
+
+            $data = $this->duplicatePreviousOrder($entityManager, $store, $hashid);
+            if (null !== $data) {
+                $delivery = $data['delivery'];
+                $previousArbitraryPrice = $data['previousArbitraryPrice'];
+            }
+        }
+
+        if (null === $delivery) {
+            $delivery = $store->createDelivery();
+        }
 
         $form = $this->createDeliveryForm($delivery, [
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
             'with_address_props' => true,
             'with_arbitrary_price' => true,
+            'arbitrary_price' => $previousArbitraryPrice,
         ]);
 
         $form->handleRequest($request);

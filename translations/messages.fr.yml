@@ -887,6 +887,7 @@ deliveries.sort.newest: Les plus récentes
 deliveries.sort.oldest: Les plus anciennes
 deliveries.filter.clear: Afficher tout
 orders.new: Nouvelle commande
+orders.duplicate: Dupliquer une commande
 organizations.new: Nouvelle organisation
 basics.copy: Copier
 orders.payment_link.send_by_email: Envoyer un lien de paiement

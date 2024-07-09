@@ -25,10 +25,16 @@ monolog:
             path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
             max_files: 3
-            channels: ["!event", "!api", "!stripe", "!loopeat"]
+            channels: ["!event", "!snc_redis", "!api", "!stripe", "!loopeat"]
         console:
             type:   console
             channels: ["!event", "!doctrine"]
+        redis:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/redis.%kernel.environment%.log"
+            level: debug
+            max_files: 3
+            channels: [ snc_redis ]
         api:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"

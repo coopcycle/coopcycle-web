@@ -134,21 +134,27 @@ class DeliveryType extends AbstractType
             // Allow admins to define an arbitrary price
             if (true === $options['with_arbitrary_price'] &&
                 $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+
+                $arbitraryPrice = $options['arbitrary_price'];
+
                 $form->add('arbitraryPrice', CheckboxType::class, [
                     'label' => 'form.delivery.arbitrary_price.label',
                     'mapped' => false,
                     'required' => false,
+                    'data' => isset($arbitraryPrice),
                 ])
                 ->add('variantName', TextType::class, [
                     'label' => 'form.new_order.variant_name.label',
                     'help' => 'form.new_order.variant_name.help',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $arbitraryPrice ? $arbitraryPrice['productName'] : null,
                 ])
                 ->add('variantPrice', MoneyType::class, [
                     'label' => 'form.new_order.variant_price.label',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $arbitraryPrice ? $arbitraryPrice['amount'] : null,
                 ]);
             }
         });
@@ -284,6 +290,7 @@ class DeliveryType extends AbstractType
             'with_remember_address' => false,
             'with_address_props' => false,
             'with_arbitrary_price' => false,
+            'arbitrary_price' => null,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

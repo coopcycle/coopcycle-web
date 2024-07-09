@@ -950,6 +950,7 @@ deliveries.filter.clear: Show all
 deliveries.section.upcoming: Upcoming
 deliveries.section.past: Past
 orders.new: New order
+orders.duplicate: Duplicate an order
 basics.copy: Copy
 orders.payment_link.send_by_email: Send payment link by email
 orders.payment_link.sent: Email sent successfully
