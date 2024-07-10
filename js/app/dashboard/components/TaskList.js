@@ -191,61 +191,62 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
                 <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
               </Tooltip>
             </div>}
-            <Popconfirm
-              placement="left"
-              title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
-              onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
-              okText={ t('CROPPIE_CONFIRM') }
-              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
-              <a href="#"
-                className="text-reset mr-2"
-                style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
-                onClick={ e => e.preventDefault() }>
-                <i className="fa fa-lg fa-times"></i>
-              </a>
-            </Popconfirm>
           </div>
           <ExtraInformations duration={duration} distance={distance} weight={weight} volumeUnits={volumeUnits} />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
-        { tasks.length > 0 && (
-          <div className="d-flex align-items-center mt-2 mb-2">
+        <div className="d-flex align-items-center mt-2 mb-2">
+          <a
+            className='tasklist__actions--icon ml-3'
+            onClick={ (e) => showVehicleMenu({event: e, props: {username: username}}) }
+          >
+            <VehicleIcon />
+          </a>
+          { taskList.vehicle ?
             <a
               className='tasklist__actions--icon ml-3'
-              onClick={ (e) => showVehicleMenu({event: e, props: {username: username}}) }
+              onClick={ (e) => showTrailerMenu({event: e, props: {username: username}}) }
             >
-              <VehicleIcon />
-            </a>
-            { taskList.vehicle ?
+              <TrailerIcon />
+            </a> :
+            null
+          }
+          <a
+            className='tasklist__actions--icon ml-3'
+            onClick={ () => dispatch(togglePolyline(username)) }
+          >
+            <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
+          </a>
+          { tasks.length > 0 ?
+            <>
               <a
-                className='tasklist__actions--icon ml-3'
-                onClick={ (e) => showTrailerMenu({event: e, props: {username: username}}) }
+                className="ml-3 tasklist__actions--icon d-flex align-items-center justify-content-center"
+                title="Optimize"
+                style={{
+                  visibility: tasks.length > 1 ? 'visible' : 'hidden'
+                }}
+                onClick={ e => {
+                  e.preventDefault()
+                  dispatch(optimizeTaskList({'@id': uri, username: username}))
+                }}
               >
-                <TrailerIcon />
-              </a> :
-              null
+                <i className="fa fa-2x fa-bolt"></i>
+              </a>
+              <Popconfirm
+                placement="left"
+                title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
+                onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
+                okText={ t('CROPPIE_CONFIRM') }
+                cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
+                <a href="#"
+                  className="ml-3 tasklist__actions--icon d-flex align-items-center justify-content-center"
+                  onClick={ e => e.preventDefault() }>
+                  <i className="fa fa-2x fa-times"></i>
+                </a>
+              </Popconfirm>
+            </> : null
             }
-            <a
-              className='tasklist__actions--icon ml-3'
-              onClick={ () => dispatch(togglePolyline(username)) }
-            >
-              <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
-            </a>
-            <a
-              className="ml-3 tasklist__actions--icon d-flex align-items-center justify-content-center"
-              title="Optimize"
-              style={{
-                visibility: tasks.length > 1 ? 'visible' : 'hidden'
-              }}
-              onClick={ e => {
-                e.preventDefault()
-                dispatch(optimizeTaskList({'@id': uri, username: username}))
-              }}
-            >
-              <i className="fa fa-2x fa-bolt"></i>
-            </a>
-          </div>
-        )}
+        </div>
         <Droppable
           droppableId={ `assigned:${username}` }
           key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
