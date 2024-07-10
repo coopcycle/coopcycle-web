@@ -11,6 +11,7 @@ use AppBundle\Message\ImportTasks;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
+use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -20,51 +21,27 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 final class UploadListener
 {
-    private $entityManager;
-    private $mappingFactory;
-    private $uploadHandler;
-    private $settingsManager;
-    private $messageBus;
-    private $productSpreadsheetParser;
-    private $secret;
-    private $isDemo;
-    private $logger;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        PropertyMappingFactory $mappingFactory,
-        UploadHandler $uploadHandler,
-        SettingsManager $settingsManager,
-        MessageBusInterface $messageBus,
-        ProductSpreadsheetParser $productSpreadsheetParser,
-        SerializerInterface $serializer,
-        IriConverterInterface $iriConverter,
-        CacheInterface $projectCache,
-        ValidatorInterface $validator,
-        string $secret,
-        bool $isDemo,
-        LoggerInterface $logger)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PropertyMappingFactory $mappingFactory,
+        private readonly UploadHandler $uploadHandler,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageBusInterface $messageBus,
+        private readonly ProductSpreadsheetParser $productSpreadsheetParser,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly CacheInterface $projectCache,
+        private readonly ValidatorInterface $validator,
+        private readonly string $secret,
+        private readonly bool $isDemo,
+        private readonly LoggerInterface $logger)
     {
-        $this->entityManager = $entityManager;
-        $this->mappingFactory = $mappingFactory;
-        $this->uploadHandler = $uploadHandler;
-        $this->settingsManager = $settingsManager;
-        $this->messageBus = $messageBus;
-        $this->productSpreadsheetParser = $productSpreadsheetParser;
-        $this->serializer = $serializer;
-        $this->iriConverter = $iriConverter;
-        $this->projectCache = $projectCache;
-        $this->validator = $validator;
-        $this->secret = $secret;
-        $this->isDemo = $isDemo;
-        $this->logger = $logger;
     }
 
     public function onUpload(PostPersistEvent $event)
@@ -79,7 +56,7 @@ final class UploadListener
 
                 $violations = $this->validator->validate($file, new AssertSpreadsheet('product'));
                 if (count($violations) > 0) {
-                    throw new \Exception((string) $violations);
+                    throw new \Exception(ValidationUtils::serializeToString($violations));
                 }
 
                 $restaurant = $this->iriConverter->getItemFromIri($request->get('restaurant'));
@@ -188,7 +165,7 @@ final class UploadListener
         if (count($violations) > 0) {
             $fileSystem->delete($file->getPathname());
 
-            throw new UploadException((string) $violations);
+            throw new UploadException(ValidationUtils::serializeToString($violations));
         }
 
         $date = $request->get('date');
