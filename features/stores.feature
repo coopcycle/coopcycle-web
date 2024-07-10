@@ -76,6 +76,7 @@ Feature: Stores
         "hydra:member":[
           {
             "@id":"/api/stores/1",
+            "id":1,
             "@type":"http://schema.org/Store",
             "name":"Acme",
             "enabled":true,
@@ -108,6 +109,7 @@ Feature: Stores
         "@context":"/api/contexts/Store",
         "@id":"/api/stores/1",
         "@type":"http://schema.org/Store",
+        "id":1,
         "name":"Acme",
         "enabled":true,
         "address":{
@@ -122,7 +124,8 @@ Feature: Stores
           "telephone":null,
           "name":null
         },
-        "timeSlot":"/api/time_slots/1"
+        "timeSlot":"/api/time_slots/1",
+        "timeSlots":[]
       }
       """
 
@@ -143,6 +146,7 @@ Feature: Stores
         "@context":"/api/contexts/Store",
         "@id":"/api/stores/1",
         "@type":"http://schema.org/Store",
+        "id":1,
         "name":"Acme",
         "enabled":true,
         "address":{
@@ -157,7 +161,8 @@ Feature: Stores
           "telephone":null,
           "name":null
         },
-        "timeSlot":"/api/time_slots/1"
+        "timeSlot":"/api/time_slots/1",
+        "timeSlots":[]
       }
       """
 
@@ -589,5 +594,70 @@ Feature: Stores
           "@id":"/api/stores/2/addresses?type=dropoff",
           "@type":"hydra:PartialCollectionView"
         }
+      }
+      """
+
+  Scenario: Reorder store time slots
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/6"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+          "@context": "/api/contexts/Store",
+          "@id": "/api/stores/6",
+          "@type": "http://schema.org/Store",
+          "id": 6,
+          "name": "Acme 6",
+          "enabled": true,
+          "address": {"@*@":"@*@"},
+          "timeSlot": "/api/time_slots/1",
+          "timeSlots": [
+              "/api/time_slots/1",
+              "/api/time_slots/2"
+          ]
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/merge-patch+json"
+    When the user "bob" sends a "PATCH" request to "/api/stores/6" with body:
+      """
+      {
+        "@id": "/api/stores/6",
+        "timeSlots": [
+          "/api/time_slots/2",
+          "/api/time_slots/1",
+          "/api/time_slots/3"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+          "@context": "/api/contexts/Store",
+          "@id": "/api/stores/6",
+          "@type": "http://schema.org/Store",
+          "id": 6,
+          "name": "Acme 6",
+          "enabled": true,
+          "address": {"@*@":"@*@"},
+          "timeSlot": "/api/time_slots/1",
+          "timeSlots": [
+              "/api/time_slots/2",
+              "/api/time_slots/1",
+              "/api/time_slots/3"
+          ]
       }
       """

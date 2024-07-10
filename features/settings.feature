@@ -33,6 +33,8 @@ Feature: Settings
         "average_preparation_time": @number@,
         "average_shipping_time": @number@,
         "motto": "@string@||@null@",
-        "order_confirm_message": @string@
+        "order_confirm_message": @string@,
+        "edenred_client_id": "@string@",
+        "edenred_authorization_endpoint": "@string@"
       }
       """

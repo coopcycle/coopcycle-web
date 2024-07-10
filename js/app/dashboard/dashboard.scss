@@ -17,7 +17,7 @@ html, body {
 }
 
 .content {
-  height: calc(100% - 50px);
+  height: calc(100vh - ($navbar-height));
 }
 
 .dashboard {
@@ -31,10 +31,8 @@ html, body {
     display: flex;
     flex: 1;
     width: 100%;
-    height: 100vh;
-  }
-  &--nav &__wrapper {
-    height: calc(100vh - 50px);
+    flex-direction: column;
+    height: 100%;
   }
 
   &__map, &__aside, &__map-container {
@@ -56,10 +54,16 @@ html, body {
 
   &__toolbar-container {
     width: 100%;
+    height: $navbar-height;
     .navbar {
+      height: $navbar-height;
       margin-bottom: 0;
       border-radius: 0;
     }
+  }
+
+  &__content {
+    height: calc(100vh - 2 * ($navbar-height));
   }
 
   &__loader {
@@ -104,25 +108,6 @@ html, body {
     &__scroll {
       overflow: auto;
     }
-
-    &__search {
-      position: absolute;
-      max-height: 100%;
-      height: 100%;
-      left: 0;
-      right: 0;
-      transform: translateY(100%);
-      transition: transform 0.4s;
-      background-color: #fff;
-      &--on {
-        transform: translateY(0);
-      }
-    }
-
-    &__search-box {
-      padding: 15px;
-    }
-
   }
 
   &__date {
@@ -130,13 +115,24 @@ html, body {
     padding-right: 15px;
   }
 
-  &__date-picker {
+  &__date-picker, &__search-input {
     margin: 9px 0;
     display: inline-block;
 
     .ant-calendar-picker {
       margin: 0;
     }
+  }
+
+  &__search-result {
+    padding: 2px;
+    text-wrap: wrap;
+  }
+
+  &__search-result .ant-select-item-option-content {
+    overflow: unset;
+    white-space: unset;
+    text-overflow: unset;
   }
 
   &__date-link {

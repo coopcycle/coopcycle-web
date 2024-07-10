@@ -35,6 +35,10 @@
   padding: 0;
 }
 
+.pointer-events-none {
+  pointer-events: none;
+}
+
 @keyframes rotating {
   from {
     transform: rotate(0deg);

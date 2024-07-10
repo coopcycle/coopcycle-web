@@ -80,6 +80,8 @@ service_tax_exempt:
       zero: 0.0
     co:
       zero: 0.0
+    br-rs:
+      zero: 0.0
 
 drink:
   rates:
@@ -257,4 +259,6 @@ base_exempt:
     fr-re:
       zero: 0.00
     co:
+      zero: 0.00
+    br-rs:
       zero: 0.00

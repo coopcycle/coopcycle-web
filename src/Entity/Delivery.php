@@ -276,47 +276,43 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public static function createWithTasks(Task ...$tasks)
     {
         $delivery = self::create();
+        $delivery->withTasks(...$tasks);
+        return $delivery;
+    }
 
-        $delivery->removeTask($delivery->getPickup());
-        $delivery->removeTask($delivery->getDropoff());
+    public function withTasks(Task ...$tasks)
+    {
+        $this->removeTask($this->getPickup());
+        $this->removeTask($this->getDropoff());
+
+        // reset array keys/indices
+        $this->items->clear();
 
         if (count($tasks) > 2) {
 
-            $delivery = $delivery->withTasks(...$tasks);
+            $pickup = array_shift($tasks);
+
+            // Make sure the first task is a pickup
+            $pickup->setType(Task::TYPE_PICKUP);
+
+            $this->addTask($pickup);
+
+            foreach ($tasks as $dropoff) {
+                $dropoff->setPrevious($pickup);
+                $this->addTask($dropoff);
+            }
 
         } else {
 
             [ $pickup, $dropoff ] = $tasks;
 
             $pickup->setType(Task::TYPE_PICKUP);
-            $pickup->setDelivery($delivery);
+            $pickup->setNext($dropoff);
 
             $dropoff->setType(Task::TYPE_DROPOFF);
-            $dropoff->setDelivery($delivery);
-
-            $pickup->setNext($dropoff);
             $dropoff->setPrevious($pickup);
 
-            $delivery->addTask($pickup);
-            $delivery->addTask($dropoff);
-        }
-
-        return $delivery;
-    }
-
-    public function withTasks(Task ...$tasks)
-    {
-        $this->items->clear();
-
-        $pickup = array_shift($tasks);
-
-        // Make sure the first task is a pickup
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $this->addTask($pickup);
-
-        foreach ($tasks as $dropoff) {
-            $dropoff->setPrevious($pickup);
+            $this->addTask($pickup);
             $this->addTask($dropoff);
         }
 

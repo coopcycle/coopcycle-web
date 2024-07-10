@@ -23,38 +23,44 @@ export const selectOrders = createSelector(
   state => state.orders,
   state => state.searchQuery,
   state => state.searchResults,
-  (orders, searchQuery, searchResults) => searchQuery.length > 0 ?
-    _.intersectionWith(orders, searchResults, orderComparator) : orders
+  (orders, searchQuery, searchResults) => {
+    if (searchQuery.length > 0) {
+      // search results are ordered by relevance
+      return searchResults.map(res => orders.find(o => orderComparator(o, res)))
+    } else {
+      return orders.sort(orderSort)
+    }
+  }
 )
 
 export const selectNewOrders = createSelector(
   selectOrders,
-  orders => _.filter(orders, o => o.state === 'new').sort(orderSort)
+  orders => _.filter(orders, o => o.state === 'new')
 )
 
 export const selectAcceptedOrders = createSelector(
   selectOrders,
-  orders => _.filter(orders, o => o.state === 'accepted').sort(orderSort)
+  orders => _.filter(orders, o => o.state === 'accepted')
 )
 
 export const selectStartedOrders = createSelector(
   selectOrders,
-  orders => _.filter(orders, o => o.state === 'started').sort(orderSort)
+  orders => _.filter(orders, o => o.state === 'started')
 )
 
 export const selectReadyOrders = createSelector(
   selectOrders,
-  orders => _.filter(orders, o => o.state === 'ready').sort(orderSort)
+  orders => _.filter(orders, o => o.state === 'ready')
 )
 
 export const selectFulfilledOrders = createSelector(
   selectOrders,
-  orders => _.filter(orders, o => o.state === 'fulfilled').sort(orderSort)
+  orders => _.filter(orders, o => o.state === 'fulfilled')
 )
 
 export const selectCancelledOrders = createSelector(
   selectOrders,
-  orders => _.filter(orders, o => o.state === 'refused' || o.state === 'cancelled').sort(orderSort)
+  orders => _.filter(orders, o => o.state === 'refused' || o.state === 'cancelled')
 )
 
 export const selectHoursRanges = createSelector(

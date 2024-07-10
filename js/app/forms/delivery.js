@@ -24,11 +24,12 @@ const collectionHolder = document.querySelector('#delivery_tasks')
 
 class DeliveryForm {
   disable() {
-    $('#delivery-submit').attr('disabled', true)
+    // do not use `disabled` attribute to disable the buttons as it will prevent the button value from being sent to the server
+    $('button[type="submit"]').addClass('pointer-events-none')
     $('#loader').removeClass('hidden')
   }
   enable() {
-    $('#delivery-submit').attr('disabled', false)
+    $('button[type="submit"]').removeClass('pointer-events-none')
     $('#loader').addClass('hidden')
   }
 }

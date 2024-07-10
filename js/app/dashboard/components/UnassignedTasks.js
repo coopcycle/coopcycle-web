@@ -9,7 +9,7 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, toggleSearch, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules, appendToUnassignedTasks } from '../redux/actions'
+import { setTaskListGroupMode, openNewTaskModal, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules, appendToUnassignedTasks } from '../redux/actions'
 import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks, selectUnassignedTasksLoading } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
@@ -51,12 +51,6 @@ const Buttons = () => {
         dispatch(openNewTaskModal())
       }}>
         <i className="fa fa-plus"></i>
-      </a>
-      <a href="#" className="mr-3" onClick={ e => {
-        e.preventDefault()
-        dispatch(toggleSearch())
-      }}>
-        <i className="fa fa-search"></i>
       </a>
       <Popover
         placement="leftTop"

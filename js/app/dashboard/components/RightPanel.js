@@ -6,18 +6,15 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import {
-  toggleSearch,
-  closeSearch,
   setToursEnabled,
   loadOrganizations
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
 import TaskLists from './TaskLists'
-import SearchPanel from './SearchPanel'
 import TasksContextMenu from './context-menus/TasksContextMenu'
 import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
-import { selectCouriers, selectSplitDirection, selectAreToursEnabled, selectSearchIsOn } from '../redux/selectors'
+import { selectCouriers, selectSplitDirection, selectAreToursEnabled } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 
 const DashboardApp = ({ loadingAnim }) => {
@@ -26,7 +23,6 @@ const DashboardApp = ({ loadingAnim }) => {
 
   const toursEnabled = useSelector(selectAreToursEnabled)
   const couriersList = useSelector(selectCouriers)
-  const searchIsOn = useSelector(selectSearchIsOn)
   const splitDirection = useSelector(selectSplitDirection)
 
   const splitRef = useRef(),
@@ -49,20 +45,6 @@ const DashboardApp = ({ loadingAnim }) => {
   const sizes = toursEnabled ? [33.33, 33.33, 33.33] : [50, 0 , 50]
 
   useEffect(() => {
-    const toggleSearchOnKeyDown = e => {
-      const isCtrl = (e.ctrlKey || e.metaKey)
-      if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
-        if (!searchIsOn) {
-          e.preventDefault()
-          dispatch(toggleSearch())
-        }
-      }
-      if (e.keyCode === 27) {
-        dispatch(closeSearch())
-      }
-    }
-    window.addEventListener('keydown', toggleSearchOnKeyDown)
-
     dispatch(loadOrganizations())
 
     loadingAnim.stop()
@@ -70,11 +52,6 @@ const DashboardApp = ({ loadingAnim }) => {
     // fix : may already have been remvoed when running in react strict mode
     if (document.querySelector('.dashboard__loader')) {
       document.querySelector('.dashboard__loader').remove()
-    }
-
-    // return cleanup function
-    return () => {
-      window.removeEventListener('keydown', toggleSearchOnKeyDown, false)
     }
   }, [])
 
@@ -96,7 +73,6 @@ const DashboardApp = ({ loadingAnim }) => {
           { children }
         </Split>
       </DragDropContext>
-      { searchIsOn ? <SearchPanel /> : null }
       <TasksContextMenu />
       <ToastContainer />
     </div>

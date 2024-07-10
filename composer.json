@@ -147,6 +147,7 @@
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
         "coopcycle/transporter": "dev-master",
+        "league/flysystem-sftp-v3": "^3.0",
         "runtime/frankenphp-symfony": "^0.2.0"
     },
     "require-dev": {

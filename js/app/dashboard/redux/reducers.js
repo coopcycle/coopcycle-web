@@ -18,9 +18,6 @@ import {
   CANCEL_TASK_FAILURE,
   OPEN_FILTERS_MODAL,
   CLOSE_FILTERS_MODAL,
-  TOGGLE_SEARCH,
-  OPEN_SEARCH,
-  CLOSE_SEARCH,
   OPEN_SETTINGS,
   CLOSE_SETTINGS,
   LOAD_TASK_EVENTS_REQUEST,
@@ -63,6 +60,7 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TOUR_REQUEST,
   ADD_TASK_TO_GROUP_REQUEST,
+  toggleTourPolyline,
 } from './actions'
 
 import {
@@ -73,6 +71,7 @@ import { tokenRefreshSuccess } from '../utils/client'
 const initialState = {
   addModalIsOpen: false,
   polylineEnabled: {},
+  tourPolylinesEnabled: {},
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
   selectedTasks: [],
   jwt: '',
@@ -81,7 +80,6 @@ const initialState = {
   completeTaskErrorMessage: null,
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,
-  searchIsOn: false,
   isLoadingTaskEvents: false,
   taskEvents: {},
   imports: {},
@@ -120,6 +118,18 @@ export const polylineEnabled = (state = {}, action) => {
     const { username } = action
     newState[username] = !state[username]
 
+    return newState
+  default:
+    return state
+  }
+}
+
+export const tourPolylinesEnabled = (state = {}, action) => {
+  switch (action.type) {
+  case toggleTourPolyline.type:
+    let newState = { ...state }
+    const tourId = action.payload
+    newState[tourId] = !state[tourId]
     return newState
   default:
     return state
@@ -259,22 +269,6 @@ export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, acti
   case OPEN_FILTERS_MODAL:
     return true
   case CLOSE_FILTERS_MODAL:
-    return false
-  default:
-    return state
-  }
-}
-
-export const searchIsOn = (state = initialState.searchIsOn, action) => {
-  switch (action.type) {
-  case TOGGLE_SEARCH:
-
-    return !state
-  case OPEN_SEARCH:
-
-    return true
-  case CLOSE_SEARCH:
-
     return false
   default:
     return state

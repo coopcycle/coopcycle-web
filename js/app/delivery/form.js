@@ -12,8 +12,6 @@ import './form.scss'
 let map
 let polylineLayerGroup
 let markersLayerGroup
-let form
-let pricePreview
 
 JsBarcode('.barcode').init();
 
@@ -92,100 +90,95 @@ if (document.getElementById('map')) {
   markersLayerGroup.addTo(map)
 }
 
-form = new DeliveryForm('delivery', {
-  onReady: function(delivery) {
-    delivery.tasks.forEach((task, index) => {
-      if (task.address) {
-        createMarker({
-          latitude: task.address.geo.latitude,
-          longitude: task.address.geo.longitude
-        }, index, task.type.toLowerCase())
-      }
-    })
-    MapHelper.fitToLayers(map, markersLayerGroup.getLayers())
-  },
-  onChange: function(delivery) {
-
-    markersLayerGroup.clearLayers()
-    delivery.tasks.forEach((task, index) => {
-      if (task.address) {
-        createMarker({
-          latitude: task.address.geo.latitude,
-          longitude: task.address.geo.longitude
-        }, index, task.type.toLowerCase())
-      }
-    })
-    MapHelper.fitToLayers(map, markersLayerGroup.getLayers())
-
-    if (isValid(delivery)) {
-
-      this.disable()
-      polylineLayerGroup.clearLayers()
-
-      const updateDistance = new Promise((resolve) => {
-        route(delivery).then((infos) => {
-          polylineLayerGroup.addLayer(
-            MapHelper.createPolylineWithArrows(infos.polyline, '#3498DB')
-          )
-          $('#delivery_distance').text(`${infos.kms} Km`)
-          resolve()
-        })
-      })
-
-      const updatePrice = new Promise((resolve) => {
-        if (delivery.store && pricePreview) {
-
-          const tasks = delivery.tasks.slice(0)
-
-          const deliveryAsPayload = {
-            ...delivery,
-            tasks: tasks.map(t => ({
-              ...t,
-              address: serializeAddress(t.address)
-            }))
-          }
-
-          pricePreview.update(deliveryAsPayload).then(() => resolve())
-        } else {
-          resolve()
-        }
-      })
-
-      Promise.all([
-        updateDistance,
-        updatePrice,
-      ])
-      .then(() => {
-        form.enable()
-      })
-      // eslint-disable-next-line no-console
-      .catch(e => console.error(e))
-    }
-  }
-})
-
 const priceEl = document.getElementById('delivery-price')
-
+let pricePreview
 if (priceEl) {
-  $('form[name="delivery"]').LoadingOverlay('show', {
-    image: false,
-  })
-  $.getJSON(window.Routing.generate('profile_jwt'))
-    .then(result => {
-      $('form[name="delivery"]').LoadingOverlay('hide')
-      pricePreview = new PricePreview(priceEl, { token: result.jwt })
-    })
+  pricePreview = new PricePreview(priceEl)
 }
 
 const arbitraryPriceEl = document.getElementById('delivery_arbitraryPrice')
 const variantDetailsEl = document.querySelector('[data-variant-details]')
 
 if (arbitraryPriceEl) {
-  arbitraryPriceEl.addEventListener('change', function(e) {
-    if (e.target.checked) {
+  const setIsDisplayDetails = (isDisplayed) => {
+    if (isDisplayed) {
       variantDetailsEl.classList.remove('d-none')
     } else {
       variantDetailsEl.classList.add('d-none')
     }
+  }
+
+  // update on initial load
+  setIsDisplayDetails(arbitraryPriceEl.checked)
+
+  arbitraryPriceEl.addEventListener('change', function(e) {
+    setIsDisplayDetails(e.target.checked)
   })
 }
+
+const updateData = (form, delivery) => {
+  markersLayerGroup.clearLayers()
+  delivery.tasks.forEach((task, index) => {
+    if (task.address) {
+      createMarker({
+        latitude: task.address.geo.latitude,
+        longitude: task.address.geo.longitude
+      }, index, task.type.toLowerCase())
+    }
+  })
+  MapHelper.fitToLayers(map, markersLayerGroup.getLayers())
+
+  if (isValid(delivery)) {
+
+    form.disable()
+    polylineLayerGroup.clearLayers()
+
+    const updateDistance = new Promise((resolve) => {
+      route(delivery).then((infos) => {
+        polylineLayerGroup.addLayer(
+          MapHelper.createPolylineWithArrows(infos.polyline, '#3498DB')
+        )
+        $('#delivery_distance').text(`${infos.kms} Km`)
+        resolve()
+      })
+    })
+
+    const updatePrice = new Promise((resolve) => {
+      if (delivery.store && pricePreview) {
+
+        const tasks = delivery.tasks.slice(0)
+
+        const deliveryAsPayload = {
+          ...delivery,
+          tasks: tasks.map(t => ({
+            ...t,
+            address: serializeAddress(t.address)
+          }))
+        }
+
+        pricePreview.update(deliveryAsPayload).then(() => resolve())
+      } else {
+        resolve()
+      }
+    })
+
+    Promise.all([
+      updateDistance,
+      updatePrice,
+    ])
+           .then(() => {
+             form.enable()
+           })
+      // eslint-disable-next-line no-console
+           .catch(e => console.error(e))
+  }
+}
+
+new DeliveryForm('delivery', {
+  onReady: function(delivery) {
+    updateData(this, delivery)
+  },
+  onChange: function(delivery) {
+    updateData(this, delivery)
+  }
+})

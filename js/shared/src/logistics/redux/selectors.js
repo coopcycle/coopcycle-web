@@ -78,10 +78,19 @@ export const selectTaskListTasksByUsername = createSelector(
 
 )
 
-
 export const selectAllTours = createSelector(
   tourSelectors.selectAll,
   (allTours) => allTours
+)
+
+export const selectTourPolylines = createSelector(
+  selectAllTours,
+  (allTours) => {
+    return allTours.reduce((acc, tour) => {
+      acc[tour['@id']] = tour.polyline
+      return acc
+    }, {})
+  }
 )
 
 const selectItemId = (state, itemId) => itemId
@@ -149,7 +158,8 @@ export const selectTourWeight = createSelector(
   (tour, allTasks) => tour.items.reduce(
     (acc, taskId) => {
       const task = allTasks.find(t => t['@id'] === taskId)
-      if (task.type === 'DROPOFF') {
+      // task can be undefined, see https://github.com/coopcycle/coopcycle-web/issues/4487
+      if (task?.type === 'DROPOFF') {
         return acc + task.weight
       }
       return acc
@@ -167,7 +177,7 @@ export const selectTaskListWeight = createSelector(
     }, 0)
 )
 
-export const getTaskVolumeUnits = (task) => task.packages.reduce((acc, pt) => acc + pt.quantity * pt.volume_per_package, 0)
+export const getTaskVolumeUnits = (task) => task.packages ? task.packages.reduce((acc, pt) => acc + pt.quantity * pt.volume_per_package, 0) : 0
 
 export const selectTourVolumeUnits = createSelector(
   selectTourById,
@@ -176,7 +186,8 @@ export const selectTourVolumeUnits = createSelector(
     return tour.items.reduce(
     (acc, taskId) => {
       const task = allTasks.find(t => t['@id'] === taskId)
-      if (task.type === 'DROPOFF') {
+      // task can be undefined, see https://github.com/coopcycle/coopcycle-web/issues/4487
+      if (task?.type === 'DROPOFF') {
         return acc + getTaskVolumeUnits(task)
       }
       return acc

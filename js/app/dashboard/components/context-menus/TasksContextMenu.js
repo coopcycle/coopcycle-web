@@ -241,7 +241,19 @@ const DynamicMenu = () => {
 
   useEffect(() => {
     if(taskToShow) {
-      requestAnimationFrame(() => document.querySelector(`[data-task-id="${taskToShow['@id']}"]`).scrollIntoView())
+      requestAnimationFrame(() => {
+        // detects if the 'task to show' is visible to the user
+        // it is quite fragile as it depends on the layout
+        const htmlEl = document.querySelector(`.dashboard__aside [data-task-id="${taskToShow['@id']}"]`)
+        const rect = htmlEl.getBoundingClientRect()
+
+        const parentPanel = $(htmlEl).closest('.dashboard__panel')[0]
+        const parentRect = parentPanel.getBoundingClientRect()
+
+        if (!(rect.top >= parentRect.top - 20 && rect.bottom <= parentRect.bottom + 20)) {
+          htmlEl.scrollIntoView()
+        }
+    })
     }
   }, [taskToShow])
 
@@ -250,6 +262,7 @@ const DynamicMenu = () => {
     !_.find(unassignedTasks, unassignedTask => unassignedTask['@id'] === selectedTask['@id']))
 
   const selectedTask = selectedTasks.length > 0 ? selectedTasks[0] : undefined
+  const noActionAvailable = selectedTasks.length > 0 && actions.length === 0
 
   return (
     <Menu id="task-contextmenu">
@@ -308,7 +321,7 @@ const DynamicMenu = () => {
           </Item>
       )}
       </Submenu>
-     <Separator />
+      { !noActionAvailable && <Separator /> }
       <Item
         hidden={ !actions.includes(CANCEL_MULTI) }
         onClick={ () => dispatch(cancelTasks(selectedTasks)) }
@@ -321,7 +334,7 @@ const DynamicMenu = () => {
       >
         {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
       </Item>
-      <Separator />
+      { !noActionAvailable && <Separator /> }
       <Item
         hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
         onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
@@ -385,7 +398,7 @@ const DynamicMenu = () => {
           >
             {t("ADMIN_DASHBOARD_REPORT_INCIDENT")}
       </Item>
-      { selectedTasks.length > 0 && actions.length === 0 && (
+      { noActionAvailable && (
         <Item disabled>
           { t('ADMIN_DASHBOARD_NO_ACTION_AVAILABLE') }
         </Item>

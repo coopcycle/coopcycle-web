@@ -361,11 +361,12 @@ api_platform:
     messenger:
         enabled: false
     formats:
-        jsonld: ['application/ld+json']
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
         csv: ['text/csv']
         html: ['text/html']
     patch_formats:
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
     swagger:
         versions: [3, 2]
@@ -800,6 +801,7 @@ fos_js_routing:
         - api_time_slots_delete_item
         - admin_transporter_message
         - api_organizations_get_collection
+        - api_time_slots_get_collection
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
