@@ -6,7 +6,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use AppBundle\Entity\Trailer;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -75,6 +74,7 @@ class Vehicle
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\Type("integer")
     */
     protected $electricRange;
 

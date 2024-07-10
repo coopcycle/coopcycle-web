@@ -6,8 +6,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
-use AppBundle\Entity\Vehicle;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 /**
  * @ApiResource(
@@ -40,31 +41,41 @@ class Trailer
 
     /**
     * @Groups({"trailer", "trailer_create"})
+    * @Assert\NotBlank
+    * @Assert\Type("string")
     */
     protected $name;
 
     /**
     * @Groups({"trailer", "trailer_create"})
+    * @Assert\NotBlank
+    * @Assert\Type("integer")
     */
     protected $maxVolumeUnits;
 
     /**
     * @Groups({"trailer", "trailer_create"})
+    * @Assert\NotBlank
+    * @Assert\Type("integer")
     */
     protected $maxWeight;
 
     /**
     * @Groups({"trailer", "trailer_create"})
+    * @Assert\NotBlank
+    * @Assert\CssColor
     */
     protected $color;
 
     /**
     * @Groups({"trailer", "trailer_create"})
+    * @Assert\Type("boolean")
     */
     protected $isElectric;
 
     /**
     * @Groups({"trailer", "trailer_create"})
+    * @Assert\Type("integer")
     */
     protected $electricRange;
 

@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Vehicle;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
+
 class Trailer
 {
     protected $id;
