@@ -21,7 +21,7 @@ import { initialState as settingsInitialState, defaultFilters, defaultSettings }
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
 
-import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter } from '../coopcycle-frontend-js/logistics/redux'
+import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import axios from 'axios'
 
@@ -69,7 +69,8 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
         ),
         organizations: organizationAdapter.getInitialState(),
         vehicles: vehicleAdapter.getInitialState(),
-        trailers: trailerAdapter.getInitialState()
+        trailers: trailerAdapter.getInitialState(),
+        warehouses: warehouseAdapter.getInitialState(),
       }
     },
     jwt: jwtToken,
@@ -126,7 +127,8 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
         unassignedToursOrGroupsOrderIds: [],
         organizationsLoading: true,
         trailersLoading: true,
-        vehiclesLoading: true
+        vehiclesLoading: true,
+        warehousesLoading: true,
       }
     }
   })

@@ -25,3 +25,7 @@ export const vehicleAdapter = createEntityAdapter({
 export const trailerAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
 })
+
+export const warehouseAdapter = createEntityAdapter({
+  selectId: (o) => o['@id'],
+})

@@ -9,7 +9,8 @@ import {
   setToursEnabled,
   loadOrganizations,
   loadVehicles,
-  loadTrailers
+  loadTrailers,
+  loadWarehouses
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -52,6 +53,7 @@ const DashboardApp = ({ loadingAnim }) => {
     dispatch(loadOrganizations())
     dispatch(loadVehicles())
     dispatch(loadTrailers())
+    dispatch(loadWarehouses())
 
     loadingAnim.stop()
     loadingAnim.destroy()

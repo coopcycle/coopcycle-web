@@ -18,7 +18,8 @@ import {
   setTaskToShow,
   loadVehiclesSuccess,
   loadTrailersSuccess,
-  setTaskListsLoading
+  setTaskListsLoading,
+  loadWarehousesSuccess
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -147,6 +148,11 @@ export default (state = initialState, action) => {
       return {
         ...state,
         trailersLoading: false,
+      }
+    case loadWarehousesSuccess.type:
+      return {
+        ...state,
+        warehousesLoading: false,
       }
   }
 

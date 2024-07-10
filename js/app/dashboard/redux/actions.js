@@ -127,7 +127,7 @@ export const startTaskFailure = createAction('START_TASK_FAILURE')
 export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
 export const loadVehiclesSuccess = createAction('LOAD_VEHICLES_SUCCESS')
 export const loadTrailersSuccess = createAction('LOAD_TRAILERS_SUCCESS')
-
+export const loadWarehousesSuccess = createAction('LOAD_WAREHOUSES_SUCCESS')
 
 export const toggleTourPanelExpanded = createAction('TOGGLE_TOUR_PANEL_EXPANDED')
 export const toggleTaskListPanelExpanded = createAction('TASKLIST_PANEL_EXPANDED')
@@ -1726,5 +1726,25 @@ export function loadTrailers() {
       }
     })
     dispatch(loadTrailersSuccess(data))
+  }
+}
+
+export function loadWarehouses() {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_warehouses_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadWarehousesSuccess(data))
   }
 }
