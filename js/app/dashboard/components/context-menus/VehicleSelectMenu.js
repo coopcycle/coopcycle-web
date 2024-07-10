@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { selectAllVehicles, selectVehicleIdToTaskListIdMap } from "../../../../shared/src/logistics/redux/selectors"
 import { Item, Menu } from "react-contexify"
 import { useTranslation } from "react-i18next"
-import { setTaskListVehicle } from "../../redux/actions"
+import { setTaskListTrailer, setTaskListVehicle } from "../../redux/actions"
 
 export default () => {
 
@@ -12,8 +12,9 @@ export default () => {
   const vehicleIdToTaskListIdMap = useSelector(selectVehicleIdToTaskListIdMap)
   const dispatch = useDispatch()
 
-  const onVehicleClick = ({ props, data }) =>{
+  const onVehicleClick = ({ props, data }) => {
     dispatch(setTaskListVehicle(props.username, data.vehicleId))
+    dispatch(setTaskListTrailer(props.username, null))
   }
 
   return (
