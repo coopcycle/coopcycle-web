@@ -18,10 +18,22 @@ import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
 import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
 import PolylineIcon from './icons/PolylineIcon'
+import {default as VehicleIcon} from './icons/Vehicle'
+import {default as TrailerIcon} from './icons/Trailer'
 import ExtraInformations from './TaskCollectionDetails'
 import Vehicle from './Vehicle'
+import Trailer from './Trailer'
+import { useContextMenu } from 'react-contexify'
 
 moment.locale($('html').attr('lang'))
+
+const showVehicleMenu = useContextMenu({
+  id: 'vehicle-selectmenu'
+}).show
+
+const showTrailerMenu = useContextMenu({
+  id: 'trailer-selectmenu'
+}).show
 
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
 
@@ -149,6 +161,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
             <span>
               <Avatar username={ username } size="24" />
               <Vehicle vehicleId={taskList.vehicle} />
+              <Trailer trailerId={taskList.trailer} />
               <small className="text-monospace ml-2">
                 <strong className="mr-2">{ username }</strong>
                 <span className="text-muted">{ `(${tasks.length})` }</span>
@@ -196,12 +209,27 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           <div className="d-flex align-items-center mt-2 mb-2">
             <a
               className='tasklist__actions--icon ml-3'
+              onClick={ (e) => showVehicleMenu({event: e, props: {username: username}}) }
+            >
+              <VehicleIcon />
+            </a>
+            { taskList.vehicle ?
+              <a
+                className='tasklist__actions--icon ml-3'
+                onClick={ (e) => showTrailerMenu({event: e, props: {username: username}}) }
+              >
+                <TrailerIcon />
+              </a> :
+              null
+            }
+            <a
+              className='tasklist__actions--icon ml-3'
               onClick={ () => dispatch(togglePolyline(username)) }
             >
               <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
             </a>
             <a
-              className="ml-4 tasklist__actions--icon d-flex align-items-center justify-content-center"
+              className="ml-3 tasklist__actions--icon d-flex align-items-center justify-content-center"
               title="Optimize"
               style={{
                 visibility: tasks.length > 1 ? 'visible' : 'hidden'

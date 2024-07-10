@@ -9,7 +9,7 @@ import moment from 'moment'
 import {
   cancelTasks,
   createTaskList,
-  modifyTaskList,
+  putTaskListItems,
   moveTasksToNextDay,
   moveTasksToNextWorkingDay,
   moveToBottom,
@@ -74,7 +74,7 @@ const useAssignAction = function() {
     }
 
     const newTasksList = [...tasksList.items, ...tasksToAssign.map(t => t['@id'])]
-    return dispatch(modifyTaskList(tasksList.username, newTasksList))
+    return dispatch(putTaskListItems(tasksList.username, newTasksList))
   }
 }
 
@@ -181,7 +181,9 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
   return actions
 }
 
-const DynamicMenu = () => {
+const DynamicMenu = (props) => {
+
+  console.log(props)
 
   const { t } = useTranslation()
 

@@ -306,7 +306,7 @@ class TaskList implements TaskCollectionInterface
      *
      * @return  self
      */
-    public function setVehicle(Vehicle $vehicle)
+    public function setVehicle(?Vehicle $vehicle)
     {
         $this->vehicle = $vehicle;
 
@@ -330,7 +330,7 @@ class TaskList implements TaskCollectionInterface
      *
      * @return  self
      */
-    public function setTrailer(Trailer $trailer)
+    public function setTrailer(?Trailer $trailer)
     {
         $this->trailer = $trailer;
 

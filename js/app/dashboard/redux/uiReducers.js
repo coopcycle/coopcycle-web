@@ -17,7 +17,8 @@ import {
   toggleTasksGroupPanelExpanded,
   setTaskToShow,
   loadVehiclesSuccess,
-  loadTrailersSuccess
+  loadTrailersSuccess,
+  setTaskListsLoading
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -40,6 +41,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         taskListsLoading: false,
+      }
+
+    case setTaskListsLoading.type:
+      return {
+        ...state,
+        taskListsLoading: action.payload,
       }
 
     case OPEN_NEW_TASK_MODAL:

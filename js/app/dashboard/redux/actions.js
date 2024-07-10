@@ -170,7 +170,7 @@ export function assignAfter(username, task, after) {
       Array.prototype.splice.apply(newTaskListItems,
         Array.prototype.concat([ taskIndex + 1, 0 ], task['@id'])
       )
-      dispatch(modifyTaskList(username, newTaskListItems))
+      dispatch(putTaskListItems(username, newTaskListItems))
     }
   }
 }
@@ -195,7 +195,7 @@ export function unassignTasks(username, items) {
     const taskList = selectTaskListByUsername(getState(), {username: username}),
       toRemove = items.map(i => i['@id'])
 
-    await dispatch(modifyTaskList(username, withoutItemsIRIs(taskList.items, toRemove)))
+    await dispatch(putTaskListItems(username, withoutItemsIRIs(taskList.items, toRemove)))
   }
 }
 
@@ -224,6 +224,10 @@ export function modifyTaskListRequestSuccess(taskList) {
   return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
 }
 
+export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
+export const setTaskListVehicleRequest = createAction('SET_TASK_LIST_VEHICLE_REQUEST')
+export const setTaskListTrailerRequest = createAction('SET_TASK_LIST_TRAILER_REQUEST')
+
 export function setFilterValue(key, value) {
   return { type: SET_FILTER_VALUE, key, value }
 }
@@ -245,11 +249,11 @@ export function importError(token, message) {
 }
 
 /**
- * Modify a TaskList
- * @param {string} Username - Username of the rider to which we assign
+ * PUT tasklist's items
+ * @param {string} username - Username of the rider to which we assign
  * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
  */
-export function modifyTaskList(username, items) {
+export function putTaskListItems(username, items) {
 
   return async function(dispatch, getState) {
 
@@ -294,6 +298,92 @@ export function modifyTaskList(username, items) {
     dispatch(modifyTaskListRequestSuccess(response.data))
     return response.data
   }
+}
+
+/**
+ * @param {TaskList} TaskList -
+ * @param {string} vehicleId - Vehicle's IRI
+ */
+export function setTaskListVehicle(username, vehicleId) {
+  return async function(dispatch, getState) {
+
+    const tasksList = selectTaskListByUsername(getState(), {username: username})
+
+    const url = window.Routing.generate('api_task_lists_patch_item', {
+      id: tasksList.id,
+    })
+
+    dispatch(setTaskListsLoading(true))
+    dispatch(setTaskListVehicleRequest({username, vehicleId}))
+
+    const { jwt } = getState()
+    const httpClient = createClient(dispatch)
+
+    let response
+
+    try {
+      response = await httpClient.request({
+        method: 'PATCH',
+        url,
+        data: {'vehicle': vehicleId},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    dispatch(setTaskListsLoading(false))
+    return response.data
+  }
+
+}
+
+/**
+ * @param {TaskList} TaskList -
+ * @param {string} trailerId - Trailers's IRI
+ */
+export function setTaskListTrailer(username, trailerId) {
+  return async function(dispatch, getState) {
+
+    const tasksList = selectTaskListByUsername(getState(), {username: username})
+
+    const url = window.Routing.generate('api_task_lists_patch_item', {
+      id: tasksList.id,
+    })
+
+    dispatch(setTaskListsLoading(true))
+    dispatch(setTaskListTrailerRequest({username, trailerId}))
+
+    const { jwt } = getState()
+    const httpClient = createClient(dispatch)
+
+    let response
+
+    try {
+      response = await httpClient.request({
+        method: 'PATCH',
+        url,
+        data: {'trailer': trailerId},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    dispatch(setTaskListsLoading(false))
+    return response.data
+  }
+
 }
 
 export function togglePolyline(username) {
@@ -385,7 +475,7 @@ function moveTo(task, direction) {
           newItems.push(taskId)
           break
       }
-      dispatch(modifyTaskList(taskList.username, newItems))
+      dispatch(putTaskListItems(taskList.username, newItems))
     }
   }
 }
@@ -879,7 +969,7 @@ export function optimizeTaskList(taskList) {
     })
       .then(response => {
         // TODO : fix this
-        dispatch(modifyTaskList(taskList.username, response.data.items))
+        dispatch(putTaskListItems(taskList.username, response.data.items))
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))

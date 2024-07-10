@@ -18,6 +18,8 @@ import TasksContextMenu from './context-menus/TasksContextMenu'
 import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
+import VehicleSelectMenu from './context-menus/VehicleSelectMenu'
+import TrailerSelectMenu from './context-menus/TrailerSelectMenu'
 
 const DashboardApp = ({ loadingAnim }) => {
 
@@ -78,6 +80,8 @@ const DashboardApp = ({ loadingAnim }) => {
         </Split>
       </DragDropContext>
       <TasksContextMenu />
+      <VehicleSelectMenu />
+      <TrailerSelectMenu />
       <ToastContainer />
     </div>
   )
