@@ -8,10 +8,13 @@ class Trailer
 {
     protected $id;
 
+    /**
+    * @Groups({"vehicle"})
+    */
     protected $trailer;
 
     /**
-    * @Groups({"vehicle", "trailer_create"})
+    * @Groups({"trailer", "trailer_create"})
     */
     protected $vehicle;
 

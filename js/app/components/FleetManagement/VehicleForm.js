@@ -13,18 +13,16 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
 
   const handleSubmit = async (values) => {
     setLoading(true)
-
-    // convert to gramms
-    values.maxWeight = values.maxWeight * 1000
-
-    await onSubmit(values)
+    await onSubmit({
+      ...values,
+      maxWeight: values.maxWeight * 1000,  // convert to gramms
+      isElectric: values.isElectric || false // force-define this value as the checkox component seems not controlled in Formik
+    })
     setLoading(false)
   }
 
   initialValues = {
     ...initialValues,
-    // FIXME : not 100% sure it is the correct way to do this...
-    isElectric: initialValues.isElectric || false,
     warehouse: initialValues.warehouse || warehouses[0]['@id']
   }
 

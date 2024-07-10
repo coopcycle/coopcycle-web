@@ -12,7 +12,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 /**
  * @ApiResource(
  *   attributes={
- *     "normalization_context"={"groups"={"trailer", "vehicle"}},
+ *     "normalization_context"={"groups"={"trailer"}},
  *     "denormalization_context"={"groups"={"trailer_create"}},
  *   },
  *   collectionOperations={
@@ -69,7 +69,7 @@ class Trailer
     protected $electricRange;
 
     /**
-    * @Groups({"trailer", "trailer_create", "vehicle"})
+    * @Groups({"trailer", "trailer_create"})
     */
     protected $compatibleVehicles;
 

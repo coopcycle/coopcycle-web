@@ -12,7 +12,7 @@ import Task from './Task'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded } from '../redux/actions'
-import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
+import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectTrailersLoading, selectVehiclesLoading, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
@@ -24,15 +24,12 @@ import ExtraInformations from './TaskCollectionDetails'
 import Vehicle from './Vehicle'
 import Trailer from './Trailer'
 import { useContextMenu } from 'react-contexify'
+import TrailerSelectMenu from './context-menus/TrailerSelectMenu'
 
 moment.locale($('html').attr('lang'))
 
 const showVehicleMenu = useContextMenu({
   id: 'vehicle-selectmenu'
-}).show
-
-const showTrailerMenu = useContextMenu({
-  id: 'trailer-selectmenu'
 }).show
 
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
@@ -132,6 +129,12 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const items = taskList.items
   const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
+
+  const vehiclesLoading = useSelector(selectVehiclesLoading)
+  const trailersLoading = useSelector(selectTrailersLoading)
+  const showTrailerMenu = useContextMenu({
+    id: `trailer-selectmenu-${username}`
+  }).show
 
   const visibleTasks = tasks.filter(task => {
     return _.includes(visibleTaskIds, task['@id'])
@@ -263,6 +266,10 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           )}
         </Droppable>
       </div>
+      { !trailersLoading && !vehiclesLoading && taskList.vehicle ?
+        <TrailerSelectMenu username={username} vehicleId={taskList.vehicle} /> :
+        null
+      }
     </div>
   )
 }

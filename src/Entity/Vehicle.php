@@ -69,7 +69,7 @@ class Vehicle
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\NotBlank
+    * @Assert\Type("boolean")
     */
     protected $isElectric;
 
@@ -85,6 +85,9 @@ class Vehicle
     */
     protected $warehouse;
 
+    /**
+    * @Groups({"vehicle"})
+    */
     protected $compatibleTrailers;
 
     public function __construct() {

@@ -181,9 +181,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
   return actions
 }
 
-const DynamicMenu = (props) => {
-
-  console.log(props)
+const DynamicMenu = () => {
 
   const { t } = useTranslation()
 

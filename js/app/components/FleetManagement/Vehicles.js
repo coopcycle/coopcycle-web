@@ -94,7 +94,8 @@ export default () => {
     {
       title: t("ADMIN_VEHICLE_MAX_WEIGHT_LABEL"),
       dataIndex: "maxWeight",
-      align: "center"
+      align: "center",
+      render: (maxWeight) => maxWeight / 1000
     },
     {
       title: t("ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL"),
@@ -138,7 +139,8 @@ export default () => {
     {
       title: t("ADMIN_VEHICLE_MAX_WEIGHT_LABEL"),
       dataIndex: "maxWeight",
-      align: "center"
+      align: "center",
+      render: (maxWeight) => maxWeight / 1000
     },
     {
       title: t("ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL"),
