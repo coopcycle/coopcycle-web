@@ -129,18 +129,18 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                   </div>
                 </div>
                 <div className="col-md-offset-3 col-md-3">
-                  <div className={ `${errors.volumeUnits ? 'has-error': ''}` }>
-                    <label className="control-label" htmlFor="volumeUnits">{ t('ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL') }</label>
+                  <div className={ `${errors.maxVolumeUnits ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="maxVolumeUnits">{ t('ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL') }</label>
                     <Field
                       className="form-control"
                       type="number"
-                      value={ values.volumeUnits }
-                      name="volumeUnits"
+                      value={ values.maxVolumeUnits }
+                      name="maxVolumeUnits"
                       required
                     />
-                    { errors.volumeUnits && touched.volumeUnits && (
+                    { errors.maxVolumeUnits && touched.maxVolumeUnits && (
                       <div className="has-error px-4">
-                        <small className="help-block">{ errors.volumeUnits }</small>
+                        <small className="help-block">{ errors.maxVolumeUnits }</small>
                       </div>
                     )}
                   </div>

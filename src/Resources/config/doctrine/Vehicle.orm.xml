@@ -5,7 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
-    <field name="volumeUnits" type="integer" column="max_volume_units"/>
+    <field name="maxVolumeUnits" type="integer" column="max_volume_units"/>
     <field name="maxWeight" type="integer" column="max_weight"/>
     <field name="color" length="7" type="string" column="color"/>
     <field name="isElectric" type="boolean" column="is_electric"/>

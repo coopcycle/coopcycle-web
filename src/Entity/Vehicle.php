@@ -50,7 +50,7 @@ class Vehicle
     * @Assert\NotBlank
     * @Assert\Type("integer")
     */
-    protected $volumeUnits;
+    protected $maxVolumeUnits;
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
@@ -125,9 +125,9 @@ class Vehicle
     /**
      * @return mixed
      */
-    public function getVolumeUnits()
+    public function getMaxVolumeUnits()
     {
-        return $this->volumeUnits;
+        return $this->maxVolumeUnits;
     }
 
     /**
@@ -135,9 +135,9 @@ class Vehicle
      *
      * @return self
      */
-    public function setVolumeUnits($volumeUnits)
+    public function setMaxVolumeUnits($volumeUnits)
     {
-        $this->volumeUnits = $volumeUnits;
+        $this->maxVolumeUnits = $volumeUnits;
 
         return $this;
     }

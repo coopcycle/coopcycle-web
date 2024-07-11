@@ -15,12 +15,13 @@ const Loader = () => {
   )
 }
 
-const CompatibleVehicles = ({compatibleVehicles}) => {
+const CompatibleVehicles = ({compatibleVehicles, vehicles}) => {
   return (
     <ul>
       {
         compatibleVehicles.map((vehicleCompat) => {
-          return <li key={vehicleCompat['@id']}>{ vehicleCompat.vehicle.name }</li>
+          const vehicle = vehicles.find(v => v['@id'] === vehicleCompat.vehicle)
+          return <li key={vehicleCompat['@id']}>{ vehicle.name }</li>
         })
       }
     </ul>
@@ -99,7 +100,7 @@ export default () => {
     },
     {
       title: t("ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL"),
-      dataIndex: "volumeUnits",
+      dataIndex: "maxVolumeUnits",
       align: "center"
     },
     {
@@ -161,7 +162,7 @@ export default () => {
     {
       title: t("ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL"),
       dataIndex: "compatibleVehicles",
-      render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} />,
+      render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} vehicles={vehicles} />,
     },
     {
       key: "action",

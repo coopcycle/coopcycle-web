@@ -170,7 +170,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           </div>
           <div className="mb-1" >
             {visibleTasks.length > 0 && (
-              <div style={{ width: '80%' }}>
+              <span style={{ width: '80%', display: 'inline-block' }}>
                 <ProgressBarMemo
                     completedTasks={ completedTasks.length }
                     tasks={ visibleTasks.length }
@@ -180,16 +180,16 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
                     cancelledTasks={ cancelledTasks.length }
                     t={t.bind(this)}
                   />
-              </div>
+              </span>
               ) }
-              {incidentReported.length > 0 && <div onClick={(e) => {
+              {incidentReported.length > 0 && <span className="ml-2" style={{ display: 'inline-block' }} onClick={(e) => {
                 dispatch(onlyFilter('showIncidentReportedTasks'))
                 e.stopPropagation()
               }}>
               <Tooltip title="Incident(s)">
                 <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
               </Tooltip>
-            </div>}
+            </span>}
           </div>
           <ExtraInformations
             duration={duration}
@@ -197,7 +197,7 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
             weight={weight}
             volumeUnits={volumeUnits}
             vehicleMaxWeight={vehicle?.maxWeight}
-            vehicleMaxVolumeUnits={vehicle?.volumeUnits}
+            vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits}
           />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>

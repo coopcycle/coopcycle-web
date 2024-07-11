@@ -30,7 +30,6 @@ final class Version20240703124328 extends AbstractMigration
         $this->addSql("ALTER TABLE vehicle RENAME COLUMN volume_units TO max_volume_units;");
         $this->addSql("ALTER TABLE vehicle ALTER COLUMN is_electric SET NOT NULL;");
         $this->addSql("ALTER TABLE vehicle ALTER COLUMN color SET NOT NULL;");
-        $this->addSql("ALTER TABLE vehicle ALTER COLUMN warehouse_id SET NOT NULL;");
     }
 
     public function down(Schema $schema): void
