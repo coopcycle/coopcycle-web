@@ -45,8 +45,8 @@ class RouteOptimizer
 
         $normalizer = new RoutingProblemNormalizer();
 
-        $this->logger->debug("Input data for routing problem");
-        $this->logger->debug(print_r($normalizer->normalize($routingProblem), true));
+        $this->logger->info("Input data for optimization routing problem");
+        $this->logger->info(print_r($normalizer->normalize($routingProblem), true));
 
         // TODO Catch Exception
         $response = $this->vroomClient->request('POST', '', [
@@ -60,8 +60,8 @@ class RouteOptimizer
         // remove the first result which is the starting point, for now equal of the first task of the list
         array_shift($firstRoute['steps']);
 
-        $this->logger->debug("Route optimization result");
-        $this->logger->debug(print_r($firstRoute['steps'], true));
+        $this->logger->info("Route optimization result");
+        $this->logger->info(print_r($data, true));
 
         $jobDescriptions = [];
 
