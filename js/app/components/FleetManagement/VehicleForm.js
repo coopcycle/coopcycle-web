@@ -23,7 +23,8 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
 
   initialValues = {
     ...initialValues,
-    warehouse: initialValues.warehouse || warehouses[0]['@id']
+    maxWeight: initialValues.maxWeight ? initialValues.maxWeight / 1000 : null,
+    warehouse: initialValues.warehouse['@id'] || warehouses[0]['@id']
   }
 
   const validate = (values) => {
@@ -40,7 +41,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
     <div>
       <div className="modal-header">
         <h4 className="modal-title">
-          { t('ADMIN_VEHICLE_FORM_TITLE') }
+          { initialValues['@id'] ? t('ADMIN_VEHICLE_UPDATE_FORM_TITLE') : t('ADMIN_VEHICLE_FORM_TITLE') }
           <a className="pull-right" onClick={ () => closeModal() }><i className="fa fa-close"></i></a>
         </h4>
       </div>

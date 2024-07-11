@@ -26,6 +26,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "access_control"="is_granted('ROLE_ADMIN')",
  *      },
  *   },
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "patch"={
+ *       "method"="PATCH",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *      }
+ *   },
  *   order={"name": "ASC"},
  * )
  */

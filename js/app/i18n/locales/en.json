@@ -183,6 +183,8 @@
         "ADMIN_WAREHOUSE_NAME_LABEL": "Name",
         "ADMIN_WAREHOUSE_ADDRESS_LABEL": "Adresse",
         "ADMIN_VEHICLE_FORM_TITLE": "Create vehicle",
+        "ADMIN_VEHICLE_UPDATE_FORM_TITLE": "Update vehicle",
+        "ADMIN_VEHICLE_UPDATE_TRAILER_FORM_TITLE": "Update trailer",
         "ADMIN_VEHICLE_TRAILER_FORM_TITLE": "Create trailer",
         "ADMIN_VEHICLE_NAME_LABEL": "Name",
         "ADMIN_VEHICLE_MAX_WEIGHT_LABEL": "Maximum carried weight (kg)",

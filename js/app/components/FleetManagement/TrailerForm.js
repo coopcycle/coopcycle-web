@@ -22,6 +22,11 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
     closeModal()
   }
 
+  initialValues = {
+    ...initialValues,
+    maxWeight: initialValues.maxWeight ? initialValues.maxWeight / 1000 : null,
+  }
+
   const validate = (values) => {
     // we use mostly buil-int HTML validation
     const errors = {}
@@ -35,7 +40,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
     <div>
       <div className="modal-header">
         <h4 className="modal-title">
-          { t('ADMIN_VEHICLE_TRAILER_FORM_TITLE') }
+        { initialValues['@id'] ? t('ADMIN_VEHICLE_UPDATE_TRAILER_FORM_TITLE') : t('ADMIN_VEHICLE_TRAILER_FORM_TITLE') }
           <a className="pull-right" onClick={ () => closeModal() }><i className="fa fa-close"></i></a>
         </h4>
       </div>

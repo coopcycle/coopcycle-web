@@ -48,6 +48,7 @@ export default () => {
   const [warehouses, setWarehouses] = useState([])
   const [trailers, setTrailers] = useState([])
   const [vehicles, setVehicles] = useState([])
+  const [initialValues, setInitialValues] = useState({})
 
   const httpClient = new window._auth.httpClient()
 
@@ -120,6 +121,11 @@ export default () => {
       align: "center"
     },
     {
+      key: "edit",
+      align: "right",
+      render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsVehicleModalOpen(true)}}></span></a>,
+    },
+    {
       key: "action",
       align: "right",
       render: (record) => <DeleteIcon deleteUrl={"api_vehicles_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchVehicles} />,
@@ -165,6 +171,11 @@ export default () => {
       render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} vehicles={vehicles} />,
     },
     {
+      key: "edit",
+      align: "right",
+      render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
+    },
+    {
       key: "action",
       align: "right",
       render: (record) => <DeleteIcon deleteUrl={"api_trailers_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchTrailers} />,
@@ -172,9 +183,17 @@ export default () => {
   ]
 
   const onSubmitVehicle = async (values) => {
-    const url = window.Routing.generate("api_vehicles_post_collection")
+    let url, request
 
-    const { error } = await httpClient.post(url, values);
+    if (values['@id']) {
+      url = window.Routing.generate("api_vehicles_patch_item", {id: values.id})
+      request = await httpClient.patch(url, values)
+    } else {
+      url = window.Routing.generate("api_vehicles_post_collection")
+      request = await httpClient.post(url, values)
+    }
+
+    const {error} = await request
 
     if (error)
     {
@@ -187,9 +206,17 @@ export default () => {
   }
 
   const onSubmitTrailer = async (values) => {
-    const url = window.Routing.generate("api_trailers_post_collection")
+    let url, request
 
-    const { error } = await httpClient.post(url, values);
+    if (values['@id']) {
+      url = window.Routing.generate("api_trailers_patch_item", {id: values.id})
+      request = await httpClient.patch(url, values)
+    } else {
+      url = window.Routing.generate("api_trailers_post_collection")
+      request = await httpClient.post(url, values)
+    }
+
+    const {error} = await request
 
     if (error)
     {
@@ -248,7 +275,7 @@ export default () => {
                     className="ReactModal__Content--no-default" // disable additional inline style from react-modal
                   >
                     <VehicleForm
-                      initialValues={{}}
+                      initialValues={initialValues}
                       onSubmit={onSubmitVehicle}
                       closeModal={() => setIsVehicleModalOpen(false)}
                       warehouses={warehouses}
