@@ -25,20 +25,23 @@ export default ({vehicleId, username}) => {
   }
 
   return (
-    <Menu id={submenuId}>
-      <Item key={-1} onClick={onTrailerClick} data={{trailerId: null}}>{ t('CLEAR') }</Item>
-      {
-        compatibleTrailerIds.map((trailerId, index) => {
-          const trailer = trailers.find(t => t['@id'] === trailerId)
-          return (
-            <Item
-              onClick={onTrailerClick}
-              data={{trailerId: trailer['@id']}}
-              disabled={trailerIdToTaskListIdMap.has(trailer['@id'])}
-              key={index} >
-                {trailer.name}
-            </Item>)
-        })
+    <Menu id={submenuId}>-
+      { compatibleTrailerIds.length > 0 ?
+        <>
+          <Item key={-1} onClick={onTrailerClick} data={{trailerId: null}}>{ t('CLEAR') }</Item>
+          {compatibleTrailerIds.map((trailerId, index) => {
+            const trailer = trailers.find(t => t['@id'] === trailerId)
+            return (
+              <Item
+                onClick={onTrailerClick}
+                data={{trailerId: trailer['@id']}}
+                disabled={trailerIdToTaskListIdMap.has(trailer['@id'])}
+                key={index} >
+                  {trailer.name}
+              </Item>)
+          })}
+        </> :
+        <Item key={0} disabled>{ t('NO_COMPATIBLE_TRAILER') }</Item>
       }
     </Menu>
   )

@@ -16,7 +16,7 @@ import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selec
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight, selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
 import PolylineIcon from './icons/PolylineIcon'
 import {default as VehicleIcon} from './icons/Vehicle'
 import {default as TrailerIcon} from './icons/Trailer'
@@ -154,45 +154,51 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const cancelledTasks = _.filter(visibleTasks, t => t.status === 'CANCELLED')
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
+  const vehicle = useSelector(state => selectVehicleById(state, taskList.vehicle))
   const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
   const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
 
   return (
     <div>
       <div className="pl-2 task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
-          <div>
-            <span>
-              <Avatar username={ username } size="24" />
-              <Vehicle vehicleId={taskList.vehicle} />
-              <Trailer trailerId={taskList.trailer} />
-              <small className="text-monospace ml-2">
-                <strong className="mr-2">{ username }</strong>
-                <span className="text-muted">{ `(${tasks.length})` }</span>
-              </small>
-            </span>
-            { visibleTasks.length > 0 && (
-            <div style={{ width: '33.3333%' }}>
-              <ProgressBarMemo
-                  completedTasks={ completedTasks.length }
-                  tasks={ visibleTasks.length }
-                  inProgressTasks={ inProgressTasks.length }
-                  incidentReported={ incidentReported.length }
-                  failureTasks={ failureTasks.length }
-                  cancelledTasks={ cancelledTasks.length }
-                  t={t.bind(this)}
-                />
-            </div>
-            ) }
-            {incidentReported.length > 0 && <div onClick={(e) => {
-              dispatch(onlyFilter('showIncidentReportedTasks'))
-              e.stopPropagation()
-            }}>
+          <div className="mb-1 d-flex align-items-center task-list__badges">
+            <Avatar username={ username } size="24" className="ml-2" />
+            <strong className="mr-2">{ username }</strong>
+            <span className="badge">{ tasks.length }</span>
+            <Vehicle vehicleId={taskList.vehicle} />
+            <Trailer trailerId={taskList.trailer} />
+          </div>
+          <div className="mb-1" >
+            {visibleTasks.length > 0 && (
+              <div style={{ width: '80%' }}>
+                <ProgressBarMemo
+                    completedTasks={ completedTasks.length }
+                    tasks={ visibleTasks.length }
+                    inProgressTasks={ inProgressTasks.length }
+                    incidentReported={ incidentReported.length }
+                    failureTasks={ failureTasks.length }
+                    cancelledTasks={ cancelledTasks.length }
+                    t={t.bind(this)}
+                  />
+              </div>
+              ) }
+              {incidentReported.length > 0 && <div onClick={(e) => {
+                dispatch(onlyFilter('showIncidentReportedTasks'))
+                e.stopPropagation()
+              }}>
               <Tooltip title="Incident(s)">
                 <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
               </Tooltip>
             </div>}
           </div>
-          <ExtraInformations duration={duration} distance={distance} weight={weight} volumeUnits={volumeUnits} />
+          <ExtraInformations
+            duration={duration}
+            distance={distance}
+            weight={weight}
+            volumeUnits={volumeUnits}
+            vehicleMaxWeight={vehicle?.maxWeight}
+            vehicleMaxVolumeUnits={vehicle?.volumeUnits}
+          />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
         <div className="d-flex align-items-center mt-2 mb-2">

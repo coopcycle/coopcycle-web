@@ -4,7 +4,7 @@ import { useSelector } from "react-redux"
 import { selectSettings } from "../redux/selectors"
 
 
-export default ({ duration, distance, weight, volumeUnits}) => {
+export default ({ duration, distance, weight, volumeUnits, vehicleMaxWeight, vehicleMaxVolumeUnits}) => {
 
     const { showWeightAndVolumeUnit, showDistanceAndTime } = useSelector(selectSettings)
 
@@ -26,9 +26,9 @@ export default ({ duration, distance, weight, volumeUnits}) => {
         { showDistanceAndTime && showWeightAndVolumeUnit ? (<span className="mx-2">|</span>) : null }
         { showWeightAndVolumeUnit ?
           <>
-              <span>{ weightFormatted }</span>
+              <span>{ vehicleMaxWeight ? `${weightFormatted} / ${formatWeight(vehicleMaxWeight)}` : weightFormatted } kg</span>
               <span className="mx-2">|</span>
-              <span>{ volumeUnitsFormatted }</span>
+              <span>{ vehicleMaxVolumeUnits ? `${volumeUnitsFormatted} / ${formatVolumeUnits(vehicleMaxVolumeUnits)}`: volumeUnitsFormatted } VU</span>
           </>
         : null
         }

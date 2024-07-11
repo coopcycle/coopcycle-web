@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedItemsIds } from './taskListUtils';
-import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter } from './adapters'
+import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from './adapters'
 import i18next from 'i18next';
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
@@ -11,12 +11,16 @@ const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entiti
 const organizationSelectors = organizationAdapter.getSelectors((state) => state.logistics.entities.organizations)
 const vehiclesSelectors = vehicleAdapter.getSelectors((state) => state.logistics.entities.vehicles)
 const trailersSelectors = trailerAdapter.getSelectors((state) => state.logistics.entities.trailers)
+const warehousesSelectors = warehouseAdapter.getSelectors((state) => state.logistics.entities.warehouses)
 
 export const selectVehicleById = vehiclesSelectors.selectById
 export const selectAllVehicles = vehiclesSelectors.selectAll
 
 export const selectTrailerById = trailersSelectors.selectById
 export const selectAllTrailers = trailersSelectors.selectAll
+
+export const selectWarehouseById = warehousesSelectors.selectById
+export const selectAllWarehouses = warehousesSelectors.selectAll
 
 export const selectAllOrganizations = organizationSelectors.selectAll
 export const selectOrganizationsLoading = state => state.logistics.ui.organizationsLoading

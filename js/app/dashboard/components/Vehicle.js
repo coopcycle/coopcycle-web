@@ -1,24 +1,37 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
+import { selectVehicleById, selectWarehouseById } from '../../../shared/src/logistics/redux/selectors'
 import Vehicle from './icons/Vehicle'
 import Warehouse from './icons/Warehouse'
+import { Tooltip } from 'antd'
 
 export default ({ vehicleId }) => {
     const vehicle = useSelector(state => selectVehicleById(state, vehicleId))
+    const warehouse = useSelector(state => selectWarehouseById(state, vehicle?.warehouse['@id']))
+
     return (
       <>
-        <span
-          className='mx-2'
-          style={{display: 'inline-block', width: '24px', height: '24px', borderRadius: '40px', backgroundColor: vehicle?.color || 'red', color: 'white'}}
-        >
-          <Warehouse />
-        </span>
-        <span
-          style={{display: 'inline-block', width: '24px', height: '24px', borderRadius: '40px', backgroundColor: vehicle?.color || 'red', color: 'white'}}
-        >
-          <Vehicle />
-        </span>
+        { vehicle && warehouse ?
+          <>
+            <Tooltip title={`${warehouse.name} ${warehouse.address.streetAddress}`}>
+              <span
+                className='dashboard__badge'
+                style={{backgroundColor: vehicle?.color}}
+              >
+                <Warehouse />
+              </span>
+            </Tooltip>
+            <Tooltip title={`${vehicle.name}`}>
+              <span
+                className='dashboard__badge dashboard__badge--vehicle'
+                style={{backgroundColor: vehicle?.color}}
+              >
+                <Vehicle />
+              </span>
+            </Tooltip>
+          </>
+          : null
+        }
       </>
     )
 }
