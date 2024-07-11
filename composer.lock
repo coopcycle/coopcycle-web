@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f8076f1596ef13e8fd3c4262730b8cb0",
+    "content-hash": "f4ac7f2b0602ac85cb13949c498fa55b",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1261,12 +1261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "cd3b15b6a5498d22cd8e4f353a17f8903c04531c"
+                "reference": "43a0bee9416c8aeb9ce73c54a3307e15b2a8201f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/cd3b15b6a5498d22cd8e4f353a17f8903c04531c",
-                "reference": "cd3b15b6a5498d22cd8e4f353a17f8903c04531c",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/43a0bee9416c8aeb9ce73c54a3307e15b2a8201f",
+                "reference": "43a0bee9416c8aeb9ce73c54a3307e15b2a8201f",
                 "shasum": ""
             },
             "require": {
@@ -1296,7 +1296,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-06-07T15:20:48+00:00"
+            "time": "2024-07-04T11:45:00+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -8135,6 +8135,55 @@
                 }
             ],
             "time": "2024-03-15T19:58:44+00:00"
+        },
+        {
+            "name": "league/flysystem-sftp-v3",
+            "version": "3.28.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/flysystem-sftp-v3.git",
+                "reference": "abedadd3c64d4f0e276d6ecc796ec8194d136b41"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/flysystem-sftp-v3/zipball/abedadd3c64d4f0e276d6ecc796ec8194d136b41",
+                "reference": "abedadd3c64d4f0e276d6ecc796ec8194d136b41",
+                "shasum": ""
+            },
+            "require": {
+                "league/flysystem": "^3.0.14",
+                "league/mime-type-detection": "^1.0.0",
+                "php": "^8.0.2",
+                "phpseclib/phpseclib": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\Flysystem\\PhpseclibV3\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Frank de Jonge",
+                    "email": "info@frankdejonge.nl"
+                }
+            ],
+            "description": "SFTP filesystem adapter for Flysystem.",
+            "keywords": [
+                "Flysystem",
+                "file",
+                "files",
+                "filesystem",
+                "sftp"
+            ],
+            "support": {
+                "source": "https://github.com/thephpleague/flysystem-sftp-v3/tree/3.28.0"
+            },
+            "time": "2024-05-06T20:05:52+00:00"
         },
         {
             "name": "league/geotools",
@@ -23710,5 +23759,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }

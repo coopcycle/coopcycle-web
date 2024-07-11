@@ -12,16 +12,15 @@ use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskRepository;
 use AppBundle\Entity\User;
+use AppBundle\Utils\PriceFormatter;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use League\Csv\Writer as CsvWriter;
 
 final class DeliveryDataExporter implements DataExporterInterface
 {
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
+    public function __construct(private EntityManagerInterface $entityManager, private PriceFormatter $priceFormatter)
+    {}
 
     public function export(\DateTime $start, \DateTime $end): string
     {
@@ -98,7 +97,7 @@ final class DeliveryDataExporter implements DataExporterInterface
             if (isset($ordersByDelivery[$delivery['PICKUP']['delivery']])) {
                 $order = $ordersByDelivery[$delivery['PICKUP']['delivery']];
                 $orderNumber = $order['number'];
-                $orderTotal = $order['total'];
+                $orderTotal = $this->priceFormatter->format($order['total'] ?? 0);
             }
 
             $packages = '';

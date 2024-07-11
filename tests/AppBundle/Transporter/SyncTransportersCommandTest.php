@@ -54,13 +54,13 @@ class SyncTransportersCommandTest extends KernelTestCase {
     EDI;
 
     const FS_MASK_DBS = 'testingdbs';
-    const FS_MASK_BMV = 'testingbmv';
-
 
     protected EntityManagerInterface $entityManager;
     protected TaskManager $taskManager;
     protected LoaderInterface $fixturesLoader;
-    protected Filesystem $syncFs;
+    protected Filesystem $syncDBSchenkerFs;
+    protected Filesystem $syncInBMVFs;
+    protected Filesystem $syncOutBMVFs;
     protected Filesystem $edifactFs;
     protected $params;
     protected $settingManager;
@@ -78,7 +78,9 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
-        $this->syncFs = new Filesystem(new InMemoryFilesystemAdapter());
+        $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
+        $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
+        $this->syncOutBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->edifactFs = new Filesystem(new InMemoryFilesystemAdapter());
 
 
@@ -112,25 +114,29 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'name' => 'DBSchenker test',
                     'legal_name' => 'DBSchenker Testing Inc.',
                     'legal_id' => '0000011',
-                    'fs_mask' => self::FS_MASK_DBS,
-                    'sync_uri' => $this->syncFs,
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
                 ],
                 'BMV' => [
                     'enabled' => true,
                     'name' => 'BMV test',
                     'legal_name' => 'BMV Testing Inc.',
                     'legal_id' => '0000022',
-                    'fs_mask' => self::FS_MASK_BMV,
-                    'sync_uri' => $this->syncFs,
+                    'sync' => [
+                        'in' => [
+                            'uri' => $this->syncInBMVFs
+                        ],
+                        'out' => [
+                            'uri' => $this->syncOutBMVFs
+                        ]
+                    ]
                 ]
             ]);
 
-        $this->syncFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
-        $this->syncFs->createDirectory(sprintf('from_%s', self::FS_MASK_DBS));
-
-        $this->syncFs->createDirectory(sprintf('to_%s', self::FS_MASK_BMV));
-        $this->syncFs->createDirectory(sprintf('from_%s', self::FS_MASK_BMV));
-
+        $this->syncDBSchenkerFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
+        $this->syncDBSchenkerFs->createDirectory(sprintf('from_%s', self::FS_MASK_DBS));
     }
 
     protected function initCommand(): Command
@@ -166,8 +172,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'name' => 'DBSchenker test',
                     'legal_name' => 'DBSchenker Testing Inc.',
                     'legal_id' => '0000011',
-                    'fs_mask' => self::FS_MASK_DBS,
-                    'sync_uri' => $this->syncFs,
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
                 ]
             ]);
 
@@ -205,8 +213,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'name' => 'DBSchenker test',
                     'legal_name' => 'DBSchenker Testing Inc.',
                     'legal_id' => '0000011',
-                    'fs_mask' => self::FS_MASK_DBS,
-                    'sync_uri' => $this->syncFs,
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
                 ]
             ]);
 
@@ -244,8 +254,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'name' => 'DBSchenker test',
                     'legal_name' => 'DBSchenker Testing Inc.',
                     'legal_id' => '0000011',
-                    'fs_mask' => self::FS_MASK_DBS,
-                    'sync_uri' => $this->syncFs,
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
                 ]
             ]);
 
@@ -283,8 +295,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
                     'name' => 'DBSchenker test',
                     'legal_name' => 'DBSchenker Testing Inc.',
                     'legal_id' => '0000011',
-                    'fs_mask' => self::FS_MASK_DBS,
-                    'sync_uri' => $this->syncFs,
+                    'sync' => [
+                        'filemask' => self::FS_MASK_DBS,
+                        'uri' => $this->syncDBSchenkerFs,
+                    ]
                 ]
             ]);
 
@@ -317,13 +331,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $params = $this->prophesize(ParameterBagInterface::class);
         $params->get('transporters_config')
             ->willReturn([
-                'BMV' => [
+                'HEPPNER' => [
                     'enabled' => true,
-                    'name' => 'BMV test',
-                    'legal_name' => 'BMV Testing Inc.',
-                    'legal_id' => '0000022',
-                    'fs_mask' => self::FS_MASK_DBS,
-                    'sync_uri' => $this->syncFs,
+                    'name' => 'Heppner test',
+                    'legal_name' => 'Heppner Testing Inc.',
+                    'legal_id' => '0000033'
                 ]
             ]);
 
@@ -337,10 +349,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
 
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('No store with transporter "BMV" connected');
+        $this->expectExceptionMessage('No store with transporter "HEPPNER" connected');
         $commandTester = new CommandTester($command);
         $commandTester->execute([
-            'transporter' => 'BMV'
+            'transporter' => 'HEPPNER'
         ]);
     }
 
@@ -366,13 +378,13 @@ class SyncTransportersCommandTest extends KernelTestCase {
     public function testInvalidAddressSync(): void
     {
         // Insert edi to sync
-        $this->syncFs->write(
+        $this->syncDBSchenkerFs->write(
             sprintf('to_%s/test.edi', self::FS_MASK_DBS),
             self::INVALID_ADDRESS_EDI_SAMPLE
         );
 
         // Valid the file is there
-        $dir_list = $this->syncFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
         $this->assertCount(1, $dir_list);
 
         $command = $this->initCommand();
@@ -387,7 +399,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringContainsString('No messages to send', $output);
 
         // Check if command removed the file to sync
-        $dir_list = $this->syncFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
         $this->assertCount(0, $dir_list);
 
         $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
@@ -441,13 +453,13 @@ class SyncTransportersCommandTest extends KernelTestCase {
     public function testValidSyncOneTask(): void
     {
         // Insert edi to sync
-        $this->syncFs->write(
+        $this->syncDBSchenkerFs->write(
             sprintf('to_%s/test.edi', self::FS_MASK_DBS),
             self::EDI_SAMPLE
         );
 
         // Valid the file is there
-        $dir_list = $this->syncFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
         $this->assertCount(1, $dir_list);
 
         $command = $this->initCommand();
@@ -463,7 +475,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringContainsString('No messages to send', $output);
 
         // Check if command removed the file to sync
-        $dir_list = $this->syncFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
         $this->assertCount(0, $dir_list);
 
         $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
@@ -575,8 +587,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
 
 
-        $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
-        $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_BMV))->toArray());
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
 
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
         $this->assertCount(3, $unsynced);
@@ -589,14 +601,14 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertStringContainsString('3 messages to send', $output);
 
 
-        $this->assertCount(0, $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_BMV))->toArray());
-        $dir_list = $this->syncFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
         $this->assertCount(1, $dir_list);
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
         $this->assertCount(0, $unsynced);
 
 
-        $reportContent = $this->syncFs->read($dir_list[0]['path']);
+        $reportContent = $this->syncDBSchenkerFs->read($dir_list[0]['path']);
 
         foreach(explode("\n", self::PARTIAL_REPORT_EDI_SAMPLE) as $line) {
             $this->assertStringContainsString(
@@ -605,7 +617,85 @@ class SyncTransportersCommandTest extends KernelTestCase {
             );
         }
 
+    }
 
+    public function testMultipleFilesystemsSync(): void
+    {
+        // Insert edi to sync
+        $this->syncOutBMVFs->write('test.edi', self::EDI_SAMPLE);
+
+        // Valid the file is there
+        $dir_list = $this->syncOutBMVFs->listContents('/')->toArray();
+        $this->assertCount(1, $dir_list);
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'BMV'
+        ]);
+
+        // Check command output
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
+
+        // Check if command removed the file to sync
+        $dir_list = $this->syncOutBMVFs->listContents('/')->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        $this->assertCount(2, $delivery->getTasks());
+
+        /** @var Task $pickup */
+        $pickup = $delivery->getPickup();
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+
+        $ediMessage = $dropoff->getImportMessage();
+
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_INBOUND,
+            $ediMessage->getDirection()
+        );
+
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_SCONTR,
+            $ediMessage->getMessageType()
+        );
+
+
+        $this->assertCount(1, $dropoff->getEdifactMessages());
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $this->assertCount(3, $pickup->getEdifactMessages());
+        $this->assertCount(2, $dropoff->getEdifactMessages());
+
+
+        $commandTester->execute([
+            'transporter' => 'BMV'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
+
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+        $dir_list = $this->syncInBMVFs->listContents('/')->toArray();
+        $this->assertCount(1, $dir_list);
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('BMV');
+        $this->assertCount(0, $unsynced);
     }
 
 }
