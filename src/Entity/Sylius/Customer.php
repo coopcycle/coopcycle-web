@@ -17,7 +17,6 @@ use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Sylius\Component\Customer\Model\Customer as BaseCustomer;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Webmozart\Assert\Assert;
 use AppBundle\Entity\Model\TaggableInterface;
@@ -43,10 +42,8 @@ use AppBundle\Entity\Model\TaggableTrait;
  */
 class Customer extends BaseCustomer implements TaggableInterface, CustomerInterface
 {
-    use TaggableTrait {
-        getTags as protected traitGetTags;
-    }
-
+    use TaggableTrait;
+    
     /** @var User */
     protected $user;
 
@@ -371,14 +368,5 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
         $this->dabbaCredentials->setCustomer(null);
         $this->dabbaCredentials = null;
-    }
-
-    /**
-     * @SerializedName("tags")
-     * @Groups({"order", "order_minimal"})
-     */
-    public function getTags(): array
-    {
-        return $this->traitGetTags();
     }
 }
