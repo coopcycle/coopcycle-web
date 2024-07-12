@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
+use AppBundle\Form\Order\OneOffOrderType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -38,11 +39,6 @@ trait DeliveryTrait
         return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
 
-    protected function createDeliveryForm(Delivery $delivery, array $options = [])
-    {
-        return $this->createForm(DeliveryType::class, $delivery, $options);
-    }
-
     protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
     {
         $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
@@ -70,8 +66,7 @@ trait DeliveryTrait
 
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createDeliveryForm($delivery, [
-            'with_address_props' => true,
+        $form = $this->createForm(OneOffOrderType::class, $delivery, [
             'with_arbitrary_price' => null === $delivery->getOrder(),
         ]);
 

@@ -13,6 +13,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
+use AppBundle\Form\Order\NewOrderType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
@@ -363,10 +364,7 @@ trait StoreTrait
             $delivery = $store->createDelivery();
         }
 
-        $form = $this->createDeliveryForm($delivery, [
-            'with_dropoff_doorstep' => true,
-            'with_remember_address' => true,
-            'with_address_props' => true,
+        $form = $this->createForm(NewOrderType::class, $delivery, [
             'with_arbitrary_price' => true,
             'arbitrary_price' => $previousArbitraryPrice,
         ]);
