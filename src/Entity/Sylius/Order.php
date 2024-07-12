@@ -1791,7 +1791,7 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
-     * @returns Collection all bookmarks set by different users
+     * @return Collection all bookmarks set by different users
      */
     public function getBookmarks(): Collection
     {
