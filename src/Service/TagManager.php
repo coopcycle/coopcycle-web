@@ -5,10 +5,8 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Tagging;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\ORM\QueryBuilder;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -247,19 +245,11 @@ class TagManager
         ];
     }
 
-    public function getAllTagsQueryBuilder(): QueryBuilder
+    public function getAllTags(): array
     {
         return $this->entityManager
             ->getRepository(Tag::class)
             ->createQueryBuilder('t')
-            ->where('t.slug NOT LIKE :prefix')
-            ->setParameter('prefix', '\_\_%') // Exclude system tags
-            ;
-    }
-
-    public function getAllTags(): array
-    {
-        return $this->getAllTagsQueryBuilder()
             ->select(
                 't.name',
                 't.slug',

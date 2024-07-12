@@ -10,8 +10,7 @@ use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Tag;
-use AppBundle\Entity\Tagging;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreAddressesType;
@@ -26,7 +25,6 @@ use AppBundle\Sylius\Order\OrderFactory;
 use Carbon\Carbon;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -390,15 +388,7 @@ trait StoreTrait
                     $isBookmarked = true === $form->get('bookmark')->getData();
                     $order = $delivery->getOrder();
 
-                    //FIXME a hack to force Doctrine to flush the Order, otherwise tags are not persisted (see TaggableSubscriber)
-                    $order->setShippingTimeRange(clone $order->getShippingTimeRange());
-
-                    if ($isBookmarked) {
-                        $order->addTag('__bookmark');
-                    } else {
-                        $order->removeTag('__bookmark');
-                    }
-                    $entityManager->flush();
+                    $orderManager->setBookmark($order, $isBookmarked);
                 }
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
@@ -414,11 +404,7 @@ trait StoreTrait
 
                     if ($form->has('bookmark')) {
                         $isBookmarked = true === $form->get('bookmark')->getData();
-                        if ($isBookmarked) {
-                            $order->addTag('__bookmark');
-                        } else {
-                            $order->removeTag('__bookmark');
-                        }
+                        $orderManager->setBookmark($order, $isBookmarked);
                     }
 
                     $entityManager->persist($order);
@@ -589,7 +575,7 @@ trait StoreTrait
 
     public function storeDeliveriesBookmarksAction($id, Request $request,
         EntityManagerInterface $entityManager,
-        DeliveryRepository $deliveryRepository)
+        OrderRepository $orderRepository)
     {
         /**
          * Currently we only support bookmarks for admin users,
@@ -605,21 +591,10 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        $qb = $deliveryRepository->createQueryBuilder('d')
-            ->where('d.store = :store')
-            ->join(Order::class, 'o', Expr\Join::WITH, 'o = d.order')
-            ->join(Tagging::class, 'tagging', Expr\Join::WITH, 'tagging.resourceId = o.id AND tagging.resourceClass = :orderResourceType')
-            ->join(Tag::class, 'tag', Expr\Join::WITH, 'tag = tagging.tag')
-            ->andWhere('tag.slug = :tagName')
-            ->setParameter('store', $store)
-            ->setParameter('orderResourceType', 'AppBundle\Entity\Sylius\Order')
-            ->setParameter('tagName', '__bookmark')
-            ;
-
         return $this->render('store/deliveries_bookmarks.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
-            'bookmarks' => $qb->getQuery()->getResult(),
+            'bookmarks' => $orderRepository->findBookmarked($store, $this->getUser()),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],

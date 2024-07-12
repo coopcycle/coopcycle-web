@@ -19,41 +19,29 @@ use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Http\Adapter\Guzzle7\Client;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
 use Webmozart\Assert\Assert;
 
 class Geocoder
 {
-    private $rateLimiterStore;
-    private $settingsManager;
-    private $openCageApiKey;
-    private $country;
-    private $locale;
-    private $rateLimitPerSecond;
-    private $autoconfigure;
-
-    private $geocoder;
+    private ?GeocoderInterface $geocoder = null;
 
     /**
      * FIXME Inject providers through constructor (needs a CompilerPass)
      */
     public function __construct(
-        RateLimiterStore $rateLimiterStore,
-        SettingsManager $settingsManager,
-        string $openCageApiKey,
-        string $country,
-        string $locale,
-        int $rateLimitPerSecond,
-        bool $autoconfigure = true)
+        private readonly RateLimiterStore $rateLimiterStore,
+        private readonly SettingsManager $settingsManager,
+        private readonly string $openCageApiKey,
+        private readonly string $country,
+        private readonly string $locale,
+        private readonly int $rateLimitPerSecond,
+        private readonly bool $autoconfigure = true,
+        private readonly LoggerInterface $logger = new NullLogger())
     {
-        $this->rateLimiterStore = $rateLimiterStore;
-        $this->settingsManager = $settingsManager;
-        $this->openCageApiKey = $openCageApiKey;
-        $this->country = $country;
-        $this->locale = $locale;
-        $this->rateLimitPerSecond = $rateLimitPerSecond;
-        $this->autoconfigure = $autoconfigure;
     }
 
     private function getGeocoder()
@@ -81,7 +69,9 @@ class Geocoder
                 $providers[] = $this->createGoogleMapsProvider();
             }
 
-            $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $this->locale);
+            $provider = new ChainProvider($providers);
+            $provider->setLogger($this->logger);
+            $this->geocoder = new StatefulGeocoder($provider, $this->locale);
         }
 
         return $this->geocoder;
@@ -118,10 +108,7 @@ class Geocoder
         $this->geocoder = $geocoder;
     }
 
-    /**
-     * @return Address|null
-     */
-    public function geocode($value, $address = null)
+    public function geocode($value, $address = null): ?Address
     {
         $query = GeocodeQuery::create($value);
 
@@ -161,6 +148,7 @@ class Geocoder
             return $address;
         }
 
+        $this->logger->warning(sprintf('Geocoder: No results for "%s"', $query));
         return null;
     }
 

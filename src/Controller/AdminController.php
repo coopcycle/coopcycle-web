@@ -1035,10 +1035,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $tags = $tagManager->getAllTagsQueryBuilder()
-            ->orderBy('t.name', 'ASC')
-            ->getQuery()
-            ->getArrayResult();
+        $tags = $this->entityManager->getRepository(Tag::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/tags.html.twig', [
             'tags' => $tags

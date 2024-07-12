@@ -246,7 +246,7 @@ export default class MapProxy {
 
     popupComponent = this.taskPopups.get(task['@id'])
 
-    if (popupComponent) {
+    if (popupComponent && popupComponent.current) { // ref.current may be null, but I didn't understood why, maybe when the popup unmounts (?)
       popupComponent.current.updateTask(task)
     }
 

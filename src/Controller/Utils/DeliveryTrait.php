@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -58,6 +59,7 @@ trait DeliveryTrait
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
         OrderNumberAssignerInterface $orderNumberAssigner,
+        OrderManager $orderManager
     )
     {
         $delivery = $entityManager
@@ -95,15 +97,7 @@ trait DeliveryTrait
                 $order = $delivery->getOrder();
 
                 if (null !== $order) {
-                    //FIXME a hack to force Doctrine to flush the Order, otherwise tags are not persisted (see TaggableSubscriber)
-                    $order->setShippingTimeRange(clone $order->getShippingTimeRange());
-
-                    if ($isBookmarked) {
-                        $order->addTag('__bookmark');
-                    } else {
-                        $order->removeTag('__bookmark');
-                    }
-                    $entityManager->flush();
+                    $orderManager->setBookmark($order, $isBookmarked);
                 }
             }
 

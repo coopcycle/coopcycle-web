@@ -146,3 +146,12 @@ AppBundle\Entity\Store:
       - '@time_slot_2'
     __calls:
       - addAddress: [ "@address_2" ]
+  store_7:
+    name: 'BMV'
+    address: "@address_2"
+    enabled: true
+    transporter: 'BMV'
+    pricingRuleSet: '@pricing_rule_set_4'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@address_2" ]

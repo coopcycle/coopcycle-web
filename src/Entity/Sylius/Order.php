@@ -43,8 +43,6 @@ use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
-use AppBundle\Entity\Model\TaggableInterface;
-use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
@@ -438,10 +436,9 @@ use Webmozart\Assert\Assert as WMAssert;
  * @AssertLoopEatOrder(groups={"loopeat"})
  * @AssertDabbaOrder(groups={"dabba"})
  */
-class Order extends BaseOrder implements OrderInterface, TaggableInterface
+class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;
-    use TaggableTrait;
 
     protected $customer;
 
@@ -506,6 +503,8 @@ class Order extends BaseOrder implements OrderInterface, TaggableInterface
 
     protected $businessAccount;
 
+    protected Collection $bookmarks;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -527,6 +526,7 @@ class Order extends BaseOrder implements OrderInterface, TaggableInterface
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
         $this->vendors = new ArrayCollection();
+        $this->bookmarks = new ArrayCollection();
     }
 
     /**
@@ -1787,5 +1787,14 @@ class Order extends BaseOrder implements OrderInterface, TaggableInterface
     public function getPickupAddresses(): Collection
     {
         return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
+    }
+
+    /**
+     * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
+     * @return Collection all bookmarks set by different users
+     */
+    public function getBookmarks(): Collection
+    {
+        return $this->bookmarks;
     }
 }

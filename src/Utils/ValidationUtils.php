@@ -57,4 +57,10 @@ class ValidationUtils
             'code' => null
         ];
     }
+
+    public static function serializeToString(ConstraintViolationListInterface $violations): string
+    {
+        $data = ValidationUtils::serializeViolationList($violations);
+        return implode('; ', $data);
+    }
 }
