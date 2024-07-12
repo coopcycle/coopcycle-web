@@ -8,6 +8,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
@@ -32,7 +33,8 @@ class DeliveryType extends AbstractType
         protected TranslatorInterface $translator,
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected string $country,
-        protected string $locale)
+        protected string $locale,
+        private readonly OrderManager $orderManager)
     {
     }
 
@@ -149,7 +151,7 @@ class DeliveryType extends AbstractType
                     'label' => 'form.delivery.bookmark.label',
                     'mapped' => false,
                     'required' => false,
-                    'data' => $delivery->getOrder() && $delivery->getOrder()->hasTag('__bookmark'),
+                    'data' => $delivery->getOrder() && $this->orderManager->hasBookmark($delivery->getOrder()),
                 ]);
             }
         });

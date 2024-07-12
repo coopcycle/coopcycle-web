@@ -252,4 +252,10 @@ interface OrderInterface extends
      * @return Collection
      */
     public function getPickupAddresses(): Collection;
+
+    /**
+     * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
+     * @returns Collection all bookmarks set by different users
+     */
+    public function getBookmarks(): Collection;
 }
