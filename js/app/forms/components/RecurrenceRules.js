@@ -5,11 +5,11 @@ import Modal from 'react-modal'
 import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
 import RecurrenceRule from './RecurrenceRule'
 import {
-  closeRecurrenceRuleModal,
-  openNewRecurrenceRuleModal,
-  selectIsRecurrenceRuleModalOpen,
+  closeRecurrenceModal,
+  openRecurrenceModal,
+  selectIsRecurrenceModalOpen,
   selectRecurrenceRule,
-} from '../redux/recurrenceRulesSlice'
+} from '../redux/recurrenceSlice'
 import { useTranslation } from 'react-i18next'
 
 function Content() {
@@ -25,7 +25,7 @@ function Content() {
         className="mr-3"
         onClick={e => {
           e.preventDefault()
-          dispatch(openNewRecurrenceRuleModal())
+          dispatch(openRecurrenceModal())
         }}>
         <i className="fa fa-clock-o"></i>
         &nbsp;
@@ -37,13 +37,13 @@ function Content() {
   return (
     <RecurrenceRule
       rrule={recurrenceRule}
-      onClick={() => dispatch(openNewRecurrenceRuleModal())}
+      onClick={() => dispatch(openRecurrenceModal())}
     />
   )
 }
 
 export function RecurrenceRules() {
-  const recurrenceRuleModalIsOpen = useSelector(selectIsRecurrenceRuleModalOpen)
+  const recurrenceModalIsOpen = useSelector(selectIsRecurrenceModalOpen)
 
   const dispatch = useDispatch()
 
@@ -51,8 +51,8 @@ export function RecurrenceRules() {
     <div>
       <Content />
       <Modal
-        isOpen={recurrenceRuleModalIsOpen}
-        onRequestClose={() => dispatch(closeRecurrenceRuleModal())}
+        isOpen={recurrenceModalIsOpen}
+        onRequestClose={() => dispatch(closeRecurrenceModal())}
         className="ReactModal__Content--recurrence"
         overlayClassName="ReactModal__Overlay--zIndex-1001"
         shouldCloseOnOverlayClick={true}>

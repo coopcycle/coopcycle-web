@@ -76,10 +76,10 @@
           {{ form_row(form.bookmark) }}
         {% endif %}
 
-        {% if with_recurrence_rules is defined and with_recurrence_rules %}
+        {% if form.recurrence is defined %}
           <hr>
           <!-- React component will be inserted here -->
-          <div id="delivery_form__recurrence_rules__container">
+          <div id="delivery_form__recurrence__container">
           </div>
         {% endif %}
       </div>

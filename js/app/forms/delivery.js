@@ -17,7 +17,10 @@ import { validateForm } from '../utils/address'
 import i18n from '../i18n'
 import { RecurrenceRules } from './components/RecurrenceRules'
 import tasksSlice from './redux/tasksSlice'
-import { recurrenceRulesSlice } from './redux/recurrenceRulesSlice'
+import {
+  recurrenceSlice,
+  selectRecurrenceRule,
+} from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
 
 const selectTasks = state => state.tasks
@@ -498,7 +501,7 @@ export default function(name, options) {
       preloadedState = {
         ...preloadedState,
         recurrenceRules: {
-          ...recurrenceRulesSlice.getInitialState(),
+          ...recurrenceSlice.getInitialState(),
           recurrenceRule: JSON.parse(el.dataset.recurrenceRules),
         }
       }
@@ -512,7 +515,7 @@ export default function(name, options) {
       reducer: {
         [storeSlice.name]: storeSlice.reducer,
         "tasks": tasksSlice.reducer,
-        [recurrenceRulesSlice.name]: recurrenceRulesSlice.reducer,
+        [recurrenceSlice.name]: recurrenceSlice.reducer,
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
@@ -552,6 +555,13 @@ export default function(name, options) {
         form.disable()
       }
 
+      const recurrenceRule = selectRecurrenceRule(reduxStore.getState())
+      if (recurrenceRule) {
+        document.querySelector('#delivery_recurrence').value = JSON.stringify({
+          rule: recurrenceRule
+        })
+      }
+
     }, false)
 
     // https://symfony.com/doc/current/form/form_collections.html#allowing-new-tags-with-the-prototype
@@ -582,7 +592,7 @@ export default function(name, options) {
     }
   }
 
-  const recurrenceRulesContainer = document.querySelector('#delivery_form__recurrence_rules__container')
+  const recurrenceRulesContainer = document.querySelector('#delivery_form__recurrence__container')
   if (recurrenceRulesContainer) {
     const root = createRoot(recurrenceRulesContainer);
     root.render(

@@ -14,12 +14,12 @@ import TimeRange from '../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 import { useDispatch, useSelector } from 'react-redux'
 import {
-  closeRecurrenceRuleModal,
+  closeRecurrenceModal,
   createRecurrenceRule,
   deleteRecurrenceRule,
   selectRecurrenceRule,
   updateRecurrenceRule,
-} from '../redux/recurrenceRulesSlice'
+} from '../redux/recurrenceSlice'
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -91,11 +91,11 @@ export default function ModalContent() {
 
   const dispatch = useDispatch()
 
-  const defaultRecurrence =
+  const defaultRecurrenceRule =
     'FREQ=WEEKLY;BYDAY=' + moment().locale('en').format('dd').toUpperCase()
 
   const initialValues = {
-    rule: recurrenceRule ? recurrenceRule.rule : defaultRecurrence,
+    rule: recurrenceRule ?? defaultRecurrenceRule,
   }
 
   const isSaved = Boolean(recurrenceRule)
@@ -106,7 +106,7 @@ export default function ModalContent() {
         <button
           type="button"
           className="close"
-          onClick={() => dispatch(closeRecurrenceRuleModal())}
+          onClick={() => dispatch(closeRecurrenceModal())}
           aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -120,19 +120,14 @@ export default function ModalContent() {
         onSubmit={values => {
           if (isSaved) {
             dispatch(
-              updateRecurrenceRule({
-                ...recurrenceRule,
-                rule: values.rule,
-              }),
+              updateRecurrenceRule(values.rule),
             )
           } else {
             dispatch(
-              createRecurrenceRule({
-                rule: values.rule,
-              }),
+              createRecurrenceRule(values.rule),
             )
           }
-          dispatch(closeRecurrenceRuleModal())
+          dispatch(closeRecurrenceModal())
         }}
         validateOnBlur={true}
         validateOnChange={false}>
@@ -165,7 +160,7 @@ export default function ModalContent() {
                   title={t('CONFIRM_DELETE')}
                   onConfirm={() => {
                     dispatch(deleteRecurrenceRule(recurrenceRule))
-                    dispatch(closeRecurrenceRuleModal())
+                    dispatch(closeRecurrenceModal())
                   }}
                   okText={t('CROPPIE_CONFIRM')}
                   cancelText={t('CROPPIE_CANCEL')}>

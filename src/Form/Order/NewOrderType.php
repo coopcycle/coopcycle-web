@@ -36,6 +36,7 @@ class NewOrderType extends DeliveryType
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
             'with_address_props' => true,
+            'with_recurrence' => $this->authorizationChecker->isGranted('ROLE_ADMIN')
         ]);
     }
 }

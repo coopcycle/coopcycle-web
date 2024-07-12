@@ -5,7 +5,7 @@ import moment from 'moment'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 
 export default ({ rrule, onClick }) => {
-  const ruleObj = rrulestr(rrule.rule, {
+  const ruleObj = rrulestr(rrule, {
     dtstart: moment.utc().toDate(),
   })
 

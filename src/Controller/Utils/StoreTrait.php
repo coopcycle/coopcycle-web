@@ -11,6 +11,7 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\Order\NewOrderType;
@@ -23,14 +24,19 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Doctrine\ORM\QueryBuilder;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Psr\Log\LoggerInterface;
+use Recurr\Exception\InvalidRRule;
+use Recurr\Rule;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -42,6 +48,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -330,12 +337,14 @@ trait StoreTrait
     }
 
     public function newStoreDeliveryAction($id, Request $request,
-        OrderManager $orderManager,
         DeliveryManager $deliveryManager,
+        OrderManager $orderManager,
         OrderFactory $orderFactory,
+        OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
-        OrderNumberAssignerInterface $orderNumberAssigner)
+        NormalizerInterface $normalizer,
+        LoggerInterface $logger)
     {
         $routes = $request->attributes->get('routes');
 
@@ -382,12 +391,8 @@ trait StoreTrait
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
 
-                if ($form->has('bookmark')) {
-                    $isBookmarked = true === $form->get('bookmark')->getData();
-                    $order = $delivery->getOrder();
-
-                    $orderManager->setBookmark($order, $isBookmarked);
-                }
+                $this->handleBookmark($orderManager, $form, $delivery->getOrder());
+                $this->handleSubscription($entityManager, $normalizer, $logger, $store, $form, $delivery);
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -399,11 +404,7 @@ trait StoreTrait
                     $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
 
                     $this->handleRememberAddress($store, $form);
-
-                    if ($form->has('bookmark')) {
-                        $isBookmarked = true === $form->get('bookmark')->getData();
-                        $orderManager->setBookmark($order, $isBookmarked);
-                    }
+                    $this->handleBookmark($orderManager, $form, $order);
 
                     $entityManager->persist($order);
                     $entityManager->flush();
@@ -411,6 +412,8 @@ trait StoreTrait
                     $orderManager->onDemand($order);
 
                     $entityManager->flush();
+
+                    $this->handleSubscription($entityManager, $normalizer, $logger, $store, $form, $delivery);
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -457,6 +460,99 @@ trait StoreTrait
                 $store->addAddress($task->getAddress());
             }
         }
+    }
+
+    private function handleBookmark(OrderManager $orderManager, FormInterface $form, OrderInterface $order): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        if (!$form->has('bookmark')) {
+            return;
+        }
+
+        $isBookmarked = true === $form->get('bookmark')->getData();
+        $orderManager->setBookmark($order, $isBookmarked);
+    }
+
+    private function handleSubscription(
+        EntityManagerInterface $entityManager,
+        NormalizerInterface $normalizer,
+        LoggerInterface $logger,
+        Store $store,
+        FormInterface $form,
+        Delivery $delivery): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        if (!$form->has('recurrence')) {
+            return;
+        }
+
+        $recurrenceData = $form->get('recurrence')->getData();
+
+        if (null === $recurrenceData) {
+            return;
+        }
+
+        $recurrence = json_decode($recurrenceData, true);
+
+        if (null === $recurrence) {
+            return;
+        }
+
+        $ruleStr = $recurrence['rule'];
+
+        if (null === $ruleStr) {
+            return;
+        }
+
+        $rule = null;
+        try {
+            $rule = new Rule($ruleStr);
+        } catch (InvalidRRule $e) {
+            $logger->warning('Invalid recurrence rule', [
+                'rule' => $ruleStr,
+                'exception' => $e->getMessage(),
+            ]);
+            return;
+        }
+        
+        $subscription = new RecurrenceRule();
+        $subscription->setStore($store);
+        $subscription->setRule($rule);
+
+        $tasks = $normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['delivery_create']]);
+        $tasks = array_map(function($task) {
+            // Keep only the time part of the date in the template
+            $dateTimeFields = ['before', 'after', 'doneBefore', 'doneAfter'];
+            foreach ($dateTimeFields as $field) {
+                if (!isset($task[$field])) {
+                    continue;
+                }
+                $task[$field] = (new DateTime($task[$field]))->format('H:i:s');
+            }
+
+            //FIXME: figure out why the weight is float sometimes
+            if (isset($task['weight'])) {
+                $task['weight'] = (int) $task['weight'];
+            }
+
+            return $task;
+        }, $tasks);
+
+        $template = [
+            '@type' => 'hydra:Collection',
+            'hydra:member' => $tasks,
+        ];
+
+        $subscription->setTemplate($template);
+
+        $entityManager->persist($subscription);
+        $entityManager->flush();
     }
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)

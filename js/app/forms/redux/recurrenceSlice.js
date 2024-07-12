@@ -1,27 +1,27 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  recurrenceRule: null,
+  rule: null,
   modalIsOpen: false,
 }
 
 const slice = createSlice({
-  name: 'recurrenceRules',
+  name: 'recurrence',
   initialState,
   reducers: {
     createRecurrenceRule: (state, action) => {
-      state.recurrenceRule = action.payload
+      state.rule = action.payload
     },
     updateRecurrenceRule: (state, action) => {
-      state.recurrenceRule = action.payload
+      state.rule = action.payload
     },
     deleteRecurrenceRule: state => {
-      state.recurrenceRule = null
+      state.rule = null
     },
-    openNewRecurrenceRuleModal: state => {
+    openRecurrenceModal: state => {
       state.modalIsOpen = true
     },
-    closeRecurrenceRuleModal: state => {
+    closeRecurrenceModal: state => {
       state.modalIsOpen = false
     },
   },
@@ -32,13 +32,13 @@ export const {
   createRecurrenceRule,
   updateRecurrenceRule,
   deleteRecurrenceRule,
-  openNewRecurrenceRuleModal,
-  closeRecurrenceRuleModal,
+  openRecurrenceModal,
+  closeRecurrenceModal,
 } = slice.actions
 
-export const recurrenceRulesSlice = slice
+export const recurrenceSlice = slice
 
 export const selectRecurrenceRule = state =>
-  state.recurrenceRules.recurrenceRule
-export const selectIsRecurrenceRuleModalOpen = state =>
-  state.recurrenceRules.modalIsOpen
+  state.recurrence.rule
+export const selectIsRecurrenceModalOpen = state =>
+  state.recurrence.modalIsOpen

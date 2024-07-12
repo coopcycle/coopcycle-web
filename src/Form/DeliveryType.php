@@ -12,6 +12,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -154,6 +155,13 @@ class DeliveryType extends AbstractType
                     'data' => $delivery->getOrder() && $this->orderManager->hasBookmark($delivery->getOrder()),
                 ]);
             }
+
+            if ($options['with_recurrence']) {
+                $form->add('recurrence', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ]);
+            }
         });
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
@@ -287,6 +295,7 @@ class DeliveryType extends AbstractType
             'with_address_props' => false,
             'with_arbitrary_price' => false,
             'arbitrary_price' => null,
+            'with_recurrence' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);
