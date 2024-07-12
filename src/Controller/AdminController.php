@@ -60,7 +60,7 @@ use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
-use AppBundle\Form\NewOrderType;
+use AppBundle\Form\NewCustomOrderType;
 use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\OrganizationType;
@@ -2411,7 +2411,7 @@ class AdminController extends AbstractController
     )
     {
         $delivery = new Delivery();
-        $form = $this->createForm(NewOrderType::class, $delivery);
+        $form = $this->createForm(NewCustomOrderType::class, $delivery);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

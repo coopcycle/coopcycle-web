@@ -2,15 +2,11 @@
 
 namespace AppBundle\Form;
 
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\Type\MoneyType;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class NewOrderType extends DeliveryType
+class NewCustomOrderType extends DeliveryType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
