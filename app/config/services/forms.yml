@@ -45,6 +45,7 @@ services:
       $authorizationChecker: '@security.authorization_checker'
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
+      $orderManager: '@AppBundle\Service\OrderManager'
     tags: [ form.type ]
 
   AppBundle\Form\DeliveryEmbedType:
