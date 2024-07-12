@@ -202,6 +202,7 @@ Feature: Tasks
       {
         "@context":"/api/contexts/TaskList",
         "@id":"@string@.startsWith('/api/task_lists/')",
+        "id": "@integer@",
         "@type":"TaskList",
         "hydra:member":[
           {
@@ -375,6 +376,7 @@ Feature: Tasks
       {
         "@context":"/api/contexts/TaskList",
         "@id":"@string@.startsWith('/api/task_lists')",
+        "id": "@integer@",
         "@type":"TaskList",
         "hydra:member":[],
         "hydra:totalItems":0,
