@@ -405,6 +405,7 @@ Feature: Orders Adhoc
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@
       }
     """

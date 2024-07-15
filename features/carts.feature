@@ -1849,7 +1849,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
