@@ -154,7 +154,8 @@ Feature: Orders Adhoc
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@
       }
     """
 
@@ -279,7 +280,8 @@ Feature: Orders Adhoc
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@
       }
     """
     When the user "bob" is loaded:
