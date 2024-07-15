@@ -36,16 +36,23 @@
 }) %}
 {% endif %}
 
+{% set payment_form_config = {
+  card: gateway,
+  amount: order.total,
+  gatewayConfigs: gateway_configs,
+  tokenElement: token_element_selector,
+  selectPaymentMethodURL: path('order_payment_select_method', { hashId: payment|hashid })
+} %}
+
+{% if with_saved_cards|default(false) %}
+  {% set payment_form_config = payment_form_config|merge({
+    orderId: order.id,
+    orderHasUser: order.customer.hasUser(),
+    orderAccessToken: order_access_token,
+    savedPaymentMethodElement: '#checkout_payment_stripePayment_savedPaymentMethodId'
+  }) %}
+{% endif %}
+
 <script type="text/javascript">
-  new CoopCycle.PaymentForm(document.querySelector('{{ payment_form_selector|escape('js') }}'), {
-    card: "{{ gateway }}",
-    amount: {{ order.total }},
-    gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-    tokenElement: document.querySelector('{{ token_element_selector|escape('js') }}'),
-    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"{% if with_saved_cards|default(false) %},
-    orderId: "{{ order.id }}",
-    orderHasUser: "{{ order.customer.hasUser() }}",
-    orderAccessToken: "{{ order_access_token }}",
-    savedPaymentMethodElement: document.querySelector('#checkout_payment_stripePayment_savedPaymentMethodId'){% endif %}
-  });
+  new CoopCycle.PaymentForm('{{ payment_form_selector|raw }}', {{ payment_form_config|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_PRETTY_PRINT'))|raw }});
 </script>
