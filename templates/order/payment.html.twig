@@ -108,7 +108,6 @@
 
   {{ encore_entry_script_tags('order-payment') }}
 
-{% set gateway = payment_gateway_resolver.resolve() %}
 {% set gateway_configs = {} %}
 
 {% if gateway == 'stripe' %}
