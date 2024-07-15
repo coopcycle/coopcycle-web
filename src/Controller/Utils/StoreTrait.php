@@ -527,6 +527,8 @@ trait StoreTrait
 
         $tasks = $normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['delivery_create']]);
         $tasks = array_map(function($task) {
+            unset($task['@id']);
+
             // Keep only the time part of the date in the template
             $dateTimeFields = ['before', 'after'];
             foreach ($dateTimeFields as $field) {
