@@ -1,0 +1,58 @@
+{% set country = country_iso %}
+{% set gateway = payment_gateway_resolver.resolve() %}
+
+{% set gateway_configs = {} %}
+
+{% if gateway == 'stripe' %}
+<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+
+{% set stripe_config = {
+  publishableKey: coopcycle_setting('stripe_publishable_key'),
+  createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid })
+} %}
+
+{% if with_saved_cards|default(false) %}
+  {% set stripe_config = stripe_config|merge({
+    account: payment.stripeUserId ? payment.stripeUserId : null,
+    clonePaymentMethodToConnectedAccountURL: path('stripe_clone_payment_method', { hashId: payment|hashid }),
+    createSetupIntentOrAttachPMURL: path('stripe_create_setup_intent_or_attach_pm', { hashId: payment|hashid }),
+    customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
+    createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
+  }) %}
+{% endif %}
+
+{% set gateway_configs = gateway_configs|merge({
+  stripe: stripe_config
+}) %}
+{% endif %}
+
+{% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+{% set gateway_configs = gateway_configs|merge({
+  mercadopago: {
+    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
+    country: country
+  }
+}) %}
+{% endif %}
+
+{% set payment_form_config = {
+  card: gateway,
+  amount: order.total,
+  gatewayConfigs: gateway_configs,
+  tokenElement: token_element_selector,
+  selectPaymentMethodURL: path('order_payment_select_method', { hashId: payment|hashid })
+} %}
+
+{% if with_saved_cards|default(false) %}
+  {% set payment_form_config = payment_form_config|merge({
+    orderId: order.id,
+    orderHasUser: order.customer.hasUser(),
+    orderAccessToken: order_access_token,
+    savedPaymentMethodElement: '#checkout_payment_stripePayment_savedPaymentMethodId'
+  }) %}
+{% endif %}
+
+<script type="text/javascript">
+  new CoopCycle.PaymentForm('{{ payment_form_selector|raw }}', {{ payment_form_config|json_encode(constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_PRETTY_PRINT'))|raw }});
+</script>

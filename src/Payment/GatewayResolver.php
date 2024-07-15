@@ -2,6 +2,8 @@
 
 namespace AppBundle\Payment;
 
+use AppBundle\Sylius\Order\OrderInterface;
+
 class GatewayResolver
 {
     private $country;
@@ -28,6 +30,11 @@ class GatewayResolver
         }
 
         return 'stripe';
+    }
+
+    public function resolveForOrder(OrderInterface $order)
+    {
+        return $this->resolve();
     }
 
     public function resolve()

@@ -1,8 +1,5 @@
 {% extends "base.html.twig" %}
 
-{% set gateway = payment_gateway_resolver.resolve() %}
-{% set gateway_configs = {} %}
-
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 
 {% block body %}
@@ -71,27 +68,13 @@
 
 {% block scripts %}
 
-{% if gateway == 'stripe' %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-{% set gateway_configs = gateway_configs|merge({
-  stripe: {
-    publishableKey: coopcycle_setting('stripe_publishable_key'),
-    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
-  }
-}) %}
-{% endif %}
-
 {% if form.payment is defined and payment.state in ['new', 'cart'] %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-<script type="text/javascript">
-new CoopCycle.PaymentForm(document.querySelector('form[name="adhoc_order"]'), {
-  card: "{{ gateway }}",
-  amount: {{ order.total }},
-  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-  tokenElement: document.querySelector('#adhoc_order_payment_stripeToken'),
-  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
-});
-</script>
+  {% include 'payment/scripts.html.twig' with {
+    order: order,
+    payment: payment,
+    payment_form_selector: 'form[name="adhoc_order"]',
+    token_element_selector: '#adhoc_order_payment_stripeToken'
+  } %}
 {% endif %}
 
 {% endblock %}

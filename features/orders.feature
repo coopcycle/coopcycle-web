@@ -234,7 +234,8 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@
     }
     """
 
@@ -403,7 +404,8 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@
     }
     """
 
@@ -693,7 +695,8 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@
     }
     """
 
@@ -849,7 +852,8 @@ Feature: Orders
         "paymentMethod":"@string@||@null@",
         "hasReceipt":@boolean@,
         "invitation":null,
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@
       }
       """
 
@@ -1000,7 +1004,8 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@
     }
     """
 
@@ -1223,7 +1228,8 @@ Feature: Orders
         "paymentMethod":"CARD",
         "assignedTo":null,
         "invitation":null,
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@
       }
       """
 

@@ -26,7 +26,13 @@ class CreditCard {
 
 const containsMethod = (methods, method) => !!_.find(methods, m => m.type === method)
 
-export default function(form, options) {
+export default function(formSelector, options) {
+
+  const form = document.querySelector(formSelector)
+
+  if (!form) {
+    return
+  }
 
   const submitButton = form.querySelector('input[type="submit"],button[type="submit"]')
 
@@ -84,9 +90,9 @@ export default function(form, options) {
       onSavedCreditCardSelected: (card) => {
         if (!card) {
           // used to blanck field when the card form is enabled
-          options.savedPaymentMethodElement.removeAttribute('value')
+          document.querySelector(options.savedPaymentMethodElement).removeAttribute('value')
         } else {
-          options.savedPaymentMethodElement.setAttribute('value', card.id)
+          document.querySelector(options.savedPaymentMethodElement).setAttribute('value', card.id)
         }
 
       }
@@ -99,7 +105,7 @@ export default function(form, options) {
     cc.createToken(savedPaymentMethodId)
       .then(token => {
         if (token) {
-          options.tokenElement.setAttribute('value', token)
+          document.querySelector(options.tokenElement).setAttribute('value', token)
           form.submit()
         } else {
           setLoading(false)
@@ -114,7 +120,7 @@ export default function(form, options) {
   const handlePayment = () => {
     let savedPaymentMethod = null
     if (options.savedPaymentMethodElement) {
-      savedPaymentMethod = options.savedPaymentMethodElement.getAttribute('value')
+      savedPaymentMethod = document.querySelector(options.savedPaymentMethodElement).getAttribute('value')
     }
 
     if (methods.length === 1 && containsMethod(methods, 'card')) {
