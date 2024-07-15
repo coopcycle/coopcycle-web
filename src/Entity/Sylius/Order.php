@@ -33,10 +33,12 @@ use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
+use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -124,6 +126,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
+ *       "normalization_context"={"api_sub_level"=true},
  *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
@@ -421,6 +424,28 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "denormalization_context"={"groups"={"update_loopeat_returns"}},
  *       "openapi_context"={
  *         "summary"="Update Loopeat returns for an order"
+ *       }
+ *     },
+ *     "update_edenred_credentials"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/edenred_credentials",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=EdenredCredentialsInput::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "denormalization_context"={"groups"={"update_edenred_credentials"}},
+ *       "openapi_context"={
+ *         "summary"="Update Edenred credentials for an order"
+ *       }
+ *     },
+ *     "configure_payment"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/payment",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=ConfigurePaymentInput::class,
+ *       "denormalization_context"={"groups"={"order_configure_payment"}},
+ *       "openapi_context"={
+ *         "summary"="Configure payment for a Order resource."
  *       }
  *     },
  *   },
@@ -1784,5 +1809,21 @@ class Order extends BaseOrder implements OrderInterface
     public function getPickupAddresses(): Collection
     {
         return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
+    }
+
+    /**
+     * @SerializedName("hasEdenredCredentials")
+     * @Groups({"order", "order_update", "cart"})
+     */
+    public function hasEdenredCredentials(): bool
+    {
+        /** @var \AppBundle\Sylius\Customer\CustomerInterface|null */
+        $customer = $this->getCustomer();
+
+        if (null === $customer) {
+            return false;
+        }
+
+        return $customer->hasEdenredCredentials();
     }
 }
