@@ -35,8 +35,14 @@ class PricingManager
     /**
      * @return OrderInterface|null
      */
-    public function createOrder(Delivery $delivery, PricingStrategy $pricingStrategy = new UsePricingRules, bool $throwException = false): ?OrderInterface
+    public function createOrder(Delivery $delivery, PricingStrategy $pricingStrategy = null, bool $throwException = false): ?OrderInterface
     {
+        // Defining a default value in the method signature fails in the phpunit tests
+        // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
+        if (null === $pricingStrategy) {
+            $pricingStrategy = new UsePricingRules();
+        }
+
         $store = $delivery->getStore();
 
         if (null !== $store && $store->getCreateOrders()) {
