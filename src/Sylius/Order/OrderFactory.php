@@ -92,7 +92,7 @@ class OrderFactory implements FactoryInterface
         return $order;
     }
 
-    public function createForDelivery(Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true)
+    public function createForDelivery(Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true): OrderInterface
     {
         Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
 

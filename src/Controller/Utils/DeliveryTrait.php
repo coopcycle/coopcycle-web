@@ -28,15 +28,7 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    /**
-     * @param OrderFactory $factory
-     * @param Delivery $delivery
-     * @param int $price
-     * @param CustomerInterface $customer
-     *
-     * @return OrderInterface
-     */
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true)
+    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, bool $attach = true): OrderInterface
     {
         return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
