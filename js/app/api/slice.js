@@ -17,13 +17,12 @@ const baseQuery = fetchBaseQuery({
     const accessToken = selectAccessToken(getState())
 
     if (accessToken) {
-      headers.set('Authorization', `Bearer ${ accessToken }`)
-
+      headers.set('Authorization', `Bearer ${accessToken}`)
     } else if (guestCheckoutEndpoints.includes(endpoint)) {
       const orderAccessToken = selectOrderAccessToken(getState())
 
       if (orderAccessToken) {
-        headers.set('Authorization', `Bearer ${ orderAccessToken }`)
+        headers.set('Authorization', `Bearer ${orderAccessToken}`)
       }
     }
 
@@ -38,7 +37,11 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
   if (result.error && result.error.status === 401) {
     // try to get a new token; works only for logged in users
-    const refreshResponse = await baseQuery(window.Routing.generate('profile_jwt'), api, extraOptions)
+    const refreshResponse = await baseQuery(
+      window.Routing.generate('profile_jwt'),
+      api,
+      extraOptions,
+    )
 
     if (refreshResponse.data && refreshResponse.data.jwt) {
       api.dispatch(setAccessToken(refreshResponse.data.jwt))
@@ -58,11 +61,21 @@ export const apiSlice = createApi({
   // The "endpoints" represent operations and requests for this server
   // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
+    subscriptionGenerateOrders: builder.mutation({
+      query: (date) => ({
+        url: 'api/recurrence_rules/generate_orders',
+        params: {
+          date: date.format('YYYY-MM-DD'),
+        },
+        method: 'POST',
+        body: {},
+      }),
+    }),
     getOrderTiming: builder.query({
-      query: (nodeId) => `${ nodeId }/timing`,
+      query: nodeId => `${nodeId}/timing`,
     }),
     getOrderValidate: builder.query({
-      query: (nodeId) => `${ nodeId }/validate`,
+      query: nodeId => `${nodeId}/validate`,
     }),
     updateOrder: builder.mutation({
       query: ({ nodeId, ...patch }) => ({
@@ -75,4 +88,8 @@ export const apiSlice = createApi({
 })
 
 // Export the auto-generated hook for the query endpoints
-export const { useGetOrderTimingQuery, useUpdateOrderMutation } = apiSlice
+export const {
+  useSubscriptionGenerateOrdersMutation,
+  useGetOrderTimingQuery,
+  useUpdateOrderMutation,
+} = apiSlice

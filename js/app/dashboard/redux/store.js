@@ -18,8 +18,10 @@ import settingsReducers from './settingsReducers'
 import trackingReducers from './trackingReducers'
 import tourEntityReducers from './tourEntityReducers';
 import organizationEntityReducers from './organizationEntityReducers';
+import { accountSlice } from '../../entities/account/reduxSlice'
+import { apiSlice } from '../../api/slice'
 
-const middlewares = [ thunk, socketIO, persistFilters ]
+const middlewares = [ thunk, socketIO, apiSlice.middleware, persistFilters ]
 
 // we maye want enhancing redux dev tools only  in dev ?
 // also if server side render is made later, it is
@@ -42,6 +44,8 @@ const reducer = combineReducers({
   config: configReducers,
   settings: settingsReducers,
   tracking: trackingReducers,
+  [accountSlice.name]: accountSlice.reducer,
+  [apiSlice.reducerPath]: apiSlice.reducer,
 })
 
 export const createStoreFromPreloadedState = preloadedState => {

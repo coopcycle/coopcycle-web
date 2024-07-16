@@ -14,6 +14,8 @@ import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRec
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
+import { useSubscriptionGenerateOrdersMutation } from '../../api/slice'
+import { selectSelectedDate } from '../../../shared/src/logistics/redux'
 
 const StandaloneTasks =  ({tasks, offset}) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
@@ -90,6 +92,9 @@ export const UnassignedTasks = () => {
   const isTourDragging = useSelector(selectIsTourDragging)
   const unassignedTasksIdsOrder = useSelector(selectOrderOfUnassignedTasks)
   const unassignedTasksLoading = useSelector(selectUnassignedTasksLoading)
+  const date = useSelector(selectSelectedDate)
+
+  const [generateOrders, { isUninitialized }] = useSubscriptionGenerateOrdersMutation()
 
   useEffect(() => {
     const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
@@ -103,6 +108,14 @@ export const UnassignedTasks = () => {
     }
 
   }, [standaloneTasks]);
+
+  useEffect(() => {
+    if (!isUninitialized) {
+      return
+    }
+
+    generateOrders(date)
+  }, [date]);
 
   return (
     <div className="dashboard__panel">
