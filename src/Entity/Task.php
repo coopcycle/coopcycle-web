@@ -1284,7 +1284,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
 
     /**
-    * @Groups({"task"})
+    * @Groups({"barcode"})
     */
     public function getBarcodes(): array
     {

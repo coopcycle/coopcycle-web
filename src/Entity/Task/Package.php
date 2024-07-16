@@ -7,6 +7,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class Package
 {
+
+    /**
+     * @Groups({"package"})
+     */
     protected $id;
 
 

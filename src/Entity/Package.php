@@ -17,10 +17,6 @@ class Package
 {
     use Timestampable;
 
-
-    /**
-     * @Groups({"package"})
-     */
     protected $id;
 
     /**

@@ -55,7 +55,7 @@ class BarcodeController extends AbstractController
         return $this->json([
             "ressource" => $iriConverter->getIriFromItem($ressource),
             "entity" => $normalizer->normalize($ressource, null, [
-                'groups' => ['task', 'package', 'delivery', 'address']
+                'groups' => ['task', 'package', 'delivery', 'address', 'barcode']
             ])
         ]);
     }
