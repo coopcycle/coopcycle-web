@@ -30,7 +30,7 @@ class GenerateOrders
             throw new BadRequestHttpException('Date is required');
         }
 
-        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findAll();
+        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findBy(['deletedAt' => null]);
 
         $subscriptions = array_filter($allSubscriptions, function ($subscription) use ($date) {
             return $this->filterByDate($subscription, $date);
