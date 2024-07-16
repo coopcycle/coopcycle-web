@@ -4,17 +4,30 @@ namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\Task\Package;
+use AppBundle\Utils\Barcode\BarcodeUtils;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Twig\Environment as TwigEnvironment;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
 class BarcodeController extends AbstractController
 {
+    public function __construct(
+        private TwigEnvironment $twig,
+        private HttpClientInterface $browserlessClient,
+        private BarcodeUtils $barcodeUtils,
+    )
+    { }
+
+
+
     /**
      * @Route("/api/barcode", name="barcode_api")
      */
@@ -29,12 +42,9 @@ class BarcodeController extends AbstractController
            return $this->json(['error' => 'No code provided.'], 400);
         }
 
-        $re = '/6767(?<instance>[0-9]{3})(?<entity>[1-2])(?<id>[0-9]+)(P(?<package>[0-9]+))?(U(?<unit>[0-9]+))?8076/';
+        $barcode = $this->barcodeUtils::parse($request->get('code'));
 
-        $matches = [];
-        preg_match($re, $request->get('code'), $matches, PREG_OFFSET_CAPTURE);
-
-        $entity = match((int)$matches['entity'][0]) {
+        $entity = match($barcode->getEntityType()) {
             1 => Task::class,
             2 => Delivery::class,
             default => null
@@ -44,8 +54,7 @@ class BarcodeController extends AbstractController
             return $this->json(['error' => 'Malformed barcode.'], 400);
         }
 
-        $id = (int)$matches['id'][0];
-        $ressource = $this->getDoctrine()->getRepository($entity)->find($id);
+        $ressource = $this->getDoctrine()->getRepository($entity)->find($barcode->getEntityId());
 
         if (is_null($ressource)) {
             return $this->json(['error' => 'No data found.'], 404);
@@ -55,15 +64,67 @@ class BarcodeController extends AbstractController
         return $this->json([
             "ressource" => $iriConverter->getIriFromItem($ressource),
             "entity" => $normalizer->normalize($ressource, null, [
-                'groups' => ['task', 'package', 'delivery', 'address', 'barcode']
+                'groups' => ['task', 'delivery', 'package', 'address', 'barcode']
             ])
         ]);
     }
 
-    private function getNonInternalCode(string $code)
-    {
-        $this->getDoctrine()->getRepository(EDIFACTMessage::class)->findOneBy([
+    /**
+     * @Route("/tasks/label", name="task_label_pdf")
+     */
+    public function viewLabelAction(
+        PhoneNumberUtil $phoneUtil,
+        BarcodeGeneratorSVG $generator,
+        Request $request
+    ): Response {
 
+        if (!$request->get('code', null)) {
+            return $this->json(['error' => 'No code provided.'], 400);
+        }
+
+        $barcode = $this->barcodeUtils::parse($request->get('code'));
+
+
+        $phoneUtil = $phoneUtil::getInstance();
+        /** @var Task $ressource */
+        $ressource = $this->getDoctrine()->getRepository(Task::class)->find($barcode->getEntityId());
+        $phone = $phoneUtil->format($ressource->getAddress()->getTelephone(), PhoneNumberFormat::INTERNATIONAL);
+
+        $from = $ressource->getDelivery()?->getPickup()?->getAddress();
+
+        $barcodeSVG = $generator->getBarcode(
+            barcode: $barcode->getRawBarcode(),
+            type: $generator::TYPE_CODE_128,
+            widthFactor: 1.4,
+            height: 55
+        );
+
+
+        $html = $this->twig->render('task/label.pdf.twig', [
+            'from' => $from,
+            'task' => $ressource,
+            'phone' => $phone,
+            'barcode' => $barcodeSVG,
+            'barcode_raw' => $barcode->getRawBarcode(),
+            'currentPackage' => $barcode->getPackageTaskIndex(),
+            'totalPackages' => $ressource->totalPackages()
+        ]);
+
+        $response = $this->browserlessClient->request('POST', '/pdf', [
+            'json' => [
+                'html' => $html,
+                'options' => [
+                    'displayHeaderFooter' => false,
+                    'printBackground' => false,
+                    'format' => 'A5'
+                ]
+            ]
+        ]);
+
+        $pdf = (string) $response->getContent();
+        return new Response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="label.pdf"'
         ]);
     }
 }

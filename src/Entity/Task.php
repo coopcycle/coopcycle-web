@@ -1142,6 +1142,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $taskPackage;
     }
+
+    public function totalPackages(): int
+    {
+        return array_sum($this->getPackages()->map(function (TaskPackage $package) {
+            return $package->getQuantity();
+        })->toArray());
+    }
+
     /**
      * @return int
      */
@@ -1304,16 +1312,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->getPackages()->toArray(),
             function ($carry, TaskPackage $package) use ($instance_id) {
                 for ($q = 0; $q < $package->getQuantity(); $q++) {
-                    $carry[] = sprintf(
+                    $carry['barcodes'][] = sprintf(
                         '6767%03d%d%dP%dU%d6076',
                         $instance_id,
                         1,
                         $this->getId(),
                         $package->getId(),
-                        $q + 1
+                        ++$carry['ammount']
                     );
                 }
                 return $carry;
-            }, []);
+            }, ['barcodes' => [], 'ammount' => 0])['barcodes'];
     }
 }
