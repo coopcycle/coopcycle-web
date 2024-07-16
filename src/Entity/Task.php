@@ -49,6 +49,7 @@ use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingRuleMatcherInterface;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -57,6 +58,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
+use stdClass;
 
 /**
  * @ApiResource(
@@ -504,7 +506,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->delivery;
     }
-
+    /**
+     * @return Task
+     */
     public function setDelivery($delivery)
     {
         $this->delivery = $delivery;
@@ -516,7 +520,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->type;
     }
-
+    /**
+     * @return Task
+     */
     public function setType($type)
     {
         $this->type = $type;
@@ -538,7 +544,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->status;
     }
-
+    /**
+     * @return Task
+     */
     public function setStatus($status)
     {
         $this->status = $status;
@@ -555,7 +563,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->status === self::STATUS_FAILED;
     }
-
+    /**
+     * @return bool
+     */
     public function isCompleted()
     {
         return $this->isDone() || $this->isFailed();
@@ -570,7 +580,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->address;
     }
-
+    /**
+     * @return Task
+     */
     public function setAddress($address)
     {
         $this->address = $address;
@@ -590,6 +602,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("after")
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     * @return Task
      */
     public function setAfter(?\DateTime $doneAfter)
     {
@@ -610,6 +623,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("before")
      * @Groups({"task", "task_edit", "delivery"})
+     * @return Task
      */
     public function setBefore(?\DateTime $doneBefore)
     {
@@ -622,7 +636,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->comments;
     }
-
+    /**
+     * @return Task
+     */
     public function setComments($comments)
     {
         $this->comments = $comments;
@@ -634,7 +650,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->updatedAt;
     }
-
+    /**
+     * @return ArrayCollection<array-key,<missing>>
+     */
     public function getEvents()
     {
         $iterator = $this->events->getIterator();
@@ -646,7 +664,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             iterator_to_array($iterator)
         );
     }
-
+    /**
+     * @return bool
+     */
     public function containsEventWithName($name)
     {
         foreach ($this->events as $e) {
@@ -657,7 +677,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return false;
     }
-
+    /**
+     * @return void
+     */
     public function addEvent(TaskEvent $event)
     {
         if ($event->getName() === 'task:created' && $this->containsEventWithName('task:created')) {
@@ -677,7 +699,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->previous;
     }
-
+    /**
+     * @return Task
+     */
     public function setPrevious(Task $previous = null)
     {
         $this->previous = $previous;
@@ -694,7 +718,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->next;
     }
-
+    /**
+     * @return Task
+     */
     public function setNext(Task $next = null)
     {
         $this->next = $next;
@@ -715,12 +741,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return null !== $this->assignedTo;
     }
-
+    /**
+     * @return bool
+     */
     public function isAssignedTo(User $courier)
     {
         return $this->isAssigned() && $this->assignedTo === $courier;
     }
-
+    /**
+     * @return ?DateTime
+     */
     public function getAssignedOn()
     {
         return $this->assignedOn;
@@ -734,6 +764,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @param User $courier
      * @param \DateTime|null $date
+     * @return void
      */
     public function assignTo(User $courier, \DateTime $date = null)
     {
@@ -744,13 +775,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->assignedTo = $courier;
         $this->assignedOn = $date;
     }
-
+    /**
+     * @return void
+     */
     public function unassign()
     {
         $this->assignedTo = null;
         $this->assignedOn = null;
     }
-
+    /**
+     * @return bool
+     */
     public function hasEvent($name)
     {
         foreach ($this->getEvents() as $event) {
@@ -777,19 +812,25 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->group;
     }
-
+    /**
+     * @return Task
+     */
     public function setGroup(TaskGroup $group = null)
     {
         $this->group = $group;
 
         return $this;
     }
-
+    /**
+     * @return Collection<int,TaskImage>
+     */
     public function getImages()
     {
         return $this->images;
     }
-
+    /**
+     * @return Task
+     */
     public function setImages($images)
     {
         foreach ($images as $image) {
@@ -801,7 +842,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return Task
+     */
     public function addImage($image)
     {
         $this->images->add($image);
@@ -809,7 +852,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return Task
+     */
     public function addImages($images)
     {
         foreach ($images as $image) {
@@ -821,7 +866,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return Task
+     */
     public function duplicate()
     {
         $task = new self();
@@ -907,7 +954,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->setBefore($before);
     }
-
+    /**
+     * @return Task
+     */
     public function setDoorstep($doorstep)
     {
         $this->doorstep = $doorstep;
@@ -923,6 +972,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("orgName")
      * @Groups({"task"})
+     * @return mixed|string
      */
     public function getOrganizationName()
     {
@@ -935,7 +985,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return '';
     }
-
+    /**
+     * @return Task
+     */
     public function setRef(string $ref)
     {
         $this->ref = $ref;
@@ -967,7 +1019,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $job;
     }
-
+    /**
+     * @return Task
+     */
     public function setRecurrenceRule(RecurrenceRule $recurrenceRule)
     {
         $this->recurrenceRule = $recurrenceRule;
@@ -983,6 +1037,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("images")
      * @Groups({"task"})
+     * @return ArrayCollection<Doctrine\Common\Collections\array-key,<missing>>|<missing>
      */
     public function getImagesWithCache()
     {
@@ -992,7 +1047,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this->getImages();
     }
-
+    /**
+     * @return void
+     */
     public function setMetadata($key)
     {
         if (func_num_args() === 1 && is_array(func_get_arg(0))) {
@@ -1001,7 +1058,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->metadata[func_get_arg(0)] = func_get_arg(1);
         }
     }
-
+    /**
+     * @return array
+     */
     public function getMetadata()
     {
         return $this->metadata;
@@ -1035,7 +1094,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->packages->add($wrappedPackage);
         }
     }
-
+    /**
+     * @return void
+     */
     public function setQuantityForPackage(Package $package, $quantity = 1)
     {
         $wrappedPackage = $this->resolvePackage($package);
@@ -1053,7 +1114,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->packages->add($wrappedPackage);
         }
     }
-
+    /**
+     * @return void
+     */
     public function removePackage(Package $package)
     {
         $wrappedPackage = $this->resolvePackage($package);
@@ -1079,24 +1142,32 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $taskPackage;
     }
-
+    /**
+     * @return int
+     */
     public function getWeight()
     {
         return $this->weight;
     }
-
+    /**
+     * @return Task
+     */
     public function setWeight($weight)
     {
         $this->weight = $weight;
 
         return $this;
     }
-
+    /**
+     * @return void
+     */
     public function addToStore(Store $store)
     {
         $this->setOrganization($store->getOrganization());
     }
-
+    /**
+     * @return stdClass
+     */
     public function toExpressionLanguageObject()
     {
         $taskObject = new \stdClass();
@@ -1145,12 +1216,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $language->evaluate($expression, $this->toExpressionLanguageValues());
     }
-
+    /**
+     * @return void
+     */
     public function appendToComments($comments)
     {
         $this->comments = ($this->comments ?? '') . "\n\n" . $comments;
     }
-
+    /**
+     * @return mixed
+     */
     public function evaluatePrice(PricingRule $pricingRule, ExpressionLanguage $language = null)
     {
         if (null === $language) {
@@ -1199,9 +1274,46 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return void
+     */
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitTask($this);
+    }
+
+
+    /**
+    * @Groups({"task"})
+    */
+    public function getBarcodes(): array
+    {
+        // FIXME: This is the instance ID since its not yet used, set to 1 for now
+        $instance_id = 1;
+
+        if ($this->getPackages()->isEmpty()) {
+            return [sprintf(
+                '6767%03d%d%d6076',
+                $instance_id,
+                1,
+                $this->getId()
+            )];
+        }
+
+        return array_reduce(
+            $this->getPackages()->toArray(),
+            function ($carry, TaskPackage $package) use ($instance_id) {
+                for ($q = 0; $q < $package->getQuantity(); $q++) {
+                    $carry[] = sprintf(
+                        '6767%03d%d%dP%dU%d6076',
+                        $instance_id,
+                        1,
+                        $this->getId(),
+                        $package->getId(),
+                        $q + 1
+                    );
+                }
+                return $carry;
+            }, []);
     }
 }
