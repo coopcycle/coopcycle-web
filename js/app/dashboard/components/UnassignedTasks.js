@@ -16,6 +16,7 @@ import classNames from 'classnames'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
 import { useSubscriptionGenerateOrdersMutation } from '../../api/slice'
 import { selectSelectedDate } from '../../../shared/src/logistics/redux'
+import Alert from '../../components/core/Alert'
 
 const StandaloneTasks =  ({tasks, offset}) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
@@ -94,7 +95,7 @@ export const UnassignedTasks = () => {
   const unassignedTasksLoading = useSelector(selectUnassignedTasksLoading)
   const date = useSelector(selectSelectedDate)
 
-  const [generateOrders, { isUninitialized }] = useSubscriptionGenerateOrdersMutation()
+  const [generateOrders, { isUninitialized, isLoading: isGeneratingOrdersForSubscriptions }] = useSubscriptionGenerateOrdersMutation()
 
   useEffect(() => {
     const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
@@ -136,6 +137,9 @@ export const UnassignedTasks = () => {
         className="dashboard__panel__scroll"
         style={{ opacity: unassignedTasksLoading ? 0.7 : 1, pointerEvents: unassignedTasksLoading ? 'none' : 'initial' }}
       >
+        {isGeneratingOrdersForSubscriptions ? (
+          <Alert loading noBottomMargin>{t('DASHBOARD_GENERATING_ORDERS')}</Alert>
+        ) : null}
         { isRecurrenceRulesVisible && recurrenceRules.map((rrule, index) =>
           <RecurrenceRule
             key={ `rrule-${index}` }

@@ -17,6 +17,7 @@
         "DATEPICKER_TOMORROW": "[Tomorrow]",
         "DASHBOARD_UNASSIGNED": "Unassigned",
         "DASHBOARD_UNASSIGNED_TOURS": "Unassigned tours",
+        "DASHBOARD_GENERATING_ORDERS": "Loading subscriptions...",
         "ENABLED": "Enabled",
         "DISABLED": "Disabled",
         "new": "New orders",

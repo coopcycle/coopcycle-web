@@ -2,7 +2,7 @@ import React from 'react'
 import Spinner from './Spinner'
 
 export default {
-  title: 'Design System/3. Spinner',
+  title: 'Design System/4. Spinner',
   tags: ['autodocs'],
   component: Spinner,
 
