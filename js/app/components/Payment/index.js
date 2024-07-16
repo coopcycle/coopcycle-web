@@ -213,6 +213,7 @@ export default function(formSelector, options) {
 
   const onSelect = value => {
     form.querySelector(`input[name="checkout_payment[method]"][value="${value}"]`).checked = true
+    document.getElementById('card-errors').textContent = ''
     axios
       .post(options.selectPaymentMethodURL, { method: value })
       .then(response => {
