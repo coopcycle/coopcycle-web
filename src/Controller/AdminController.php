@@ -19,6 +19,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Nonprofit;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -2420,12 +2421,7 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
-
-            $variant = $order->getItems()->get(0)->getVariant();
-
-            $variant->setName($variantName);
-            $variant->setCode(Uuid::uuid4()->toString());
+            $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 

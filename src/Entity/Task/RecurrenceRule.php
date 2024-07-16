@@ -95,6 +95,8 @@ class RecurrenceRule
      */
     private $template = [];
 
+    private ?array $arbitraryPriceTemplate = null;
+
     /**
      * @var Store
      * @Assert\NotNull
@@ -197,5 +199,15 @@ class RecurrenceRule
     public function getOrganizationName()
     {
         return $this->store->getOrganization()->getName();
+    }
+
+    public function getArbitraryPriceTemplate(): ?array
+    {
+        return $this->arbitraryPriceTemplate;
+    }
+
+    public function setArbitraryPriceTemplate(?array $arbitraryPriceTemplate): void
+    {
+        $this->arbitraryPriceTemplate = $arbitraryPriceTemplate;
     }
 }

@@ -4,6 +4,8 @@ namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Form\Order\OneOffOrderType;
@@ -34,7 +36,7 @@ trait DeliveryTrait
      *
      * @return OrderInterface
      */
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
+    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true)
     {
         return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
@@ -119,16 +121,7 @@ trait DeliveryTrait
         $variantPrice = $form->get('variantPrice')->getData();
         $variantName = $form->get('variantName')->getData();
 
-        $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
-
-        /** @var OrderItemInterface */
-        $orderItem = $order->getItems()->first();
-        $orderItem->setImmutable(true);
-
-        $variant = $orderItem->getVariant();
-
-        $variant->setName($variantName);
-        $variant->setCode(Uuid::uuid4()->toString());
+        $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
 
         $order->setState(OrderInterface::STATE_ACCEPTED);
 

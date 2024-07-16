@@ -3,6 +3,11 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
+use AppBundle\Entity\Sylius\PricingStrategy;
+use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Service\DeliveryManager;
@@ -30,28 +35,39 @@ class PricingManager
     /**
      * @return OrderInterface|null
      */
-    public function createOrder(Delivery $delivery, bool $throwException = false): ?OrderInterface
+    public function createOrder(Delivery $delivery, PricingStrategy $pricingStrategy = new UsePricingRules, bool $throwException = false): ?OrderInterface
     {
         $store = $delivery->getStore();
 
         if (null !== $store && $store->getCreateOrders()) {
 
-            $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+            $order = null;
 
-            if (null === $price) {
+            if ($pricingStrategy instanceof UsePricingRules) {
+                $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
 
-                if ($throwException) {
-                    throw new NoRuleMatchedException();
+                if (null === $price) {
+
+                    if ($throwException) {
+                        throw new NoRuleMatchedException();
+                    }
+
+                    $this->logger->error('Price could not be calculated');
+
+                    return null;
                 }
 
-                $this->logger->error('Price could not be calculated');
+                $price = (int) $price;
+                $order = $this->orderFactory->createForDelivery($delivery, new PricingRulesBasedPrice($price));
 
-                return null;
+            } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
+                $order = $this->orderFactory->createForDelivery($delivery, new ArbitraryPrice($pricingStrategy->getVariantName(), $pricingStrategy->getVariantPrice()));
+
+            } else {
+                if ($throwException) {
+                    throw new \InvalidArgumentException('Unsupported pricing config');
+                }
             }
-
-            $price = (int) $price;
-
-            $order = $this->orderFactory->createForDelivery($delivery, $price);
 
             // We need to persist the order first,
             // because an auto increment is needed to generate a number
@@ -104,7 +120,12 @@ class PricingManager
             $store->addDelivery($delivery);
             $this->entityManager->persist($delivery);
 
-            $order = $this->createOrder($delivery);
+            if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
+                $order = $this->createOrder($delivery, new UseArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']));
+            } else {
+                $order = $this->createOrder($delivery);
+            }
+
             if (null !== $order) {
                 $order->setSubscription($subscription);
             }

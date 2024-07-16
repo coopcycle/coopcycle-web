@@ -11,6 +11,10 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Entity\Sylius\PricingStrategy;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
+use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
@@ -387,12 +391,14 @@ trait StoreTrait
                 $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($useArbitraryPrice) {
-
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
 
+                $variantPrice = $form->get('variantPrice')->getData();
+                $variantName = $form->get('variantName')->getData();
+
                 $this->handleBookmark($orderManager, $form, $delivery->getOrder());
-                $this->handleSubscription($entityManager, $normalizer, $logger, $store, $form, $delivery);
+                $this->handleSubscription($entityManager, $normalizer, $logger, $store, $form, $delivery, new UseArbitraryPrice($variantName, $variantPrice));
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -401,7 +407,7 @@ trait StoreTrait
                 try {
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $this->getUser()->getCustomer());
 
                     $this->handleRememberAddress($store, $form);
                     $this->handleBookmark($orderManager, $form, $order);
@@ -482,7 +488,8 @@ trait StoreTrait
         LoggerInterface $logger,
         Store $store,
         FormInterface $form,
-        Delivery $delivery): void
+        Delivery $delivery,
+        PricingStrategy $pricingStrategy = new UsePricingRules): void
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return;
@@ -551,6 +558,14 @@ trait StoreTrait
             'hydra:member' => $tasks,
         ];
 
+        if ($pricingStrategy instanceof UseArbitraryPrice) {
+            $arbitraryPriceTemplate = [
+                'variantName' => $pricingStrategy->getVariantName(),
+                'variantPrice' => $pricingStrategy->getVariantPrice(),
+            ];
+            $subscription->setArbitraryPriceTemplate($arbitraryPriceTemplate);
+        }
+        
         $subscription->setTemplate($template);
 
         $entityManager->persist($subscription);
