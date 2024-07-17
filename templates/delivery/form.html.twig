@@ -2,16 +2,6 @@
 
 {% form_theme form 'form/delivery.html.twig' %}
 
-{% block breadcrumb %}
-  {% set delivery = form.vars.value %}
-  <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
-  {% if delivery.id is not null %}
-  <li>#{{ delivery.id }}</li>
-  {% else %}
-  <li>{% trans %}delivery.createNew{% endtrans %}</li>
-  {% endif %}
-{% endblock %}
-
 {% block dashboard_subnav %}
   <div>
     <a href="{{ path(back_route) }}">
@@ -20,12 +10,16 @@
   </div>
 {% endblock %}
 
+{% set delivery = form.vars.value %}
+{% set store = delivery.store %}
+
 {% block content %}
 
-{% set delivery = form.vars.value %}
-{% set is_new = delivery.id is null %}
+  {% set is_new = delivery.id is null %}
 
-{{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null, 'data-user-admin': is_granted('ROLE_ADMIN') } }) }}
+  {{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null, 'data-user-admin': is_granted('ROLE_ADMIN') } }) }}
+
+  {% include 'delivery/_partials/navbar.html.twig' %}
 
   {% if is_granted('ROLE_ADMIN') and not is_new and delivery.order is not empty %}
     {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}

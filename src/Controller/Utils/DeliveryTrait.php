@@ -93,7 +93,7 @@ trait DeliveryTrait
             return $this->redirectToRoute($routes['success']);
         }
 
-        return $this->render('delivery/form.html.twig', [
+        return $this->render('delivery/item.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'delivery' => $delivery,
             'form' => $form->createView(),

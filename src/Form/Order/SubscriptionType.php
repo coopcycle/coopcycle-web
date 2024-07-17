@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class NewOrderType extends DeliveryType
+class SubscriptionType extends DeliveryType
 {
     public function __construct(
         RoutingInterface $routing,
@@ -37,7 +37,6 @@ class NewOrderType extends DeliveryType
             'with_remember_address' => true,
             'with_address_props' => true,
             'with_arbitrary_price' => true,
-            'with_bookmark' => true,
             'with_recurrence' => true
         ]);
     }

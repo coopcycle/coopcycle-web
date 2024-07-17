@@ -603,6 +603,15 @@ admin_store_delivery_download_images:
         _controller: AppBundle\Controller\AdminController::downloadDeliveryImagesAction
     methods:  [ GET ]
 
+admin_store_subscriptions:
+  path: /admin/stores/{storeId}/subscriptions/{subscriptionId}
+  defaults:
+    _controller: AppBundle\Controller\AdminController::subscriptionAction
+    layout: 'admin.html.twig'
+    routes:
+      success: admin_deliveries
+  methods:  [ GET, POST ]
+
 admin_store_users:
     path: /admin/stores/{id}/users
     defaults:

@@ -34,6 +34,7 @@ class OneOffOrderType extends DeliveryType
 
         $resolver->setDefaults([
             'with_address_props' => true,
+            'with_bookmark' => true,
         ]);
     }
 }

@@ -68,6 +68,10 @@ services:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
+  AppBundle\Form\Order\SubscriptionType:
+    parent: AppBundle\Form\DeliveryType
+    tags: [ form.type ]
+
   AppBundle\Form\OrderType:
     arguments: [ '@sm.factory', '@security.authorization_checker' ]
     tags: [ form.type ]
