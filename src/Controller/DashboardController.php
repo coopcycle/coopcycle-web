@@ -4,25 +4,21 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Entity\LocalBusiness;
-use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\Filesystem;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -33,16 +29,15 @@ class DashboardController extends AbstractController
     use OrderTrait;
     use RestaurantTrait;
     use StoreTrait;
+    use InjectAuthTrait;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        bool $adhocOrderEnabled
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TranslatorInterface $translator,
+        private readonly bool $adhocOrderEnabled,
+        private readonly JWTTokenManagerInterface $JWTTokenManager
     )
     {
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
-        $this->adhocOrderEnabled = $adhocOrderEnabled;
     }
 
     protected function getRestaurantRoutes()
