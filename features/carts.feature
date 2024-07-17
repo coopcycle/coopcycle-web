@@ -93,7 +93,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -170,7 +171,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -247,7 +249,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod": "delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -309,7 +312,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -374,7 +378,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -433,7 +438,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -499,7 +505,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -558,7 +565,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -664,7 +672,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -770,7 +779,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -876,7 +886,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -1540,7 +1551,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -1663,7 +1675,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1749,7 +1762,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1835,7 +1849,8 @@ Feature: Carts
           "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 
@@ -1935,7 +1950,8 @@ Feature: Carts
           "tip":[],
           "incident":[]
         },
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@
       }
       """
 

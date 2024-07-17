@@ -8,6 +8,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
@@ -44,7 +45,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         private PriceFormatter $priceFormatter,
         private TranslatorInterface $translator,
         private LoopeatClient $loopeatClient,
-        private LoopeatContextInitializer $loopeatContextInitializer)
+        private LoopeatContextInitializer $loopeatContextInitializer,
+        private GatewayResolver $paymentGatewayResolver)
     {}
 
     public function normalize($object, $format = null, array $context = array())
@@ -168,6 +170,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         if (null !== ($invitation = $object->getInvitation())) {
             $data['invitation'] = $invitation->getSlug();
         }
+
+        $data['paymentGateway'] = $this->paymentGatewayResolver->resolveForOrder($object);
 
         return $data;
     }

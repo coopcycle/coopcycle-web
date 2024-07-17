@@ -1,8 +1,5 @@
 {% extends "base.html.twig" %}
 
-{% set country = country_iso %}
-{% set gateway = payment_gateway_resolver.resolve() %}
-
 {% form_theme form 'form/order.html.twig' %}
 
 {% block banner %}
@@ -105,49 +102,14 @@
 
 {% block scripts %}
 {% if not order.empty %}
-
   {{ encore_entry_script_tags('order-payment') }}
-
-{% set gateway = payment_gateway_resolver.resolve() %}
-{% set gateway_configs = {} %}
-
-{% if gateway == 'stripe' %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-{% set gateway_configs = gateway_configs|merge({
-  stripe: {
-    publishableKey: coopcycle_setting('stripe_publishable_key'),
-    account: payment.stripeUserId ? payment.stripeUserId : null,
-    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
-    clonePaymentMethodToConnectedAccountURL: path('stripe_clone_payment_method', { hashId: payment|hashid }),
-    createSetupIntentOrAttachPMURL: path('stripe_create_setup_intent_or_attach_pm', { hashId: payment|hashid }),
-    customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
-    createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
-  }
-}) %}
-{% endif %}
-
-{% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-{% set gateway_configs = gateway_configs|merge({
-  mercadopago: {
-    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
-    country: country
-  }
-}) %}
-{% endif %}
-
-<script type="text/javascript">
-  new CoopCycle.PaymentForm(document.querySelector('form[name="checkout_payment"]'), {
-    card: "{{ gateway }}",
-    amount: {{ order.total }},
-    orderId: "{{ order.id }}",
-    orderHasUser: "{{ order.customer.hasUser() }}",
-    orderAccessToken: "{{ order_access_token }}",
-    gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    savedPaymentMethodElement: document.querySelector('#checkout_payment_stripePayment_savedPaymentMethodId'),
-    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}",
-  });
-</script>
+  {% include 'payment/scripts.html.twig' with {
+    order: order,
+    payment: payment,
+    payment_form_selector: 'form[name="checkout_payment"]',
+    token_element_selector: '#checkout_payment_stripePayment_stripeToken',
+    order_access_token: order_access_token,
+    with_saved_cards: true
+  } %}
 {% endif %}
 {% endblock %}
