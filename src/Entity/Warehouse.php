@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -16,7 +18,7 @@ use Gedmo\Timestampable\Traits\Timestampable;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_ADMIN')",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
  *      },
  *     "post"={
  *       "method"="POST",
@@ -36,11 +38,14 @@ class Warehouse
     protected $id;
 
     /**
+    * @Assert\NotBlank()
     * @Groups({"warehouse", "warehouse_create"})
     */
     protected $name;
 
     /**
+    * @Assert\NotNull()
+    * @Assert\Valid()
     * @Groups({"address", "address_create"})
     */
     protected $address;
