@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Tagging;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr;
 use Psr\Log\LoggerInterface;
@@ -222,7 +221,9 @@ class TagManager
         $this->logger->debug(sprintf('Original tags "%s", new tags "%s"',
             implode(' ', $originalTags),
             implode(' ', $newTags)
-        ));
+        ), [
+            'taggable' => $taggable->getTaggableResourceClass(),
+        ]);
 
         foreach ($originalTags as $originalTag) {
             if (!in_array($originalTag, $newTags)) {

@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -58,6 +59,7 @@ trait DeliveryTrait
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
         OrderNumberAssignerInterface $orderNumberAssigner,
+        OrderManager $orderManager
     )
     {
         $delivery = $entityManager
@@ -87,6 +89,16 @@ trait DeliveryTrait
             } else {
                 $entityManager->persist($delivery);
                 $entityManager->flush();
+            }
+
+            if ($form->has('bookmark')) {
+                $isBookmarked = true === $form->get('bookmark')->getData();
+
+                $order = $delivery->getOrder();
+
+                if (null !== $order) {
+                    $orderManager->setBookmark($order, $isBookmarked);
+                }
             }
 
             return $this->redirectToRoute($routes['success']);

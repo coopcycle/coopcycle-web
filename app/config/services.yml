@@ -614,6 +614,15 @@ services:
         arguments:
             - '%sonic_namespace%'
 
+  AppBundle\Entity\Sylius\OrderRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Sylius\Order
+    calls: [[setDeliveryRepository, ['@AppBundle\Entity\DeliveryRepository']]]
+
+  sylius.repository.order:
+    alias: AppBundle\Entity\Sylius\OrderRepository
+
   AppBundle\Service\Routing\Osrm: ~
 
   routing_service:

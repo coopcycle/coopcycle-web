@@ -10,6 +10,7 @@ use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\StoreAddressesType;
@@ -383,6 +384,13 @@ trait StoreTrait
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
 
+                if ($form->has('bookmark')) {
+                    $isBookmarked = true === $form->get('bookmark')->getData();
+                    $order = $delivery->getOrder();
+
+                    $orderManager->setBookmark($order, $isBookmarked);
+                }
+
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
             } elseif ($store->getCreateOrders()) {
@@ -393,6 +401,11 @@ trait StoreTrait
                     $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
 
                     $this->handleRememberAddress($store, $form);
+
+                    if ($form->has('bookmark')) {
+                        $isBookmarked = true === $form->get('bookmark')->getData();
+                        $orderManager->setBookmark($order, $isBookmarked);
+                    }
 
                     $entityManager->persist($order);
                     $entityManager->flush();
@@ -557,6 +570,34 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
+        ]);
+    }
+
+    public function storeDeliveriesBookmarksAction($id, Request $request,
+        EntityManagerInterface $entityManager,
+        OrderRepository $orderRepository)
+    {
+        /**
+         * Currently we only support bookmarks for admin users,
+         * if (when) we need to support bookmarks for store owners,
+         * make sure that admin users and store owners can't see each other's bookmarks
+         */
+
+        $store = $entityManager
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store, 'view');
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('store/deliveries_bookmarks.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'bookmarks' => $orderRepository->findBookmarked($store, $this->getUser()),
+            'routes' => $this->getDeliveryRoutes(),
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
         ]);
     }
 

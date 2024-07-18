@@ -503,6 +503,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $businessAccount;
 
+    protected Collection $bookmarks;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -524,6 +526,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
         $this->vendors = new ArrayCollection();
+        $this->bookmarks = new ArrayCollection();
     }
 
     /**
@@ -1784,5 +1787,14 @@ class Order extends BaseOrder implements OrderInterface
     public function getPickupAddresses(): Collection
     {
         return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
+    }
+
+    /**
+     * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
+     * @return Collection all bookmarks set by different users
+     */
+    public function getBookmarks(): Collection
+    {
+        return $this->bookmarks;
     }
 }
