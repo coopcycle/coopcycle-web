@@ -1437,3 +1437,6 @@ services:
     arguments: [
       '@edenredsynchronizer.client',
     ]
+
+  Picqer\Barcode\BarcodeGeneratorSVG: ~
+  AppBundle\Utils\Barcode\BarcodeUtils: ~

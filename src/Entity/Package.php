@@ -4,7 +4,15 @@ namespace AppBundle\Entity;
 
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 
+/**
+ * @ApiResource(
+ *   attributes={
+ *     "normalization_context"={"groups"={"package"}}
+ *   },
+ * )
+ */
 class Package
 {
     use Timestampable;
@@ -12,10 +20,20 @@ class Package
     protected $id;
 
     /**
-     * @Groups({"store_with_packages"})
+     * @Groups({"store_with_packages", "package"})
      */
     protected $name;
+
+
+    /**
+     * @Groups({"package"})
+     */
     protected $volumeUnits;
+
+
+    /**
+     * @Groups({"package"})
+     */
     protected $packageSet;
     protected $slug;
 
