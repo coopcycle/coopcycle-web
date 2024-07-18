@@ -5,19 +5,13 @@ namespace AppBundle\Entity\Sylius;
 class UseArbitraryPrice implements PricingStrategy
 {
     public function __construct(
-        private readonly string $variantName,
-        private readonly int $variantPrice,
+        private readonly ArbitraryPrice $arbitraryPrice
     )
     {
     }
 
-    public function getVariantName(): string
+    public function getArbitraryPrice(): ArbitraryPrice
     {
-        return $this->variantName;
-    }
-
-    public function getVariantPrice(): int
-    {
-        return $this->variantPrice;
+        return $this->arbitraryPrice;
     }
 }

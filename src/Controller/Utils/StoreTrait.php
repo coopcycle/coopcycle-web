@@ -329,7 +329,7 @@ trait StoreTrait
                 $variantName = $form->get('variantName')->getData();
 
                 $this->handleBookmark($orderManager, $form, $delivery->getOrder());
-                $this->handleSubscription($pricingManager, $store, $delivery, $form, new UseArbitraryPrice($variantName, $variantPrice));
+                $this->handleSubscription($pricingManager, $store, $delivery, $form, new UseArbitraryPrice(new ArbitraryPrice($variantName, $variantPrice)));
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 

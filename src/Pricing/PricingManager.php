@@ -84,7 +84,7 @@ class PricingManager
                 $order = $this->orderFactory->createForDelivery($delivery, new PricingRulesBasedPrice($price));
 
             } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
-                $order = $this->orderFactory->createForDelivery($delivery, new ArbitraryPrice($pricingStrategy->getVariantName(), $pricingStrategy->getVariantPrice()));
+                $order = $this->orderFactory->createForDelivery($delivery, $pricingStrategy->getArbitraryPrice());
 
             } else {
                 if ($throwException) {
@@ -209,9 +209,10 @@ class PricingManager
         ];
 
         if ($pricingStrategy instanceof UseArbitraryPrice) {
+            $arbitraryPrice = $pricingStrategy->getArbitraryPrice();
             $arbitraryPriceTemplate = [
-                'variantName' => $pricingStrategy->getVariantName(),
-                'variantPrice' => $pricingStrategy->getVariantPrice(),
+                'variantName' => $arbitraryPrice->getVariantName(),
+                'variantPrice' => $arbitraryPrice->getValue(),
             ];
             $subscription->setArbitraryPriceTemplate($arbitraryPriceTemplate);
         }
@@ -269,7 +270,7 @@ class PricingManager
 
             if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
                 $order = $this->createOrder($delivery, [
-                    'pricingStrategy' => new UseArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']),
+                    'pricingStrategy' => new UseArbitraryPrice(new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice'])),
                     'persist' => $persist,
                 ]);
             } else {
