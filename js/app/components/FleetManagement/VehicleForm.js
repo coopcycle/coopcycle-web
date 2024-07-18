@@ -24,7 +24,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
   initialValues = {
     ...initialValues,
     maxWeight: initialValues.maxWeight ? initialValues.maxWeight / 1000 : null,
-    warehouse: initialValues.warehouse['@id'] || warehouses[0]['@id']
+    warehouse: initialValues.warehouse ? initialValues.warehouse['@id'] : warehouses[0]['@id']
   }
 
   const validate = (values) => {
