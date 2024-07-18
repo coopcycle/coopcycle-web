@@ -3,24 +3,23 @@
 {% block breadcrumb %}
 
   {% if is_granted('ROLE_DISPATCHER') %}
-    {% if store is defined %}
+    {% set store = delivery.store %}
+
+    {% if store is not null %}
       <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
       <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
-
-      {% set order = delivery.order %}
-      {% if order is not null %}
-        <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
-        <li><a href="{{ path('admin_order', { id: order.id }) }}">{{ order.number }} (#{{ order.id }})</a></li>
-      {% endif %}
-
-      <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
-      <li>#{{ delivery.id }}</li>
-
     {% else %}
-{#      TODO: display properly the hierarchy for foodtech orders #}
-      <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
-      <li>#{{ delivery.id }}</li>
+      {#      TODO: display properly the restaurant(s) for foodtech orders #}
     {% endif %}
+
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+      <li><a href="{{ path('admin_order', { id: order.id }) }}">{{ order.number }} (#{{ order.id }})</a></li>
+    {% endif %}
+    
+    <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+    <li>#{{ delivery.id }}</li>
 
   {% endif %}
 
