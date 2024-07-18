@@ -23,6 +23,7 @@ use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
  * FIXME: Should we merge this class into the OrderManager class?
@@ -35,6 +36,7 @@ class PricingManager
         private readonly OrderFactory $orderFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly DenormalizerInterface $denormalizer,
+        private readonly NormalizerInterface $normalizer,
         private readonly LoggerInterface $logger)
     {}
 
@@ -182,7 +184,7 @@ class PricingManager
         $subscription->setStore($store);
         $subscription->setRule($rule);
 
-        $tasks = $this->denormalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['delivery_create']]);
+        $tasks = $this->normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['delivery_create']]);
         $tasks = array_map(function($task) {
             unset($task['@id']);
 
