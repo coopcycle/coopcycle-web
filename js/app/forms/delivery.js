@@ -484,7 +484,6 @@ export default function(name, options) {
 
   if (el) {
 
-
     // Intialize Redux store
     let preloadedState = {
       tasks: [],
@@ -493,16 +492,18 @@ export default function(name, options) {
     if (el.dataset.store) {
       preloadedState = {
         ...preloadedState,
-        store: el.dataset.store
+        [storeSlice.name]: el.dataset.store
       }
     }
 
-    if (el.dataset.recurrenceRules) {
+    if (el.dataset.subscription) {
+      const subscription = JSON.parse(el.dataset.subscription)
+
       preloadedState = {
         ...preloadedState,
-        recurrenceRules: {
+        [recurrenceSlice.name]: {
           ...recurrenceSlice.getInitialState(),
-          recurrenceRule: JSON.parse(el.dataset.recurrenceRules),
+          rule: subscription.rule,
         }
       }
     }

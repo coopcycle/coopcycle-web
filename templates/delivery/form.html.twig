@@ -16,7 +16,11 @@
 
   {% set is_new = delivery.id is null %}
 
-  {{ form_start(form, { attr: { 'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null, 'data-user-admin': is_granted('ROLE_ADMIN') } }) }}
+  {{ form_start(form, { attr: {
+    'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null,
+    'data-subscription': subscription is defined and subscription is not empty ? subscription|coopcycle_normalize('AppBundle\\Entity\\Task\\RecurrenceRule', ['task_recurrence_rule'], 'json')|json_encode : null,
+    'data-user-admin': is_granted('ROLE_ADMIN')
+  } }) }}
 
   {% include 'delivery/_partials/navbar.html.twig' %}
 
