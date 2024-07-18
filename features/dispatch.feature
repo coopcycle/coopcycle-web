@@ -376,7 +376,7 @@ Feature: Dispatch
             "date":"2018-12-01",
             "username":"sarah",
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()"
+            "updatedAt":"@string@.isDateTime()",
             "vehicle": null,
             "trailer": null
           },

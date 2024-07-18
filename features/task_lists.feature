@@ -146,7 +146,9 @@ Feature: Tasks lists
       "createdAt":"@string@.isDateTime()",
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
-      "username":"bob"
+      "username":"bob",
+      "vehicle": null,
+      "trailer": null
     }
     """
    Scenario: Assign task with PUT then add a tour to the tasklist
@@ -202,7 +204,9 @@ Feature: Tasks lists
       "createdAt":"@string@.isDateTime()",
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
-      "username":"bob"
+      "username":"bob",
+      "vehicle": null,
+      "trailer": null
     }
     """
 
