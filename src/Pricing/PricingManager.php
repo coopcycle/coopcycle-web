@@ -20,7 +20,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -157,31 +156,44 @@ class PricingManager
         ];
     }
 
-    public function createSubscription(Store $store, Delivery $delivery, array $recurrence, PricingStrategy $pricingStrategy = null): ?RecurrenceRule
+    public function createSubscription(Store $store, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
     {
-        if (null === $pricingStrategy) {
-            $pricingStrategy = new UsePricingRules();
-        }
-
-        $ruleStr = $recurrence['rule'];
-
-        if (null === $ruleStr) {
-            return null;
-        }
-
-        $rule = null;
-        try {
-            $rule = new Rule($ruleStr);
-        } catch (InvalidRRule $e) {
-            $this->logger->warning('Invalid recurrence rule', [
-                'rule' => $ruleStr,
-                'exception' => $e->getMessage(),
-            ]);
-            return null;
-        }
-
         $subscription = new RecurrenceRule();
         $subscription->setStore($store);
+
+        $this->setData($subscription, $delivery, $rule, $pricingStrategy);
+
+        $this->entityManager->persist($subscription);
+        $this->entityManager->flush();
+
+        return $subscription;
+    }
+
+    public function updateSubscription(RecurrenceRule $subscription, Delivery $tempDelivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
+    {
+        //FIXME; we have to temporary persist the delivery and tasks, because `TaskNormalizer` depends on database ids;
+        // we should properly model subscription template to avoid the need for normalization
+        $tempDelivery->setOrder(null);
+        foreach ($tempDelivery->getTasks() as $task) {
+            $task->setPrevious(null);
+            $task->setNext(null);
+        }
+        $this->entityManager->persist($tempDelivery);
+        $this->entityManager->flush();
+
+        $this->setData($subscription, $tempDelivery, $rule, $pricingStrategy);
+
+        foreach ($tempDelivery->getTasks() as $task) {
+            $this->entityManager->remove($task);
+        }
+        $this->entityManager->remove($tempDelivery);
+        $this->entityManager->flush();
+
+        return $subscription;
+    }
+
+    private function setData(RecurrenceRule $subscription, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): void
+    {
         $subscription->setRule($rule);
 
         $tasks = $this->normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['delivery_create']]);
@@ -217,14 +229,11 @@ class PricingManager
                 'variantPrice' => $arbitraryPrice->getValue(),
             ];
             $subscription->setArbitraryPriceTemplate($arbitraryPriceTemplate);
+        } else {
+            $subscription->setArbitraryPriceTemplate(null);
         }
 
         $subscription->setTemplate($template);
-
-        $this->entityManager->persist($subscription);
-        $this->entityManager->flush();
-
-        return $subscription;
     }
 
     public function createOrderFromSubscription(Task\RecurrenceRule $subscription, string $startDate, bool $persist = true): ?OrderInterface

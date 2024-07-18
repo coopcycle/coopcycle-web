@@ -39,6 +39,9 @@ use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Psr\Log\LoggerInterface;
+use Recurr\Exception\InvalidRRule;
+use Recurr\Rule;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -283,7 +286,8 @@ trait StoreTrait
         OrderFactory $orderFactory,
         OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $entityManager,
-        TranslatorInterface $translator)
+        TranslatorInterface $translator,
+        LoggerInterface $logger)
     {
         $routes = $request->attributes->get('routes');
 
@@ -318,18 +322,12 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
-            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
-                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
-
-            if ($useArbitraryPrice) {
+            if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
 
-                $variantPrice = $form->get('variantPrice')->getData();
-                $variantName = $form->get('variantName')->getData();
-
                 $this->handleBookmark($orderManager, $form, $delivery->getOrder());
-                $this->handleSubscription($pricingManager, $store, $delivery, $form, new UseArbitraryPrice(new ArbitraryPrice($variantName, $variantPrice)));
+                $this->handleNewSubscription($pricingManager, $store, $delivery, $form, $logger, new UseArbitraryPrice($arbitraryPrice));
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -350,7 +348,7 @@ trait StoreTrait
 
                     $entityManager->flush();
 
-                    $this->handleSubscription($pricingManager, $store, $delivery, $form);
+                    $this->handleNewSubscription($pricingManager, $store, $delivery, $form, $logger);
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -406,6 +404,7 @@ trait StoreTrait
         Request $request,
         PricingManager $pricingManager,
         EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
     )
     {
         $subscription = $entityManager
@@ -416,8 +415,8 @@ trait StoreTrait
 
         $store = $subscription->getStore();
 
-        $order = $pricingManager->createOrderFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
-        $delivery = $order->getDelivery();
+        $tempOrder = $pricingManager->createOrderFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
+        $tempDelivery = $tempOrder->getDelivery();
 
         $routes = $request->attributes->get('routes');
 
@@ -426,29 +425,21 @@ trait StoreTrait
             $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
         }
 
-        $form = $this->createForm(SubscriptionType::class, $delivery, [
+        $form = $this->createForm(SubscriptionType::class, $tempDelivery, [
             'arbitrary_price' => $arbitraryPrice,
         ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-//            $delivery = $form->getData();
-//
-//            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
-//                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
-//
-//            if ($useArbitraryPrice) {
-//                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-//                    $entityManager, $orderNumberAssigner);
-//            } else {
-//                $entityManager->persist($delivery);
-//                $entityManager->flush();
-//            }
+            $tempDelivery = $form->getData();
 
-            //TODO: persist subscription
+            $arbitraryPrice = $this->getArbitraryPrice($form);
+            $rule = $this->getRecurrenceRule($form, $logger);
 
-            //TODO; prevent order and delivery from being persisted
+            if (null !== $rule) {
+                $pricingManager->updateSubscription($subscription, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+            }
 
             $this->handleRememberAddress($store, $form);
 
@@ -458,7 +449,7 @@ trait StoreTrait
         return $this->render('store/subscriptions/item.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'subscription' => $subscription,
-            'delivery' => $delivery,
+            'delivery' => $tempDelivery,
             'form' => $form->createView(),
         ]);
     }
@@ -492,34 +483,84 @@ trait StoreTrait
         $orderManager->setBookmark($order, $isBookmarked);
     }
 
-    private function handleSubscription(
+    private function handleNewSubscription(
         PricingManager $pricingManager,
         Store $store,
         Delivery $delivery,
         FormInterface $form,
+        LoggerInterface $logger,
         PricingStrategy $pricingStrategy = new UsePricingRules): void
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return;
         }
 
-        if (!$form->has('recurrence')) {
+        $recurrenceRule = $this->getRecurrenceRule($form, $logger);
+
+        if (null === $recurrenceRule) {
             return;
+        }
+
+        $pricingManager->createSubscription($store, $delivery, $recurrenceRule, $pricingStrategy);
+    }
+
+    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        if (!$form->has('arbitraryPrice')) {
+            return null;
+        }
+
+        if (true !== $form->get('arbitraryPrice')->getData()) {
+            return null;
+        }
+
+        $variantPrice = $form->get('variantPrice')->getData();
+        $variantName = $form->get('variantName')->getData();
+
+        return new ArbitraryPrice($variantName, $variantPrice);
+    }
+
+
+    private function getRecurrenceRule(FormInterface $form, LoggerInterface $logger): ?Rule
+    {
+        if (!$form->has('recurrence')) {
+            return null;
         }
 
         $recurrenceData = $form->get('recurrence')->getData();
 
         if (null === $recurrenceData) {
-            return;
+            return null;
         }
 
         $recurrence = json_decode($recurrenceData, true);
 
         if (null === $recurrence) {
-            return;
+            return null;
         }
 
-        $pricingManager->createSubscription($store, $delivery, $recurrence, $pricingStrategy);
+        $ruleStr = $recurrence['rule'];
+
+        if (null === $ruleStr) {
+            return null;
+        }
+
+        $rule = null;
+        try {
+            $rule = new Rule($ruleStr);
+        } catch (InvalidRRule $e) {
+            $logger->warning('Invalid recurrence rule', [
+                'rule' => $ruleStr,
+                'exception' => $e->getMessage(),
+            ]);
+            return null;
+        }
+
+        return $rule;
     }
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)
