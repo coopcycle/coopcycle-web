@@ -326,8 +326,10 @@ trait StoreTrait
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
 
-                $this->handleBookmark($orderManager, $form, $delivery->getOrder());
-                $this->handleNewSubscription($pricingManager, $store, $delivery, $form, $logger, new UseArbitraryPrice($arbitraryPrice));
+                $order = $delivery->getOrder();
+
+                $this->handleBookmark($orderManager, $form, $order);
+                $this->handleNewSubscription($pricingManager, $entityManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -348,7 +350,7 @@ trait StoreTrait
 
                     $entityManager->flush();
 
-                    $this->handleNewSubscription($pricingManager, $store, $delivery, $form, $logger);
+                    $this->handleNewSubscription($pricingManager, $entityManager, $logger, $store, $form, $delivery, $order);
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -485,10 +487,12 @@ trait StoreTrait
 
     private function handleNewSubscription(
         PricingManager $pricingManager,
-        Store $store,
-        Delivery $delivery,
-        FormInterface $form,
+        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
+        Store $store,
+        FormInterface $form,
+        Delivery $delivery,
+        OrderInterface $order,
         PricingStrategy $pricingStrategy = new UsePricingRules): void
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -501,7 +505,12 @@ trait StoreTrait
             return;
         }
 
-        $pricingManager->createSubscription($store, $delivery, $recurrenceRule, $pricingStrategy);
+        $subscription = $pricingManager->createSubscription($store, $delivery, $recurrenceRule, $pricingStrategy);
+
+        if (null !== $subscription) {
+            $order->setSubscription($subscription);
+            $entityManager->flush();
+        }
     }
 
     private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
