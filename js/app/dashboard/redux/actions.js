@@ -60,7 +60,8 @@ export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 export const OPEN_EXPORT_MODAL = 'OPEN_EXPORT_MODAL'
 export const CLOSE_EXPORT_MODAL = 'CLOSE_EXPORT_MODAL'
 
-export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
+export const startOptimRequest = createAction('START_OPTIM_REQUEST')
+export const setOptimResult = createAction('SET_OPTIM_RESULT')
 
 export const RIGHT_PANEL_MORE_THAN_HALF = 'RIGHT_PANEL_MORE_THAN_HALF'
 export const RIGHT_PANEL_LESS_THAN_HALF = 'RIGHT_PANEL_LESS_THAN_HALF'
@@ -454,7 +455,7 @@ export function createTaskList(date, username) {
 
 /**
  * Action to move task to top or bottom of tasklist
- * @param {Object} task - Task we are moving
+ * @param {Task} task
  * @param {string} direction - Either 'top' or 'bottom'
  */
 function moveTo(task, direction) {
@@ -949,6 +950,10 @@ export function loadTaskEvents(task) {
   }
 }
 
+/**
+ * Optimize a TaskList
+ * @param {TaskList} taskList
+ */
 export function optimizeTaskList(taskList) {
 
   return function(dispatch, getState) {
@@ -956,6 +961,8 @@ export function optimizeTaskList(taskList) {
     const { jwt } = getState()
 
     const url = `${taskList['@id']}/optimize`
+
+    dispatch(startOptimRequest())
 
     createClient(dispatch).request({
       method: 'get',
@@ -968,8 +975,8 @@ export function optimizeTaskList(taskList) {
       }
     })
       .then(response => {
-        // TODO : fix this
-        dispatch(putTaskListItems(taskList.username, response.data.items))
+        dispatch(putTaskListItems(taskList.username, response.data.solution.items))
+        dispatch(setOptimResult({previous: taskList, unassigned_count: response.data.unassigned_count}))
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))

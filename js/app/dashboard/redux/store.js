@@ -1,7 +1,7 @@
 import {createStore, applyMiddleware, compose, combineReducers} from 'redux'
 import thunk from 'redux-thunk'
 import reduceReducers from 'reduce-reducers';
-import { socketIO, persistFilters } from './middlewares'
+import { socketIO, persistFilters, resetOptimizationResult } from './middlewares'
 import {
   dateReducer,
   taskEntityReducers as coreTaskEntityReducers,
@@ -21,8 +21,9 @@ import organizationEntityReducers from './organizationEntityReducers';
 import vehicleEntityReducers from './vehicleEntityReducers';
 import trailerEntityReducers from './trailerEntityReducers';
 import warehouseEntityReducers from './warehouseEntityReducers';
+import optimReducers from './optimReducers';
 
-const middlewares = [ thunk, socketIO, persistFilters ]
+const middlewares = [ thunk, socketIO, persistFilters, resetOptimizationResult ]
 
 // we maye want enhancing redux dev tools only  in dev ?
 // also if server side render is made later, it is
@@ -48,6 +49,7 @@ const reducer = combineReducers({
   config: configReducers,
   settings: settingsReducers,
   tracking: trackingReducers,
+  optimization: optimReducers
 })
 
 export const createStoreFromPreloadedState = preloadedState => {

@@ -86,7 +86,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *        "method"="GET",
  *        "path"="/task_lists/{id}/optimize",
  *        "controller"=OptimizeController::class,
- *        "access_control"="is_granted('ROLE_ADMIN')"
+ *        "access_control"="is_granted('ROLE_ADMIN')",
+ *        "serialize"=false
  *     }
  *   },
  *   attributes={

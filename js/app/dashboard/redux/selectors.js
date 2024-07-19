@@ -33,6 +33,7 @@ export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTou
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
 export const selectVehiclesLoading = state => state.logistics.ui.vehiclesLoading
 export const selectTrailersLoading = state => state.logistics.ui.trailersLoading
+export const selectOptimLoading = state => state.logistics.ui.optimLoading
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
 export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
@@ -53,6 +54,9 @@ export const getProductNameById = id => store => {
   return store.dashboard.dashboards.filter(({ Id }) => Id === id)[0]
     .Name;
 }
+
+// optim selectors
+export const selectLastOptimResult = state => state.optimization.lastOptimResult
 
 export const selectCouriers = state => state.config.couriersList
 export const selectTaskEvents = state => state.taskEvents

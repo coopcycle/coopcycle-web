@@ -94,7 +94,10 @@ class RouteOptimizer
             })->toArray()
         );
 
-        return $res;
+        return [
+            "solution" => $res,
+            "unassigned_count" => $data["summary"]["unassigned"]
+        ];
     }
 
     /**

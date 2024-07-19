@@ -260,6 +260,22 @@ class RouteOptimizerTest extends KernelTestCase
         $this->assertEquals(48.8696315, $solution[2]->getTask()->getAddress()->getGeo()->getLatitude());
     }
 
+    public function testOptimizationWithUnassignedTasks()
+    {
+
+        // this fixture load some tasks which are not doable in the given time window
+        $this->fixturesLoader->load([
+            __DIR__.'/../../../features/fixtures/ORM/optimizer/set4.yml'
+        ]);
+
+        $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
+
+        $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
+
+        $solution = $optimizer->optimize($taskList);
+
+   }
+
     public function testOptimize()
     {
         $coords = [
@@ -351,4 +367,5 @@ class RouteOptimizerTest extends KernelTestCase
         $this->assertSame($addresses[2], $pickups[0]);
         $this->assertSame($addresses[3], $dropoff);
     }
+
 }

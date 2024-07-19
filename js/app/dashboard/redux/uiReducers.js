@@ -19,7 +19,9 @@ import {
   loadVehiclesSuccess,
   loadTrailersSuccess,
   setTaskListsLoading,
-  loadWarehousesSuccess
+  loadWarehousesSuccess,
+  setOptimResult,
+  startOptimRequest
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -152,7 +154,17 @@ export default (state = initialState, action) => {
     case loadWarehousesSuccess.type:
       return {
         ...state,
-        warehousesLoading: false,
+        warehousesLoading: false
+      }
+    case startOptimRequest.type:
+      return {
+        ...state,
+        optimLoading: true,
+      }
+    case setOptimResult.type:
+      return {
+        ...state,
+        optimLoading: false,
       }
   }
 
