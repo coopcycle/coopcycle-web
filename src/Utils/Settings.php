@@ -126,4 +126,19 @@ class Settings
     public $google_api_key_custom;
 
     public $geocoding_provider;
+
+    /**
+     * @Assert\Regex("/^pk_[A-Za-z0-9]+/")
+     */
+    public $paygreen_public_key;
+
+    /**
+     * @Assert\Regex("/^sk_[A-Za-z0-9]+/")
+     */
+    public $paygreen_secret_key;
+
+    /**
+     * @Assert\Regex("/^sh_[A-Za-z0-9]+/")
+     */
+    public $paygreen_shop_id;
 }

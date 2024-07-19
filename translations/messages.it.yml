@@ -283,6 +283,9 @@ order.export.heading.delivery_fee: Tariffa di consegna
 form.delivery.vehicle.placeholder: Scegli un tipo di veicolo
 form.delivery.to_be_confirmed.warning: Devi confermare l'ordine
 basics.delete: Cancella
+basics.address: Indirizzo
+warehouses.breadcrumb: Magazzini
+warehouses.breadcrumb.help: Definire i magazzini
 receipt.emitter_details: Ordine presso ristorante <strong>%restaurant_name%</strong>
 delivery.import.success_message: Il tuo file è stato processato correttamente, %count%
   consegne sono state create

@@ -889,6 +889,7 @@ basics.send_invitation.confirm: Your invitation has been sent! You can now edit 
 basics.configure: Configure
 basics.select_all: Select all
 basics.delete_selected: Delete selected
+basics.address: Address
 profile.password.change: Change your password
 authentication.forgot_password: Forgot password?
 authentication.not_registered_yet: Not registered yet?
@@ -1309,6 +1310,8 @@ form.vehicle.volume_units.label: Volume units
 form.vehicle.max_weight.label: Maximum weight (kg)
 vehicles.breadcrumb: Vehicles
 vehicles.breadcrumb.help: Define fleet of vehicles
+warehouses.breadcrumb: Warehouses
+warehouses.breadcrumb.help: Define warehouses
 form.task_export.dv4cul.label: Export using DV4CUL format
 restaurant.form.section.dabba: Dabba
 restaurant.form.dabba_enabled.label: Enable Dabba deposit-refund system
@@ -1535,3 +1538,8 @@ restaurant.businessAccount.notAvilable: "This restaurant is not included in the 
   >clicking here</a>.\n"
 business_account.switch.order_with_business: Order with my company
 business_account.switch.ordering_with_business: Ordering with my company
+form.settings.paygreen.title: Paygreen configuration
+form.settings.paygreen_public_key.label: Paygreen public key
+form.settings.paygreen_secret_key.label: Paygreen secret key
+form.settings.paygreen_shop_id.label: Paygreen Shop ID
+restaurant.form.paygreen_shop_id.label: Paygreen Shop ID

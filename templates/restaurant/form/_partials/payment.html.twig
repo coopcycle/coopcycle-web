@@ -1,8 +1,6 @@
 {% if restaurant.id is not null %}
 
-  {% set gateway = payment_gateway_resolver.resolve() %}
-
-  {% if gateway == 'stripe' and show_stripe_connect %}
+  {% if payment_gateway_resolver.supports('stripe') and show_stripe_connect %}
 
     {% include "_partials/restaurant/stripe_accounts.html.twig" %}
 
@@ -25,7 +23,7 @@
 
   {% endif %}
 
-  {% if gateway == 'mercadopago' %}
+  {% if payment_gateway_resolver.supports('mercadopago') %}
     {% include "_partials/restaurant/mercadopago_accounts.html.twig" %}
 
     {% if form.allowMercadopagoConnect is defined %}
@@ -46,6 +44,10 @@
         </div>
       </div>
     {% endif %}
+
+  {% if form.paygreenShopId is defined %}
+    {{ form_row(form.paygreenShopId) }}
+  {% endif %}
 
 {% endif %}
 

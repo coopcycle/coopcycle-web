@@ -31,6 +31,11 @@ export const selectExpandedTasksGroupsPanelsIds = state => state.logistics.ui.ex
 export const selectTaskToShow = state => state.logistics.ui.taskToShow
 export const selectLoadingTourPanelsIds = state => state.logistics.ui.loadingTourPanelsIds
 export const selectTaskListsLoading = state => state.logistics.ui.taskListsLoading
+export const selectVehiclesLoading = state => state.logistics.ui.vehiclesLoading
+export const selectTrailersLoading = state => state.logistics.ui.trailersLoading
+export const selectWarehousesLoading = state => state.logistics.ui.warehousesLoading
+export const selectIsFleetManagementLoaded = state => !selectVehiclesLoading(state) && !selectTrailersLoading(state) && !selectWarehousesLoading(state)
+
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
 export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds

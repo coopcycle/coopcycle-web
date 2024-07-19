@@ -64,7 +64,7 @@
         "DASHBOARD_UNASSIGNED": "Nepřiřazeno",
         "DATEPICKER_TOMORROW": "[Zítra]",
         "DATEPICKER_TODAY": "[Dnes]",
-        "ADD_BUTON": "Přidat",
+        "ADD_BUTTON": "Přidat",
         "DELIVERY_TIME_SLOTS": "Časové sloty pro doručení",
         "OPENING_HOURS_RANGE_TIME_SLOT": "Od {{fromDay}} do {{toDay}}, mezi {{open}} a {{close}}",
         "ORDER_TIMELINE_PICKED_TITLE": "Objednávka vyzvednuta {{date}}",

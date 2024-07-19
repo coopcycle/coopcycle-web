@@ -91,7 +91,15 @@
     help: 'vehicles.breadcrumb.help' | trans,
     path: path('admin_vehicles'),
     icon: 'bicycle',
-    active: ['admin_vehicles', 'admin_vehicle'],
+    active: ['admin_vehicles'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
+    title: 'warehouses.breadcrumb' | trans,
+    help: 'warehouses.breadcrumb.help' | trans,
+    path: path('admin_warehouses'),
+    icon: 'home',
+    active: ['admin_warehouses'],
     enabled: is_granted('ROLE_ADMIN'),
   },
   {

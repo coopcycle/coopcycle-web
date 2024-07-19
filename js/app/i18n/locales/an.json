@@ -8,7 +8,7 @@
         "OPENING_HOURS_SINGLE_TIME_SLOT": "Lo {{day}} entre {{open}} y {{close}}",
         "OPENING_HOURS_RANGE_TIME_SLOT": "De {{fromDay}} a {{toDay}}, entre {{open}} y {{close}}",
         "DELIVERY_TIME_SLOTS": "Horarios d'entrega",
-        "ADD_BUTON": "Anyadir",
+        "ADD_BUTTON": "Anyadir",
         "DATEPICKER_TODAY": "[Hue]",
         "DATEPICKER_TOMORROW": "[Manyana]",
         "DASHBOARD_UNASSIGNED": "No asignau",

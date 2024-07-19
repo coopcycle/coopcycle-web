@@ -5,27 +5,5 @@
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  <a href="{{ path('admin_new_vehicle') }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {% trans %}basics.add{% endtrans %}
-  </a>
-</p>
-<table class="table">
-  <thead>
-    <th>{{ 'basics.name'|trans }}</th>
-    <th>{{ 'form.vehicle.volume_units.label'|trans }}</th>
-    <th>{{ 'form.vehicle.max_weight.label'|trans }}</th>
-    <th></th>
-  </thead>
-  <tbody>
-  {% for vehicle in vehicles %}
-    <tr>
-      <td>{{ vehicle.name }}</td>
-      <td>{{ vehicle.volumeUnits }}</td>
-      <td>{{ vehicle.maxWeight }}</td>
-      <td></td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+  <div id="vehicles-admin-app" {{ react_component('FleetManagement/VehiclesList') }}></div>
 {% endblock %}

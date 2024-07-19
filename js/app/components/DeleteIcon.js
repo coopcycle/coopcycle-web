@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 
-export default function DeleteIcon(props) {
+export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessage, afterDeleteFetch }) {
+
+  errorMessage = errorMessage || "ADMIN_DEFAULT_DELETION_ERROR_MESSAGE"
+  afterDeleteFetch = afterDeleteFetch || window.location.reload
+
   const { t } = useTranslation(),
-    { deleteUrl, objectId, objectName } = props,
-    errorMessage = props.errorMessage || "ADMIN_DEFAULT_DELETION_ERROR_MESSAGE",
     [loading, setLoading] = useState(false),
     onDeleteClick = async () => {
       if (!window.confirm(t('CONFIRM_DELETE_WITH_PLACEHOLDER', { object_name: objectName }))) {
@@ -26,7 +28,7 @@ export default function DeleteIcon(props) {
         alert(t(errorMessage))
         return;
       } else {
-        window.location.reload()
+        afterDeleteFetch()
       }
     }
 

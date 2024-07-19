@@ -718,3 +718,6 @@ delivery.state:
   delivered: 'Zugestellt'
   failed: 'Fehlgeschlagen'
   cancelled: 'Abgebrochen'
+basics.address: Adresse
+warehouses.breadcrumb: Lagerhäuser
+warehouses.breadcrumb.help: Lagerhäuser definieren

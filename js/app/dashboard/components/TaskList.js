@@ -16,11 +16,21 @@ import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selec
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight } from '../../../shared/src/logistics/redux/selectors'
-import PolylineIcon from '../PolylineIcon'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight, selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
+import PolylineIcon from './icons/PolylineIcon'
+import {default as VehicleIcon} from './icons/Vehicle'
+import {default as TrailerIcon} from './icons/Trailer'
 import ExtraInformations from './TaskCollectionDetails'
+import Vehicle from './Vehicle'
+import Trailer from './Trailer'
+import { useContextMenu } from 'react-contexify'
+import TrailerSelectMenu from './context-menus/TrailerSelectMenu'
 
 moment.locale($('html').attr('lang'))
+
+const showVehicleMenu = useContextMenu({
+  id: 'vehicle-selectmenu'
+}).show
 
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
 
@@ -120,6 +130,11 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
+  const selectTrailerMenuId = `trailer-selectmenu-${username}`
+  const showTrailerMenu = useContextMenu({
+    id: selectTrailerMenuId
+  }).show
+
   const visibleTasks = tasks.filter(task => {
     return _.includes(visibleTaskIds, task['@id'])
   })
@@ -138,81 +153,105 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const cancelledTasks = _.filter(visibleTasks, t => t.status === 'CANCELLED')
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
+  const vehicle = useSelector(state => selectVehicleById(state, taskList.vehicle))
   const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
   const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
 
   return (
     <div>
       <div className="pl-2 task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
-          <div>
-            <span>
-              <Avatar username={ username } size="24" />
-              <small className="text-monospace ml-2">
-                <strong className="mr-2">{ username }</strong>
-                <span className="text-muted">{ `(${tasks.length})` }</span>
-              </small>
-            </span>
-            { visibleTasks.length > 0 && (
-            <div style={{ width: '33.3333%' }}>
-              <ProgressBarMemo
-                  completedTasks={ completedTasks.length }
-                  tasks={ visibleTasks.length }
-                  inProgressTasks={ inProgressTasks.length }
-                  incidentReported={ incidentReported.length }
-                  failureTasks={ failureTasks.length }
-                  cancelledTasks={ cancelledTasks.length }
-                  t={t.bind(this)}
-                />
-            </div>
-            ) }
-            {incidentReported.length > 0 && <div onClick={(e) => {
-              dispatch(onlyFilter('showIncidentReportedTasks'))
-              e.stopPropagation()
-            }}>
+          <div className="mb-1 d-flex align-items-center task-list__badges">
+            <Avatar username={ username } size="24" className="ml-2" />
+            <strong className="mr-2">{ username }</strong>
+            <span className="badge">{ tasks.length }</span>
+            <Vehicle vehicleId={taskList.vehicle} />
+            <Trailer trailerId={taskList.trailer} />
+          </div>
+          <div className="mb-1" >
+            {visibleTasks.length > 0 && (
+              <span style={{ width: '80%', display: 'inline-block' }}>
+                <ProgressBarMemo
+                    completedTasks={ completedTasks.length }
+                    tasks={ visibleTasks.length }
+                    inProgressTasks={ inProgressTasks.length }
+                    incidentReported={ incidentReported.length }
+                    failureTasks={ failureTasks.length }
+                    cancelledTasks={ cancelledTasks.length }
+                    t={t.bind(this)}
+                  />
+              </span>
+              ) }
+              {incidentReported.length > 0 && <span className="ml-2" style={{ display: 'inline-block' }} onClick={(e) => {
+                dispatch(onlyFilter('showIncidentReportedTasks'))
+                e.stopPropagation()
+              }}>
               <Tooltip title="Incident(s)">
                 <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
               </Tooltip>
-            </div>}
-            <Popconfirm
-              placement="left"
-              title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
-              onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
-              okText={ t('CROPPIE_CONFIRM') }
-              cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
-              <a href="#"
-                className="text-reset mr-2"
-                style={{ visibility: uncompletedTasks.length > 0 ? 'visible' : 'hidden' }}
-                onClick={ e => e.preventDefault() }>
-                <i className="fa fa-lg fa-times"></i>
-              </a>
-            </Popconfirm>
+            </span>}
           </div>
-          <ExtraInformations duration={duration} distance={distance} weight={weight} volumeUnits={volumeUnits} />
+          <ExtraInformations
+            duration={duration}
+            distance={distance}
+            weight={weight}
+            volumeUnits={volumeUnits}
+            vehicleMaxWeight={vehicle?.maxWeight}
+            vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits}
+          />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
-        { tasks.length > 0 && (
-          <div className="d-flex align-items-center mt-2 mb-2">
+        <div className="d-flex align-items-center mt-2 mb-2">
+          <a
+            className='tasklist__actions--icon ml-3'
+            onClick={ (e) => showVehicleMenu({event: e, props: {username: username}}) }
+          >
+            <VehicleIcon />
+          </a>
+          { taskList.vehicle ?
             <a
               className='tasklist__actions--icon ml-3'
-              onClick={ () => dispatch(togglePolyline(username)) }
+              onClick={ (e) => showTrailerMenu({event: e, props: {username: username}}) }
             >
-              <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
-            </a>
-            <a
-              className="ml-4 tasklist__actions--icon d-flex align-items-center justify-content-center"
-              title="Optimize"
-              style={{
-                visibility: tasks.length > 1 ? 'visible' : 'hidden'
-              }}
-              onClick={ e => {
-                e.preventDefault()
-                dispatch(optimizeTaskList({'@id': uri, username: username}))
-              }}
-            >
-              <i className="fa fa-2x fa-bolt"></i>
-            </a>
-          </div>
-        )}
+              <TrailerIcon />
+            </a> :
+            null
+          }
+          <a
+            className='tasklist__actions--icon ml-3'
+            onClick={ () => dispatch(togglePolyline(username)) }
+          >
+            <PolylineIcon fillColor={polylineEnabled ? '#EEB516' : null} />
+          </a>
+          { tasks.length > 0 ?
+            <>
+              <a
+                className="ml-3 tasklist__actions--icon d-flex align-items-center justify-content-center"
+                title="Optimize"
+                style={{
+                  visibility: tasks.length > 1 ? 'visible' : 'hidden'
+                }}
+                onClick={ e => {
+                  e.preventDefault()
+                  dispatch(optimizeTaskList({'@id': uri, username: username}))
+                }}
+              >
+                <i className="fa fa-2x fa-bolt"></i>
+              </a>
+              <Popconfirm
+                placement="left"
+                title={ t('ADMIN_DASHBOARD_UNASSIGN_ALL_TASKS') }
+                onConfirm={ () => dispatch(unassignTasks(username, uncompletedTasks)) }
+                okText={ t('CROPPIE_CONFIRM') }
+                cancelText={ t('ADMIN_DASHBOARD_CANCEL') }>
+                <a href="#"
+                  className="ml-3 tasklist__actions--icon d-flex align-items-center justify-content-center"
+                  onClick={ e => e.preventDefault() }>
+                  <i className="fa fa-2x fa-times"></i>
+                </a>
+              </Popconfirm>
+            </> : null
+            }
+        </div>
         <Droppable
           droppableId={ `assigned:${username}` }
           key={tasks.length} // assign a mutable key to trigger a re-render when inserting a nested droppable (for example : a tour)
@@ -233,6 +272,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           )}
         </Droppable>
       </div>
+      {/* do not conditionnally render this ContextMenu, it will cause crash when you open the menu */}
+      <TrailerSelectMenu username={username} vehicleId={taskList.vehicle} selectTrailerMenuId={selectTrailerMenuId} />
     </div>
   )
 }

@@ -1,0 +1,9 @@
+{% extends "deliveries.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_warehouses') }}">{{ 'warehouses.breadcrumb'|trans }}</a></li>
+{% endblock %}
+
+{% block content %}
+  <div id="warehouse" {{ react_component('FleetManagement/WarehousesList') }}></div>
+{% endblock %}

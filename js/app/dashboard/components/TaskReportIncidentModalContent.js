@@ -81,10 +81,7 @@ function TaskReportIncidentModalContent({ task }) {
       <Form.Item label="Description" name="description">
         <Input.TextArea placeholder="Description" autoSize={{ minRows: 2 }} />
       </Form.Item>
-      <Form.Item>
-        <Button type="primary" loading={loading} htmlType="submit">
-          {t("REPORT")}
-        </Button>
+      <Form.Item className="pull-right">
         {incident && (
           <a
             className="ml-3"
@@ -101,6 +98,9 @@ function TaskReportIncidentModalContent({ task }) {
             />
           </a>
         )}
+        <Button type="primary" loading={loading} htmlType="submit">
+          {t("REPORT")}
+        </Button>
       </Form.Item>
     </Form>
   );

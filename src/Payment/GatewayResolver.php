@@ -12,7 +12,8 @@ class GatewayResolver
 
     public function __construct(string $country,
         $mercadopagoCountries = [],
-        $forceStripe = false)
+        $forceStripe = false,
+        private bool $paygreenEnabled = false)
     {
         $this->country = $country;
         $this->mercadopagoCountries = $mercadopagoCountries;
@@ -34,11 +35,24 @@ class GatewayResolver
 
     public function resolveForOrder(OrderInterface $order)
     {
-        return $this->resolve();
+        if ($order->supportsPaygreen()) {
+            return 'paygreen';
+        }
+
+        return $this->resolveForCountry($this->country);
     }
 
     public function resolve()
     {
         return $this->resolveForCountry($this->country);
+    }
+
+    public function supports($gateway): bool
+    {
+        if ($gateway === 'paygreen') {
+            return $this->paygreenEnabled;
+        }
+
+        return $gateway === $this->resolveForCountry($this->country);
     }
 }
