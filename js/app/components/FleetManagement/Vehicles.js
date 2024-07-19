@@ -331,7 +331,7 @@ export default () => {
                     className="ReactModal__Content--no-default" // disable additional inline style from react-modal
                   >
                     <TrailerForm
-                      initialValues={{}}
+                      initialValues={initialValues}
                       onSubmit={onSubmitTrailer}
                       closeModal={() => setIsTrailerModalOpen(false)}
                       vehicles={vehicles}
