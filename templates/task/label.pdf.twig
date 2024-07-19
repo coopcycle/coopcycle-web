@@ -71,11 +71,15 @@
         <ul>
           <li><strong>Ref:</strong></li>
           <li>{{ barcode_raw }}</li>
+          {% if package is not null %}
+            <li><strong>Package:</strong></li>
+            <li>{{ package }}</li>
+          {% endif %}
         </ul>
       </div>
       <div style="flex: 1">
         <ul>
-          <li><strong>Weigth:</strong></li>
+          <li><strong>Weight:</strong></li>
           {% if task.weight > 0 %}
             <li style="font-size: 1.4em">{{ (task.weight / 1000)|format_number }} Kg</li>
           {% else %}

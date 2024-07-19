@@ -4,8 +4,8 @@ namespace AppBundle\Utils\Barcode;
 
 final class Barcode {
 
-    public const int TYPE_TASK = 1;
-    public const int TYPE_DELIVERY = 2;
+    const TYPE_TASK = 1;
+    const TYPE_DELIVERY = 2;
 
     public function __construct(
         private readonly string $raw_barcode,
@@ -18,12 +18,12 @@ final class Barcode {
 
     public function isContainsPackages(): bool
     {
-        return is_null($this->package_task_id) && is_null($this->package_task_index);
+        return !is_null($this->package_task_id) && !is_null($this->package_task_index);
     }
 
     public function isInternal(): bool
     {
-        return is_null($this->entity_type) && is_null($this->entity_id);
+        return !is_null($this->entity_type) && !is_null($this->entity_id);
     }
 
     public function getEntityId(): ?int
@@ -49,6 +49,11 @@ final class Barcode {
     public function getRawBarcode(): string
     {
         return $this->raw_barcode;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getRawBarcode();
     }
 
 }

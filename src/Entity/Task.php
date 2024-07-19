@@ -47,6 +47,8 @@ use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingRuleMatcherInterface;
+use AppBundle\Utils\Barcode\Barcode;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
 use DateTime;
@@ -1296,32 +1298,23 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     */
     public function getBarcodes(): array
     {
-        // FIXME: This is the instance ID since its not yet used, set to 1 for now
-        $instance_id = 1;
+        $codebars = [
+            'task' => null,
+            'packages' => [],
+        ];
 
-        if ($this->getPackages()->isEmpty()) {
-            return [sprintf(
-                '6767%03d%d%d6076',
-                $instance_id,
-                1,
-                $this->getId()
-            )];
+        $codebars['task'] = BarcodeUtils::getBarcodeFromTask($this)->getRawBarcode();
+
+        foreach ($this->getPackages() as $package) {
+            $codebars['packages'][] = [
+                'name' => $package->getPackage()->getName(),
+                'barcodes' => array_map(
+                    fn(Barcode $code) => $code->getRawBarcode(),
+                    BarcodeUtils::getBarcodeFromPackage($package)
+                )
+            ];
         }
 
-        return array_reduce(
-            $this->getPackages()->toArray(),
-            function ($carry, TaskPackage $package) use ($instance_id) {
-                for ($q = 0; $q < $package->getQuantity(); $q++) {
-                    $carry['barcodes'][] = sprintf(
-                        '6767%03d%d%dP%dU%d6076',
-                        $instance_id,
-                        1,
-                        $this->getId(),
-                        $package->getId(),
-                        ++$carry['ammount']
-                    );
-                }
-                return $carry;
-            }, ['barcodes' => [], 'ammount' => 0])['barcodes'];
+        return $codebars;
     }
 }

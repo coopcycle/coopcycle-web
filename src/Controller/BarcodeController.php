@@ -44,17 +44,7 @@ class BarcodeController extends AbstractController
 
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
-        $entity = match($barcode->getEntityType()) {
-            1 => Task::class,
-            2 => Delivery::class,
-            default => null
-        };
-
-        if (is_null($entity)) {
-            return $this->json(['error' => 'Malformed barcode.'], 400);
-        }
-
-        $ressource = $this->getDoctrine()->getRepository($entity)->find($barcode->getEntityId());
+        $ressource = $this->getDoctrine()->getRepository(Task::class)->findByBarcode($barcode->getRawBarcode());
 
         if (is_null($ressource)) {
             return $this->json(['error' => 'No data found.'], 404);
@@ -88,6 +78,17 @@ class BarcodeController extends AbstractController
         $phoneUtil = $phoneUtil::getInstance();
         /** @var Task $ressource */
         $ressource = $this->getDoctrine()->getRepository(Task::class)->find($barcode->getEntityId());
+
+        $package = null;
+        if ($barcode->isContainsPackages()) {
+            $package = $ressource->getPackages()
+                ->filter(fn($p) => $p->getId() === $barcode->getPackageTaskId())
+                ->first()
+                ?->getPackage()
+                ?->getName();
+        }
+
+
         $phone = $phoneUtil->format($ressource->getAddress()->getTelephone(), PhoneNumberFormat::INTERNATIONAL);
 
         $from = $ressource->getDelivery()?->getPickup()?->getAddress();
@@ -106,6 +107,7 @@ class BarcodeController extends AbstractController
             'phone' => $phone,
             'barcode' => $barcodeSVG,
             'barcode_raw' => $barcode->getRawBarcode(),
+            'package' => $package,
             'currentPackage' => $barcode->getPackageTaskIndex(),
             'totalPackages' => $ressource->totalPackages()
         ]);

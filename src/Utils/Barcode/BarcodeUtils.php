@@ -2,10 +2,15 @@
 
 namespace AppBundle\Utils\Barcode;
 
-use Picqer\Barcode\BarcodeGenerator;
+use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\Package;
+use Doctrine\ORM\Mapping\Entity;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class BarcodeUtils {
 
+    const WITHOUT_PACKAGE = '6767%03d%d%d6076';
+    const WITH_PACKAGE =    '6767%03d%d%dP%dU%d6076';
 
     public static function parse(string $barcode): Barcode {
         $matches = [];
@@ -23,6 +28,47 @@ class BarcodeUtils {
             $matches['package'][0] ?? null,
             $matches['unit'][0] ?? null
         );
+    }
+
+    /**
+     * @return Barcode[]|Barcode|null
+     * @param object $entity
+     */
+    public static function getBarcodeFromEntity(object $entity): array|Barcode|null {
+        switch (get_class($entity)) {
+            case Task::class:
+                return self::getBarcodeFromTask($entity);
+            case Package::class:
+                return self::getBarcodeFromPackage($entity);
+            default:
+                return null;
+        }
+    }
+
+    public static function getBarcodeFromTask(Task $task): Barcode {
+        $code = sprintf(
+            self::WITHOUT_PACKAGE,
+            1, //TODO: Dynamicly get instance
+            Barcode::TYPE_TASK, $task->getId()
+        );
+
+        return self::parse($code);
+    }
+
+    /**
+     * @return Barcode[]
+     */
+    public static function getBarcodeFromPackage(Package $package): array {
+        $codebars = [];
+        for ($q = 0; $q < $package->getQuantity(); $q++) {
+            $codebars[] = sprintf(
+                self::WITH_PACKAGE,
+                1, //TODO: Dynamicly get instance
+                Barcode::TYPE_TASK, $package->getTask()->getId(),
+                $package->getId(), $q + 1
+            );
+        }
+        return array_map(fn(string $code) => self::parse($code), $codebars);
     }
 
 }
