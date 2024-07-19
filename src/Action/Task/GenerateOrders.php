@@ -30,6 +30,10 @@ class GenerateOrders
             throw new BadRequestHttpException('Date is required');
         }
 
+        if (new \DateTime($date . ' 23:59') < new \DateTime()) {
+            throw new BadRequestHttpException('Date must be in the future');
+        }
+
         $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findBy(['deletedAt' => null]);
 
         $subscriptions = array_filter($allSubscriptions, function ($subscription) use ($date) {

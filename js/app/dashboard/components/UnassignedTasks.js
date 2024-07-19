@@ -115,6 +115,10 @@ export const UnassignedTasks = () => {
       return
     }
 
+    if (date.isBefore(new Date(), 'day')) {
+      return
+    }
+
     generateOrders(date)
   }, [date]);
 
