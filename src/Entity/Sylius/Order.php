@@ -1797,4 +1797,14 @@ class Order extends BaseOrder implements OrderInterface
     {
         return $this->bookmarks;
     }
+
+    public function supportsPaygreen(): bool
+    {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->supportsPaygreen();
+    }
 }
