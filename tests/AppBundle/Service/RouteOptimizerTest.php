@@ -234,7 +234,7 @@ class RouteOptimizerTest extends KernelTestCase
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        $solution = $optimizer->optimize($taskList);
+        $solution = $optimizer->optimize($taskList)["solution"];
 
         $this->assertEquals(Task::TYPE_PICKUP, $solution[0]->getTask()->getType());
     }
@@ -252,7 +252,7 @@ class RouteOptimizerTest extends KernelTestCase
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        $solution = $optimizer->optimize($taskList);
+        $solution = $optimizer->optimize($taskList)["solution"];
 
         $this->assertEquals("tour_1", $solution[0]->getTour()->getName());
 
@@ -272,8 +272,8 @@ class RouteOptimizerTest extends KernelTestCase
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        $solution = $optimizer->optimize($taskList);
-
+        $unassignedCount = $optimizer->optimize($taskList)["unassigned_count"];
+        $this->assertEquals($unassignedCount, 2);
    }
 
     public function testOptimize()
@@ -325,7 +325,7 @@ class RouteOptimizerTest extends KernelTestCase
 
         $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
 
-        $result = $optimizer->optimize($taskCollection->reveal());
+        $result = $optimizer->optimize($taskCollection->reveal())["solution"];
 
         $this->assertSame($result[0]->getTask(), $taskList[0]);
         $this->assertSame($result[1]->getTask(), $taskList[2]);
