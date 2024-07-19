@@ -389,7 +389,9 @@ Feature: Tasks
         "date":"2020-03-02",
         "username":"bob",
         "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()"
+        "updatedAt":"@string@.isDateTime()",
+        "vehicle": null,
+        "trailer": null
       }
       """
 

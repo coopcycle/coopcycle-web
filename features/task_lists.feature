@@ -138,6 +138,7 @@ Feature: Tasks lists
     {
       "@context":"/api/contexts/TaskList",
       "@id":"/api/task_lists/1",
+      "id": "@integer@",
       "@type":"TaskList",
       "items":["/api/tasks/7", "/api/tasks/4", "/api/tasks/6", "/api/tasks/5"],
       "distance":@integer@,
@@ -151,6 +152,7 @@ Feature: Tasks lists
       "trailer": null
     }
     """
+
    Scenario: Assign task with PUT then add a tour to the tasklist
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -196,6 +198,7 @@ Feature: Tasks lists
     {
       "@context":"/api/contexts/TaskList",
       "@id":"/api/task_lists/1",
+      "id": "@integer@",
       "@type":"TaskList",
       "items":["/api/tasks/4","/api/tours/1"],
       "distance":@integer@,
