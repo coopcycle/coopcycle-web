@@ -586,6 +586,9 @@ basics.are_you_sure: ¿Estás segur@?
 basics.no_entries: Ningun elemento por el momento
 basics.select_all: Seleccionar todo
 basics.delete_selected: Eliminar seleccionados
+basics.address: Dirección
+warehouses.breadcrumb: Almacenes
+warehouses.breadcrumb.help: Definir almacenes
 profile.password.change: Cambiar la contraseña
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?
