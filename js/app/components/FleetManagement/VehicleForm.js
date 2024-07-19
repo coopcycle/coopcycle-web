@@ -208,12 +208,10 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                 </div>
               </div>
               <div className="row">
-                <div className="text-center">
-                  <div className="input-group-btn">
-                    <button className="btn btn-primary" type="submit" disabled={isLoading}>
-                      { t('SAVE_BUTTON') }
-                    </button>
-                  </div>
+                <div className="input-group-btn pull-right">
+                  <button className="btn btn-primary" type="submit" disabled={isLoading}>
+                    { t('SAVE_BUTTON') }
+                  </button>
                 </div>
               </div>
             </form>
