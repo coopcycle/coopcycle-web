@@ -24,9 +24,8 @@
 
   {% include 'delivery/_partials/navbar.html.twig' %}
 
-  {% if is_granted('ROLE_ADMIN') and not is_new and delivery.order is not empty %}
-    {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}
-  {% endif %}
+  {% block alerts %}
+  {% endblock %}
 
   {{ form_errors(form) }}
 
