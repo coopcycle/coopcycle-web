@@ -14,11 +14,11 @@
 
     {% set order = delivery.order %}
     {% if order is not null %}
-      <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+      <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
       <li><a href="{{ path('admin_order', { id: order.id }) }}">{{ order.number }} (#{{ order.id }})</a></li>
     {% endif %}
-    
-    <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
+
+    <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
     <li>#{{ delivery.id }}</li>
 
   {% endif %}
