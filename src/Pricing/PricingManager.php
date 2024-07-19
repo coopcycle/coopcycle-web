@@ -214,6 +214,14 @@ class PricingManager
                 $task['weight'] = (int) $task['weight'];
             }
 
+            // Do not store if it's not set (otherwise it breaks the denormalization)
+            if (null === $task['ref']) {
+                unset($task['ref']);
+            }
+
+            //FIXME:
+            unset($task['tags']);
+
             return $task;
         }, $tasks);
 
