@@ -11,4 +11,10 @@ final class PaymentDetailsOutput
      * @Groups({"order"})
      */
     public $stripeAccount;
+
+    /**
+     * @var string|null
+     * @Groups({"order"})
+     */
+    public $paygreenWebviewUrl;
 }

@@ -9,6 +9,7 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
@@ -18,6 +19,7 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethod;
+use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use Prophecy\Argument;
 
 class GatewayTest extends TestCase
@@ -36,12 +38,14 @@ class GatewayTest extends TestCase
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
         $this->edenred = $this->prophesize(EdenredClient::class);
+        $this->paygreenManager = $this->prophesize(PaygreenManager::class);
 
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            $this->edenred->reveal(),
+            $this->paygreenManager->reveal()
         );
     }
 

@@ -11,6 +11,7 @@ use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
@@ -31,6 +32,7 @@ class CapturePaymentTest extends TestCase
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->edenred = $this->prophesize(EdenredClient::class);
+        $this->paygreenManager = $this->prophesize(PaygreenManager::class);
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
@@ -38,7 +40,8 @@ class CapturePaymentTest extends TestCase
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            $this->edenred->reveal(),
+            $this->paygreenManager->reveal()
         );
 
         $this->capturePayment = new CapturePayment(
