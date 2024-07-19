@@ -1533,3 +1533,7 @@ restaurant.businessAccount.notAvilable: "This restaurant is not included in the 
   >clicking here</a>.\n"
 business_account.switch.order_with_business: Order with my company
 business_account.switch.ordering_with_business: Ordering with my company
+form.settings.paygreen.title: Paygreen configuration
+form.settings.paygreen_public_key.label: Paygreen public key
+form.settings.paygreen_secret_key.label: Paygreen secret key
+form.settings.paygreen_shop_id.label: Paygreen Shop ID

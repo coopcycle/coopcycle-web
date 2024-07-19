@@ -39,6 +39,8 @@ class SettingsManager
         'mercadopago_live_access_token',
         'mercadopago_client_secret',
         'google_api_key_custom',
+        'paygreen_public_key',
+        'paygreen_secret_key',
     ];
 
     private static $boolean = [

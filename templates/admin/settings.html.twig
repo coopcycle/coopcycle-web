@@ -76,6 +76,10 @@
     {% include 'admin/_partials/mercadopago.html.twig' %}
   {% endif %}
 
+  {% if form.paygreen is defined %}
+    {% include 'admin/_partials/paygreen.html.twig' %}
+  {% endif %}
+
   <hr>
 
   <h4>{% trans %}form.settings.sms.title{% endtrans %}</h4>
