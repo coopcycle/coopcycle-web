@@ -15,8 +15,7 @@ export default ({
 }) => {
   return (
     <div
-      className={classNames({
-        alert: true,
+      className={classNames('alert d-flex align-items-center', {
         'alert-success': success,
         'alert-info': info,
         'alert-warning': warning,
@@ -25,7 +24,7 @@ export default ({
       })}>
       {loading ? (
         <span>
-          <Spinner /> 
+          <Spinner />  
         </span>
       ) : null}
       {icon ? (
