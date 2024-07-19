@@ -298,7 +298,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?int $rateLimitAmount;
 
-    protected ?string $paygreenShopId;
+    protected ?string $paygreenShopId = null;
 
     /**
      * @Groups({"restaurant"})
