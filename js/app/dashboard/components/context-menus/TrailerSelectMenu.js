@@ -4,44 +4,48 @@ import { selectAllTrailers, selectTrailerIdToTaskListIdMap, selectVehicleById } 
 import { Item, Menu, useContextMenu } from "react-contexify"
 import { useTranslation } from "react-i18next"
 import { setTaskListTrailer } from "../../redux/actions"
+import { selectIsFleetManagementLoaded } from "../../redux/selectors"
 
-export default ({vehicleId, username}) => {
+export default ({vehicleId, username, selectTrailerMenuId}) => {
 
-  const submenuId = `trailer-selectmenu-${username}`
   const { hideAll } = useContextMenu({
-    id: submenuId,
+    id: selectTrailerMenuId,
   })
 
   const { t } = useTranslation()
   const vehicle = useSelector(state => selectVehicleById(state, vehicleId))
-  const compatibleTrailerIds = vehicle.compatibleTrailers.map(item => item.trailer)
+  const isFleetManagementLoaded = useSelector(selectIsFleetManagementLoaded)
   const trailers = useSelector(selectAllTrailers)
   const trailerIdToTaskListIdMap = useSelector(selectTrailerIdToTaskListIdMap)
   const dispatch = useDispatch()
 
-  const onTrailerClick = ({ props, data }) =>{
-    dispatch(setTaskListTrailer(props.username, data.trailerId))
+  const onTrailerClick = ({ data }) => {
+    dispatch(setTaskListTrailer(username, data.trailerId))
     hideAll()
   }
 
   return (
-    <Menu id={submenuId}>-
-      { compatibleTrailerIds.length > 0 ?
+    <Menu id={selectTrailerMenuId}>
+      { isFleetManagementLoaded && vehicle ?
         <>
-          <Item key={-1} onClick={onTrailerClick} data={{trailerId: null}}>{ t('CLEAR') }</Item>
-          {compatibleTrailerIds.map((trailerId, index) => {
-            const trailer = trailers.find(t => t['@id'] === trailerId)
-            return (
-              <Item
-                onClick={onTrailerClick}
-                data={{trailerId: trailer['@id']}}
-                disabled={trailerIdToTaskListIdMap.has(trailer['@id'])}
-                key={index} >
-                  {trailer.name}
-              </Item>)
-          })}
-        </> :
-        <Item key={0} disabled>{ t('NO_COMPATIBLE_TRAILER') }</Item>
+          { vehicle.compatibleTrailers.map(item => item.trailer).length > 0 ?
+            <>
+              <Item key={-1} onClick={onTrailerClick} data={{trailerId: null}}>{ t('CLEAR') }</Item>
+              {vehicle.compatibleTrailers.map(item => item.trailer).map((trailerId, index) => {
+                const trailer = trailers.find(t => t['@id'] === trailerId)
+                return (
+                  <Item
+                    onClick={onTrailerClick}
+                    data={{trailerId: trailer['@id']}}
+                    disabled={trailerIdToTaskListIdMap.has(trailer['@id'])}
+                    key={index} >
+                      {trailer.name}
+                  </Item>)
+              })}
+            </> :
+            <Item key={0} disabled>{ t('NO_COMPATIBLE_TRAILER') }</Item>
+          }
+          </> : null
       }
     </Menu>
   )

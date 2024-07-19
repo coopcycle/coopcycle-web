@@ -12,7 +12,7 @@ import Task from './Task'
 
 import Avatar from '../../components/Avatar'
 import { unassignTasks, togglePolyline, optimizeTaskList, onlyFilter, toggleTaskListPanelExpanded } from '../redux/actions'
-import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectTrailersLoading, selectVehiclesLoading, selectVisibleTaskIds } from '../redux/selectors'
+import { selectExpandedTaskListPanelsIds, selectPolylineEnabledByUsername, selectVisibleTaskIds } from '../redux/selectors'
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
@@ -130,10 +130,9 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
   const tasks = useSelector(state => selectTaskListTasksByUsername(state, {username: username}))
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
-  const vehiclesLoading = useSelector(selectVehiclesLoading)
-  const trailersLoading = useSelector(selectTrailersLoading)
+  const selectTrailerMenuId = `trailer-selectmenu-${username}`
   const showTrailerMenu = useContextMenu({
-    id: `trailer-selectmenu-${username}`
+    id: selectTrailerMenuId
   }).show
 
   const visibleTasks = tasks.filter(task => {
@@ -273,10 +272,8 @@ export const TaskList = ({ uri, username, distance, duration, taskListsLoading }
           )}
         </Droppable>
       </div>
-      { !trailersLoading && !vehiclesLoading && taskList.vehicle ?
-        <TrailerSelectMenu username={username} vehicleId={taskList.vehicle} /> :
-        null
-      }
+      {/* do not conditionnally render this ContextMenu, it will cause crash when you open the menu */}
+      <TrailerSelectMenu username={username} vehicleId={taskList.vehicle} selectTrailerMenuId={selectTrailerMenuId} />
     </div>
   )
 }
