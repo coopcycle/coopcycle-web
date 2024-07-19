@@ -196,7 +196,7 @@ class PricingManager
     {
         $subscription->setRule($rule);
 
-        $tasks = $this->normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['delivery_create']]);
+        $tasks = $this->normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['task_create']]);
         $tasks = array_map(function($task) {
             unset($task['@id']);
 
