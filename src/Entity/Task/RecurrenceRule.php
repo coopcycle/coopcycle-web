@@ -210,4 +210,13 @@ class RecurrenceRule
     {
         $this->arbitraryPriceTemplate = $arbitraryPriceTemplate;
     }
+
+    /**
+     * @SerializedName("isCancelled")
+     * @Groups({"task_recurrence_rule"})
+     */
+    public function isCancelled(): bool
+    {
+        return $this->isDeleted();
+    }
 }

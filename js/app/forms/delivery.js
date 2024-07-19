@@ -504,7 +504,12 @@ export default function(name, options) {
         [recurrenceSlice.name]: {
           ...recurrenceSlice.getInitialState(),
           rule: subscription.rule,
+          isCancelled: subscription.isCancelled,
         }
+      }
+
+      if (subscription.isCancelled) {
+        $('button[type="submit"]').addClass('display-none');
       }
     }
 
@@ -556,9 +561,10 @@ export default function(name, options) {
         form.disable()
       }
 
-      const recurrenceRule = selectRecurrenceRule(reduxStore.getState())
-      if (recurrenceRule) {
-        document.querySelector('#delivery_recurrence').value = JSON.stringify({
+      const recurrenceField = document.querySelector('#delivery_recurrence')
+      if (recurrenceField) {
+        const recurrenceRule = selectRecurrenceRule(reduxStore.getState())
+        recurrenceField.value = JSON.stringify({
           rule: recurrenceRule
         })
       }

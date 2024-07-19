@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   rule: null,
+  isCancelled: false,
   modalIsOpen: false,
 }
 
@@ -40,5 +41,7 @@ export const recurrenceSlice = slice
 
 export const selectRecurrenceRule = state =>
   state.recurrence.rule
+export const selectIsCancelled = state =>
+  state.recurrence.isCancelled
 export const selectIsRecurrenceModalOpen = state =>
   state.recurrence.modalIsOpen

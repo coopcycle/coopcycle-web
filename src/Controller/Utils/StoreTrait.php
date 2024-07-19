@@ -441,9 +441,10 @@ trait StoreTrait
 
             if (null !== $rule) {
                 $pricingManager->updateSubscription($subscription, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+                $this->handleRememberAddress($store, $form);
+            } else {
+                $pricingManager->cancelSubscription($subscription, $tempDelivery);
             }
-
-            $this->handleRememberAddress($store, $form);
 
             return $this->redirectToRoute($routes['success']);
         }

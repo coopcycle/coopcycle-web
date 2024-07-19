@@ -173,23 +173,44 @@ class PricingManager
     {
         //FIXME; we have to temporary persist the delivery and tasks, because `TaskNormalizer` depends on database ids;
         // we should properly model subscription template to avoid the need for normalization
+        $this->persistTempDelivery($tempDelivery);
+
+        $this->setData($subscription, $tempDelivery, $rule, $pricingStrategy);
+        $this->entityManager->flush();
+
+        $this->cleanupTempDelivery($tempDelivery);
+
+        return $subscription;
+    }
+
+    public function cancelSubscription(RecurrenceRule $subscription, Delivery $tempDelivery): void
+    {
+        $this->persistTempDelivery($tempDelivery);
+
+        $this->entityManager->remove($subscription);
+        $this->entityManager->flush();
+
+        $this->cleanupTempDelivery($tempDelivery);
+    }
+
+    private function persistTempDelivery(Delivery $tempDelivery): void
+    {
+        // tempDelivery is added to entity manager by the form
         $tempDelivery->setOrder(null);
         foreach ($tempDelivery->getTasks() as $task) {
             $task->setPrevious(null);
             $task->setNext(null);
         }
-        $this->entityManager->persist($tempDelivery);
         $this->entityManager->flush();
+    }
 
-        $this->setData($subscription, $tempDelivery, $rule, $pricingStrategy);
-
+    private function cleanupTempDelivery(Delivery $tempDelivery): void
+    {
         foreach ($tempDelivery->getTasks() as $task) {
             $this->entityManager->remove($task);
         }
         $this->entityManager->remove($tempDelivery);
         $this->entityManager->flush();
-
-        return $subscription;
     }
 
     private function setData(RecurrenceRule $subscription, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): void
