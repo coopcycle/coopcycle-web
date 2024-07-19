@@ -18,6 +18,9 @@ import settingsReducers from './settingsReducers'
 import trackingReducers from './trackingReducers'
 import tourEntityReducers from './tourEntityReducers';
 import organizationEntityReducers from './organizationEntityReducers';
+import vehicleEntityReducers from './vehicleEntityReducers';
+import trailerEntityReducers from './trailerEntityReducers';
+import warehouseEntityReducers from './warehouseEntityReducers';
 
 const middlewares = [ thunk, socketIO, persistFilters ]
 
@@ -35,7 +38,10 @@ const reducer = combineReducers({
       tasks: reduceReducers(coreTaskEntityReducers, webTaskEntityReducers),
       taskLists: reduceReducers(coreTaskListEntityReducers, webTaskListEntityReducers),
       tours: reduceReducers(coreTourEntityReducers, tourEntityReducers),
-      organizations: reduceReducers(organizationEntityReducers)
+      organizations: reduceReducers(organizationEntityReducers),
+      vehicles: reduceReducers(vehicleEntityReducers),
+      trailers: reduceReducers(trailerEntityReducers),
+      warehouses: reduceReducers(warehouseEntityReducers)
     }),
     ui: reduceReducers(coreUiReducers, webUiReducers)
   }),

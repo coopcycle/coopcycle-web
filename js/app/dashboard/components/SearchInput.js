@@ -80,7 +80,7 @@ class SearchInput extends React.Component {
           this.setState({ q: value })
           this.search(value)
         }}
-        dataSource={resultsDisplay}
+        options={resultsDisplay}
         dropdownStyle={{zIndex: 1, height: "30vh"}}
       >
         <Input.Search placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') } />

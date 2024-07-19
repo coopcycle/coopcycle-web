@@ -802,6 +802,19 @@ fos_js_routing:
         - admin_transporter_message
         - api_organizations_get_collection
         - api_time_slots_get_collection
+        - api_warehouses_post_collection
+        - api_warehouses_get_collection
+        - api_warehouses_delete_item
+        - api_trailers_post_collection
+        - api_trailers_get_collection
+        - api_trailers_delete_item
+        - api_vehicles_post_collection
+        - api_vehicles_get_collection
+        - api_vehicles_delete_item
+        - admin_warehouses
+        - api_task_lists_patch_item
+        - api_vehicles_patch_item
+        - api_trailers_patch_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

@@ -735,6 +735,9 @@ basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous po
 basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a
   bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations
   personnelles</a>
+basics.address: Adresse
+warehouses.breadcrumb: Entrepôts
+warehouses.breadcrumb.help: Définir les entrepôts
 adminDashboard.embed.title: Formulaires
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle

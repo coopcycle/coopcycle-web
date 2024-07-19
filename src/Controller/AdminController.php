@@ -43,6 +43,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Warehouse;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -75,7 +76,6 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
-use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
@@ -2941,46 +2941,23 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/vehicles/new", name="admin_new_vehicle")
-     */
-    public function newVehicleAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $vehicle = new Vehicle();
-
-        $form = $this->createForm(VehicleType::class, $vehicle);
-
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-
-            $this->getDoctrine()->getManager()->persist($vehicle);
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute('admin_vehicles');
-        }
-
-        return $this->render('admin/vehicle.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
      * @Route("/admin/vehicles", name="admin_vehicles")
      */
     public function vehiclesAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
+        return $this->render('admin/vehicles.html.twig', $this->auth([]));
+    }
 
-        return $this->render('admin/vehicles.html.twig', [
-            'vehicles' => $vehicles,
-        ]);
+    /**
+     * @Route("/admin/warehouses", name="admin_warehouses")
+     */
+    public function warehousesAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
     /**
