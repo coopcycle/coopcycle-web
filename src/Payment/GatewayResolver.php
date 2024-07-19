@@ -3,6 +3,7 @@
 namespace AppBundle\Payment;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 
 class GatewayResolver
 {
@@ -54,5 +55,16 @@ class GatewayResolver
         }
 
         return $gateway === $this->resolveForCountry($this->country);
+    }
+
+    public function resolveForPayment(PaymentInterface $payment)
+    {
+        $details = $payment->getDetails();
+
+        if (isset($details['paygreen_payment_order_id']) && isset($details['paygreen_object_secret'])) {
+            return 'paygreen';
+        }
+
+        return $this->resolveForOrder($payment->getOrder());
     }
 }
