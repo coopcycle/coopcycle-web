@@ -68,6 +68,16 @@ export default () => {
     })
   }
 
+  const openVehicleCreateModal = () => {
+    setInitialValues({})
+    setIsVehicleModalOpen(true)
+  }
+
+  const openTrailerCreateModal = () => {
+    setInitialValues({})
+    setIsTrailerModalOpen(true)
+  }
+
   useEffect(() => {
     Promise.all([
       httpClient.get(window.Routing.generate("api_warehouses_get_collection")),
@@ -263,7 +273,7 @@ export default () => {
                 </div> :
                 <>
                   <div className="pull-right mb-2">
-                      <a onClick={() => setIsVehicleModalOpen(true)} className="btn btn-success">
+                      <a onClick={() => openVehicleCreateModal()} className="btn btn-success">
                         <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
                       </a>
                   </div>
@@ -303,7 +313,7 @@ export default () => {
                 </div> :
                 <>
                   <div className="pull-right mb-2">
-                      <a onClick={() => setIsTrailerModalOpen(true)} className="btn btn-success">
+                      <a onClick={() => openTrailerCreateModal()} className="btn btn-success">
                         <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
                       </a>
                   </div>

@@ -211,7 +211,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                 </div>
               </div>
               <div className="row">
-                <div className="input-group-btn pull-right">
+                <div className="input-group-btn text-center">
                   <button className="btn btn-primary" type="submit" disabled={isLoading}>
                     { t('SAVE_BUTTON') }
                   </button>
