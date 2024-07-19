@@ -10274,21 +10274,21 @@
         },
         {
             "name": "nucleos/profile-bundle",
-            "version": "2.3.x-dev",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "a1858aed7263ac0300515a8691e132d8acbfaf65"
+                "reference": "bee9d31a465bfde0c66ab9faf92f38c8c8004a85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/a1858aed7263ac0300515a8691e132d8acbfaf65",
-                "reference": "a1858aed7263ac0300515a8691e132d8acbfaf65",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/bee9d31a465bfde0c66ab9faf92f38c8c8004a85",
+                "reference": "bee9d31a465bfde0c66ab9faf92f38c8c8004a85",
                 "shasum": ""
             },
             "require": {
                 "doctrine/persistence": "^2.2.2 || ^3.0.0",
-                "nucleos/user-bundle": "^2.0",
+                "nucleos/user-bundle": "^2.3 || ^3.0",
                 "php": "^8.1",
                 "symfony/config": "^5.4 || ^6.2",
                 "symfony/dependency-injection": "^5.4 || ^6.2",
@@ -10351,7 +10351,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nucleos/NucleosProfileBundle/issues",
-                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/2.3.x"
+                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/2.4.0"
             },
             "funding": [
                 {
@@ -10371,7 +10371,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-07-05T08:48:05+00:00"
+            "time": "2023-08-10T17:27:20+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -23803,7 +23803,6 @@
     "stability-flags": {
         "league/geotools": 0,
         "drupal/core-vendor-hardening": 20,
-        "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
         "coopcycle/transporter": 20,
         "behatch/contexts": 20
