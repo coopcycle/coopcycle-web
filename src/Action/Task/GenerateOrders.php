@@ -34,7 +34,9 @@ class GenerateOrders
             throw new BadRequestHttpException('Date must be in the future');
         }
 
-        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findBy(['deletedAt' => null]);
+        $this->entityManager->getFilters()->enable('soft_deleteable');
+        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findAll();
+        $this->entityManager->getFilters()->disable('soft_deleteable');
 
         $subscriptions = array_filter($allSubscriptions, function ($subscription) use ($date) {
             return $this->filterByDate($subscription, $date);
