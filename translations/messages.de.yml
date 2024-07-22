@@ -461,7 +461,7 @@ index.our_restaurants: Unsere Restaurants
 index.banner: Dein Lieblingsessen zu dir nach Hause
 stores.addresses: Adressen
 stores.deliveries.heading: 'Lieferung #%delivery_id% - %delivery_distance%'
-stores.deliveries.heading2: 'Lieferung #%delivery_id%'§
+stores.deliveries.heading2: 'Lieferung #%delivery_id%'
 stores.deliveries: Lieferungen
 stores.api_keys: API Schlüssel
 stores.pricing_rule_set: Preisermittlung
