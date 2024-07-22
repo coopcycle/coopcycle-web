@@ -510,6 +510,11 @@ trait StoreTrait
 
         if (null !== $subscription) {
             $order->setSubscription($subscription);
+
+            foreach ($delivery->getTasks() as $task) {
+                $task->setRecurrenceRule($subscription);
+            }
+
             $entityManager->flush();
         }
     }
