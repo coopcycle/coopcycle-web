@@ -21,6 +21,10 @@
   </div>
 {% endif %}
 
+{% if is_granted('ROLE_DISPATCHER') and order.subscription is not empty %}
+  {% include '_partials/delivery/subscription_alert.html.twig' with { subscription: order.subscription } %}
+{% endif %}
+
 <div class="d-md-flex flex-md-row">
   <div class="flex-fill mr-md-4" data-change-state>
     <div class="mb-4">

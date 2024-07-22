@@ -12,6 +12,7 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -136,22 +137,29 @@ class DeliveryType extends AbstractType
                     'help' => 'form.new_order.variant_name.help',
                     'mapped' => false,
                     'required' => false,
-                    'data' => $arbitraryPrice ? $arbitraryPrice['productName'] : null,
+                    'data' => $arbitraryPrice ? $arbitraryPrice->getVariantName() : null,
                 ])
                 ->add('variantPrice', MoneyType::class, [
                     'label' => 'form.new_order.variant_price.label',
                     'mapped' => false,
                     'required' => false,
-                    'data' => $arbitraryPrice ? $arbitraryPrice['amount'] : null,
+                    'data' => $arbitraryPrice ? $arbitraryPrice->getValue() : null,
                 ]);
             }
 
-            if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && $delivery->getStore()) {
+            if ($options['with_bookmark'] && $delivery->getStore() && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('bookmark', CheckboxType::class, [
                     'label' => 'form.delivery.bookmark.label',
                     'mapped' => false,
                     'required' => false,
                     'data' => $delivery->getOrder() && $this->orderManager->hasBookmark($delivery->getOrder()),
+                ]);
+            }
+
+            if ($options['with_recurrence'] && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $form->add('recurrence', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
                 ]);
             }
         });
@@ -287,6 +295,8 @@ class DeliveryType extends AbstractType
             'with_address_props' => false,
             'with_arbitrary_price' => false,
             'arbitrary_price' => null,
+            'with_bookmark' => false,
+            'with_recurrence' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

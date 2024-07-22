@@ -385,6 +385,10 @@ adminDashboard.pledges.title: Anregungen
 adminDashboard.time_slots.title: Zeitfenster
 delivery.tracking_link: Sendungsverfolgung
 delivery.with_id: 'Versand #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Diese Bestellung wurde durch ein Abonnement generiert
+subscription.view: Abonnement anzeigen
 profile.username: Benutzername
 form.order.refund_modal.title: Rückzahlung
 form.payment.refund_amount.help: Der von Dir angegebene Betrag wird dem Kunden zurückerstattet
@@ -457,6 +461,7 @@ index.our_restaurants: Unsere Restaurants
 index.banner: Dein Lieblingsessen zu dir nach Hause
 stores.addresses: Adressen
 stores.deliveries.heading: 'Lieferung #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Lieferung #%delivery_id%'
 stores.deliveries: Lieferungen
 stores.api_keys: API Schlüssel
 stores.pricing_rule_set: Preisermittlung

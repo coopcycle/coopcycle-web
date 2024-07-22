@@ -54,10 +54,22 @@ services:
     autoconfigure: false
     tags: [ form.type ]
 
-  AppBundle\Form\NewOrderType:
+  AppBundle\Form\NewCustomOrderType:
     parent: AppBundle\Form\DeliveryType
     autowire: false
     autoconfigure: false
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\NewOrderType:
+    parent: AppBundle\Form\DeliveryType
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\OneOffOrderType:
+    parent: AppBundle\Form\DeliveryType
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\SubscriptionType:
+    parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:

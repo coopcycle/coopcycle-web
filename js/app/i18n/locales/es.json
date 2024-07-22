@@ -13,6 +13,7 @@
         "DATEPICKER_TODAY": "[Hoy]",
         "DATEPICKER_TOMORROW": "[Mañana]",
         "DASHBOARD_UNASSIGNED": "No asignado",
+        "DASHBOARD_GENERATING_ORDERS": "Comprobando suscripciones activas...",
         "ENABLED": "Activado",
         "DISABLED": "Desactivado",
         "VEHICLES": "Vehículos",
@@ -328,6 +329,9 @@
             "PER_PACKAGE_ADD_DISCOUNT": "Agregar descuento"
         },
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrar pedidos periódicos",
+        "RECURRENCE_RULE_ADD": "Agregar regla de recurrencia",
+        "RECURRENCE_RULE_DAYS_REQUIRED": "Por favor, elija al menos un día",
+        "SUBSCRIPTION_CANCELLED": "Suscripción cancelada",
         "EDENRED_SPLIT_AMOUNTS": "Usted puede pagar {{edenred}} con su tarjeta Edenred, pero aún así usted necesita pagar{{card}} con tarjeta de crédito",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Mostrar las entregas de forma ascendente.",
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Confirma  borrar todas las tareas del grupo?",

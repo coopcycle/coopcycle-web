@@ -11,6 +11,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
+use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
@@ -275,4 +276,16 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findBySubscriptionAndDate(Task\RecurrenceRule $subscription, DateTime $date)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        $this->addDateClause($qb, $date);
+
+        return $qb
+            ->andWhere('o.subscription = :subscription')
+            ->setParameter('subscription', $subscription)
+            ->getQuery()
+            ->getResult();
+    }
 }

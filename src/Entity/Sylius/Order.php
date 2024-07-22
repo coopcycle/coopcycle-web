@@ -43,6 +43,7 @@ use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
@@ -504,6 +505,8 @@ class Order extends BaseOrder implements OrderInterface
     protected $businessAccount;
 
     protected Collection $bookmarks;
+
+    protected ?RecurrenceRule $subscription = null;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -1806,5 +1809,15 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $this->getRestaurant()->supportsPaygreen();
+    }
+
+    public function getSubscription(): ?RecurrenceRule
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription(?RecurrenceRule $subscription): void
+    {
+        $this->subscription = $subscription;
     }
 }

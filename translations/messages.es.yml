@@ -539,6 +539,7 @@ stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
 stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Entrega #%delivery_id%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
 stores.addresses: Direcciones
@@ -681,6 +682,10 @@ adminDashboard.tags.confirm_delete: "¿Estás seguro de eliminar esta etiqueta? 
 adminDashboard.time_slots.title: Franja horaria
 delivery.tracking_link: Enlace de seguimiento
 delivery.with_id: 'Entrega #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Cette commande a été générée par un abonnement
+subscription.view: Voir l'abonnement
 help.title: Ayuda
 help.home: Casa
 restaurant.stats.order_number: Número de pedido

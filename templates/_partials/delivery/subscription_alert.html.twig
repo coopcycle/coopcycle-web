@@ -1,0 +1,8 @@
+<div class="alert alert-info">
+  <i class="fa fa-info-circle"></i> {{ 'subscription.generated_order'|trans }}
+  <span class="pull-right">
+    <a class="btn btn-xs btn-success" href="{{ path('admin_store_subscriptions', { storeId: subscription.store.id, subscriptionId: subscription.id }) }}">
+      {{ 'subscription.view'|trans }}
+    </a>
+  </span>
+</div>

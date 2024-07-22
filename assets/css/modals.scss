@@ -80,6 +80,11 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+.ReactModal__Overlay--zIndex-1001 {
+  // For example, could be used to put the modal *ABOVE* the Leaflet map (z-index: 1000)
+  z-index: 1001;
+}
+
 .ReactModal__Content {
   position: absolute;
   top: 50%;
