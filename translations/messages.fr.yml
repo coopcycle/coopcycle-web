@@ -698,6 +698,8 @@ stores.deliveries.heading2: 'Livraison #%delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
+stores.deliveries.bookmarks: Commandes enregistrées
+stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
@@ -1252,6 +1254,7 @@ order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% de
   paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
 form.delivery.arbitrary_price.label: Definir le prix manuellement
+form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
 homepage.featured: À la une

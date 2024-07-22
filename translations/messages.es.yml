@@ -543,6 +543,8 @@ stores.deliveries.heading2: 'Entrega #%delivery_id%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
 stores.addresses: Direcciones
+stores.deliveries.bookmarks: Pedidos guardados
+stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega para encontrarlos fácilmente más tarde
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han sido\
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\
@@ -926,6 +928,7 @@ form.delivery.pickup.address_placeholder: Número de casa y nombre de la calle, 
   código postal, ciudad
 form.delivery.dropoff.address_placeholder: Número de casa y nombre de la calle, área,
   código postal, ciudad
+form.delivery.bookmark.label: Añadir a Pedidos guardados
 form.order.refuse.label: Rechazar
 form.order.refuse.refund.alert: Este pedido se pagó con un método de pago que no gestiona
   las autorizaciones previas. Si lo rechaza, se reembolsará el pago. ¿Estás seguro?

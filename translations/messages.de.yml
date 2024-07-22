@@ -497,6 +497,8 @@ adminDashboard.activity.title: Aktivitäten
 index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
 stores.deliveries.task_unassigned: Nicht zugeteilt
 stores.manage: Verwalten
+stores.deliveries.bookmarks: Gespeicherte Bestellungen
+stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite, um sie später leichter zu finden
 roles.ROLE_STORE.help: 'Laden-Besitzer*in: zugeordnete Läden verwalten, Sendungen
   verwalten, ...'
 roles.ROLE_RESTAURANT.help: 'Restaurant-Besitzer*in: zugeordnete Restaurants verwalten,
@@ -596,6 +598,7 @@ restaurant.contract.calculation_info: Sie können dem Restaurant einen anderen B
 form.task.dropoff.doorstep.label: Türschwelle-Zustellung
 form.delivery.pickup.address_placeholder: Straßenname und Hausnummer, Postleitzahl,
   Stadt
+form.delivery.bookmark.label: Zu gespeicherten Bestellungen hinzufügen
 form.suggest.message: "Ist ihr Lieblingsrestaurant nicht dabei?\n<br>\nTeilen Sie\
   \ uns den Namen des Restaurants und seine Adresse mit, sodass andere Benutzer*innen\
   \ es in der Liste der Wünschrestaurants es wählen können. \n<br>\nDas wird uns ermöglichen,\
