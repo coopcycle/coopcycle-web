@@ -240,8 +240,12 @@ class PricingManager
                 unset($task['ref']);
             }
 
-            //FIXME:
-            unset($task['tags']);
+            if (isset($task['tags'])) {
+                $task['tags'] = array_map(
+                    fn ($tag) => $tag['slug'],
+                    $task['tags']
+                );
+            }
 
             return $task;
         }, $tasks);

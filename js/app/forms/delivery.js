@@ -12,7 +12,6 @@ import { I18nextProvider } from 'react-i18next'
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import DateRangePicker from '../widgets/DateRangePicker'
-import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
 import i18n from '../i18n'
 import { RecurrenceRules } from './components/RecurrenceRules'
@@ -22,6 +21,7 @@ import {
   selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
+import TagsSelect from '../components/TagsSelect'
 
 const selectTasks = state => state.tasks
 
@@ -229,14 +229,20 @@ function createDatePickerWidget(name, type, isAdmin = false) {
 }
 
 function createTagsWidget(name, type, tags) {
-  new TagsInput(document.querySelector(`#${name}_${type}_tagsAsString_widget`), {
-    tags,
-    defaultValue: [],
-    onChange: function(tags) {
-      var slugs = tags.map(tag => tag.slug)
-      document.querySelector(`#${name}_${type}_tagsAsString`).value = slugs.join(' ')
-    }
-  })
+  const initialValue = document.querySelector(`#${name}_${type}_tagsAsString`).value
+
+  const root = createRoot(document.querySelector(`#${name}_${type}_tagsAsString_widget`))
+  root.render(
+    <TagsSelect
+      defaultValue={initialValue ?? ''}
+      isMulti
+      onChange={tags => {
+        let slugs = tags.map(tag => tag.slug)
+        document.querySelector(`#${name}_${type}_tagsAsString`).value = slugs.join(' ')
+      }}
+      tags={tags}
+    />,
+  )
 }
 
 function createSwitchTimeSlotWidget(name, taskForm) {
