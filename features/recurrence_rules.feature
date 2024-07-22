@@ -44,7 +44,8 @@ Feature: Task recurrence rules
           },
           "after":"11:30",
           "before":"12:00"
-        }
+        },
+        "isCancelled":false
       }
       """
 
@@ -119,7 +120,8 @@ Feature: Task recurrence rules
               "before":"12:30"
             }
           ]
-        }
+        },
+        "isCancelled":false
       }
       """
 
@@ -165,7 +167,8 @@ Feature: Task recurrence rules
           },
           "after":"11:30",
           "before":"12:30"
-        }
+        },
+        "isCancelled":false
       }
       """
 
@@ -239,7 +242,8 @@ Feature: Task recurrence rules
         },
         "store":"/api/stores/1",
         "orgName":"Acme",
-        "name":null
+        "name":null,
+        "isCancelled":false
       }
       """
 
