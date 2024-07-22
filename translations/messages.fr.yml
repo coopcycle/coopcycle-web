@@ -88,6 +88,10 @@ adminDashboard.pledges.title: Suggestions
 delivery.createNew: Créer une livraison
 delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Cette commande a été générée par un abonnement
+subscription.view: Voir l'abonnement
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
@@ -690,6 +694,7 @@ stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
 stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Livraison #%delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
