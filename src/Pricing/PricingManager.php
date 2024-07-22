@@ -222,7 +222,7 @@ class PricingManager
             unset($task['@id']);
 
             // Keep only the time part of the date in the template
-            $dateTimeFields = ['before', 'after'];
+            $dateTimeFields = ['after', 'before', 'doneAfter', 'doneBefore'];
             foreach ($dateTimeFields as $field) {
                 if (!isset($task[$field])) {
                     continue;
