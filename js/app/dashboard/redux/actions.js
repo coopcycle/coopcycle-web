@@ -976,7 +976,7 @@ export function optimizeTaskList(taskList) {
     })
       .then(response => {
         dispatch(putTaskListItems(taskList.username, response.data.solution.items))
-        dispatch(setOptimResult({previous: taskList, unassigned_count: response.data.unassigned_count}))
+        dispatch(setOptimResult({previous: taskList, unassignedCount: response.data.unassignedCount}))
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))

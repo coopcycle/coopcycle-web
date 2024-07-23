@@ -32,7 +32,7 @@ final class Optimize
                 'item_operation_name' => 'get',
                 'groups' => ['task_list']
             ]),
-            "unassigned_count" => $optim["unassigned_count"]
+            "unassignedCount" => $optim["unassignedCount"]
         ]);
     }
 }

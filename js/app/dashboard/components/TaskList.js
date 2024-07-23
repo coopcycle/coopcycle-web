@@ -267,7 +267,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
                   {previousDistance: formatDistance(lastOptimResult.previous.distance), previousDuration: formatDuration(lastOptimResult.previous.duration)}
                 )
               }
-              { lastOptimResult.unassigned_count > 0 ? <><br /><span className="error">{ t('ADMIN_DASHBOARD_OPTIMIZATION_UNASSIGNED_TASKS', {count: lastOptimResult.unassigned_count}) }</span></> : null}
+              { lastOptimResult.unassignedCount > 0 ? <><br /><span className="error">{ t('ADMIN_DASHBOARD_OPTIMIZATION_UNASSIGNED_TASKS', {count: lastOptimResult.unassignedCount}) }</span></> : null}
             </p>
               <a className="btn btn-default btn-xs" onClick={() => dispatch(putTaskListItems(username, lastOptimResult.previous.items))}>{ t('UNDO') }</a>
           </div>

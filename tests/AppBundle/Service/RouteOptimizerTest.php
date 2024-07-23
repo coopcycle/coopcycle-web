@@ -272,7 +272,7 @@ class RouteOptimizerTest extends KernelTestCase
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
 
-        $unassignedCount = $optimizer->optimize($taskList)["unassigned_count"];
+        $unassignedCount = $optimizer->optimize($taskList)["unassignedCount"];
         $this->assertEquals($unassignedCount, 2);
    }
 

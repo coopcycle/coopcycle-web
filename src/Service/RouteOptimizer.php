@@ -96,7 +96,7 @@ class RouteOptimizer
 
         return [
             "solution" => $res,
-            "unassigned_count" => $data["summary"]["unassigned"]
+            "unassignedCount" => $data["summary"]["unassigned"]
         ];
     }
 
