@@ -22,6 +22,7 @@ module.exports = {
       return require("./cypress/plugins/index.js")(on, config);
     },
     baseUrl: "http://localhost:9080",
+    experimentalStudio: true,
   },
 
   component: {
