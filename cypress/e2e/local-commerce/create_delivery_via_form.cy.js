@@ -11,8 +11,7 @@ context('Delivery', () => {
       cy.exec(cmd)
     })
 
-    // fails on GitHub CI. to be fixed when we redo delivery form.
-    it.skip('create delivery via form', () => {
+    it('create delivery via form', () => {
 
       cy.visit('/fr/embed/delivery/start')
 
@@ -21,7 +20,7 @@ context('Delivery', () => {
       cy.searchAddress(
         '[data-form="task"]:nth-of-type(1)',
         '91 rue de rivoli paris',
-        '91 Rue De Rivoli, 75001 Paris, France'
+        /^91,? Rue de Rivoli,? 75001,? Paris,? France/i,
       )
 
       // Dropoff
@@ -29,24 +28,24 @@ context('Delivery', () => {
       cy.searchAddress(
         '[data-form="task"]:nth-of-type(2)',
         '120 rue st maur paris',
-        '120 Rue Saint-Maur'
+        /^120,? Rue Saint-Maur,? 75011,? Paris,? France/i,
       )
 
       cy.get('[data-form="task"]')
         .each(($el) => {
           cy.wrap($el).find('[id$="address_newAddress_latitude"]')
             .invoke('val')
-            .should('match', /[0-9\.]+/)
+            .should('match', /[0-9.]+/)
           cy.wrap($el).find('[id$="address_newAddress_longitude"]')
             .invoke('val')
-            .should('match', /[0-9\.]+/)
+            .should('match', /[0-9.]+/)
         })
 
       cy.get('#delivery_name').type('John Doe', { timeout: 5000, delay: 30 })
       cy.get('#delivery_email').type('dev@coopcycle.org', { timeout: 5000, delay: 30 })
       cy.get('#delivery_telephone').type('0612345678', { timeout: 5000, delay: 30 })
 
-      cy.get('form[name="delivery"] button[type="submit"]').click()
+      cy.get('form[name="delivery"]').submit()
 
       cy.location('pathname').should('match', /\/fr\/forms\/[a-zA-Z0-9]+\/summary/)
 
@@ -54,10 +53,11 @@ context('Delivery', () => {
         .invoke('text')
         .should('match', /Vous avez demandé une course qui vous sera déposée le/)
 
-      cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe', { timeout: 5000, delay: 30 })
+      cy.get('form[name="checkout_payment"] input[type="text"]')
+        .type('John Doe', { timeout: 5000, delay: 30 })
       cy.enterCreditCard()
 
-      cy.get('form[name="checkout_payment"] button[type="submit"]').click()
+      cy.get('form[name="checkout_payment"]').submit()
 
       cy.location('pathname', { timeout: 30000 }).should('match', /\/fr\/pub\/o\/[a-zA-Z0-9]+/)
     })
