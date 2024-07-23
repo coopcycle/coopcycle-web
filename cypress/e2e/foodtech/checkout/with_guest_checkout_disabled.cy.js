@@ -32,7 +32,7 @@ describe('Checkout (happy path); with guest checkout disabled', () => {
 
     cy.get('.cart__items').invoke('text').should('match', /Cheeseburger/)
 
-    cy.searchAddress(
+    cy.searchAddressUsingAddressModal(
       '.ReactModal__Content--enter-address',
       '91 rue de rivoli paris',
       /^91,? Rue de Rivoli,? 75001,? Paris,? France/i,

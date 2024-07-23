@@ -37,7 +37,7 @@ context('Checkout', () => {
         cy.get('.ReactModal__Content--enter-address')
           .should('be.visible')
 
-        cy.searchAddress(
+        cy.searchAddressUsingAddressModal(
         '.ReactModal__Content--enter-address',
         '10, avenue Ledru-Rollin 75012',
         '10 Avenue Ledru-Rollin, 75012 Paris, France'

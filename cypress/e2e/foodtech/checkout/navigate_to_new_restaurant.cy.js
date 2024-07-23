@@ -32,7 +32,7 @@ context('Checkout', () => {
         cy.get('.ReactModal__Content--enter-address').should('be.visible')
         cy.get('.cart__items').invoke('text').should('match', /Cheese Cake/)
 
-        cy.searchAddress(
+        cy.searchAddressUsingAddressModal(
           '.ReactModal__Content--enter-address',
           '91 rue de rivoli paris',
           '91 Rue De Rivoli, 75001 Paris, France'

@@ -35,7 +35,7 @@ describe('Failed checkout; time range is not valid any more', () => {
     cy.get('.cart__items').invoke('text').should('match', /Cheeseburger/)
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart2')
-    cy.searchAddress(
+    cy.searchAddressUsingAddressModal(
       '.ReactModal__Content--enter-address',
       '91 rue de rivoli paris',
       /^91,? Rue de Rivoli,? 75001,? Paris,? France/i,
