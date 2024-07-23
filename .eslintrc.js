@@ -40,5 +40,6 @@ module.exports = {
     'react/prop-types': 'off',
     'react/display-name': 'off',
     'react/no-deprecated': 'warn',
+    "cypress/unsafe-to-chain-command": "warn",
   },
 }
