@@ -19,7 +19,7 @@
   </thead>
   <tbody>
   {% for delivery in deliveries %}
-    <tr>
+    <tr data-testid="delivery__list_item">
       <td>
         <a href="{{ path(routes.view, { id: delivery.id }) }}">#{{ delivery.id }}</a>
       </td>
