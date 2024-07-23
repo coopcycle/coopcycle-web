@@ -26,9 +26,6 @@ module.exports = {
 
   component: {
     setupNodeEvents(on, config) {},
-  },
-
-  component: {
     devServer: {
       framework: "react",
       bundler: "webpack",
