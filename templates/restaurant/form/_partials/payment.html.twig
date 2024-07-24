@@ -46,6 +46,7 @@
     {% endif %}
 
   {% if form.paygreenShopId is defined %}
+    <h4>{{ 'form.local_business.paygreen_account.title'|trans }}</h4>
     {{ form_row(form.paygreenShopId) }}
   {% endif %}
 
