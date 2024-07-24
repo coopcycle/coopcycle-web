@@ -117,6 +117,7 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="paygreenShopId" type="string" column="paygreen_shop_id" nullable="true"/>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>

@@ -82,8 +82,8 @@
 {% set pickup = delivery.pickup %}
 {% set dropoff = delivery.dropoff %}
 
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 {{ encore_entry_script_tags('delivery-map') }}
+
 <script>
 
 new CoopCycle.DeliveryMap('map', {
@@ -98,6 +98,8 @@ $("#modify-form").on('click', function() {
     .submit()
 });
 
+</script>
+
 {% include 'payment/scripts.html.twig' with {
   order: order,
   payment: payment,
@@ -105,5 +107,4 @@ $("#modify-form").on('click', function() {
   token_element_selector: '#checkout_payment_stripePayment_stripeToken'
 } %}
 
-</script>
 {% endblock %}

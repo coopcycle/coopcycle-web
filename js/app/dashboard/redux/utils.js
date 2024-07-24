@@ -324,12 +324,12 @@ export const formatDistance = (distance) => {
  * @param {Integer} weight - weight in g
  */
 export const formatWeight = (weight) => {
-  return (weight / 1000).toFixed(2) + ' kg'
+  return (weight / 1000).toFixed(2)
 }
 
 /**
  * @param {Integer} vu - volume units
  */
 export const formatVolumeUnits = (vu) => {
-  return (vu).toFixed(2) + ' v.u.'
+  return (vu).toFixed(2)
 }

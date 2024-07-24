@@ -148,6 +148,7 @@
         "league/flysystem-ftp": "^3.0",
         "coopcycle/transporter": "dev-master",
         "league/flysystem-sftp-v3": "^3.0",
+        "paygreen/paygreen-php": "*",
         "runtime/frankenphp-symfony": "^0.2.0"
     },
     "require-dev": {

@@ -35,7 +35,7 @@ export default () => {
   const defaultDisplayedValue = Array.prototype.concat(
     unassignedTasksFilters.excludedTags.map((slug) => {
       const tag = findTagFromSlug(slug, allTags)
-      return {...tag, label: '-'+tag.name, value: slug, isExclusion: true}
+      return {...tag, label: '-'+ tag.name, value: slug, isExclusion: true}
     }),
     unassignedTasksFilters.includedTags.map((slug) => {
       const tag = findTagFromSlug(slug, allTags)

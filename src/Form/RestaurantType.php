@@ -159,27 +159,32 @@ class RestaurantType extends LocalBusinessType
             if (null !== $restaurant->getId()) {
 
                 if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
-                    $gateway = $this->gatewayResolver->resolve();
 
-                    switch ($gateway) {
-                        case 'mercadopago':
-                            $form->add('allowMercadopagoConnect', CheckboxType::class, [
-                                'label' => 'restaurant.form.allow_mercadopago_connect.label',
-                                'mapped' => false,
-                                'required' => false,
-                                'data' => in_array('ROLE_RESTAURANT', $restaurant->getMercadopagoConnectRoles())
-                            ]);
-                            break;
-                        case 'stripe':
-                        default:
-                            $form->add('allowStripeConnect', CheckboxType::class, [
-                                'label' => 'restaurant.form.allow_stripe_connect.label',
-                                'mapped' => false,
-                                'required' => false,
-                                'data' => in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())
-                            ]);
-                            break;
+                    if ($this->gatewayResolver->supports('mercadopago')) {
+                        $form->add('allowMercadopagoConnect', CheckboxType::class, [
+                            'label' => 'restaurant.form.allow_mercadopago_connect.label',
+                            'mapped' => false,
+                            'required' => false,
+                            'data' => in_array('ROLE_RESTAURANT', $restaurant->getMercadopagoConnectRoles())
+                        ]);
                     }
+
+                    if ($this->gatewayResolver->supports('stripe')) {
+                        $form->add('allowStripeConnect', CheckboxType::class, [
+                            'label' => 'restaurant.form.allow_stripe_connect.label',
+                            'mapped' => false,
+                            'required' => false,
+                            'data' => in_array('ROLE_RESTAURANT', $restaurant->getStripeConnectRoles())
+                        ]);
+                    }
+
+                    if ($this->gatewayResolver->supports('paygreen')) {
+                        $form->add('paygreenShopId', TextType::class, [
+                            'label' => 'restaurant.form.paygreen_shop_id.label',
+                            'required' => false,
+                        ]);
+                    }
+
                     if (!$restaurant->isDeleted()) {
                         $form->add('delete', SubmitType::class, [
                             'label' => 'basics.delete',

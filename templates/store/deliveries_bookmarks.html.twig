@@ -1,0 +1,29 @@
+{% extends layout %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a>
+  </li>
+  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+  <li>{% trans %}stores.deliveries.bookmarks{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+  <h3>{{ 'stores.deliveries.bookmarks'|trans }}</h3>
+
+  {% include '_partials/delivery/list.html.twig' with { deliveries: bookmarks, empty_message: 'stores.deliveries.bookmarks.empty_message' } %}
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('delivery-list') }}
+  <style>
+    .dashboard-subnav {
+      background-color: #e41939 !important;
+    }
+  </style>
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('delivery-list') }}
+{% endblock %}

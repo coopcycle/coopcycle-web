@@ -17,17 +17,20 @@ class httpClient {
   }
 
   async request({ method, url, data, params, headers }, depth = 0) {
+    const sendHeaders = {
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json',
+      Authorization: `Bearer ${this.jwt}`,
+      ...headers,
+    }
+
     try {
       const response = await axios({
         method,
         url,
         data,
         params,
-        headers: {
-          "Content-Type": "application/json; charset=utf-8",
-          Authorization: `Bearer ${this.jwt}`,
-          ...headers,
-        },
+        headers: sendHeaders,
       });
       return { response: response.data, error: null };
     } catch (err) {
@@ -36,7 +39,13 @@ class httpClient {
           if (depth < 3) {
             await this._refreshToken();
             return await this.request(
-              { method, url, data, params, headers },
+              {
+                method,
+                url,
+                data,
+                params,
+                headers: sendHeaders
+              },
               depth + 1,
             );
           }

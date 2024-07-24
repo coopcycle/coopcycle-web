@@ -16,6 +16,8 @@
         <join-column name="courier_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="vehicle" target-entity="AppBundle\Entity\Vehicle" nullable="true"></many-to-one>
+    <many-to-one field="trailer" target-entity="AppBundle\Entity\Trailer" nullable="true"></many-to-one>
     <field name="distance" type="integer" column="distance" nullable="false"/>
     <field name="duration" type="integer" column="duration" nullable="false"/>
     <field name="polyline" type="text" column="polyline" nullable="false"/>

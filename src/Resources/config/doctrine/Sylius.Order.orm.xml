@@ -133,6 +133,16 @@
     <many-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount" inversed-by="orders">
       <join-column name="business_account_id" referenced-column-name="id" nullable="true" />
     </many-to-one>
+    <one-to-many field="bookmarks" target-entity="AppBundle\Entity\Sylius\OrderBookmark" mapped-by="order" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+    <many-to-one field="subscription" target-entity="AppBundle\Entity\Task\RecurrenceRule">
+      <join-columns>
+        <join-column name="subscription_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />
+      </join-columns>
+    </many-to-one>
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\OrderListener">
         <lifecycle-callback type="preUpdate" method="preUpdate"/>

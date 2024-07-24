@@ -614,6 +614,15 @@ services:
         arguments:
             - '%sonic_namespace%'
 
+  AppBundle\Entity\Sylius\OrderRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Sylius\Order
+    calls: [[setDeliveryRepository, ['@AppBundle\Entity\DeliveryRepository']]]
+
+  sylius.repository.order:
+    alias: AppBundle\Entity\Sylius\OrderRepository
+
   AppBundle\Service\Routing\Osrm: ~
 
   routing_service:
@@ -1136,6 +1145,7 @@ services:
         - cl
         - co
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
 
   AppBundle\Payment\Gateway: ~
 
@@ -1428,3 +1438,18 @@ services:
     arguments: [
       '@edenredsynchronizer.client',
     ]
+
+  paygreen.http_client:
+    class: Symfony\Component\HttpClient\Psr18Client
+
+  AppBundle\Paygreen\EnvironmentFactory:
+    arguments:
+      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+
+  Paygreen\Sdk\Payment\V3\Environment:
+    factory: '@AppBundle\Paygreen\EnvironmentFactory'
+
+  Paygreen\Sdk\Payment\V3\Client:
+    arguments:
+      - '@paygreen.http_client'
+      - '@Paygreen\Sdk\Payment\V3\Environment'

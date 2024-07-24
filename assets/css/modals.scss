@@ -2,7 +2,7 @@
 
 @mixin modal-content-border() {
   border-radius: 8px;
-  box-shadow: 0 4px 64px 0 #0000000D;
+  box-shadow: 4px 4px 4px 0 $dark-gray;
 }
 
 /* Vertically centered modal */
@@ -80,6 +80,11 @@
   background-color: rgba(0, 0, 0, 0.5);
 }
 
+.ReactModal__Overlay--zIndex-1001 {
+  // For example, could be used to put the modal *ABOVE* the Leaflet map (z-index: 1000)
+  z-index: 1001;
+}
+
 .ReactModal__Content {
   position: absolute;
   top: 50%;
@@ -113,9 +118,6 @@
   gap: 0.5rem;
 }
 
-.ReactModal__Html--open {
-}
-
 // Prevent scroll
 // https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-the-documentbody-and-html-tag
 .ReactModal__Body--open,
@@ -128,4 +130,12 @@
     // An attempt to prevent the content from shifting when the scrollbar is removed (due to overflow: hidden)
     padding-right: 15px;
   }
+}
+
+.ReactModal__Content {
+  @include modal-content-border();
+  min-width: 60%;
+  border: 1px solid $dark-gray;
+  padding: 15px;
+  max-height: calc(100vh - 30px);
 }

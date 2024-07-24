@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryFormSubmission;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
@@ -335,7 +336,7 @@ class EmbedController extends AbstractController
             $telephone = $form->get('telephone')->getData();
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
+            $order    = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $customer, $attach = false);
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [

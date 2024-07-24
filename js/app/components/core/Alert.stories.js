@@ -19,17 +19,24 @@ export const Default = {
   },
 }
 
-export const Primary = {
-  args: {
-    children: 'Primary',
-    primary: true,
-  },
-}
-
 export const Success = {
   args: {
     children: 'Success',
     success: true,
+  },
+}
+
+export const Info = {
+  args: {
+    children: 'Info',
+    info: true,
+  },
+}
+
+export const Warning = {
+  args: {
+    children: 'Warning',
+    warning: true,
   },
 }
 
@@ -40,16 +47,9 @@ export const Danger = {
   },
 }
 
-export const Link = {
-  args: {
-    children: 'Link',
-    link: true,
-  },
-}
-
 export const Loading = {
   args: {
-    children: 'Default',
+    children: 'Loading',
     loading: true,
   },
 }

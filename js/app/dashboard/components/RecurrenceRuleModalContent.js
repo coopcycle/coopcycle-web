@@ -459,12 +459,12 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, closeRecurrenceRuleM
           setFieldValue,
         }) => (
           <div>
-              <div className="p-4 border-bottom" >
-                  <input className="form-control"
-                        placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }
-                        value={ values.name }
-                        onChange={ e => setFieldValue('name', e.target.value) } />
-              </div>
+            <div className="p-4 border-bottom" >
+                <input className="form-control"
+                      placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }
+                      value={ values.name }
+                      onChange={ e => setFieldValue('name', e.target.value) } />
+            </div>
             <div className="p-4 border-bottom">
               <Select
                 defaultValue={ _.find(storesOptions, o => o.value === values.store) }

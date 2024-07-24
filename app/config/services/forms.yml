@@ -45,6 +45,7 @@ services:
       $authorizationChecker: '@security.authorization_checker'
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
+      $orderManager: '@AppBundle\Service\OrderManager'
     tags: [ form.type ]
 
   AppBundle\Form\DeliveryEmbedType:
@@ -53,10 +54,22 @@ services:
     autoconfigure: false
     tags: [ form.type ]
 
-  AppBundle\Form\NewOrderType:
+  AppBundle\Form\NewCustomOrderType:
     parent: AppBundle\Form\DeliveryType
     autowire: false
     autoconfigure: false
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\NewOrderType:
+    parent: AppBundle\Form\DeliveryType
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\OneOffOrderType:
+    parent: AppBundle\Form\DeliveryType
+    tags: [ form.type ]
+
+  AppBundle\Form\Order\SubscriptionType:
+    parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:

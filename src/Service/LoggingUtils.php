@@ -38,9 +38,9 @@ class LoggingUtils
         return implode(' | ', $stack);
     }
 
-    private function getElementOrEmptyString($arr, $key) {
+    private function getElementOrEmptyString($arr, $key): string {
         if (array_key_exists($key, $arr)) {
-            return $arr[$key];
+            return (string) $arr[$key];
         } else {
             return '';
         }

@@ -16,6 +16,18 @@ class BaseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $parentForm = $form->getParent();
+
+            $settings = $parentForm->getData();
+
+            foreach (array_keys($form->all()) as $key) {
+                $form->get($key)->setData($settings->{$key});
+            }
+        });
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();

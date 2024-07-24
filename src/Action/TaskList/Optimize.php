@@ -3,27 +3,36 @@
 namespace AppBundle\Action\TaskList;
 
 use AppBundle\Entity\TaskList;
+use AppBundle\Serializer\TaskListNormalizer;
 use AppBundle\Service\RouteOptimizer;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class Optimize
 {
-    private $optimizer;
 
-    public function __construct(RouteOptimizer $optimizer)
-    {
-        $this->optimizer = $optimizer;
-    }
+    public function __construct(
+        private RouteOptimizer $optimizer,
+        private TaskListNormalizer $taskListNormalizer)
+    {}
 
     public function __invoke($data)
     {
-        $optimizedItems = $this->optimizer->optimize($data);
+        $optim = $this->optimizer->optimize($data);
 
         $data->clear();
 
-        foreach ($optimizedItems as $item) {
+        foreach ($optim["solution"] as $item) {
             $data->addItem($item);
         }
 
-        return $data;
+        return new JsonResponse([
+            "solution" => $this->taskListNormalizer->normalize($data, 'jsonld', [
+                'resource_class' => TaskList::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['task_list']
+            ]),
+            "unassignedCount" => $optim["unassignedCount"]
+        ]);
     }
 }

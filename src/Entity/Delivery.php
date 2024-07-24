@@ -181,7 +181,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this->order;
     }
 
-    public function setOrder(OrderInterface $order)
+    public function setOrder(?OrderInterface $order)
     {
         $this->order = $order;
 

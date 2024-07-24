@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
+docker compose exec php php vendor/bin/phpunit "$@"

@@ -8,6 +8,7 @@ import {
 const initialState = {
   organizationsLoading: true,
   taskListsLoading: false,
+  optimLoading: false,
   isTourDragging: true,
   currentTask: null,
   expandedTourPanelIds: [],

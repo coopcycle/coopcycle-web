@@ -17,3 +17,15 @@ export const tourAdapter = createEntityAdapter({
 export const organizationAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
 })
+
+export const vehicleAdapter = createEntityAdapter({
+  selectId: (o) => o['@id'],
+})
+
+export const trailerAdapter = createEntityAdapter({
+  selectId: (o) => o['@id'],
+})
+
+export const warehouseAdapter = createEntityAdapter({
+  selectId: (o) => o['@id'],
+})

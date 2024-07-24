@@ -15,7 +15,13 @@ import {
   toggleTourPanelExpanded,
   toggleTaskListPanelExpanded,
   toggleTasksGroupPanelExpanded,
-  setTaskToShow
+  setTaskToShow,
+  loadVehiclesSuccess,
+  loadTrailersSuccess,
+  setTaskListsLoading,
+  loadWarehousesSuccess,
+  setOptimResult,
+  startOptimRequest
 } from "./actions";
 
 // will be overrided by js/shared/src/logistics/redux/uiReducers.js when we reduce reducers so set initialState there
@@ -38,6 +44,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         taskListsLoading: false,
+      }
+
+    case setTaskListsLoading.type:
+      return {
+        ...state,
+        taskListsLoading: action.payload,
       }
 
     case OPEN_NEW_TASK_MODAL:
@@ -128,6 +140,31 @@ export default (state = initialState, action) => {
       return {
         ...state,
         organizationsLoading: false,
+      }
+    case loadVehiclesSuccess.type:
+      return {
+        ...state,
+        vehiclesLoading: false,
+      }
+    case loadTrailersSuccess.type:
+      return {
+        ...state,
+        trailersLoading: false,
+      }
+    case loadWarehousesSuccess.type:
+      return {
+        ...state,
+        warehousesLoading: false
+      }
+    case startOptimRequest.type:
+      return {
+        ...state,
+        optimLoading: true,
+      }
+    case setOptimResult.type:
+      return {
+        ...state,
+        optimLoading: false,
       }
   }
 

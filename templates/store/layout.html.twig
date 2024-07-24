@@ -51,6 +51,11 @@
             {{ 'stores.deliveries'|trans }}
           </a>
         </li>
+        <li role="presentation">
+          <a href="{{ path('admin_store_deliveries_bookmarks', { id: store.id }) }}">
+            {{ 'stores.deliveries.bookmarks'|trans }}
+          </a>
+        </li>
         {% endif %}
         {% endif %}
       </ul>

@@ -202,6 +202,7 @@ Feature: Tasks
       {
         "@context":"/api/contexts/TaskList",
         "@id":"@string@.startsWith('/api/task_lists/')",
+        "id": "@integer@",
         "@type":"TaskList",
         "hydra:member":[
           {
@@ -351,7 +352,9 @@ Feature: Tasks
         "date":"2018-03-02",
         "username":"bob",
         "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()"
+        "updatedAt":"@string@.isDateTime()",
+        "vehicle": null,
+        "trailer": null
       }
       """
 
@@ -375,6 +378,7 @@ Feature: Tasks
       {
         "@context":"/api/contexts/TaskList",
         "@id":"@string@.startsWith('/api/task_lists')",
+        "id": "@integer@",
         "@type":"TaskList",
         "hydra:member":[],
         "hydra:totalItems":0,
@@ -385,7 +389,9 @@ Feature: Tasks
         "date":"2020-03-02",
         "username":"bob",
         "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()"
+        "updatedAt":"@string@.isDateTime()",
+        "vehicle": null,
+        "trailer": null
       }
       """
 

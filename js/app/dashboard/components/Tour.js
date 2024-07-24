@@ -12,7 +12,7 @@ import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectTourPolylinesEnabledById, selectTourIdToColorMap } from '../redux/selectors'
 import ExtraInformations from './TaskCollectionDetails'
-import PolylineIcon from '../PolylineIcon'
+import PolylineIcon from './icons/PolylineIcon'
 
 
 const RenderEditNameForm = ({children, tour, isLoading}) => {

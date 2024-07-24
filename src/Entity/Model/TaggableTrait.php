@@ -8,12 +8,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 trait TaggableTrait
 {
-    protected $tags;
+    protected array $tags = [];
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getTaggableResourceClass()
+    public function getTaggableResourceClass(): string
     {
         return ClassUtils::getClass($this);
     }
@@ -22,12 +19,8 @@ trait TaggableTrait
      * @SerializedName("tags")
      * @Groups({"task", "order", "order_minimal"})
      */
-    public function getTags()
+    public function getTags(): array
     {
-        if (null === $this->tags) {
-            $this->tags = [];
-        }
-
         return $this->tags;
     }
 
@@ -35,13 +28,13 @@ trait TaggableTrait
      * @SerializedName("tags")
      * @Groups({"task_create", "task_edit"})
      */
-    public function setTags($tags)
+    public function setTags(array|string $tags): void
     {
         $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
         $this->tags = array_unique($this->tags);
     }
 
-    public function addTags($tags)
+    public function addTags(array|string $tags): void
     {
         $this->tags = array_merge(
             $this->getTags(),

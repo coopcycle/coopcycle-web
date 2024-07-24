@@ -88,6 +88,10 @@ adminDashboard.pledges.title: Suggestions
 delivery.createNew: Créer une livraison
 delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Cette commande a été générée par un abonnement
+subscription.view: Voir l'abonnement
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
@@ -690,9 +694,12 @@ stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
 stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Livraison #%delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
+stores.deliveries.bookmarks: Commandes enregistrées
+stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
@@ -735,6 +742,9 @@ basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous po
 basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a
   bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations
   personnelles</a>
+basics.address: Adresse
+warehouses.breadcrumb: Entrepôts
+warehouses.breadcrumb.help: Définir les entrepôts
 adminDashboard.embed.title: Formulaires
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle
@@ -1244,6 +1254,7 @@ order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% de
   paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
 form.delivery.arbitrary_price.label: Definir le prix manuellement
+form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
 homepage.featured: À la une
@@ -1422,3 +1433,4 @@ form.settings.company_legal_name.help: "Veuillez entrer le nom légal complet de
 form.settings.company_legal_id.label: "Numéro de SIRET"
 form.settings.company_legal_id.help: "Ce numéro est généralement disponible sur les documents officiels de l'entreprise, tels que les factures ou les contrats."
 restaurant.form.edenred_enabled.label: Activer Edenred
+restaurant.form.paygreen_shop_id.label: Identifiant de boutique Paygreen

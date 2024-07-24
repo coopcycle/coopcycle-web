@@ -9,18 +9,28 @@ use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Entity\Sylius\PricingStrategy;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
+use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
+use AppBundle\Form\Order\NewOrderType;
+use AppBundle\Form\Order\SubscriptionType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,6 +39,9 @@ use League\Flysystem\Filesystem;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Psr\Log\LoggerInterface;
+use Recurr\Exception\InvalidRRule;
+use Recurr\Rule;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
@@ -266,74 +279,15 @@ trait StoreTrait
         ]);
     }
 
-    private function duplicatePreviousOrder(EntityManagerInterface $entityManager, $store, $hashid): array | null
-    {
-        if (null === $hashid) {
-            return null;
-        }
-
-        $hashids = new Hashids($this->getParameter('secret'), 16);
-        $decoded = $hashids->decode($hashid);
-        if (count($decoded) !== 1) {
-            return null;
-        }
-
-        $fromOrder = current($decoded);
-
-        $previousOrder = $entityManager
-            ->getRepository(Order::class)
-            ->find($fromOrder);
-
-        if (null === $previousOrder) {
-            return null;
-        }
-
-        $previousDelivery = $previousOrder->getDelivery();
-
-        if (null === $previousDelivery) {
-            return null;
-        }
-
-        if ($store !== $previousDelivery->getStore()) {
-            return null;
-        }
-
-        // Keep the original objects untouched, creating new ones instead
-        $newTasks = array_map(function($task){
-            return $task->duplicate();
-        }, $previousDelivery->getTasks());
-
-        $delivery = Delivery::createWithTasks(...$newTasks);
-        $delivery->setStore($store);
-
-        $orderItem = $previousOrder->getItems()->first();
-        $productVariant = $orderItem->getVariant(); // @phpstan-ignore method.nonObject
-
-        $previousArbitraryPrice = null;
-
-        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
-            // price based on the PricingRuleSet; will be recalculated based on the latest rules
-        } else {
-            // arbitrary price
-            $previousArbitraryPrice = [
-                'productName' => $productVariant->getName(),
-                'amount' => $productVariant->getPrice(),
-            ];
-        }
-
-        return [
-            'delivery' => $delivery,
-            'previousArbitraryPrice' => $previousArbitraryPrice,
-        ];
-    }
-
     public function newStoreDeliveryAction($id, Request $request,
-        OrderManager $orderManager,
         DeliveryManager $deliveryManager,
+        PricingManager $pricingManager,
+        OrderManager $orderManager,
         OrderFactory $orderFactory,
+        OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
-        OrderNumberAssignerInterface $orderNumberAssigner)
+        LoggerInterface $logger)
     {
         $routes = $request->attributes->get('routes');
 
@@ -347,11 +301,8 @@ trait StoreTrait
         $previousArbitraryPrice = null;
 
         if ($this->isGranted('ROLE_ADMIN')) {
-            // pre-fill fields with the data from the previous order
-
-            $hashid = $request->query->get('frmrdr');
-
-            $data = $this->duplicatePreviousOrder($entityManager, $store, $hashid);
+            // pre-fill fields with the data from a previous order
+            $data = $this->duplicateOrder($request, $store, $pricingManager);
             if (null !== $data) {
                 $delivery = $data['delivery'];
                 $previousArbitraryPrice = $data['previousArbitraryPrice'];
@@ -362,11 +313,7 @@ trait StoreTrait
             $delivery = $store->createDelivery();
         }
 
-        $form = $this->createDeliveryForm($delivery, [
-            'with_dropoff_doorstep' => true,
-            'with_remember_address' => true,
-            'with_address_props' => true,
-            'with_arbitrary_price' => true,
+        $form = $this->createForm(NewOrderType::class, $delivery, [
             'arbitrary_price' => $previousArbitraryPrice,
         ]);
 
@@ -375,13 +322,14 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
-            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
-                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
-
-            if ($useArbitraryPrice) {
-
+            if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
                 $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
                     $entityManager, $orderNumberAssigner);
+
+                $order = $delivery->getOrder();
+
+                $this->handleBookmark($orderManager, $form, $order);
+                $this->handleNewSubscription($pricingManager, $entityManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -390,9 +338,10 @@ trait StoreTrait
                 try {
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, $price, $this->getUser()->getCustomer());
+                    $order = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $this->getUser()->getCustomer());
 
                     $this->handleRememberAddress($store, $form);
+                    $this->handleBookmark($orderManager, $form, $order);
 
                     $entityManager->persist($order);
                     $entityManager->flush();
@@ -400,6 +349,8 @@ trait StoreTrait
                     $orderManager->onDemand($order);
 
                     $entityManager->flush();
+
+                    $this->handleNewSubscription($pricingManager, $entityManager, $logger, $store, $form, $delivery, $order);
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -421,7 +372,7 @@ trait StoreTrait
             }
         }
 
-        return $this->render('store/delivery_form.html.twig', [
+        return $this->render('store/deliveries/new.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -430,6 +381,79 @@ trait StoreTrait
             'store_route' => $routes['store'],
             'back_route' => $routes['back'],
             'show_left_menu' => $request->attributes->get('show_left_menu', true),
+        ]);
+    }
+
+    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager)
+    {
+        $hashid = $request->query->get('frmrdr');
+
+        if (null === $hashid) {
+            return null;
+        }
+
+        $hashids = new Hashids($this->getParameter('secret'), 16);
+        $decoded = $hashids->decode($hashid);
+        if (count($decoded) !== 1) {
+            return null;
+        }
+
+        $fromOrder = current($decoded);
+        return $pricingManager->duplicateOrder($store, $fromOrder);
+    }
+
+    public function subscriptionAction($storeId, $subscriptionId,
+        Request $request,
+        PricingManager $pricingManager,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+    )
+    {
+        $subscription = $entityManager
+            ->getRepository(RecurrenceRule::class)
+            ->find($subscriptionId);
+
+        $this->accessControl($subscription, 'view');
+
+        $store = $subscription->getStore();
+
+        $tempOrder = $pricingManager->createOrderFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
+        $tempDelivery = $tempOrder->getDelivery();
+
+        $routes = $request->attributes->get('routes');
+
+        $arbitraryPrice = null;
+        if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
+            $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
+        }
+
+        $form = $this->createForm(SubscriptionType::class, $tempDelivery, [
+            'arbitrary_price' => $arbitraryPrice,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $tempDelivery = $form->getData();
+
+            $arbitraryPrice = $this->getArbitraryPrice($form);
+            $rule = $this->getRecurrenceRule($form, $logger);
+
+            if (null !== $rule) {
+                $pricingManager->updateSubscription($subscription, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+                $this->handleRememberAddress($store, $form);
+            } else {
+                $pricingManager->cancelSubscription($subscription, $tempDelivery);
+            }
+
+            return $this->redirectToRoute($routes['success']);
+        }
+
+        return $this->render('store/subscriptions/item.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'subscription' => $subscription,
+            'delivery' => $tempDelivery,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -446,6 +470,112 @@ trait StoreTrait
                 $store->addAddress($task->getAddress());
             }
         }
+    }
+
+    private function handleBookmark(OrderManager $orderManager, FormInterface $form, OrderInterface $order): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        if (!$form->has('bookmark')) {
+            return;
+        }
+
+        $isBookmarked = true === $form->get('bookmark')->getData();
+        $orderManager->setBookmark($order, $isBookmarked);
+    }
+
+    private function handleNewSubscription(
+        PricingManager $pricingManager,
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger,
+        Store $store,
+        FormInterface $form,
+        Delivery $delivery,
+        OrderInterface $order,
+        PricingStrategy $pricingStrategy = new UsePricingRules): void
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return;
+        }
+
+        $recurrenceRule = $this->getRecurrenceRule($form, $logger);
+
+        if (null === $recurrenceRule) {
+            return;
+        }
+
+        $subscription = $pricingManager->createSubscription($store, $delivery, $recurrenceRule, $pricingStrategy);
+
+        if (null !== $subscription) {
+            $order->setSubscription($subscription);
+
+            foreach ($delivery->getTasks() as $task) {
+                $task->setRecurrenceRule($subscription);
+            }
+
+            $entityManager->flush();
+        }
+    }
+
+    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        if (!$form->has('arbitraryPrice')) {
+            return null;
+        }
+
+        if (true !== $form->get('arbitraryPrice')->getData()) {
+            return null;
+        }
+
+        $variantPrice = $form->get('variantPrice')->getData();
+        $variantName = $form->get('variantName')->getData();
+
+        return new ArbitraryPrice($variantName, $variantPrice);
+    }
+
+
+    private function getRecurrenceRule(FormInterface $form, LoggerInterface $logger): ?Rule
+    {
+        if (!$form->has('recurrence')) {
+            return null;
+        }
+
+        $recurrenceData = $form->get('recurrence')->getData();
+
+        if (null === $recurrenceData) {
+            return null;
+        }
+
+        $recurrence = json_decode($recurrenceData, true);
+
+        if (null === $recurrence) {
+            return null;
+        }
+
+        $ruleStr = $recurrence['rule'];
+
+        if (null === $ruleStr) {
+            return null;
+        }
+
+        $rule = null;
+        try {
+            $rule = new Rule($ruleStr);
+        } catch (InvalidRRule $e) {
+            $logger->warning('Invalid recurrence rule', [
+                'rule' => $ruleStr,
+                'exception' => $e->getMessage(),
+            ]);
+            return null;
+        }
+
+        return $rule;
     }
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)
@@ -557,6 +687,34 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
+        ]);
+    }
+
+    public function storeDeliveriesBookmarksAction($id, Request $request,
+        EntityManagerInterface $entityManager,
+        OrderRepository $orderRepository)
+    {
+        /**
+         * Currently we only support bookmarks for admin users,
+         * if (when) we need to support bookmarks for store owners,
+         * make sure that admin users and store owners can't see each other's bookmarks
+         */
+
+        $store = $entityManager
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store, 'view');
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->render('store/deliveries_bookmarks.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'bookmarks' => $orderRepository->findBookmarked($store, $this->getUser()),
+            'routes' => $this->getDeliveryRoutes(),
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
         ]);
     }
 

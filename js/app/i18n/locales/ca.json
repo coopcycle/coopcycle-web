@@ -6,7 +6,7 @@
         "OPENING_HOURS_SINGLE": "El {{day}} des de {{open}} fins {{close}}",
         "OPENING_HOURS_RANGE": "Del {{fromDay}} al {{toDay}}, de{{open}} a {{close}}",
         "DELIVERY_TIME_SLOTS": "Horaris d'entrega",
-        "ADD_BUTON": "Afegir",
+        "ADD_BUTTON": "Afegir",
         "DATEPICKER_TODAY": "[Avui]",
         "DATEPICKER_TOMORROW": "[Demà]",
         "DASHBOARD_UNASSIGNED": "Sense assignar",

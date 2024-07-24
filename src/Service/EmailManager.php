@@ -66,6 +66,8 @@ class EmailManager
             $message = $message->html($body);
         }
 
+        $message->embedFromPath(__DIR__ . '/../../web/img/logo.png', 'logo', 'image/png');
+
         return $message;
     }
 

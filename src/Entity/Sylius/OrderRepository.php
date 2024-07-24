@@ -3,16 +3,17 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Refund;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
+use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
 use Sylius\Component\Customer\Model\CustomerInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
@@ -21,6 +22,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class OrderRepository extends BaseOrderRepository
 {
+
+    private ?DeliveryRepository $deliveryRepository;
+
+    // This method is called by Dependency Injection
+    public function setDeliveryRepository(?DeliveryRepository $deliveryRepository): void
+    {
+        $this->deliveryRepository = $deliveryRepository;
+    }
+
     public function findCartsByRestaurant(LocalBusiness $restaurant)
     {
         $qb = $this->createQueryBuilder('o')
@@ -250,4 +260,32 @@ class OrderRepository extends BaseOrderRepository
         return $id;
     }
 
+    public function findBookmarked(Store $store, UserInterface $user): array
+    {
+        $qb = $this->deliveryRepository->createQueryBuilder('d')
+            ->where('d.store = :store')
+            ->join(Order::class, 'o', Join::WITH, 'o = d.order')
+            ->join(OrderBookmark::class, 'b', Join::WITH, 'b.order = o')
+            ->andWhere('b.owner = :user OR b.role IN (:userRoles)')
+            ->orderBy('o.id', 'DESC')
+            ->setParameter('store', $store)
+            ->setParameter('user', $user)
+            ->setParameter('userRoles', $user->getRoles())
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findBySubscriptionAndDate(Task\RecurrenceRule $subscription, DateTime $date)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        $this->addDateClause($qb, $date);
+
+        return $qb
+            ->andWhere('o.subscription = :subscription')
+            ->setParameter('subscription', $subscription)
+            ->getQuery()
+            ->getResult();
+    }
 }

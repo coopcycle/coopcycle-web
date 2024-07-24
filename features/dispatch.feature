@@ -44,6 +44,7 @@ Feature: Dispatch
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/task_lists')",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":@array@,
             "distance":0,
@@ -52,10 +53,13 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"sarah",
-            "date":"2018-12-01"
+            "date":"2018-12-01",
+            "vehicle": null,
+            "trailer": null
           },
           {
             "@id":"@string@.startsWith('/api/task_lists')",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":@array@,
             "distance":0,
@@ -64,7 +68,9 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"bob",
-            "date":"2018-12-01"
+            "date":"2018-12-01",
+            "vehicle": null,
+            "trailer": null
           }
         ],
         "hydra:totalItems":2,
@@ -353,6 +359,7 @@ Feature: Dispatch
         "hydra:member":[
           {
             "@id":"/api/task_lists/1",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":[
               {
@@ -369,10 +376,13 @@ Feature: Dispatch
             "date":"2018-12-01",
             "username":"sarah",
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()"
+            "updatedAt":"@string@.isDateTime()",
+            "vehicle": null,
+            "trailer": null
           },
           {
             "@id":"/api/task_lists/2",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":[
               {
@@ -389,7 +399,9 @@ Feature: Dispatch
             "date":"2018-12-01",
             "username":"bob",
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()"
+            "updatedAt":"@string@.isDateTime()",
+            "vehicle": null,
+            "trailer": null
           }
         ],
         "hydra:totalItems":2,

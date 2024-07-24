@@ -298,6 +298,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?int $rateLimitAmount;
 
+    protected ?string $paygreenShopId = null;
+
     /**
      * @Groups({"restaurant"})
      */
@@ -1188,4 +1190,18 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->autoAcceptOrdersEnabled = $enabled;
     }
 
+    public function setPaygreenShopId(string $shopId): void
+    {
+        $this->paygreenShopId = $shopId;
+    }
+
+    public function getPaygreenShopId(): ?string
+    {
+        return $this->paygreenShopId;
+    }
+
+    public function supportsPaygreen(): bool
+    {
+        return null !== $this->getPaygreenShopId();
+    }
 }
