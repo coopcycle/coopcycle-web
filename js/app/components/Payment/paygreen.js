@@ -90,8 +90,7 @@ export default {
           resolve(paymentOrder.id)
           break;
         case paygreenjs.Events.PAYMENT_FAIL:
-          // TODO Use the actual error message
-          reject(new Error('Try again later'));
+          reject(event.detail?.error || new Error('An error occurred'));
           break;
       }
     }
@@ -131,12 +130,12 @@ export default {
 
           window.paygreenjs.attachEventListener(
             paygreenjs.Events.FULL_PAYMENT_DONE,
-            this.submitPaymentListener
+            (event) => this.submitPaymentListener(event)
           );
 
           window.paygreenjs.attachEventListener(
             paygreenjs.Events.PAYMENT_FAIL,
-            this.submitPaymentListener
+            (event) => this.submitPaymentListener(event)
           );
 
           window.paygreenjs.init({
