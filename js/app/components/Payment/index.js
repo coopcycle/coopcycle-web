@@ -80,10 +80,10 @@ export default function(formSelector, options) {
       gatewayConfig,
       amount: options.amount,
       onChange: (event) => {
+        event.complete ? enableBtn(submitButton) : disableBtn(submitButton)
         if (event.error) {
           document.getElementById('card-errors').textContent = event.error.message
         } else {
-          event.complete && enableBtn(submitButton)
           document.getElementById('card-errors').textContent = ''
         }
       },
