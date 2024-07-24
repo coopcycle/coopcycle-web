@@ -227,10 +227,14 @@ export default function(formSelector, options) {
               cashDisclaimer.remove()
             }
 
-            cc.mount(document.getElementById('card-element'), value, response.data, options).then(() => {
-              document.getElementById('card-element').scrollIntoView()
-              enableBtn(submitButton)
-            })
+            cc.mount(document.getElementById('card-element'), value, response.data, options)
+              .then(() => {
+                document.getElementById('card-element').scrollIntoView()
+                enableBtn(submitButton)
+              })
+              .catch(e => {
+                document.getElementById('card-errors').textContent = e.message
+              })
             break
           case 'edenred':
             // TODO
