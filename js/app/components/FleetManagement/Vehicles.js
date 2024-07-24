@@ -180,11 +180,12 @@ export default () => {
       dataIndex: "compatibleVehicles",
       render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} vehicles={vehicles} />,
     },
-    {
-      key: "edit",
-      align: "right",
-      render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
-    },
+    //
+    // {
+    //   key: "edit",
+    //   align: "right",
+    //   render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
+    // },
     {
       key: "action",
       align: "right",
