@@ -11,16 +11,20 @@ context('Delivery', () => {
     cy.exec(cmd)
   })
 
-  it('create delivery as store', () => {
-    cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
-
+  it('create delivery as admin', function () {
     cy.visit('/login')
 
-    cy.login('store_1', 'store_1')
+    cy.login('admin', '12345678')
 
-    cy.location('pathname').should('eq', '/dashboard')
+    cy.visit('/admin/stores')
 
-    cy.get('a').contains('Créer une livraison').click()
+    cy.get('[data-testid=store__list_item]')
+      .find('.dropdown-toggle')
+      .click()
+
+    cy.get('[data-testid=store__list_item]')
+      .contains('Créer une livraison')
+      .click()
 
     // Pickup
 
@@ -123,17 +127,11 @@ context('Delivery', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-    cy.wait('@apiRoutingRoute')
-
-    cy.get('#delivery_distance')
-      .invoke('text')
-      .should('match', /[0-9.]+ Km/)
-
     cy.get('#delivery-submit').click()
 
     cy.location('pathname', { timeout: 3000 }).should(
       'match',
-      /\/dashboard\/stores\/[0-9]+\/deliveries$/,
+      /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
     cy.get('[data-testid=delivery__list_item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
