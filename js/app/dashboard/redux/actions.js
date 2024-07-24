@@ -1711,7 +1711,6 @@ export function loadVehicles() {
         'Content-Type': 'application/ld+json'
       }
     })
-    console.log(data)
     dispatch(loadVehiclesSuccess(data))
   }
 }
