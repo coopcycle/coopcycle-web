@@ -180,6 +180,7 @@ export default () => {
       dataIndex: "compatibleVehicles",
       render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} vehicles={vehicles} />,
     },
+    // https://github.com/coopcycle/coopcycle-web/issues/4529
     //
     // {
     //   key: "edit",
