@@ -136,10 +136,10 @@ context('Delivery', () => {
       /\/dashboard\/stores\/[0-9]+\/deliveries$/,
     )
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i)
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/^72,? Rue Saint-Maur,? 75011,? Paris,? France/i)
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
   })
 })
