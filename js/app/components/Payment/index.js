@@ -236,9 +236,9 @@ export default function(formSelector, options) {
             }
 
             cc.mount(document.getElementById('card-element'), value, response.data, options)
-              .then(() => {
+              .then((shouldEnableBtn = true) => {
                 document.getElementById('card-onmount-focus').scrollIntoView()
-                enableBtn(submitButton)
+                shouldEnableBtn && enableBtn(submitButton)
               })
               .catch(e => {
                 document.getElementById('card-errors').textContent = e.message
