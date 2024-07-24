@@ -64,43 +64,35 @@ export default {
       }
     }
 
-    this.createPaymentFlowOnChangeListener = (resolve) => {
-      return (event) => {
+    this.createPaymentFlowOnChangeListener = (resolve) => (event) => {
 
-        console.log(event.type, event.detail)
+      console.log(event.type, event.detail)
 
-        if (!event?.detail?.method && event?.detail?.status === 'pending') {
-          // We do not enable the submit button for now
-          resolve(false)
-        }
+      if (!event?.detail?.method && event?.detail?.status === 'pending') {
+        // We do not enable the submit button for now
+        resolve(false)
+      }
 
-        // https://developers.paygreen.fr/recipes/pgjs-conecs-bank-card-payment
-        // If the first flow was successful, we ask to pay the rest by credit card
-        if (!event?.detail?.method && paygreenjs.status().flows[0].status === 'success') {
-          window.paygreenjs.setPaymentMethod('bank_card');
-        }
+      // https://developers.paygreen.fr/recipes/pgjs-conecs-bank-card-payment
+      // If the first flow was successful, we ask to pay the rest by credit card
+      if (!event?.detail?.method && paygreenjs.status().flows[0].status === 'success') {
+        window.paygreenjs.setPaymentMethod('bank_card');
       }
     }
 
     // Placeholder function, will be overriden when createToken() is called
     this.submitPaymentListener = (event) => console.log(event)
 
-    this.createSubmitPaymentListener = (resolve, reject) => {
-
-      return (event) => {
-
-        console.log('submitPaymentListener', event)
-
-        switch (event.type) {
-          case paygreenjs.Events.FULL_PAYMENT_DONE:
-            const { paymentOrder } = window.paygreenjs.status()
-            resolve(paymentOrder.id)
-            break;
-          case paygreenjs.Events.PAYMENT_FAIL:
-            // TODO Use the actual error message
-            reject(new Error('Try again later'));
-            break;
-        }
+    this.createSubmitPaymentListener = (resolve, reject) => (event) => {
+      switch (event.type) {
+        case paygreenjs.Events.FULL_PAYMENT_DONE:
+          const { paymentOrder } = window.paygreenjs.status()
+          resolve(paymentOrder.id)
+          break;
+        case paygreenjs.Events.PAYMENT_FAIL:
+          // TODO Use the actual error message
+          reject(new Error('Try again later'));
+          break;
       }
     }
 
@@ -119,31 +111,10 @@ export default {
           window.paygreenjs.attachEventListener(
             paygreenjs.Events.ERROR,
             (event) => {
-              // FIXME
+              // FIXME Grab the actuall error message
               console.log(event.type, event.detail)
             }
           );
-
-          /*
-          window.paygreenjs.attachEventListener(
-            paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
-            (event) => {
-
-              console.log(event)
-              console.log(window.paygreenjs.status())
-
-              if (!event?.detail?.method && paygreenjs.status().flows[0].status === 'success') {
-                this.listeners.forEach(cb => {
-                  if (typeof cb === 'function') {
-                    cb(event, null, true);
-                  }
-                });
-                this.listeners = [];
-                window.paygreenjs.setPaymentMethod('bank_card');
-              }
-            }
-          );
-          */
 
           // This will enable the submit button once the card is 100% valid
           window.paygreenjs.attachEventListener(
@@ -160,34 +131,12 @@ export default {
 
           window.paygreenjs.attachEventListener(
             paygreenjs.Events.FULL_PAYMENT_DONE,
-            (event) => {
-              this.submitPaymentListener(event)
-              /*
-              console.log(event.type, event.detail)
-              this.listeners.forEach(cb => {
-                if (typeof cb === 'function') {
-                  cb(event, response.data.id, true);
-                }
-              });
-              this.listeners = [];
-              */
-            }
+            this.submitPaymentListener
           );
 
           window.paygreenjs.attachEventListener(
             paygreenjs.Events.PAYMENT_FAIL,
-            (event) => {
-              this.submitPaymentListener(event)
-              /*
-              console.log(event.type, event.detail)
-              this.listeners.forEach(cb => {
-                if (typeof cb === 'function') {
-                  cb(event, response.data.id, false);
-                }
-              });
-              this.listeners = [];
-              */
-            }
+            this.submitPaymentListener
           );
 
           window.paygreenjs.init({
@@ -219,23 +168,7 @@ export default {
     }
   },
   async createToken() {
-    console.log('createToken')
     return new Promise((resolve, reject) => {
-
-      console.log(window.paygreenjs.status())
-
-
-      /*
-      this.listeners.push((event, paymentOrderID, success) => {
-        if (success) {
-          resolve(paymentOrderID);
-        } else {
-          reject(new Error('Try again later'));
-        }
-      })
-      this.
-      */
-
       this.submitPaymentListener = this.createSubmitPaymentListener(resolve, reject);
       window.paygreenjs.submitPayment();
     });
