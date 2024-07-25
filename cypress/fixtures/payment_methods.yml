@@ -1,0 +1,6 @@
+Sylius\Component\Payment\Model\PaymentMethod:
+  payment_method_cart:
+    code: CARD
+    currentLocale: fr
+    name: Card
+    enabled: true

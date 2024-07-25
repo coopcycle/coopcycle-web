@@ -2,6 +2,7 @@ include:
   - settings.yml
   - sylius_channels.yml
   - sylius_taxation.yml
+  - payment_methods.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
