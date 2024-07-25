@@ -17,7 +17,7 @@ module.exports = {
 
   retries: {
     // Configure retry attempts for `cypress run`
-    runMode: 3,
+    runMode: 2,
     // Configure retry attempts for `cypress open`
     openMode: 0,
   },
