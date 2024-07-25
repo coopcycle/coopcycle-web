@@ -1,4 +1,4 @@
-context('Delivery', () => {
+context('Delivery (role: admin)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
@@ -9,20 +9,19 @@ context('Delivery', () => {
     }
 
     cy.exec(cmd)
-  })
 
-  it('create delivery as admin', function () {
     cy.visit('/login')
-
     cy.login('admin', '12345678')
-
+  })
+  
+  it('create delivery for store with createOrders disabled', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store__list_item]')
+    cy.get('[data-testid=store_Store_with_createOrders_disabled__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store__list_item]')
+    cy.get('[data-testid=store_Store_with_createOrders_disabled__list_item]')
       .contains('Créer une livraison')
       .click()
 

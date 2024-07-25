@@ -1,4 +1,4 @@
-context('Delivery', () => {
+context('Delivery via form', () => {
     beforeEach(() => {
 
       const prefix = Cypress.env('COMMAND_PREFIX')
@@ -11,7 +11,7 @@ context('Delivery', () => {
       cy.exec(cmd)
     })
 
-    it('create delivery via form', () => {
+    it('create delivery', () => {
 
       cy.visit('/fr/embed/delivery/start')
 

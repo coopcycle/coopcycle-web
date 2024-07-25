@@ -1,4 +1,4 @@
-context('Delivery', () => {
+context('Delivery (role: store)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
@@ -11,7 +11,7 @@ context('Delivery', () => {
     cy.exec(cmd)
   })
 
-  it('create delivery as store', () => {
+  it('create delivery', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
     cy.visit('/login')
