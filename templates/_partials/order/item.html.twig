@@ -1,6 +1,6 @@
 {% set options_adjustments = item.getAdjustments('menu_item_modifier') %}
 {% set packaging_adjustments = item.getAdjustments('reusable_packaging') %}
-<tr>
+<tr data-testid="order_item">
   <td>
     <span class="text-muted">{{ item.quantity }} ×</span> {{ item.variant.name }}
     {% if options_adjustments|length > 0 or packaging_adjustments|length > 0 %}
@@ -22,7 +22,7 @@
     </ul>
     {% endif %}
   </td>
-  <td class="text-right">
+  <td class="text-right" data-testid="total">
     {{ item.total|price_format }}
   </td>
 </tr>

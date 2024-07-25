@@ -126,6 +126,8 @@ context('Delivery (role: admin)', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
+    cy.get('[data-tax="included"]').contains('4,99 €')
+
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
@@ -158,6 +160,10 @@ context('Delivery (role: admin)', () => {
       'match',
       /\/admin\/orders\/[0-9]+$/,
     )
+
+    cy.get('[data-testid="order_item"]')
+      .find('[data-testid="total"]')
+      .contains('€4.99')
   })
 
   it('create delivery for store with createOrders disabled', function () {
