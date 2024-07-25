@@ -215,9 +215,7 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $form = $this->createForm(CheckoutAddressType::class, $order, [
-            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests should run with CSRF protection enabled, but once in a while it fails
-        ]);
+        $form = $this->createForm(CheckoutAddressType::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -344,9 +342,7 @@ class OrderController extends AbstractController
         $stripeManager->configurePayment($payment);
 
         $checkoutPayment = new CheckoutPayment($order);
-        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
-            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while it fails
-        ]);
+        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
 
         $parameters =  [
             'order' => $order,
