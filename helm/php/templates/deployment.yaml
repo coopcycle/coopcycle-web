@@ -1,0 +1,186 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "api-platform.fullname" . }}
+  labels:
+    {{- include "api-platform.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "api-platform.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secrets.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "api-platform.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "api-platform.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-php
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.php.image.repository }}:{{ .Values.php.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.php.image.pullPolicy }}
+          env:
+            - name: SERVER_NAME
+              value: :80
+            - name: MERCURE_PUBLISHER_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: mercure-jwt-secret
+            - name: MERCURE_SUBSCRIBER_JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: mercure-jwt-secret
+            - name: TRUSTED_HOSTS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: php-trusted-hosts
+            - name: TRUSTED_PROXIES
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: php-trusted-proxies
+            - name: APP_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: php-app-env
+            - name: APP_DEBUG
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: php-app-debug
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: php-app-secret
+            - name: CORS_ALLOW_ORIGIN
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: php-cors-allow-origin
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: database-url
+            - name: COOPCYCLE_DB_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: database-host
+            - name: COOPCYCLE_DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: database-port
+            - name: COOPCYCLE_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: database-name
+            - name: COOPCYCLE_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: database-user
+            - name: COOPCYCLE_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: database-password
+            - name: CADDY_GLOBAL_OPTIONS
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: caddy-global-options
+            - name: MERCURE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: mercure-url
+            - name: MERCURE_PUBLIC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: mercure-public-url
+            - name: MERCURE_EXTRA_DIRECTIVES
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: mercure-extra-directives
+            - name: MERCURE_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "api-platform.fullname" . }}
+                  key: mercure-jwt-secret
+{{/*          COOPCYCLE_REDIS_DSN=redis://redis:6379*/}}
+            - name: COOPCYCLE_REDIS_DSN
+              value: redis://coopcycle-web-redis-master
+{{/*          MESSENGER_TRANSPORT_DSN=redis://redis:6379/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1*/}}
+            - name: MESSENGER_TRANSPORT_DSN
+              value: redis://coopcycle-web-redis-master/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1
+{{/*          COOPCYCLE_TILE38_DSN=redis://tile38:9851*/}}
+            - name: S3_ENDPOINT
+              value: "http://coopcycle-web-minio:9000"
+{{/*              value: "http://minio:9000"*/}}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: admin
+              containerPort: 2019
+              protocol: TCP
+          volumeMounts:
+            - name: php-logs
+              mountPath: /app/var/logs
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "/bin/sleep 1; kill -QUIT 1"]
+          readinessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 600 #debugging only
+          livenessProbe:
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 600 #debugging only
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: php-logs
+          emptyDir: {}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
