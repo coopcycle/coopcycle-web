@@ -2,7 +2,7 @@
 {% set packaging_adjustments = item.getAdjustments('reusable_packaging') %}
 <tr data-testid="order_item">
   <td>
-    <span class="text-muted">{{ item.quantity }} ×</span> {{ item.variant.name }}
+    <span class="text-muted">{{ item.quantity }} ×</span><span data-testid="name">{{ item.variant.name }}</span>
     {% if options_adjustments|length > 0 or packaging_adjustments|length > 0 %}
     <ul class="list-unstyled">
     {% for adjustment in options_adjustments %}
