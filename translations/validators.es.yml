@@ -23,7 +23,7 @@ order.items.containsDisabledProduct: El pedido contiene un producto desactivado
 
 delivery.price.error.priceCalculation: El precio de la entrega no pudo ser calculado.
 
-delivery.tasks.unexpectedCount: Delivery must consist of two tasks.
+delivery.tasks.unexpectedCount: Una entrega tiene que tener dos tareas.
 delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior a la
   fecha de retiro.
 
@@ -42,3 +42,25 @@ spreadsheet.missing_column: Debe definir una columna « %column% »
 spreadsheet.missing_columns: Debe definir una columna « %column% » o una columna « %other_column% »
 spreadsheet.alternative_columns: Debe definir una columna « %column% » o una columna « %other_column% », pero no ambas
 spreadsheet.csv_encoding: Los archivos CSV deben estar codificados en UTF-8
+
+order.fulfillment_methods.empty: Este establecimiento no esta disponible en estos
+  momentos
+delivery.check.noStore: Hace falta proporcionar una tienda
+product_option.valuesRange.notAllowed: No se puede definir un rango para una opción
+  obligatorio
+product.reusablePackagingUnit.mustBeGreaterThanZero: Se debe de especificar una cantidad
+  mayor que 0
+order.state.notModifiable: Pedido ya no puede ser modificado
+loopeat.insufficient_balance: Tu balance de LoopEat (X) no es suficiente para todo
+  el pedido
+restaurant.contract.variableCustomerAmount.pickOne: Elije como mínimo una tarfia
+restaurant.contract.variableDeliveryPrice.pickOne: Elije como mínimo una tarifa
+order.collection.not_available: El metodo de cumplimento "recogida en sitio" no esta
+  disponible
+task_group.ref.duplicate: El ref "%red%" aparece más que una vez
+checkout.user_with_same_email_exists: Una cuenta asociada con ese correo electronico
+  ya existe
+order.shippingTimeRange.notAvailable: No esta disponible en estos momentos
+pricing_rule.expression.syntax_error: Error de sintax en la expresión "%expression%"
+store.multi_drop.conflict: No se puede tener activado crear pedidos y permitido entregas
+  multiples a la misma vez

@@ -30,7 +30,6 @@ export default ({vehicleId, username, selectTrailerMenuId}) => {
         <>
           { vehicle.compatibleTrailers.map(item => item.trailer).length > 0 ?
             <>
-              <Item key={-1} onClick={onTrailerClick} data={{trailerId: null}}>{ t('CLEAR') }</Item>
               {vehicle.compatibleTrailers.map(item => item.trailer).map((trailerId, index) => {
                 const trailer = trailers.find(t => t['@id'] === trailerId)
                 return (
@@ -42,8 +41,9 @@ export default ({vehicleId, username, selectTrailerMenuId}) => {
                       {trailer.name}
                   </Item>)
               })}
+              <Item key={-1} onClick={onTrailerClick} data={{trailerId: null}}>{ t('CLEAR') }<i className="fa fa-close ml-1"></i></Item>
             </> :
-            <Item key={0} disabled>{ t('NO_COMPATIBLE_TRAILER') }</Item>
+            <Item key={0} disabled>{ t('ADMIN_DASHBOARD_NO_COMPATIBLE_TRAILER') }</Item>
           }
           </> : null
       }

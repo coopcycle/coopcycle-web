@@ -95,7 +95,7 @@ export const UnassignedTasks = () => {
   const unassignedTasksLoading = useSelector(selectUnassignedTasksLoading)
   const date = useSelector(selectSelectedDate)
 
-  const [generateOrders, { isUninitialized, isLoading: isGeneratingOrdersForSubscriptions }] = useSubscriptionGenerateOrdersMutation()
+  const { isUninitialized, isLoading: isGeneratingOrdersForSubscriptions } = useSubscriptionGenerateOrdersMutation()[1]
 
   useEffect(() => {
     const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
@@ -119,7 +119,8 @@ export const UnassignedTasks = () => {
       return
     }
 
-    generateOrders(date)
+    // TODO : discussion between paul and vladimir
+    // generateOrders(date)
   }, [date]);
 
   return (

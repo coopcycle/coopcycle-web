@@ -24,7 +24,6 @@ export default () => {
 
   return (
     <Menu id="vehicle-selectmenu">
-      <Item key={-1} onClick={onVehicleClick} data={{vehicleId: null}}>{ t('CLEAR') }</Item>
       {
         vehicles.map((vehicle, index) => {
           return (
@@ -37,6 +36,7 @@ export default () => {
             </Item>)
         })
       }
+      <Item key={-1} onClick={onVehicleClick} data={{vehicleId: null}}>{ t('CLEAR') }<i className="fa fa-close ml-1"></i></Item>
     </Menu>
   )
 

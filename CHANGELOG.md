@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.1] - 2024-07-24
+
+### Added
+* Add the ability for admins to bookmark/save orders by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4489
+* Add order subscriptions by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4511
+* Introduce vehicles, warehouses and trailers by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4485
+* Add the ability for a dispatcher to undo optimization
+
 ## [3.4.0] - 2024-07-08
 
 ### Added
