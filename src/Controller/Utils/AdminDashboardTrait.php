@@ -134,7 +134,7 @@ trait AdminDashboardTrait
         // insert here all queries for soft deletable that you don't want to show in the dashboard
 
         $recurrenceRules =
-            $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAll();
+            $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findAllTaskBasedRule();
 
         $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
             return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
