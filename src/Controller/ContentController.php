@@ -20,16 +20,17 @@ class ContentController extends AbstractController
      * @Route({
      *   "an": "/sobre-nosotros",
      *   "ca": "/sobre-nosaltres",
+     *   "da": "/om-os",
      *   "de": "/uber-uns",
      *   "en": "/about-us",
      *   "es": "/sobre-nosotros",
      *   "eu": "/guri-buruz",
      *   "fr": "/a-propos",
+     *   "hu": "/rolunk",
      *   "it": "/riguardo-a-noi",
      *   "pl": "/o-nas",
      *   "pt_BR": "/sobre-nos",
-     *   "pt_PT": "/sobre-nos",
-     *   "da": "/om-os"
+     *   "pt_PT": "/sobre-nos"
      * }, name="about_us")
      */
     public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
