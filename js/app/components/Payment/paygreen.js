@@ -85,12 +85,15 @@ export default {
 
     this.createSubmitPaymentListener = (resolve, reject) => (event) => {
       switch (event.type) {
-        case paygreenjs.Events.FULL_PAYMENT_DONE:
+        case window.paygreenjs.Events.FULL_PAYMENT_DONE:
           const { paymentOrder } = window.paygreenjs.status()
           resolve(paymentOrder.id)
           break;
-        case paygreenjs.Events.PAYMENT_FAIL:
+        case window.paygreenjs.Events.PAYMENT_FAIL:
           reject(event.detail?.error || new Error('An error occurred'));
+          break;
+        case window.paygreenjs.Events.ERROR:
+          reject(event.detail);
           break;
       }
     }
@@ -103,40 +106,46 @@ export default {
 
           // This will show/hide the button to go back to platform selection
           window.paygreenjs.attachEventListener(
-            paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
+            window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
             this.toggleChangePaymentPlatform
           );
 
           window.paygreenjs.attachEventListener(
-            paygreenjs.Events.ERROR,
-            (event) => {
-              // FIXME Grab the actuall error message
-              console.log(event.type, event.detail)
-            }
+            window.paygreenjs.Events.ERROR,
+            (event) => this.submitPaymentListener(event)
           );
 
           // This will enable the submit button once the card is 100% valid
           window.paygreenjs.attachEventListener(
-            paygreenjs.Events.CARD_ONCHANGE,
+            window.paygreenjs.Events.CARD_ONCHANGE,
             (event) => {
               this.config.onChange({ complete: event.detail.valid })
             }
           );
 
           window.paygreenjs.attachEventListener(
-            paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
+            window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
             this.createPaymentFlowOnChangeListener(resolve)
           );
 
           window.paygreenjs.attachEventListener(
-            paygreenjs.Events.FULL_PAYMENT_DONE,
+            window.paygreenjs.Events.FULL_PAYMENT_DONE,
             (event) => this.submitPaymentListener(event)
           );
 
           window.paygreenjs.attachEventListener(
-            paygreenjs.Events.PAYMENT_FAIL,
+            window.paygreenjs.Events.PAYMENT_FAIL,
             (event) => this.submitPaymentListener(event)
           );
+
+          // Move to next field automatically
+          // https://developers.paygreen.fr/docs/paygreenjs-customization#change-focus
+          window.paygreenjs.attachEventListener(window.paygreenjs.Events.PAN_FIELD_FULFILLED, () => {
+            paygreenjs.focus('exp');
+          });
+          window.paygreenjs.attachEventListener(window.paygreenjs.Events.EXP_FIELD_FULFILLED, () => {
+            paygreenjs.focus('cvv');
+          });
 
           window.paygreenjs.init({
             paymentOrderID: response.data.id,
