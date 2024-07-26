@@ -10,21 +10,21 @@ class MockCsrfTokenManager implements CsrfTokenManagerInterface
 
     public function getToken(string $tokenId)
     {
-        // TODO: Implement getToken() method.
+        return new CsrfToken($tokenId, 'mocked_token');
     }
 
     public function refreshToken(string $tokenId)
     {
-        // TODO: Implement refreshToken() method.
+        return new CsrfToken($tokenId, 'mocked_token');
     }
 
     public function removeToken(string $tokenId)
     {
-        // TODO: Implement removeToken() method.
+        return null;
     }
 
     public function isTokenValid(CsrfToken $token)
     {
-        // TODO: Implement isTokenValid() method.
+        return false;
     }
 }
