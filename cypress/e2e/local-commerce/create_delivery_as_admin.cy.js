@@ -147,6 +147,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Delivery page
+    //TODO: verify that all input data is saved correctly
     cy.get('[data-testid="breadcrumb"]')
       .find('[data-testid="order_id"]')
       .should('exist')
@@ -462,6 +463,8 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Delivery page
+    cy.get('#delivery_form__recurrence__container')
+      .should('not.exist')
     cy.get('a[href*="subscriptions"]')
       .click()
 
@@ -471,6 +474,7 @@ context('Delivery (role: admin)', () => {
       /\/admin\/stores\/[0-9]+\/subscriptions\/[0-9]+$/,
     )
     cy.get('[data-tax="included"]').contains('4,99 €')
+    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
   })
 
   it('create delivery for store with createOrders disabled', function () {
