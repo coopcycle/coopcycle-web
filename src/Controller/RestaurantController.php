@@ -26,6 +26,7 @@ use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
 use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
@@ -41,6 +42,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
@@ -88,9 +90,8 @@ class RestaurantController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
         private OrderAccessTokenManager $orderAccessTokenManager,
-        private LoggerInterface $checkoutLogger,
-        private LoggingUtils $loggingUtils,
-        private string $environment
+        private LoggerInterface $checkoutLogger = new NullLogger(),
+        private LoggingUtils $loggingUtils = new NullLoggingUtils()
     )
     {
     }
