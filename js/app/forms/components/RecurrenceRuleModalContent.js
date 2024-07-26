@@ -169,7 +169,7 @@ export default function ModalContent() {
                   </Button>
                 </Popconfirm>
               )}
-              <span>
+              <span data-testid="save">
                 <Button type="primary" size="large" onClick={handleSubmit}>
                   {t('ADMIN_DASHBOARD_TASK_FORM_SAVE')}
                 </Button>

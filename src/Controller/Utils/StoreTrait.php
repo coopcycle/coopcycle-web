@@ -417,8 +417,7 @@ trait StoreTrait
 
         $store = $subscription->getStore();
 
-        $tempOrder = $pricingManager->createOrderFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
-        $tempDelivery = $tempOrder->getDelivery();
+        $tempDelivery = $pricingManager->createDeliveryFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
 
         $routes = $request->attributes->get('routes');
 
