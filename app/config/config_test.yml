@@ -97,3 +97,7 @@ services:
             $baseUri: 'https://api.urbantz.com/v2/'
 
     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
+
+    # normally cypress e2e tests should run with CSRF protection enabled, but once in a while it fails
+    security.csrf.token_manager:
+      class: AppBundle\Service\MockCsrfTokenManager
