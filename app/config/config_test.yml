@@ -9,8 +9,6 @@ parameters:
 
 framework:
     test: ~
-    # normally cypress e2e tests should run with CSRF protection enabled, but once in a while it fails
-    csrf_protection: false
     session:
         storage_id: session.storage.mock_file
     profiler:
@@ -99,6 +97,3 @@ services:
             $baseUri: 'https://api.urbantz.com/v2/'
 
     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
-
-    security.csrf.token_manager:
-      class: AppBundle\Service\MockCsrfTokenManager

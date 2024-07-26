@@ -473,7 +473,9 @@ class RestaurantController extends AbstractController
             $this->persistAndFlushCart($order);
         }
 
-        $cartForm = $this->createForm(CartType::class, $order);
+        $cartForm = $this->createForm(CartType::class, $order, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+        ]);
         $cartForm->handleRequest($request);
 
         if ($cartForm->isSubmitted()) {
@@ -593,7 +595,9 @@ class RestaurantController extends AbstractController
             }
         }
 
-        $cartForm = $this->createForm(CartType::class, $cart);
+        $cartForm = $this->createForm(CartType::class, $cart, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+        ]);
 
         $cartForm->handleRequest($request);
 
