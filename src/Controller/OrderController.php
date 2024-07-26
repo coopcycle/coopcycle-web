@@ -11,6 +11,7 @@ use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderInvitation;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
@@ -65,6 +66,7 @@ class OrderController extends AbstractController
         private ValidatorInterface $validator,
         private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
+        private string $environment
     )
     {
     }
