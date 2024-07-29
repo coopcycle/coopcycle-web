@@ -63,11 +63,32 @@ class Pay
             return $data;
         }
 
-        if (!isset($body['paymentMethodId']) && !isset($body['paymentIntentId']) && !isset($body['cashOnDelivery'])) {
+        if (!isset($body['paymentMethodId']) && !isset($body['paymentIntentId']) && !isset($body['cashOnDelivery']) && !isset($body['paymentOrderId'])) {
             throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
+
+        if (isset($body['paymentOrderId'])) {
+
+            if (empty($body['paymentOrderId'])) {
+                throw new BadRequestHttpException('Payment Order ID is empty');
+            }
+
+            $details = $payment->getDetails();
+            if ($body['paymentOrderId'] !== $details['paygreen_payment_order_id']) {
+                throw new BadRequestHttpException('Payment Order ID mismatch');
+            }
+
+            $this->orderManager->checkout($data, $details['paygreen_payment_order_id']);
+            $this->entityManager->flush();
+
+            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+                throw new BadRequestHttpException($payment->getLastError());
+            }
+
+            return $data;
+        }
 
         if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
 

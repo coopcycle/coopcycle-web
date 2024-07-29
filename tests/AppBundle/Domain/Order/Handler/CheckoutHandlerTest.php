@@ -12,6 +12,7 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
@@ -41,12 +42,14 @@ class CheckoutHandlerTest extends TestCase
         $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
         $this->edenred = $this->prophesize(EdenredClient::class);
+        $this->paygreenManager = $this->prophesize(PaygreenManager::class);
 
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
             $this->stripeManager->reveal(),
             $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            $this->edenred->reveal(),
+            $this->paygreenManager->reveal()
         );
 
         $this->handler = new CheckoutHandler(

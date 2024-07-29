@@ -1,0 +1,35 @@
+.paygreen-methods-container {
+  display: flex;
+}
+
+.pg-payment-method {
+  position: relative;
+  box-shadow: none;
+  color: transparent; // This allows to hide the text
+}
+
+.pg-payment-method::before {
+  content: '';
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pg-payment-method-bank_card::before {
+  background-image: url(./bank-card.svg);
+}
+
+.pg-payment-method-conecs::before {
+  background-image: url(./conecs.svg);
+}
+
+.pg-payment-method-swile::before {
+  background-image: url(./swile.svg);
+}
+
+.pg-payment-method-restoflash::before {
+  background-image: url(./restoflash.svg);
+}
