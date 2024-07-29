@@ -137,4 +137,17 @@ class PaygreenManager
         $payment->setPaygreenPaymentOrderId($data['data']['id']);
         $payment->setPaygreenObjectSecret($data['data']['object_secret']);
     }
+
+    public function getEnabledPlatforms($shopId): array
+    {
+        $this->authenticate();
+
+        $response = $this->paygreenClient->listPaymentConfig($shopId);
+
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        $enabled = array_filter($data['data'], fn ($c) => $c['status'] === 'payment_config.enabled');
+
+        return array_map(fn ($c) => $c['platform'], $enabled);
+    }
 }
