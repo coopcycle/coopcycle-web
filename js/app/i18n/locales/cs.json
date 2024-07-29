@@ -242,6 +242,10 @@
             "TYPE_PER_PACKAGE": "Cena za jedno balení"
         },
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Opravdu chcete odstranit všechny úkoly v této skupině?",
-        "CASH_ON_DELIVERY_DISCLAIMER": "Budete platit na dobírku. Připravte si prosím přesnou částku a ujistěte se, že jste dosažitelní."
+        "CASH_ON_DELIVERY_DISCLAIMER": "Budete platit na dobírku. Připravte si prosím přesnou částku a ujistěte se, že jste dosažitelní.",
+        "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "Právě jste změnili vlastnost adresy. Chcete tuto vlastnost změnit pro všechny minulé i nadcházející dodávky, které tuto adresu používají, nebo jen jednou?",
+        "ADMIN_DASHBOARD_PACKAGES": "Balíčky",
+        "ADMIN_DASHBOARD_WEIGHT": "Váha",
+        "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Změna stávající adresy"
     }
 }
