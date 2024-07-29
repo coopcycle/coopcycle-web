@@ -217,6 +217,7 @@ services:
       - 4000:4000
     depends_on:
       - postgres
+      - minio
     environment:
       - CUBEJS_DB_TYPE=postgres
       - CUBEJS_DB_HOST=${COOPCYCLE_DB_HOST}
@@ -229,6 +230,12 @@ services:
       - CUBEJS_API_SECRET
       - CUBEJS_SCHEMA_PATH=schema
       - CUBEJS_CACHE_AND_QUEUE_DRIVER=memory
+      - CUBEJS_DB_DUCKDB_S3_ENDPOINT=${S3_ENDPOINT}
+      - CUBEJS_DB_DUCKDB_S3_REGION=${S3_REGION}
+      - CUBEJS_DB_DUCKDB_S3_ACCESS_KEY_ID=${S3_CREDENTIALS_KEY}
+      - CUBEJS_DB_DUCKDB_S3_SECRET_ACCESS_KEY=${S3_CREDENTIALS_SECRET}
+      - CUBEJS_DB_DUCKDB_S3_USE_SSL=false
+      - CUBEJS_DB_DUCKDB_S3_URL_STYLE=path
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
