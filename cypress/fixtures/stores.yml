@@ -38,8 +38,8 @@ AppBundle\Entity\TimeSlot:
   time_slot_1:
     name: 'Acme time slot'
     openingHours:
-      - 'Mo-Su 12:00-14:00'
-      - 'Mo-Su 14:00-17:00'
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'
 
 AppBundle\Entity\Store:
   store_1:
