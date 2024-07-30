@@ -129,8 +129,7 @@ context('Managing subscriptions (role: admin)', () => {
     cy.get('[data-tax="included"]').contains('4,99 €')
 
     cy.get('#delivery_form__recurrence__container').find('a').click();
-    cy.get(':nth-child(5) > .ant-checkbox > .ant-checkbox-input').check();
-    cy.get(':nth-child(6) > .ant-checkbox > .ant-checkbox-input').check();
+    cy.chooseDaysOfTheWeek([5, 6]);
     cy.get('[data-testid=save]').click();
 
     cy.get('#delivery-submit').click()
@@ -155,9 +154,7 @@ context('Managing subscriptions (role: admin)', () => {
     cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
 
     cy.get('#delivery_form__recurrence__container').click();
-    cy.get(':nth-child(5) > .ant-checkbox > .ant-checkbox-input').uncheck();
-    cy.get(':nth-child(6) > .ant-checkbox > .ant-checkbox-input').uncheck();
-    cy.get(':nth-child(1) > .ant-checkbox > .ant-checkbox-input').check();
+    cy.chooseDaysOfTheWeek([1]);
     cy.get('[data-testid=save]').click();
 
     cy.get('#delivery-submit').click()
