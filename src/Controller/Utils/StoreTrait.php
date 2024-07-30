@@ -413,12 +413,14 @@ trait StoreTrait
             ->getRepository(RecurrenceRule::class)
             ->find($subscriptionId);
 
-        $this->accessControl($subscription, 'view');
-
         $store = $subscription->getStore();
 
-        $tempOrder = $pricingManager->createOrderFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
-        $tempDelivery = $tempOrder->getDelivery();
+        // Currently the route is only accessible by ROLE_DISPATCHER,
+        // so this check is not doing much, but it would be useful
+        // if we decide to open the route to store owners
+        $this->denyAccessUnlessGranted('view', $store);
+
+        $tempDelivery = $pricingManager->createDeliveryFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
 
         $routes = $request->attributes->get('routes');
 
