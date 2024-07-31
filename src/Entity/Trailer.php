@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\Trailer\SetVehicles;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
@@ -31,10 +32,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
  *     },
- *     "patch"={
- *       "method"="PATCH",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *      }
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     },
+ *     "set_vehicles"={
+ *       "method"="PUT",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "path"="/trailers/{id}/vehicles",
+ *       "controller"=SetVehicles::class,
+ *       "write"=false,
+ *       "read"=false
+ *     },
  *   },
  *   order={"name": "ASC"},
  * )
@@ -239,27 +248,34 @@ class Trailer
     }
 
     public function getCompatibleVehicles() {
-        return $this->compatibleVehicles;
+        return $this->compatibleVehicles->map(function ($vehicleCompat) {
+            return $vehicleCompat->getVehicle();
+        });
     }
 
-    public function hasVehicleCompat(Vehicle\Trailer $vehicleTrailer): bool
+    public function hasVehicleCompat($vehicle): bool
     {
-        return $this->getCompatibleVehicles()->contains($vehicleTrailer);
+        return $this->getCompatibleVehicles()->contains($vehicle);
     }
 
-    public function addCompatibleVehicle(Vehicle\Trailer $vehicleTrailer)
+    public function setCompatibleVehicles($vehicles)
     {
-        $vehicleTrailer->setTrailer($this);
-        if (!$this->hasVehicleCompat($vehicleTrailer)) {
-            $this->compatibleVehicles->add($vehicleTrailer);
+        // remove
+        foreach($this->compatibleVehicles as $vehicleTrailer) {
+            $existingVehicle = $vehicleTrailer->getVehicle();
+            if (!array_search($existingVehicle, $vehicles)) {
+                $this->compatibleVehicles->removeElement($vehicleTrailer);
+                $existingVehicle->removeCompatibleTrailer($vehicleTrailer);
+            }
         }
-    }
 
-    public function removeCompatibleVehicle(Vehicle\Trailer $vehicleTrailer)
-    {
-        $vehicleTrailer->setTrailer($this);
-        if ($this->hasVehicleCompat($vehicleTrailer)) {
-            $this->compatibleVehicles->removeElement($vehicleTrailer);
+        foreach($vehicles as $vehicle) {
+            if (!$this->hasVehicleCompat($vehicle)) {
+                $vehicleTrailer = new Vehicle\Trailer();
+                $vehicleTrailer->setVehicle($vehicle);
+                $vehicleTrailer->setTrailer($this);
+                $this->compatibleVehicles->add($vehicleTrailer);
+            }
         }
     }
 }

@@ -261,18 +261,13 @@ class Vehicle
      */
     public function getCompatibleTrailers()
     {
-        return $this->compatibleTrailers;
+        return $this->compatibleTrailers->map(function ($vehicleTrailer) {
+            return $vehicleTrailer->getTrailer();
+        });
     }
 
-    /**
-     * Set the value of compatibleTrailers
-     *
-     * @return  self
-     */
-    public function setCompatibleTrailers($compatibleTrailers)
-    {
-        $this->compatibleTrailers = $compatibleTrailers;
-
-        return $this;
+    public function removeCompatibleTrailer(Vehicle\Trailer $vehicleTrailer) {
+        $this->compatibleTrailers->removeElement($vehicleTrailer);
     }
+
 }
