@@ -34,7 +34,8 @@ class TimeSlotManager
         return $this->entityManager
             ->getRepository(Store::class)
             ->createQueryBuilder('s')
-            ->innerJoin('s.timeSlots', 'ts', 'WITH', 'ts = :timeslot')
+            ->innerJoin('s.timeSlots', 'sts', 'WITH', 'sts.store = s')
+            ->where('sts.timeSlot = :timeslot')
             ->setParameter('timeslot', $timeSlot)
             ->getQuery()->getResult();
     }
