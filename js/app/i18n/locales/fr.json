@@ -510,6 +510,13 @@
         "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_NO": "Retourner à la commande précédente",
         "TIME_SLOTS": "Tranches horaires",
         "TIME_SLOTS_SELECT": "Sélectionnez une tranche horaire",
-        "TIME_SLOTS_SET_DEFAULT": "Définir comme tranche horaire par défaut"
+        "TIME_SLOTS_SET_DEFAULT": "Définir comme tranche horaire par défaut",
+        "PAYMENT_FORM_ELIGIBLE_AMOUNT_EDENRED": "Montant éligible Ticket Restaurant®",
+        "PAYMENT_FORM_CARD_COMPLEMENT": "Montant à régler par carte bancaire",
+        "MEAL_VOUCHER_DISCLAIMER": "Vos chèques-repas sont uniquement utilisables pour commander de la nourriture. Les frais de livraison et de service seront donc débités via votre moyen de paiement habituel (Mastercard, Visa).",
+        "PM_CREDIT_OR_DEBIT_CARD": "Carte bancaire",
+        "PM_CASH": "Espèces",
+        "PM_EDENRED": "Edenred",
+        "PM_GIROPAY": "Giropay"
     }
 }

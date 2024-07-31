@@ -562,6 +562,9 @@
         "TRANSPORTER_SHOW_PODS": "Show PODs",
         "TIME_SLOTS": "Time slots",
         "TIME_SLOTS_SELECT": "Select a time slot",
-        "TIME_SLOTS_SET_DEFAULT": "Set as default time slot"
+        "TIME_SLOTS_SET_DEFAULT": "Set as default time slot",
+        "PAYMENT_FORM_ELIGIBLE_AMOUNT_EDENRED": "Eligible Ticket Restaurant® amount",
+        "PAYMENT_FORM_CARD_COMPLEMENT": "Amount to be paid by credit card",
+        "MEAL_VOUCHER_DISCLAIMER": "Your meal vouchers can only be used to order food. Delivery and service charges will therefore be debited via your usual payment method (Mastercard, Visa)."
     }
 }

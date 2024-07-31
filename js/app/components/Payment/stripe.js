@@ -7,6 +7,7 @@ import _ from 'lodash'
 
 import i18n, { getCountry } from '../../i18n'
 import SavedCreditCard from './SavedCreditCard'
+import MealVoucherDetails from './MealVoucherDetails'
 import { isGuest } from './utils'
 
 const style = {
@@ -159,6 +160,9 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
 
   return (
     <React.Fragment>
+      { hasBreakdown && (
+        <MealVoucherDetails { ...options.amount_breakdown } />
+      )}
       {
         thereAreCardsToShow ?
         <div>
@@ -193,12 +197,6 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
               { t('PAYMENT_FORM_TITLE') }
             </label>
             <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
-            { hasBreakdown && (
-              <span className="help-block mt-3">
-                <i className="fa fa-info-circle mr-2"></i>
-                <span>{ t('EDENRED_SPLIT_AMOUNTS', _.mapValues(options.amount_breakdown, value => (value / 100).formatMoney())) }</span>
-              </span>
-            )}
             { (!hasBreakdown && _.includes(['es', 'fr'], country)) && (
               <span className="help-block mt-3">
                 <i className="fa fa-info-circle mr-2"></i>
