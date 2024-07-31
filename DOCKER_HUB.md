@@ -7,7 +7,7 @@ Read the [Docker Hub Quickstart](https://docs.docker.com/docker-hub/)
 
 ```
 DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build --no-cache php
-docker push coopcycle/php:8.2
+docker push coopcycle/php:8.3
 ```
 
 ```

@@ -623,6 +623,8 @@ services:
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
+  AppBundle\Entity\Task\RecurrenceRuleRepository: ~
+
   AppBundle\Service\Routing\Osrm: ~
 
   routing_service:
@@ -1065,12 +1067,6 @@ services:
       $eventBus: '@simple_bus.event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-
-  AppBundle\MessageHandler\RetrieveStripeFeeHandler:
-    arguments:
-      $adjustmentFactory: '@sylius.factory.adjustment'
-    tags:
-      - { name: monolog.logger, channel: stripe }
 
   AppBundle\MessageHandler\TopBarNotificationHandler: ~
 

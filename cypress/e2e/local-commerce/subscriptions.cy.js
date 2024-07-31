@@ -1,4 +1,4 @@
-context('Delivery (role: store)', () => {
+context('Managing subscriptions (role: admin)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
@@ -9,18 +9,21 @@ context('Delivery (role: store)', () => {
     }
 
     cy.exec(cmd)
-  })
 
-  it('create delivery', () => {
-    cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
-
+    // Login
     cy.visit('/login')
+    cy.login('admin', '12345678')
 
-    cy.login('store_1', 'store_1')
+    // Create a delivery order and a subscription
+    cy.visit('/admin/stores')
 
-    cy.location('pathname').should('eq', '/dashboard')
+    cy.get('[data-testid=store_Acme__list_item]')
+      .find('.dropdown-toggle')
+      .click()
 
-    cy.get('a').contains('Créer une livraison').click()
+    cy.get('[data-testid=store_Acme__list_item]')
+      .contains('Créer une livraison')
+      .click()
 
     // Pickup
 
@@ -123,23 +126,81 @@ context('Delivery (role: store)', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-    cy.wait('@apiRoutingRoute')
+    cy.get('[data-tax="included"]').contains('4,99 €')
 
-    cy.get('#delivery_distance')
-      .invoke('text')
-      .should('match', /[0-9.]+ Km/)
+    cy.get('#delivery_form__recurrence__container').find('a').click();
+    cy.chooseDaysOfTheWeek([5, 6]);
+    cy.get('[data-testid=save]').click();
+
+    cy.get('#delivery-submit').click()
+  })
+
+  it('modify subscription', function () {
+    // List of deliveries page
+    cy.location('pathname', { timeout: 3000 }).should(
+      'match',
+      /\/admin\/stores\/[0-9]+\/deliveries$/,
+    )
+
+    cy.get('[data-testid="delivery__list_item"]')
+      .find('[data-testid="delivery_id"]')
+      .click()
+
+    // Delivery page
+    cy.get('a[href*="subscriptions"]')
+      .click()
+
+    // Subscription page
+    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
+
+    cy.get('#delivery_form__recurrence__container').click();
+    cy.chooseDaysOfTheWeek([1]);
+    cy.get('[data-testid=save]').click();
 
     cy.get('#delivery-submit').click()
 
+    cy.get('[data-testid="delivery_id"]').click();
+
+    // Delivery page
+    cy.get('a[href*="subscriptions"]')
+      .click()
+
+    // Subscription page
+    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le lundi')
+  })
+
+  it('cancel subscription', function () {
+    // List of deliveries page
     cy.location('pathname', { timeout: 3000 }).should(
       'match',
-      /\/dashboard\/stores\/[0-9]+\/deliveries$/,
+      /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
+
+    cy.get('[data-testid="delivery__list_item"]')
+      .find('[data-testid="delivery_id"]')
+      .click()
+
+    // Delivery page
+    cy.get('a[href*="subscriptions"]')
+      .click()
+
+    // Subscription page
+    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
+
+    cy.get('#delivery_form__recurrence__container').click();
+    cy.get('.ant-btn-danger > :nth-child(2)').click();
+    cy.get('.ant-popover-buttons > .ant-btn-primary > span').click();
+
+    cy.get('#delivery-submit').click()
+
+    cy.get('[data-testid="delivery_id"]').click();
+
+    // Delivery page
+    cy.get('a[href*="subscriptions"]')
+      .click()
+
+    // Subscription page
+    cy.get('#delivery_form__recurrence__container').contains('Abonnement annulé')
+
   })
 })

@@ -192,3 +192,15 @@ Cypress.Commands.add('closeRestaurantForToday',
       })
     })
   })
+
+Cypress.Commands.add('chooseDaysOfTheWeek', (daysOfTheWeek) => {
+  for (let i = 1; i < 7; i++) {
+    if (daysOfTheWeek.includes(i)) {
+      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+        .check()
+    } else {
+      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+        .uncheck()
+    }
+  }
+})

@@ -119,7 +119,7 @@ restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas v
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est indisponible à la livraison jusqu'au
-  <strong>%date%</strong>. Vous pouvez commander pour plus tard !
+  <strong>%date%</strong>.
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
 restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
   sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
@@ -920,7 +920,7 @@ receipt.footer_item.total_products: Total produits
 receipt.footer_item.total_excl_tax: Total HT
 receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
-receipt.billing_details: Commande payée par carte de crédit le %date%
+receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte %name%

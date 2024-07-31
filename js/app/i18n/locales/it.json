@@ -268,7 +268,6 @@
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Sei sicuro di voler cancellare tutti gli incarichi di questo gruppo?",
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrare regole ricorrenti",
         "PAYMENT_FORM_NOT_SUPPORTED": "Non accettiamo (ancora!) buoni pasto, per favore utilizza una carta di credito classica.",
-        "EDENRED_SPLIT_AMOUNTS": "Puoi pagare {{edenred}} con la tua carta Edenred, ma devi comunque pagare {{card}} con carta di credito",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Mostrare consegne in maniera ascendente",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Spostare {{count}} incarichi al prossimo giorno lavorativo ({{nextWorkingDay}})",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Spostare {{count}} incarichi al giorno seguente",

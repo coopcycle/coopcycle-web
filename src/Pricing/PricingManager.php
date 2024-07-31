@@ -269,7 +269,7 @@ class PricingManager
         $subscription->setTemplate($template);
     }
 
-    public function createOrderFromSubscription(Task\RecurrenceRule $subscription, string $startDate, bool $persist = true): ?OrderInterface
+    public function createDeliveryFromSubscription(Task\RecurrenceRule $subscription, string $startDate, bool $persist = true): ?Delivery
     {
         $store = $subscription->getStore();
 
@@ -303,7 +303,7 @@ class PricingManager
             $tasks[] = $task;
         }
 
-        $order = null;
+        $delivery = null;
         if (count($tasks) > 1 && $tasks[0]->isPickup()) {
             $delivery = Delivery::createWithTasks(...$tasks);
             $store->addDelivery($delivery);
@@ -311,21 +311,35 @@ class PricingManager
             if ($persist) {
                 $this->entityManager->persist($delivery);
             }
+        }
 
-            if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
-                $order = $this->createOrder($delivery, [
-                    'pricingStrategy' => new UseArbitraryPrice(new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice'])),
-                    'persist' => $persist,
-                ]);
-            } else {
-                $order = $this->createOrder($delivery, [
-                    'persist' => $persist,
-                ]);
-            }
+        return $delivery;
+    }
 
-            if (null !== $order) {
-                $order->setSubscription($subscription);
-            }
+    public function createOrderFromSubscription(Task\RecurrenceRule $subscription, string $startDate, bool $persist = true): ?OrderInterface
+    {
+        $store = $subscription->getStore();
+
+        $delivery = $this->createDeliveryFromSubscription($subscription, $startDate, $persist);
+
+        if (null === $delivery) {
+            return null;
+        }
+
+        $order = null;
+        if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
+            $order = $this->createOrder($delivery, [
+                'pricingStrategy' => new UseArbitraryPrice(new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice'])),
+                'persist' => $persist,
+            ]);
+        } else {
+            $order = $this->createOrder($delivery, [
+                'persist' => $persist,
+            ]);
+        }
+
+        if (null !== $order) {
+            $order->setSubscription($subscription);
         }
 
         if ($persist) {

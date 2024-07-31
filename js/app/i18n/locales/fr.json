@@ -319,7 +319,6 @@
         "PAYMENT_FORM_REDIRECT_HELP": "Vous serez redirigé·e vers le site Internet de votre banque pour compléter la transaction",
         "PAYMENT_FORM_CARDHOLDER_NAME": "Nom du titulaire de la carte",
         "PAYMENT_FORM_TITLE": "Vos informations de paiement",
-        "EDENRED_SPLIT_AMOUNTS": "Vous pouvez payer {{edenred}} avec votre carte Edenred, mais vous devez payer {{card}} avec votre carte bancaire",
         "PAYMENT_FORM_NOT_SUPPORTED": "Nous nʼacceptons pas (encore !) les cartes Titre Restaurant, veuillez utiliser une carte bleue classique ou une carte Swile.",
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
@@ -510,6 +509,13 @@
         "CART_CHANGE_FULFILMENT_DETAILS_MODAL_BTN_NO": "Retourner à la commande précédente",
         "TIME_SLOTS": "Tranches horaires",
         "TIME_SLOTS_SELECT": "Sélectionnez une tranche horaire",
-        "TIME_SLOTS_SET_DEFAULT": "Définir comme tranche horaire par défaut"
+        "TIME_SLOTS_SET_DEFAULT": "Définir comme tranche horaire par défaut",
+        "PAYMENT_FORM_ELIGIBLE_AMOUNT_EDENRED": "Montant éligible Ticket Restaurant®",
+        "PAYMENT_FORM_CARD_COMPLEMENT": "Montant à régler par carte bancaire",
+        "MEAL_VOUCHER_DISCLAIMER": "Vos chèques-repas sont uniquement utilisables pour commander de la nourriture. Les frais de livraison et de service seront donc débités via votre moyen de paiement habituel (Mastercard, Visa).",
+        "PM_CREDIT_OR_DEBIT_CARD": "Carte bancaire",
+        "PM_CASH": "Espèces",
+        "PM_EDENRED": "Edenred",
+        "PM_GIROPAY": "Giropay"
     }
 }

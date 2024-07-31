@@ -35,7 +35,7 @@ class GenerateOrders
         }
 
         $this->entityManager->getFilters()->enable('soft_deleteable');
-        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findAll();
+        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findAllSubscriptions();
         $this->entityManager->getFilters()->disable('soft_deleteable');
 
         $subscriptions = array_filter($allSubscriptions, function ($subscription) use ($date) {
@@ -86,11 +86,6 @@ class GenerateOrders
 
         $orders = $this->entityManager->getRepository(Order::class)->findBySubscriptionAndDate($subscription, $date);
 
-        // Ideally, we should create an order for each subscription,
-        // but previously we were creating only tasks sometimes and this behavior is still supported,
-        // that's why we need to check for tasks as well
-        $tasks = $this->entityManager->getRepository(Task::class)->findBySubscriptionAndDate($subscription, $date);
-
-        return 0 === count($orders) && 0 === count($tasks);
+        return 0 === count($orders);
     }
 }

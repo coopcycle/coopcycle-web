@@ -140,7 +140,8 @@ export const openTaskTaskList = function(task) {
     if (task.isAssigned) {
       const taskList = selectTaskListByUsername(getState(), {username: task.assignedTo})
       const expandedTaskListPanelsIds = selectExpandedTaskListPanelsIds(getState())
-      if (!expandedTaskListPanelsIds.includes(taskList['@id'])) {
+      // safeguard for TaskList not undefined because of https://github.com/coopcycle/coopcycle-web/issues/4348
+      if (taskList && !expandedTaskListPanelsIds.includes(taskList['@id'])) {
         dispatch(toggleTaskListPanelExpanded(taskList['@id']))
       }
     }

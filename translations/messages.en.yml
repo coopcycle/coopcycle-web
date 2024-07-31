@@ -980,7 +980,7 @@ receipt.footer_item.total_products: Total products
 receipt.footer_item.total_excl_tax: Total (excl. VAT)
 receipt.footer_item.total_incl_tax: Total (incl. VAT)
 receipt.total: Total (incl. VAT)
-receipt.billing_details: Order paid by credit card on %date%
+receipt.billing_details: Order paid by %payment_method% on %date%
 receipt.emitter_details: Order at restaurant <strong>%restaurant_name%</strong>
 delivery.import.success_message: Your file was successfully processed, %count% deliveries
   have been created

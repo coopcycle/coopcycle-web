@@ -228,7 +228,7 @@ AppBundle\Entity\LocalBusiness:
   crazy_hamburger:
     name: Crazy Hamburger
     address: "@address_1"
-    openingHours: ['Mo-Su 09:30-23:30']
+    openingHours: ['Mo-Su 09:30-23:59']
     enabled: true
     contract: "@contract_1"
     edenred_enabled: false
