@@ -1,6 +1,9 @@
 ## Prerequisites
 
-Install [Docker](https://www.docker.com/) and [Minikube](https://minikube.sigs.k8s.io/docs/start/).
+Install
+- [Docker](https://www.docker.com/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [Helm](https://helm.sh/docs/intro/quickstart/#install-helm)
 
 ### Run minikube
 
@@ -28,6 +31,8 @@ docker build -t localhost:5000/php:1.0.0 . -f ./docker/php/Dockerfile --target f
 ```sh
 docker run --rm -it --network=host alpine ash -c "apk add socat && socat TCP-LISTEN:5000,reuseaddr,fork TCP:$(minikube ip):5000"
 ```
+
+//TODO: use pre-built image ?
 
 #### osrm
 ```sh
@@ -57,6 +62,30 @@ helm install osrm helm/osrm \
   --set image.tag=1.0.0
 ```
 
+#### redis
+```sh
+helm install coopcycle-redis helm/redis \
+  --dependency-update
+```
+
+#### centrifugo
+```sh
+helm install centrifugo helm/centrifugo \
+  --dependency-update
+```
+
+#### typesense
+```sh
+helm install coopcycle-typesense helm/typesense \
+  --dependency-update
+```
+
+#### tile38
+```sh
+helm install coopcycle-tile38 helm/tile38 \
+  --dependency-update
+```
+
 #### php/symfony
 ```sh
 helm install coopcycle-web helm/php \
@@ -66,6 +95,11 @@ helm install coopcycle-web helm/php \
 ```
 
 #### 3.1. Upgrade using helm chart
+
+```sh
+helm upgrade centrifugo helm/centrifugo \
+--dependency-update
+```
 
 ```sh
 helm upgrade coopcycle-web helm/php \
