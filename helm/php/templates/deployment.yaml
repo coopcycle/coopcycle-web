@@ -148,6 +148,9 @@ spec:
             - name: TYPESENSE_HOST
               value: coopcycle-typesense
 {{/*              value: typesense*/}}
+            - name: CENTRIFUGO_API_URL
+              value: http://centrifugo:9000/api
+{{/*              value: http://centrifugo:8000/api*/}}
           ports:
             - name: http
               containerPort: 80
