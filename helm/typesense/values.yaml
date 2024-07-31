@@ -4,8 +4,13 @@
 
 replicaCount: 1
 
+# TODO; move to a secret
+typeSense:
+  apiKey: "YourTypesenseApiKey"
+  dataDir: "/data"
+
 image:
-  repository: nginx
+  repository: typesense/typesense
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -41,7 +46,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8108
 
 ingress:
   enabled: false
@@ -72,13 +77,11 @@ resources: {}
   #   memory: 128Mi
 
 livenessProbe:
-  httpGet:
-    path: /
-    port: http
+  tcpSocket:
+    port: 8108
 readinessProbe:
-  httpGet:
-    path: /
-    port: http
+  tcpSocket:
+    port: 8108
 
 autoscaling:
   enabled: false
@@ -88,14 +91,17 @@ autoscaling:
   # targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
-volumes: []
+volumes:
+ - name: typesense-data
 # - name: foo
 #   secret:
 #     secretName: mysecret
 #     optional: false
 
 # Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
+volumeMounts:
+  - name: typesense-data
+    mountPath: "/data"
 # - name: foo
 #   mountPath: "/etc/foo"
 #   readOnly: true
