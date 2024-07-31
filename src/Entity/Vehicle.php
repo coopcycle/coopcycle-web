@@ -33,7 +33,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "patch"={
  *       "method"="PATCH",
  *       "access_control"="is_granted('ROLE_ADMIN')"
- *      }
+ *      },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     },
  *   },
  *   order={"name": "ASC"},
  * )
