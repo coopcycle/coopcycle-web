@@ -7,7 +7,6 @@ use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\MercadopagoManager;

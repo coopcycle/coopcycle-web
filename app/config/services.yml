@@ -1068,12 +1068,6 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
 
-  AppBundle\MessageHandler\RetrieveStripeFeeHandler:
-    arguments:
-      $adjustmentFactory: '@sylius.factory.adjustment'
-    tags:
-      - { name: monolog.logger, channel: stripe }
-
   AppBundle\MessageHandler\TopBarNotificationHandler: ~
 
   AppBundle\MessageHandler\DeliveryCreatedHandler:

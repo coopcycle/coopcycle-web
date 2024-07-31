@@ -4,7 +4,6 @@ namespace AppBundle\Payment;
 
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Refund;
-use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
 use Omnipay\Common\Message\ResponseInterface;
