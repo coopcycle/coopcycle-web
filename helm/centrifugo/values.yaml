@@ -4,13 +4,6 @@
 
 replicaCount: 1
 
-image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -105,3 +98,17 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+centrifugo:
+  config:
+    engine: "redis"
+    admin: true
+  # FIXME; use secrets for PROD deployment
+  secrets:
+    tokenHmacSecretKey: "CentrifugoToken"
+    adminPassword: "centrifugo"
+    adminSecret: "centrifugo"
+    apiKey: "CentrifugoApiKey"
+    redisAddress: "redis://coopcycle-redis-master:6379"
+  env:
+    CENTRIFUGO_ALLOWED_ORIGINS: "http://localhost:*"
