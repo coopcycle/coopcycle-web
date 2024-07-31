@@ -52,18 +52,17 @@ export default () => {
 
   const httpClient = new window._auth.httpClient()
 
-  const fetchVehicles = () => {
+  const fetchAll = () => {
     setIsLoading(true)
-    httpClient.get(window.Routing.generate("api_vehicles_get_collection")).then(({response}) => {
-      setVehicles(response["hydra:member"])
-      setIsLoading(false)
-    })
-  }
-
-  const fetchTrailers = () => {
-    setIsLoading(true)
-    httpClient.get(window.Routing.generate("api_trailers_get_collection")).then(({response}) => {
-      setTrailers(response["hydra:member"])
+    Promise.all([
+      httpClient.get(window.Routing.generate("api_warehouses_get_collection")),
+      httpClient.get(window.Routing.generate("api_trailers_get_collection")),
+      httpClient.get(window.Routing.generate("api_vehicles_get_collection")),
+    ]).then(values => {
+      const [warehouseRes, trailerRes, vehicleRes] = values
+      setWarehouses(warehouseRes.response["hydra:member"])
+      setTrailers(trailerRes.response["hydra:member"])
+      setVehicles(vehicleRes.response["hydra:member"])
       setIsLoading(false)
     })
   }
@@ -79,17 +78,7 @@ export default () => {
   }
 
   useEffect(() => {
-    Promise.all([
-      httpClient.get(window.Routing.generate("api_warehouses_get_collection")),
-      httpClient.get(window.Routing.generate("api_trailers_get_collection")),
-      httpClient.get(window.Routing.generate("api_vehicles_get_collection")),
-    ]).then(values => {
-      const [warehouseRes, trailerRes, vehicleRes] = values
-      setWarehouses(warehouseRes.response["hydra:member"])
-      setTrailers(trailerRes.response["hydra:member"])
-      setVehicles(vehicleRes.response["hydra:member"])
-      setIsLoading(false)
-    })
+    fetchAll()
   }, [])
 
   const vehicleColumns = [
@@ -138,7 +127,7 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"api_vehicles_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchVehicles} />,
+      render: (record) => <DeleteIcon deleteUrl={"api_vehicles_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
     },
   ]
 
@@ -189,7 +178,7 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"api_trailers_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchTrailers} />,
+      render: (record) => <DeleteIcon deleteUrl={"api_trailers_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
     },
   ]
 
@@ -211,7 +200,7 @@ export default () => {
       alert(t('ERROR'))
       return;
     } else {
-      fetchVehicles()
+      fetchAll()
       setIsVehicleModalOpen(false)
     }
   }
@@ -241,10 +230,8 @@ export default () => {
       await request
     }
 
-    setIsLoading(true)
-    const { response } = await httpClient.get(window.Routing.generate("api_trailers_get_collection"))
-    setTrailers(response["hydra:member"])
-    setIsLoading(false)
+    fetchAll()
+    setIsTrailerModalOpen(false)
   }
 
   return (

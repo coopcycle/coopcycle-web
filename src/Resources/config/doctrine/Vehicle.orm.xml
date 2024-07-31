@@ -11,7 +11,7 @@
     <field name="isElectric" type="boolean" column="is_electric"/>
     <field name="electricRange" type="integer" column="electric_range" nullable="true"/>
     <many-to-one field="warehouse" target-entity="AppBundle\Entity\Warehouse"></many-to-one>
-    <one-to-many field="compatibleTrailers" target-entity="AppBundle\Entity\Vehicle\Trailer" mapped-by="vehicle"></one-to-many>
+    <one-to-many field="compatibleTrailers" target-entity="AppBundle\Entity\Vehicle\Trailer" orphan-removal="true" mapped-by="vehicle"></one-to-many>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

@@ -162,7 +162,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                     )}
                   </div>
                 </div>
-                <div className="col-md-6 col-md-offset-4">
+                <div className="col-md-4 col-md-offset-6">
                   { values.isElectric ?
                     <div className={ `${errors.electricRange ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="electricRange">{ t('ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL') }</label>

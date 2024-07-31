@@ -125,20 +125,13 @@ class PostSoftDeleteSubscriber implements EventSubscriber
         }
 
         if ($entity instanceof Vehicle) {
-            $trailers = $entity->getCompatibleTrailers();
-            foreach ($trailers as $trailer) {
-                $trailer->getCompatibleVehicles()->removeElement($entity);
-            }
-            $unitOfWork->computeChangeSets();
+            $entity->clearTrailers();
+            $objectManager->flush();
         }
 
         if ($entity instanceof Trailer) {
-
-            $vehicles = $entity->getCompatibleVehicles();
-            foreach ($vehicles as $vehicle) {
-                $vehicle->getCompatibleVehicles()->removeElement($entity);
-            }
-            $unitOfWork->computeChangeSets();
+            $entity->clearVehicles();
+            $objectManager->flush();
         }
     }
 }

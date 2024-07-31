@@ -266,8 +266,12 @@ class Vehicle
         });
     }
 
-    public function removeCompatibleTrailer(Vehicle\Trailer $vehicleTrailer) {
-        $this->compatibleTrailers->removeElement($vehicleTrailer);
+    public function clearTrailers()
+    {
+        foreach($this->compatibleTrailers as $item) {
+            $item->setVehicle(null);
+        }
+        return $this->compatibleTrailers->clear();
     }
 
 }

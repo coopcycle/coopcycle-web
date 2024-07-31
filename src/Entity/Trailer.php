@@ -262,10 +262,7 @@ class Trailer
         return $this->getCompatibleVehicles()->contains($vehicle);
     }
 
-    /**
-     * Clear the assigned items
-     */
-    public function clear()
+    public function clearVehicles()
     {
         foreach($this->compatibleVehicles as $item) {
             $item->setTrailer(null);
@@ -275,7 +272,7 @@ class Trailer
 
     public function setCompatibleVehicles($vehicles)
     {
-        $this->clear();
+        $this->clearVehicles();
 
         foreach($vehicles as $vehicle) {
             if (!$this->hasVehicleCompat($vehicle)) {

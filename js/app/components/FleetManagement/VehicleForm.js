@@ -67,7 +67,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
             >
               <div className={ `form-group${errors.name ? 'has-error': ''}` }>
                 <div className="row">
-                  <div className="col-md-8">
+                  <div className="col-md-12">
                   <label className="control-label" htmlFor="name">{ t('ADMIN_VEHICLE_NAME_LABEL') }</label>
                     <Field
                       className="form-control"
@@ -88,7 +88,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
               <div className={ `form-group ${errors.color ? 'has-error': ''}` }>
                 <label className="control-label" htmlFor="color">{ t('ADMIN_VEHICLE_COLOR_LABEL') }</label>
                   <div className="row">
-                    <div className="col-md-8">
+                    <div className="col-md-12">
                       <Field
                         name="color"
                         minLength="7"
@@ -113,7 +113,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                   </div>
                 </div>
                 <div className="row form-group">
-                  <div className="col-md-3">
+                  <div className="col-md-4">
                     <div className={ `${errors.maxWeight ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="maxWeight">{ t('ADMIN_VEHICLE_MAX_WEIGHT_LABEL') }</label>
                       <Field
@@ -130,7 +130,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                       )}
                     </div>
                   </div>
-                  <div className="col-md-offset-2 col-md-3">
+                  <div className="col-md-offset-4 col-md-4">
                     <div className={ `${errors.maxVolumeUnits ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="maxVolumeUnits">{ t('ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL') }</label>
                       <Field
@@ -163,7 +163,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                     )}
                   </div>
                 </div>
-                <div className="col-md-4 col-md-offset-2">
+                <div className="col-md-4 col-md-offset-6">
                   { values.isElectric ?
                     <div className={ `${errors.electricRange ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="electricRange">{ t('ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL') }</label>
@@ -184,7 +184,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                 </div>
               </div>
               <div className="row form-group">
-                <div className="col-md-8">
+                <div className="col-md-12">
                   <div className={ `${errors.warehouse ? 'has-error': ''}` }>
                     <label className="control-label" htmlFor="warehouse">{ t('ADMIN_VEHICLE_WAREHOUSE_LABEL') }</label>
                     <Field
