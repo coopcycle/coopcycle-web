@@ -51,10 +51,10 @@ helm dependency update ./helm/php
 
 #### osrm
 ```sh
-helm install coopcycle-osrm helm/osrm \
+helm install osrm helm/osrm \
   --dependency-update \
-  --set osrm.image.repository=localhost:5000/osrm \
-  --set osrm.image.tag=1.0.0
+  --set image.repository=localhost:5000/osrm \
+  --set image.tag=1.0.0
 ```
 
 #### php/symfony
@@ -103,7 +103,7 @@ Lens IDE (https://k8slens.dev/)
 
 #### osrm
 ```sh
-helm uninstall coopcycle-osrm
+helm uninstall osrm
 ```
 
 #### php/symfony
