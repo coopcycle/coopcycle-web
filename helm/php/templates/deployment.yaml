@@ -134,10 +134,10 @@ spec:
                   name: {{ include "api-platform.fullname" . }}
                   key: mercure-jwt-secret
             - name: COOPCYCLE_REDIS_DSN
-              value: redis://coopcycle-web-redis-master
+              value: redis://coopcycle-redis-master
 {{/*              value: redis://redis:6379*/}}
             - name: MESSENGER_TRANSPORT_DSN
-              value: redis://coopcycle-web-redis-master/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1
+              value: redis://coopcycle-redis-master/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1
 {{/*              value: redis://redis:6379/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1*/}}
             - name: S3_ENDPOINT
               value: http://coopcycle-web-minio:9000

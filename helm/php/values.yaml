@@ -67,13 +67,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-# Full configuration: https://github.com/bitnami/charts/tree/main/bitnami/redis
-redis:
-  enabled: true
-  architecture: standalone
-  auth:
-    enabled: false
-
 # Full configuration: https://github.com/bitnami/charts/tree/main/bitnami/minio
 minio:
   enabled: true
