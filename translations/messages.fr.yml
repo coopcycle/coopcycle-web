@@ -920,7 +920,7 @@ receipt.footer_item.total_products: Total produits
 receipt.footer_item.total_excl_tax: Total HT
 receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
-receipt.billing_details: Commande payée par carte de crédit le %date%
+receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte %name%

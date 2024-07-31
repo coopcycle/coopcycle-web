@@ -491,7 +491,7 @@ form.task.telephone.label: Telefon
 form.task.address.label: Adresse
 localBusiness.form.enabled: Aktiviert
 notifications.restaurant.new_order: Neue Bestellung zu bestätigen
-receipt.billing_details: Bestellung am %date% mit Kredikarte bezahlt
+receipt.billing_details: Bestellung am %date% mit %payment_method% bezahlt
 receipt.line_item.quantity: Stückzahl
 adminDashboard.activity.title: Aktivitäten
 index.map.tip: Benutze die Karte unten, um die Restaurants zu finden

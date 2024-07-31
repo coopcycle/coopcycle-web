@@ -87,7 +87,9 @@
 </table>
 
 <div style="text-align: center;">
-  <small>{{ 'receipt.billing_details'|trans({ '%date%': payment.updatedAt|format_datetime('short', 'short', locale=locale) }) }}</small>
+  {% for payment in payments %}
+  <small style="display: block;">{{ 'receipt.billing_details'|trans({ '%date%': payment.updatedAt|format_datetime('short', 'short', locale=locale), '%payment_method%': payment.method.name }) }}</small>
+  {% endfor %}
 </div>
 
 {% endblock %}

@@ -794,7 +794,7 @@ receipt.footer_item.total_products: Total productos
 receipt.footer_item.total_excl_tax: Total (sin IVA)
 receipt.footer_item.total_incl_tax: Total (IVA incl.)
 receipt.total: Total (IVA incl.)
-receipt.billing_details: Pedido pagado con tarjeta de crédito/débito el %date%
+receipt.billing_details: Pedido pagado con %payment_method% el %date%
 receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nuevo pedido por confirmar
 form.checkout_address.quote.label: Solicitar presupuesto
