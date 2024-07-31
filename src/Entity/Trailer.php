@@ -36,6 +36,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_ADMIN')",
  *     },
+ *     "patch"={
+ *       "method"="PATCH",
+ *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
  *     "set_vehicles"={
  *       "method"="PUT",
  *       "security"="is_granted('ROLE_ADMIN')",
@@ -99,7 +103,7 @@ class Trailer
     protected $electricRange;
 
     /**
-    * @Groups({"trailer", "trailer_create"})
+    * @Groups({"trailer"})
     */
     protected $compatibleVehicles;
 

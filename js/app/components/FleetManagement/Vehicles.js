@@ -19,9 +19,9 @@ const CompatibleVehicles = ({compatibleVehicles, vehicles}) => {
   return (
     <ul>
       {
-        compatibleVehicles.map((vehicleCompat) => {
-          const vehicle = vehicles.find(v => v['@id'] === vehicleCompat.vehicle)
-          return <li key={vehicleCompat['@id']}>{ vehicle.name }</li>
+        compatibleVehicles.map((compatibleVehicleId) => {
+          const vehicle = vehicles.find(v => v['@id'] === compatibleVehicleId)
+          return <li key={vehicle['@id']}>{ vehicle.name }</li>
         })
       }
     </ul>
@@ -180,13 +180,12 @@ export default () => {
       dataIndex: "compatibleVehicles",
       render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} vehicles={vehicles} />,
     },
-    // https://github.com/coopcycle/coopcycle-web/issues/4529
-    //
-    // {
-    //   key: "edit",
-    //   align: "right",
-    //   render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
-    // },
+
+    {
+      key: "edit",
+      align: "right",
+      render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
+    },
     {
       key: "action",
       align: "right",
@@ -228,18 +227,24 @@ export default () => {
       request = await httpClient.post(url, values)
     }
 
-    const {error} = await request
+    const res = await request
 
-    if (error)
+    if (res.error)
     {
       alert(t('ERROR'))
-      return;
-    } else {
-      setIsLoading(true)
-      const { response } = await httpClient.get(window.Routing.generate("api_trailers_get_collection"))
-      setTrailers(response["hydra:member"])
-      setIsLoading(false)
+      return
     }
+
+    if (values['compatibleVehicles']) {
+      url = window.Routing.generate("api_trailers_set_vehicles_item", {id: res.response.id})
+      request = await httpClient.put(url, {compatibleVehicles: values.compatibleVehicles})
+      await request
+    }
+
+    setIsLoading(true)
+    const { response } = await httpClient.get(window.Routing.generate("api_trailers_get_collection"))
+    setTrailers(response["hydra:member"])
+    setIsLoading(false)
   }
 
   return (
