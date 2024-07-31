@@ -258,16 +258,20 @@ class Trailer
         return $this->getCompatibleVehicles()->contains($vehicle);
     }
 
+    /**
+     * Clear the assigned items
+     */
+    public function clear()
+    {
+        foreach($this->compatibleVehicles as $item) {
+            $item->setTrailer(null);
+        }
+        return $this->compatibleVehicles->clear();
+    }
+
     public function setCompatibleVehicles($vehicles)
     {
-        // remove
-        foreach($this->compatibleVehicles as $vehicleTrailer) {
-            $existingVehicle = $vehicleTrailer->getVehicle();
-            if (!array_search($existingVehicle, $vehicles)) {
-                $this->compatibleVehicles->removeElement($vehicleTrailer);
-                $existingVehicle->removeCompatibleTrailer($vehicleTrailer);
-            }
-        }
+        $this->clear();
 
         foreach($vehicles as $vehicle) {
             if (!$this->hasVehicleCompat($vehicle)) {

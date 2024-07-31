@@ -2,6 +2,14 @@
 
 namespace AppBundle\Entity\Vehicle;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+
+
+/**
+ * @ApiResource(
+ *   shortName="VehicleTrailer",
+ * )
+ */
 class Trailer
 {
     protected $id;
