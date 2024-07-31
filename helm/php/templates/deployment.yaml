@@ -133,16 +133,21 @@ spec:
                 secretKeyRef:
                   name: {{ include "api-platform.fullname" . }}
                   key: mercure-jwt-secret
-{{/*          COOPCYCLE_REDIS_DSN=redis://redis:6379*/}}
             - name: COOPCYCLE_REDIS_DSN
               value: redis://coopcycle-web-redis-master
-{{/*          MESSENGER_TRANSPORT_DSN=redis://redis:6379/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1*/}}
+{{/*              value: redis://redis:6379*/}}
             - name: MESSENGER_TRANSPORT_DSN
               value: redis://coopcycle-web-redis-master/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1
-{{/*          COOPCYCLE_TILE38_DSN=redis://tile38:9851*/}}
+{{/*              value: redis://redis:6379/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1*/}}
             - name: S3_ENDPOINT
-              value: "http://coopcycle-web-minio:9000"
-{{/*              value: "http://minio:9000"*/}}
+              value: http://coopcycle-web-minio:9000
+{{/*              value: http://minio:9000*/}}
+            - name: COOPCYCLE_TILE38_DSN
+              value: redis://coopcycle-tile38:9851
+{{/*              value: redis://tile38:9851*/}}
+            - name: TYPESENSE_HOST
+              value: coopcycle-typesense
+{{/*              value: typesense*/}}
           ports:
             - name: http
               containerPort: 80
