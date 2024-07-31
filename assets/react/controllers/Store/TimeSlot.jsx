@@ -9,7 +9,7 @@ import 'skeleton-screen-css/dist/index.scss'
 async function _fetchTimeSlots() {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("api_time_slots_get_collection"),
+    window.Routing.generate("api_time_slots_get_collection", { pagination: new Boolean(false).toString() }),
   );
 }
 
