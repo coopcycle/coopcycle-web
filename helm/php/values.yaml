@@ -38,7 +38,7 @@ postgresql:
       auth:
         username: "example"
         password: "!ChangeMe!"
-        database: "api"
+        database: "coopcycle"
         postgresPassword: "!AdminUserPasswordChangeMe!"
   # Persistent Volume Storage configuration.
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
@@ -59,9 +59,9 @@ postgresql:
       scripts:
         postgis.sh: |
           export PGPASSWORD="!AdminUserPasswordChangeMe!"
-          psql -U postgres -d api -c "CREATE EXTENSION IF NOT EXISTS postgis;"
-          psql -U postgres -d api -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;"
-          psql -U postgres -d api -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
+          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS postgis;"
+          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;"
+          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
 imagePullSecrets: []
 nameOverride: ""
