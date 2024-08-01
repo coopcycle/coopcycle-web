@@ -356,6 +356,8 @@ class StripeManager
 
     public function attachPaymentMethodToCustomer(PaymentInterface $payment)
     {
+        $this->configure();
+
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
 
