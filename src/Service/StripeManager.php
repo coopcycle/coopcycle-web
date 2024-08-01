@@ -3,24 +3,18 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
-use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class StripeManager
 {
-    private $settingsManager;
-    private $logger;
-
     const STRIPE_API_VERSION = '2019-09-09';
 
     public function __construct(
-        SettingsManager $settingsManager,
-        LoggerInterface $logger)
+        private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger)
     {
-        $this->settingsManager = $settingsManager;
-        $this->logger = $logger;
     }
 
     public function configure()
@@ -281,6 +275,8 @@ class StripeManager
             return;
         }
 
+        $this->configure();
+
         $restaurants = $order->getRestaurants();
 
         if (count($restaurants) > 0) {
@@ -315,7 +311,7 @@ class StripeManager
     /**
      * @return Stripe\Customer
      */
-    public function createCustomer(User $user)
+    private function createCustomer(User $user)
     {
         if (null !== $user->getStripeCustomerId()) {
             return Stripe\Customer::retrieve($user->getStripeCustomerId());
@@ -337,6 +333,8 @@ class StripeManager
      */
     public function createSetupIntent(PaymentInterface $payment, $paymentMethod)
     {
+        $this->configure();
+
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
 
@@ -386,6 +384,8 @@ class StripeManager
      */
     public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment)
     {
+        $this->configure();
+
         $payload = [
             'payment_method' => $payment->getPaymentMethod()
         ];
@@ -409,6 +409,8 @@ class StripeManager
 
     public function getCustomerPaymentMethods($customerId)
     {
+        $this->configure();
+
         return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
     }
 
