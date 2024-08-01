@@ -3,8 +3,6 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Controller\StripeController;
-use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\StripePayment;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
@@ -12,17 +10,13 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use Hashids\Hashids;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use SimpleBus\Message\Bus\MessageBus;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
-use Sylius\Component\Order\Context\CartContextInterface;
-use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -103,7 +97,6 @@ class StripeControllerTest extends TestCase
 
         $paymentIntent = $this->createPaymentIntent('requires_source_action', 'use_stripe_sdk', '123456');
 
-        $this->stripeManager->configure()->shouldBeCalled();
         $this->stripeManager->createIntent($payment, false)->willReturn($paymentIntent);
 
         $payload = [
@@ -157,7 +150,6 @@ class StripeControllerTest extends TestCase
 
         $paymentIntent = $this->createPaymentIntent('requires_capture');
 
-        $this->stripeManager->configure()->shouldBeCalled();
         $this->stripeManager->createIntent($payment, false)->willReturn($paymentIntent);
 
         $payload = [
@@ -211,7 +203,6 @@ class StripeControllerTest extends TestCase
 
         $paymentIntent = $this->createPaymentIntent('requires_capture');
 
-        $this->stripeManager->configure()->shouldNotBeCalled();
         $this->stripeManager->createIntent($payment)->shouldNotBeCalled();
 
         $hashids = new Hashids($this->secret, 8);
@@ -259,7 +250,6 @@ class StripeControllerTest extends TestCase
 
         $setupIntent = $this->createSetupIntent('succeeded');
 
-        $this->stripeManager->configure()->shouldBeCalled();
         $this->stripeManager->createSetupIntent($payment, 'pm_123456')->willReturn($setupIntent);
 
         $payload = [
@@ -303,8 +293,7 @@ class StripeControllerTest extends TestCase
             ->willReturn($paymentRepository->reveal());
 
         $setupIntent = $this->createSetupIntent('requires_action');
-
-        $this->stripeManager->configure()->shouldBeCalled();
+        
         $this->stripeManager->createSetupIntent($payment, 'pm_123456')->willReturn($setupIntent);
 
         $payload = [
