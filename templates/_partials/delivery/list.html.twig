@@ -21,7 +21,13 @@
   {% for delivery in deliveries %}
     <tr data-testid="delivery__list_item">
       <td>
-        <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">#{{ delivery.id }}</a>
+        <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">
+          {% if delivery.order is not null %}
+            {{ delivery.order.number }}
+          {% else %}
+            #{{ delivery.id }}
+          {% endif %}
+        </a>
       </td>
       {% if with_store is defined and with_store %}
       <td width="20%">

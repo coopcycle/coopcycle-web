@@ -1,4 +1,4 @@
-<h3>Delivery #{{ delivery.id }}</h3>
+<h3>Delivery {% if delivery.order is not empty %}{{ delivery.order.number }}{% else %}#{{ delivery.id }}{% endif %}</h3>
 {% if delivery.store is not empty %}
 <h4>{{ delivery.store.name }}</h4>
 {% endif %}
