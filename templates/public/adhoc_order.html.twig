@@ -5,7 +5,7 @@
 {% block body %}
 <div class="container">
   <div class="row">
-    <h3 class="col-md-12 mb-4">Detalle del pedido #{{order.number}}</h3>
+    <h3 class="col-md-12 mb-4">Detalle del pedido {{order.number}}</h3>
     <div class="adhoc-order-detail col-12 col-md-5">
 
       {% include '_partials/order/items.html.twig' with { with_total_excluding_tax: true } %}

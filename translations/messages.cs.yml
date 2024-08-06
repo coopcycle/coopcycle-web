@@ -269,7 +269,7 @@ profile.managedRestaurants: Restaurace spravovaná uživatelem
 profile.accountType: Typ účtu
 order.cart.title: Košík
 order.items.products_with_count: Produkty (%count%)
-order.summary.heading: Objednávka %number% (#%id%)
+order.summary.heading: Objednávka %number%
 order.total_excluding_tax: Celkem (bez DPH)
 order.total_including_tax: Celkem (vč. DPH)
 order.items_total: Celkem produktů

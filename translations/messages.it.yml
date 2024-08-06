@@ -900,7 +900,7 @@ order.total_tax: IVA
 order.total_tax_by_rate: Totale %name%
 profile.task.noTasks: Nessun incarico programmato
 profile.managedRestaurants: Ristoranti gestiti dall'utente
-order.summary.heading: Ordine %number% (#%id%)
+order.summary.heading: Ordine %number%
 order.total_excluding_tax: Totale (escluso IVA)
 order.total_including_tax: Totale (incl. IVA)
 order.preparation_expected_at: La preparazione inizierà %date%
