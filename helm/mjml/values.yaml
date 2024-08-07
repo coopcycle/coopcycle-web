@@ -91,7 +91,7 @@ readinessProbe:
         curl -X POST -H 'Content-Type: text/plain' \
         --data '<mjml><mj-body><mj-section><mj-column><mj-text>ABC</mj-text></mj-column></mj-section></mj-body></mjml>' \
         http://localhost:80/
-  initialDelaySeconds: 5 #todo; switch to 25
+  initialDelaySeconds: 25
 
 autoscaling:
   enabled: false
