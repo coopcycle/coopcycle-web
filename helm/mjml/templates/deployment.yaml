@@ -36,9 +36,19 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          #FIXME; dev env configuration; see https://github.com/adrianrudnik/mjml-server
+          env:
+            - name: CORS
+              value: "*"
+            - name: MJML_KEEP_COMMENTS
+              value: "true"
+            - name: MJML_VALIDATION_LEVEL
+              value: "strict"
+            - name: MJML_MINIFY
+              value: "false"
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: 80
               protocol: TCP
           livenessProbe:
             {{- toYaml .Values.livenessProbe | nindent 12 }}

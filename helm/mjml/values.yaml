@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: adrianrudnik/mjml-server
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -41,7 +41,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8889
 
 ingress:
   enabled: false
@@ -72,13 +72,26 @@ resources: {}
   #   memory: 128Mi
 
 livenessProbe:
-  httpGet:
-    path: /
-    port: http
+  exec:
+    command:
+      - sh
+      - -c
+      - |
+        curl -X POST -H 'Content-Type: text/plain' \
+        --data '<mjml><mj-body><mj-section><mj-column><mj-text>ABC</mj-text></mj-column></mj-section></mj-body></mjml>' \
+        http://localhost:80/
+  initialDelaySeconds: 30
+  periodSeconds: 30
 readinessProbe:
-  httpGet:
-    path: /
-    port: http
+  exec:
+    command:
+      - sh
+      - -c
+      - |
+        curl -X POST -H 'Content-Type: text/plain' \
+        --data '<mjml><mj-body><mj-section><mj-column><mj-text>ABC</mj-text></mj-column></mj-section></mj-body></mjml>' \
+        http://localhost:80/
+  initialDelaySeconds: 5 #todo; switch to 25
 
 autoscaling:
   enabled: false
