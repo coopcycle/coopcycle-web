@@ -32,7 +32,7 @@ docker build -t localhost:5000/php:1.0.0 . -f ./docker/php/Dockerfile --target f
 docker run --rm -it --network=host alpine ash -c "apk add socat && socat TCP-LISTEN:5000,reuseaddr,fork TCP:$(minikube ip):5000"
 ```
 
-//TODO: use pre-built image ?
+//TODO: use pre-built image
 
 #### osrm
 ```sh
@@ -83,6 +83,18 @@ helm install coopcycle-typesense helm/typesense \
 #### tile38
 ```sh
 helm install coopcycle-tile38 helm/tile38 \
+  --dependency-update
+```
+
+#### mjml
+```sh
+helm install mjml helm/mjml \
+  --dependency-update
+```
+
+#### smtp
+```sh
+helm install smtp helm/smtp \
   --dependency-update
 ```
 
