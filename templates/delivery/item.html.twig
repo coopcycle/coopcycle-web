@@ -15,17 +15,18 @@
     {% set order = delivery.order %}
     {% if order is not null %}
       <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
-      <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }} (#{{ order.id }})</a></li>
+      <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
+    {% else %}
+      <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
+      <li>#{{ delivery.id }}</li>
     {% endif %}
-
-    <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
-    <li>#{{ delivery.id }}</li>
-
   {% endif %}
 
 {% endblock %}
 
-{% if is_granted('ROLE_DISPATCHER') %}
+{% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty %}
+  {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.order.number }) %}
+{% else %}
   {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.id }) %}
 {% endif %}
 

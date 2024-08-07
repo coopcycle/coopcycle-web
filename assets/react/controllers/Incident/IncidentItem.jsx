@@ -33,7 +33,6 @@ function ContextDetails({ delivery, order }) {
       <>
         <hr className="my-2" />
         <p className="font-weight-bold">Delivery details</p>
-        <div>Delivery #{delivery.id}</div>
       </>
     );
   }

@@ -19,9 +19,9 @@ const CompatibleVehicles = ({compatibleVehicles, vehicles}) => {
   return (
     <ul>
       {
-        compatibleVehicles.map((vehicleCompat) => {
-          const vehicle = vehicles.find(v => v['@id'] === vehicleCompat.vehicle)
-          return <li key={vehicleCompat['@id']}>{ vehicle.name }</li>
+        compatibleVehicles.map((compatibleVehicleId) => {
+          const vehicle = vehicles.find(v => v['@id'] === compatibleVehicleId)
+          return <li key={vehicle['@id']}>{ vehicle.name }</li>
         })
       }
     </ul>
@@ -52,18 +52,17 @@ export default () => {
 
   const httpClient = new window._auth.httpClient()
 
-  const fetchVehicles = () => {
+  const fetchAll = () => {
     setIsLoading(true)
-    httpClient.get(window.Routing.generate("api_vehicles_get_collection")).then(({response}) => {
-      setVehicles(response["hydra:member"])
-      setIsLoading(false)
-    })
-  }
-
-  const fetchTrailers = () => {
-    setIsLoading(true)
-    httpClient.get(window.Routing.generate("api_trailers_get_collection")).then(({response}) => {
-      setTrailers(response["hydra:member"])
+    Promise.all([
+      httpClient.get(window.Routing.generate("api_warehouses_get_collection")),
+      httpClient.get(window.Routing.generate("api_trailers_get_collection")),
+      httpClient.get(window.Routing.generate("api_vehicles_get_collection")),
+    ]).then(values => {
+      const [warehouseRes, trailerRes, vehicleRes] = values
+      setWarehouses(warehouseRes.response["hydra:member"])
+      setTrailers(trailerRes.response["hydra:member"])
+      setVehicles(vehicleRes.response["hydra:member"])
       setIsLoading(false)
     })
   }
@@ -79,17 +78,7 @@ export default () => {
   }
 
   useEffect(() => {
-    Promise.all([
-      httpClient.get(window.Routing.generate("api_warehouses_get_collection")),
-      httpClient.get(window.Routing.generate("api_trailers_get_collection")),
-      httpClient.get(window.Routing.generate("api_vehicles_get_collection")),
-    ]).then(values => {
-      const [warehouseRes, trailerRes, vehicleRes] = values
-      setWarehouses(warehouseRes.response["hydra:member"])
-      setTrailers(trailerRes.response["hydra:member"])
-      setVehicles(vehicleRes.response["hydra:member"])
-      setIsLoading(false)
-    })
+    fetchAll()
   }, [])
 
   const vehicleColumns = [
@@ -138,7 +127,7 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"api_vehicles_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchVehicles} />,
+      render: (record) => <DeleteIcon deleteUrl={"api_vehicles_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
     },
   ]
 
@@ -180,17 +169,16 @@ export default () => {
       dataIndex: "compatibleVehicles",
       render: (compatibleVehicles) => <CompatibleVehicles compatibleVehicles={compatibleVehicles} vehicles={vehicles} />,
     },
-    // https://github.com/coopcycle/coopcycle-web/issues/4529
-    //
-    // {
-    //   key: "edit",
-    //   align: "right",
-    //   render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
-    // },
+
+    {
+      key: "edit",
+      align: "right",
+      render: (record) => <a className="text-reset" href="#"><span className="fa fa-pencil" onClick={() => {setInitialValues(record); setIsTrailerModalOpen(true)}}></span></a>,
+    },
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"api_trailers_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchTrailers} />,
+      render: (record) => <DeleteIcon deleteUrl={"api_trailers_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
     },
   ]
 
@@ -212,7 +200,7 @@ export default () => {
       alert(t('ERROR'))
       return;
     } else {
-      fetchVehicles()
+      fetchAll()
       setIsVehicleModalOpen(false)
     }
   }
@@ -228,18 +216,22 @@ export default () => {
       request = await httpClient.post(url, values)
     }
 
-    const {error} = await request
+    const res = await request
 
-    if (error)
+    if (res.error)
     {
       alert(t('ERROR'))
-      return;
-    } else {
-      setIsLoading(true)
-      const { response } = await httpClient.get(window.Routing.generate("api_trailers_get_collection"))
-      setTrailers(response["hydra:member"])
-      setIsLoading(false)
+      return
     }
+
+    if (values['compatibleVehicles']) {
+      url = window.Routing.generate("api_trailers_set_vehicles_item", {id: res.response.id})
+      request = await httpClient.put(url, {compatibleVehicles: values.compatibleVehicles})
+      await request
+    }
+
+    fetchAll()
+    setIsTrailerModalOpen(false)
   }
 
   return (

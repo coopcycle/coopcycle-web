@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *   normalizationContext={"groups"={"time_slot"}},
+ *   paginationClientEnabled=true,
  *   itemOperations={
  *     "get"={"method"="GET"},
  *     "delete"={

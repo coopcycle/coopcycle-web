@@ -272,7 +272,7 @@ profile.managedRestaurants: Restaurantes gerenciados pelo usuário
 profile.accountType: Tipo de conta
 order.cart.title: Carrinho
 order.items.products_with_count: Produtos (%count%)
-order.summary.heading: Pedido %number% (#%id%)
+order.summary.heading: Pedido %number%
 order.total_excluding_tax: Total (excl. ICMS)
 order.total_including_tax: Total (incl. ICMS)
 order.items_total: Total de produtos

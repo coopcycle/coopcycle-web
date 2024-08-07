@@ -14,7 +14,11 @@
 
     <div class="delivery__tracking">
       <div class="delivery__tracking__topnav">
-        <h1>{{ 'delivery.with_id'|trans({ '%id%': delivery.id }) }}</h1>
+        {% if delivery.order is not empty %}
+          <h1>{{ 'delivery.with_id'|trans({ '%id%': delivery.order.number }) }}</h1>
+        {% else %}
+          <h1>{{ 'delivery.with_id'|trans({ '%id%': delivery.id }) }}</h1>
+        {% endif %}
       </div>
       <div class="delivery__tracking__map-container">
         <div id="map" class="delivery__tracking__map"></div>

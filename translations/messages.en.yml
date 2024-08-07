@@ -316,7 +316,7 @@ profile.orders: Orders
 profile.configuration: Configuration
 order.cart.title: Cart
 order.items.products_with_count: Products (%count%)
-order.summary.heading: Order %number% (#%id%)
+order.summary.heading: Order %number%
 order.total_excluding_tax: Total (excl. VAT)
 order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
@@ -808,8 +808,8 @@ stores.users: Users
 stores.pricing_rule_set: Pricing
 stores.api_keys: API keys
 stores.deliveries: Deliveries
-stores.deliveries.heading: 'Delivery #%delivery_id% - %delivery_distance%'
-stores.deliveries.heading2: 'Delivery #%delivery_id%'
+stores.deliveries.heading: 'Delivery %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Delivery %delivery_id%'
 stores.deliveries.task_unassigned: Unassigned
 stores.deliveries.bookmarks: Saved orders
 stores.deliveries.bookmarks.empty_message: Bookmark orders on the Delivery page to find them easily later

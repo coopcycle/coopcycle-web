@@ -2,21 +2,20 @@
 
 namespace AppBundle\Entity\Vehicle;
 
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 
+/**
+ * @ApiResource(
+ *   shortName="VehicleTrailer",
+ * )
+ */
 class Trailer
 {
     protected $id;
 
-    /**
-    * @Groups({"vehicle"})
-    */
     protected $trailer;
 
-    /**
-    * @Groups({"trailer", "trailer_create"})
-    */
     protected $vehicle;
 
     /**
@@ -55,6 +54,26 @@ class Trailer
     public function setVehicle($vehicle)
     {
         $this->vehicle = $vehicle;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of id
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the value of id
+     *
+     * @return  self
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
 
         return $this;
     }

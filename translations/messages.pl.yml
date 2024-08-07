@@ -298,7 +298,7 @@ profile.managedRestaurants: Restauracje zarządzane przez użytkownika
 profile.accountType: Typ konta
 order.cart.title: Koszyk
 order.items.products_with_count: Produkty (%count%)
-order.summary.heading: Zamówienie %number% (#%id%)
+order.summary.heading: Zamówienie %number%
 order.total_excluding_tax: Łącznie (bez VAT)
 order.total_including_tax: Łącznie (z VAT)
 order.items_total: Wszystkie produkty
