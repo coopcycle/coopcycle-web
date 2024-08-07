@@ -44,7 +44,7 @@ postgresql:
   # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
   primary:
     persistence:
-      enabled: false
+      enabled: true
       storageClass: standard
       size: 1Gi
     pullPolicy: IfNotPresent
