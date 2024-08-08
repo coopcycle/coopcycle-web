@@ -109,6 +109,6 @@ centrifugo:
     adminPassword: "centrifugo"
     adminSecret: "centrifugo"
     apiKey: "CentrifugoApiKey"
-    redisAddress: "redis://coopcycle-redis-master:6379"
+    redisAddress: "redis://coopcycle-web-redis-master:6379"
   env:
     CENTRIFUGO_ALLOWED_ORIGINS: "http://localhost:*"
