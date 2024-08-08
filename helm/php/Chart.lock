@@ -1,9 +1,24 @@
 dependencies:
-- name: postgresql
-  repository: https://charts.bitnami.com/bitnami/
-  version: 14.3.3
-- name: minio
-  repository: https://charts.bitnami.com/bitnami/
-  version: 14.0.0
-digest: sha256:09abc1b5b5eb2704ea0dc2f95d7a0ffde6e03a6928a859bc07fea78f23ef2dc9
-generated: "2024-07-31T12:42:51.591037-07:00"
+- name: redis
+  repository: file://../redis
+  version: 19.6.0
+- name: tile38
+  repository: file://../tile38
+  version: 1.33.1
+- name: typesense
+  repository: file://../typesense
+  version: 0.22.2
+- name: osrm
+  repository: file://../osrm
+  version: 1.0.0
+- name: centrifugo
+  repository: file://../centrifugo
+  version: 8.0.0
+- name: mjml
+  repository: file://../mjml
+  version: 2.4.0
+- name: smtp
+  repository: file://../smtp
+  version: 0.0.2
+digest: sha256:a746836887dd73ca4d49a8ea7d732463d51f11733a8ffecf1c9ff71f1e13190c
+generated: "2024-08-07T18:38:52.262135-07:00"

@@ -27,7 +27,6 @@ mercure:
   jwtSecret: "!ChangeThisMercureHubJWTSecretKey!"
   extraDirectives: cors_origins http://chart-example.local https://chart-example.local
 
-# Full configuration: https://github.com/bitnami/charts/tree/master/bitnami/postgresql
 postgresql:
   enabled: true
   # If bringing your own PostgreSQL, the full uri to use
@@ -40,39 +39,10 @@ postgresql:
         password: "!ChangeMe!"
         database: "coopcycle"
         postgresPassword: "!AdminUserPasswordChangeMe!"
-  # Persistent Volume Storage configuration.
-  # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
-  primary:
-    persistence:
-      enabled: true
-      storageClass: standard
-      size: 1Gi
-    pullPolicy: IfNotPresent
-    image:
-      repository: bitnami/postgresql
-      tag: 14
-    resources:
-      requests:
-        memory: 50Mi
-        cpu: 1m
-    initdb:
-      scripts:
-        postgis.sh: |
-          export PGPASSWORD="!AdminUserPasswordChangeMe!"
-          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS postgis;"
-          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;"
-          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
-# Full configuration: https://github.com/bitnami/charts/tree/main/bitnami/minio
-minio:
-  enabled: true
-  auth:
-    rootUser: "minio"
-    rootPassword: "coopcycle"
 
 serviceAccount:
   # Specifies whether a service account should be created

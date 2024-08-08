@@ -25,11 +25,24 @@ version: 0.1.0
 appVersion: 1.0.0
 
 dependencies:
-  - name: postgresql
-    version: ~14.3.1
-    repository: https://charts.bitnami.com/bitnami/
-    condition: postgresql.enabled
-  - name: minio
-    version: ~14.0.0
-    repository: https://charts.bitnami.com/bitnami/
-    condition: minio.enabled
+  - name: redis
+    version: 19.6.0
+    repository: "file://../redis"
+  - name: tile38
+    version: 1.33.1
+    repository: "file://../tile38"
+  - name: typesense
+    version: 0.22.2
+    repository: "file://../typesense"
+  - name: osrm
+    version: 1.0.0
+    repository: "file://../osrm"
+  - name: centrifugo
+    version: 8.0.0
+    repository: "file://../centrifugo"
+  - name: mjml
+    version: 2.4.0
+    repository: "file://../mjml"
+  - name: smtp
+    version: 0.0.2
+    repository: "file://../smtp"
