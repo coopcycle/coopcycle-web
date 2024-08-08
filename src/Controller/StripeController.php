@@ -175,7 +175,7 @@ class StripeController extends AbstractController
     {
         $this->logger->info('Received webhook');
 
-        $stripeManager->configure();
+        $stripeManager->setupStripeApi();
 
         $payload = $request->getContent();
 

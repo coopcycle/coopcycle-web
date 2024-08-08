@@ -17,7 +17,8 @@ class StripeManager
     {
     }
 
-    public function configure()
+    //FIXME: legacy approach: https://github.com/stripe/stripe-php/wiki/Migration-to-StripeClient-and-services-in-7.33.0#legacy-approach
+    public function setupStripeApi()
     {
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         Stripe\Stripe::setApiVersion(self::STRIPE_API_VERSION);
@@ -123,7 +124,7 @@ class StripeManager
      */
     public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $order = $payment->getOrder();
 
@@ -162,7 +163,7 @@ class StripeManager
      */
     public function createGiropayIntent(PaymentInterface $payment): Stripe\PaymentIntent
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $order = $payment->getOrder();
 
@@ -192,7 +193,7 @@ class StripeManager
      */
     public function confirmIntent(PaymentInterface $payment): Stripe\PaymentIntent
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $stripeOptions = $this->getStripeOptions($payment);
 
@@ -215,7 +216,7 @@ class StripeManager
      */
     public function capture(PaymentInterface $payment)
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         // TODO Exception
         $intent = Stripe\PaymentIntent::retrieve(
@@ -244,7 +245,7 @@ class StripeManager
         // Check if the charge was made in test or live mode
         // To achieve this, we need to store a "livemode" key in payment details
 
-        $this->configure();
+        $this->setupStripeApi();
 
         $stripeAccount = $payment->getStripeUserId();
         $stripeOptions = array();
@@ -275,7 +276,7 @@ class StripeManager
             return;
         }
 
-        $this->configure();
+        $this->setupStripeApi();
 
         $restaurants = $order->getRestaurants();
 
@@ -333,7 +334,7 @@ class StripeManager
      */
     public function createSetupIntent(PaymentInterface $payment, $paymentMethod)
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
@@ -354,7 +355,7 @@ class StripeManager
 
     public function attachPaymentMethodToCustomer(PaymentInterface $payment)
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
@@ -384,7 +385,7 @@ class StripeManager
      */
     public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment)
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $payload = [
             'payment_method' => $payment->getPaymentMethod()
@@ -409,7 +410,7 @@ class StripeManager
 
     public function getCustomerPaymentMethods($customerId)
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
     }
