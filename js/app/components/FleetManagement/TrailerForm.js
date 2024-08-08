@@ -66,7 +66,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
             >
               <div className={ `form-group${errors.name ? 'has-error': ''}` }>
                 <div className="row">
-                  <div className="col-md-8">
+                  <div className="col-md-12">
                   <label className="control-label" htmlFor="name">{ t('ADMIN_VEHICLE_NAME_LABEL') }</label>
                     <Field
                       className="form-control"
@@ -87,7 +87,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
               <div className={ `form-group ${errors.color ? 'has-error': ''}` }>
                 <label className="control-label" htmlFor="maxWeight">{ t('ADMIN_VEHICLE_COLOR_LABEL') }</label>
                   <div className="row">
-                    <div className="col-md-8">
+                    <div className="col-md-12">
                       <Field
                         name="color"
                         minLength="7"
@@ -112,7 +112,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                   </div>
                 </div>
                 <div className="row form-group">
-                  <div className="col-md-2">
+                  <div className="col-md-4">
                     <div className={ `${errors.maxWeight ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="maxWeight">{ t('ADMIN_VEHICLE_MAX_WEIGHT_LABEL') }</label>
                       <Field
@@ -129,7 +129,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                       )}
                     </div>
                   </div>
-                  <div className="col-md-offset-4 col-md-2">
+                  <div className="col-md-offset-4 col-md-4">
                     <div className={ `${errors.maxVolumeUnits ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="maxVolumeUnits">{ t('ADMIN_VEHICLE_MAX_VOLUME_UNITS_LABEL') }</label>
                       <Field
@@ -162,7 +162,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                     )}
                   </div>
                 </div>
-                <div className="col-md-4 col-md-offset-2">
+                <div className="col-md-4 col-md-offset-6">
                   { values.isElectric ?
                     <div className={ `${errors.electricRange ? 'has-error': ''}` }>
                       <label className="control-label" htmlFor="electricRange">{ t('ADMIN_VEHICLE_ELECTRIC_RANGE_LABEL') }</label>
@@ -183,7 +183,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                 </div>
               </div>
               <div className="row form-group">
-                <div className="col-md-8">
+                <div className="col-md-12">
                   <div className={ `${errors.compatibleVehicles ? 'has-error': ''}` }>
                     <label className="control-label" htmlFor="compatibleVehicles">{ t('ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL') }</label>
                     <Field
@@ -196,8 +196,13 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
                         // https://github.com/coopcycle/coopcycle-web/issues/774
                         // https://github.com/JedWatson/react-select/issues/3030
                         menuPortalTarget={document.body}
+                        defaultValue={
+                          initialValues.compatibleVehicles.map(vehicleId => {
+                            const vehicle = vehicles.find(v => v['@id'] === vehicleId)
+                            return {value: vehicle['@id'], label: vehicle.name}
+                        })}
                         options={vehicles.map(vehicle => {return {value: vehicle['@id'], label: vehicle.name}})}
-                        onChange={(selected) => { setFieldValue('compatibleVehicles', selected.map(opt => {return {vehicle: opt.value}})) }}
+                        onChange={(selected) => { setFieldValue('compatibleVehicles', selected.map(opt => opt.value)) }}
                         placeholder={ t('ADMIN_VEHICLE_COMPATIBLE_VEHICLES_LABEL') }
                       />
                     }

@@ -272,7 +272,7 @@ profile.accountType: Type de compte
 order.cart.title: Panier
 order.cart.donation: Dons aux associations
 order.items.products_with_count: Produits (%count%)
-order.summary.heading: Commande %number% (#%id%)
+order.summary.heading: Commande %number%
 order.total_excluding_tax: Total HT
 order.total_including_tax: Total TTC
 order.items_total: Total produits
@@ -693,8 +693,8 @@ stores.createNewDelivery: Créer une livraison
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
-stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
-stores.deliveries.heading2: 'Livraison #%delivery_id%'
+stores.deliveries.heading: 'Livraison %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Livraison %delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses

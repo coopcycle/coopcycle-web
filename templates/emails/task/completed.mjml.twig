@@ -5,7 +5,7 @@
   <mj-text align="left" line-height="20px">
   {% set trans_key = 'task.%s.%s.body'|format(task.type|lower, (task.done ? 'done' : 'failed')) %}
   {{ trans_key|trans({
-    '%id%': task.delivery.id,
+    '%id%': (task.delivery.order ? task.delivery.order.number : task.delivery.id),
     '%address%': task.address.streetAddress,
   }, 'emails') | raw }}
   </mj-text>

@@ -814,6 +814,7 @@ fos_js_routing:
         - api_task_lists_patch_item
         - api_vehicles_patch_item
         - api_trailers_patch_item
+        - api_trailers_set_vehicles_item
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

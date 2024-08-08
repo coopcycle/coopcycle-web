@@ -12,6 +12,7 @@
         <cascade-persist/>
       </cascade>
     </many-to-one>
+    <one-to-many field="vehicles" target-entity="AppBundle\Entity\Vehicle" mapped-by="warehouse" />
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

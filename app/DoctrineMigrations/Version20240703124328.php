@@ -24,7 +24,7 @@ final class Version20240703124328 extends AbstractMigration
         $this->addSql('ALTER TABLE vehicle ADD deleted_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
 
         // at the moment we write the feature we assume legacy vehicles are not useful so let's soft delete them
-        // also they misses the "warehouse" field so they would need user-update for sure
+        // also they misses the "warehouse" field so they would need manual user-update to be usable
         $this->addSql("UPDATE vehicle SET color = '#0000ff', is_electric = false, deleted_at = NOW();");
 
         $this->addSql("ALTER TABLE vehicle RENAME COLUMN volume_units TO max_volume_units;");

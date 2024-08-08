@@ -2,7 +2,7 @@
 
 {% block breadcrumb %}
 <li><a href="{{ path('profile_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
-<li>#{{ order.id }}</li>
+<li>{{ order.number }}</li>
 {% endblock %}
 
 {% block content %}

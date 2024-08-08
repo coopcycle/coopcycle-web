@@ -212,7 +212,7 @@ profile.orders: Pedidos
 profile.configuration: Configuración
 order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
-order.summary.heading: Pedido %number% (#%id%)
+order.summary.heading: Pedido %number%
 order.total_including_tax: Total (IVA incl.)
 order.items_total: Total productos
 order.total_tax: IVA
@@ -538,8 +538,8 @@ stores.createNewDelivery: Crear entrega
 stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
-stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
-stores.deliveries.heading2: 'Entrega #%delivery_id%'
+stores.deliveries.heading: 'Entrega %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Entrega %delivery_id%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
 stores.addresses: Direcciones

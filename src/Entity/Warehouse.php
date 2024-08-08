@@ -50,6 +50,8 @@ class Warehouse
     */
     protected $address;
 
+    protected $vehicles;
+
     /**
      * Get the value of id
      */
@@ -108,5 +110,13 @@ class Warehouse
         $this->address = $address;
 
         return $this;
+    }
+
+    /**
+     * Get the value of vehicles
+     */
+    public function getVehicles()
+    {
+        return $this->vehicles;
     }
 }

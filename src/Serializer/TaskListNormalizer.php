@@ -57,7 +57,6 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
                 );
                 }, $object->getTempLegacyTaskStorage()
             );
-            // var_dump($data['items']);
         }
         // legacy serialization for app and events
         // see https://github.com/coopcycle/coopcycle-app/issues/1803

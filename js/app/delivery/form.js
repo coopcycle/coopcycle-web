@@ -97,22 +97,29 @@ if (priceEl) {
 }
 
 const arbitraryPriceEl = document.getElementById('delivery_arbitraryPrice')
-const variantDetailsEl = document.querySelector('[data-variant-details]')
 
 if (arbitraryPriceEl) {
-  const setIsDisplayDetails = (isDisplayed) => {
-    if (isDisplayed) {
-      variantDetailsEl.classList.remove('d-none')
+  const containerEl = document.querySelector('[data-variant-details]')
+  const variantNameEl = document.getElementById('delivery_variantName')
+  const variantPriceEl = document.getElementById('delivery_variantPrice')
+
+  const setIsChecked = (isChecked) => {
+    if (isChecked) {
+      containerEl.classList.remove('d-none')
+      variantNameEl.setAttribute('required', 'required');
+      variantPriceEl.setAttribute('required', 'required');
     } else {
-      variantDetailsEl.classList.add('d-none')
+      containerEl.classList.add('d-none')
+      variantNameEl.removeAttribute('required');
+      variantPriceEl.removeAttribute('required');
     }
   }
 
   // update on initial load
-  setIsDisplayDetails(arbitraryPriceEl.checked)
+  setIsChecked(arbitraryPriceEl.checked)
 
   arbitraryPriceEl.addEventListener('change', function(e) {
-    setIsDisplayDetails(e.target.checked)
+    setIsChecked(e.target.checked)
   })
 }
 

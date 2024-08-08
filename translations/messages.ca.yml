@@ -205,7 +205,7 @@ profile.managedRestaurants: Restaurants gestionats per l’usuari
 profile.accountType: Tipus de compte
 order.cart.title: Cistell de compra
 order.items.products_with_count: Productes (%count%)
-order.summary.heading: Comanda %number% (#%id%)
+order.summary.heading: Comanda %number%
 order.total_including_tax: Total (amb IVA)
 order.items_total: Total de productes
 order.total_tax: IVA

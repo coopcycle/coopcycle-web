@@ -28,9 +28,9 @@ export default ({vehicleId, username, selectTrailerMenuId}) => {
     <Menu id={selectTrailerMenuId}>
       { isFleetManagementLoaded && vehicle ?
         <>
-          { vehicle.compatibleTrailers.map(item => item.trailer).length > 0 ?
+          { vehicle.compatibleTrailers.length > 0 ?
             <>
-              {vehicle.compatibleTrailers.map(item => item.trailer).map((trailerId, index) => {
+              {vehicle.compatibleTrailers.map((trailerId, index) => {
                 const trailer = trailers.find(t => t['@id'] === trailerId)
                 return (
                   <Item

@@ -33,7 +33,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "patch"={
  *       "method"="PATCH",
  *       "access_control"="is_granted('ROLE_ADMIN')"
- *      }
+ *      },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     },
  *   },
  *   order={"name": "ASC"},
  * )
@@ -257,18 +261,17 @@ class Vehicle
      */
     public function getCompatibleTrailers()
     {
-        return $this->compatibleTrailers;
+        return $this->compatibleTrailers->map(function ($vehicleTrailer) {
+            return $vehicleTrailer->getTrailer();
+        });
     }
 
-    /**
-     * Set the value of compatibleTrailers
-     *
-     * @return  self
-     */
-    public function setCompatibleTrailers($compatibleTrailers)
+    public function clearTrailers()
     {
-        $this->compatibleTrailers = $compatibleTrailers;
-
-        return $this;
+        foreach($this->compatibleTrailers as $item) {
+            $item->setVehicle(null);
+        }
+        return $this->compatibleTrailers->clear();
     }
+
 }
