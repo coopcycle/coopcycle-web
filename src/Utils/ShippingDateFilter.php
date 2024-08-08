@@ -56,7 +56,8 @@ class ShippingDateFilter
         // if the dispatcher adds an delay of 30min
         // then I want here to filter out all of the possible dropoffs between 11:30 and 12:00
         // so I need to substract the delay from the preparation time
-        $preparationWithDelay = $preparation->sub(date_interval_create_from_date_string(sprintf('%s minutes', $orderingDelayMinutes)));
+        $preparationWithDelay = clone $preparation;
+        $preparationWithDelay = $preparationWithDelay->sub(date_interval_create_from_date_string(sprintf('%s minutes', $orderingDelayMinutes)));
 
         if ($preparationWithDelay <= $now) {
 
@@ -75,6 +76,7 @@ class ShippingDateFilter
         $vendorConditions = $order->getVendorConditions();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
+        // I am not sure if we should include the delay here. Having the delay included means: if there is 30min delay + 25min prep+shipping then the restaurant needs to be open 55min in advance so it has the time to prepare the order.
         if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparationWithDelay, $vendorConditions->getClosingRules())) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s" with delay "%s" minutes',

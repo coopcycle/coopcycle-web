@@ -149,8 +149,7 @@ class OrderTimeline
 
         } else {
 
-            // take the least optimistic for the dropoff, so we get the most optimistic for the preparation time
-            $dropoff = $range->getUpper();
+            $dropoff = $range->getLower();
             $timeline->setDropoffExpectedAt($dropoff);
 
             // The pickup time is when the messenger grabs the bag
