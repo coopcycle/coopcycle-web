@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Event\OrderDelayed;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -24,7 +25,7 @@ class OrdersRateLimit
      * @return bool
      * @throws \RedisException
      */
-    public function isRangeFull(Order $order, \DateTime $pickupTime): bool {
+    public function isRangeFull(Order|OrderInterface $order, \DateTime $pickupTime): bool {
 
         if (!$this->featureEnabled($order)) {
             return false;
@@ -173,7 +174,7 @@ class OrdersRateLimit
      * @param Order $order
      * @return bool
      */
-    private function featureEnabled(Order $order): bool
+    private function featureEnabled(Order|OrderInterface $order): bool
     {
         if (!$order->hasVendor()) {
             return false;
