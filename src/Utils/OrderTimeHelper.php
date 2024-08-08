@@ -37,19 +37,26 @@ class OrderTimeHelper
     {
     }
 
-    private function filterChoices(OrderInterface $cart, array $choices): array
+    private function filterChoices(OrderInterface $cart, array $choices, $fulfillmentMethod): array
     {
         $choicesLogged = 0;
         $acceptedChoicesLogged = 0;
+        $orderingDelayMinutes = $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes());
 
-        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, &$choicesLogged, &$acceptedChoicesLogged) {
+        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $orderingDelayMinutes, &$choicesLogged, &$acceptedChoicesLogged) {
 
-            $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
+            $result = $this->shippingDateFilter->accept(
+                $cart,
+                $choice->toTsRange(),
+                orderingDelayMinutes: $orderingDelayMinutes
+            );
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
-                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
+                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s with delay %s',
                     var_export($result, true),
-                    (string)$choice),
+                    (string)$choice,
+                    (string)$orderingDelayMinutes
+                ),
                     [
                         'order' => $this->loggingUtils->getOrderId($cart),
                         'vendor' => $this->loggingUtils->getVendors($cart),
@@ -131,13 +138,12 @@ class OrderTimeHelper
                 $fulfillmentMethod->getOpeningHours(),
                 $this->timeRegistry,
                 $vendorConditions->getClosingRules(),
-                $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
                 $fulfillmentMethod->isPreOrderingAllowed()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
-            $values = $this->filterChoices($cart, $choiceList->getChoices());
+            $values = $this->filterChoices($cart, $choiceList->getChoices(), $fulfillmentMethod);
 
             // FIXME Sort availabilities
 
