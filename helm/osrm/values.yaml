@@ -5,7 +5,8 @@
 replicaCount: 1
 
 image:
-  repository: "chart-example.local/coopcycle/osrm"
+  repository: "localhost:5000/osrm"
+#  repository: "chart-example.local/coopcycle/osrm"
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
