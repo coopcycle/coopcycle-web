@@ -14,6 +14,9 @@ use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 
+/**
+ * Generate available time choices for 'ASAP ordering', i.e. from a restaurant/local business opening hours and settings (preordering) it will generate a list of TimeRanges available for ordering.
+ */
 class AsapChoiceLoader implements ChoiceLoaderInterface
 {
     private $openingHours;
