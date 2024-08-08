@@ -52,7 +52,7 @@ jobs:
       - name: Create .env file
         run: cp .env.dist .env
       - name: Pull Docker images
-        run: docker-compose pull --ignore-pull-failures
+        run: docker compose pull --ignore-pull-failures
       - name: Prepare OSRM data
         run: |
           docker-compose run -T --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
