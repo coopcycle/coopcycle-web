@@ -95,6 +95,18 @@ class OrderTimeHelper
         return $value + $this->getExtraTime();
     }
 
+    /**
+     * Generate dropoff time choices for 'ASAP ordering'
+     * 1. Generate the TimeRanges choices from opening hours
+     * 2. Filter out regarding 3 criterias:
+     *    - preparation time
+     *    - shipping time
+     *    - ordering delay
+     * 3. Sort availabilities
+     * 4. Cache the result
+     *
+     * @return array
+     */
     private function getAsapChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
     {
         $hash = sprintf('%s-%s-%s',
