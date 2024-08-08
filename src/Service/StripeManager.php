@@ -17,8 +17,14 @@ class StripeManager
     {
     }
 
-    //FIXME: legacy approach: https://github.com/stripe/stripe-php/wiki/Migration-to-StripeClient-and-services-in-7.33.0#legacy-approach
-    public function setupStripeApi()
+    /**
+     * Please call this method before using the Stripe lib
+     *
+     * FIXME: legacy approach: https://github.com/stripe/stripe-php/wiki/Migration-to-StripeClient-and-services-in-7.33.0#legacy-approach
+     * 
+     * @return void
+     */
+    public function setupStripeApi(): void
     {
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         Stripe\Stripe::setApiVersion(self::STRIPE_API_VERSION);
