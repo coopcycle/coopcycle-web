@@ -43,6 +43,8 @@ class OrderTimeHelper
         $acceptedChoicesLogged = 0;
         $orderingDelayMinutes = $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes());
 
+        $this->logger->info('here');
+
         return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $orderingDelayMinutes, &$choicesLogged, &$acceptedChoicesLogged) {
 
             $result = $this->shippingDateFilter->accept(
@@ -50,9 +52,7 @@ class OrderTimeHelper
                 $choice->toTsRange(),
                 orderingDelayMinutes: $orderingDelayMinutes
             );
-
-            if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
-                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s with delay %s',
+            $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s with delay %s',
                     var_export($result, true),
                     (string)$choice,
                     (string)$orderingDelayMinutes
@@ -61,6 +61,9 @@ class OrderTimeHelper
                         'order' => $this->loggingUtils->getOrderId($cart),
                         'vendor' => $this->loggingUtils->getVendors($cart),
                     ]);
+
+
+            if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
 
                 if ($result) {
                     $acceptedChoicesLogged++;
