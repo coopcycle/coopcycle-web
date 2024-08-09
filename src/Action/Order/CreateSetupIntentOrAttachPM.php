@@ -37,8 +37,6 @@ class CreateSetupIntentOrAttachPM
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
 
-        $this->stripeManager->configure();
-
         try {
             $intent = $this->stripeManager->createSetupIntent($payment, $body['payment_method_to_save']);
 

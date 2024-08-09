@@ -136,8 +136,6 @@ class Pay
         // Assign order number now because it is needed for Stripe
         $this->orderNumberAssigner->assignNumber($data);
 
-        $this->stripeManager->configure();
-
         try {
 
             $payment->setPaymentMethod($body['paymentMethodId']);
