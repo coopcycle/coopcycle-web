@@ -2,14 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Task;
-use AppBundle\Entity\Task\Group;
-use AppBundle\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
-use Symfony\Component\HttpFoundation\Request;
 
 class Collection extends Base
 {
