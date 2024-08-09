@@ -28,7 +28,7 @@ class ShippingDateFilter
      * @return bool
      * @throws \RedisException
      */
-    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null): bool
+    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null, int $orderingDelayMinutes = 0): bool
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -52,11 +52,18 @@ class ShippingDateFilter
 
         $timeline = $this->orderTimelineCalculator->calculate($order, $range);
         $preparation = $timeline->getPreparationExpectedAt();
+        // if a customer wants a dropoff at 12:00, and preparation time + shipping time is 30 minutes, I need to order at 11:30 at least
+        // if the dispatcher adds an delay of 30min
+        // then I want here to filter out all of the possible dropoffs between 11:30 and 12:00
+        // so I need to substract the delay from the preparation time
+        $preparationWithDelay = clone $preparation;
+        $preparationWithDelay = $preparationWithDelay->sub(date_interval_create_from_date_string(sprintf('%s minutes', $orderingDelayMinutes)));
 
-        if ($preparation <= $now) {
+        if ($preparationWithDelay <= $now) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" is in the past',
-                $preparation->format(\DateTime::ATOM)),
+            $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" with delay "%s" minutes is in the past',
+                $preparation->format(\DateTime::ATOM),
+                strval($orderingDelayMinutes)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
                     'vendor' => $this->loggingUtils->getVendors($order),
@@ -69,10 +76,14 @@ class ShippingDateFilter
         $vendorConditions = $order->getVendorConditions();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
+        // I am not sure if we should include the delay here.
+        // Having the delay included means: if there is 30min delay + 25min prep+shipping then the restaurant needs to be open 55min in advance so it has the time to prepare the order.
+        // Regarding prior notice, it means that a restaurant that opens at 6PM and has a 1H prior notice can not deliver someone before 7:25PM
+        if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparationWithDelay, $vendorConditions->getClosingRules())) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
-                $preparation->format(\DateTime::ATOM)),
+            $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s" with delay "%s" minutes',
+                $preparation->format(\DateTime::ATOM),
+                strval($orderingDelayMinutes)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
                     'vendor' => $this->loggingUtils->getVendors($order),

@@ -14,12 +14,14 @@ use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 
+/**
+ * Generate available time choices for 'ASAP ordering', i.e. from a restaurant/local business opening hours and settings (preordering) it will generate a list of TimeRanges available for ordering.
+ */
 class AsapChoiceLoader implements ChoiceLoaderInterface
 {
     private $openingHours;
     private $timeRegistry;
     private $closingRules;
-    private $orderingDelayMinutes;
     private $rangeDuration;
     private $preOrderingAllowed;
 
@@ -27,14 +29,12 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
         array $openingHours,
         TimeRegistry $timeRegistry,
         Collection $closingRules = null,
-        int $orderingDelayMinutes = 0,
         int $rangeDuration = 10,
         bool $preOrderingAllowed = true)
     {
         $this->openingHours = $openingHours;
         $this->timeRegistry = $timeRegistry;
         $this->closingRules = $closingRules ?? new ArrayCollection();
-        $this->orderingDelayMinutes = $orderingDelayMinutes;
         $this->rangeDuration = $rangeDuration;
         $this->preOrderingAllowed = $preOrderingAllowed;
     }
@@ -45,10 +45,6 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     public function loadChoiceList($value = null): ChoiceListInterface
     {
         $now = Carbon::now();
-
-        if ($this->orderingDelayMinutes > 0) {
-            $now->modify(sprintf('+%d minutes', $this->orderingDelayMinutes));
-        }
 
         if (count($this->openingHours) === 0) {
 
