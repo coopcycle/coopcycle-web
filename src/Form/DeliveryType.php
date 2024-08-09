@@ -147,7 +147,9 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            if ($options['with_bookmark'] && $delivery->getStore() && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            $isDeliveryOrder = null !== $store && $store->getCreateOrders();
+            
+            if ($options['with_bookmark'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('bookmark', CheckboxType::class, [
                     'label' => 'form.delivery.bookmark.label',
                     'mapped' => false,
@@ -156,7 +158,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            if ($options['with_recurrence'] && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($options['with_recurrence'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('recurrence', HiddenType::class, [
                     'required' => false,
                     'mapped' => false,
