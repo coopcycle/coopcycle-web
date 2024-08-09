@@ -23,8 +23,6 @@ class MyStripePaymentMethods
     {
         $output = new StripePaymentMethodsOutput();
         if (null !== $this->getUser()->getStripeCustomerId()) {
-            $this->stripeManager->configure();
-
             $paymentMethods = $this->stripeManager->getCustomerPaymentMethods(
                 $this->getUser()->getStripeCustomerId()
             );

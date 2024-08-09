@@ -175,7 +175,7 @@ class StripeController extends AbstractController
     {
         $this->logger->info('Received webhook');
 
-        $stripeManager->configure();
+        $stripeManager->setupStripeApi();
 
         $payload = $request->getContent();
 
@@ -489,8 +489,6 @@ class StripeController extends AbstractController
         // Assign order number now because it is needed for Stripe
         $orderNumberAssigner->assignNumber($order);
 
-        $stripeManager->configure();
-
         try {
 
             $payment->setPaymentMethod($data['payment_method_id']);
@@ -602,8 +600,6 @@ class StripeController extends AbstractController
             ], 400);
         }
 
-        $stripeManager->configure();
-
         try {
             $payment->setPaymentMethod($data['payment_method_id']);
 
@@ -668,8 +664,6 @@ class StripeController extends AbstractController
             ], 400);
         }
 
-        $stripeManager->configure();
-
         try {
 
             $intent = $stripeManager->createSetupIntent($payment, $data['payment_method_to_save']);
@@ -727,8 +721,6 @@ class StripeController extends AbstractController
         if (null === $user->getStripeCustomerId()) {
             return new JsonResponse(['cards' => []]);
         }
-
-        $stripeManager->configure();
 
         try {
             $cards = $stripeManager->getCustomerPaymentMethods($user->getStripeCustomerId());

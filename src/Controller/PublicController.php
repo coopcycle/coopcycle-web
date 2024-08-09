@@ -82,8 +82,6 @@ class PublicController extends AbstractController
 
                 try {
 
-                    $stripeManager->configure();
-
                     if ($lastPayment->requiresUseStripeSDK()) {
                         $stripeManager->confirmIntent($lastPayment);
                     }
