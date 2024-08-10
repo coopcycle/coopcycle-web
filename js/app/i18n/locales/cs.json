@@ -246,6 +246,12 @@
         "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "Právě jste změnili vlastnost adresy. Chcete tuto vlastnost změnit pro všechny minulé i nadcházející dodávky, které tuto adresu používají, nebo jen jednou?",
         "ADMIN_DASHBOARD_PACKAGES": "Balíčky",
         "ADMIN_DASHBOARD_WEIGHT": "Váha",
-        "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Změna stávající adresy"
+        "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Změna stávající adresy",
+        "SCHEDULE_ORDER": "Pořadí objednávky",
+        "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Změnit pouze jednou",
+        "TIME_RANGE_FROM": "od {{start}}",
+        "ADMIN_DASHBOARD_CREATE_GROUP": "Vytvořit skupinu",
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Název skupiny",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Jednotky objemu"
     }
 }
