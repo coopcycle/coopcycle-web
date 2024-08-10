@@ -128,8 +128,8 @@ restaurant.disabledWarning: "Tato restaurace je neaktivní, takže návštěvní
   %restaurantEditUrl%\"> aktivovat v administraci</a>.\n"
 restaurant.closedWarningWithDelay: Objednejte nyní na později. Objednávejte alespoň
   %delay% předem.
-restaurant.temporaryClosedWarning: Tato restaurace je uzavřena do <strong>% date%
-  </strong>. I přesto si můžete objednat na později!
+restaurant.temporaryClosedWarning: Tato restaurace je uzavřena a nedostupná do <strong>%
+  date% </strong>.
 restaurant.noMenuWarning: "Tato restaurace zatím nemá nabídku\n"
 restaurant.quotes_disclaimer.authenticated: Tato restaurace také přijímá objednávky
   na nabídky. Chcete-li vytvořit nabídky, musíte být referenčním zákazníkem. <a href="%contact_us%">
@@ -1215,3 +1215,38 @@ form.store_type.multi_drop_enabled.help: Umožnit uživatelům přidávat dalš�
   při vytváření dodávky
 form.store_type.multi_drop_enabled.label: Povolení vícenásobného předání
 promotion_rule.is_items_total_above: Součet položek je vyšší než %amount%
+form.api_app.type.label: Mechanismus ověřování API
+form.api_app.type.oauth.label: OAuth - pro WordPress
+form.api_app.type.api_key.label: Klíč API - pro Urbantz
+form.settings.mercadopago.client_secret.label: Tajemství klienta
+localBusiness.form.business_address.help: Tato adresa bude použita v účtenkách
+form.local_business.mercadopago.connected: Připojeno
+restaurant.form.section.en_boite_le_plat: Konzervované jídlo
+restaurant.form.en_boite_le_plat_enabled.label: Povolit zálohový systém na misky pro
+  jídlo
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: Chci <a href="https://www.rekrabicka.cz/"
+  target="_blank">Rekrabičky </a> jako zálohované misky na jídlo.
+order.cart.donation: Dary
+order.export.heading.nonprofit: Neziskové organizace
+adminDashboard.nonprofits.createNew: Přidat novou neziskovou organizaci
+adminDashboard.nonprofits.title: Neziskovky
+adminDashboard.nonprofits.confirm_delete: Opravdu chcete tuto neziskovou organizaci
+  smazat?
+order.cart.donation.disclaimer: Nabízíme vám možnost věnovat %percentage% z příjmů
+  z vaší objednávky jednomu z našich partnerských sdružení. Nebudete platit více.
+form.checkout_address.nonprofit.placeholder: Vyberte si svou oblíbenou neziskovou
+  organizaci
+form.delivery.arbitrary_price.label: Definujte cenu ručně
+adminDashboard.users.confirmDeleteUser: Opravdu chcete odstranit uživatele s e-mailem
+  %email%?
+adminDashboard.users.userHasBeenDeleted: Uživatel byl smazán.
+restaurants.pre_order: Předobjednávka
+restaurant.closedOpensTodayLaterWarning: Tato restaurace je nyní zavřená, ale otevírá
+  dnes v <strong>%time%</strong>.
+restaurant.canOrderForLater: Stále si však můžete objednat na pozdější dobu!
+restaurant.closedOpensTomorrowWarning: Tato restaurace je dnes zavřená, ale zítra
+  se otevře v <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: Stále si však můžete objednat na zítřek!
+restaurant.closedOpensAfterTomorrowWarning: Tato restaurace je uzavřena do <strong>%date%</strong>.
+restaurant.canOrderForOtherDay: Na tento den si však stále můžete objednat!
+restaurant.closedNowWarning: Tato restaurace je nyní zavřená.
