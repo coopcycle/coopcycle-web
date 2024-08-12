@@ -64,7 +64,6 @@ export function OrderLayout() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    console.log('OrderLayout; sync')
     dispatch(sync())
   }, [])
 
