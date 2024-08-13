@@ -81,6 +81,8 @@
         "ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS": "In corso",
         "ADMIN_DASHBOARD_TOOLTIP_FAILED": "Fallito",
         "ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED": "Segnalazione di incidente",
+        "ADMIN_DASHBOARD_CREATE_TOUR": "Crea tour",
+        "ADMIN_DASHBOARD_INCLUDE_TASKS_FROM_ORDER": "Includi tutte le attività dall'ordini",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Totale",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Ordine creato",
         "ORDER_TIMELINE_ACCEPTED_TITLE": "{{date}} Ordine confermato",

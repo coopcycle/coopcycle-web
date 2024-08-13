@@ -98,9 +98,6 @@ export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
 export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 
-export const OPEN_CREATE_TOUR_MODAL = 'OPEN_CREATE_TOUR_MODAL'
-export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
-
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
@@ -1475,13 +1472,8 @@ export function closeCreateDeliveryModal() {
   return { type: CLOSE_CREATE_DELIVERY_MODAL }
 }
 
-export function openCreateTourModal() {
-  return { type: OPEN_CREATE_TOUR_MODAL }
-}
-
-export function closeCreateTourModal() {
-  return { type: CLOSE_CREATE_TOUR_MODAL }
-}
+export const openCreateTourModal = createAction("OPEN_CREATE_TOUR_MODAL")
+export const closeCreateTourModal = createAction("CLOSE_CREATE_TOUR_MODAL")
 
 export function openTaskRescheduleModal() {
   return { type: OPEN_TASK_RESCHEDULE_MODAL }
