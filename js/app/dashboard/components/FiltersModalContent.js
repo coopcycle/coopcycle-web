@@ -294,6 +294,14 @@ class FiltersModalContent extends React.Component {
               </div>
               <div role="tabpanel" className="tab-pane" id="filters_couriers">
                 <div className="dashboard__modal-filters__tabpane my-4">
+                  <div>
+                    <a
+                      className="text-muted pull-right"
+                      onClick={() => setFieldValue("hiddenCouriers", [])}
+                    >
+                      {this.props.t("ADMIN_DASHBOARD_FILTERS_SHOW_ALL")}
+                    </a>
+                  </div>
                   {this.props.couriers.map((username) => (
                     <div
                       className="dashboard__modal-filters__courier"
@@ -313,6 +321,9 @@ class FiltersModalContent extends React.Component {
                           defaultChecked={
                             !isHidden(values.hiddenCouriers, username)
                           }
+                          checked={
+                            !isHidden(values.hiddenCouriers, username)
+                          }
                           onChange={(checked) => {
                             if (checked) {
                               setFieldValue(
@@ -330,6 +341,12 @@ class FiltersModalContent extends React.Component {
                             }
                           }}
                         />
+                        <a
+                          className="text-muted ml-4"
+                          onClick={() => setFieldValue("hiddenCouriers", this.props.couriers.filter(c => c !== username))}
+                        >
+                          {this.props.t("ONLY")}
+                        </a>
                       </div>
                     </div>
                   ))}
