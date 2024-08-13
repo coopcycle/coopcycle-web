@@ -59,7 +59,12 @@ class ShippingDateFilter
         $preparationWithDelay = clone $preparation;
         $preparationWithDelay = $preparationWithDelay->sub(date_interval_create_from_date_string(sprintf('%s minutes', $orderingDelayMinutes)));
 
-        if ($preparationWithDelay <= $now) {
+        $preparationCanStartAt = clone $now;
+        if ($orderingDelayMinutes > 0) {
+            $preparationCanStartAt = $preparationCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $orderingDelayMinutes)));
+        }
+
+        if ($preparation <= $preparationCanStartAt) {
 
             $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" with delay "%s" minutes is in the past',
                 $preparation->format(\DateTime::ATOM),
