@@ -28,7 +28,7 @@ export function withoutItemsIRIs(currentItems, toRemoveItems) {
   )
 }
 
-export function withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap) {
+export function withOrderTasks(selectedTasks, allTasks, taskIdToTourIdMap) {
 
   if (!Array.isArray(selectedTasks)) {
     selectedTasks = [ selectedTasks ]
