@@ -80,7 +80,11 @@ class PackageSet
      */
     public function getPackages()
     {
-        return $this->packages;
+        return $this->packages->filter(
+            function ($package) {
+                return !$package->isDeleted();
+            }
+        );
     }
 
     /**
