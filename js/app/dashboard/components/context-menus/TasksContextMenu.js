@@ -55,7 +55,6 @@ export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
-export const CREATE_TOUR_WITH_ORDERS = 'CREATE_TOUR_WITH_ORDERS'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 
 const { hideAll } = useContextMenu({
