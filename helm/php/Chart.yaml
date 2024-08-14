@@ -22,7 +22,7 @@ version: 0.1.0
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
-appVersion: 1.0.0
+appVersion: 0.1.0
 
 dependencies:
   - name: redis
@@ -35,7 +35,7 @@ dependencies:
     version: 0.22.2
     repository: "file://../typesense"
   - name: osrm
-    version: 1.0.0
+    version: 0.1.0
     repository: "file://../osrm"
   - name: centrifugo
     version: 8.0.0

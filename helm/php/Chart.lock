@@ -10,7 +10,7 @@ dependencies:
   version: 0.22.2
 - name: osrm
   repository: file://../osrm
-  version: 1.0.0
+  version: 0.1.0
 - name: centrifugo
   repository: file://../centrifugo
   version: 8.0.0
@@ -20,5 +20,5 @@ dependencies:
 - name: smtp
   repository: file://../smtp
   version: 0.0.2
-digest: sha256:a746836887dd73ca4d49a8ea7d732463d51f11733a8ffecf1c9ff71f1e13190c
-generated: "2024-08-07T18:38:52.262135-07:00"
+digest: sha256:110a2115148483cc4efda88fadfe9787e5b34a5b6d26a217677327a9d665622c
+generated: "2024-08-14T10:20:09.924716-07:00"

@@ -31,14 +31,13 @@ postgresql:
   enabled: true
   # If bringing your own PostgreSQL, the full uri to use
   #url: postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=13&charset=utf8
-  global:
-    postgresql:
-      port: "5432"
-      auth:
-        username: "example"
-        password: "!ChangeMe!"
-        database: "coopcycle"
-        postgresPassword: "!AdminUserPasswordChangeMe!"
+  host: "postgresql-dev"
+  port: "5432"
+  auth:
+    username: "example"
+    password: "!ChangeMe!"
+    database: "coopcycle"
+    postgresPassword: "!AdminUserPasswordChangeMe!"
 
 imagePullSecrets: []
 nameOverride: ""
