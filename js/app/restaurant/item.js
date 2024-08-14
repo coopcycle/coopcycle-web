@@ -1,6 +1,5 @@
-import React from 'react'
-import { createRoot } from 'react-dom/client';
-import { createPortal } from 'react-dom'
+import React, { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
@@ -25,28 +24,20 @@ import './menu.scss'
 import './components/Order/index.scss'
 import '../components/order/index.scss'
 
-import ProductOptionsModal
-  from './components/ProductDetails/ProductOptionsModal'
+import ProductOptionsModal from './components/ProductDetails/ProductOptionsModal'
 import ChangeRestaurantOnAddProductModal from './components/ChangeRestaurantOnAddProductModal'
 import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
 import LoopeatModal from './components/LoopeatModal'
-import FulfillmentDetails from './components/Order/FulfillmentDetails'
-import { OrderOverlay, StickyOrder } from './components/Order'
+import { OrderLayout } from './components/Order'
 import {
   selectCanAddToExistingCart,
   selectCartShippingTimeRange,
   selectCartTiming,
 } from './redux/selectors'
-import {
-  checkTimeRange,
-} from '../utils/order/helpers'
-import {
-  timeRangeSlice,
-} from '../components/order/timeRange/reduxSlice'
-import {
-  accountSlice,
-} from '../entities/account/reduxSlice'
+import { checkTimeRange } from '../utils/order/helpers'
+import { timeRangeSlice } from '../components/order/timeRange/reduxSlice'
+import { accountSlice } from '../entities/account/reduxSlice'
 import { buildGuestInitialState } from '../entities/guest/utils'
 import { guestSlice } from '../entities/guest/reduxSlice'
 import { orderSlice } from '../entities/order/reduxSlice'
@@ -68,7 +59,6 @@ function setMenuLoading(isLoading) {
 }
 
 function init() {
-
   const container = document.getElementById('cart')
 
   if (!container) {
@@ -191,16 +181,12 @@ function init() {
 
   Modal.setAppElement(container)
 
-  // desktop only
-  const fulfilmentDetailsContainer = document.getElementById('restaurant__fulfilment-details__container')
-
-  const root = createRoot(container);
+  const root = createRoot(container)
   root.render(
-      <Provider store={ store }>
-        <I18nextProvider i18n={ i18n }>
-          {createPortal(<FulfillmentDetails />, fulfilmentDetailsContainer)}
-          <StickyOrder />
-          <OrderOverlay />
+    <StrictMode>
+      <Provider store={store}>
+        <I18nextProvider i18n={i18n}>
+          <OrderLayout />
           <ProductOptionsModal />
           <ChangeRestaurantOnAddProductModal />
           <InvitePeopleToOrderModal />
@@ -208,6 +194,7 @@ function init() {
           <LoopeatModal />
         </I18nextProvider>
       </Provider>
+    </StrictMode>,
   )
 }
 

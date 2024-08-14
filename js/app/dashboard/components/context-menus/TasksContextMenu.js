@@ -35,7 +35,7 @@ import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/re
 
 import 'react-contexify/dist/ReactContexify.css'
 import { selectAllTasks, selectSelectedDate, selectTaskIdToTourIdMap, taskListSelectors } from '../../../../shared/src/logistics/redux/selectors'
-import { isValidTasksMultiSelect, usePrevious, withOrderTasksForDragNDrop } from '../../redux/utils'
+import { isValidTasksMultiSelect, usePrevious, withOrderTasks } from '../../redux/utils'
 import Avatar from '../../../components/Avatar'
 
 export const ASSIGN_MULTI = 'ASSIGN_MULTI'
@@ -55,6 +55,7 @@ export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
+export const CREATE_TOUR_WITH_ORDERS = 'CREATE_TOUR_WITH_ORDERS'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 
 const { hideAll } = useContextMenu({
@@ -123,6 +124,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         actions.push(CANCEL_MULTI)
         actions.push(CREATE_GROUP)
         actions.push(CREATE_TOUR)
+        actions.push(CREATE_TOUR_WITH_ORDERS)
       }
 
       if (containsOnlyGroupedTasks) {
@@ -203,7 +205,7 @@ const DynamicMenu = () => {
   const expandedGroupPanelsIds = useSelector(selectExpandedTasksGroupsPanelsIds)
   const taskToShow = useSelector(selectTaskToShow)
 
-  let selectedOrders =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
+  let selectedOrders =  withOrderTasks(selectedTasks, allTasks, taskIdToTourIdMap)
 
   const assign = useAssignAction()
   const assignSelectedOrders = (username) => assign(username, selectedOrders)
@@ -336,18 +338,6 @@ const DynamicMenu = () => {
       </Item>
       { !noActionAvailable && <Separator /> }
       <Item
-        hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
-        onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
-      >
-        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
-      </Item>
-      <Item
-        hidden={ !actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) }
-        onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
-      >
-        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
-      </Item>
-      <Item
         hidden={ !actions.includes(CREATE_GROUP) }
         onClick={ () => dispatch(openCreateGroupModal()) }
       >
@@ -366,21 +356,6 @@ const DynamicMenu = () => {
         { t('ADMIN_DASHBOARD_REMOVE_FROM_GROUP') }
       </Item>
       <Item
-        hidden={ !actions.includes(RESTORE) }
-        onClick={ () => dispatch(restoreTasks(selectedTasks)) }
-      >
-        { t('ADMIN_DASHBOARD_RESTORE') }
-      </Item>
-      <Item
-        hidden={ !actions.includes(RESCHEDULE) }
-        onClick={ () => {
-          dispatch(setCurrentTask(selectedTasks[0]))
-          dispatch(openTaskRescheduleModal())
-        }}
-        >
-        { t('ADMIN_DASHBOARD_RESCHEDULE') }
-      </Item>
-      <Item
         hidden={ !actions.includes(CREATE_DELIVERY) }
         onClick={ () => dispatch(openCreateDeliveryModal()) }
       >
@@ -393,10 +368,37 @@ const DynamicMenu = () => {
         { t('ADMIN_DASHBOARD_CREATE_TOUR') }
       </Item>
       <Item
+        hidden={ !actions.includes(MOVE_TO_NEXT_DAY_MULTI) }
+        onClick={ () => dispatch(moveTasksToNextDay(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI', { count: selectedTasks.length }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(MOVE_TO_NEXT_WORKING_DAY_MULTI) }
+        onClick={ () => dispatch(moveTasksToNextWorkingDay(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI', { count: selectedTasks.length, nextWorkingDay: moment(nextWorkingDay).format('LL') }) }
+      </Item>
+      <Item
+        hidden={ !actions.includes(RESCHEDULE) }
+        onClick={ () => {
+          dispatch(setCurrentTask(selectedTasks[0]))
+          dispatch(openTaskRescheduleModal())
+        }}
+        >
+        { t('ADMIN_DASHBOARD_RESCHEDULE') }
+      </Item>
+      <Item
             hidden={ !actions.includes(REPORT_INCIDENT) }
             onClick={ () => dispatch(openReportIncidentModal()) }
           >
             {t("ADMIN_DASHBOARD_REPORT_INCIDENT")}
+      </Item>
+      <Item
+        hidden={ !actions.includes(RESTORE) }
+        onClick={ () => dispatch(restoreTasks(selectedTasks)) }
+      >
+        { t('ADMIN_DASHBOARD_RESTORE') }
       </Item>
       { noActionAvailable && (
         <Item disabled>

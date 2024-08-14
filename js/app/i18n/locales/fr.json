@@ -360,6 +360,7 @@
         "SEARCH_PRODUCT_ITEM_SUBTITLE": "Dans {{- shop}}",
         "SEARCH_PLACEHOLDER": "Une boutique, un plat…",
         "ADMIN_DASHBOARD_CREATE_TOUR": "Créer une tournée",
+        "ADMIN_DASHBOARD_INCLUDE_TASKS_FROM_ORDER": "Ajouter les tâches des commandes",
         "ADMIN_DASHBOARD_TOUR_NAME": "Nom de la tournée",
         "SAVE_CREDIT_CARD": "Sauvegarder la carte bancaire",
         "PAY_WITH_SAVED_CREDIT_CARD": "Payer avec une carte bancaire sauvegardée",

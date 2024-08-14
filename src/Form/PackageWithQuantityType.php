@@ -35,6 +35,7 @@ class PackageWithQuantityType extends AbstractType
             $qb = $this->entityManager->getRepository(Package::class)
                 ->createQueryBuilder('p')
                 ->andWhere('p.packageSet = :package_set')
+                ->andWhere('p.deletedAt IS NOT NULL')
                 ->setParameter('package_set', $options['package_set'])
                 ->orderBy('p.name', 'ASC');
 
@@ -46,10 +47,13 @@ class PackageWithQuantityType extends AbstractType
                 $qb->setParameter('package_id', $data->getPackage()->getId());
             }
 
+            $data = $qb->getQuery()->getResult();
+
             $form
                 ->add('package', EntityType::class, [
                     'class' => Package::class,
-                    'choices' => $qb->getQuery()->getResult(),
+                    'choices' => $data,
+                    'data' => count($data) ? $data[0] : null,
                     'label' => 'form.package_with_quantity.package.label',
                     'choice_label' => 'name',
                     'choice_value' => 'name',

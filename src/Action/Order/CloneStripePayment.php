@@ -31,8 +31,6 @@ class CloneStripePayment
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
 
-        $this->stripeManager->configure();
-
         try {
             $payment->setPaymentMethod($request->attributes->get('paymentMethodId'));
 

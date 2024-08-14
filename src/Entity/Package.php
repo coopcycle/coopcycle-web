@@ -2,12 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 class Package
 {
     use Timestampable;
+    use SoftDeleteable;
 
     protected $id;
 

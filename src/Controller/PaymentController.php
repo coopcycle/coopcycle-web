@@ -75,7 +75,7 @@ class PaymentController extends AbstractController
 
         $order = $payment->getOrder();
 
-        $this->stripeManager->configure();
+        $this->stripeManager->setupStripeApi();
 
         $stripeAccount = $payment->getStripeUserId();
         $stripeOptions = [];

@@ -11,7 +11,7 @@ import { clearSelectedTasks,
   unassignTasks as unassignTasksAction
 } from "./actions"
 import { belongsToTour, selectGroups, selectOrderOfUnassignedTasks, selectSelectedTasks } from "./selectors"
-import { isValidTasksMultiSelect, withOrderTasksForDragNDrop } from "./utils"
+import { isValidTasksMultiSelect, withOrderTasks } from "./utils"
 import { toast } from 'react-toastify'
 import i18next from "i18next"
 
@@ -141,7 +141,7 @@ export function handleDragEnd(
     // when we drag n drop we want all tasks of the order/delivery to move alongside
     // except from tour or group, keep them as they are organized
     if (source.droppableId !== destination.droppableId && !result.draggableId.startsWith('tour') && !result.draggableId.startsWith('group')) {
-      selectedTasks =  withOrderTasksForDragNDrop(selectedTasks, allTasks, taskIdToTourIdMap)
+      selectedTasks =  withOrderTasks(selectedTasks, allTasks, taskIdToTourIdMap)
     }
 
     // sorting tasks to be inserted
