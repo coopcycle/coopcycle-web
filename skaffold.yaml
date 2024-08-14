@@ -12,35 +12,39 @@ build:
     - image: osrm
       context: ./docker/osrm
 
-deploy:
-  kubeContext: minikube
-  # a workaround for some services depending on others and failing before the others are ready
-  # for example, the centrifugo's dependency on redis
-  tolerateFailuresUntilDeadline: true
-  helm:
-    releases:
-    - name: coopcycle-web
-      chartPath: ./helm/php
-      #wait: true
-      #valuesFiles:
-      #- helm-skaffold-values.yaml
-      skipBuildDependencies: true # Skip helm dep build
-      #recreatePods will pass --recreate-pods to helm upgrade
-      #recreatePods: true
-      #overrides builds an override values.yaml file to run with the helm deploy
-      #overrides:
-      # some:
-      #   key: someValue
-      #setValues get appended to the helm deploy with --set.
-      #setValues:
-      # some:
-      #   key: someValue
-      namespace: default
-      # IMPORTANT: To get Skaffold to work with Helm, the image key must be configured in the skaffold.yaml.
-      setValueTemplates:
-        osrm.image.repository: "{{.IMAGE_REPO_osrm}}"
-        osrm.image.tag: "{{.IMAGE_TAG_osrm}}@{{.IMAGE_DIGEST_osrm}}"
-        php.image.repository: "{{.IMAGE_REPO_coopcycle_php}}"
-        php.image.tag: "{{.IMAGE_TAG_coopcycle_php}}@{{.IMAGE_DIGEST_coopcycle_php}}"
-      valuesFiles:
-        - skaffold-values.yaml
+profiles:
+  - name: dev
+    activation:
+      - kubeContext: minikube
+        command: dev
+    deploy:
+      # a workaround for some services depending on others and failing before the others are ready
+      # for example, the centrifugo's dependency on redis
+      tolerateFailuresUntilDeadline: true
+      helm:
+        releases:
+          - name: coopcycle-web
+            chartPath: ./helm/php
+            #wait: true
+            #valuesFiles:
+            #- helm-skaffold-values.yaml
+            skipBuildDependencies: true # Skip helm dep build
+            #recreatePods will pass --recreate-pods to helm upgrade
+            #recreatePods: true
+            #overrides builds an override values.yaml file to run with the helm deploy
+            #overrides:
+            # some:
+            #   key: someValue
+            #setValues get appended to the helm deploy with --set.
+            #setValues:
+            # some:
+            #   key: someValue
+            namespace: default
+            # IMPORTANT: To get Skaffold to work with Helm, the image key must be configured in the skaffold.yaml.
+            setValueTemplates:
+              osrm.image.repository: "{{.IMAGE_REPO_osrm}}"
+              osrm.image.tag: "{{.IMAGE_TAG_osrm}}@{{.IMAGE_DIGEST_osrm}}"
+              php.image.repository: "{{.IMAGE_REPO_coopcycle_php}}"
+              php.image.tag: "{{.IMAGE_TAG_coopcycle_php}}@{{.IMAGE_DIGEST_coopcycle_php}}"
+            valuesFiles:
+              - skaffold-values-dev.yaml

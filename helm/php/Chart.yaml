@@ -42,18 +42,24 @@ dependencies:
   - name: centrifugo
     version: 8.0.0
     repository: https://centrifugal.github.io/helm-charts
+    condition: centrifugo.enabled
   - name: tile38
     version: 1.33.1
     repository: "file://../tile38"
+    condition: tile38.enabled
   - name: typesense
     version: 0.22.2
     repository: "file://../typesense"
+    condition: typesense.enabled
   - name: osrm
     version: 0.1.0
     repository: "file://../osrm"
+    condition: osrm.enabled
   - name: mjml
     version: 2.4.0
     repository: "file://../mjml"
+    condition: mjml.enabled
   - name: smtp
     version: 0.0.2
     repository: "file://../smtp"
+    condition: smtp.enabled

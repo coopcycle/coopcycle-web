@@ -27,51 +27,6 @@ mercure:
   jwtSecret: "!ChangeThisMercureHubJWTSecretKey!"
   extraDirectives: cors_origins http://chart-example.local https://chart-example.local
 
-# Dev-only dependency
-# Full configuration: https://github.com/bitnami/charts/tree/master/bitnami/postgresql
-postgresql:
-  enabled: true
-  # If bringing your own PostgreSQL, the full uri to use
-  #url: postgresql://api-platform:!ChangeMe!@database:5432/api?serverVersion=13&charset=utf8
-  global:
-    postgresql:
-      port: "5432"
-      auth:
-        username: "example"
-        password: "!ChangeMe!"
-        database: "coopcycle"
-        postgresPassword: "!AdminUserPasswordChangeMe!"
-  # Persistent Volume Storage configuration.
-  # ref: https://kubernetes.io/docs/user-guide/persistent-volumes
-  primary:
-    persistence:
-      enabled: true
-      storageClass: standard
-      size: 1Gi
-    pullPolicy: IfNotPresent
-    image:
-      repository: bitnami/postgresql
-      tag: 14
-    resources:
-      requests:
-        memory: 50Mi
-        cpu: 1m
-    initdb:
-      scripts:
-        postgis.sh: |
-          export PGPASSWORD="!AdminUserPasswordChangeMe!"
-          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS postgis;"
-          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS postgis_topology;"
-          psql -U postgres -d coopcycle -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
-
-# Dev-only dependency
-# Full configuration: https://github.com/bitnami/charts/tree/main/bitnami/minio
-minio:
-  enabled: true
-  auth:
-    rootUser: "minio"
-    rootPassword: "coopcycle"
-
 # Full configuration: https://github.com/bitnami/charts/tree/main/bitnami/redis
 redis:
   enabled: true
@@ -79,11 +34,8 @@ redis:
   auth:
     enabled: false
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
 centrifugo:
+  enabled: true
   config:
     engine: "redis"
     admin: true
@@ -96,6 +48,25 @@ centrifugo:
     redisAddress: "redis://coopcycle-web-redis-master:6379"
   env:
     CENTRIFUGO_ALLOWED_ORIGINS: "http://localhost:*"
+
+tile38:
+  enabled: true
+
+typesense:
+  enabled: true
+
+osrm:
+  enabled: true
+
+mjml:
+  enabled: true
+
+smtp:
+  enabled: true
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
