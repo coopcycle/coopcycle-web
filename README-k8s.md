@@ -62,56 +62,17 @@ helm install osrm helm/osrm \
   --set image.tag=0.1.0
 ```
 
-#### redis
-```sh
-helm install coopcycle-redis helm/redis \
-  --dependency-update
-```
-
-#### centrifugo
-```sh
-helm install centrifugo helm/centrifugo \
-  --dependency-update
-```
-
-#### typesense
-```sh
-helm install coopcycle-typesense helm/typesense \
-  --dependency-update
-```
-
-#### tile38
-```sh
-helm install coopcycle-tile38 helm/tile38 \
-  --dependency-update
-```
-
-#### mjml
-```sh
-helm install mjml helm/mjml \
-  --dependency-update
-```
-
-#### smtp
-```sh
-helm install smtp helm/smtp \
-  --dependency-update
-```
-
 #### php/symfony
 ```sh
 helm install coopcycle-web helm/php \
   --dependency-update \
   --set php.image.repository=localhost:5000/php \
-  --set php.image.tag=0.1.0
+  --set php.image.tag=0.1.0 \
+  --set osrm.image.repository=localhost:5000/osrm \
+  --set osrm.image.tag=0.1.0
 ```
 
 #### 3.1. Upgrade using helm chart
-
-```sh
-helm upgrade centrifugo helm/centrifugo \
---dependency-update
-```
 
 ```sh
 helm upgrade coopcycle-web helm/php \
