@@ -15,12 +15,12 @@ minikube start
 
 #### osrm
 ```sh
-cd ./docker/osrm && docker build -t localhost:5000/osrm:0.0.1 . && cd ../..
+cd ./docker/osrm && docker build -t localhost:5000/osrm:0.1.0 . && cd ../..
 ```
 
 #### php/symfony
 ```sh
-docker build -t localhost:5000/php:0.0.1 . -f ./docker/php/Dockerfile --target frankenphp_prod
+docker build -t localhost:5000/php:0.1.0 . -f ./docker/php/Dockerfile --target frankenphp_prod
 ```
 
 
@@ -36,12 +36,12 @@ docker run --rm -it --network=host alpine ash -c "apk add socat && socat TCP-LIS
 
 #### osrm
 ```sh
-docker push localhost:5000/osrm:0.0.1
+docker push localhost:5000/osrm:0.1.0
 ```
 
 #### php/symfony
 ```sh
-docker push localhost:5000/php:0.0.1
+docker push localhost:5000/php:0.1.0
 ```
 
 (if needed) update helm dependencies:
@@ -59,7 +59,7 @@ helm dependency update ./helm/php
 helm install osrm helm/osrm \
   --dependency-update \
   --set image.repository=localhost:5000/osrm \
-  --set image.tag=0.0.1
+  --set image.tag=0.1.0
 ```
 
 #### redis
@@ -103,7 +103,7 @@ helm install smtp helm/smtp \
 helm install coopcycle-web helm/php \
   --dependency-update \
   --set php.image.repository=localhost:5000/php \
-  --set php.image.tag=0.0.1
+  --set php.image.tag=0.1.0
 ```
 
 #### 3.1. Upgrade using helm chart
@@ -117,7 +117,7 @@ helm upgrade centrifugo helm/centrifugo \
 helm upgrade coopcycle-web helm/php \
   --dependency-update \
   --set php.image.repository=localhost:5000/php \
-  --set php.image.tag=0.0.1
+  --set php.image.tag=0.1.0
 ```
 
 ### 4. Setup port forwarding
