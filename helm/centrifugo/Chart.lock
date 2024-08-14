@@ -1,6 +1,0 @@
-dependencies:
-- name: centrifugo
-  repository: https://centrifugal.github.io/helm-charts
-  version: 8.0.0
-digest: sha256:3fb2450d6d40237a2c370ac43ae9b38efd8dab8a0247a69737aad768e23a1935
-generated: "2024-08-07T18:45:59.478636-07:00"

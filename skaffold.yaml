@@ -14,14 +14,11 @@ build:
 
 deploy:
   kubeContext: minikube
+  # a workaround for some services depending on others and failing before the others are ready
+  # for example, the centrifugo's dependency on redis
+  tolerateFailuresUntilDeadline: true
   helm:
     releases:
-    - name: postgresql-dev
-      chartPath: ./helm/postgresql-dev
-      namespace: default
-    - name: minio-dev
-      chartPath: ./helm/minio-dev
-      namespace: default
     - name: coopcycle-web
       chartPath: ./helm/php
       #wait: true

@@ -1,7 +1,16 @@
 dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami/
+  version: 14.3.3
+- name: minio
+  repository: https://charts.bitnami.com/bitnami/
+  version: 14.0.0
 - name: redis
-  repository: file://../redis
-  version: 19.6.0
+  repository: https://charts.bitnami.com/bitnami/
+  version: 19.6.4
+- name: centrifugo
+  repository: https://centrifugal.github.io/helm-charts
+  version: 8.0.0
 - name: tile38
   repository: file://../tile38
   version: 1.33.1
@@ -11,14 +20,11 @@ dependencies:
 - name: osrm
   repository: file://../osrm
   version: 0.1.0
-- name: centrifugo
-  repository: file://../centrifugo
-  version: 8.0.0
 - name: mjml
   repository: file://../mjml
   version: 2.4.0
 - name: smtp
   repository: file://../smtp
   version: 0.0.2
-digest: sha256:110a2115148483cc4efda88fadfe9787e5b34a5b6d26a217677327a9d665622c
-generated: "2024-08-14T10:20:09.924716-07:00"
+digest: sha256:004a7ca2d75fd383bcdbad4f6addc8fb3f5e2507860d4f98ee7901d4bb1b23d1
+generated: "2024-08-14T11:20:20.283149-07:00"
