@@ -1,5 +1,5 @@
 apiVersion: v2
-name: coopcycle-web
+name: coopcycle-platform
 description: A Helm chart for an API Platform project
 home: https://api-platform.com
 icon: https://api-platform.com/logo-250x250.png

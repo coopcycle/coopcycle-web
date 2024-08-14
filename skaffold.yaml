@@ -4,7 +4,7 @@ metadata:
   name: api-platform
 build:
   artifacts:
-    - image: coopcycle-php
+    - image: coopcycle-web
       context: .
       docker:
         dockerfile: ./docker/php/Dockerfile
@@ -23,8 +23,8 @@ profiles:
       tolerateFailuresUntilDeadline: true
       helm:
         releases:
-          - name: coopcycle-web
-            chartPath: ./helm/php
+          - name: coopcycle-platform
+            chartPath: ./helm/coopcycle-platform
             #wait: true
             #valuesFiles:
             #- helm-skaffold-values.yaml
@@ -44,7 +44,7 @@ profiles:
             setValueTemplates:
               osrm.image.repository: "{{.IMAGE_REPO_osrm}}"
               osrm.image.tag: "{{.IMAGE_TAG_osrm}}@{{.IMAGE_DIGEST_osrm}}"
-              php.image.repository: "{{.IMAGE_REPO_coopcycle_php}}"
-              php.image.tag: "{{.IMAGE_TAG_coopcycle_php}}@{{.IMAGE_DIGEST_coopcycle_php}}"
+              php.image.repository: "{{.IMAGE_REPO_coopcycle_web}}"
+              php.image.tag: "{{.IMAGE_TAG_coopcycle_web}}@{{.IMAGE_DIGEST_coopcycle_web}}"
             valuesFiles:
               - skaffold-values-dev.yaml
