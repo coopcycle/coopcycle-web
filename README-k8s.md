@@ -4,6 +4,7 @@ Install
 - [Docker](https://www.docker.com/)
 - [Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - [Helm](https://helm.sh/docs/intro/quickstart/#install-helm)
+- [Skaffold](https://skaffold.dev/docs/install/)
 
 ### Run minikube
 
