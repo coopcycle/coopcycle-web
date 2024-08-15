@@ -2,21 +2,21 @@ apiVersion: skaffold/v4beta11
 kind: Config
 metadata:
   name: api-platform
-build:
-  artifacts:
-    - image: coopcycle-web
-      context: .
-      docker:
-        dockerfile: ./docker/php/Dockerfile
-        target: frankenphp_prod
-    - image: osrm
-      context: ./docker/osrm
 
 profiles:
   - name: dev
     activation:
       - kubeContext: minikube
         command: dev
+    build:
+      artifacts:
+        - image: coopcycle-web
+          context: .
+          docker:
+            dockerfile: ./docker/php/Dockerfile
+            target: frankenphp_prod
+        - image: osrm
+          context: ./docker/osrm
     deploy:
       # a workaround for some services depending on others and failing before the others are ready
       # for example, the centrifugo's dependency on redis
