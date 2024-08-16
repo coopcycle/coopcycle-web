@@ -873,7 +873,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     public function supportsEdenred(): bool
     {
-        return null !== $this->getEdenredMerchantId();
+        return $this->edenredEnabled && null !== $this->getEdenredMerchantId();
     }
 
     public function getHub(): ?Hub
