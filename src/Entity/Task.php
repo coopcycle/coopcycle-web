@@ -1203,5 +1203,15 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitTask($this);
+
+    }
+
+    public static function fixTimeWindow(Task $task)
+    {
+        if (null === $task->getAfter()) {
+            $after = clone $task->getBefore();
+            $after->modify('-15 minutes');
+            $task->setAfter($after);
+        }
     }
 }
