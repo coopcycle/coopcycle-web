@@ -21,7 +21,7 @@ import {
   selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
-import { suggestionsSlice, showSuggestions } from './redux/suggestionsSlice'
+import { suggestionsSlice, showSuggestions, acceptSuggestions } from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 
@@ -505,14 +505,13 @@ function createOnTasksChanged(onChange) {
   }
 }
 
-const acceptSuggestions = () => (next) => (action) => {
-
-  const suggestions = action.type === 'suggestions/acceptSuggestions' ? action.payload : []
+// Reorder tasks in the DOM when suggestion is accepted
+const reorderTasks = () => (next) => (action) => {
 
   const result = next(action)
 
-  if (suggestions.length > 0) {
-    reorder(suggestions[0].order)
+  if (acceptSuggestions.match(action) && action.payload.length > 0) {
+    reorder(action.payload[0].order)
   }
 
   return result
@@ -571,7 +570,7 @@ export default function(name, options) {
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([createOnTasksChanged(onChange), acceptSuggestions]),
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange), reorderTasks]),
     })
 
     onReady(preloadedState)
