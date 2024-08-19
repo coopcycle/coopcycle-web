@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { createSelector } from 'reselect'
 
 const initialState = {
   showSuggestions: false,
@@ -32,3 +33,35 @@ export const {
 } = slice.actions
 
 export const suggestionsSlice = slice
+
+export const selectSuggestions = state =>
+  state.suggestions.suggestions
+
+const selectSuggestedOrder = createSelector(
+  selectSuggestions,
+  (suggestions) => suggestions.length > 0 ? suggestions[0].order : []
+)
+
+export const selectSuggestedGain = createSelector(
+  selectSuggestions,
+  (suggestions) => suggestions.length > 0 ? suggestions[0].gain : { amount: 0 }
+)
+
+export const selectSuggestedTasks = createSelector(
+  selectSuggestedOrder,
+  state => state.tasks,
+  (suggestedOrder, tasks) => {
+    const suggestedTasks = []
+    suggestedOrder.forEach((oldIndex, newIndex) => {
+      suggestedTasks.splice(newIndex, 0, tasks[oldIndex])
+    })
+
+    return suggestedTasks
+  }
+)
+
+export const selectIsSuggestionsModalOpen = createSelector(
+  selectSuggestedTasks,
+  state => state.suggestions.showSuggestions,
+  (suggestedTasks, showSuggestions) => suggestedTasks.length > 0 && showSuggestions
+)

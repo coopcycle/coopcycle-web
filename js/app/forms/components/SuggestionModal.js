@@ -3,7 +3,13 @@ import Modal from 'react-modal'
 import { connect } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Timeline } from 'antd'
-import { rejectSuggestions, acceptSuggestions } from '../redux/suggestionsSlice'
+import {
+  rejectSuggestions,
+  acceptSuggestions,
+  selectSuggestions,
+  selectSuggestedGain,
+  selectSuggestedTasks,
+  selectIsSuggestionsModalOpen } from '../redux/suggestionsSlice'
 
 const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks, suggestedGain, suggestions }) => {
 
@@ -52,21 +58,16 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
 
 function mapStateToProps(state) {
 
-  const suggestions = state.suggestions.suggestions
-  const suggestedOrder = suggestions.length > 0 ? suggestions[0].order : []
-  const suggestedGain = suggestions.length > 0 ? suggestions[0].gain : {}
-
-  const suggestedTasks = []
-  suggestedOrder.forEach((oldIndex, newIndex) => {
-    suggestedTasks.splice(newIndex, 0, state.tasks[oldIndex])
-  })
+  const suggestions = selectSuggestions(state)
+  const suggestedGain = selectSuggestedGain(state)
+  const suggestedTasks = selectSuggestedTasks(state)
 
   return {
     tasks: state.tasks,
     suggestions,
     suggestedTasks,
     suggestedGain,
-    isOpen: suggestedTasks.length > 0 && state.suggestions.showSuggestions,
+    isOpen: selectIsSuggestionsModalOpen(state),
   }
 }
 
