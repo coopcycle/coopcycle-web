@@ -8,6 +8,7 @@ import { createSelector } from 'reselect'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
+import { diff } from 'deep-object-diff'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -498,7 +499,12 @@ function createOnTasksChanged(onChange) {
     const state = getState()
 
     if (prevState.tasks !== state.tasks) {
-      onChange(state)
+
+      const firstTaskWithAddressDiff =
+        _.find(diff(prevState.tasks, state.tasks), t => t?.address && t?.address?.geo)
+      const shouldLoadSuggestions = !!firstTaskWithAddressDiff
+
+      onChange(state, shouldLoadSuggestions)
     }
 
     return result

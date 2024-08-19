@@ -126,7 +126,7 @@ if (arbitraryPriceEl) {
   })
 }
 
-const updateData = (form, delivery) => {
+const updateData = (form, delivery, shouldLoadSuggestions = false) => {
   markersLayerGroup.clearLayers()
   delivery.tasks.forEach((task, index) => {
     if (task.address) {
@@ -142,6 +142,8 @@ const updateData = (form, delivery) => {
 
     form.disable()
     polylineLayerGroup.clearLayers()
+
+    const promises = []
 
     const updateDistance = new Promise((resolve) => {
       route(delivery).then((infos) => {
@@ -202,11 +204,13 @@ const updateData = (form, delivery) => {
       }
     })
 
-    Promise.all([
-      updateDistance,
-      loadSuggestions,
-      updatePrice,
-    ])
+    promises.push(updateDistance)
+    if (shouldLoadSuggestions) {
+      promises.push(loadSuggestions)
+    }
+    promises.push(updatePrice)
+
+    Promise.all(promises)
     .then(() => {
       form.enable()
     })
@@ -219,7 +223,7 @@ new DeliveryForm('delivery', {
   onReady: function(delivery) {
     updateData(this, delivery)
   },
-  onChange: function(delivery) {
-    updateData(this, delivery)
+  onChange: function(delivery, shouldLoadSuggestions) {
+    updateData(this, delivery, shouldLoadSuggestions)
   }
 })
