@@ -21,7 +21,7 @@ moment.locale($('html').attr('lang'))
 const TaskComments = ({ task }) => {
   switch(task.type) {
     case 'PICKUP':
-      if (task.metadata.order_notes && task.metadata.order_notes.length){
+      if (task.metadata?.order_notes && task.metadata.order_notes.length){
         return <i className="fa fa-comments ml-2"></i>;
       }
       return null;
@@ -43,7 +43,7 @@ const TaskCaption = ({ task }) => {
     <span>
       <span className="mr-1">
         <span className="text-monospace font-weight-bold">
-          { task?.metadata.order_number ?
+          { task.metadata?.order_number ?
             task.metadata.order_number
             : `#${ task.id }`
           }
