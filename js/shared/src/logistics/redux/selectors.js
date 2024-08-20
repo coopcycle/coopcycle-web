@@ -215,6 +215,8 @@ export const selectTaskListWeight = createSelector(
 
 export const getTaskVolumeUnits = (task) => task.packages ? task.packages.reduce((acc, pt) => acc + pt.quantity * pt.volume_per_package, 0) : 0
 
+export const getTaskPackages = (task) => task.packages ? task.packages.reduce((acc, pt) => `${acc} ${pt.quantity} x ${pt.short_code}`, '') : ''
+
 export const selectTourVolumeUnits = createSelector(
   selectTourById,
   selectAllTasks,
