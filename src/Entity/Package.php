@@ -2,14 +2,17 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\Model\TaggableInterface;
+use AppBundle\Entity\Model\TaggableTrait;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class Package
+class Package implements TaggableInterface
 {
     use Timestampable;
     use SoftDeleteable;
+    use TaggableTrait;
 
     protected $id;
 
