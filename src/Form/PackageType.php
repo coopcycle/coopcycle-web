@@ -25,20 +25,20 @@ class PackageType extends AbstractType
                 'required' => false
             ])
             ->add('averageVolumeUnits', IntegerType::class, [
-                'label' => 'form.package.volume_units.label',
-                'help' => 'Estimated to 75% of max if not set',
+                'label' => 'form.package.average_volume_units.label',
+                'help' => 'form.package.average_estimation',
                 'required' => false
             ])
             ->add('maxVolumeUnits', IntegerType::class, [
                 'label' => 'form.package.max_volume_units.label',
             ])
             ->add('averageWeight', IntegerType::class, [
-                'label' => 'form.package.volume_units.label',
-                'help' => 'Estimated to 75% of max if not set',
+                'label' => 'form.package.average_weight.label',
+                'help' => 'form.package.average_estimation',
                 'required' => false
             ])
             ->add('maxWeight', IntegerType::class, [
-                'label' => 'form.package.max_volume_units.label',
+                'label' => 'form.package.max_weight.label',
             ])
             ->add('shortCode', TextType::class, [
                 'label' => 'form.package.shortCode.label',
