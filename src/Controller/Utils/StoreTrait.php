@@ -327,9 +327,10 @@ trait StoreTrait
                     $entityManager, $orderNumberAssigner);
 
                 $order = $delivery->getOrder();
-
                 $this->handleBookmark($orderManager, $form, $order);
-                $this->handleNewSubscription($pricingManager, $entityManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
+                $this->handleNewSubscription($pricingManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
+
+                $entityManager->flush();
 
                 return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -339,18 +340,20 @@ trait StoreTrait
 
                     $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
                     $order = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $this->getUser()->getCustomer());
+                    $entityManager->persist($order);
 
                     $this->handleRememberAddress($store, $form);
                     $this->handleBookmark($orderManager, $form, $order);
 
-                    $entityManager->persist($order);
                     $entityManager->flush();
 
+                    // We need to persist the order before calling onDemand,
+                    // because an auto increment is needed to generate a number
                     $orderManager->onDemand($order);
 
-                    $entityManager->flush();
+                    $this->handleNewSubscription($pricingManager, $logger, $store, $form, $delivery, $order);
 
-                    $this->handleNewSubscription($pricingManager, $entityManager, $logger, $store, $form, $delivery, $order);
+                    $entityManager->flush();
 
                     return $this->redirectToRoute($routes['success'], ['id' => $id]);
 
@@ -444,6 +447,7 @@ trait StoreTrait
             if (null !== $rule) {
                 $pricingManager->updateSubscription($subscription, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
                 $this->handleRememberAddress($store, $form);
+                $entityManager->flush();
             } else {
                 $pricingManager->cancelSubscription($subscription, $tempDelivery);
             }
@@ -490,7 +494,6 @@ trait StoreTrait
 
     private function handleNewSubscription(
         PricingManager $pricingManager,
-        EntityManagerInterface $entityManager,
         LoggerInterface $logger,
         Store $store,
         FormInterface $form,
@@ -516,8 +519,6 @@ trait StoreTrait
             foreach ($delivery->getTasks() as $task) {
                 $task->setRecurrenceRule($subscription);
             }
-
-            $entityManager->flush();
         }
     }
 

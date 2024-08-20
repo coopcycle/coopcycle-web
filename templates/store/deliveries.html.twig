@@ -4,7 +4,7 @@
 
 {% block breadcrumb %}
 <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li><a data-testid="store" href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
 <li>{% trans %}stores.deliveries{% endtrans %}</li>
 {% endblock %}
 
