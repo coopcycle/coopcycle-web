@@ -8,6 +8,7 @@ import { createSelector } from 'reselect'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
+import { diff } from 'deep-object-diff'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -21,7 +22,9 @@ import {
   selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
+import { suggestionsSlice, showSuggestions, acceptSuggestions } from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
+import SuggestionModal from './components/SuggestionModal'
 
 const selectTasks = state => state.tasks
 
@@ -36,6 +39,8 @@ const collectionHolder = document.querySelector('#delivery_tasks')
 
 const domIndex = (el) => Array.prototype.indexOf.call(el.parentNode.children, el)
 
+let reduxStore
+
 class DeliveryForm {
   disable() {
     // do not use `disabled` attribute to disable the buttons as it will prevent the button value from being sent to the server
@@ -46,9 +51,30 @@ class DeliveryForm {
     $('button[type="submit"]').removeClass('pointer-events-none')
     $('#loader').addClass('hidden')
   }
+  showSuggestions(suggestions) {
+    reduxStore.dispatch(showSuggestions(suggestions))
+  }
 }
 
-let reduxStore
+function reorder(suggestedOrder) {
+
+  // To reorder, we use the removeChild() function,
+  // which removes an element and returns it but preserves event listeners.
+  // Then, we re-add the elements in the expected order.
+
+  const taskEls = []
+  while (collectionHolder.firstElementChild) {
+    taskEls.push(collectionHolder.removeChild(collectionHolder.firstElementChild));
+  }
+
+  suggestedOrder.forEach((oldIndex) => {
+    collectionHolder.appendChild(taskEls[oldIndex])
+  })
+
+  collectionHolder.children.forEach((el, index) => {
+    el.querySelector('[data-position]').value = '' + index
+  })
+}
 
 function toPackages(el) {
   const packages = []
@@ -431,7 +457,10 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
       if (collectionHolder.children.length === 2) {
         document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
       }
-      collectionHolder.dataset.index--
+      const indexes = Array
+        .from(collectionHolder.children)
+        .map(el => parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10))
+      collectionHolder.dataset.index = Math.max(...indexes) + 1
     })
   }
 
@@ -470,11 +499,28 @@ function createOnTasksChanged(onChange) {
     const state = getState()
 
     if (prevState.tasks !== state.tasks) {
-      onChange(state)
+
+      const firstTaskWithAddressDiff =
+        _.find(diff(prevState.tasks, state.tasks), t => t?.address && t?.address?.geo)
+      const shouldLoadSuggestions = !!firstTaskWithAddressDiff
+
+      onChange(state, shouldLoadSuggestions)
     }
 
     return result
   }
+}
+
+// Reorder tasks in the DOM when suggestion is accepted
+const reorderTasks = () => (next) => (action) => {
+
+  const result = next(action)
+
+  if (acceptSuggestions.match(action) && action.payload.length > 0) {
+    reorder(action.payload[0].order)
+  }
+
+  return result
 }
 
 export default function(name, options) {
@@ -526,10 +572,11 @@ export default function(name, options) {
         [storeSlice.name]: storeSlice.reducer,
         "tasks": tasksSlice.reducer,
         [recurrenceSlice.name]: recurrenceSlice.reducer,
+        [suggestionsSlice.name]: suggestionsSlice.reducer,
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([createOnTasksChanged(onChange)]),
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange), reorderTasks]),
     })
 
     onReady(preloadedState)
@@ -601,6 +648,13 @@ export default function(name, options) {
         }
       })
     }
+
+    const reactRoot = createRoot(document.getElementById('delivery-form-modal'))
+    reactRoot.render(
+      <Provider store={ reduxStore }>
+        <SuggestionModal />
+      </Provider>
+    )
   }
 
   const recurrenceRulesContainer = document.querySelector('#delivery_form__recurrence__container')
