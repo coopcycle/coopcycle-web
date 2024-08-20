@@ -56,7 +56,7 @@ class PackageWithQuantityType extends AbstractType
                 ->add('package', EntityType::class, [
                     'class' => Package::class,
                     'choices' => $data,
-                    'data' => count($data) ? $data[0] : null,
+                    'data' => count($data) === 1 ? $data[0] : null,
                     'label' => 'form.package_with_quantity.package.label',
                     'choice_label' => 'name',
                     'choice_value' => 'name',
