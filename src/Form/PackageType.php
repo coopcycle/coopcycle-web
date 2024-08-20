@@ -9,7 +9,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PackageType extends AbstractType
@@ -46,9 +45,11 @@ class PackageType extends AbstractType
                 'help' => '2-letters',
                 'required' => false
             ])
+            ->add('tags', TagsType::class)
             ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+
             $package = $event->getData();
             $form = $event->getForm();
 

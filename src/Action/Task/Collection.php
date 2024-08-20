@@ -17,21 +17,21 @@ class Collection extends Base
                         (select json_agg(json_build_object(
                             'name', packages_rows.name, 'type', packages_rows.name, 'quantity', packages_rows.quantity, 'volume_per_package', packages_rows.volume_units))
                             FROM
-                                (select p.name AS name, p.volume_units AS volume_units, sum(tp.quantity) AS quantity
+                                (select p.name AS name, p.average_volume_units AS volume_units, sum(tp.quantity) AS quantity
                                     from task t inner join task_package tp on tp.task_id = t.id
                                     inner join package p on tp.package_id = p.id
                                     where t.delivery_id = t_outer.delivery_id
-                                    group by p.id, p.name, p.volume_units
+                                    group by p.id, p.name, p.average_volume_units
                                 ) packages_rows)
                     WHEN t_outer.type = 'DROPOFF' THEN
                         (select json_agg(json_build_object(
                             'name', packages_rows.name, 'type', packages_rows.name, 'quantity', packages_rows.quantity, 'volume_per_package', packages_rows.volume_units))
                             FROM
-                                (select p.name AS name, p.volume_units AS volume_units, sum(tp.quantity) AS quantity
+                                (select p.name AS name, p.average_volume_units AS volume_units, sum(tp.quantity) AS quantity
                                     from task t inner join task_package tp on tp.task_id = t.id
                                     inner join package p on tp.package_id = p.id
                                     where t.id = t_outer.id
-                                    group by p.id, p.name, p.volume_units
+                                    group by p.id, p.name, p.average_volume_units
                                 ) packages_rows)
                     ELSE
                         NULL
