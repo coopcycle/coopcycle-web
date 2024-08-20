@@ -1,26 +1,53 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
+{% block _package_set_name_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
+{% block _package_set_packages_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
 {% block _package_set_packages_widget %}
   <div>
     {{ form_widget(form) }}
-    <button type="button" class="btn btn-success" id="package_set_packages_add">
+    <button type="button" class="btn btn-success m-2" id="package_set_packages_add">
       <i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}
     </button>
   </div>
 {% endblock %}
 
 {% block _package_set_packages_entry_row %}
-  <div class="row package-entry">
-    <div class="col-sm-5">
-      {{ form_row(form.name) }}
+  <div class="package-entry thumbnail p-2 m-2">
+    <div class="row mb-0">
+      <div class="col-md-2">
+        {{ form_row(form.name) }}
+      </div>
+      <div class="col-md-8">
+        {{ form_row(form.description) }}
+      </div>
+      <div class="col-md-1">
+        {{ form_row(form.shortCode) }}
+      </div>
+      <div class="col-md-1">
+        <a class="text-danger" style="position: relative; top: 30px;">
+          <i class="fa fa-2x fa-trash delete-package-entry"></i>
+        </a>
+      </div>
     </div>
-    <div class="col-sm-5">
-      {{ form_row(form.volumeUnits) }}
-    </div>
-    <div class="col-sm-2">
-      <a class="text-danger" style="position: relative; top: 30px;">
-        <i class="fa fa-trash delete-package-entry"></i>
-      </a>
+    <div class="row">
+      <div class="col-md-1">
+        {{ form_row(form.averageWeight) }}
+      </div>
+      <div class="col-md-1">
+        {{ form_row(form.maxWeight) }}
+      </div>
+      <div class="col-md-1">
+        {{ form_row(form.averageVolumeUnits) }}
+      </div>
+      <div class="col-md-1">
+        {{ form_row(form.maxVolumeUnits) }}
+      </div>
     </div>
   </div>
 {% endblock %}

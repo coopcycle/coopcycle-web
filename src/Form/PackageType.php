@@ -20,8 +20,31 @@ class PackageType extends AbstractType
             ->add('name', TextType::class, [
                 'label' => 'form.package.name.label'
             ])
-            ->add('volumeUnits', IntegerType::class, [
+            ->add('description', TextType::class, [
+                'label' => 'form.package.description.label',
+                'empty_data' => '',
+                'required' => false
+            ])
+            ->add('averageVolumeUnits', IntegerType::class, [
                 'label' => 'form.package.volume_units.label',
+                'help' => 'Estimated to 75% of max if not set',
+                'required' => false
+            ])
+            ->add('maxVolumeUnits', IntegerType::class, [
+                'label' => 'form.package.max_volume_units.label',
+            ])
+            ->add('averageWeight', IntegerType::class, [
+                'label' => 'form.package.volume_units.label',
+                'help' => 'Estimated to 75% of max if not set',
+                'required' => false
+            ])
+            ->add('maxWeight', IntegerType::class, [
+                'label' => 'form.package.max_volume_units.label',
+            ])
+            ->add('shortCode', TextType::class, [
+                'label' => 'form.package.shortCode.label',
+                'help' => '2-letters',
+                'required' => false
             ])
             ;
 
@@ -34,6 +57,25 @@ class PackageType extends AbstractType
                     'label' => 'form.package.name.label',
                     'help' => $package->getSlug(),
                 ]);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
+            $package = $event->getForm()->getData();
+
+            $shortCode = $package->getShortCode();
+            if (is_null($shortCode)) {
+                $package->setShortCode(strtoupper(substr($package->getName(), 0 ,2)));
+            }
+
+            $averageWeight = $package->getAverageWeight();
+            if (is_null($averageWeight)) {
+                $package->setAverageWeight(round(0.75 * $package->getMaxWeight())); // Estimated to 75% of max if not set* 0.75); // Estimated to 75% of max if not set
+            }
+
+            $averageVolumeUnits = $package->getAverageVolumeUnits();
+            if (is_null($averageVolumeUnits)) {
+                $package->setAverageVolumeUnits(round(0.75 * $package->getMaxVolumeUnits())); // Estimated to 75% of max if not set* 0.75); // Estimated to 75% of max if not set
             }
         });
     }
