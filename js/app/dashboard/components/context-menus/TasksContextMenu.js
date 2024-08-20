@@ -55,7 +55,6 @@ export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
-export const CREATE_TOUR_WITH_ORDERS = 'CREATE_TOUR_WITH_ORDERS'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 
 const { hideAll } = useContextMenu({
@@ -124,7 +123,6 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         actions.push(CANCEL_MULTI)
         actions.push(CREATE_GROUP)
         actions.push(CREATE_TOUR)
-        actions.push(CREATE_TOUR_WITH_ORDERS)
       }
 
       if (containsOnlyGroupedTasks) {
