@@ -42,7 +42,6 @@ class PackageType extends AbstractType
             ])
             ->add('shortCode', TextType::class, [
                 'label' => 'form.package.shortCode.label',
-                'help' => '2-letters',
                 'required' => false
             ])
             ->add('tags', TagsType::class)

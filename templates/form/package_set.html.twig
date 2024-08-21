@@ -19,37 +19,43 @@
 
 {% block _package_set_packages_entry_row %}
   <div class="package-entry thumbnail p-2 m-2">
-    <div class="row mb-0">
-      <div class="col-md-2">
-        {{ form_row(form.name) }}
-      </div>
-      <div class="col-md-8">
-        {{ form_row(form.description) }}
-      </div>
-      <div class="col-md-1">
-        {{ form_row(form.shortCode) }}
-      </div>
-      <div class="col-md-1">
-        <a class="text-danger text-center" style="position: relative; top: 30px;">
+    <div class="my-2">
+        <span class="form-inline d-inline-block">
+          {{ form_label(form.name) }} {{ form_widget(form.name) }}<br>
+        </span>
+        <a class="ml-2 text-muted collapse-trigger">Expand/hide</span>
+        <a class="text-danger text-center pull-right mr-2">
           <i class="fa fa-trash delete-package-entry"></i>
         </a>
-      </div>
     </div>
-    <div class="row">
-      <div class="col-md-1">
-        {{ form_row(form.averageWeight) }}
+    <div class="mb-0 package-entry-body collapse">
+      <hr />
+      <div class="row m-0">
+        <div class="col-md-8">
+          {{ form_row(form.description) }}
+        </div>
+        <div class="col-md-offset-2 col-md-2">
+          {{ form_row(form.shortCode) }}
+        </div>
       </div>
-      <div class="col-md-1">
-        {{ form_row(form.maxWeight) }}
+      <div class="row m-0">
+        <div class="col-md-3">
+          {{ form_label(form.averageWeight) }} {{ form_widget(form.averageWeight) }}<br>
+        </div>
+          <div class="col-md-3">
+          {{ form_label(form.maxWeight) }} {{ form_widget(form.maxWeight) }}<br>
+        </div>
+        <div class="col-md-3 ">
+          {{ form_label(form.averageVolumeUnits) }} {{ form_widget(form.averageVolumeUnits) }}<br>
+        </div>
+        <div class="col-md-3 ">
+          {{ form_label(form.maxVolumeUnits) }} {{ form_widget(form.maxVolumeUnits) }}<br>
+        </div>
       </div>
-      <div class="col-md-1">
-        {{ form_row(form.averageVolumeUnits) }}
-      </div>
-      <div class="col-md-1">
-        {{ form_row(form.maxVolumeUnits) }}
-      </div>
-      <div class="col-md-offset-1 col-md-5">
-        {{ form_row(form.tags, { 'attr': {'class': 'package_tags'}}) }}
+      <div class="row m-0">
+        <div class="col-md-12">
+          {{ form_row(form.tags, { 'attr': {'class': 'package_tags'}}) }}
+        </div>
       </div>
     </div>
   </div>
