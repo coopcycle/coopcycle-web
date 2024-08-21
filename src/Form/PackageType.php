@@ -60,7 +60,7 @@ class PackageType extends AbstractType
             }
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $package = $event->getForm()->getData();
 
             $shortCode = $package->getShortCode();

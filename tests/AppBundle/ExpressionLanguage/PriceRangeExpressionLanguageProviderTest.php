@@ -62,7 +62,7 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
         $delivery = new Delivery();
 
         $package = new Package();
-        $package->setVolumeUnits($volumeUnits);
+        $package->setAverageVolumeUnits($volumeUnits);
 
         $delivery->addPackageWithQuantity($package, $quantity);
 
