@@ -2,10 +2,10 @@
 
 namespace AppBundle\Action\Incident;
 
+use AppBundle\Action\Base;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Store;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -13,10 +13,11 @@ use DateTime;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Sylius\Component\Order\Model\Adjustment;
+use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class IncidentAction
+class IncidentAction extends Base
 {
 
     private ObjectManager $entityManager;
@@ -29,10 +30,11 @@ class IncidentAction
         $this->entityManager = $doctrine->getManager();
     }
 
-    public function __invoke(Incident $data, UserInterface $user, Request $request)
+    public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
     {
 
-        $action = $request->request->get("action", null);
+        $params = $this->parseRequest($request);
+        $action = $params->get("action", null);
 
         $allowedActions = [
             IncidentEvent::TYPE_RESCHEDULE,
@@ -55,16 +57,16 @@ class IncidentAction
 
         switch ($action) {
             case IncidentEvent::TYPE_RESCHEDULE:
-                $this->reschedule($data, $event, $request);
+                $this->reschedule($data, $event, $params);
                 break;
             case IncidentEvent::TYPE_APPLY_PRICE_DIFF:
-                $this->applyPriceDiff($data, $event, $request);
+                $this->applyPriceDiff($data, $event, $params);
                 break;
             case IncidentEvent::TYPE_CANCEL_TASK:
                 $this->cancelTask($data, $event);
                 break;
             case IncidentEvent::TYPE_TRANSPORTER_REPORT:
-                $this->createTransporterReport($data, $event, $request);
+                $this->createTransporterReport($data, $event, $params);
                 break;
         }
 
@@ -77,10 +79,10 @@ class IncidentAction
 
     }
 
-    private function reschedule(Incident &$data, IncidentEvent &$event, Request $request): void
+    private function reschedule(Incident &$data, IncidentEvent &$event, InputBag $params): void
     {
-        $after = $request->request->get("after", null);
-        $before = $request->request->get("before", null);
+        $after = $params->get("after", null);
+        $before = $params->get("before", null);
 
         if (is_null($after) || is_null($before)) {
             throw new \InvalidArgumentException("After and before dates are required");
@@ -113,9 +115,9 @@ class IncidentAction
         $event->setType(IncidentEvent::TYPE_CANCEL_TASK);
     }
 
-    private function applyPriceDiff(Incident &$data, IncidentEvent &$event, Request $request): void
+    private function applyPriceDiff(Incident &$data, IncidentEvent &$event, InputBag $params): void
     {
-        $priceDiff = $request->request->get("diff", null);
+        $priceDiff = $params->get("diff", null);
 
         if (is_null($priceDiff)) {
             throw new \InvalidArgumentException("diff is required");
@@ -144,7 +146,7 @@ class IncidentAction
         //TODO:: Merge https://github.com/coopcycle/coopcycle-web/pull/3845
     }
 
-    private function createTransporterReport(Incident &$data, IncidentEvent &$event, Request $request): void
+    private function createTransporterReport(Incident &$data, IncidentEvent &$event, InputBag $params): void
     {
         /** @var ?Store $store */
         $store = $data->getTask()->getDelivery()?->getStore();
@@ -158,24 +160,24 @@ class IncidentAction
             throw new \InvalidArgumentException("Transporter report cannot be created for store without DBSchenker");
         }
 
-        $failureReason = $request->request->get("failure_reason", null);
+        $failureReason = $params->get("failure_reason", null);
         if (is_null($failureReason)) {
             throw new \InvalidArgumentException("failure_reason is required");
         }
 
-        $createdAt = $request->request->get("created_at", null);
+        $createdAt = $params->get("created_at", null);
         if (is_null($createdAt)) {
             throw new \InvalidArgumentException("created_at is required");
         }
         $createdAt = new \DateTime($createdAt);
 
         /** @var mixed $pods */
-        $pods = $request->request->get("pods", []);
+        $pods = $params->get("pods", []);
         if (!is_array($pods)) {
             throw new \InvalidArgumentException("pods is required, and must be an array");
         }
 
-        $appointment = $request->request->get("appointment", null);
+        $appointment = $params->get("appointment", null);
 
         $task = $data->getTask();
         $importEDI = $task->getImportMessage();

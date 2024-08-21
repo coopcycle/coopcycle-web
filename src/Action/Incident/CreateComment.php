@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action\Incident;
 
+use AppBundle\Action\Base;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
 use Doctrine\Persistence\ManagerRegistry;
@@ -9,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class CreateComment
+class CreateComment extends Base
 {
 
     private ObjectManager $entityManager;
@@ -17,12 +18,14 @@ class CreateComment
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->entityManager = $doctrine->getManager();
+
     }
 
     public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
     {
+        $params = $this->parseRequest($request);
 
-        $comment = trim($request->request->get("comment"));
+        $comment = trim($params->get("comment"));
 
         if (empty($comment)) {
             throw new \InvalidArgumentException("Comment cannot be empty");
