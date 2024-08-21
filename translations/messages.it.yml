@@ -667,6 +667,13 @@ form.package_set.name.label: Nome
 form.package_set.packages.label: Pacchi
 form.package.name.label: Nome
 form.package.volume_units.label: Unità di volume
+form.package.description.label: Descrizione per il cliente
+form.package.average_volume_units.label: Unità di volume medio
+form.package.max_volume_units.label: Unità di volume massimo
+form.package.average_estimation: Stimato al 75 % del massimo se non impostato
+form.package.average_weight.label: Peso medio
+form.package.max_weight.label: Peso massimo
+form.package.shortCode.label: Codice di 2 lettere
 form.reusable_packaging.name.label: Nome
 form.reusable_packaging.is_tracked.label: Abilità tracciamento
 form.reusable_packaging.price.label: Prezzo
