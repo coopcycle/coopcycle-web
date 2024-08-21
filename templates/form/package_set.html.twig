@@ -21,7 +21,7 @@
   <div class="package-entry thumbnail p-2 m-2">
     <div class="my-2">
         <span class="form-inline d-inline-block">
-          {{ form_label(form.name) }} {{ form_widget(form.name) }}<br>
+          {{ form_label(form.name) }}<i class="text-danger">*</i> {{ form_widget(form.name) }}
         </span>
         <a class="ml-2 text-muted collapse-trigger">Expand/hide</span>
         <a class="text-danger text-center pull-right mr-2">
@@ -40,16 +40,18 @@
       </div>
       <div class="row m-0">
         <div class="col-md-3">
-          {{ form_label(form.averageWeight) }} {{ form_widget(form.averageWeight) }}<br>
+          {{ form_label(form.averageWeight) }} {{ form_widget(form.averageWeight) }}
+          {{ form_help(form.averageWeight) }}
         </div>
           <div class="col-md-3">
-          {{ form_label(form.maxWeight) }} {{ form_widget(form.maxWeight) }}<br>
+          {{ form_label(form.maxWeight) }}<i class="text-danger">*</i> {{ form_widget(form.maxWeight) }}
         </div>
         <div class="col-md-3 ">
-          {{ form_label(form.averageVolumeUnits) }} {{ form_widget(form.averageVolumeUnits) }}<br>
+          {{ form_label(form.averageVolumeUnits) }} {{ form_widget(form.averageVolumeUnits) }}
+          {{ form_help(form.averageVolumeUnits) }}
         </div>
         <div class="col-md-3 ">
-          {{ form_label(form.maxVolumeUnits) }} {{ form_widget(form.maxVolumeUnits) }}<br>
+          {{ form_label(form.maxVolumeUnits) }}<i class="text-danger">*</i> {{ form_widget(form.maxVolumeUnits) }}
         </div>
       </div>
       <div class="row m-0">
