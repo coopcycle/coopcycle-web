@@ -64,7 +64,9 @@ mjml:
 smtp:
   enabled: true
 
-imagePullSecrets: []
+imagePullSecrets:
+   - name: registrykey
+
 nameOverride: ""
 fullnameOverride: ""
 
