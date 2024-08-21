@@ -44,7 +44,13 @@ const TaskCaption = ({ task }) => {
       <span className="mr-1">
         <span className="text-monospace font-weight-bold">
           { task.metadata?.order_number ?
-            task.metadata.order_number
+            <>
+              {
+                task.metadata?.delivery_position ?
+                <>{task.metadata.order_number}-{task.metadata.delivery_position}</>
+                : task.metadata.order_number
+              }
+            </>
             : `#${ task.id }`
           }
         </span>
