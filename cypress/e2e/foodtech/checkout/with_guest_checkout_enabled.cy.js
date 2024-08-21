@@ -75,7 +75,7 @@ describe('Checkout (happy path); with guest checkout enabled', () => {
     //           .should('equal', "21,00 €")
 
     cy.get('input[name="checkout_address[customer][email]"]')
-      .type('test@gmail.com')
+      .type('e2e-web@demo.coopcycle.org')
 
     cy.get('input[name="checkout_address[customer][phoneNumber]"]')
       .type('+33612345678')
