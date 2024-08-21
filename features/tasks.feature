@@ -2462,7 +2462,8 @@ Feature: Tasks
                "type":"SMALL",
                "name":"SMALL",
                "quantity":4,
-               "volume_per_package": 1
+               "volume_per_package": 1,
+               "short_code": "AB"
             }
          ],
          "@*@": "@*@"

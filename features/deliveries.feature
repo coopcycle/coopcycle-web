@@ -348,7 +348,8 @@ Feature: Deliveries
               "type": "XL",
               "name": "XL",
               "quantity": 2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -382,7 +383,8 @@ Feature: Deliveries
               "type": "XL",
               "name": "XL",
               "quantity": 2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
