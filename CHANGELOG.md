@@ -5,32 +5,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.7.0] - 2024-08-12
+## [3.8.1] - 2024-08-21
+
+### Added
+* Sugggest a more optimized route when creating a delivery.
+
+## [3.7.9] - 2024-08-21
 
 ### Fixed
+* Crash when taking actions or adding comments to a incident
+
+### Changed
+* Move the "Take action" button close to the header section in incident view
+
+## [3.7.6] - 2024-08-20
+
+### Fixed
+*  Crash when bookmarking a new order: https://github.com/coopcycle/coopcycle-web/issues/4560
+*  Bug on the delivery order form. It is not possible to add packages (clicking on the button had no effect).
+
+## [3.7.3] - 2024-08-19
+
+### Added
+* Introduce vehicles, warehouses and trailers by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4485
+* Enable trailers edit
+* Show order number in orders/deliveries-related screens
+* 'Duplicate an order' button by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4474
+* Add the ability for admins to bookmark/save orders by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4489
+* Add order subscriptions by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4511
+* Format price in exports.
+* Transporters: Add support for multiple synchronisation mechanism by @r0xsh in https://github.com/coopcycle/coopcycle-web/pull/4486
+
+### Changed
+* Do not send geofencing notification to dispatchers and admin
+* Add the ability for a dispatcher to undo optimization
+
+### Fixed
+* Crash in dispatch when task.metadata is NULL (legacy tasks)
+* As a dispatcher I want to be able to filter by "only this rider"
+* Vehicles/trailers deletion by Atala
+* Fix dispatch map crash when expanding marker's popup
 * Stripe payment failed for some customers when they selected an option to save their card for future payments: https://github.com/coopcycle/coopcycle/issues/62
 * Some situations where delivery fee was added twice: https://github.com/coopcycle/coopcycle-web/issues/3929
 
-## [3.6.1] - 2024-07-24
-
-### Added
-* Add the ability for admins to bookmark/save orders by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4489
-* Add order subscriptions by @vladimir-8 in https://github.com/coopcycle/coopcycle-web/pull/4511
-* Introduce vehicles, warehouses and trailers by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4485
-* Add the ability for a dispatcher to undo optimization
-
-## [3.4.0] - 2024-07-08
+## [3.4.1] - 2024-07-08
 
 ### Added
 * Show volumes and weight in the dispatch for individual tasks, and sum for tours/routes and for what is assigned to a messenger. Includes a toggle setting. By @Atala in https://github.com/coopcycle/coopcycle-web/pull/4469
 * As a dispatcher, I can change the color of the dropoff markers, or show a colored line that demostrates the way the tasks are arranged into a route by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4479
-* Move the search input from right panel to top bar to improve usability and show results better by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4482
 * Allow dispatch to reorder timeslots on Store settings, which changes the way they are shown to a store when they use the order creation form by @r0xsh in https://github.com/coopcycle/coopcycle-web/pull/4417
-* In foodtech orders dashboard, fix search + show search result on top of column
 * Show task(s) in the right hand columns when selecting a task on the map by @Atala in #4455
+
+### Changed
+* Move the search input from right panel to top bar to improve usability and show results better by @Atala in https://github.com/coopcycle/coopcycle-web/pull/4482
 
 ### Fixed
 * Allow last-mile orders to be paid after the delivery has been completed
+* In foodtech orders dashboard, fix search + show search result on top of column
 
 ## [3.0.4] - 2024-06-27
 

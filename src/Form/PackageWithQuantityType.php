@@ -32,10 +32,11 @@ class PackageWithQuantityType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
+            $this->entityManager->getFilters()->enable('soft_deleteable');
+
             $qb = $this->entityManager->getRepository(Package::class)
                 ->createQueryBuilder('p')
-                ->andWhere('p.packageSet = :package_set')
-                ->andWhere('p.deletedAt IS NOT NULL')
+                ->where('p.packageSet = :package_set')
                 ->setParameter('package_set', $options['package_set'])
                 ->orderBy('p.name', 'ASC');
 
@@ -49,11 +50,13 @@ class PackageWithQuantityType extends AbstractType
 
             $data = $qb->getQuery()->getResult();
 
+            $this->entityManager->getFilters()->disable('soft_deleteable');
+
             $form
                 ->add('package', EntityType::class, [
                     'class' => Package::class,
                     'choices' => $data,
-                    'data' => count($data) ? $data[0] : null,
+                    'data' => count($data) === 1 ? $data[0] : null,
                     'label' => 'form.package_with_quantity.package.label',
                     'choice_label' => 'name',
                     'choice_value' => 'name',

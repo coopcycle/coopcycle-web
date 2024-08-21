@@ -43,6 +43,14 @@ function reducer(state = {}, action) {
       return state.concat([action.value])
     case 'REMOVE_DROPOFF':
       return removeTasks(state, action.taskIndex)
+    case 'suggestions/acceptSuggestions':
+
+      const newTasks = []
+      action.payload[0].order.forEach((oldIndex, newIndex) => {
+        newTasks.splice(newIndex, 0, state[oldIndex])
+      })
+
+      return newTasks
     default:
       return state
   }

@@ -123,13 +123,11 @@ class OrderManager
             if (!$this->hasBookmark($order)) {
                 $bookmark = new OrderBookmark($order, $user, 'ROLE_ADMIN');
                 $this->entityManager->persist($bookmark);
-                $this->entityManager->flush();
             }
         } else {
             if ($this->hasBookmark($order)) {
                 $bookmark = $this->getBookmark($order);
                 $this->entityManager->remove($bookmark);
-                $this->entityManager->flush();
             }
         }
     }

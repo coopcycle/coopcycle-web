@@ -87,6 +87,7 @@ trait DeliveryTrait
 
                 if (null !== $order) {
                     $orderManager->setBookmark($order, $isBookmarked);
+                    $entityManager->flush();
                 }
             }
 

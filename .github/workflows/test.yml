@@ -64,6 +64,9 @@ jobs:
       - name: Wait for PHP-FPM
         run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
         timeout-minutes: 2
+      - name: Wait webpack
+        run: until [ -f "web/build/entrypoints.json" ]; do sleep 5; done
+        timeout-minutes: 2
       - name: Show PHP logs
         if: always()
         run: docker compose logs php
@@ -117,6 +120,8 @@ jobs:
         run: docker compose up -d
       - name: Wait for PHP-FPM
         run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
+      - name: Wait webpack
+        run: until [ -f "web/build/entrypoints.json" ]; do sleep 5; done
       - name: Create database
         run: docker compose exec -T php bin/console doctrine:schema:create --env=test
       - name: Create typesense collections
