@@ -753,12 +753,13 @@ form.time_slot.prior_notice_hours.label: Prior notice (hours)
 form.package_set.name.label: Name
 form.package_set.packages.label: Packages
 form.package.name.label: Name
+form.package.enter_details: Click to enter package details
 form.package.description.label: Description for the customer
-form.package.average_volume_units.label: Average volume units
-form.package.max_volume_units.label: Max volume units
+form.package.average_volume_units.label: Average volume units (VU)
+form.package.max_volume_units.label: Max volume units (VU)
 form.package.average_estimation: Estimated to 75% of max if not set
-form.package.average_weight.label: Average weight
-form.package.max_weight.label: Max weight
+form.package.average_weight.label: Average weight (kg)
+form.package.max_weight.label: Max weight (kg)
 form.package.shortCode.label: 2 letter code
 form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled

@@ -750,13 +750,14 @@ form.time_slot_choice.start_time.label: Hora de inicio
 form.time_slot_choice.end_time.label: Hora de finalización
 form.package_set.name.label: Nombre
 form.package_set.packages.label: Paquetes
+form.package.enter_details: Clic para ingresar los detalles del paquete
 form.package.name.label: Nombre
 form.package.description.label: Descripción para el cliente
-form.package.average_volume_units.label: Unidades de volumen promedio
-form.package.max_volume_units.label: Unidades de volumen máximo
+form.package.average_volume_units.label: Unidades de volumen promedio (VU)
+form.package.max_volume_units.label: Unidades de volumen máximo (VU)
 form.package.average_estimation: Estimado al 75 % del máximo si no se establece
-form.package.average_weight.label: Peso promedio
-form.package.max_weight.label: Peso máximo
+form.package.average_weight.label: Peso promedio (kg)
+form.package.max_weight.label: Peso máximo (kg)
 form.package.shortCode.label: Código de 2 letras
 form.package.volume_units.label: Unidades de volumen
 basics.date_range: Desde %start% hasta %end%

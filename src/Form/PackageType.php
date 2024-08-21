@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Entity\Package;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -47,16 +48,12 @@ class PackageType extends AbstractType
             ->add('tags', TagsType::class)
             ;
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (PreSetDataEvent $event) {
             $package = $event->getData();
-            $form = $event->getForm();
 
-            if ($package && null !== $package->getId()) {
-                $form->add('name', TextType::class, [
-                    'label' => 'form.package.name.label',
-                    'help' => $package->getSlug(),
-                ]);
+            if (!is_null($package)) {
+                $package->setMaxWeight($package->getMaxWeight() / 1000);
+                $package->setAverageWeight($package->getAverageWeight() / 1000);
             }
         });
 
@@ -70,8 +67,12 @@ class PackageType extends AbstractType
 
             $averageWeight = $package->getAverageWeight();
             if (is_null($averageWeight)) {
-                $package->setAverageWeight(round(0.75 * $package->getMaxWeight())); // Estimated to 75% of max if not set* 0.75); // Estimated to 75% of max if not set
+                $package->setAverageWeight(0.75 * $package->getMaxWeight()); // Estimated to 75% of max if not set* 0.75); // Estimated to 75% of max if not set
             }
+
+            // store as g
+            $package->setAverageWeight(round($package->getAverageWeight()*1000));
+            $package->setMaxWeight(round($package->getMaxWeight()*1000));
 
             $averageVolumeUnits = $package->getAverageVolumeUnits();
             if (is_null($averageVolumeUnits)) {
