@@ -695,7 +695,7 @@ services:
       $redis: '@snc_redis.shared'
       $service: opencage
 
- # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
+  # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
@@ -722,6 +722,10 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  AppBundle\Doctrine\EventSubscriber\OrderSubscriber:
     tags:
       - { name: doctrine.event_subscriber }
 
