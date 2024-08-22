@@ -22,7 +22,7 @@ trait GiropayTrait
         }
 
         foreach ($completedGiropayPayments as $payment) {
-            $this->stripeManager->refund($payment, null, true);
+            $this->stripeManager->refund($payment);
         }
     }
 }
