@@ -12,6 +12,7 @@ AppBundle\Entity\Package:
     packageSet: '@package_set_1'
     description: ''
     short_code: 'AB'
+    color: '#a91de0'
   package_xl:
     name: 'XL'
     maxVolumeUnits: 3.0
@@ -19,6 +20,7 @@ AppBundle\Entity\Package:
     packageSet: '@package_set_1'
     description: ''
     short_code: 'AB'
+    color: '#a91de0'
   package_small2:
     name: 'SMALL'
     maxVolumeUnits: 1.0
@@ -26,6 +28,7 @@ AppBundle\Entity\Package:
     packageSet: '@package_set_2'
     description: ''
     short_code: 'AB'
+    color: '#a91de0'
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:

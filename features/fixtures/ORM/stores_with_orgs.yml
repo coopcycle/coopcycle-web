@@ -85,6 +85,7 @@ AppBundle\Entity\Package:
     packageSet: '@package_set_1'
     description: ''
     short_code: 'AB'
+    color: '#a91de0'
   package_xl:
     name: 'XL'
     maxVolumeUnits: 3.0
@@ -92,6 +93,7 @@ AppBundle\Entity\Package:
     packageSet: '@package_set_1'
     description: ''
     short_code: 'AB'
+    color: '#a91de0'
 
 AppBundle\Entity\Organization:
   org_1:
