@@ -25,6 +25,9 @@ class OrderSubscriber implements EventSubscriber
         );
     }
 
+    /**
+     * Save the order number in task.metadata.order_number for non-foodtech orders
+     */
     public function onFlush(OnFlushEventArgs $args)
     {
         $em = $args->getEntityManager();
@@ -44,6 +47,8 @@ class OrderSubscriber implements EventSubscriber
             }
 
             [ $oldValue, $newValue ] = $entityChangeSet['number'];
+
+            // for foodtech orders the delivery is not created when we assign the number, it is created when the order is accepted
             $delivery = $order->getDelivery();
 
             if (is_null($oldValue) && !is_null($newValue) && !is_null($delivery)) {
