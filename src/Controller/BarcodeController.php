@@ -74,7 +74,6 @@ class BarcodeController extends AbstractController
 
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
-
         $phoneUtil = $phoneUtil::getInstance();
         /** @var Task $ressource */
         $ressource = $this->getDoctrine()->getRepository(Task::class)->find($barcode->getEntityId());
@@ -125,8 +124,9 @@ class BarcodeController extends AbstractController
 
         $pdf = (string) $response->getContent();
         return new Response($pdf, 200, [
+            'Cache-Control' => 'private',
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'inline; filename="label.pdf"'
+            'Content-Disposition' => sprintf('attachment; filename="label_%s.pdf"', $barcode->getRawBarcode())
         ]);
     }
 }
