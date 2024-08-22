@@ -38,6 +38,7 @@ class OrderSubscriber implements EventSubscriber
         };
 
         $updatedOrders = array_filter($uow->getScheduledEntityUpdates(), $isOrder);
+        $needsRecompute = false;
 
         foreach ($updatedOrders as $order) {
             $entityChangeSet = $uow->getEntityChangeSet($order);
@@ -55,10 +56,13 @@ class OrderSubscriber implements EventSubscriber
                 foreach($delivery->getTasks() as $task) {
                     $task->setMetadata('order_number', $newValue);
                     $this->taskManager->update($task);
+                    $needsRecompute = true;
                 }
             }
         }
 
-        $uow->computeChangeSets();
+        if ($needsRecompute) {
+            $uow->computeChangeSets();
+        }
     }
 }
