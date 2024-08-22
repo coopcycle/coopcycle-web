@@ -29,6 +29,12 @@ class Package implements TaggableInterface
     protected $description;
 
     /**
+    * @Assert\NotBlank
+    * @Assert\CssColor
+    */
+    protected $color;
+
+    /**
      * @Assert\NotBlank
      */
     protected $maxVolumeUnits;
@@ -229,6 +235,26 @@ class Package implements TaggableInterface
     public function setShortCode($shortCode)
     {
         $this->shortCode = $shortCode;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of color
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * Set the value of color
+     *
+     * @return  self
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
 
         return $this;
     }

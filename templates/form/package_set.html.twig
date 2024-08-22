@@ -34,8 +34,11 @@
         <div class="col-md-8">
           {{ form_row(form.description) }}
         </div>
-        <div class="col-md-offset-2 col-md-2">
+        <div class="col-md-1">
           {{ form_row(form.shortCode) }}
+        </div>
+        <div class="col-md-3">
+          {{ form_row(form.color, { 'attr': {'class': 'package_color'}}) }}
         </div>
       </div>
       <div class="row m-0">

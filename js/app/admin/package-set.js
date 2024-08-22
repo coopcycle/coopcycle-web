@@ -1,8 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import TagsSelect from '../components/TagsSelect'
+import SwatchesPicker from 'react-color/lib/Swatches'
 
 var $packagesList = $('#package_set_packages')
+
+document.querySelector('form[name=package_set]').addEventListener('keydown', (event) => {
+  if(event.keyCode == 13) {
+    event.preventDefault()
+    return false
+  }
+})
 
 const mountTagsSelect = (packageWidgetEl) => {
 
@@ -25,6 +33,52 @@ const mountTagsSelect = (packageWidgetEl) => {
   />)
 }
 
+const PackageColorPicker = ({initialColorInput}) => {
+
+  const [expanded, setExpanded] = useState(false)
+  const [color, setColor] = useState(initialColorInput.value)
+
+  return (
+    <>
+      <a
+        onClick={() => setExpanded(true)}
+        style={{
+          display: "block",
+          width: "20px",
+          height: "20px",
+          backgroundColor: color,
+          border: "1px solid black"
+        }}
+      ></a>
+      { expanded ?
+        <div style={{position: 'absolute', right: 0, zIndex: 1}}>
+          <SwatchesPicker // I chose a color picker with just click selection so the user select by click and we simply close it
+            color={ color }
+            onChange={ color => {
+              if (color.hex.length === 7) {
+                setExpanded(false)
+                setColor(color.hex)
+                initialColorInput.value = color.hex
+              }
+            }}
+          />
+        </div>
+        : null
+      }
+    </>
+  )
+}
+
+const mountColorPicker = (packageWidgetEl) => {
+
+  const colorInput = packageWidgetEl.querySelector(".package_color")
+  colorInput.classList.add('d-none')
+
+  const colorPickerWidget = document.createElement('div')
+  colorInput.closest('.form-group').appendChild(colorPickerWidget)
+  createRoot(colorPickerWidget).render(<PackageColorPicker initialColorInput={colorInput} />)
+}
+
 const bindDelete = (packageWidgetEl) => {
   const deleteEl = packageWidgetEl.querySelector('.delete-package-entry')
   deleteEl.addEventListener('click', function () {
@@ -44,6 +98,7 @@ const bindCollapse = (packageWidgetEl) => {
 
 const initJSBindingsForPackageEntry = (packageWidgetEl) => {
   mountTagsSelect(packageWidgetEl)
+  mountColorPicker(packageWidgetEl)
   bindDelete(packageWidgetEl)
   bindCollapse(packageWidgetEl)
 }

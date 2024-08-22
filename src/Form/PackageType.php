@@ -25,6 +25,9 @@ class PackageType extends AbstractType
                 'empty_data' => '',
                 'required' => false
             ])
+            ->add('color', TextType::class, [
+                'label' => 'form.package.color.label'
+            ])
             ->add('averageVolumeUnits', IntegerType::class, [
                 'label' => 'form.package.average_volume_units.label',
                 'help' => 'form.package.average_estimation',

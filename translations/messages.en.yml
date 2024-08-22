@@ -753,6 +753,7 @@ form.time_slot.prior_notice_hours.label: Prior notice (hours)
 form.package_set.name.label: Name
 form.package_set.packages.label: Packages
 form.package.name.label: Name
+form.package.color.label: Color (click to select)
 form.package.enter_details: Click to enter package details
 form.package.description.label: Description for the customer
 form.package.average_volume_units.label: Average volume units (VU)
