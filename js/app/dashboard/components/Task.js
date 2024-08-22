@@ -54,6 +54,10 @@ const TaskCaption = ({ task }) => {
             : `#${ task.id }`
           }
         </span>
+        {/* keep the task ID displayed for the web dispatcher while migrating the client code as the rider sees the task ID in the app */}
+        <span className='text-muted ml-1'>
+          {`#${ task.id }`}
+        </span>
       </span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
