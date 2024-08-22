@@ -5,8 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event as OrderEvents;
 use AppBundle\Domain\Task\Event as TaskEvents;
-use AppBundle\Entity\TaskEvent;
-use AppBundle\Entity\Sylius\OrderEvent;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
@@ -25,6 +23,7 @@ class ActivityManager
         OrderEvents\OrderDropped::class,
         OrderEvents\OrderFulfilled::class,
         TaskEvents\TaskCreated::class,
+        TaskEvents\TaskUpdated::class,
         TaskEvents\TaskAssigned::class,
         TaskEvents\TaskUnassigned::class,
         TaskEvents\TaskStarted::class,
