@@ -584,7 +584,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function getPackages()
     {
         if (null !== $this->packageSet) {
-            return $this->packageSet->getPackages()->toArray();
+            return array_values($this->packageSet->getPackages()->toArray());
         }
 
         return [];
