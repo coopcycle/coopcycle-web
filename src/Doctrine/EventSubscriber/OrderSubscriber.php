@@ -38,6 +38,11 @@ class OrderSubscriber implements EventSubscriber
 
         foreach ($updatedOrders as $order) {
             $entityChangeSet = $uow->getEntityChangeSet($order);
+
+            if (!array_key_exists('number', $entityChangeSet)) {
+                continue;
+            }
+
             [ $oldValue, $newValue ] = $entityChangeSet['number'];
             $delivery = $order->getDelivery();
 
