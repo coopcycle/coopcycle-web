@@ -802,6 +802,7 @@ fos_js_routing:
         - admin_transporter_message
         - api_organizations_get_collection
         - api_time_slots_get_collection
+        - task_label_pdf
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
