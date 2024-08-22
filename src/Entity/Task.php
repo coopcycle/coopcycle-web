@@ -1305,14 +1305,18 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         $codebars['task'] = BarcodeUtils::getBarcodeFromTask($this)->getRawBarcode();
 
+        $count = 0;
         foreach ($this->getPackages() as $package) {
+            $barcodes = array_map(
+                fn(Barcode $code) => $code->getRawBarcode(),
+                BarcodeUtils::getBarcodeFromPackage($package, $count));
+
             $codebars['packages'][] = [
                 'name' => $package->getPackage()->getName(),
-                'barcodes' => array_map(
-                    fn(Barcode $code) => $code->getRawBarcode(),
-                    BarcodeUtils::getBarcodeFromPackage($package)
-                )
+                'barcodes' => $barcodes
             ];
+
+            $count += count($barcodes);
         }
 
         return $codebars;

@@ -9,8 +9,8 @@ use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class BarcodeUtils {
 
-    const WITHOUT_PACKAGE = '6767%03d%d%d6076';
-    const WITH_PACKAGE =    '6767%03d%d%dP%dU%d6076';
+    const WITHOUT_PACKAGE = '6767%03d%d%d8076';
+    const WITH_PACKAGE =    '6767%03d%d%dP%dU%d8076';
 
     public static function parse(string $barcode): Barcode {
         $matches = [];
@@ -58,14 +58,14 @@ class BarcodeUtils {
     /**
      * @return Barcode[]
      */
-    public static function getBarcodeFromPackage(Package $package): array {
+    public static function getBarcodeFromPackage(Package $package, int $start = 0): array {
         $codebars = [];
         for ($q = 0; $q < $package->getQuantity(); $q++) {
             $codebars[] = sprintf(
                 self::WITH_PACKAGE,
                 1, //TODO: Dynamicly get instance
                 Barcode::TYPE_TASK, $package->getTask()->getId(),
-                $package->getId(), $q + 1
+                $package->getId(), $q + $start + 1
             );
         }
         return array_map(fn(string $code) => self::parse($code), $codebars);

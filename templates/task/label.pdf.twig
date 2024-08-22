@@ -90,7 +90,11 @@
       <div style="flex: 1">
         <ul>
           <li><strong>Parcel:</strong></li>
-          <li style="font-size: 1.4em">{{ currentPackage }} / {{ totalPackages }}</li>
+          {% if currentPackage is not null %}
+            <li style="font-size: 1.4em">{{ currentPackage }} / {{ totalPackages }}</li>
+          {% else %}
+            <li>-</li>
+          {% endif %}
         </ul>
       </div>
     </div>
