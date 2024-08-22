@@ -191,7 +191,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $taskCollection = parent::addTask($task, $position);
 
         $deliveryPosition = $taskCollection->findTaskPosition($task);
-        $task->setMetadata('delivery_position', $deliveryPosition);
+        $task->setMetadata('delivery_position', $deliveryPosition + 1); // we prefer it to be 1-indexed for user display
 
         return $taskCollection;
     }
