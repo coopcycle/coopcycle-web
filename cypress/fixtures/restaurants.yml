@@ -243,6 +243,25 @@ AppBundle\Entity\LocalBusiness:
       - addProduct: [ "@carrotcake" ]
       - addTaxon: [ "@crazy_hamburger_menu" ]
       - setMenuTaxon: [ "@crazy_hamburger_menu" ]
+  restaurant_with_cash_on_delivery:
+    name: Restaurant with cash on delivery
+    address: "@address_1"
+    openingHours: [ 'Mo-Su 09:30-23:59' ]
+    enabled: true
+    contract: "@contract_1"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
+    cash_on_delivery_enabled: true
+    __calls:
+      - setMinimumAmount: [ 'delivery', 1500 ]
+      - setMinimumAmount: [ 'collection', 1500 ]
+      - addProduct: [ "@hamburger" ]
+      - addProduct: [ "@cheeseburger" ]
+      - addProduct: [ "@cheesecake" ]
+      - addProduct: [ "@carrotcake" ]
+      - addTaxon: [ "@crazy_hamburger_menu" ]
+      - setMenuTaxon: [ "@crazy_hamburger_menu" ]
   pizza_express:
     name: Pizza Express
     address: "@address_2"
