@@ -418,37 +418,32 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/order/payment/{hashId}/method", name="order_payment_select_method", methods={"POST"})
+     * @Route("/order/payment-method", name="order_select_payment_method", methods={"POST"})
      */
-    public function selectPaymentMethodAction($hashId, Request $request,
+    public function selectPaymentMethodAction(Request $request,
         OrderManager $orderManager,
         CartContextInterface $cartContext,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
         EdenredClient $edenredClient)
     {
-        $hashids = new Hashids($this->getParameter('secret'), 8);
+        $order = $cartContext->getCart();
 
-        $decoded = $hashids->decode($hashId);
+        if (null === $order || !$order->hasVendor()) {
 
-        if (count($decoded) !== 1) {
-
-            return new JsonResponse(['message' => 'Hashid could not be decoded'], 400);
+            return new JsonResponse(['message' => 'Order does not exist or has no vendor'], 400);
         }
 
-        $paymentId = current($decoded);
-        $payment = $entityManager->getRepository(PaymentInterface::class)->find($paymentId);
+        if (null === $order->getCustomer()) {
+
+            return new JsonResponse(['message' => 'Order does not have any customer'], 400);
+        }
+
+        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
         if (null === $payment) {
 
-            return new JsonResponse(['message' => 'Payment does not exist'], 404);
-        }
-
-        $order = $payment->getOrder();
-
-        if (null === $order) {
-
-            return new JsonResponse(['message' => 'Payment does not belong to any order'], 400);
+            return new JsonResponse(['message' => 'Order has no payment'], 404);
         }
 
         $content = $request->getContent();
