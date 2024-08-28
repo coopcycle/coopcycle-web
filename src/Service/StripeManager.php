@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
+use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -414,11 +415,21 @@ class StripeManager
         return Stripe\PaymentMethod::create($payload, $stripeOptions);
     }
 
-    public function getCustomerPaymentMethods($customerId)
+    public function getCustomerPaymentMethods($customerId): Stripe\Collection
     {
         $this->setupStripeApi();
 
-        return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
+        $response = Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
+
+        $nonExpiredCards = array_filter($response->toArray()['data'], function ($pm) {
+
+            $endOfCurrentMonth = Carbon::now()->endOfMonth();
+            $expDate = Carbon::createFromDate($pm['card']['exp_year'], $pm['card']['exp_month'])->endOfMonth();
+
+            return $expDate >= $endOfCurrentMonth;
+        });
+
+        return Stripe\Collection::constructFrom(['data' => array_values($nonExpiredCards)]);
     }
 
     /**

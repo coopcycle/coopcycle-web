@@ -3,6 +3,7 @@ include:
   - sylius_channels.yml
   - addresses.yml
   - restaurants.yml
+  - payment_methods.yml
 
 AppBundle\Entity\User:
   bob:

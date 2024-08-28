@@ -27,7 +27,7 @@ class MyStripePaymentMethods
                 $this->getUser()->getStripeCustomerId()
             );
 
-            foreach($paymentMethods as $paymentMethod) {
+            foreach ($paymentMethods as $paymentMethod) {
                 $output->addMethod($paymentMethod);
             }
 

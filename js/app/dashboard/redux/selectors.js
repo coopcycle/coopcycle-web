@@ -139,7 +139,8 @@ export const selectStandaloneTasks = createSelector(
       const grouped = reduce(dropoffTasks, (acc, task) => {
         if (task.previous) {
           const prev = find(standaloneTasks, t => t['@id'] === task.previous)
-          if (prev) {
+
+          if (prev && !acc.find(t => t['@id'] === prev['@id'])) { // avoid inserting the pickup several time for multi-dropoff
             acc.push(prev)
           }
         }

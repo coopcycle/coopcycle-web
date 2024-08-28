@@ -83,7 +83,7 @@ class CancelOrderHandlerTest extends KernelTestCase
         $order->setTakeaway(true);
 
         $this->stripeManager
-            ->refund($payment, null, true)
+            ->refund($payment)
             ->shouldBeCalled();
 
         $this->eventRecorder
