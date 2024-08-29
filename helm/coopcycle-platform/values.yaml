@@ -11,8 +11,8 @@ php:
   appEnv: prod
   appDebug: "0"
   appSecret: ""
-  corsAllowOrigin: "^https?://.*?\\.chart-example\\.local$"
-  trustedHosts: "^127\\.0\\.0\\.1|localhost|.*\\.chart-example\\.local$"
+  corsAllowOrigin: "^https?://.*?\\.coopcycle\\.org"
+  trustedHosts: "^127\\.0\\.0\\.1|localhost|.*\\.coopcycle\\.org$"
   trustedProxies:
     - "127.0.0.1"
     - "10.0.0.0/8"
