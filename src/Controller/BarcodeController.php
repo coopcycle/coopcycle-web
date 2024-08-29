@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Service\TaskManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
+use Doctrine\Persistence\ManagerRegistry;
 use Picqer\Barcode\BarcodeGeneratorSVG;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +24,8 @@ class BarcodeController extends AbstractController
     public function __construct(
         private TwigEnvironment $twig,
         private HttpClientInterface $browserlessClient,
+        private ManagerRegistry $doctrine,
+        private TaskManager $taskManager,
         private BarcodeUtils $barcodeUtils,
     )
     { }
@@ -50,6 +54,8 @@ class BarcodeController extends AbstractController
             return $this->json(['error' => 'No data found.'], 404);
         }
 
+        $this->taskManager->scan($ressource);
+        $this->doctrine->getManager()->flush();
 
         return $this->json([
             "ressource" => $iriConverter->getIriFromItem($ressource),
@@ -98,7 +104,6 @@ class BarcodeController extends AbstractController
             widthFactor: 1.4,
             height: 55
         );
-
 
         $html = $this->twig->render('task/label.pdf.twig', [
             'from' => $from,
