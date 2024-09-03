@@ -446,13 +446,7 @@ class OrderController extends AbstractController
             return new JsonResponse(['message' => 'Order has no payment'], 404);
         }
 
-        $content = $request->getContent();
-
-        $data = [];
-
-        if (!empty($content)) {
-            $data = json_decode($content, true);
-        }
+        $data = $request->toArray();
 
         if (!isset($data['method'])) {
 
