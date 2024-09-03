@@ -118,6 +118,7 @@ services:
   League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
   Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
+  Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1458,3 +1459,5 @@ services:
     arguments:
       - '@paygreen.http_client'
       - '@Paygreen\Sdk\Payment\V3\Environment'
+
+  AppBundle\Sylius\Payment\Context: ~

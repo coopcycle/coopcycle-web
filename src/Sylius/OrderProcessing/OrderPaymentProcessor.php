@@ -2,14 +2,19 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Webmozart\Assert\Assert;
 
@@ -23,6 +28,8 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         PaymentFactoryInterface $paymentFactory,
         CurrencyContextInterface $currencyContext,
+        private PaymentContext $paymentContext,
+        private EdenredClient $edenredClient,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
     {
@@ -61,6 +68,11 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return;
         }
 
+        if ($this->paymentContext->hasMethod()) {
+            $this->processWithContext($order);
+            return;
+        }
+
         $targetState = $targetStates[$order->getState()];
 
         $lastPayment = $order->getLastPayment($targetState);
@@ -95,5 +107,78 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | (new) payment: %d', $payment->getAmount()),
             ['order' => $this->loggingUtils->getOrderId($order)]);
+    }
+
+    private function processWithContext(BaseOrderInterface $order): void
+    {
+        $payments = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
+            return $payment->getState() === PaymentInterface::STATE_CART;
+        });
+
+        /** @var Collection */
+        $paymentsToKeep = new ArrayCollection();
+
+        switch ($this->paymentContext->getMethod()) {
+            case 'EDENRED':
+            case 'EDENRED+CARD':
+
+                $amounts = $this->edenredClient->splitAmounts($order);
+
+                if ($amounts['card'] > 0) {
+                    // FIXME
+                    // Do not hardcode this here
+                    $card = $this->paymentMethodRepository->findOneByCode('CARD');
+                    $cardPayment = $this->upsertPayment($order, $payments, $card, $amounts['card']);
+                    $paymentsToKeep->add($cardPayment);
+                }
+
+                // FIXME
+                // Do not hardcode this here
+                $edenred = $this->paymentMethodRepository->findOneByCode('EDENRED');
+                $edenredPayment = $this->upsertPayment($order, $payments, $edenred, $amounts['edenred']);
+                $paymentsToKeep->add($edenredPayment);
+
+                break;
+
+            case 'CARD':
+            default:
+                // FIXME
+                // Do not hardcode this here
+                $card = $this->paymentMethodRepository->findOneByCode('CARD');
+                $cardPayment = $this->upsertPayment($order, $payments, $card, $order->getTotal());
+                $paymentsToKeep->add($cardPayment);
+
+        }
+
+        foreach ($payments as $payment) {
+            if (!$paymentsToKeep->contains($payment)) {
+                $order->removePayment($payment);
+            }
+        }
+    }
+
+    private function upsertPayment(BaseOrderInterface $order,
+        Collection $payments, PaymentMethodInterface $method, int $amount): PaymentInterface
+    {
+        /** @var PaymentInterface|false */
+        $payment = $payments->filter(fn (PaymentInterface $payment): bool => $payment->getMethod() === $method)->first();
+
+        if ($payment) {
+            $payment->setCurrencyCode($this->currencyContext->getCurrencyCode());
+            $payment->setAmount($amount);
+
+            return $payment;
+        }
+
+        $payment = $this->paymentFactory->createWithAmountAndCurrencyCode(
+            $amount,
+            $this->currencyContext->getCurrencyCode()
+        );
+        $payment->setMethod($method);
+        $payment->setState(PaymentInterface::STATE_CART);
+
+        $order->addPayment($payment);
+
+        return $payment;
     }
 }

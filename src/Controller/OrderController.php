@@ -27,6 +27,7 @@ use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
@@ -49,6 +50,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
@@ -425,7 +427,10 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
-        EdenredClient $edenredClient)
+        EdenredClient $edenredClient,
+        SerializerInterface $serializer,
+        PaymentContext $paymentContext,
+        OrderProcessorInterface $orderPaymentProcessor)
     {
         $order = $cartContext->getCart();
 
@@ -454,6 +459,8 @@ class OrderController extends AbstractController
         }
 
         $code = strtoupper($data['method']);
+
+        $paymentContext->setMethod($code);
 
         $paymentMethod = $paymentMethodRepository->findOneByCode($code);
 
@@ -484,10 +491,13 @@ class OrderController extends AbstractController
                 break;
         }
 
+        $orderPaymentProcessor->process($order);
+
         $entityManager->flush();
 
         return new JsonResponse([
             'amount_breakdown' => $payment->getAmountBreakdown(),
+            'payments' => $serializer->normalize($order->getPayments(), 'json', ['groups' => ['payment']]),
         ]);
     }
 
