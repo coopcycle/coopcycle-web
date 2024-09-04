@@ -163,6 +163,23 @@ export default function(formSelector, options) {
     if (store) {
       const orderNodeId = selectOrderNodeId(store.getState())
 
+      const shippingTimeRange = selectShippingTimeRange(store.getState())
+      const persistedTimeRange = selectPersistedTimeRange(store.getState())
+
+      // if the customer has already selected the time range, it will be checked on the server side
+      if (!shippingTimeRange && persistedTimeRange) {
+        try {
+          await checkTimeRange(
+            persistedTimeRange,
+            store.getState,
+            store.dispatch,
+          )
+        } catch (error) {
+          setLoading(false)
+          return
+        }
+      }
+
       let violations = null
       try {
         const { error } = await store.dispatch(
@@ -188,23 +205,6 @@ export default function(formSelector, options) {
           </StrictMode>,
         )
         return
-      }
-
-      const shippingTimeRange = selectShippingTimeRange(store.getState())
-      const persistedTimeRange = selectPersistedTimeRange(store.getState())
-
-      // if the customer has already selected the time range, it will be checked on the server side
-      if (!shippingTimeRange && persistedTimeRange) {
-        try {
-          await checkTimeRange(
-            persistedTimeRange,
-            store.getState,
-            store.dispatch,
-          )
-        } catch (error) {
-          setLoading(false)
-          return
-        }
       }
     }
 
