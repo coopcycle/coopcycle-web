@@ -140,6 +140,13 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
                 break;
 
+            case 'CASH_ON_DELIVERY':
+                // FIXME
+                // Do not hardcode this here
+                $cash = $this->paymentMethodRepository->findOneByCode('CASH_ON_DELIVERY');
+                $cashPayment = $this->upsertPayment($order, $payments, $cash, $order->getTotal(), $targetState);
+                $paymentsToKeep->add($cashPayment);
+
             case 'CARD':
             default:
                 // FIXME
