@@ -92,7 +92,11 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
 
 ingress:
   enabled: false
