@@ -50,7 +50,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Psr\Log\LoggerInterface;
@@ -428,7 +428,7 @@ class OrderController extends AbstractController
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
         EdenredClient $edenredClient,
-        SerializerInterface $serializer,
+        NormalizerInterface $normalizer,
         PaymentContext $paymentContext,
         OrderProcessorInterface $orderPaymentProcessor)
     {
@@ -495,9 +495,11 @@ class OrderController extends AbstractController
 
         $entityManager->flush();
 
+        $payments = array_values($order->getPayments()->toArray());
+
         return new JsonResponse([
             'amount_breakdown' => $payment->getAmountBreakdown(),
-            'payments' => $serializer->normalize($order->getPayments(), 'json', ['groups' => ['payment']]),
+            'payments' => $normalizer->normalize($payments, 'json', ['groups' => ['payment']]),
         ]);
     }
 
