@@ -68,12 +68,12 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return;
         }
 
+        $targetState = $targetStates[$order->getState()];
+
         if ($this->paymentContext->hasMethod()) {
-            $this->processWithContext($order);
+            $this->processWithContext($order, $targetState);
             return;
         }
-
-        $targetState = $targetStates[$order->getState()];
 
         $lastPayment = $order->getLastPayment($targetState);
 
@@ -109,10 +109,10 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             ['order' => $this->loggingUtils->getOrderId($order)]);
     }
 
-    private function processWithContext(BaseOrderInterface $order): void
+    private function processWithContext(BaseOrderInterface $order, string $targetState = PaymentInterface::STATE_CART): void
     {
-        $payments = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
-            return $payment->getState() === PaymentInterface::STATE_CART;
+        $payments = $order->getPayments()->filter(function (PaymentInterface $payment) use ($targetState): bool {
+            return $payment->getState() === $targetState;
         });
 
         /** @var Collection */
@@ -128,14 +128,14 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                     // FIXME
                     // Do not hardcode this here
                     $card = $this->paymentMethodRepository->findOneByCode('CARD');
-                    $cardPayment = $this->upsertPayment($order, $payments, $card, $amounts['card']);
+                    $cardPayment = $this->upsertPayment($order, $payments, $card, $amounts['card'], $targetState);
                     $paymentsToKeep->add($cardPayment);
                 }
 
                 // FIXME
                 // Do not hardcode this here
                 $edenred = $this->paymentMethodRepository->findOneByCode('EDENRED');
-                $edenredPayment = $this->upsertPayment($order, $payments, $edenred, $amounts['edenred']);
+                $edenredPayment = $this->upsertPayment($order, $payments, $edenred, $amounts['edenred'], $targetState);
                 $paymentsToKeep->add($edenredPayment);
 
                 break;
@@ -145,7 +145,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                 // FIXME
                 // Do not hardcode this here
                 $card = $this->paymentMethodRepository->findOneByCode('CARD');
-                $cardPayment = $this->upsertPayment($order, $payments, $card, $order->getTotal());
+                $cardPayment = $this->upsertPayment($order, $payments, $card, $order->getTotal(), $targetState);
                 $paymentsToKeep->add($cardPayment);
 
         }
@@ -158,7 +158,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
     }
 
     private function upsertPayment(BaseOrderInterface $order,
-        Collection $payments, PaymentMethodInterface $method, int $amount): PaymentInterface
+        Collection $payments, PaymentMethodInterface $method, int $amount, string $targetState = PaymentInterface::STATE_CART): PaymentInterface
     {
         /** @var PaymentInterface|false */
         $payment = $payments->filter(fn (PaymentInterface $payment): bool => $payment->getMethod() === $method)->first();
@@ -175,7 +175,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             $this->currencyContext->getCurrencyCode()
         );
         $payment->setMethod($method);
-        $payment->setState(PaymentInterface::STATE_CART);
+        $payment->setState($targetState);
 
         $order->addPayment($payment);
 
