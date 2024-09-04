@@ -29,9 +29,9 @@ describe('Checkout (happy path)', () => {
 
       cy.wait('@postRestaurantCart')
 
-      cy.addProduct('Cheeseburger', '#CHEESEBURGER-options', 1, [
-        'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES',
-        'HAMBURGER_DRINK_COLA' ])
+      cy.addProduct('Cheeseburger', '#CHEESEBURGER_crazy_hamburger-options', 1, [
+        'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES_crazy_hamburger',
+        'HAMBURGER_DRINK_COLA_crazy_hamburger' ])
 
       cy.wait('@postProduct', { timeout: 5000 })
 
@@ -50,7 +50,7 @@ describe('Checkout (happy path)', () => {
         .invoke('text')
         .should('match', /^91,? Rue de Rivoli,? 75001,? Paris,? France/i)
 
-      cy.addProduct('Cheese Cake', '#CHEESECAKE-options')
+      cy.addProduct('Cheese Cake', '#CHEESECAKE_crazy_hamburger-options')
 
       cy.wait('@postProduct', { timeout: 5000 })
 

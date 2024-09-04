@@ -26,9 +26,9 @@ describe('Failed checkout; time range is not valid any more', () => {
 
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct1')
 
-    cy.addProduct('Cheeseburger', '#CHEESEBURGER-options', 2, [
-      'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES',
-      'HAMBURGER_DRINK_COLA' ])
+    cy.addProduct('Cheeseburger', '#CHEESEBURGER_crazy_hamburger-options', 2, [
+      'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES_crazy_hamburger',
+      'HAMBURGER_DRINK_COLA_crazy_hamburger' ])
 
     cy.wait('@postProduct1', { timeout: 5000 })
 

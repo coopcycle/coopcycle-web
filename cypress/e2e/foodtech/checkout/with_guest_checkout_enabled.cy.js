@@ -31,9 +31,9 @@ describe('Checkout (happy path); with guest checkout enabled', () => {
 
     cy.wait('@postRestaurantCart')
 
-    cy.addProduct('Cheeseburger', '#CHEESEBURGER-options', 2, [
-      'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES',
-      'HAMBURGER_DRINK_COLA' ])
+    cy.addProduct('Cheeseburger', '#CHEESEBURGER_crazy_hamburger-options', 2, [
+      'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES_crazy_hamburger',
+      'HAMBURGER_DRINK_COLA_crazy_hamburger' ])
 
     cy.wait('@postProduct', { timeout: 5000 })
 
