@@ -82,15 +82,3 @@ task.failed.body: |
 order.payment.subject: 'Rendelésed fizetése %order.number%'
 order.payment.body: "Szia,\n<br>\nTeljesítettük a rendelésed.\n<br>\nAz alábbi linken\
   \ tudsz bankkártyával fizetni.\n"
-covid_19.subject: ''
-covid_19.body: ""
-
-order.expiring_authorization.subject: ''
-order.expiring_authorization.text: ''
-
-order.receipt.subject: ''
-order.receipt.body: ""
-
-order.payment_failed.subject: ''
-order.payment_failed.body: ""
-order.payment_failed.return_to_order: ''
