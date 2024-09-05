@@ -269,6 +269,10 @@ twig:
 
     exception_controller: null
 
+monolog:
+  # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+  channels: [ 'checkout', 'push_notification', 'real_time_message' ]
+
 # Doctrine Configuration
 doctrine:
     dbal:
