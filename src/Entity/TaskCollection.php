@@ -136,12 +136,12 @@ abstract class TaskCollection
      */
     public function getTasks(string $expression = '')
     {
-        $language = new ExpressionLanguage();
 
         $tasks = $this->getItems()
             ->map(fn(TaskCollectionItem $item) => $item->getTask());
 
-        if ('' !== $expression) {
+        if ('' != $expression) {
+            $language = new ExpressionLanguage();
             $tasks = $tasks
                 ->filter(function (Task $task) use ($language, $expression) {
                     return $language->evaluate($expression, ['task' => $task]);
