@@ -531,6 +531,7 @@
         "TRANSPORTER_SHOW_PODS": "Show PODs",
         "TIME_SLOTS": "Time slots",
         "TIME_SLOTS_SELECT": "Select a time slot",
-        "TIME_SLOTS_SET_DEFAULT": "Set as default time slot"
+        "TIME_SLOTS_SET_DEFAULT": "Set as default time slot",
+        "GENERIC_BARCODE_HELP": "This is a generic barcode for this dropoff, this barcode can be used for all purposes."
     }
 }
