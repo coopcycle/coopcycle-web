@@ -542,6 +542,9 @@ services:
     tags:
       - { name: monolog.logger, channel: timing }
 
+  AppBundle\Entity\Listener\:
+    resource: '../../src/Entity/Listener/*'
+
   AppBundle\Entity\Listener\TaskListener:
     tags:
       - { name: doctrine.orm.entity_listener }

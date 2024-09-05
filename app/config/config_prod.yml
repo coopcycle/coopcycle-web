@@ -66,7 +66,7 @@ monolog:
         forward_channels:
             type: group
             members: [ logs_to_upload ]
-            channels: [ checkout, coopcycle.order_processing, push_notification, real_time_message ]
+            channels: [ domain_event, checkout, coopcycle.order_processing, push_notification, real_time_message ]
         logs_to_upload:
             # includes messages:
             # channels listed in forward_channels: persist all messages
