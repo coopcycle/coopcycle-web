@@ -72,6 +72,11 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+startupProbe:
+  tcpSocket:
+    port: 5000
+  failureThreshold: 30
+  periodSeconds: 10
 livenessProbe:
   tcpSocket:
     port: 5000

@@ -111,6 +111,21 @@ ingress:
   #    hosts:
   #      - chart-example.local
 
+startupProbe:
+  tcpSocket:
+    port: 80
+  failureThreshold: 30
+  periodSeconds: 10
+livenessProbe:
+  tcpSocket:
+    port: 80
+  failureThreshold: 1
+  periodSeconds: 30
+readinessProbe:
+  tcpSocket:
+    port: 80
+  periodSeconds: 30
+
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
