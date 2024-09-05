@@ -48,18 +48,37 @@ class BarcodeController extends AbstractController
 
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
-        $ressource = $this->getDoctrine()->getRepository(Task::class)->findByBarcode($barcode->getRawBarcode());
+        /** @var Task $task */
+        $task = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->findByBarcode($barcode->getRawBarcode());
 
-        if (is_null($ressource)) {
+        if (is_null($task)) {
             return $this->json(['error' => 'No data found.'], 404);
         }
 
-        $this->taskManager->scan($ressource);
+        $client_action = null;
+        if ($task->isAssignedTo($this->getUser())) {
+            $client_action = 'ask_unassign';
+        } elseif ($task->isAssigned()) {
+            $client_action = 'ask_assign';
+        }
+
+        if (!$task->isAssignedTo($this->getUser())) {
+            if (is_null($task->getDelivery())) {
+                $task->assignTo($this->getUser());
+            } else {
+                $task->getDelivery()->assignTo($this->getUser());
+            }
+        }
+
+        $this->taskManager->scan($task);
         $this->doctrine->getManager()->flush();
 
         return $this->json([
-            "ressource" => $iriConverter->getIriFromItem($ressource),
-            "entity" => $normalizer->normalize($ressource, null, [
+            "ressource" => $iriConverter->getIriFromItem($task),
+            "client_action" => $client_action,
+            "entity" => $normalizer->normalize($task, null, [
                 'groups' => ['task', 'delivery', 'package', 'address', 'barcode']
             ])
         ]);
