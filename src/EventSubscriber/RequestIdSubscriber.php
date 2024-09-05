@@ -24,6 +24,10 @@ class RequestIdSubscriber implements EventSubscriberInterface
         if (! $request->headers->has('X-Request-ID')) {
             $request->headers->set('X-Request-ID', Uuid::uuid4()->toString());
         }
+
+        \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($request): void {
+            $scope->setTag('request_id', $request->headers->get('X-Request-ID'));
+        });
     }
 
     public function onKernelResponse(ResponseEvent $event)
