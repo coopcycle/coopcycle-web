@@ -21,3 +21,6 @@ data:
   typesense-host: "{{ include "coopcycle-platform.fullname" . }}-typesense"
   centrifugo-url: "http://{{ include "coopcycle-platform.fullname" . }}-centrifugo:9000"
   centrifugo-web-socket: "http://{{ include "coopcycle-platform.fullname" . }}-centrifugo:8000"
+  osrm-host: "{{ include "coopcycle-platform.fullname" . }}-osrm:5000"
+  mjml-host: "http://{{ include "coopcycle-platform.fullname" . }}-mjml:8889"
+  mail-url: "smtp://{{ include "coopcycle-platform.fullname" . }}-smtp:25"

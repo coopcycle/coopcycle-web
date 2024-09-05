@@ -168,6 +168,21 @@ spec:
                 configMapKeyRef:
                   name: {{ include "coopcycle-platform.fullname" . }}
                   key: centrifugo-web-socket
+            - name: COOPCYCLE_OSRM_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: osrm-host
+            - name: COOPCYCLE_MJML_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: mjml-host
+            - name: COOPCYCLE_MAIL_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: mail-url
           ports:
             - name: http
               containerPort: 80
