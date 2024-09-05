@@ -3,7 +3,9 @@
 namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Edenred\Client as EdenredClient;
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -30,6 +32,8 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         CurrencyContextInterface $currencyContext,
         private PaymentContext $paymentContext,
         private EdenredClient $edenredClient,
+        private StripeManager $stripeManager,
+        private GatewayResolver $gatewayResolver,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
     {
@@ -85,6 +89,12 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             $lastPayment->setCurrencyCode($this->currencyContext->getCurrencyCode());
             $lastPayment->setAmount($order->getTotal());
 
+            if ('stripe' === $this->gatewayResolver->resolve()) {
+                // Make sure to call StripeManager::configurePayment()
+                // It will resolve the Stripe account that will be used
+                $this->stripeManager->configurePayment($lastPayment);
+            }
+
             $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | lastPayment #%d | %d (updated)',
                 $lastPayment->getId(),
                 $lastPayment->getAmount()), ['order' => $this->loggingUtils->getOrderId($order)]);
@@ -102,6 +112,12 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         );
         $payment->setMethod($card);
         $payment->setState($targetState);
+
+        if ('stripe' === $this->gatewayResolver->resolve()) {
+            // Make sure to call StripeManager::configurePayment()
+            // It will resolve the Stripe account that will be used
+            $this->stripeManager->configurePayment($payment);
+        }
 
         $order->addPayment($payment);
 
@@ -155,8 +171,12 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                 // Do not hardcode this here
                 $card = $this->paymentMethodRepository->findOneByCode('CARD');
                 $cardPayment = $this->upsertPayment($order, $payments, $card, $order->getTotal(), $targetState);
+                if ('stripe' === $this->gatewayResolver->resolve()) {
+                    // Make sure to call StripeManager::configurePayment()
+                    // It will resolve the Stripe account that will be used
+                    $this->stripeManager->configurePayment($cardPayment);
+                }
                 $paymentsToKeep->add($cardPayment);
-
         }
 
         foreach ($payments as $payment) {

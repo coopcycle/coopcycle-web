@@ -338,13 +338,6 @@ class OrderController extends AbstractController
 
         $orderErrors = $this->validator->validate($order);
 
-        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-        // Make sure to call StripeManager::configurePayment()
-        // It will resolve the Stripe account that will be used
-        // TODO Make sure we are using Stripe, not MercadoPago
-        $stripeManager->configurePayment($payment);
-
         $checkoutPayment = new CheckoutPayment($order);
         $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
             'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while it fails
@@ -355,7 +348,6 @@ class OrderController extends AbstractController
             'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
-            'payment' => $payment,
         ];
 
         $form->handleRequest($request);
@@ -375,6 +367,10 @@ class OrderController extends AbstractController
             }
         }
 
+        // Keep a copy of the payments before trying authorization
+        $payments = $order->getPayments()->filter(
+            fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $data = [
@@ -392,24 +388,7 @@ class OrderController extends AbstractController
 
             $this->objectManager->flush();
 
-            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-
-                $error = $payment->getLastError();
-
-                // Make sure to retrieve the last payment
-                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-                // Make sure to call StripeManager::configurePayment()
-                // It will resolve the Stripe account that will be used
-                // TODO Make sure we are using Stripe, not MercadoPago
-                $stripeManager->configurePayment($payment);
-
-                return $this->render('order/payment.html.twig', array_merge($parameters, [
-                    'form' => $form->createView(),
-                    'error' => $error,
-                    'payment' => $payment,
-                ]));
-            }
+            // TODO Check if all $payments have succeeded
 
             return $this->redirectToOrderConfirm($order);
         }

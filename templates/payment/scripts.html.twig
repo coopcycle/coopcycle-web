@@ -3,6 +3,8 @@
 
 {% set gateway_configs = {} %}
 
+{% set payment = order.payments|filter(payment => payment.method.code == 'CARD' and payment.state == 'cart')|first %}
+
 {% if gateway == 'stripe' %}
 <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 

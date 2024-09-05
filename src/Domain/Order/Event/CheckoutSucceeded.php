@@ -16,7 +16,11 @@ class CheckoutSucceeded extends Event implements DomainEvent
         return 'order:checkout_succeeded';
     }
 
-    public function __construct(OrderInterface $order, ?PaymentInterface $payment = null)
+    /**
+     * @param OrderInterface $order
+     * @param PaymentInterface|array|\Traversable|null $payment
+     */
+    public function __construct(OrderInterface $order, $payment = null)
     {
         parent::__construct($order);
 
