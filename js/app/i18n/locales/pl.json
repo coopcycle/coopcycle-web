@@ -177,7 +177,7 @@
         "DASHBOARD_UNASSIGNED": "Nieprzypisany",
         "DATEPICKER_TOMORROW": "[Jutro]",
         "DATEPICKER_TODAY": "[Dzisiaj]",
-        "ADD_BUTON": "Dodaj",
+        "ADD_BUTTON": "Dodaj",
         "OPENING_HOURS_TITLE": "Godziny otwarcia",
         "OPENING_HOURS_RANGE": "Otwarte od dnia {{fromDay}} do {{toDay}}, od {{open}} do {{close}}",
         "OPENING_HOURS_SINGLE": "Otwarte dnia {{day}} od {{open}} do {{close}}",

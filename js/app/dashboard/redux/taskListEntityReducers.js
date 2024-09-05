@@ -2,8 +2,9 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   MODIFY_TASK_LIST_REQUEST_SUCCESS,
   TASK_LISTS_UPDATED,
-  // UPDATE_TASK,
-  REMOVE_TASK
+  REMOVE_TASK,
+  setTaskListVehicleRequest,
+  setTaskListTrailerRequest
 } from './actions'
 import {
   taskListEntityUtils,
@@ -24,7 +25,6 @@ export default (state = initialState, action) => {
       let entity = selectors.selectById(state, action.username)
 
       if (!entity) {
-
         return state
       }
 
@@ -34,7 +34,20 @@ export default (state = initialState, action) => {
       }
 
       return taskListAdapter.upsertOne(state, newEntity)
+    case setTaskListVehicleRequest.type: {
+      const {username, vehicleId} = action.payload
 
+      let taskList = selectors.selectById(state, username)
+
+      return taskListAdapter.upsertOne(state, {...taskList, vehicle: vehicleId})
+    }
+    case setTaskListTrailerRequest.type: {
+      const {username, trailerId} = action.payload
+
+      let taskList = selectors.selectById(state, username)
+
+      return taskListAdapter.upsertOne(state, {...taskList, trailer: trailerId})
+    }
     case MODIFY_TASK_LIST_REQUEST_SUCCESS:
       return taskListAdapter.upsertOne(state, action.taskList)
 

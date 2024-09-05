@@ -43,11 +43,11 @@ class DateParser
         }
 
         if (1 === preg_match(self::DATE_PATTERN_HYPHEN, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
+            $date->setDate(intval(!empty($matches['year']) ? $matches['year'] : $date->format('Y')), $matches['month'], $matches['day']);
         } elseif (1 === preg_match(self::DATE_PATTERN_SLASH, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
+            $date->setDate(intval(!empty($matches['year']) ? $matches['year'] : $date->format('Y')), $matches['month'], $matches['day']);
         } elseif (1 === preg_match(self::DATE_PATTERN_DOT, $text, $matches)) {
-            $date->setDate(isset($matches['year']) ? $matches['year'] : $date->format('Y'), $matches['month'], $matches['day']);
+            $date->setDate(intval(!empty($matches['year']) ? $matches['year'] : $date->format('Y')), $matches['month'], $matches['day']);
         }
     }
 

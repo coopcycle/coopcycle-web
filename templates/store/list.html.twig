@@ -10,7 +10,7 @@
     </thead>
     <tbody>
     {% for store in stores %}
-      <tr>
+      <tr data-testid="store_{{ store.name|replace({' ': '_'})|escape('js') }}__list_item">
         <td><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></td>
         {% if is_granted('ROLE_ADMIN') %}
         <td>

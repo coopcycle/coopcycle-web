@@ -147,6 +147,7 @@
         "league/flysystem-ftp": "^3.0",
         "coopcycle/transporter": "dev-master",
         "league/flysystem-sftp-v3": "^3.0",
+        "paygreen/paygreen-php": "*",
         "picqer/php-barcode-generator": "^2.4"
     },
     "require-dev": {

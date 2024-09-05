@@ -1009,11 +1009,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->ref;
     }
 
-    public static function toVroomJob(Task $task, $iri): VroomJob
+    public static function toVroomJob(Task $task, $iri = '', $id = null): VroomJob
     {
         $job = new VroomJob();
 
-        $job->id = $task->getId();
+        $jobId = $task->getId() ?? $id;
+
+        $job->id = $jobId;
         $job->description = $iri; // if the task is linked to a tour, this will be the tour iri, otherwise the task iri
         $job->location = [
             $task->getAddress()->getGeo()->getLongitude(),
@@ -1297,6 +1299,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitTask($this);
+
+    }
+
+    public static function fixTimeWindow(Task $task)
+    {
+        if (null === $task->getAfter()) {
+            $after = clone $task->getBefore();
+            $after->modify('-15 minutes');
+            $task->setAfter($after);
+        }
     }
 
 

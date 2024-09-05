@@ -7,7 +7,10 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import {
   setToursEnabled,
-  loadOrganizations
+  loadOrganizations,
+  loadVehicles,
+  loadTrailers,
+  loadWarehouses
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -16,6 +19,8 @@ import TasksContextMenu from './context-menus/TasksContextMenu'
 import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
+import VehicleSelectMenu from './context-menus/VehicleSelectMenu'
+
 
 const DashboardApp = ({ loadingAnim }) => {
 
@@ -46,6 +51,9 @@ const DashboardApp = ({ loadingAnim }) => {
 
   useEffect(() => {
     dispatch(loadOrganizations())
+    dispatch(loadVehicles())
+    dispatch(loadTrailers())
+    dispatch(loadWarehouses())
 
     loadingAnim.stop()
     loadingAnim.destroy()
@@ -74,6 +82,7 @@ const DashboardApp = ({ loadingAnim }) => {
         </Split>
       </DragDropContext>
       <TasksContextMenu />
+      <VehicleSelectMenu />
       <ToastContainer />
     </div>
   )

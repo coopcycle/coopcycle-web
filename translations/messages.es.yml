@@ -212,7 +212,7 @@ profile.orders: Pedidos
 profile.configuration: Configuración
 order.cart.title: Cesta
 order.items.products_with_count: Productos (%count%)
-order.summary.heading: Pedido %number% (#%id%)
+order.summary.heading: Pedido %number%
 order.total_including_tax: Total (IVA incl.)
 order.items_total: Total productos
 order.total_tax: IVA
@@ -538,10 +538,13 @@ stores.createNewDelivery: Crear entrega
 stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
-stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading: 'Entrega %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Entrega %delivery_id%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
 stores.addresses: Direcciones
+stores.deliveries.bookmarks: Pedidos guardados
+stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega para encontrarlos fácilmente más tarde
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han sido\
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\
@@ -562,7 +565,7 @@ activity.task.cancelled: "@%owner% ha cancelado la tarea #task/%aggregate_id%\n"
 activity.order.created: "El pedido #order/%aggregate_id% ha sido creado por @%owner%\n"
 activity.order.accepted: "El pedido #order/%aggregate_id% ha sido aceptado\n"
 activity.order.refused: "El pedido #order/%aggregate_id% ha sido rechazado\n"
-activity.order.picked: "@%owner% ha recuperado el pedido #order/%aggregate_id%\n"
+activity.order.picked: "@%owner% ha recogido el pedido #order/%aggregate_id%\n"
 activity.order.dropped: "@%owner% ha entregado el pedido #order/%aggregate_id%\n"
 activity.order.fulfilled: "El pedido #order/%aggregate_id% esta terminado\n"
 activity.order.delayed: "El pedido #order/%aggregate_id% has sido atrasado\n"
@@ -586,6 +589,9 @@ basics.are_you_sure: ¿Estás segur@?
 basics.no_entries: Ningun elemento por el momento
 basics.select_all: Seleccionar todo
 basics.delete_selected: Eliminar seleccionados
+basics.address: Dirección
+warehouses.breadcrumb: Almacenes
+warehouses.breadcrumb.help: Definir almacenes
 profile.password.change: Cambiar la contraseña
 authentication.forgot_password: ¿Contraseña olvidada?
 authentication.not_registered_yet: ¿Todavía no estas registrado?
@@ -678,6 +684,10 @@ adminDashboard.tags.confirm_delete: "¿Estás seguro de eliminar esta etiqueta? 
 adminDashboard.time_slots.title: Franja horaria
 delivery.tracking_link: Enlace de seguimiento
 delivery.with_id: 'Entrega #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Cette commande a été générée par un abonnement
+subscription.view: Voir l'abonnement
 help.title: Ayuda
 help.home: Casa
 restaurant.stats.order_number: Número de pedido
@@ -784,7 +794,7 @@ receipt.footer_item.total_products: Total productos
 receipt.footer_item.total_excl_tax: Total (sin IVA)
 receipt.footer_item.total_incl_tax: Total (IVA incl.)
 receipt.total: Total (IVA incl.)
-receipt.billing_details: Pedido pagado con tarjeta de crédito/débito el %date%
+receipt.billing_details: Pedido pagado con %payment_method% el %date%
 receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nuevo pedido por confirmar
 form.checkout_address.quote.label: Solicitar presupuesto
@@ -918,6 +928,7 @@ form.delivery.pickup.address_placeholder: Número de casa y nombre de la calle, 
   código postal, ciudad
 form.delivery.dropoff.address_placeholder: Número de casa y nombre de la calle, área,
   código postal, ciudad
+form.delivery.bookmark.label: Añadir a Pedidos guardados
 form.order.refuse.label: Rechazar
 form.order.refuse.refund.alert: Este pedido se pagó con un método de pago que no gestiona
   las autorizaciones previas. Si lo rechaza, se reembolsará el pago. ¿Estás seguro?
@@ -1454,3 +1465,14 @@ restaurant.businessAccount.notAvilable: "Éste restaurante no está incluído en
   >haciendo click aquí</a>.\n"
 business_account.switch.order_with_business: Pedir con mi empresa
 business_account.switch.ordering_with_business: Pidiendo con mi empresa
+form.store_type.multi_drop_enabled.label: Habilitar entregas multiples
+api_apps.regenerate_secret: Renovar clave secreto
+restaurant.form.cash_on_delivery_enabled.label: Activar el pago con efectivo
+promotion_rule.is_items_total_above: El valor total de los productos está por encima
+  de %amount%
+form.store_type.multi_drop_enabled.help: Permitir usarios añadir varios puntos de
+  entrega al crear un encargo
+api_apps.regenerate_secret_warning: Cualquier app usando esta salida de API con el
+  secreto anterior dejará de funcionar.
+restaurant.form.cash_on_delivery_enabled.help: Esto permitirá clientes pagar en efectivo
+  al repartidor. Use con cuidado.

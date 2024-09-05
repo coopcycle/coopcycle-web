@@ -19,6 +19,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Nonprofit;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -43,6 +44,7 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Entity\Warehouse;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -60,7 +62,7 @@ use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
-use AppBundle\Form\NewOrderType;
+use AppBundle\Form\NewCustomOrderType;
 use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\OrganizationType;
@@ -75,7 +77,6 @@ use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
-use AppBundle\Form\VehicleType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
@@ -2364,8 +2365,24 @@ class AdminController extends AbstractController
 
         $form = $this->createForm(PackageSetType::class, $packageSet);
 
+        $originalPackages = new ArrayCollection();
+
+        foreach ($packageSet->getPackages() as $package) {
+            $originalPackages->add($package);
+        }
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $packageSet = $form->getData();
+
+            foreach ($originalPackages as $originalPackage) {
+                if (!$packageSet->getPackages()->contains($originalPackage)) {
+                    $objectManager->remove($originalPackage);
+                    // $originalPackage->setPackageSet(null);
+                }
+            }
+
             $objectManager->persist($packageSet);
             $objectManager->flush();
 
@@ -2396,6 +2413,7 @@ class AdminController extends AbstractController
 
         $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
 
+
         if (!$packageSet) {
             throw $this->createNotFoundException(sprintf('Package set #%d does not exist', $id));
         }
@@ -2411,7 +2429,7 @@ class AdminController extends AbstractController
     )
     {
         $delivery = new Delivery();
-        $form = $this->createForm(NewOrderType::class, $delivery);
+        $form = $this->createForm(NewCustomOrderType::class, $delivery);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -2420,12 +2438,7 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
-
-            $variant = $order->getItems()->get(0)->getVariant();
-
-            $variant->setName($variantName);
-            $variant->setCode(Uuid::uuid4()->toString());
+            $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 
@@ -2941,46 +2954,23 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/vehicles/new", name="admin_new_vehicle")
-     */
-    public function newVehicleAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $vehicle = new Vehicle();
-
-        $form = $this->createForm(VehicleType::class, $vehicle);
-
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-
-            $this->getDoctrine()->getManager()->persist($vehicle);
-            $this->getDoctrine()->getManager()->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute('admin_vehicles');
-        }
-
-        return $this->render('admin/vehicle.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
      * @Route("/admin/vehicles", name="admin_vehicles")
      */
     public function vehiclesAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $vehicles = $this->getDoctrine()->getRepository(Vehicle::class)->findAll();
+        return $this->render('admin/vehicles.html.twig', $this->auth([]));
+    }
 
-        return $this->render('admin/vehicles.html.twig', [
-            'vehicles' => $vehicles,
-        ]);
+    /**
+     * @Route("/admin/warehouses", name="admin_warehouses")
+     */
+    public function warehousesAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
     /**

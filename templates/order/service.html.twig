@@ -6,7 +6,7 @@
 
 {% block breadcrumb %}
 <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
-<li>#{{ order.id }}</li>
+<li>{{ order.number }}</li>
 {% endblock %}
 
 {% block content %}
@@ -19,6 +19,10 @@
   <div class="alert alert-info">
     <i class="fa fa-info-circle"></i> {{ 'form.order.accept.help'|trans }}
   </div>
+{% endif %}
+
+{% if is_granted('ROLE_DISPATCHER') and order.subscription is not empty %}
+  {% include '_partials/delivery/subscription_alert.html.twig' with { subscription: order.subscription } %}
 {% endif %}
 
 <div class="d-md-flex flex-md-row">

@@ -5,8 +5,11 @@ namespace AppBundle\Sylius\Order;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -89,7 +92,7 @@ class OrderFactory implements FactoryInterface
         return $order;
     }
 
-    public function createForDelivery(Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
+    public function createForDelivery(Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true): OrderInterface
     {
         Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
 
@@ -117,11 +120,17 @@ class OrderFactory implements FactoryInterface
             $order->setCustomer($customer);
         }
 
-        $variant = $this->productVariantFactory->createForDelivery($delivery, $price);
+        $variant = $this->productVariantFactory->createForDelivery($delivery, $price->getValue());
 
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);
         $orderItem->setUnitPrice($variant->getPrice());
+
+        if ($price instanceof ArbitraryPrice) {
+            $orderItem->setImmutable(true);
+            $variant->setName($price->getVariantName());
+            $variant->setCode(Uuid::uuid4()->toString());
+        }
 
         $this->orderItemQuantityModifier->modify($orderItem, 1);
 

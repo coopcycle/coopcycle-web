@@ -375,8 +375,6 @@ class OrderController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
             $data = [
                 'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
             ];

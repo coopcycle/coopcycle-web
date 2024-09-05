@@ -8,46 +8,35 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DeliveryType extends AbstractType
 {
-    protected $routing;
-    protected $translator;
-    protected $authorizationChecker;
-    protected $country;
-    protected $locale;
 
     public function __construct(
-        RoutingInterface $routing,
-        TranslatorInterface $translator,
-        AuthorizationCheckerInterface $authorizationChecker,
-        string $country,
-        string $locale)
+        protected RoutingInterface $routing,
+        protected TranslatorInterface $translator,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected string $country,
+        protected string $locale,
+        private readonly OrderManager $orderManager)
     {
-        $this->routing = $routing;
-        $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->country = $country;
-        $this->locale = $locale;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -148,13 +137,31 @@ class DeliveryType extends AbstractType
                     'help' => 'form.new_order.variant_name.help',
                     'mapped' => false,
                     'required' => false,
-                    'data' => $arbitraryPrice ? $arbitraryPrice['productName'] : null,
+                    'data' => $arbitraryPrice ? $arbitraryPrice->getVariantName() : null,
                 ])
                 ->add('variantPrice', MoneyType::class, [
                     'label' => 'form.new_order.variant_price.label',
                     'mapped' => false,
                     'required' => false,
-                    'data' => $arbitraryPrice ? $arbitraryPrice['amount'] : null,
+                    'data' => $arbitraryPrice ? $arbitraryPrice->getValue() : null,
+                ]);
+            }
+
+            $isDeliveryOrder = null !== $store && $store->getCreateOrders();
+            
+            if ($options['with_bookmark'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $form->add('bookmark', CheckboxType::class, [
+                    'label' => 'form.delivery.bookmark.label',
+                    'mapped' => false,
+                    'required' => false,
+                    'data' => $delivery->getOrder() && $this->orderManager->hasBookmark($delivery->getOrder()),
+                ]);
+            }
+
+            if ($options['with_recurrence'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $form->add('recurrence', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
                 ]);
             }
         });
@@ -162,7 +169,6 @@ class DeliveryType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
 
             $data = $event->getData();
-            $form = $event->getForm();
 
             $tasks = $data['tasks'];
 
@@ -291,6 +297,8 @@ class DeliveryType extends AbstractType
             'with_address_props' => false,
             'with_arbitrary_price' => false,
             'arbitrary_price' => null,
+            'with_bookmark' => false,
+            'with_recurrence' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

@@ -19,9 +19,15 @@
   </thead>
   <tbody>
   {% for delivery in deliveries %}
-    <tr>
+    <tr data-testid="delivery__list_item">
       <td>
-        <a href="{{ path(routes.view, { id: delivery.id }) }}">#{{ delivery.id }}</a>
+        <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">
+          {% if delivery.order is not null %}
+            {{ delivery.order.number }}
+          {% else %}
+            #{{ delivery.id }}
+          {% endif %}
+        </a>
       </td>
       {% if with_store is defined and with_store %}
       <td width="20%">
@@ -130,6 +136,6 @@
 </table>
 {% else %}
   <p class="text-muted">
-  {% trans %}basics.no_entries{% endtrans %}
+    {{ empty_message|default('basics.no_entries')|trans }}
   </p>
 {% endif %}

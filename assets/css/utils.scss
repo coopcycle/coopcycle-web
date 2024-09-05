@@ -58,6 +58,11 @@
   box-sizing: border-box;
   animation: rotating 1.5s linear infinite;
 
+  &.loader--lg {
+    width: 40px;
+    height: 40px;
+  }
+
   &.loader--dark {
     border-color: $dark;
     border-bottom-color: transparent;

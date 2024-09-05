@@ -2,6 +2,7 @@ include:
   - settings.yml
   - sylius_channels.yml
   - sylius_taxation.yml
+  - payment_methods.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_1:
@@ -37,8 +38,8 @@ AppBundle\Entity\TimeSlot:
   time_slot_1:
     name: 'Acme time slot'
     openingHours:
-      - 'Mo-Su 12:00-14:00'
-      - 'Mo-Su 14:00-17:00'
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'
 
 AppBundle\Entity\Store:
   store_1:
@@ -47,9 +48,17 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
+    createOrders: true
+  store_do_not_create_orders:
+    name: 'Store with createOrders disabled'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    createOrders: false
 
 AppBundle\Entity\User:
-  default_user:
+  storeOwner:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'store_1'
@@ -59,6 +68,15 @@ AppBundle\Entity\User:
         - false
     roles: [ 'ROLE_USER', 'ROLE_STORE' ]
     stores: [ '@store_1' ]
+  admin:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'admin'
+        - '12345678'
+        - 'admin@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_ADMIN' ]
 
 AppBundle\Entity\Sylius\Product:
   on_demand_delivery:

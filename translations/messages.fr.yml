@@ -88,6 +88,10 @@ adminDashboard.pledges.title: Suggestions
 delivery.createNew: Créer une livraison
 delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Cette commande a été générée par un abonnement
+subscription.view: Voir l'abonnement
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
@@ -115,7 +119,7 @@ restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas v
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est indisponible à la livraison jusqu'au
-  <strong>%date%</strong>. Vous pouvez commander pour plus tard !
+  <strong>%date%</strong>.
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
 restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
   sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
@@ -268,7 +272,7 @@ profile.accountType: Type de compte
 order.cart.title: Panier
 order.cart.donation: Dons aux associations
 order.items.products_with_count: Produits (%count%)
-order.summary.heading: Commande %number% (#%id%)
+order.summary.heading: Commande %number%
 order.total_excluding_tax: Total HT
 order.total_including_tax: Total TTC
 order.items_total: Total produits
@@ -689,10 +693,13 @@ stores.createNewDelivery: Créer une livraison
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
-stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading: 'Livraison %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Livraison %delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
+stores.deliveries.bookmarks: Commandes enregistrées
+stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
@@ -735,6 +742,9 @@ basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous po
 basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a
   bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations
   personnelles</a>
+basics.address: Adresse
+warehouses.breadcrumb: Entrepôts
+warehouses.breadcrumb.help: Définir les entrepôts
 adminDashboard.embed.title: Formulaires
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle
@@ -910,7 +920,7 @@ receipt.footer_item.total_products: Total produits
 receipt.footer_item.total_excl_tax: Total HT
 receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
-receipt.billing_details: Commande payée par carte de crédit le %date%
+receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte %name%
@@ -1244,6 +1254,7 @@ order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% de
   paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
 form.delivery.arbitrary_price.label: Definir le prix manuellement
+form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
 homepage.featured: À la une
@@ -1422,3 +1433,4 @@ form.settings.company_legal_name.help: "Veuillez entrer le nom légal complet de
 form.settings.company_legal_id.label: "Numéro de SIRET"
 form.settings.company_legal_id.help: "Ce numéro est généralement disponible sur les documents officiels de l'entreprise, tels que les factures ou les contrats."
 restaurant.form.edenred_enabled.label: Activer Edenred
+restaurant.form.paygreen_shop_id.label: Identifiant de boutique Paygreen

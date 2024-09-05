@@ -304,7 +304,7 @@ profile.managedStores: Vom Benutzer verwaltete Shops
 profile.managedRestaurants: Vom Benutzer verwaltete Restaurants
 profile.accountType: Kontotyp
 order.cart.title: Warenkorb
-order.summary.heading: Auftrag %number% (#%id%)
+order.summary.heading: Auftrag %number%
 order.items_total: Alle Artikel insgesamt
 order.total_tax: Steuern
 order.preparation_expected_at: Erwartete Bereitstellung bis zum %date%
@@ -385,6 +385,10 @@ adminDashboard.pledges.title: Anregungen
 adminDashboard.time_slots.title: Zeitfenster
 delivery.tracking_link: Sendungsverfolgung
 delivery.with_id: 'Versand #%id%'
+subscriptions.title: Abonnements
+subscription.title: 'Abonnement #%id%'
+subscription.generated_order: Diese Bestellung wurde durch ein Abonnement generiert
+subscription.view: Abonnement anzeigen
 profile.username: Benutzername
 form.order.refund_modal.title: Rückzahlung
 form.payment.refund_amount.help: Der von Dir angegebene Betrag wird dem Kunden zurückerstattet
@@ -456,7 +460,8 @@ index.view_all_restaurants: Alle Restaurants
 index.our_restaurants: Unsere Restaurants
 index.banner: Dein Lieblingsessen zu dir nach Hause
 stores.addresses: Adressen
-stores.deliveries.heading: 'Lieferung #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading: 'Lieferung %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Lieferung %delivery_id%'
 stores.deliveries: Lieferungen
 stores.api_keys: API Schlüssel
 stores.pricing_rule_set: Preisermittlung
@@ -486,12 +491,14 @@ form.task.telephone.label: Telefon
 form.task.address.label: Adresse
 localBusiness.form.enabled: Aktiviert
 notifications.restaurant.new_order: Neue Bestellung zu bestätigen
-receipt.billing_details: Bestellung am %date% mit Kredikarte bezahlt
+receipt.billing_details: Bestellung am %date% mit %payment_method% bezahlt
 receipt.line_item.quantity: Stückzahl
 adminDashboard.activity.title: Aktivitäten
 index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
 stores.deliveries.task_unassigned: Nicht zugeteilt
 stores.manage: Verwalten
+stores.deliveries.bookmarks: Gespeicherte Bestellungen
+stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite, um sie später leichter zu finden
 roles.ROLE_STORE.help: 'Laden-Besitzer*in: zugeordnete Läden verwalten, Sendungen
   verwalten, ...'
 roles.ROLE_RESTAURANT.help: 'Restaurant-Besitzer*in: zugeordnete Restaurants verwalten,
@@ -591,6 +598,7 @@ restaurant.contract.calculation_info: Sie können dem Restaurant einen anderen B
 form.task.dropoff.doorstep.label: Türschwelle-Zustellung
 form.delivery.pickup.address_placeholder: Straßenname und Hausnummer, Postleitzahl,
   Stadt
+form.delivery.bookmark.label: Zu gespeicherten Bestellungen hinzufügen
 form.suggest.message: "Ist ihr Lieblingsrestaurant nicht dabei?\n<br>\nTeilen Sie\
   \ uns den Namen des Restaurants und seine Adresse mit, sodass andere Benutzer*innen\
   \ es in der Liste der Wünschrestaurants es wählen können. \n<br>\nDas wird uns ermöglichen,\
@@ -718,3 +726,6 @@ delivery.state:
   delivered: 'Zugestellt'
   failed: 'Fehlgeschlagen'
   cancelled: 'Abgebrochen'
+basics.address: Adresse
+warehouses.breadcrumb: Lagerhäuser
+warehouses.breadcrumb.help: Lagerhäuser definieren

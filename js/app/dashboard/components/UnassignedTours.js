@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import _ from 'lodash'
 
 import { Draggable, Droppable } from "@hello-pangea/dnd"
-import { connect, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import Tour from './Tour'
@@ -15,23 +15,19 @@ import { getDroppableListStyle } from '../utils'
 import { Tooltip } from 'antd'
 
 
-const Buttons = connect(
-  () => ({}),
-  (dispatch) => ({
-    openCreateTourModal: () => dispatch(openCreateTourModal()),
-  })
-)(({ openCreateTourModal }) => {
+const Buttons = () => {
+  const dispatch = useDispatch()
   return (
     <React.Fragment>
       <a href="#" className="mr-3" onClick={ e => {
         e.preventDefault()
-        openCreateTourModal()
+        dispatch(openCreateTourModal())
       }}>
         <i className="fa fa-plus"></i>
       </a>
     </React.Fragment>
   )
-})
+}
 
 const CollapsedUnassignedTours = ({ unassignedToursCount, splitCollapseAction }) => {
   const { t } = useTranslation()

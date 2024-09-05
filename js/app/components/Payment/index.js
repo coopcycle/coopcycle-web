@@ -80,10 +80,10 @@ export default function(formSelector, options) {
       gatewayConfig,
       amount: options.amount,
       onChange: (event) => {
+        event.complete ? enableBtn(submitButton) : disableBtn(submitButton)
         if (event.error) {
           document.getElementById('card-errors').textContent = event.error.message
         } else {
-          event.complete && enableBtn(submitButton)
           document.getElementById('card-errors').textContent = ''
         }
       },
@@ -163,6 +163,23 @@ export default function(formSelector, options) {
     if (store) {
       const orderNodeId = selectOrderNodeId(store.getState())
 
+      const shippingTimeRange = selectShippingTimeRange(store.getState())
+      const persistedTimeRange = selectPersistedTimeRange(store.getState())
+
+      // if the customer has already selected the time range, it will be checked on the server side
+      if (!shippingTimeRange && persistedTimeRange) {
+        try {
+          await checkTimeRange(
+            persistedTimeRange,
+            store.getState,
+            store.dispatch,
+          )
+        } catch (error) {
+          setLoading(false)
+          return
+        }
+      }
+
       let violations = null
       try {
         const { error } = await store.dispatch(
@@ -189,23 +206,6 @@ export default function(formSelector, options) {
         )
         return
       }
-
-      const shippingTimeRange = selectShippingTimeRange(store.getState())
-      const persistedTimeRange = selectPersistedTimeRange(store.getState())
-
-      // if the customer has already selected the time range, it will be checked on the server side
-      if (!shippingTimeRange && persistedTimeRange) {
-        try {
-          await checkTimeRange(
-            persistedTimeRange,
-            store.getState,
-            store.dispatch,
-          )
-        } catch (error) {
-          setLoading(false)
-          return
-        }
-      }
     }
 
     handlePayment()
@@ -213,6 +213,7 @@ export default function(formSelector, options) {
 
   const onSelect = value => {
     form.querySelector(`input[name="checkout_payment[method]"][value="${value}"]`).checked = true
+    document.getElementById('card-errors').textContent = ''
     axios
       .post(options.selectPaymentMethodURL, { method: value })
       .then(response => {
@@ -226,10 +227,14 @@ export default function(formSelector, options) {
               cashDisclaimer.remove()
             }
 
-            cc.mount(document.getElementById('card-element'), value, response.data, options).then(() => {
-              document.getElementById('card-element').scrollIntoView()
-              enableBtn(submitButton)
-            })
+            cc.mount(document.getElementById('card-element'), value, response.data, options)
+              .then(() => {
+                document.getElementById('card-element').scrollIntoView()
+                enableBtn(submitButton)
+              })
+              .catch(e => {
+                document.getElementById('card-errors').textContent = e.message
+              })
             break
           case 'edenred':
             // TODO

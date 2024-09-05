@@ -1,0 +1,11 @@
+Sylius\Component\Payment\Model\PaymentMethod:
+  payment_method_cart:
+    code: CARD
+    currentLocale: fr
+    name: Card
+    enabled: true
+  payment_method_cash_on_delivery:
+    code: CASH_ON_DELIVERY
+    currentLocale: fr
+    name: Cash on delivery
+    enabled: true

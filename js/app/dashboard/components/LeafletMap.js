@@ -144,6 +144,7 @@ const MapProvider = (props) => {
     const LMap = MapHelper.init('map', {
       onLoad: props.onLoad,
       polygonManagement: true,
+      singleton: true,
     })
 
     const proxy = new MapProxy(LMap, {

@@ -43,6 +43,7 @@ use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
@@ -503,6 +504,10 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $businessAccount;
 
+    protected Collection $bookmarks;
+
+    protected ?RecurrenceRule $subscription = null;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -524,6 +529,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
         $this->vendors = new ArrayCollection();
+        $this->bookmarks = new ArrayCollection();
     }
 
     /**
@@ -1784,5 +1790,34 @@ class Order extends BaseOrder implements OrderInterface
     public function getPickupAddresses(): Collection
     {
         return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
+    }
+
+    /**
+     * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
+     * @return Collection all bookmarks set by different users
+     */
+    public function getBookmarks(): Collection
+    {
+        return $this->bookmarks;
+    }
+
+    public function supportsPaygreen(): bool
+    {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->supportsPaygreen();
+    }
+
+    public function getSubscription(): ?RecurrenceRule
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription(?RecurrenceRule $subscription): void
+    {
+        $this->subscription = $subscription;
     }
 }

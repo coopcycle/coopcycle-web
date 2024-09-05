@@ -288,7 +288,7 @@ class OpeningHours extends React.Component {
               )}
             </div>
             <button className="btn btn-sm btn-success" onClick={ this.addRow.bind(this) } disabled={ this.state.disabled }>
-              { this.props.t('ADD_BUTON') }
+              { this.props.t('ADD_BUTTON') }
             </button>
           </div>
         </div>

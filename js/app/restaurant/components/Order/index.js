@@ -4,28 +4,21 @@ import Sticky from 'react-stickynode'
 import classNames from 'classnames'
 
 import { sync } from '../../redux/actions'
-import {
-  selectIsMobileCartVisible,
-} from '../../redux/selectors'
+import { selectIsMobileCartVisible } from '../../redux/selectors'
 import FulfillmentDetails from './FulfillmentDetails'
 import MobileOrderHeading from './MobileOrderHeading'
 import CartWrapper from './CartWrapper'
+import { createPortal } from 'react-dom'
 
 // mobile (and small tablets)
-export function OrderOverlay() {
+function OrderOverlay() {
   const isMobileCartVisible = useSelector(selectIsMobileCartVisible)
 
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(sync())
-  }, [])
-
   return (
-    <div className={ classNames('order-overlay', {
-      'order-overlay--show': isMobileCartVisible,
-    }) }>
-
+    <div
+      className={classNames('order-overlay', {
+        'order-overlay--show': isMobileCartVisible,
+      })}>
       <MobileOrderHeading />
 
       <div className="order-overlay__content">
@@ -37,16 +30,9 @@ export function OrderOverlay() {
   )
 }
 
-
 // desktop (and larger tablets)
-export function StickyOrder() {
-  const [ menuNavHeight, setMenuNavHeight ] = useState(0)
-
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    dispatch(sync())
-  }, [])
+function StickyOrder() {
+  const [menuNavHeight, setMenuNavHeight] = useState(0)
 
   const el = document.getElementById('restaurant-menu-nav')
 
@@ -54,14 +40,38 @@ export function StickyOrder() {
     if (el) {
       const height = el.clientHeight
 
-      document.documentElement.style.setProperty('--restaurant-menu-nav-height',
-        `${ height }px`)
+      document.documentElement.style.setProperty(
+        '--restaurant-menu-nav-height',
+        `${height}px`,
+      )
       setMenuNavHeight(height)
     }
-  }, [ el ])
+  }, [el])
 
   return (
-    <Sticky top={ menuNavHeight } bottomBoundary=".content">
+    <Sticky top={menuNavHeight} bottomBoundary=".content">
       <CartWrapper />
-    </Sticky>)
+    </Sticky>
+  )
+}
+
+// desktop only
+const fulfilmentDetailsContainer = document.getElementById(
+  'restaurant__fulfilment-details__container',
+)
+
+export function OrderLayout() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(sync())
+  }, [])
+
+  return (
+    <>
+      {createPortal(<FulfillmentDetails />, fulfilmentDetailsContainer)}
+      <StickyOrder />
+      <OrderOverlay />
+    </>
+  )
 }

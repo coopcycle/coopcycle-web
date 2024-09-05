@@ -23,6 +23,7 @@ function init(id, options = {}) {
   let center
   let zoom = 13
   let zoomControl = true
+  let singleton = options?.singleton || false
 
   if (settings.center) {
     center = settings.center
@@ -39,7 +40,7 @@ function init(id, options = {}) {
   }
 
   // do not init twice the map when running in react's strict mode
-  if(map !== undefined){
+  if (map !== undefined && singleton) {
     return map
   }
 

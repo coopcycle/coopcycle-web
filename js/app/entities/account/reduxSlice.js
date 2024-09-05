@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  accessToken: null,
+  accessToken: window._auth?.jwt,
 }
 
 // only for registered users, for guest users (guest checkout) use guestSlice

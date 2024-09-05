@@ -9,17 +9,14 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\DeliveryAddress;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Store\Token as StoreToken;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
@@ -33,10 +30,8 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Exception\ExpectationException;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
-use Behat\Behat\Tester\Exception\PendingException;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker\Generator as FakerGenerator;
@@ -57,11 +52,7 @@ use League\Bundle\OAuth2ServerBundle\Model\Scope;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
-use League\OAuth2\Server\Exception\OAuthServerException;
-use DMore\ChromeDriver\ChromeDriver;
 use GeoJson\GeoJson;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpClient\Exception\TransportException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -105,6 +96,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected Redis $tile38,
         protected FakerGenerator $faker,
         protected OrderProcessorInterface $orderProcessor,
+        protected OrderRepository $orderRepository,
         protected KernelInterface $kernel,
         protected UserManager $userManager,
         protected CollectionManager $typesenseCollectionManager)
@@ -925,7 +917,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function getLastCartFromRestaurant(LocalBusiness $restaurant)
     {
-        $carts = $this->getContainer()->get('sylius.repository.order')
+        $carts = $this->orderRepository
             ->findCartsByRestaurant($restaurant);
 
         uasort($carts, function ($a, $b) {

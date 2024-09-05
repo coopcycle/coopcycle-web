@@ -575,6 +575,16 @@ admin_store_deliveries:
             import_success: admin_deliveries
     methods:  [ GET, POST ]
 
+admin_store_deliveries_bookmarks:
+  path: /admin/stores/{id}/deliveries/bookmarks
+  defaults:
+    _controller: AppBundle\Controller\AdminController::storeDeliveriesBookmarksAction
+    layout: 'admin.html.twig'
+    routes:
+      stores: admin_stores
+      store: admin_store
+  methods:  [ GET ]
+
 admin_store_delivery_new:
     path: /admin/stores/{id}/deliveries/new
     defaults:
@@ -592,6 +602,15 @@ admin_store_delivery_download_images:
     defaults:
         _controller: AppBundle\Controller\AdminController::downloadDeliveryImagesAction
     methods:  [ GET ]
+
+admin_store_subscriptions:
+  path: /admin/stores/{storeId}/subscriptions/{subscriptionId}
+  defaults:
+    _controller: AppBundle\Controller\AdminController::subscriptionAction
+    layout: 'admin.html.twig'
+    routes:
+      success: admin_deliveries
+  methods:  [ GET, POST ]
 
 admin_store_users:
     path: /admin/stores/{id}/users

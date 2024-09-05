@@ -27,7 +27,7 @@ parameters:
     database_user:     "%env(COOPCYCLE_DB_USER)%"
     database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
     locale: "%coopcycle.locale%"
-    locale_regex: an|ca|fr|en|es|eu|de|it|pl|pt_BR|pt_PT|da
+    locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
     router.request_context.scheme: 'http'
     router.request_context.host: "%env(APP_HOST)%"
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -171,7 +171,6 @@ framework:
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async
             'AppBundle\Message\OrderReceiptEmail': async
-            'AppBundle\Message\RetrieveStripeFee': async
             'AppBundle\Message\Sms': async
             'AppBundle\Message\UpdateLocation': async
             'AppBundle\Message\TopBarNotification': async
@@ -802,6 +801,20 @@ fos_js_routing:
         - admin_transporter_message
         - api_organizations_get_collection
         - api_time_slots_get_collection
+        - api_warehouses_post_collection
+        - api_warehouses_get_collection
+        - api_warehouses_delete_item
+        - api_trailers_post_collection
+        - api_trailers_get_collection
+        - api_trailers_delete_item
+        - api_vehicles_post_collection
+        - api_vehicles_get_collection
+        - api_vehicles_delete_item
+        - admin_warehouses
+        - api_task_lists_patch_item
+        - api_vehicles_patch_item
+        - api_trailers_patch_item
+        - api_trailers_set_vehicles_item
         - task_label_pdf
 
 webpack_encore:

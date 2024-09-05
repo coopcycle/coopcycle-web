@@ -60,7 +60,8 @@ export const CLOSE_IMPORT_MODAL = 'CLOSE_IMPORT_MODAL'
 export const OPEN_EXPORT_MODAL = 'OPEN_EXPORT_MODAL'
 export const CLOSE_EXPORT_MODAL = 'CLOSE_EXPORT_MODAL'
 
-export const OPTIMIZE_TASK_LIST = 'OPTIMIZE_TASK_LIST'
+export const startOptimRequest = createAction('START_OPTIM_REQUEST')
+export const setOptimResult = createAction('SET_OPTIM_RESULT')
 
 export const RIGHT_PANEL_MORE_THAN_HALF = 'RIGHT_PANEL_MORE_THAN_HALF'
 export const RIGHT_PANEL_LESS_THAN_HALF = 'RIGHT_PANEL_LESS_THAN_HALF'
@@ -97,9 +98,6 @@ export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
 export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 
-export const OPEN_CREATE_TOUR_MODAL = 'OPEN_CREATE_TOUR_MODAL'
-export const CLOSE_CREATE_TOUR_MODAL = 'CLOSE_CREATE_TOUR_MODAL'
-
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
@@ -125,6 +123,9 @@ export const insertInUnassignedTours = createAction('INSERT_IN_UNASSIGNED_TOURS'
 export const startTaskFailure = createAction('START_TASK_FAILURE')
 
 export const loadOrganizationsSuccess = createAction('LOAD_ORGANIZATIONS_SUCCESS')
+export const loadVehiclesSuccess = createAction('LOAD_VEHICLES_SUCCESS')
+export const loadTrailersSuccess = createAction('LOAD_TRAILERS_SUCCESS')
+export const loadWarehousesSuccess = createAction('LOAD_WAREHOUSES_SUCCESS')
 
 export const toggleTourPanelExpanded = createAction('TOGGLE_TOUR_PANEL_EXPANDED')
 export const toggleTaskListPanelExpanded = createAction('TASKLIST_PANEL_EXPANDED')
@@ -136,7 +137,8 @@ export const openTaskTaskList = function(task) {
     if (task.isAssigned) {
       const taskList = selectTaskListByUsername(getState(), {username: task.assignedTo})
       const expandedTaskListPanelsIds = selectExpandedTaskListPanelsIds(getState())
-      if (!expandedTaskListPanelsIds.includes(taskList['@id'])) {
+      // safeguard for TaskList not undefined because of https://github.com/coopcycle/coopcycle-web/issues/4348
+      if (taskList && !expandedTaskListPanelsIds.includes(taskList['@id'])) {
         dispatch(toggleTaskListPanelExpanded(taskList['@id']))
       }
     }
@@ -167,7 +169,7 @@ export function assignAfter(username, task, after) {
       Array.prototype.splice.apply(newTaskListItems,
         Array.prototype.concat([ taskIndex + 1, 0 ], task['@id'])
       )
-      dispatch(modifyTaskList(username, newTaskListItems))
+      dispatch(putTaskListItems(username, newTaskListItems))
     }
   }
 }
@@ -192,7 +194,7 @@ export function unassignTasks(username, items) {
     const taskList = selectTaskListByUsername(getState(), {username: username}),
       toRemove = items.map(i => i['@id'])
 
-    await dispatch(modifyTaskList(username, withoutItemsIRIs(taskList.items, toRemove)))
+    await dispatch(putTaskListItems(username, withoutItemsIRIs(taskList.items, toRemove)))
   }
 }
 
@@ -221,6 +223,10 @@ export function modifyTaskListRequestSuccess(taskList) {
   return { type: MODIFY_TASK_LIST_REQUEST_SUCCESS, taskList }
 }
 
+export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
+export const setTaskListVehicleRequest = createAction('SET_TASK_LIST_VEHICLE_REQUEST')
+export const setTaskListTrailerRequest = createAction('SET_TASK_LIST_TRAILER_REQUEST')
+
 export function setFilterValue(key, value) {
   return { type: SET_FILTER_VALUE, key, value }
 }
@@ -242,11 +248,11 @@ export function importError(token, message) {
 }
 
 /**
- * Modify a TaskList
- * @param {string} Username - Username of the rider to which we assign
+ * PUT tasklist's items
+ * @param {string} username - Username of the rider to which we assign
  * @param {Array.Objects} items - Items to be assigned, list of tasks and tours to be assigned
  */
-export function modifyTaskList(username, items) {
+export function putTaskListItems(username, items) {
 
   return async function(dispatch, getState) {
 
@@ -291,6 +297,92 @@ export function modifyTaskList(username, items) {
     dispatch(modifyTaskListRequestSuccess(response.data))
     return response.data
   }
+}
+
+/**
+ * @param {TaskList} TaskList -
+ * @param {string} vehicleId - Vehicle's IRI
+ */
+export function setTaskListVehicle(username, vehicleId) {
+  return async function(dispatch, getState) {
+
+    const tasksList = selectTaskListByUsername(getState(), {username: username})
+
+    const url = window.Routing.generate('api_task_lists_patch_item', {
+      id: tasksList.id,
+    })
+
+    dispatch(setTaskListsLoading(true))
+    dispatch(setTaskListVehicleRequest({username, vehicleId}))
+
+    const { jwt } = getState()
+    const httpClient = createClient(dispatch)
+
+    let response
+
+    try {
+      response = await httpClient.request({
+        method: 'PATCH',
+        url,
+        data: {'vehicle': vehicleId},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    dispatch(setTaskListsLoading(false))
+    return response.data
+  }
+
+}
+
+/**
+ * @param {TaskList} TaskList -
+ * @param {string} trailerId - Trailers's IRI
+ */
+export function setTaskListTrailer(username, trailerId) {
+  return async function(dispatch, getState) {
+
+    const tasksList = selectTaskListByUsername(getState(), {username: username})
+
+    const url = window.Routing.generate('api_task_lists_patch_item', {
+      id: tasksList.id,
+    })
+
+    dispatch(setTaskListsLoading(true))
+    dispatch(setTaskListTrailerRequest({username, trailerId}))
+
+    const { jwt } = getState()
+    const httpClient = createClient(dispatch)
+
+    let response
+
+    try {
+      response = await httpClient.request({
+        method: 'PATCH',
+        url,
+        data: {'trailer': trailerId},
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
+
+    dispatch(setTaskListsLoading(false))
+    return response.data
+  }
+
 }
 
 export function togglePolyline(username) {
@@ -361,7 +453,7 @@ export function createTaskList(date, username) {
 
 /**
  * Action to move task to top or bottom of tasklist
- * @param {Object} task - Task we are moving
+ * @param {Task} task
  * @param {string} direction - Either 'top' or 'bottom'
  */
 function moveTo(task, direction) {
@@ -382,7 +474,7 @@ function moveTo(task, direction) {
           newItems.push(taskId)
           break
       }
-      dispatch(modifyTaskList(taskList.username, newItems))
+      dispatch(putTaskListItems(taskList.username, newItems))
     }
   }
 }
@@ -856,6 +948,10 @@ export function loadTaskEvents(task) {
   }
 }
 
+/**
+ * Optimize a TaskList
+ * @param {TaskList} taskList
+ */
 export function optimizeTaskList(taskList) {
 
   return function(dispatch, getState) {
@@ -863,6 +959,8 @@ export function optimizeTaskList(taskList) {
     const { jwt } = getState()
 
     const url = `${taskList['@id']}/optimize`
+
+    dispatch(startOptimRequest())
 
     createClient(dispatch).request({
       method: 'get',
@@ -875,8 +973,8 @@ export function optimizeTaskList(taskList) {
       }
     })
       .then(response => {
-        // TODO : fix this
-        dispatch(modifyTaskList(taskList.username, response.data.items))
+        dispatch(putTaskListItems(taskList.username, response.data.solution.items))
+        dispatch(setOptimResult({previous: taskList, unassignedCount: response.data.unassignedCount}))
       })
       // eslint-disable-next-line no-console
       .catch(error => console.log(error))
@@ -1374,13 +1472,8 @@ export function closeCreateDeliveryModal() {
   return { type: CLOSE_CREATE_DELIVERY_MODAL }
 }
 
-export function openCreateTourModal() {
-  return { type: OPEN_CREATE_TOUR_MODAL }
-}
-
-export function closeCreateTourModal() {
-  return { type: CLOSE_CREATE_TOUR_MODAL }
-}
+export const openCreateTourModal = createAction("OPEN_CREATE_TOUR_MODAL")
+export const closeCreateTourModal = createAction("CLOSE_CREATE_TOUR_MODAL")
 
 export function openTaskRescheduleModal() {
   return { type: OPEN_TASK_RESCHEDULE_MODAL }
@@ -1593,5 +1686,64 @@ export function loadOrganizations() {
       }
     })
     dispatch(loadOrganizationsSuccess(data))
+  }
+}
+
+export function loadVehicles() {
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_vehicles_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadVehiclesSuccess(data))
+  }
+}
+
+export function loadTrailers() {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_trailers_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadTrailersSuccess(data))
+  }
+}
+
+export function loadWarehouses() {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    const data = await client.paginatedRequest({
+      method: 'GET',
+      url: window.Routing.generate('api_warehouses_get_collection'),
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json'
+      }
+    })
+    dispatch(loadWarehousesSuccess(data))
   }
 }

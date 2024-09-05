@@ -66,14 +66,19 @@
     </div>
   </div>
 
-  <hr>
-
   {% if form.stripe is defined %}
-  {% include 'admin/_partials/stripe.html.twig' %}
+    <hr>
+    {% include 'admin/_partials/stripe.html.twig' %}
   {% endif %}
 
   {% if form.mercadopago is defined %}
+    <hr>
     {% include 'admin/_partials/mercadopago.html.twig' %}
+  {% endif %}
+
+  {% if form.paygreen is defined %}
+    <hr>
+    {% include 'admin/_partials/paygreen.html.twig' %}
   {% endif %}
 
   <hr>

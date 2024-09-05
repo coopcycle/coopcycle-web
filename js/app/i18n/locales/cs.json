@@ -64,7 +64,7 @@
         "DASHBOARD_UNASSIGNED": "Nepřiřazeno",
         "DATEPICKER_TOMORROW": "[Zítra]",
         "DATEPICKER_TODAY": "[Dnes]",
-        "ADD_BUTON": "Přidat",
+        "ADD_BUTTON": "Přidat",
         "DELIVERY_TIME_SLOTS": "Časové sloty pro doručení",
         "OPENING_HOURS_RANGE_TIME_SLOT": "Od {{fromDay}} do {{toDay}}, mezi {{open}} a {{close}}",
         "ORDER_TIMELINE_PICKED_TITLE": "Objednávka vyzvednuta {{date}}",
@@ -261,7 +261,6 @@
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Přesunout ({{count}}) úkolů na další den",
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Zobrazit pravidla opakování",
         "PAYMENT_FORM_NOT_SUPPORTED": "Karty Ticket Restaurant (zatím!) Nepřijímáme, použijte prosím klasickou kreditní kartu.",
-        "EDENRED_SPLIT_AMOUNTS": "Pomocí karty Edenred můžete platit {{edenred}}, stále však musíte platit {{card}} kreditní kartou",
         "PRICE_RANGE_EDITOR": {
             "TYPE_RANGE": "Cena podle rozsahů",
             "TYPE_FIXED": "Pevná cena",
@@ -274,6 +273,16 @@
             "TYPE_PER_PACKAGE": "Cena za jedno balení"
         },
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "Opravdu chcete odstranit všechny úkoly v této skupině?",
-        "CASH_ON_DELIVERY_DISCLAIMER": "Budete platit na dobírku. Připravte si prosím přesnou částku a ujistěte se, že jste dosažitelní."
+        "CASH_ON_DELIVERY_DISCLAIMER": "Budete platit na dobírku. Připravte si prosím přesnou částku a ujistěte se, že jste dosažitelní.",
+        "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "Právě jste změnili vlastnost adresy. Chcete tuto vlastnost změnit pro všechny minulé i nadcházející dodávky, které tuto adresu používají, nebo jen jednou?",
+        "ADMIN_DASHBOARD_PACKAGES": "Balíčky",
+        "ADMIN_DASHBOARD_WEIGHT": "Váha",
+        "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Změna stávající adresy",
+        "SCHEDULE_ORDER": "Pořadí objednávky",
+        "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Změnit pouze jednou",
+        "TIME_RANGE_FROM": "od {{start}}",
+        "ADMIN_DASHBOARD_CREATE_GROUP": "Vytvořit skupinu",
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Název skupiny",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Jednotky objemu"
     }
 }

@@ -6,6 +6,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskList;
+use DateTime;
 use AppBundle\Utils\Barcode\Barcode;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Doctrine\ORM\EntityRepository;
@@ -61,6 +62,18 @@ class TaskRepository extends EntityRepository
 
         return $qb->andWhere('OVERLAPS(TSRANGE(t.doneAfter, t.doneBefore), CAST(:range AS tsrange)) = TRUE')
             ->setParameter('range', sprintf('[%s, %s]', $start->format('Y-m-d 00:00:00'), $end->format('Y-m-d 23:59:59')));
+    }
+
+    public function findBySubscriptionAndDate(Task\RecurrenceRule $subscription, DateTime $date)
+    {
+        $start = clone $date;
+        $end = clone $date;
+
+        return self::addRangeClause($this->createQueryBuilder('t'), $start, $end)
+            ->andWhere('t.recurrenceRule = :subscription')
+            ->setParameter('subscription', $subscription)
+            ->getQuery()
+            ->getResult();
     }
 
     public function findByBarcode(string $barcode): ?Task

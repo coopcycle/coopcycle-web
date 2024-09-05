@@ -45,7 +45,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
 
           case 'card':
             return (
-              <div style={ methodStyles }>
+              <div style={ methodStyles } key={ m.type }>
                 <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
                 <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
                         onClick={ () => setMethod('card') }>
@@ -57,7 +57,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'giropay':
 
             return (
-              <div style={ methodStyles }>
+              <div style={ methodStyles }key={ m.type }>
                 <label>{ t('PM_GIROPAY') }</label>
                 <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
                         onClick={ () => setMethod('giropay') }>
@@ -70,7 +70,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'edenred+card':
 
             return (
-              <div style={ methodStyles }>
+              <div style={ methodStyles }key={ m.type }>
                 <label>{ t('PM_EDENRED') }</label>
                 <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => {
@@ -90,7 +90,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'cash_on_delivery':
 
             return (
-              <div style={ methodStyles }>
+              <div style={ methodStyles }key={ m.type }>
                 <label>{ t('PM_CASH') }</label>
                 <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => setMethod('cash_on_delivery') }>

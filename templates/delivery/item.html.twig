@@ -1,0 +1,40 @@
+{% extends 'delivery/form.html.twig' %}
+
+{% block breadcrumb %}
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set store = delivery.store %}
+
+    {% if store is not null %}
+      <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+      <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+    {% else %}
+      {#      TODO: display properly the restaurant(s) for foodtech orders #}
+    {% endif %}
+
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
+      <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
+    {% else %}
+      <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
+      <li>#{{ delivery.id }}</li>
+    {% endif %}
+  {% endif %}
+
+{% endblock %}
+
+{% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty %}
+  {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.order.number }) %}
+{% else %}
+  {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.id }) %}
+{% endif %}
+
+{% block alerts %}
+  {% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty %}
+    {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}
+  {% endif %}
+  {% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty and delivery.order.subscription is not empty %}
+    {% include '_partials/delivery/subscription_alert.html.twig' with { subscription: delivery.order.subscription } %}
+  {% endif %}
+{% endblock %}

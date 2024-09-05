@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Task;
 
 use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
+use AppBundle\Action\Task\GenerateOrders;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -26,7 +27,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     "post"={
  *       "method"="POST",
  *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
- *     }
+ *     },
+ *     "generate_orders"={
+ *       "method"="POST",
+ *       "path"="/recurrence_rules/generate_orders",
+ *       "security"="is_granted('ROLE_DISPATCHER')",
+ *       "controller"=GenerateOrders::class
+ *     },
  *   },
  *   itemOperations={
  *     "get"={
@@ -87,6 +94,8 @@ class RecurrenceRule
      * @AssertRecurrenceRuleTemplate
      */
     private $template = [];
+
+    private ?array $arbitraryPriceTemplate = null;
 
     /**
      * @var Store
@@ -190,5 +199,24 @@ class RecurrenceRule
     public function getOrganizationName()
     {
         return $this->store->getOrganization()->getName();
+    }
+
+    public function getArbitraryPriceTemplate(): ?array
+    {
+        return $this->arbitraryPriceTemplate;
+    }
+
+    public function setArbitraryPriceTemplate(?array $arbitraryPriceTemplate): void
+    {
+        $this->arbitraryPriceTemplate = $arbitraryPriceTemplate;
+    }
+
+    /**
+     * @SerializedName("isCancelled")
+     * @Groups({"task_recurrence_rule"})
+     */
+    public function isCancelled(): bool
+    {
+        return $this->isDeleted();
     }
 }

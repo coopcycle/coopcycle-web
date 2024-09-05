@@ -84,7 +84,7 @@ class RefuseOrderHandlerTest extends TestCase
         $order->addPayment($payment);
 
         $this->stripeManager
-            ->refund($payment, null, true)
+            ->refund($payment)
             ->shouldBeCalled();
 
         $this->eventRecorder

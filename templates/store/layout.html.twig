@@ -9,7 +9,7 @@
 {% endif %}
 
   <div class="row">
-    <div class="col-sm-3">
+    <div data-testid="sidenav" class="col-sm-3">
       {% if form is defined and form.imageFile is defined %}
         {{ form_row(form.imageFile) }}
       {% else %}
@@ -49,6 +49,11 @@
         <li role="presentation">
           <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
             {{ 'stores.deliveries'|trans }}
+          </a>
+        </li>
+        <li role="presentation">
+          <a data-testid="bookmarks" href="{{ path('admin_store_deliveries_bookmarks', { id: store.id }) }}">
+            {{ 'stores.deliveries.bookmarks'|trans }}
           </a>
         </li>
         {% endif %}

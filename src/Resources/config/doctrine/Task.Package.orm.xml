@@ -12,7 +12,7 @@
     </many-to-one>
     <many-to-one field="package" target-entity="AppBundle\Entity\Package">
       <join-columns>
-        <join-column name="package_id" referenced-column-name="id" nullable="false"/>
+        <join-column name="package_id" referenced-column-name="id" nullable="false" />
       </join-columns>
     </many-to-one>
   </entity>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { isTimeRangeSignificantlyDifferent } from '../../../utils/order/helpers'
-import LoadingIcon from '../../core/LoadingIcon'
+import Spinner from '../../core/Spinner'
 import ShippingTimeRange from '../../ShippingTimeRange'
 import {
   selectFulfilmentTimeRange,
@@ -49,7 +49,7 @@ export default function TimeRange() {
   }, [ shippingTimeRange, persistedTimeRange, fulfilmentTimeRange ])
 
   if (isLoading) {
-    return (<LoadingIcon />)
+    return (<Spinner />)
   }
 
   return (

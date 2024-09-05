@@ -2,15 +2,27 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
 import { assignedItemsIds } from './taskListUtils';
-import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter } from './adapters'
+import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from './adapters'
 import i18next from 'i18next';
 
 const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
 export const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 const organizationSelectors = organizationAdapter.getSelectors((state) => state.logistics.entities.organizations)
-export const selectAllOrganizations = organizationSelectors.selectAll
+const vehiclesSelectors = vehicleAdapter.getSelectors((state) => state.logistics.entities.vehicles)
+const trailersSelectors = trailerAdapter.getSelectors((state) => state.logistics.entities.trailers)
+const warehousesSelectors = warehouseAdapter.getSelectors((state) => state.logistics.entities.warehouses)
 
+export const selectVehicleById = vehiclesSelectors.selectById
+export const selectAllVehicles = vehiclesSelectors.selectAll
+
+export const selectTrailerById = trailersSelectors.selectById
+export const selectAllTrailers = trailersSelectors.selectAll
+
+export const selectWarehouseById = warehousesSelectors.selectById
+export const selectAllWarehouses = warehousesSelectors.selectAll
+
+export const selectAllOrganizations = organizationSelectors.selectAll
 export const selectOrganizationsLoading = state => state.logistics.ui.organizationsLoading
 
 export const selectSelectedDate = state => state.logistics.date
@@ -36,6 +48,30 @@ export const selectAssignedTasks = createSelector(
   taskListSelectors.selectAll,
   taskLists => assignedItemsIds(taskLists)
 )
+
+export const selectVehicleIdToTaskListIdMap = createSelector(
+  taskListSelectors.selectAll,
+  (allTaskList) => {
+    let vehicleIdToTaskListId = new Map()
+    allTaskList.forEach((taskList) => {
+      if (taskList.vehicle) {
+        vehicleIdToTaskListId.set(taskList.vehicle, taskList['username'])
+      }
+  })
+  return vehicleIdToTaskListId
+})
+
+export const selectTrailerIdToTaskListIdMap = createSelector(
+  taskListSelectors.selectAll,
+  (allTaskList) => {
+    let trailerIdToTaskListId = new Map()
+    allTaskList.forEach((taskList) => {
+      if (taskList.trailer) {
+        trailerIdToTaskListId.set(taskList.trailer, taskList['username'])
+      }
+  })
+  return trailerIdToTaskListId
+})
 
 export const selectUnassignedTasks = createSelector(
   selectAllTasks,

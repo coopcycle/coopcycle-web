@@ -5,6 +5,7 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
+use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\PricingManager;
@@ -88,7 +89,9 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
             $this->entityManager->persist($delivery);
 
             try {
-                $this->pricingManager->createOrder($delivery, true);
+                $this->pricingManager->createOrder($delivery, [
+                    'throwException' => true,
+                ]);
             } catch (NoRuleMatchedException $e) {
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $result->addErrorToRow($rowNumber, $errorMessage);

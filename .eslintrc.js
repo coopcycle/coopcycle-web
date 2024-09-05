@@ -5,25 +5,28 @@ module.exports = {
     es6: true,
     node: true,
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:jest/recommended', 'plugin:storybook/recommended'],
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:jest/recommended',
+    'plugin:storybook/recommended',
+    'plugin:cypress/recommended',
+  ],
   parser: 'babel-eslint',
   parserOptions: {
     ecmaFeatures: {
-      jsx: true
+      jsx: true,
     },
     ecmaVersion: 6,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-    'jest',
-  ],
+  plugins: ['react', 'jest'],
   globals: {
-    '$': true,
+    $: true,
     io: true,
     CoopCycle: true,
     Stripe: true,
-    google: true
+    google: true,
   },
   settings: {
     react: {
@@ -37,5 +40,7 @@ module.exports = {
     'react/prop-types': 'off',
     'react/display-name': 'off',
     'react/no-deprecated': 'warn',
-  }
-};
+    "cypress/unsafe-to-chain-command": "warn",
+    "cypress/no-unnecessary-waiting": "warn",
+  },
+}

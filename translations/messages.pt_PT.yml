@@ -210,7 +210,7 @@ order.total_tax: IVA
 order.items_total: Total de produtos
 order.total_including_tax: Total (com IVA)
 order.total_excluding_tax: Total (sem IVA)
-order.summary.heading: Pedido%número% (#%id%)
+order.summary.heading: Pedido%número%
 order.items.products_with_count: Produtos(%count%)
 order.cart.title: Carrinho
 profile.accountType: Tipo de conta

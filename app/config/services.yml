@@ -614,6 +614,17 @@ services:
         arguments:
             - '%sonic_namespace%'
 
+  AppBundle\Entity\Sylius\OrderRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Sylius\Order
+    calls: [[setDeliveryRepository, ['@AppBundle\Entity\DeliveryRepository']]]
+
+  sylius.repository.order:
+    alias: AppBundle\Entity\Sylius\OrderRepository
+
+  AppBundle\Entity\Task\RecurrenceRuleRepository: ~
+
   AppBundle\Service\Routing\Osrm: ~
 
   routing_service:
@@ -752,6 +763,9 @@ services:
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\WarehouseDeleteSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
@@ -1057,12 +1071,6 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
 
-  AppBundle\MessageHandler\RetrieveStripeFeeHandler:
-    arguments:
-      $adjustmentFactory: '@sylius.factory.adjustment'
-    tags:
-      - { name: monolog.logger, channel: stripe }
-
   AppBundle\MessageHandler\TopBarNotificationHandler: ~
 
   AppBundle\MessageHandler\DeliveryCreatedHandler:
@@ -1136,6 +1144,7 @@ services:
         - cl
         - co
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
 
   AppBundle\Payment\Gateway: ~
 
@@ -1428,6 +1437,21 @@ services:
     arguments: [
       '@edenredsynchronizer.client',
     ]
+
+  paygreen.http_client:
+    class: Symfony\Component\HttpClient\Psr18Client
+
+  AppBundle\Paygreen\EnvironmentFactory:
+    arguments:
+      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+
+  Paygreen\Sdk\Payment\V3\Environment:
+    factory: '@AppBundle\Paygreen\EnvironmentFactory'
+
+  Paygreen\Sdk\Payment\V3\Client:
+    arguments:
+      - '@paygreen.http_client'
+      - '@Paygreen\Sdk\Payment\V3\Environment'
 
   Picqer\Barcode\BarcodeGeneratorSVG: ~
   AppBundle\Utils\Barcode\BarcodeUtils: ~

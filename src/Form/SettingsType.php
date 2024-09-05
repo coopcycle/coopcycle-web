@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
+use AppBundle\Form\PaymentGateway\PaygreenType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
 use AppBundle\Form\Type\GeocodingProviderType;
@@ -154,17 +155,16 @@ class SettingsType extends AbstractType
                 ]);
         }
 
-        $gateway = $this->gatewayResolver->resolve();
+        if ($this->gatewayResolver->supports('mercadopago')) {
+            $builder->add('mercadopago', MercadopagoType::class, ['mapped' => false]);
+        }
 
-        switch ($gateway) {
-            case 'mercadopago':
-                $builder->add('mercadopago', MercadopagoType::class, ['mapped' => false]);
-                break;
+        if ($this->gatewayResolver->supports('stripe')) {
+            $builder->add('stripe', StripeType::class, ['mapped' => false]);
+        }
 
-            case 'stripe':
-            default:
-                $builder->add('stripe', StripeType::class, ['mapped' => false]);
-                break;
+        if ($this->gatewayResolver->supports('paygreen')) {
+            $builder->add('paygreen', PaygreenType::class, ['mapped' => false]);
         }
 
         $builder->add('notifications', NotificationsType::class, [

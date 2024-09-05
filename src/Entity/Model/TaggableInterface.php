@@ -4,18 +4,16 @@ namespace AppBundle\Entity\Model;
 
 interface TaggableInterface
 {
-    /**
-     * @return string
-     */
-    public function getTaggableResourceClass();
+    public function getTaggableResourceClass(): string;
 
     /**
      * @return string[]
      */
-    public function getTags();
+    public function getTags(): array;
 
     /**
-     * @param string[]|string $tags
+     * @param string|string[] $tags
      */
-    public function setTags($tags);
+    public function setTags(array|string $tags): void;
+
 }

@@ -107,7 +107,7 @@ class ReceiptGenerator
         $html = $this->twig->render('order/receipt.pdf.twig', [
             'receipt'      => $order->getReceipt(),
             'order_number' => $order->getNumber(),
-            'payment'      => $order->getLastPayment(),
+            'payments'     => $order->getPayments(),
             'restaurant'   => $order->getRestaurant(),
             'locale'       => $this->locale,
         ]);

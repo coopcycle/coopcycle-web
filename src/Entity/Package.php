@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -16,6 +17,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 class Package
 {
     use Timestampable;
+    use SoftDeleteable;
 
     protected $id;
 

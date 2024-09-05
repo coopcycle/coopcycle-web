@@ -34,14 +34,6 @@ services:
     tags:
       - { name: 'console.command', command: 'craue:setting:create' }
 
-  AppBundle\Command\ImportStripeFeeCommand:
-    arguments:
-      $orderRepository: '@sylius.repository.order'
-      $orderManager: '@sylius.manager.order'
-      $adjustmentFactory: '@sylius.factory.adjustment'
-    tags:
-      - { name: 'console.command', command: 'coopcycle:orders:import-stripe-fee' }
-
   AppBundle\Command\InitDemoCommand:
     arguments:
       $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
@@ -104,12 +96,6 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:geofencing' }
       - { name: 'monolog.logger', channel: 'geofencing' }
-
-  AppBundle\Command\WatchExpiringAuthorizationCommand:
-    arguments:
-      $orderRepository: '@sylius.repository.order'
-    tags:
-      - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }
 
   # AppBundle\Command\OrderNotificationCommand:
   #   arguments:

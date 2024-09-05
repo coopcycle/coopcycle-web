@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\Task\RecurrenceRule" table="task_rrule">
+  <entity name="AppBundle\Entity\Task\RecurrenceRule" table="task_rrule" repository-class="AppBundle\Entity\Task\RecurrenceRuleRepository">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name" nullable="true" />
     <field name="rule" type="rrule" column="rule" nullable="false"/>
     <field name="template" type="json" column="template" nullable="false"/>
+    <field name="arbitraryPriceTemplate" type="json" column="arbitrary_price_template" nullable="true"/>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store" inversed-by="rrules">
       <join-columns>

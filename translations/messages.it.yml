@@ -283,6 +283,9 @@ order.export.heading.delivery_fee: Tariffa di consegna
 form.delivery.vehicle.placeholder: Scegli un tipo di veicolo
 form.delivery.to_be_confirmed.warning: Devi confermare l'ordine
 basics.delete: Cancella
+basics.address: Indirizzo
+warehouses.breadcrumb: Magazzini
+warehouses.breadcrumb.help: Definire i magazzini
 receipt.emitter_details: Ordine presso ristorante <strong>%restaurant_name%</strong>
 delivery.import.success_message: Il tuo file è stato processato correttamente, %count%
   consegne sono state create
@@ -456,7 +459,7 @@ allergens.SULPHUR_DIOXIDE_SULPHITES: Anidride solforosa e solfiti
 orders.payment_refunded: Pagamento rimborsato con successo
 form.local_business.iso_code.fr.vat_number: Numero di partita IVA
 receipt.title: 'Ricevuta del tuo ordine #%number%'
-receipt.billing_details: Ordine pagato tramite carta di credito il %date%
+receipt.billing_details: Ordine pagato tramite %payment_method% il %date%
 form.delivery_import.file.label: File
 notifications.messenger_approaching: Ciao %customer%! Il nostro corriere %messenger%
   è vicino a te. Preparati!
@@ -897,7 +900,7 @@ order.total_tax: IVA
 order.total_tax_by_rate: Totale %name%
 profile.task.noTasks: Nessun incarico programmato
 profile.managedRestaurants: Ristoranti gestiti dall'utente
-order.summary.heading: Ordine %number% (#%id%)
+order.summary.heading: Ordine %number%
 order.total_excluding_tax: Totale (escluso IVA)
 order.total_including_tax: Totale (incl. IVA)
 order.preparation_expected_at: La preparazione inizierà %date%

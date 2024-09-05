@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be1423acc89bf48a248011a88b46b9d0",
+    "content-hash": "0773d8f601d2ca4531748c5b7cf1ac20",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -11077,6 +11077,61 @@
                 "source": "https://github.com/paragonie/random_compat"
             },
             "time": "2020-10-15T08:29:30+00:00"
+        },
+        {
+            "name": "paygreen/paygreen-php",
+            "version": "1.3.17",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PayGreen/paygreen-php.git",
+                "reference": "5315fd8a2c2e229fffe9122eca1435653a6d4b63"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PayGreen/paygreen-php/zipball/5315fd8a2c2e229fffe9122eca1435653a6d4b63",
+                "reference": "5315fd8a2c2e229fffe9122eca1435653a6d4b63",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "guzzlehttp/psr7": ">=1.8.4",
+                "php": ">=5.6",
+                "php-http/httplug": ">=1.0",
+                "php-http/message": ">=1.7.2",
+                "psr/log": ">=1.1.4"
+            },
+            "require-dev": {
+                "behat/behat": "^3.7",
+                "php-http/curl-client": "^1.7.1",
+                "php-http/mock-client": "^1.3",
+                "php-webdriver/webdriver": "^1.13",
+                "phpunit/phpunit": "^5.7.27",
+                "symfony/dotenv": "^3.4.47",
+                "symfony/var-dumper": "^3.4.47"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Paygreen\\Sdk\\": "lib/PaygreenSdk"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "PayGreen",
+                    "homepage": "https://paygreen.io/"
+                }
+            ],
+            "description": "PayGreen PHP SDK",
+            "support": {
+                "issues": "https://github.com/PayGreen/paygreen-php/issues",
+                "source": "https://github.com/PayGreen/paygreen-php/tree/1.3.17"
+            },
+            "time": "2024-01-02T13:46:39+00:00"
         },
         {
             "name": "php-edifact/edifact-generator",
@@ -22273,16 +22328,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.7",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "52d2bbfdcae7f895915629e4694e9497d0f8e28d"
+                "reference": "384af967d35b2162f69526c7276acadce534d0e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/52d2bbfdcae7f895915629e4694e9497d0f8e28d",
-                "reference": "52d2bbfdcae7f895915629e4694e9497d0f8e28d",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/384af967d35b2162f69526c7276acadce534d0e1",
+                "reference": "384af967d35b2162f69526c7276acadce534d0e1",
                 "shasum": ""
             },
             "require": {
@@ -22327,7 +22382,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-07-06T11:17:41+00:00"
+            "time": "2024-08-27T09:18:05+00:00"
         },
         {
             "name": "phpstan/phpstan-doctrine",
@@ -23846,5 +23901,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

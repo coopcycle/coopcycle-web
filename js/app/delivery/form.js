@@ -6,6 +6,9 @@ require('gasparesganga-jquery-loading-overlay')
 
 import DeliveryForm from '../forms/delivery'
 import PricePreview from './PricePreview'
+import axios from 'axios'
+
+const baseURL = location.protocol + '//' + location.host
 
 import './form.scss'
 
@@ -97,26 +100,33 @@ if (priceEl) {
 }
 
 const arbitraryPriceEl = document.getElementById('delivery_arbitraryPrice')
-const variantDetailsEl = document.querySelector('[data-variant-details]')
 
 if (arbitraryPriceEl) {
-  const setIsDisplayDetails = (isDisplayed) => {
-    if (isDisplayed) {
-      variantDetailsEl.classList.remove('d-none')
+  const containerEl = document.querySelector('[data-variant-details]')
+  const variantNameEl = document.getElementById('delivery_variantName')
+  const variantPriceEl = document.getElementById('delivery_variantPrice')
+
+  const setIsChecked = (isChecked) => {
+    if (isChecked) {
+      containerEl.classList.remove('d-none')
+      variantNameEl.setAttribute('required', 'required');
+      variantPriceEl.setAttribute('required', 'required');
     } else {
-      variantDetailsEl.classList.add('d-none')
+      containerEl.classList.add('d-none')
+      variantNameEl.removeAttribute('required');
+      variantPriceEl.removeAttribute('required');
     }
   }
 
   // update on initial load
-  setIsDisplayDetails(arbitraryPriceEl.checked)
+  setIsChecked(arbitraryPriceEl.checked)
 
   arbitraryPriceEl.addEventListener('change', function(e) {
-    setIsDisplayDetails(e.target.checked)
+    setIsChecked(e.target.checked)
   })
 }
 
-const updateData = (form, delivery) => {
+const updateData = (form, delivery, shouldLoadSuggestions = false) => {
   markersLayerGroup.clearLayers()
   delivery.tasks.forEach((task, index) => {
     if (task.address) {
@@ -133,6 +143,8 @@ const updateData = (form, delivery) => {
     form.disable()
     polylineLayerGroup.clearLayers()
 
+    const promises = []
+
     const updateDistance = new Promise((resolve) => {
       route(delivery).then((infos) => {
         polylineLayerGroup.addLayer(
@@ -141,6 +153,36 @@ const updateData = (form, delivery) => {
         $('#delivery_distance').text(`${infos.kms} Km`)
         resolve()
       })
+    })
+
+    const loadSuggestions = new Promise((resolve) => {
+
+      $.getJSON(window.Routing.generate('profile_jwt'))
+        .then(result => {
+
+          axios({
+            method: 'post',
+            url: `${baseURL}/api/deliveries/suggest_optimizations`,
+            data: {
+              ...delivery,
+              tasks: delivery.tasks.slice(0).map(t => ({
+                ...t,
+                address: serializeAddress(t.address)
+              }))
+            },
+            headers: {
+              Accept: 'application/ld+json',
+              'Content-Type': 'application/ld+json',
+              Authorization: `Bearer ${result.jwt}`
+            }
+          })
+          .then(response => {
+            if (response.data.suggestions.length > 0) {
+              form.showSuggestions(response.data.suggestions)
+            }
+            resolve()
+          })
+        })
     })
 
     const updatePrice = new Promise((resolve) => {
@@ -162,15 +204,18 @@ const updateData = (form, delivery) => {
       }
     })
 
-    Promise.all([
-      updateDistance,
-      updatePrice,
-    ])
-           .then(() => {
-             form.enable()
-           })
-      // eslint-disable-next-line no-console
-           .catch(e => console.error(e))
+    promises.push(updateDistance)
+    if (shouldLoadSuggestions) {
+      promises.push(loadSuggestions)
+    }
+    promises.push(updatePrice)
+
+    Promise.all(promises)
+    .then(() => {
+      form.enable()
+    })
+    // eslint-disable-next-line no-console
+    .catch(e => console.error(e))
   }
 }
 
@@ -178,7 +223,7 @@ new DeliveryForm('delivery', {
   onReady: function(delivery) {
     updateData(this, delivery)
   },
-  onChange: function(delivery) {
-    updateData(this, delivery)
+  onChange: function(delivery, shouldLoadSuggestions) {
+    updateData(this, delivery, shouldLoadSuggestions)
   }
 })

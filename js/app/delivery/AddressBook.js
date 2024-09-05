@@ -54,7 +54,7 @@ function getUnformattedValue(prop, value) {
   return value ?? ''
 }
 
-const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
+const AddressPopover = ({ baseTestId, address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
   const { t } = useTranslation()
@@ -93,7 +93,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
       open={ visible }
       onOpenChange={ visible => setVisible(visible) }
       content={
-        <Form form={ form } name="horizontal_login" layout="inline" onFinish={ onFinish }
+        <Form form={ form } name={ `${baseTestId}_${prop}__popover` } layout="inline" onFinish={ onFinish }
           initialValues={{ [ prop ]: getFormattedValue(prop, value) }}>
           <Form.Item
             name={ prop }
@@ -114,7 +114,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
           </Form.Item>
         </Form> }
     >
-      <span style={{ position: 'relative', display: 'inline-block' }}>
+      <span style={{ position: 'relative', display: 'inline-block' }} data-testid={ `address_${prop}__popover_pill` }>
         <button
           type="button"
           className={ classNames({
@@ -145,6 +145,7 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
 }
 
 const AddressBook = ({
+  baseTestId,
   addresses,
   initialAddress,
   onAddressSelected,
@@ -206,6 +207,7 @@ const AddressBook = ({
         { _.map(details, item => (
           <AddressPopover
             key={ item.prop }
+            baseTestId={ baseTestId }
             address={ address }
             onChange={ value => onAddressPropChange(address, item.prop, value) }
             { ...item } />
@@ -402,6 +404,7 @@ export default function(el, options) {
 
   render(
     <AddressBook
+      baseTestId={el.id ?? 'AddressBook'}
       allowSearchSavedAddresses={ Boolean(allowSearchSavedAddresses) }
       addresses={ addresses }
       initialAddress={ address }
