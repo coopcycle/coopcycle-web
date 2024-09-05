@@ -14,3 +14,10 @@ data:
   mercure-public-url: {{ .Values.mercure.publicUrl | default "http://127.0.0.1/.well-known/mercure" | quote }}
   mercure-extra-directives: {{ .Values.mercure.extraDirectives | quote }}
   caddy-global-options: {{ .Values.php.caddyGlobalOptions | quote }}
+  redis-dsn: "redis://{{ include "coopcycle-platform.fullname" . }}-redis-master"
+  messenger-transport-dsn: "redis://{{ include "coopcycle-platform.fullname" . }}-redis-master/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1"
+  s3-endpoint: "http://{{ include "coopcycle-platform.fullname" . }}-minio:9000"
+  tile38-dsn: "redis://{{ include "coopcycle-platform.fullname" . }}-tile38:9851"
+  typesense-host: "{{ include "coopcycle-platform.fullname" . }}-typesense"
+  centrifugo-url: "http://{{ include "coopcycle-platform.fullname" . }}-centrifugo:9000"
+  centrifugo-web-socket: "http://{{ include "coopcycle-platform.fullname" . }}-centrifugo:8000"

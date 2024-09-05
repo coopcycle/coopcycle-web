@@ -54,7 +54,7 @@
 	header ?Permissions-Policy "browsing-topics=()"
 
 	handle_path /centrifugo/* {
-	  reverse_proxy centrifugo:8000
+	  reverse_proxy {$CENTRIFUGO_WEB_SOCKET}
 	}
 
 	php_server

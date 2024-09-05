@@ -1243,7 +1243,7 @@ services:
 
   phpcent\Client:
     arguments:
-      - '%env(CENTRIFUGO_API_URL)%'
+      - '%env(CENTRIFUGO_URL)%/api'
       - '%env(CENTRIFUGO_API_KEY)%'
       - '%env(CENTRIFUGO_TOKEN_HMAC_SECRET_KEY)%'
 

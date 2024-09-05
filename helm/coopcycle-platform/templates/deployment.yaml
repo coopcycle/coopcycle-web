@@ -134,23 +134,40 @@ spec:
                   name: {{ include "coopcycle-platform.fullname" . }}
                   key: mercure-jwt-secret
             - name: COOPCYCLE_REDIS_DSN
-              value: redis://coopcycle-platform-redis-master
-{{/*              value: redis://redis:6379*/}}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: redis-dsn
             - name: MESSENGER_TRANSPORT_DSN
-              value: redis://coopcycle-platform-redis-master/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1
-{{/*              value: redis://redis:6379/coopcycle:messages/coopcycle/coopcycle:consumer?delete_after_ack=1*/}}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: messenger-transport-dsn
             - name: S3_ENDPOINT
-              value: http://coopcycle-platform-minio:9000
-{{/*              value: http://minio:9000*/}}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: s3-endpoint
             - name: COOPCYCLE_TILE38_DSN
-              value: redis://coopcycle-platform-tile38:9851
-{{/*              value: redis://tile38:9851*/}}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: tile38-dsn
             - name: TYPESENSE_HOST
-              value: coopcycle-platform-typesense
-{{/*              value: typesense*/}}
-            - name: CENTRIFUGO_API_URL
-              value: http://coopcycle-platform-centrifugo:9000/api
-{{/*              value: http://centrifugo:8000/api*/}}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: typesense-host
+            - name: CENTRIFUGO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: centrifugo-url
+            - name: CENTRIFUGO_WEB_SOCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "coopcycle-platform.fullname" . }}
+                  key: centrifugo-web-socket
           ports:
             - name: http
               containerPort: 80
