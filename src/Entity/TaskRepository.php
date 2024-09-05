@@ -76,7 +76,7 @@ class TaskRepository extends EntityRepository
             @see https://github.com/ScientaNL/DoctrineJsonFunctions
         */
         $conn = $this->getEntityManager()->getConnection();
-        $sql = "SELECT id FROM task WHERE metadata->>'imported_from' = :barcode";
+        $sql = "SELECT id FROM task WHERE metadata->>'barcode' = :barcode";
         $stmt = $conn->prepare($sql);
         $id = $stmt->executeQuery(['barcode' => $barcode->getRawBarcode()])->fetchOne();
         if ($id) {
