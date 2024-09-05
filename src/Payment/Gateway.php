@@ -5,23 +5,26 @@ namespace AppBundle\Payment;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Refund;
 use AppBundle\Service\MercadopagoManager;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\StripeManager;
 use Omnipay\Common\Message\ResponseInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class Gateway
 {
-    private $resolver;
+    private $gatewayResolver;
     private $stripeManager;
     private $mercadopagoManager;
+    private $edenred;
 
     public function __construct(
-        GatewayResolver $resolver,
+        GatewayResolver $gatewayResolver,
         StripeManager $stripeManager,
         MercadopagoManager $mercadopagoManager,
-        EdenredClient $edenred)
+        EdenredClient $edenred,
+        private PaygreenManager $paygreenManager)
     {
-        $this->resolver = $resolver;
+        $this->gatewayResolver = $gatewayResolver;
         $this->stripeManager = $stripeManager;
         $this->mercadopagoManager = $mercadopagoManager;
         $this->edenred = $edenred;
@@ -39,7 +42,7 @@ class Gateway
             return new StripeResponse([]);
         }
 
-        switch ($this->resolver->resolve()) {
+        switch ($this->gatewayResolver->resolveForPayment($payment)) {
             case 'mercadopago':
 
                 $payment->setStripeToken($context['token']);
@@ -49,6 +52,17 @@ class Gateway
                 $payment->setCharge($p->id);
 
                 return new MercadopagoResponse($p);
+            case 'paygreen':
+
+                // With Paygreen, the payment has already been authorized
+                // We double-check the status of the payment
+
+                if ($this->paygreenManager->isPaymentOrderAuthorized($context['token'])) {
+                    return new PaygreenResponse([]);
+                }
+
+                throw new \Exception('Invalid Payment Order');
+
             case 'stripe':
             default:
 
@@ -87,11 +101,15 @@ class Gateway
             return new StripeResponse([]);
         }
 
-        switch ($this->resolver->resolve()) {
+        switch ($this->gatewayResolver->resolveForPayment($payment)) {
             case 'mercadopago':
                 $this->mercadopagoManager->capture($payment);
 
                 return new MercadopagoResponse([]);
+            case 'paygreen':
+                $this->paygreenManager->capture($payment);
+
+                return new PaygreenResponse([]);
             case 'stripe':
             default:
 
@@ -121,7 +139,7 @@ class Gateway
         // and also with Edenred if needed
         } elseif ($payment->isEdenredWithCard()) {
 
-            switch ($this->resolver->resolve()) {
+            switch ($this->gatewayResolver->resolve()) {
                 case 'mercadopago':
                     // TODO Implement
                     throw new \RuntimeException('Refunding with MercadoPago is not implemented yet');

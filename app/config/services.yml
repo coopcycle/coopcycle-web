@@ -1452,3 +1452,7 @@ services:
     arguments:
       - '@paygreen.http_client'
       - '@Paygreen\Sdk\Payment\V3\Environment'
+
+  AppBundle\Service\PaygreenManager:
+    arguments:
+      $country: '%country_iso%'

@@ -1544,3 +1544,4 @@ form.settings.paygreen_secret_key.label: Paygreen secret key
 form.settings.paygreen_shop_id.label: Paygreen Shop ID
 restaurant.form.paygreen_shop_id.label: Paygreen Shop ID
 form.local_business.paygreen_account.title: Paygreen account
+paygreen.choose_another_plaform: Choose another payment platform

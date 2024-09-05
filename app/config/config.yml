@@ -266,6 +266,7 @@ twig:
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
         odoo_url: '%env(ODOO_URL)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
+        paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
     exception_controller: null
 
