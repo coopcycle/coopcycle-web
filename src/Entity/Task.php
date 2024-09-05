@@ -22,6 +22,7 @@ use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
+use AppBundle\Action\Task\Note as TaskNote;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -323,6 +324,12 @@ use stdClass;
  *       "path"="/tasks/{id}/context",
  *       "controller"=TaskContext::class,
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "put_task_note"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/note",
+ *       "controller"=TaskNote::class,
+ *       "security"="is_granted('view', object)",
  *     }
  *   }
  * )
@@ -1231,7 +1238,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      */
     public function appendToComments($comments)
     {
-        $this->comments = ($this->comments ?? '') . "\n\n" . $comments;
+        $this->comments = implode("\n\n", array_filter([trim($this->getComments()), $comments]));
     }
     /**
      * @return mixed
