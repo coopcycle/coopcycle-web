@@ -147,6 +147,8 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                 $cashPayment = $this->upsertPayment($order, $payments, $cash, $order->getTotal(), $targetState);
                 $paymentsToKeep->add($cashPayment);
 
+                break;
+
             case 'CARD':
             default:
                 // FIXME
