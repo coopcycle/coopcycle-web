@@ -1058,6 +1058,9 @@ services:
     tags:
       - { name: monolog.processor, channel: api }
 
+  AppBundle\Messenger\:
+    resource: '../../src/Messenger/*'
+
   AppBundle\MessageHandler\EmailHandler: ~
 
   AppBundle\Api\Swagger\SwaggerDecorator:
