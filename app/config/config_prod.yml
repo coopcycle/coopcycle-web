@@ -55,6 +55,7 @@ monolog:
                 - ^/
         forward_fingers_crossed:
           type: group
+          channels: ["!api", "!stripe", "!loopeat"]
           members: [ default_file, logs_to_upload ]
         default_file:
             type: rotating_file
@@ -62,11 +63,10 @@ monolog:
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
-            channels: ["!api", "!stripe", "!loopeat"]
         forward_channels:
             type: group
+            channels: [ domain_event, checkout, coopcycle.order_processing, messenger, push_notification, real_time_message ]
             members: [ logs_to_upload ]
-            channels: [ domain_event, checkout, coopcycle.order_processing, push_notification, real_time_message ]
         logs_to_upload:
             # includes messages:
             # channels listed in forward_channels: persist all messages
