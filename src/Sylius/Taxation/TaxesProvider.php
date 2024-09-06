@@ -7,15 +7,12 @@ use AppBundle\Entity\Sylius\TaxRate;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Symfony\Component\Yaml\Yaml;
 
 class TaxesProvider
 {
     public function __construct(
-        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly FactoryInterface $taxCategoryFactory,
         private readonly FactoryInterface $taxRateFactory)
     {
