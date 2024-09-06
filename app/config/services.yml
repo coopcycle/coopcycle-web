@@ -1043,9 +1043,8 @@ services:
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
-  AppBundle\Log\RequestIdProcessor:
-
-  AppBundle\Log\RequestUriProcessor:
+  AppBundle\Log\:
+    resource: '../../src/Log/*'
 
   Symfony\Bridge\Monolog\Processor\RouteProcessor:
     tags:
@@ -1058,6 +1057,9 @@ services:
   Symfony\Bridge\Monolog\Processor\TokenProcessor:
     tags:
       - { name: monolog.processor, channel: api }
+
+  AppBundle\Messenger\:
+    resource: '../../src/Messenger/*'
 
   AppBundle\MessageHandler\EmailHandler: ~
 
