@@ -15,13 +15,10 @@ use Symfony\Component\Yaml\Yaml;
 class TaxesProvider
 {
     public function __construct(
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        FactoryInterface $taxCategoryFactory,
-        FactoryInterface $taxRateFactory)
+        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private readonly FactoryInterface $taxCategoryFactory,
+        private readonly FactoryInterface $taxRateFactory)
     {
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxCategoryFactory = $taxCategoryFactory;
-        $this->taxRateFactory = $taxRateFactory;
     }
 
     public function getCategories()

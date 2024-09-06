@@ -8,6 +8,7 @@ use AppBundle\Service\StripeManager;
 use Craue\ConfigBundle\Entity\BaseSetting;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe;
+use Stripe\Exception\ApiErrorException;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 /**
@@ -27,7 +28,10 @@ class CreateWebhookEndpointHandler implements MessageHandlerInterface
         $this->entityName = $entityName;
     }
 
-    public function __invoke(CreateWebhookEndpoint $message)
+    /**
+     * @throws ApiErrorException
+     */
+    public function __invoke(CreateWebhookEndpoint $message): void
     {
         $mode = $message->getMode();
 
