@@ -69,7 +69,6 @@ services:
       $currencyRepository: '@sylius.repository.currency'
       $currencyFactory: '@sylius.factory.currency'
       $promotionFactory: '@sylius.factory.promotion'
-      $taxCategoryFactory: '@sylius.factory.tax_category'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $country: "%country_iso%"
       $localeRegex: "%locale_regex%"
