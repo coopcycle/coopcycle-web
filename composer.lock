@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "620f978521ceec798223e1ce93254ef4",
+    "content-hash": "d640d340bb1cca8921098cce28686402",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -3878,6 +3878,205 @@
                 "source": "https://github.com/firebase/php-jwt/tree/v6.10.1"
             },
             "time": "2024-05-18T18:05:11+00:00"
+        },
+        {
+            "name": "flow-php/dremel",
+            "version": "0.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flow-php/dremel.git",
+                "reference": "4fbcdbe6535a8ef28aec69ec6ca0345bb06e3d5a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flow-php/dremel/zipball/4fbcdbe6535a8ef28aec69ec6ca0345bb06e3d5a",
+                "reference": "4fbcdbe6535a8ef28aec69ec6ca0345bb06e3d5a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Flow\\": [
+                        "src/Flow"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP ETL - Dremel algorithm implementation",
+            "keywords": [
+                "Algorithm",
+                "dremel",
+                "etl",
+                "extract",
+                "filter",
+                "load",
+                "transform"
+            ],
+            "support": {
+                "issues": "https://github.com/flow-php/dremel/issues",
+                "source": "https://github.com/flow-php/dremel/tree/0.9.2"
+            },
+            "time": "2024-07-15T12:20:45+00:00"
+        },
+        {
+            "name": "flow-php/filesystem",
+            "version": "0.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flow-php/filesystem.git",
+                "reference": "c1589155c12bb0c5a071031db66b65fdfc30f3ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flow-php/filesystem/zipball/c1589155c12bb0c5a071031db66b65fdfc30f3ac",
+                "reference": "c1589155c12bb0c5a071031db66b65fdfc30f3ac",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "webmozart/glob": "^3.0 || ^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Flow/Filesystem/DSL/functions.php"
+                ],
+                "psr-4": {
+                    "Flow\\": [
+                        "src/Flow"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP ETL - Filesystem abstraction",
+            "keywords": [
+                "aws",
+                "azure",
+                "etl",
+                "extract",
+                "filesystem",
+                "gcp",
+                "load",
+                "remote",
+                "transform"
+            ],
+            "support": {
+                "issues": "https://github.com/flow-php/filesystem/issues",
+                "source": "https://github.com/flow-php/filesystem/tree/0.9.2"
+            },
+            "time": "2024-08-04T07:40:47+00:00"
+        },
+        {
+            "name": "flow-php/parquet",
+            "version": "0.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flow-php/parquet.git",
+                "reference": "00146de53b7df590896fdb2347506ce71855b87e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flow-php/parquet/zipball/00146de53b7df590896fdb2347506ce71855b87e",
+                "reference": "00146de53b7df590896fdb2347506ce71855b87e",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.1",
+                "ext-bcmath": "*",
+                "ext-zlib": "*",
+                "flow-php/dremel": "^0.9.0 || 1.x-dev",
+                "flow-php/snappy": "^0.9.0 || 1.x-dev",
+                "packaged/thrift": "^0.15.0",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Flow/Parquet/functions.php",
+                    "src/stubs.php"
+                ],
+                "psr-4": {
+                    "Flow\\": [
+                        "src/Flow"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP ETL - library for reading and writing Parquet files",
+            "keywords": [
+                "etl",
+                "extract",
+                "filter",
+                "load",
+                "parquet",
+                "transform"
+            ],
+            "support": {
+                "issues": "https://github.com/flow-php/parquet/issues",
+                "source": "https://github.com/flow-php/parquet/tree/0.9.2"
+            },
+            "time": "2024-08-12T10:07:37+00:00"
+        },
+        {
+            "name": "flow-php/snappy",
+            "version": "0.9.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flow-php/snappy.git",
+                "reference": "89917ac1c12b0cbf62b7449a217c259ecf48f4a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flow-php/snappy/zipball/89917ac1c12b0cbf62b7449a217c259ecf48f4a5",
+                "reference": "89917ac1c12b0cbf62b7449a217c259ecf48f4a5",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "polyfill.php"
+                ],
+                "psr-4": {
+                    "Flow\\": [
+                        "src/Flow"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHP ETL - Google Snappy compression algorithm implementation",
+            "keywords": [
+                "Algorithm",
+                "compression",
+                "etl",
+                "extract",
+                "filter",
+                "load",
+                "snappy",
+                "transform"
+            ],
+            "support": {
+                "issues": "https://github.com/flow-php/snappy/issues",
+                "source": "https://github.com/flow-php/snappy/tree/0.9.2"
+            },
+            "time": "2024-07-31T06:09:31+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -11372,6 +11571,45 @@
                 "source": "https://github.com/1up-lab/OneupUploaderBundle/tree/4.0.1"
             },
             "time": "2022-07-25T07:51:47+00:00"
+        },
+        {
+            "name": "packaged/thrift",
+            "version": "0.15.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/packaged/thrift.git",
+                "reference": "dbf4e5ff5c85d56ccae62265ed25424b366ce269"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/packaged/thrift/zipball/dbf4e5ff5c85d56ccae62265ed25424b366ce269",
+                "reference": "dbf4e5ff5c85d56ccae62265ed25424b366ce269",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.5 || ^7.0 || ^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Thrift\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Apache Thrift",
+            "homepage": "http://thrift.apache.org/",
+            "keywords": [
+                "apache",
+                "thrift"
+            ],
+            "support": {
+                "issues": "https://github.com/packaged/thrift/issues",
+                "source": "https://github.com/packaged/thrift/tree/0.15.0"
+            },
+            "time": "2021-09-23T10:34:40+00:00"
         },
         {
             "name": "pagerfanta/core",
@@ -21131,6 +21369,55 @@
             "time": "2022-06-03T18:03:27+00:00"
         },
         {
+            "name": "webmozart/glob",
+            "version": "4.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/webmozarts/glob.git",
+                "reference": "8a2842112d6916e61e0e15e316465b611f3abc17"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webmozarts/glob/zipball/8a2842112d6916e61e0e15e316465b611f3abc17",
+                "reference": "8a2842112d6916e61e0e15e316465b611f3abc17",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3 || ^8.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5",
+                "symfony/filesystem": "^5.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Webmozart\\Glob\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bernhard Schussek",
+                    "email": "bschussek@gmail.com"
+                }
+            ],
+            "description": "A PHP implementation of Ant's glob.",
+            "support": {
+                "issues": "https://github.com/webmozarts/glob/issues",
+                "source": "https://github.com/webmozarts/glob/tree/4.7.0"
+            },
+            "time": "2024-03-07T20:33:40+00:00"
+        },
+        {
             "name": "willdurand/geocoder",
             "version": "4.6.0",
             "source": {
@@ -24157,5 +24444,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
