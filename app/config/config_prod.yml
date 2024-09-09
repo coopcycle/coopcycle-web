@@ -59,7 +59,7 @@ monolog:
             type: fingers_crossed
             action_level: warning
             # only re-include channels excluded by exclude_channels_from_upload, all other channels are included already
-            channels: [ php, cache, security, app, timing ]
+            channels: [ php, cache, security, timing ]
             handler: logs_to_upload
             excluded_404s:
               # regex: exclude all 404 errors from the logs
@@ -72,7 +72,7 @@ monolog:
             max_files: 7
         exclude_channels_from_upload:
             type: group
-            channels: [ "!php", "!cache", "!security", "!app", "!timing" ]
+            channels: [ "!php", "!cache", "!security", "!timing" ]
             members: [ logs_to_upload ]
         logs_to_upload:
             # includes all messages from all channels except the channels listed in exclude_channels_from_upload
