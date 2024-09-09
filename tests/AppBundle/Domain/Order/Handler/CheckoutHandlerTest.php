@@ -21,6 +21,7 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethod;
 use Prophecy\Argument;
 
 class CheckoutHandlerTest extends TestCase
@@ -60,8 +61,12 @@ class CheckoutHandlerTest extends TestCase
 
     public function testCheckoutWithPaymentIntent()
     {
+        $paymentMethod = new PaymentMethod();
+        $paymentMethod->setCode('CARD');
+
         $payment = new Payment();
         $payment->setState(PaymentInterface::STATE_CART);
+        $payment->setMethod($paymentMethod);
 
         $paymentIntent = Stripe\PaymentIntent::constructFrom([
             'id' => 'pi_12345678',
@@ -91,8 +96,12 @@ class CheckoutHandlerTest extends TestCase
 
     public function testCheckoutFailed()
     {
+        $paymentMethod = new PaymentMethod();
+        $paymentMethod->setCode('CARD');
+
         $payment = new Payment();
         $payment->setState(PaymentInterface::STATE_CART);
+        $payment->setMethod($paymentMethod);
 
         $paymentIntent = Stripe\PaymentIntent::constructFrom([
             'id' => 'pi_12345678',
