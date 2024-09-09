@@ -74,59 +74,6 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         $targetState = $targetStates[$order->getState()];
 
-        if ($this->paymentContext->hasMethod()) {
-            $this->processWithContext($order, $targetState);
-            return;
-        }
-
-        $lastPayment = $order->getLastPayment($targetState);
-
-        if (null !== $lastPayment) {
-            $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | lastPayment #%d | %d (initial)',
-                $lastPayment->getId(),
-                $lastPayment->getAmount()), ['order' => $this->loggingUtils->getOrderId($order)]);
-
-            $lastPayment->setCurrencyCode($this->currencyContext->getCurrencyCode());
-            $lastPayment->setAmount($order->getTotal());
-
-            if ('stripe' === $this->gatewayResolver->resolve()) {
-                // Make sure to call StripeManager::configurePayment()
-                // It will resolve the Stripe account that will be used
-                $this->stripeManager->configurePayment($lastPayment);
-            }
-
-            $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | lastPayment #%d | %d (updated)',
-                $lastPayment->getId(),
-                $lastPayment->getAmount()), ['order' => $this->loggingUtils->getOrderId($order)]);
-
-            return;
-        }
-
-        // FIXME
-        // Do not hardcode this here
-        $card = $this->paymentMethodRepository->findOneByCode('CARD');
-
-        $payment = $this->paymentFactory->createWithAmountAndCurrencyCode(
-            $order->getTotal(),
-            $this->currencyContext->getCurrencyCode()
-        );
-        $payment->setMethod($card);
-        $payment->setState($targetState);
-
-        if ('stripe' === $this->gatewayResolver->resolve()) {
-            // Make sure to call StripeManager::configurePayment()
-            // It will resolve the Stripe account that will be used
-            $this->stripeManager->configurePayment($payment);
-        }
-
-        $order->addPayment($payment);
-
-        $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | (new) payment: %d', $payment->getAmount()),
-            ['order' => $this->loggingUtils->getOrderId($order)]);
-    }
-
-    private function processWithContext(BaseOrderInterface $order, string $targetState = PaymentInterface::STATE_CART): void
-    {
         $payments = $order->getPayments()->filter(function (PaymentInterface $payment) use ($targetState): bool {
             return $payment->getState() === $targetState;
         });
@@ -196,6 +143,10 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             $payment->setCurrencyCode($this->currencyContext->getCurrencyCode());
             $payment->setAmount($amount);
 
+            $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | (updated) payment #%d: %d ',
+                $payment->getId(),
+                $payment->getAmount()), ['order' => $this->loggingUtils->getOrderId($order)]);
+
             return $payment;
         }
 
@@ -207,6 +158,9 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         $payment->setState($targetState);
 
         $order->addPayment($payment);
+
+        $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | (new) payment: %d', $payment->getAmount()),
+            ['order' => $this->loggingUtils->getOrderId($order)]);
 
         return $payment;
     }

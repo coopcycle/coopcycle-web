@@ -4,7 +4,7 @@ namespace AppBundle\Sylius\Payment;
 
 class Context
 {
-    private $method;
+    private $method = 'CARD';
 
     public function setMethod($method)
     {
