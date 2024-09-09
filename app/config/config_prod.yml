@@ -53,29 +53,33 @@ monolog:
             excluded_404s:
                 # regex: exclude all 404 errors from the logs
                 - ^/
+        # use a separate fingers_crossed handler to include only excluded channels,
+        # due to `The channels configuration only works for top-level handlers.`
+        upload_fingers_crossed:
+            type: fingers_crossed
+            action_level: warning
+            # only re-include channels excluded by exclude_channels_from_upload, all other channels are included already
+            channels: [ php, cache, security, timing ]
+            handler: logs_to_upload
+            excluded_404s:
+              # regex: exclude all 404 errors from the logs
+              - ^/
         default_file:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
-        upload_warnings:
+        exclude_channels_from_upload:
             type: group
-            # see explanation in logs_to_upload
-            channels: [ php, cache, security, timing ]
-            level: warning
-            members: [ logs_to_upload ]
-        upload_info:
-            type: group
-            # see explanation in logs_to_upload
             channels: [ "!php", "!cache", "!security", "!timing" ]
-            level: info
             members: [ logs_to_upload ]
         logs_to_upload:
-            # includes info and higher messages from all channels except the channels listed in upload_info
-            # for these channels only warning and higher messages are included (see upload_warnings)
+            # includes all messages from all channels except the channels listed in exclude_channels_from_upload
+            # in case of a warning or higher (see upload_fingers_crossed/action_level) excluded channels are also included
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/logs_to_upload.%kernel.environment%.log"
+            level: debug
             formatter: monolog.formatter.json
             max_files: 2
         api:
