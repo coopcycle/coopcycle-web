@@ -5,7 +5,7 @@
         "SCHEDULE_ORDER": "Rendelés ütemezése",
         "CART_EMPTY": "A kosarad üres",
         "OPENING_HOURS_SINGLE": "Nyitva: {{day}} : {{open}} - {{close}}",
-        "OPENING_HOURS_RANGE": "",
+        "OPENING_HOURS_RANGE": "{{fromDay}}-tól {{toDay}}-ig, {{open}}-tól {{close}}-ig",
         "OPENING_HOURS_SINGLE_TIME_SLOT": "",
         "OPENING_HOURS_RANGE_TIME_SLOT": "",
         "DELIVERY_TIME_SLOTS": "Kiszállítási sávok",
