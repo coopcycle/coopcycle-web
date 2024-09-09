@@ -192,16 +192,6 @@ class RestaurantType extends LocalBusinessType
                     }
                 }
 
-                if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && ($this->debug || 'de' === $this->country)) {
-                    $form
-                        ->add('enableGiropay', CheckboxType::class, [
-                            'label' => 'restaurant.form.giropay_enabled.label',
-                            'mapped' => false,
-                            'required' => false,
-                            'data' => $restaurant->isStripePaymentMethodEnabled('giropay'),
-                        ]);
-                }
-
                 $isFoodEstablishment = FoodEstablishment::isValid($restaurant->getType());
 
                 if ($isFoodEstablishment) {
@@ -254,15 +244,6 @@ class RestaurantType extends LocalBusinessType
                             $mercadopagoConnectRoles[] = 'ROLE_RESTAURANT';
                             $restaurant->setMercadopagoConnectRoles($mercadopagoConnectRoles);
                         }
-                    }
-                }
-
-                if ($form->has('enableGiropay')) {
-                    $enableGiropay = $form->get('enableGiropay')->getData();
-                    if ($enableGiropay) {
-                        $restaurant->enableStripePaymentMethod('giropay');
-                    } else {
-                        $restaurant->disableStripePaymentMethod('giropay');
                     }
                 }
 

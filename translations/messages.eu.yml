@@ -162,7 +162,6 @@ restaurant.form.quotes_allowed.label: 'Jatetxe honek aipuak ere onartzen ditu (a
 restaurant.form.loopeat_enabled.label: 'Gaitu LoopEat gordailu-itzulera sistema'
 restaurant.form.loopeat_disconnect.label: 'Deskonektatu LoopEat'
 restaurant.form.featured.label: 'Jatetxe hau hasiera orrian aipatzen da'
-restaurant.form.giropay_enabled.label: 'Gaitu Giropay'
 restaurant.form.fulfillment_methods.label: 'Osatze metodoak'
 restaurant.form.section.general: 'Orokorra'
 restaurant.form.section.options: 'Aukerak'

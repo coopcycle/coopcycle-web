@@ -894,7 +894,6 @@ form.offer_delivery.coupon_code.help: Es su responsabilidad comunicar este códi
   al cliente, ya sea personalmente o a través de las redes sociales
 users.all: Todos los usuarios
 basics.allow_edit: Permitir edición
-restaurant.form.giropay_enabled.label: Habilitar Giropay
 restaurant.form.section.general: General
 restaurant.form.section.options: Opciones
 restaurant.form.section.fulfillment: Cumplimiento

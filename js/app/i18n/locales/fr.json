@@ -517,7 +517,6 @@
         "PM_CREDIT_OR_DEBIT_CARD": "Carte bancaire",
         "PM_CASH": "Espèces",
         "PM_EDENRED": "Edenred",
-        "PM_GIROPAY": "Giropay",
         "DELIVERY_OPTIMIZATION_SUGGESTION_TITLE": "Nous avons trouvé une route plus optimisée pour votre livraison.",
         "DELIVERY_OPTIMIZATION_SUGGESTION_GAIN": "Celle-ci nous ferait gagner une distance de {{distance}}.",
         "DELIVERY_OPTIMIZATION_SUGGESTION_CONFIRM": "Voulez-vous appliquer la route optimisée ?",

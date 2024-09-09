@@ -151,7 +151,6 @@ restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky
 restaurant.form.loopeat_enabled.label: Povolit systém vkladu a vrácení peněz LoopEat
 restaurant.form.loopeat_disconnect.label: Odpojit LoopEat
 restaurant.form.featured.label: Tato restaurace je uvedena na domovské stránce
-restaurant.form.giropay_enabled.label: Povolit Giropay
 restaurant.form.fulfillment_methods.label: Způsoby plnění
 restaurant.form.section.general: Obecné
 restaurant.form.section.options: Možnosti

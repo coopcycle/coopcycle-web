@@ -879,7 +879,6 @@ store.PAWN_SHOP: Casa de préstecs
 store.PET_STORE: Botiga de mascotes
 food_establishment.BAKERY: Forn de pa
 form.time_slot.prior_notice_hours.label: Avís previ (hores)
-restaurant.form.giropay_enabled.label: Habilita Giropay
 activity.task.started: "@%owner% va començar tasca #task/%*aggregate_id%\n"
 form.min_max.infinity.label: Sense màxim
 receipt.billing_details: Comanda pagada amb targeta de crèdit el %date%

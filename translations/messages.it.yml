@@ -191,7 +191,6 @@ restaurant.contract.restaurantPaysStripeFee.label: Responsabile per il costo del
   commissioni di Stripe, rimborsi e addebiti
 restaurant.contract.variableCustomerAmountEnabled.label: Abilita importo variabile
   pagato dal cliente
-restaurant.form.giropay_enabled.label: Abilita Giropay
 restaurant.form.fulfillment_methods.label: Metodo di completamento
 restaurant.form.section.general: Generale
 restaurant.form.section.options: Opzioni

@@ -1030,7 +1030,6 @@ restaurant.form.section.taxonomy: Taxonomie
 localBusiness.form.use_different_business_address.label: Utiliser une adresse commerciale
   différente
 localBusiness.form.business_address.label: Adresse commerciale
-restaurant.form.giropay_enabled.label: Activer Giropay
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option

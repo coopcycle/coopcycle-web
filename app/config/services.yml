@@ -170,10 +170,6 @@ services:
     tags:
       - { name: monolog.logger, channel: loopeat }
 
-  AppBundle\Controller\PaymentController:
-    arguments:
-      $secret: '%secret%'
-
   AppBundle\Controller\StripeController:
     arguments:
       $secret: '%secret%'

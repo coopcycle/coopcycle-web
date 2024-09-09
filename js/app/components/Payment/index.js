@@ -131,13 +131,6 @@ export default function(formSelector, options) {
         form.querySelector('input[name="checkout_payment[method]"]:checked').value
 
       switch (selectedMethod) {
-        case 'giropay':
-          cc.confirmGiropayPayment()
-            .catch(e => {
-              setLoading(false)
-              document.getElementById('card-errors').textContent = e.message
-            })
-          break
         case 'edenred':
           // It means the whole amount can be paid with Edenred (ex. click & collect)
           form.submit()
@@ -219,7 +212,6 @@ export default function(formSelector, options) {
       .then(response => {
         switch (value) {
           case 'card':
-          case 'giropay':
           case 'edenred+card':
             const cashDisclaimer = document.getElementById('cash_on_delivery_disclaimer')
             if (cashDisclaimer) {

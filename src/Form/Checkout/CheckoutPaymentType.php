@@ -58,10 +58,6 @@ class CheckoutPaymentType extends AbstractType
                 $choices['Credit card'] = 'card';
             }
 
-            if ($order->supportsGiropay()) {
-                $choices['Giropay'] = 'giropay';
-            }
-
             if ($order->supportsEdenred()) {
                 if ($order->getCustomer()->hasEdenredCredentials()) {
                     $amounts = $this->edenredPayment->splitAmounts($order);

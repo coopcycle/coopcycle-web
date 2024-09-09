@@ -164,7 +164,6 @@ restaurant.form.loopeat_enabled.label: 'Habilite lo sistema de deposito y reembo
   de LoopEat'
 restaurant.form.loopeat_disconnect.label: 'Desconnectar LoopEat'
 restaurant.form.featured.label: 'Este restaurant amaneixe en a pachina d''inicio'
-restaurant.form.giropay_enabled.label: 'Habilitar Giropay'
 restaurant.form.fulfillment_methods.label: 'Metodos de complimiento'
 restaurant.form.section.general: 'Cheneral'
 restaurant.form.section.options: 'Opcions'

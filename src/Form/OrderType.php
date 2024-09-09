@@ -15,22 +15,18 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderType extends AbstractType
 {
     private $stateMachineFactory;
     private $authorizationChecker;
-    private $translator;
 
     public function __construct(
         StateMachineFactoryInterface $stateMachineFactory,
-        AuthorizationCheckerInterface $authorizationChecker,
-        TranslatorInterface $translator)
+        AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->stateMachineFactory = $stateMachineFactory;
         $this->authorizationChecker = $authorizationChecker;
-        $this->translator = $translator;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -60,21 +56,8 @@ class OrderType extends AbstractType
                         ]);
                     }
                     if ($stateMachine->can(OrderTransitions::TRANSITION_REFUSE)) {
-
-                        $attr = [];
-
-                        $completedGiropayPayments = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
-                            return $payment->isGiropay()
-                                && $payment->getState() === PaymentInterface::STATE_COMPLETED;
-                        });
-
-                        if (count($completedGiropayPayments) > 0) {
-                            $attr['data-message'] = $this->translator->trans('form.order.refuse.refund.alert');
-                        }
-
                         $form->add('refuse', SubmitType::class, [
                             'label' => 'form.order.refuse.label',
-                            'attr' => $attr
                         ]);
 
                     } elseif ($stateMachine->can(OrderTransitions::TRANSITION_CANCEL)) {

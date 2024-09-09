@@ -54,7 +54,7 @@ class Gateway
 
                 $paymentIntent = $payment->getPaymentIntent();
 
-                if (!$payment->isGiropay() && $paymentIntent !== $context['token']) {
+                if ($paymentIntent !== $context['token']) {
                     throw new \Exception('Payment Intent mismatch');
                 }
 

@@ -1443,16 +1443,6 @@ class Order extends BaseOrder implements OrderInterface
         return $recipients;
     }
 
-    public function supportsGiropay(): bool
-    {
-        if ($this->isMultiVendor() || !$this->hasVendor()) {
-
-            return false;
-        }
-
-        return $this->getRestaurant()->isStripePaymentMethodEnabled('giropay');
-    }
-
     public function supportsEdenred(): bool
     {
         if ($this->isMultiVendor() || !$this->hasVendor()) {

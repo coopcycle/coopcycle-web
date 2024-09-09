@@ -152,7 +152,6 @@ restaurant.form.quotes_allowed.label: 'Este restaurante também aceita cotaçõe
 restaurant.form.loopeat_enabled.label: Habilitar sistema de reembolso LoopEat
 restaurant.form.loopeat_disconnect.label: Desconectar LoopEat
 restaurant.form.featured.label: Este restaurante está destacado na página inicial
-restaurant.form.giropay_enabled.label: Habilitar Giropay
 restaurant.form.fulfillment_methods.label: Métodos de finalização
 restaurant.form.section.general: Geral
 restaurant.form.section.options: Opções

@@ -54,18 +54,6 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
               </div>
             )
 
-          case 'giropay':
-
-            return (
-              <div style={ methodStyles }key={ m.type }>
-                <label>{ t('PM_GIROPAY') }</label>
-                <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-                        onClick={ () => setMethod('giropay') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
-            )
-
           case 'edenred':
           case 'edenred+card':
 

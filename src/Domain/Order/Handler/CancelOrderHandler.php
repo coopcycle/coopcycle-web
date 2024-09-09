@@ -13,8 +13,6 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 
 class CancelOrderHandler
 {
-    use GiropayTrait;
-
     private $eventRecorder;
     private $stateMachineFactory;
 
@@ -47,8 +45,6 @@ class CancelOrderHandler
                 sprintf('Order #%d cannot be cancelled for reason "%s"', $order->getId(), $reason)
             );
         }
-
-        $this->refundCompletedGiropayPayments($order);
 
         $this->eventRecorder->record(new Event\OrderCancelled($order, $reason));
     }

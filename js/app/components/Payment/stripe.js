@@ -221,22 +221,6 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
   )
 }
 
-const GiropayForm = ({ onCardholderNameChange }) => {
-
-  const { t } = useTranslation()
-
-  return (
-    <React.Fragment>
-      <div className="form-group">
-        <CardholderNameInput onChange={ onCardholderNameChange } />
-        <div className="text-center mt-3">
-          <span className="help-block">{ t('PAYMENT_FORM_REDIRECT_HELP') }</span>
-        </div>
-      </div>
-    </React.Fragment>
-  )
-}
-
 export default {
   init() {
     this.stripe = Stripe(this.config.gatewayConfig.publishableKey)
@@ -247,18 +231,6 @@ export default {
     this.el = el
     this.saveCard = false
     this.savedPaymentMethod = null
-
-    if (method === 'giropay') {
-
-      return new Promise((resolve) => {
-
-        render(
-          <GiropayForm
-            onCardholderNameChange={ cardholderName => {
-              this.cardholderName = cardholderName
-            }} />, el, resolve)
-      })
-    }
 
     let resultCards = []
     if (!isGuest(formOptions)) { // avoid this API call if the customer is a guest
@@ -378,34 +350,6 @@ export default {
           resolve(createPaymentMethodResult.paymentMethod.id)
         }
       })
-    })
-  },
-  // @see https://stripe.com/docs/payments/giropay/accept-a-payment#confirm-giropay-payment
-  // https://stripe.com/docs/js/payment_intents/confirm_giropay_payment
-  confirmGiropayPayment() {
-
-    return new Promise((resolve, reject) => {
-
-      axios.post(this.config.gatewayConfig.createGiropayPaymentIntentURL)
-        .then(response => {
-          this.stripe.confirmGiropayPayment(
-            response.data.payment_intent_client_secret,
-            {
-              payment_method: {
-                billing_details: {
-                  name: this.cardholderName
-                }
-              },
-              return_url: response.data.return_url,
-            }
-          ).then(function(result) {
-            if (result.error) {
-              reject(new Error(result.error.message))
-            } else {
-              resolve()
-            }
-          })
-        })
     })
   }
 }

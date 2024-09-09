@@ -294,7 +294,6 @@ restaurant.contract.restaurantPaysStripeFee.label: Responsável pelo custo das t
   reembolsos e estornos do Stripe
 restaurant.form.section.taxonomy: Taxonomia
 restaurant.form.fulfillment_methods.label: Métodos de preenchimento
-restaurant.form.giropay_enabled.label: Habilitar Giropay
 restaurant.form.loopeat_disconnect.label: Desconecar LoopEat
 restaurant.form.loopeat_enabled.label: Habilite o sistema de depósito e reembolso
   de LoopEat

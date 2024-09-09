@@ -30,11 +30,6 @@ class CheckoutHandler
             return $payment;
         }
 
-        if ($payment = $order->getLastPayment(PaymentInterface::STATE_PROCESSING)) {
-
-            return $payment;
-        }
-
         return null;
     }
 

@@ -188,7 +188,6 @@ restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
 restaurant.form.loopeat_disconnect.label: Disconnect %name%
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.featured.docs_path: /en/admin/restaurants/general-settings/#featured
-restaurant.form.giropay_enabled.label: Enable Giropay
 restaurant.form.fulfillment_methods.label: Fulfillment methods
 restaurant.form.section.general: General
 restaurant.form.section.options: Options

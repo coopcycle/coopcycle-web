@@ -9,8 +9,6 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 
 class RefuseOrderHandler
 {
-    use GiropayTrait;
-
     private $eventRecorder;
 
     public function __construct(StripeManager $stripeManager, RecordsMessages $eventRecorder)
@@ -22,8 +20,6 @@ class RefuseOrderHandler
     public function __invoke(RefuseOrder $command)
     {
         $order = $command->getOrder();
-
-        $this->refundCompletedGiropayPayments($order);
 
         $this->eventRecorder->record(new Event\OrderRefused($order, $command->getReason()));
     }

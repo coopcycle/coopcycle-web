@@ -635,7 +635,6 @@ form.product.reusable_packaging_enabled.label: Aktivieren Sie wiederverwendbare 
   für dieses Produkt
 form.product_option.values.help: Sie müssen eine Liste an Werte für diese Option festlegen
 restaurant.form.loopeat_disconnect.label: LoopEat trennen
-restaurant.form.giropay_enabled.label: Aktiviere Giropay
 restaurant.form.featured.label: Dieses Restaurant soll auf dem Homepage gezeigt werden
 restaurant.quotes_disclaimer.not_authenticated: Dieses Restaurant bietet auch Caterings.
   Melde dich ein <a href="%login%">Einmelden</a> um ein Kostenvoranschlag anzufragen.
