@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+    body > header,
+    body > footer {
+      display: flex;
+      justify-content: space-between;
+    }
+    body > header {
+      margin-bottom: 10mm;
+    }
+    body > header > *,
+    body > footer > * {
+      flex: 1;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    hr {
+      height: 0px;
+      border: none;
+      border-top: 1px solid black;
+      padding: 0.3em 0;
+    }
+    </style>
+  </head>
+  <body>
+    <h1 style="text-align: center; margin-bottom: 0">
+      {{ coopcycle_setting('brand_name')|upper }}
+    </h1>
+    <div style="font-size: 0.6em; text-align: right; line-height: 1em">
+    <ul>
+      <li>- powered by CoopCycle</li>
+      <li>Sustainable, cooperative logistics</li>
+    </ul>
+    </div>
+    <hr />
+    <div style="display: flex;">
+      <div style="flex: 1">FROM:</div>
+      <div style="flex: 3">
+      {% if from is not null %}
+        <ul>
+          <li>{{ from.contactName }}</li>
+          <li>{{ from.streetAddress }}</li>
+        </ul>
+      {% endif %}
+      </div>
+    </div>
+    <hr />
+    <div style="display: flex;">
+      <div style="flex: 1">TO:</div>
+      <div style="flex: 3; font-weight: bold; font-size: 1.2em">
+        <ul>
+          <li>{{ task.address.contactName }}</li>
+          <li>{{ task.address.streetAddress }}</li>
+          <li>{{ phone }}</li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+    <h2 style="text-align: center;">{{ task.address.postalCode }} {{ task.address.addressLocality|upper }}</h2>
+    <hr />
+    <div style="display: flex;">
+      <div style="flex: 1">
+        <ul>
+          <li><strong>Ref:</strong></li>
+          <li>{{ barcode_raw }}</li>
+          {% if package is not null %}
+            <li><strong>Package:</strong></li>
+            <li>{{ package }}</li>
+          {% endif %}
+        </ul>
+      </div>
+      <div style="flex: 1">
+        <ul>
+          <li><strong>Weight:</strong></li>
+          {% if task.weight > 0 %}
+            <li style="font-size: 1.4em">{{ (task.weight / 1000)|format_number }} Kg</li>
+          {% else %}
+            <li>-</li>
+          {% endif %}
+        </ul>
+      </div>
+      <div style="flex: 1">
+        <ul>
+          <li><strong>Parcel:</strong></li>
+          {% if currentPackage is not null %}
+            <li style="font-size: 1.4em">{{ currentPackage }} / {{ totalPackages }}</li>
+          {% else %}
+            <li>-</li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+    <hr />
+    <div style="text-align: center">
+      {{ barcode|raw }}
+      <div>{{ barcode_raw }}</div>
+    </div>
+  </body>
+</html>

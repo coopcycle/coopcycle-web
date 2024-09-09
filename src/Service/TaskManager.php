@@ -11,10 +11,12 @@ use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Command\RemoveFromGroup;
 use AppBundle\Domain\Task\Command\Reschedule;
 use AppBundle\Domain\Task\Command\Restore;
+use AppBundle\Domain\Task\Command\ScanBarcode;
 use AppBundle\Domain\Task\Command\Start;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class TaskManager
 {
@@ -72,5 +74,10 @@ class TaskManager
     public function incident(Task $task, string $reason, ?string $notes = null, array $data = []): void
     {
         $this->commandBus->handle(new Incident($task, $reason, $notes, $data));
+    }
+
+    public function scan(Task $task): void
+    {
+        $this->commandBus->handle(new ScanBarcode($task));
     }
 }

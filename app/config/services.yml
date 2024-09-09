@@ -1453,3 +1453,6 @@ services:
     arguments:
       - '@paygreen.http_client'
       - '@Paygreen\Sdk\Payment\V3\Environment'
+
+  Picqer\Barcode\BarcodeGeneratorSVG: ~
+  AppBundle\Utils\Barcode\BarcodeUtils: ~

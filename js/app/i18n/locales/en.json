@@ -573,6 +573,7 @@
         "DELIVERY_OPTIMIZATION_SUGGESTION_CURRENT": "Current order",
         "DELIVERY_OPTIMIZATION_SUGGESTION_SUGGESTED": "Suggested order",
         "DELIVERY_OPTIMIZATION_SUGGESTION_YES": "Yes",
-        "DELIVERY_OPTIMIZATION_SUGGESTION_NO": "No, thanks"
+        "DELIVERY_OPTIMIZATION_SUGGESTION_NO": "No, thanks",
+        "GENERIC_BARCODE_HELP": "This is a generic barcode for this dropoff, this barcode can be used for all purposes."
     }
 }
