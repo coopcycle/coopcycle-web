@@ -162,7 +162,7 @@ monolog:
             # in case of a warning or higher (see main/action_level) excluded channels are also included
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/logs_to_upload.%kernel.environment%.log"
-            level: debug
+            level: info
             formatter: monolog.formatter.json
             max_files: 2
 
