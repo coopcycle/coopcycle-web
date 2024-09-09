@@ -89,7 +89,7 @@ services:
       - 'php_cache:/var/www/html/var/cache'
 
   nginx:
-    image: 'nginx:1.11-alpine'
+    image: 'nginx:1.25-alpine'
     depends_on:
       - php
       - centrifugo
@@ -101,7 +101,7 @@ services:
       - './vendor:/var/www/html/vendor:ro'
 
   nginx_test:
-    image: 'nginx:1.11-alpine'
+    image: 'nginx:1.25-alpine'
     depends_on:
       - php
     ports:
