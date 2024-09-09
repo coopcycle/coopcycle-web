@@ -17,13 +17,14 @@ use Webmozart\Assert\Assert;
 
 class Client
 {
+    private $client;
     private $logger;
 
     public function __construct(
-        string $paymentClientId,
-        string $paymentClientSecret,
+        private string $paymentClientId,
+        private string $paymentClientSecret,
         RefreshTokenHandler $refreshTokenHandler,
-        Authentication $authentication,
+        private Authentication $authentication,
         array $config = [],
         LoggerInterface $logger = null
     )

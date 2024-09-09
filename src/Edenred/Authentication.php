@@ -8,21 +8,24 @@ use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Authentication
 {
+    private $baseUrl;
+    private $clientId;
+    private $clientSecret;
+    private $client;
+
     public function __construct(
         string $clientId,
         string $clientSecret,
         RefreshTokenHandler $refreshTokenHandler,
-        UrlGeneratorInterface $urlGenerator,
-        JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter,
-        LoggerInterface $logger,
+        private UrlGeneratorInterface $urlGenerator,
+        private JWTEncoderInterface $jwtEncoder,
+        private IriConverterInterface $iriConverter,
         array $config = []
     )
     {
@@ -36,10 +39,6 @@ class Authentication
         $this->baseUrl = $config['base_uri'];
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->urlGenerator = $urlGenerator;
-        $this->jwtEncoder = $jwtEncoder;
-        $this->iriConverter = $iriConverter;
-        $this->logger = $logger;
     }
 
     /**
