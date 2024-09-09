@@ -48,29 +48,33 @@ monolog:
     handlers:
         main:
             type: fingers_crossed
-            action_level: error
+            action_level: warning
             handler: forward_fingers_crossed
             excluded_404s:
                 # regex: exclude all 404 errors from the logs
                 - ^/
         forward_fingers_crossed:
           type: group
-          channels: ["!api", "!stripe", "!loopeat"]
-          members: [ default_file, logs_to_upload ]
+          members: [ default_file, fingers_crossed_to_upload ]
         default_file:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
+            channels: ["!api", "!stripe", "!loopeat"]
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
-        forward_channels:
+        fingers_crossed_to_upload:
+          type: group
+          # only re-include channels excluded by exclude_channels_from_upload, all other channels are included already
+          channels: [ php, cache, app, timing ]
+          members: [ logs_to_upload ]
+        exclude_channels_from_upload:
             type: group
-            channels: [ domain_event, checkout, coopcycle.order_processing, messenger, push_notification, real_time_message ]
+            channels: [ "!php", "!cache", "!app", "!timing" ]
             members: [ logs_to_upload ]
         logs_to_upload:
-            # includes messages:
-            # channels listed in forward_channels: persist all messages
-            # for other channels: `fingers_crossed` is applied
+            # includes all messages from all channels except the channels listed in exclude_channels_from_upload
+            # in case of a warning or higher (see main/action_level) excluded channels are included by fingers_crossed_to_upload
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/logs_to_upload.%kernel.environment%.log"
             level: debug
