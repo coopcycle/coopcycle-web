@@ -28,23 +28,23 @@ class TaskListManager {
         $taskList->clear();
 
         foreach($newItemsIris as $position => $newItemIri) {
-            $this->logger->info('match new item IRI ' .$newItemIri);
+            $this->logger->debug('match new item IRI ' .$newItemIri);
 
             $existingItem = array_filter(
                 $currentItems,
                 function (Item $item) use ($newItemIri) {
-                    $this->logger->info('try match with item IRI ' .$newItemIri);
+                    $this->logger->debug('try match with item IRI ' .$newItemIri);
                     return $item->getItemIri($this->iriConverter) === $newItemIri;}
             );
             // update position
             if (count($existingItem) > 0) {
-                $this->logger->info('found match for ' .$newItemIri);
+                $this->logger->debug('found match for ' .$newItemIri);
                 $existingItem = array_shift($existingItem);
                 $existingItem->setPosition($position);
                 $taskList->addItem($existingItem);
             // items that were added to the tasklist
             } else {
-                $this->logger->info('not found match for ' .$newItemIri);
+                $this->logger->debug('not found match for ' .$newItemIri);
                 $taskOrTour = $this->iriConverter->getItemFromIri($newItemIri);
                 $item = new Item();
                 $item->setPosition($position);
