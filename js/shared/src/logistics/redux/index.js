@@ -29,12 +29,10 @@ export const taskUtils = {
 
 import {
   replaceTasksWithIds,
-  assignedTasks,
 } from './taskListUtils'
 
 export const taskListUtils = {
   replaceTasksWithIds,
-  assignedTasks,
 }
 
 import {
