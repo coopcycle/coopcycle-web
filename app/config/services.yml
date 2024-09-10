@@ -1153,7 +1153,16 @@ services:
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
 
-  AppBundle\Payment\Gateway: ~
+  AppBundle\Payment\Gateway\Stripe: ~
+  AppBundle\Payment\Gateway\Edenred: ~
+  AppBundle\Payment\Gateway\MercadoPago: ~
+
+  AppBundle\Payment\Gateway:
+    arguments:
+      $gateways:
+        stripe: '@AppBundle\Payment\Gateway\Stripe'
+        edenred: '@AppBundle\Payment\Gateway\Edenred'
+        mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
 
   AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
