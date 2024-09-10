@@ -67,6 +67,7 @@ class ExportTasksCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Output format'
             )
+            ->addOption('unsecure', null, InputOption::VALUE_NONE);
         ;
     }
 
@@ -77,7 +78,10 @@ class ExportTasksCommand extends Command
             return Command::FAILURE;
         }
 
-        [$target, $options] = $this->parseTarget($input->getOption('target'));
+        [$target, $options] = $this->parseTarget(
+            $input->getOption('target'),
+            $input->getOption('unsecure')
+        );
 
         $envelope = $this->messageBus->dispatch(new ExportTasks(
             $this->parseDate($input->getOption('date-start')),
@@ -86,14 +90,21 @@ class ExportTasksCommand extends Command
 
         /** @var HandledStamp $handledStamp */
         $handledStamp = $envelope->last(HandledStamp::class);
-        $csv = $handledStamp->getResult();
+        $export = $handledStamp->getResult();
 
-        $parquet = $this->csv2parquet($csv);
+        switch ($input->getOption('format')) {
+            case 'parquet':
+                $export = $this->csv2parquet($export);
+                break;
+            case 'csv': break;
+            default:
+                throw new \Exception('Unsupported format');
+        }
 
         switch ($target) {
             case 's3':
                 $this->pushToS3(
-                    $parquet,
+                    $export,
                     $options,
                     $input->getOption('s3-access-key'),
                     $input->getOption('s3-secret-key')
@@ -108,7 +119,7 @@ class ExportTasksCommand extends Command
     }
 
 
-    private function parseTarget(string $target): array
+    private function parseTarget(string $target, bool $unsecure = false): array
     {
         $parsed = parse_url($target);
         if (!$parsed) {
@@ -123,7 +134,8 @@ class ExportTasksCommand extends Command
                 return [
                     's3',
                     [
-                        'endpoint' => sprintf('https://%s',
+                        'endpoint' => sprintf('%s://%s',
+                            $unsecure ? 'http' : 'https',
                             implode(':', array_filter(
                                 [$parsed['host'], $parsed['port'] ?? null]
                             ))),
