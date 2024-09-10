@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Domain\Task\Command\AddToGroup;
 use AppBundle\Domain\Task\Command\Cancel;
+use AppBundle\Domain\Task\Command\Update;
 use AppBundle\Domain\Task\Command\DeleteGroup;
 use AppBundle\Domain\Task\Command\Incident;
 use AppBundle\Domain\Task\Command\MarkAsDone;
@@ -58,6 +59,11 @@ class TaskManager
     public function start(Task $task)
     {
         $this->commandBus->handle(new Start($task));
+    }
+
+    public function update(Task $task)
+    {
+        $this->commandBus->handle(new Update($task));
     }
 
     public function restore(Task $task)

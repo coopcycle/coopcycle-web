@@ -207,6 +207,17 @@ abstract class TaskCollection
         }
     }
 
+    /**
+     * Find task position in the collection
+     */
+    public function findTaskPosition(Task $task) {
+        foreach ($this->getItems() as $item) {
+            if ($item->getTask() === $task) {
+                return $item->getPosition();
+            }
+        }
+    }
+
     public function getTasksByType(string $type)
     {
         return $this->getItems()

@@ -43,6 +43,14 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Cancel
 
+  coopcycle.domain.task.handler.update:
+    class: AppBundle\Domain\Task\Handler\UpdateHandler
+    arguments:
+      - '@event_recorder'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\Update
+
   coopcycle.domain.task.handler.delete_group:
     class: AppBundle\Domain\Task\Handler\DeleteGroupHandler
     arguments:
@@ -88,6 +96,7 @@ services:
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Incident
+
   #
   # Reactors
   #
@@ -121,6 +130,8 @@ services:
         subscribes_to: task:rescheduled
       - name: event_subscriber
         subscribes_to: task:incident-reported
+      - name: event_subscriber
+        subscribes_to: task:updated
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail

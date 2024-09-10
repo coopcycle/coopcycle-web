@@ -44,9 +44,19 @@ const TaskCaption = ({ task }) => {
       <span className="mr-1">
         <span className="text-monospace font-weight-bold">
           { task.metadata?.order_number ?
-            task.metadata.order_number
+            <>
+              {
+                task.metadata?.delivery_position ?
+                <>{task.metadata.order_number}-{task.metadata.delivery_position}</>
+                : task.metadata.order_number
+              }
+            </>
             : `#${ task.id }`
           }
+        </span>
+        {/* keep the task ID displayed for the web dispatcher while migrating the client code as the rider sees the task ID in the app */}
+        <span className='text-muted ml-1'>
+          {`#${ task.id }`}
         </span>
       </span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (

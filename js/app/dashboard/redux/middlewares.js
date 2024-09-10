@@ -64,6 +64,7 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:created':
         case 'task:rescheduled':
         case 'task:incident-reported':
+        case 'task:updated':
           dispatch(updateTask(event.data.task))
           break
         case 'task:assigned':
