@@ -51,7 +51,7 @@ monolog:
         timing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
-            level: info
+            level: debug
             max_files: 3
             channels: [timing]
         checkout:
