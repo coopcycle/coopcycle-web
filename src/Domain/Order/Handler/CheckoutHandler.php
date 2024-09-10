@@ -44,6 +44,11 @@ class CheckoutHandler
 
         foreach ($payments as $payment) {
 
+            // Do nothing for "offline" payments, i.e cash on delivery
+            if ($payment->isOffline()) {
+                continue;
+            }
+
             if ('approved' === $payment->getMercadopagoPaymentStatus()) {
                 continue;
             }
@@ -60,16 +65,14 @@ class CheckoutHandler
                 }
             }
 
-            if (!$payment->isOffline()) {
-                try {
-                    $this->gateway->authorize($payment, ['token' => $stripeToken]);
-                } catch (\Exception $e) {
-                    $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
-                        ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
+            try {
+                $this->gateway->authorize($payment, ['token' => $stripeToken]);
+            } catch (\Exception $e) {
+                $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
+                    ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
 
-                    $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
-                    return;
-                }
+                $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
+                return;
             }
         }
 
