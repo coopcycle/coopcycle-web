@@ -96,14 +96,9 @@ class ShippingDateFilter
         // Regarding prior notice, it means that a restaurant that opens at 6PM and has a 1H prior notice can not deliver someone before 7:25PM
         if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
 
-<<<<<<< HEAD
-            $this->logger->debug(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
-                $preparation->format(\DateTime::ATOM)),
-=======
             $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s" with delay "%s" minutes',
                 $preparation->format(\DateTime::ATOM),
-                strval($orderingDelayMinutes)),
->>>>>>> fcf668a89 (feat: do not apply delay in range generation but in filtering)
+                strval($dispatchDelayForPickup)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
                     'vendor' => $this->loggingUtils->getVendors($order),
