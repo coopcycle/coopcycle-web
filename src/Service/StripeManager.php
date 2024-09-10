@@ -81,6 +81,7 @@ class StripeManager
             return $payload;
         }
 
+        // FIXME
         // If it is a complementary payment,
         // we do not take application fee
         if ($payment->isEdenredWithCard()) {
@@ -136,7 +137,7 @@ class StripeManager
         $order = $payment->getOrder();
 
         $payload = [
-            'amount' => $payment->getAmountForMethod('CARD'),
+            'amount' => $payment->getAmount(),
             'currency' => strtolower($payment->getCurrencyCode()),
             'description' => sprintf('Order %s', $order->getNumber()),
             'payment_method' => $payment->getPaymentMethod(),
@@ -201,7 +202,7 @@ class StripeManager
         // Make sure the payment intent needs to be captured
         if ($intent->capture_method === 'manual' && $intent->amount_capturable > 0) {
             $intent->capture([
-                'amount_to_capture' => $payment->getAmountForMethod('CARD')
+                'amount_to_capture' => $payment->getAmount()
             ]);
         }
 
