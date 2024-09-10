@@ -11,7 +11,7 @@ import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdap
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
-import { selectAllTours, selectTaskIdToTourIdMap } from '../../../shared/src/logistics/redux/selectors'
+import { selectAllTours, selectTaskIdToTourIdMap, selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
@@ -44,6 +44,7 @@ export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui
 // Settings selectors
 export const selectSettings = state => state.settings
 export const selectFiltersSetting = state => state.settings.filters
+export const selectMapFiltersSetting = state => state.settings.mapFilters
 export const selectHiddenCouriersSetting = state => state.settings.filters.hiddenCouriers
 export const selectAreToursEnabled = state => state.settings.toursEnabled
 export const selectIsRecurrenceRulesVisible = state => state.settings.isRecurrenceRulesVisible
@@ -172,6 +173,36 @@ export const selectVisibleTaskIds = createSelector(
   (tasks, filters, date) => filter(tasks, task => isTaskVisible(task, filters, date)).map(task => task['@id'])
 )
 
+export const selectVisibleOnMapTaskIds = createSelector(
+  selectVisibleTaskIds,
+  selectUnassignedTours,
+  selectTaskIdToTourIdMap,
+  selectMapFiltersSetting,
+  (visibleTasksIds, unassignedTours, taskIdToTourIdMap, mapFiltersSetting) => {
+    return filter(
+      visibleTasksIds,
+      taskId => {
+        const tourId = taskIdToTourIdMap.get(taskId)
+
+        if (!mapFiltersSetting.showUnassignedTours && tourId && unassignedTours.find(t => t['@id'] === tourId)) {
+          return false
+        }
+
+        return true
+      }
+    )
+  }
+)
+
+export const selectHiddenOnMapTaskIds = createSelector(
+  selectAllTasks,
+  selectVisibleOnMapTaskIds,
+  (tasks, visibleTaskIds) => {
+    const taskIds = tasks.map(task => task['@id'])
+    return differenceWith(taskIds, visibleTaskIds)
+  }
+)
+
 export const selectPolylines = createSelector(
   selectTaskLists,
   (taskLists) => {
@@ -218,16 +249,6 @@ export const selectAsTheCrowFlies = createSelector(
     return Object.assign({}, asTheCrowFliesTaskLists, asTheCrowFliesTours)
   }
 )
-
-export const selectHiddenTaskIds = createSelector(
-  selectAllTasks,
-  selectVisibleTaskIds,
-  (tasks, visibleTaskIds) => {
-    const taskIds = tasks.map(task => task['@id'])
-    return differenceWith(taskIds, visibleTaskIds)
-  }
-)
-
 
 const fuseOptions = {
   shouldSort: true,
@@ -342,7 +363,7 @@ export const selectSelectedTasks = createSelector(
 
 export const selectVisiblePickupTasks = createSelector(
   taskSelectors.selectAll,
-  selectHiddenTaskIds,
+  selectHiddenOnMapTaskIds,
   (tasks, hiddenTaskIds) => filter(tasks, task => task.type === 'PICKUP' && !hiddenTaskIds.includes(task['@id']))
 )
 
