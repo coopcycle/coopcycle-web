@@ -4,7 +4,7 @@
 
 {% set business_restaurant_group = form.vars.data %}
 {% set is_new = (business_restaurant_group.id is null) %}
-{% set formErrors = form.vars.errors.form.getErrors(true)|length > 0 %}
+{% set form_errors = form.vars.errors.form.getErrors(true)|length > 0 %}
 
 {% block breadcrumb %}
 <li>
@@ -19,6 +19,7 @@
 {% endblock %}
 
 {% block content %}
+
 {{ form_start(form) }}
 
   <div class="row">
@@ -87,7 +88,7 @@
     var submitButton = document.querySelector("button[type='submit']")
     var form = document.querySelector('[name="business_restaurant_group"]')
 
-    if ({{ formErrors }}) {
+    if ({{ form_errors|json_encode|e('js') }}) {
       document.querySelector('[name="invalid-form-alert"]').classList.remove('hidden')
     }
 
