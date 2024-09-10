@@ -103,6 +103,7 @@ use Nucleos\UserBundle\Util\TokenGenerator as TokenGeneratorInterface;
 use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
 use Knp\Component\Pager\PaginatorInterface;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -1469,7 +1470,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/settings", name="admin_settings")
      */
-    public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis)
+    public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis, LoggerInterface $domainEventLogger)
     {
         /* Stripe live mode */
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1489,6 +1490,8 @@ class AdminController extends AbstractController
                 }
                 if ('disable_and_enable_maintenance' === $stripeLivemodeForm->getClickedButton()->getName()) {
                     $redis->set('maintenance', '1');
+                    $domainEventLogger->info('Maintenance mode enabled (stripe)');
+
                     $settingsManager->set('stripe_livemode', 'no');
                 }
                 $settingsManager->flush();
@@ -1514,6 +1517,8 @@ class AdminController extends AbstractController
                 }
                 if ('disable_and_enable_maintenance' === $mercadopagoLivemodeForm->getClickedButton()->getName()) {
                     $redis->set('maintenance', '1');
+                    $domainEventLogger->info('Maintenance mode enabled (mercadopago)');
+
                     $settingsManager->set('mercadopago_livemode', 'no');
                 }
                 $settingsManager->flush();
@@ -1534,10 +1539,12 @@ class AdminController extends AbstractController
 
                     $redis->set('maintenance_message', $maintenanceMessage);
                     $redis->set('maintenance', '1');
+                    $domainEventLogger->info('Maintenance mode enabled');
                 }
                 if ('disable' === $maintenanceForm->getClickedButton()->getName()) {
                     $redis->del('maintenance_message');
                     $redis->del('maintenance');
+                    $domainEventLogger->info('Maintenance mode disabled');
                 }
             }
 
