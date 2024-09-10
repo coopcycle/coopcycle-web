@@ -51,11 +51,13 @@ export default function Dashboard({ onDateChange }) {
 
   const sliderMarks = {
     0: t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
-    15: '15min',
-    30: '30min',
-    45: '45min',
+    10: '10min',
+    20: '20',
+    30: '30',
+    40: '40',
+    50: '50',
     60: '1h',
-    75: '1h15',
+    70: '1h10',
     90: '1h30',
     120: '2h',
     150: '2h30',
@@ -93,6 +95,7 @@ export default function Dashboard({ onDateChange }) {
   const _tipFormatter = (value) => {
     return sliderMarks[value]
   }
+
 
   return (
     <div className="FoodtechDashboard">
