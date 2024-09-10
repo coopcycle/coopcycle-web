@@ -98,7 +98,7 @@ class ShippingDateFilter
 
             $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s" with delay "%s" minutes',
                 $preparation->format(\DateTime::ATOM),
-                strval($orderingDelayMinutes)),
+                strval($dispatchDelayForPickup)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
                     'vendor' => $this->loggingUtils->getVendors($order),

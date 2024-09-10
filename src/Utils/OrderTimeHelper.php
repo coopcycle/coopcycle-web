@@ -48,7 +48,7 @@ class OrderTimeHelper
             $result = $this->shippingDateFilter->accept(
                 $cart,
                 $choice->toTsRange(),
-                orderingDelayMinutes: $orderingDelayMinutes
+                dispatchDelayForPickup: $orderingDelayMinutes
             );
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
