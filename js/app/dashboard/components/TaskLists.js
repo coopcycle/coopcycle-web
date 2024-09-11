@@ -3,21 +3,34 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
-import { openAddUserModal } from '../redux/actions'
+import { openAddUserModal, setMapFilterValue } from '../redux/actions'
 import TaskList from './TaskList'
 
-import { selectHiddenCouriersSetting, selectTaskLists, selectTaskListsLoading } from '../redux/selectors'
+import { selectHiddenCouriersSetting, selectMapFiltersSetting, selectTaskLists, selectTaskListsLoading } from '../redux/selectors'
+import { Switch, Tooltip } from 'antd'
 
 class TaskLists extends React.Component {
 
   render() {
 
-    const { taskLists, taskListsLoading } = this.props
+    const { taskLists, taskListsLoading, setMapFilterValue, mapFiltersSettings } = this.props
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
         <h4 className="dashboard__panel__header">
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
+          <Tooltip
+            title={this.props.t("HIDE_SHOW_ON_MAP")}
+            className="mr-2"
+          >
+            <Switch
+              unCheckedChildren={"0"}
+              checkedChildren={"I"}
+              defaultChecked={mapFiltersSettings.showAssigned}
+              checked={mapFiltersSettings.showAssigned}
+              onChange={checked => setMapFilterValue(checked)}
+            />
+          </Tooltip>
           { taskListsLoading ?
             (<span className="pull-right"><span className="loader"></span></span>) :
             (<a className="pull-right" onClick={this.props.openAddUserModal}>
@@ -58,6 +71,7 @@ function mapStateToProps (state) {
     taskLists: selectTaskLists(state),
     taskListsLoading: selectTaskListsLoading(state),
     hiddenCouriers: selectHiddenCouriersSetting(state),
+    mapFiltersSettings: selectMapFiltersSetting(state)
   }
 }
 
@@ -65,6 +79,7 @@ function mapDispatchToProps (dispatch) {
 
   return {
     openAddUserModal: () => dispatch(openAddUserModal()),
+    setMapFilterValue: (checked) => dispatch(setMapFilterValue({key: "showAssigned", value: checked}))
   }
 }
 

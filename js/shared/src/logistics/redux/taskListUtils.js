@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import moment from 'moment';
 import { tasksToIds } from './taskUtils'
 
@@ -27,8 +26,4 @@ export function createTempTaskList(username, items = []) {
     username,
     items,
   }
-}
-
-export function assignedItemsIds(taskLists) {
-  return _.flatMap(taskLists,taskList => taskList.items)
 }

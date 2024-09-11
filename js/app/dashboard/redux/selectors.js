@@ -11,7 +11,7 @@ import { selectUnassignedTasks, selectAllTasks, selectSelectedDate, taskListAdap
 import { filter, forEach, find, reduce, map, differenceWith, includes, mapValues } from 'lodash'
 import { isTaskVisible, isOffline, recurrenceTemplateToArray } from './utils'
 import { taskUtils } from '../../coopcycle-frontend-js/logistics/redux';
-import { selectAllTours, selectTaskIdToTourIdMap, selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
+import { selectAllTours, selectAssignedTasks, selectTaskIdToTourIdMap, selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 
 const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistics.entities.taskLists)
 export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
@@ -116,8 +116,7 @@ export const selectGroups = createSelector(
 export const selectStandaloneTasks = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
-  selectTaskIdToTourIdMap,
-  (unassignedTasks, taskListGroupMode, taskIdToTourIdMap) => {
+  (unassignedTasks, taskListGroupMode) => {
 
     let standaloneTasks = unassignedTasks
 
@@ -162,7 +161,7 @@ export const selectStandaloneTasks = createSelector(
       })
     }
 
-    return filter(standaloneTasks, t => !taskIdToTourIdMap.has(t['@id']))
+    return standaloneTasks
   }
 )
 
@@ -175,16 +174,21 @@ export const selectVisibleTaskIds = createSelector(
 
 export const selectVisibleOnMapTaskIds = createSelector(
   selectVisibleTaskIds,
+  selectAssignedTasks,
   selectUnassignedTours,
   selectTaskIdToTourIdMap,
   selectMapFiltersSetting,
-  (visibleTasksIds, unassignedTours, taskIdToTourIdMap, mapFiltersSetting) => {
+  (visibleTasksIds, assignedTasks, unassignedTours, taskIdToTourIdMap, mapFiltersSetting) => {
     return filter(
       visibleTasksIds,
       taskId => {
         const tourId = taskIdToTourIdMap.get(taskId)
 
         if (!mapFiltersSetting.showUnassignedTours && tourId && unassignedTours.find(t => t['@id'] === tourId)) {
+          return false
+        }
+
+        if (!mapFiltersSetting.showAssigned && assignedTasks.find(t => t['@id'] === taskId)) {
           return false
         }
 
