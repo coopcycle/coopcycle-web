@@ -59,11 +59,11 @@ class Payment extends BasePayment implements OrderAwareInterface
      * Determines if the payment is a meal voucher "complement",
      * i.e to pay the remaining amount that can't be paid via meal vouchers.
      */
-    public function isMealVoucherComplement(OrderInterface $order): bool
+    public function isMealVoucherComplement(): bool
     {
         if ($this->getMethod()->getCode() === 'CARD') {
-            $edenredPayments = $this->getOrder()->getPayments()->filter(function (PaymentInterface $payment): bool {
-                return $payment->getMethod()->getCode() === 'EDENRED' && $payment->getState() === PaymentInterface::STATE_CART;
+            $edenredPayments = $this->getOrder()->getPayments()->filter(function (self $payment): bool {
+                return $payment->getMethod()->getCode() === 'EDENRED' && $payment->getState() === self::STATE_CART;
             });
 
             return count($edenredPayments) > 0;
