@@ -59,13 +59,9 @@ class CheckoutPaymentType extends AbstractType
 
             if ($order->supportsEdenred()) {
                 if ($order->getCustomer()->hasEdenredCredentials()) {
-                    $amounts = $this->edenredPayment->splitAmounts($order);
-                    if ($amounts['edenred'] > 0) {
-                        if ($amounts['card'] > 0) {
-                            $choices['Edenred'] = 'edenred+card';
-                        } else {
-                            $choices['Edenred'] = 'edenred';
-                        }
+                    $edenredAmount = $this->edenredPayment->getMaxAmount($order);
+                    if ($edenredAmount > 0) {
+                        $choices['Edenred'] = 'edenred';
                     }
                 } else {
                     // The customer will be presented with the button
@@ -90,7 +86,6 @@ class CheckoutPaymentType extends AbstractType
 
                             switch ($value) {
                                 case 'edenred':
-                                case 'edenred+card':
                                     return [
                                         'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
                                         'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)

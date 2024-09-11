@@ -82,6 +82,7 @@ class StripeManager
         }
 
         // FIXME
+        // Check if order has a linked Edenred payment
         // If it is a complementary payment,
         // we do not take application fee
         if ($payment->isEdenredWithCard()) {

@@ -83,22 +83,21 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         switch ($this->paymentContext->getMethod()) {
             case 'EDENRED':
-            case 'EDENRED+CARD':
 
-                $amounts = $this->edenredClient->splitAmounts($order);
+                $edenredAmount = $this->edenredClient->getMaxAmount($order);
 
-                if ($amounts['card'] > 0) {
+                if ($edenredAmount < $order->getTotal()) {
                     // FIXME
                     // Do not hardcode this here
                     $card = $this->paymentMethodRepository->findOneByCode('CARD');
-                    $cardPayment = $this->upsertPayment($order, $payments, $card, $amounts['card'], $targetState);
+                    $cardPayment = $this->upsertPayment($order, $payments, $card, ($order->getTotal() - $edenredAmount), $targetState);
                     $paymentsToKeep->add($cardPayment);
                 }
 
                 // FIXME
                 // Do not hardcode this here
                 $edenred = $this->paymentMethodRepository->findOneByCode('EDENRED');
-                $edenredPayment = $this->upsertPayment($order, $payments, $edenred, $amounts['edenred'], $targetState);
+                $edenredPayment = $this->upsertPayment($order, $payments, $edenred, $edenredAmount, $targetState);
                 $paymentsToKeep->add($edenredPayment);
 
                 break;

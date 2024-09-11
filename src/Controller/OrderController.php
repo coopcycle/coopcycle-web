@@ -424,13 +424,6 @@ class OrderController extends AbstractController
             return new JsonResponse(['message' => 'Order does not have any customer'], 400);
         }
 
-        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-        if (null === $payment) {
-
-            return new JsonResponse(['message' => 'Order has no payment'], 404);
-        }
-
         $data = $request->toArray();
 
         if (!isset($data['method'])) {
@@ -439,8 +432,6 @@ class OrderController extends AbstractController
         }
 
         $code = strtoupper($data['method']);
-
-        $paymentContext->setMethod($code);
 
         $paymentMethod = $paymentMethodRepository->findOneByCode($code);
 
@@ -458,18 +449,7 @@ class OrderController extends AbstractController
             return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
         }
 
-        $payment->setMethod($paymentMethod);
-
-        switch ($code) {
-            case 'EDENRED+CARD':
-            case 'EDENRED':
-                $breakdown = $edenredClient->splitAmounts($order);
-                $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
-                break;
-            default:
-                $payment->clearAmountBreakdown();
-                break;
-        }
+        $paymentContext->setMethod($code);
 
         $orderPaymentProcessor->process($order);
 
@@ -493,7 +473,6 @@ class OrderController extends AbstractController
         }
 
         return new JsonResponse([
-            'amount_breakdown' => $payment->getAmountBreakdown(),
             'payments' => $normalizer->normalize($payments, 'json', ['groups' => ['payment']]),
             'stripe' => $stripe,
         ]);

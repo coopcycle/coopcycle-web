@@ -1204,11 +1204,6 @@ restaurants.edenred_transactions.title: Transactions Edenred
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.
-form.payment.edenred_disclaimer: Cette commande a été payée avec Edenred et un complément
-  par carte bancaire. Le remboursement se fera en priorité sur le montant payé par
-  carte bancaire, et sur le montant Edenred le cas échéant.
-form.payment.refund_breakdown: Montant remboursable par carte %card%, montant remboursable
-  par Edenred %edenred%
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet

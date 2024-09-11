@@ -183,11 +183,8 @@ class Client
         }
     }
 
-    public function splitAmounts(OrderInterface $order)
+    public function getMaxAmount(OrderInterface $order): int
     {
-        // FIXME
-        // If the order is click & collect, customer can pay it all
-
         $total = $order->getTotal();
 
         $notPayableAmount = array_sum([
@@ -201,15 +198,10 @@ class Client
         $balance = $this->getBalance($order->getCustomer());
 
         if ($payableAmount > $balance) {
-            $rest = $payableAmount - $balance;
-            $notPayableAmount += $rest;
-            $payableAmount = $balance;
+            return $balance;
         }
 
-        return [
-            'edenred' => $payableAmount,
-            'card' => $notPayableAmount,
-        ];
+        return $payableAmount;
     }
 
     public function cancelTransaction(PaymentInterface $payment)

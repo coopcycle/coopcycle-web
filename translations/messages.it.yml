@@ -1130,11 +1130,6 @@ index.view_all: Visualizzare tutto
 form.settings.geocoding_provider.help: Utilizzato per l'API e quando si importano
   fogli di calcolo
 form.settings.geocoding_provider.label: Fornitore di geocoding
-form.payment.refund_breakdown: Importo rimborsabile per carta %card%, importo rimborsabile
-  per Edenred %edenred%
-form.payment.edenred_disclaimer: Questo ordine è stato pagato con Edenred e un supplemento
-  con carta di credito. Il rimborso verrà fatto basandosi in priorità per l'importo
-  pagato con carta di credito, e per l'importo Edenred se necessario.
 form.settings.google_api_key_custom.label: Google API Key
 form.settings.autocomplete_provider.label: Suggerimenti fornitore
 form.settings.addresses.title: Indirizzi
