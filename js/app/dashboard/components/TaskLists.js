@@ -17,26 +17,28 @@ class TaskLists extends React.Component {
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
-        <h4 className="dashboard__panel__header">
+        <h4 className="dashboard__panel__header d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
-          <Tooltip
-            title={this.props.t("HIDE_SHOW_ON_MAP")}
-            className="mr-2"
-          >
-            <Switch
-              unCheckedChildren={"0"}
-              checkedChildren={"I"}
-              defaultChecked={mapFiltersSettings.showAssigned}
-              checked={mapFiltersSettings.showAssigned}
-              onChange={checked => setMapFilterValue(checked)}
-            />
-          </Tooltip>
-          { taskListsLoading ?
-            (<span className="pull-right"><span className="loader"></span></span>) :
-            (<a className="pull-right" onClick={this.props.openAddUserModal}>
-              <i className="fa fa-plus" data-cypress-add-to-planning></i>&nbsp;<i className="fa fa-user"></i>
-            </a>)
-          }
+          <span className="pull-right">
+            <Tooltip
+              title={this.props.t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
+              className="mr-2"
+            >
+              <Switch
+                unCheckedChildren={"0"}
+                checkedChildren={"I"}
+                defaultChecked={mapFiltersSettings.showAssigned}
+                checked={mapFiltersSettings.showAssigned}
+                onChange={checked => setMapFilterValue(checked)}
+              />
+            </Tooltip>
+            { taskListsLoading ?
+              (<span className="loader"></span>) :
+              (<a onClick={this.props.openAddUserModal}>
+                <i className="fa fa-plus" data-cypress-add-to-planning></i>&nbsp;<i className="fa fa-user"></i>
+              </a>)
+            }
+          </span>
         </h4>
         <div
           className="dashboard__panel__scroll"

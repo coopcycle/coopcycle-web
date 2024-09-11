@@ -107,7 +107,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
           </Tooltip>
         </a>
         <Tooltip
-          title={t("HIDE_SHOW_ON_MAP")}
+          title={t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
           className="mr-2"
         >
           <Switch

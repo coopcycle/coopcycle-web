@@ -95,6 +95,7 @@
         "ADMIN_DASHBOARD_DISPLAY": "Anzeige",
         "ADMIN_DASHBOARD_MODIFY_TASK": "Verändern",
         "ADMIN_DASHBOARD_START_TASK": "Anfang",
+        "ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP": "Auf der Karte ausblenden/einblenden",
         "ADMIN_DASHBOARD_TOOLTIP_COMPLETED": "Abgeschlossen",
         "ADMIN_DASHBOARD_TOOLTIP_CANCELLED": "Abgebrochen",
         "ADMIN_DASHBOARD_TOOLTIP_IN_PROGRESS": "In Bearbeitung",
