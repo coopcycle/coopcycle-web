@@ -282,7 +282,16 @@ export default function(formSelector, options) {
     .forEach(el => el.classList.add('d-none'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
-    cc.mount(document.getElementById('card-element'), null, null, options).then(() => enableBtn(submitButton))
+    axios
+      .post(options.selectPaymentMethodURL, { method: 'CARD' })
+      .then(response => {
+
+        // This will be used later in handlePayment function
+        payments = response.data.payments
+
+        cc.mount(document.getElementById('card-element'), null, response.data, options).then(() => enableBtn(submitButton))
+
+      })
   } else {
 
     const el = document.createElement('div')
