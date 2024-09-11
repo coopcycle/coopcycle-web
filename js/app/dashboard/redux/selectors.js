@@ -129,7 +129,8 @@ const sortUnassignedTasks = (taskA, taskB) => {
 export const selectStandaloneTasks = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
-  (unassignedTasks, taskListGroupMode) => {
+  selectTaskIdToTourIdMap,
+  (unassignedTasks, taskListGroupMode, taskIdToTourIdMap) => {
 
     let standaloneTasks = unassignedTasks
 
@@ -167,7 +168,7 @@ export const selectStandaloneTasks = createSelector(
       standaloneTasks.sort(sortUnassignedTasks)
     }
 
-    return standaloneTasks
+    return filter(standaloneTasks, t => !taskIdToTourIdMap.has(t['@id']))
   }
 )
 

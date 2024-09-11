@@ -114,8 +114,7 @@ export const selectAssignedTasks = createSelector(
 export const selectUnassignedTasks = createSelector(
   selectAllTasks,
   selectAssignedTasks,
-  (allTasks, assignedItemIds) =>
-    _.filter(allTasks, task => assignedItemIds.findIndex(assignedItemId => task['@id'] == assignedItemId) == -1)
+  (allTasks, assignedTasks) => _.filter(allTasks, task => !assignedTasks.find(t => t['@id'] === task['@id']))
 )
 
 export const selectAllTours = createSelector(
