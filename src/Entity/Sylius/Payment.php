@@ -61,7 +61,7 @@ class Payment extends BasePayment implements OrderAwareInterface
      */
     public function isMealVoucherComplement(): bool
     {
-        if ($this->getMethod()->getCode() === 'CARD') {
+        if ($this->getMethod()?->getCode() === 'CARD') {
             $edenredPayments = $this->getOrder()->getPayments()->filter(function (self $payment): bool {
                 return $payment->getMethod()->getCode() === 'EDENRED' && $payment->getState() === self::STATE_CART;
             });
