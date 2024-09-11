@@ -113,6 +113,19 @@ export const selectGroups = createSelector(
   }
 )
 
+const sortUnassignedTasks = (taskA, taskB) => {
+  if (moment(taskA.before).isSame(taskB.before) && taskA.type === 'PICKUP' && taskB.type === 'DROPOFF') {
+    return -1
+  } else if (moment(taskA.before).isSame(taskB.before) && taskA.metadata?.delivery_position !== undefined && taskB.metadata?.delivery_position !== undefined) {
+    return taskA.metadata.delivery_position - taskB.metadata.delivery_position
+  } else if (moment(taskA.before).isBefore(taskB.before)) {
+    // put on top of the list the tasks that have an end of delivery window that finishes sooner
+    return -1
+  }
+
+  return 1
+}
+
 export const selectStandaloneTasks = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
@@ -130,7 +143,7 @@ export const selectStandaloneTasks = createSelector(
       const dropoffTasks = filter(standaloneTasks, t => t.type === 'DROPOFF')
 
       dropoffTasks.sort((a, b) => {
-        return moment(a.before).isBefore(b.before) ?
+        return sortUnassignedTasks(a, b) > 0 ?
           (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? -1 : 1)
           :
           (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? 1 : -1)
@@ -151,14 +164,7 @@ export const selectStandaloneTasks = createSelector(
 
       standaloneTasks = grouped
     } else {
-      standaloneTasks.sort((a, b) => {
-        if (moment(a.before).isSame(b.before) && a.type === 'PICKUP') {
-          return -1
-        } else {
-          // put on top of the list the tasks that have an end of delivery window that finishes sooner
-          return moment(a.before).isBefore(b.before) ? -1 : 1
-        }
-      })
+      standaloneTasks.sort(sortUnassignedTasks)
     }
 
     return standaloneTasks
