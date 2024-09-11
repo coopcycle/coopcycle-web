@@ -5,11 +5,9 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
-use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\MercadopagoManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\StripeManager;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -29,16 +27,14 @@ class CapturePaymentTest extends TestCase
     public function setUp(): void
     {
         $this->stripeManager = $this->prophesize(StripeManager::class);
-        $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
-        $this->edenred = $this->prophesize(EdenredClient::class);
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
+        $this->stripeGateway = new Gateway\Stripe($this->stripeManager->reveal());
+
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
-            $this->stripeManager->reveal(),
-            $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            ['stripe' => $this->stripeGateway]
         );
 
         $this->capturePayment = new CapturePayment(

@@ -6,12 +6,10 @@ use AppBundle\Domain\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
 use AppBundle\Domain\Order\Handler\CheckoutHandler;
-use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\StripeManager;
 use PHPUnit\Framework\TestCase;
@@ -39,15 +37,13 @@ class CheckoutHandlerTest extends TestCase
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
-        $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
-        $this->edenred = $this->prophesize(EdenredClient::class);
+
+        $this->stripeGateway = new Gateway\Stripe($this->stripeManager->reveal());
 
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
-            $this->stripeManager->reveal(),
-            $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            ['stripe' => $this->stripeGateway]
         );
 
         $this->handler = new CheckoutHandler(
