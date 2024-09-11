@@ -236,11 +236,6 @@ class SetupCommand extends Command
                 'countries' => ['fr'],
             ],
             [
-                'code' => 'EDENRED+CARD',
-                'name' => 'Edenred + Card',
-                'countries' => ['fr'],
-            ],
-            [
                 'code' => 'CASH_ON_DELIVERY',
                 'name' => 'Cash on delivery',
                 'countries' => ['mx','ar'],
