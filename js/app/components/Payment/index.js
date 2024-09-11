@@ -212,27 +212,32 @@ export default function(formSelector, options) {
       .then(response => {
         switch (value) {
           case 'card':
-          case 'edenred+card':
+          case 'edenred':
+
             const cashDisclaimer = document.getElementById('cash_on_delivery_disclaimer')
             if (cashDisclaimer) {
               // remove disclaimer for cash method if it was previously selected
               cashDisclaimer.remove()
             }
 
-            cc.mount(document.getElementById('card-element'), value, response.data, options)
-              .then(() => {
-                document.getElementById('card-element').scrollIntoView()
-                enableBtn(submitButton)
-              })
-              .catch(e => {
-                document.getElementById('card-errors').textContent = e.message
-              })
-            break
-          case 'edenred':
-            // TODO
-            // Here no need to enter credit card details or what
-            // Maybe, add a confirmation step?
-            enableBtn(submitButton)
+            const hasCard = _.find(response.data.payments, p => p.method.code === 'CARD')
+
+            if (hasCard) {
+              cc.mount(document.getElementById('card-element'), value, response.data, options)
+                .then(() => {
+                  document.getElementById('card-element').scrollIntoView()
+                  enableBtn(submitButton)
+                })
+                .catch(e => {
+                  document.getElementById('card-errors').textContent = e.message
+                })
+            } else {
+              // TODO
+              // Here no need to enter credit card details or what
+              // Maybe, add a confirmation step?
+              enableBtn(submitButton)
+            }
+
             break
           case 'cash_on_delivery':
             if (document.getElementById('card-element').children.length) {
