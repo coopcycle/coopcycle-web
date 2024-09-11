@@ -36,6 +36,7 @@ class Gateway implements GatewayInterface
             return $this->gateways['edenred'];
         }
 
+        // FIXME Use resolveForOrder
         switch ($this->resolver->resolve()) {
             case 'mercadopago':
                 return $this->gateways['mercadopago'];
