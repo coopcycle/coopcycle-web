@@ -45,8 +45,12 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        // legacy serialization for app and events with filtered tasks
-        if ($object->getTempLegacyTaskStorage() && count($object->getTempLegacyTaskStorage())) {
+        // legacy serialization for API endpoints that output TaskList.items as a list of tasks
+        // look for "setTempLegacyTaskStorage" usage in the code.
+        // known usage at the time of the writing :
+        //  - used for the rider/dispatcher smartphone app (does not display or handle tours)
+        //  - used for stores to access /api/task_lists/ and display only tasks linked to the org (it is only used by Tricargo coop and should be considered legacy)
+        if (!is_null($object->getTempLegacyTaskStorage())) {
             $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
             $data = $this->normalizer->normalize($object, $format, $context);
             $data['items'] = array_map(function($task) {
