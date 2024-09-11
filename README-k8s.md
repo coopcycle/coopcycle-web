@@ -1,3 +1,13 @@
+## Introduction
+
+Based on Symfony Docker:
+
+https://symfony.com/blog/introducing-docker-support
+
+https://github.com/dunglas/symfony-docker
+
+Kubernetes: https://kubernetes.io/docs/concepts/architecture/
+
 ## Prerequisites
 
 Install
