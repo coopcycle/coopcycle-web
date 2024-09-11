@@ -232,6 +232,11 @@ export default {
     this.saveCard = false
     this.savedPaymentMethod = null
 
+    this.config.gatewayConfig = {
+      ...this.config.gatewayConfig,
+      ...options.stripe
+    }
+
     let resultCards = []
     if (!isGuest(formOptions)) { // avoid this API call if the customer is a guest
       resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
