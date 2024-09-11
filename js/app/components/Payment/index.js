@@ -61,6 +61,7 @@ export default function(formSelector, options) {
   disableBtn(submitButton)
 
   let cc
+  let payments = []
 
   if (containsMethod(methods, 'card')) {
 
@@ -127,18 +128,23 @@ export default function(formSelector, options) {
       handleCardPayment(savedPaymentMethod)
     } else {
 
+      const hasCard = !!_.find(payments, p => p.method.code === 'CARD')
+
       const selectedMethod =
         form.querySelector('input[name="checkout_payment[method]"]:checked').value
 
       switch (selectedMethod) {
         case 'edenred':
           // It means the whole amount can be paid with Edenred (ex. click & collect)
-          form.submit()
+          if (!hasCard) {
+            form.submit()
+          } else {
+            handleCardPayment(savedPaymentMethod)
+          }
           break
         case 'cash_on_delivery':
           form.submit()
           break
-        case 'edenred+card':
         case 'card':
           handleCardPayment(savedPaymentMethod)
           break
@@ -210,6 +216,10 @@ export default function(formSelector, options) {
     axios
       .post(options.selectPaymentMethodURL, { method: value })
       .then(response => {
+
+        // This will be used later in handlePayment function
+        payments = response.data.payments
+
         switch (value) {
           case 'card':
           case 'edenred':
@@ -220,7 +230,7 @@ export default function(formSelector, options) {
               cashDisclaimer.remove()
             }
 
-            const hasCard = _.find(response.data.payments, p => p.method.code === 'CARD')
+            const hasCard = !!_.find(response.data.payments, p => p.method.code === 'CARD')
 
             if (hasCard) {
               cc.mount(document.getElementById('card-element'), value, response.data, options)
