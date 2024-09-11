@@ -34,41 +34,6 @@ trait EdenredTrait
         }
     }
 
-    public function setAmountBreakdown(int $edenredAmount, int $cardAmount)
-    {
-        $this->details = array_merge($this->details, [
-            'amount_breakdown' => [
-                'edenred' => $edenredAmount,
-                'card'    => $cardAmount,
-            ]
-        ]);
-    }
-
-    public function clearAmountBreakdown()
-    {
-        if (isset($this->details['amount_breakdown'])) {
-            unset($this->details['amount_breakdown']);
-        }
-    }
-
-    public function getAmountBreakdown()
-    {
-        if (isset($this->details['amount_breakdown'])) {
-            return $this->details['amount_breakdown'];
-        }
-
-        return [
-            'card' => $this->getAmount(),
-        ];
-    }
-
-    public function isEdenredWithCard()
-    {
-        $method = $this->getMethod();
-
-        return null !== $method && $method->getCode() === 'EDENRED+CARD';
-    }
-
     public function setEdenredCancelId($cancelId)
     {
         $this->details = array_merge($this->details, [
