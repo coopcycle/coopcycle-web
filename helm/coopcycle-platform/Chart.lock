@@ -25,6 +25,6 @@ dependencies:
   version: 2.4.0
 - name: smtp
   repository: file://../smtp
-  version: 0.0.2
-digest: sha256:f2c0cf9e8e06476024e49538aa8968507d04379916a82f18f4fc011dd449b80a
-generated: "2024-08-21T12:26:55.673016-07:00"
+  version: 0.0.4
+digest: sha256:b358c57e08f0cc4bf09dce9a5b87a1318c4cf75d6df0a6c8f9492dfc62a1c23e
+generated: "2024-09-11T11:04:04.170571-07:00"

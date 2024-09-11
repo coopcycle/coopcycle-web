@@ -17,7 +17,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.0
+version: 0.1.1
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
@@ -59,7 +59,8 @@ dependencies:
     version: 2.4.0
     repository: "file://../mjml"
     condition: mjml.enabled
+  # dev-only dependency
   - name: smtp
-    version: 0.0.2
+    version: 0.0.4
     repository: "file://../smtp"
     condition: smtp.enabled

@@ -41,7 +41,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 25
+  port: 8025
 
 ingress:
   enabled: false
@@ -71,12 +71,17 @@ resources: {}
   #   cpu: 100m
   #   memory: 128Mi
 
+startupProbe:
+  tcpSocket:
+    port: 8025
+  failureThreshold: 30
+  periodSeconds: 10
 livenessProbe:
   tcpSocket:
-    port: 25
+    port: 8025
 readinessProbe:
   tcpSocket:
-    port: 25
+    port: 8025
 
 autoscaling:
   enabled: false

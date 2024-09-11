@@ -42,3 +42,7 @@ minio:
   auth:
     rootUser: "minio"
     rootPassword: "coopcycle"
+
+# Dev-only dependency
+smtp:
+  enabled: true
