@@ -723,6 +723,25 @@ class StripeManagerTest extends TestCase
             ->getPayments()
             ->willReturn(new ArrayCollection([ $edenredPayment, $payment ]));
 
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
+
         $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('POST', '/v1/payment_intents', 'acct_123456', [
@@ -733,6 +752,7 @@ class StripeManagerTest extends TestCase
             "confirmation_method" => "manual",
             "confirm" => "true",
             "capture_method" => "manual",
+            "customer" => "cus_123456abcdef",
         ]);
 
         $this->stripeManager->createIntent($payment);
