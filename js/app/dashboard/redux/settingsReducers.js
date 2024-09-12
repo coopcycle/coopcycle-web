@@ -40,7 +40,8 @@ export const defaultSettings = {
 }
 
 export const defaultMapFilters = {
-  showUnassignedTours: true
+  showUnassignedTours: true,
+  showAssigned: true
 }
 
 export const initialState = {
