@@ -63,11 +63,11 @@
   {% include 'order/_partials/payment_link.html.twig' %}
 {% endif %}
 
-{{ form_end(form) }}
-
 {% for payment_form in form.payments %}
   {% include 'order/_partials/payment_form.html.twig' %}
 {% endfor %}
+
+{{ form_end(form) }}
 
 {% if email_form is defined %}
   <div class="modal fade" id="send-payment-link-modal" tabindex="-1" role="dialog" aria-labelledby="send-payment-link-modal-label">

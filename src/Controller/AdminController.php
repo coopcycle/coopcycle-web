@@ -328,37 +328,33 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
 
-        foreach ($form->get('payments') as $paymentForm) {
-            if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
-                // https://github.com/symfony/symfony/issues/35277
-                /** @var \Symfony\Component\Form\Form $paymentForm */
-                $hasClickedRefund =
-                    $paymentForm->getClickedButton() && 'refund' === $paymentForm->getClickedButton()->getName();
-
-                $hasExpectedFields = $paymentForm->has('amount');
-
-                if ($hasClickedRefund && $hasExpectedFields) {
-                    $payment = $paymentForm->getData();
-                    $amount = $paymentForm->get('amount')->getData();
-                    $liableParty = $paymentForm->get('liable')->getData();
-                    $comments = $paymentForm->get('comments')->getData();
-
-                    $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
-
-                    $this->entityManager->flush();
-
-                    $this->addFlash(
-                        'notice',
-                        $this->translator->trans('orders.payment_refunded')
-                    );
-
-                    return $this->redirectToRoute('admin_order', ['id' => $id]);
-                }
-            }
-        }
-
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton()) {
+
+                if ('refund' === $form->getClickedButton()->getName()) {
+                    foreach ($form->get('payments') as $paymentForm) {
+                        /** @var \Symfony\Component\Form\ClickableInterface $refundButton */
+                        $refundButton = $paymentForm->get('refund');
+                        if ($refundButton->isClicked()) {
+                            $payment = $paymentForm->getData();
+                            $amount = $paymentForm->get('amount')->getData();
+                            $liableParty = $paymentForm->get('liable')->getData();
+                            $comments = $paymentForm->get('comments')->getData();
+
+                            $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
+
+                            $this->entityManager->flush();
+
+                            $this->addFlash(
+                                'notice',
+                                $this->translator->trans('orders.payment_refunded')
+                            );
+
+                            return $this->redirectToRoute('admin_order', ['id' => $id]);
+                        }
+                    }
+                }
+
                 if ('accept' === $form->getClickedButton()->getName()) {
                     $orderManager->accept($order);
                 }

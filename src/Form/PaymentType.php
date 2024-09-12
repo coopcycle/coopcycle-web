@@ -61,12 +61,14 @@ class PaymentType extends AbstractType
                             'expanded' => true,
                             'multiple' => false,
                             'mapped' => false,
+                            'data' => 'platform',
                         ]);
                         $form->add('comments', TextareaType::class, [
                             'label' => 'form.payment.refund_comment.label',
                             'help' => 'form.payment.refund_comment.help',
                             'mapped' => false,
                             'attr' => ['rows' => '6'],
+                            'required' => false,
                         ]);
 
                         $form->add('refund', SubmitType::class, [
