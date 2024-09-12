@@ -85,7 +85,7 @@ class StripeManager
         // we do not take application fee
         if ($payment->isMealVoucherComplement()) {
 
-            return $payload;
+            return $this->addCustomerParameter($payment, $payload);
         }
 
         $attrs = [];
@@ -110,20 +110,36 @@ class StripeManager
         }
 
         if (null === $stripeAccount || !$restaurantPaysStripeFee) {
-            /** For payments done directly in the platform account
-             *  we send the Customer paramater to associate the payment to the customer.
-             * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
-             */
+
             if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
                 $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
 
                 if (null !== $stripeCustomer) {
-                    $attrs['customer'] = $stripeCustomer;
+                    $attrs = $this->addCustomerParameter($payment, $attrs);
                 }
             }
         }
 
         return $payload + $attrs;
+    }
+
+    /**
+     * For payments done directly in the platform account
+     * we send the Customer paramater to associate the payment to the customer.
+     * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
+     */
+    private function addCustomerParameter(PaymentInterface $payment, array $payload): array
+    {
+        $order = $payment->getOrder();
+
+        if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
+            $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
+            if (null !== $stripeCustomer) {
+                $payload = array_merge($payload, ['customer' => $stripeCustomer]);
+            }
+        }
+
+        return $payload;
     }
 
     /**
