@@ -114,10 +114,10 @@ export const selectGroups = createSelector(
 )
 
 const sortUnassignedTasks = (taskA, taskB) => {
-  if (moment(taskA.before).isSame(taskB.before) && taskA.type === 'PICKUP' && taskB.type === 'DROPOFF') {
-    return -1
-  } else if (moment(taskA.before).isSame(taskB.before) && taskA.metadata?.delivery_position !== undefined && taskB.metadata?.delivery_position !== undefined) {
+  if (moment(taskA.before).isSame(taskB.before) && taskA.metadata?.delivery_position !== undefined && taskB.metadata?.delivery_position !== undefined) {
     return taskA.metadata.delivery_position - taskB.metadata.delivery_position
+  } else if (moment(taskA.before).isSame(taskB.before) && taskA.type === 'PICKUP' && taskB.type === 'DROPOFF') {
+    return -1
   } else if (moment(taskA.before).isBefore(taskB.before)) {
     // put on top of the list the tasks that have an end of delivery window that finishes sooner
     return -1
