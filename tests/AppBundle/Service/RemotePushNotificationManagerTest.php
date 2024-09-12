@@ -7,9 +7,10 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\RemotePushNotificationManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Kreait\Firebase\Factory as FirebaseFactory;
 use Kreait\Firebase\Messaging as FirebaseMessaging;
+use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
+use Kreait\Firebase\Messaging\MulticastSendReport;
 use Kreait\Firebase\Exception\Messaging\NotFound;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -44,12 +45,8 @@ class RemotePushNotificationManagerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->firebaseMessaging = $this->prophesize(FirebaseMessaging::class);
-        $this->firebaseFactory = $this->prophesize(FirebaseFactory::class);
+        $this->firebaseMessaging = $this->prophesize(Messaging::class);
         $this->pushOkClient = $this->prophesize(Pushok\Client::class);
-
-        $this->firebaseFactory->createMessaging()
-            ->willReturn($this->firebaseMessaging->reveal());
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
 
@@ -58,7 +55,7 @@ class RemotePushNotificationManagerTest extends TestCase
             ->willReturn('Tap to open');
 
         $this->remotePushNotificationManager = new RemotePushNotificationManager(
-            $this->firebaseFactory->reveal(),
+            $this->firebaseMessaging->reveal(),
             $this->pushOkClient->reveal(),
             $this->entityManager->reveal(),
             $this->translator->reveal(),
