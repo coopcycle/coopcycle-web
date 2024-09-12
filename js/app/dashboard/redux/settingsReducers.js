@@ -6,6 +6,7 @@ import {
   SHOW_RECURRENCE_RULES,
   SET_TOURS_ENABLED,
   setGeneralSettings,
+  setMapFilterValue,
 } from './actions'
 
 export const defaultFilters = {
@@ -38,10 +39,16 @@ export const defaultSettings = {
   toursEnabled: false // is the tour column expanded
 }
 
+export const defaultMapFilters = {
+  showUnassignedTours: true,
+  showAssigned: true
+}
+
 export const initialState = {
   ...defaultSettings,
   filters: defaultFilters,
   isDefaultFilters: true,
+  mapFilters: defaultMapFilters
 }
 
 export default (state = initialState, action) => {
@@ -64,6 +71,17 @@ export default (state = initialState, action) => {
       ...state,
       filters: newFilters,
       isDefaultFilters: _.isEqual(newFilters, defaultFilters)
+    }
+
+  case setMapFilterValue.type:
+    const newMapFilters = {
+      ...state.mapFilters,
+      [action.payload.key]: action.payload.value
+    }
+
+    return {
+      ...state,
+      mapFilters: newMapFilters
     }
 
   case RESET_FILTERS:

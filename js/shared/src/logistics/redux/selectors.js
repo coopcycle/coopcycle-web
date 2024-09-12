@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { mapToColor } from './taskUtils';
-import { assignedItemsIds } from './taskListUtils';
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from './adapters'
 import i18next from 'i18next';
 
@@ -44,11 +43,6 @@ export const selectTasksById = createSelector(
   (allTasks, tasksId) => tasksId.map(taskId => allTasks.find(t => t['@id'] === taskId))
 )
 
-export const selectAssignedTasks = createSelector(
-  taskListSelectors.selectAll,
-  taskLists => assignedItemsIds(taskLists)
-)
-
 export const selectVehicleIdToTaskListIdMap = createSelector(
   taskListSelectors.selectAll,
   (allTaskList) => {
@@ -73,13 +67,6 @@ export const selectTrailerIdToTaskListIdMap = createSelector(
   return trailerIdToTaskListId
 })
 
-export const selectUnassignedTasks = createSelector(
-  selectAllTasks,
-  selectAssignedTasks,
-  (allTasks, assignedItemIds) =>
-    _.filter(allTasks, task => assignedItemIds.findIndex(assignedItemId => task['@id'] == assignedItemId) == -1)
-)
-
 export const selectTasksWithColor = createSelector(
   selectAllTasks,
   allTasks => mapToColor(allTasks)
@@ -87,31 +74,47 @@ export const selectTasksWithColor = createSelector(
 
 export const selectTaskListByUsername = (state, props) => taskListSelectors.selectById(state, props.username)
 
+const flattenTaskListItemsAsListOfTasks = (taskList, allTasks, allTours) => {
+  return taskList.items.reduce((acc, it) => {
+    if (it.startsWith('/api/tours')) {
+      const tour = allTours.find(t => t['@id'] === it)
+      // filter out undefined values
+      // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+      acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId)).filter( Boolean )]
+    } else {
+      // filter out undefined values
+      // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+      const task = allTasks.find(t => t["@id"] === it)
+      if (task === undefined) {
+        console.error("Could not find task at id " + it)
+      } else {
+        acc.push(task)
+      }
+    }
+    return acc
+  }, [])
+}
+
 export const selectTaskListTasksByUsername = createSelector(
   selectTaskListByUsername,
   selectAllTasks,
   tourSelectors.selectAll,
-  (taskList, allTasks, allTours) => {
-    return taskList.items.reduce((acc, it) => {
-      if (it.startsWith('/api/tours')) {
-        const tour = allTours.find(t => t['@id'] === it)
-        // filter out undefined values
-        // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
-        acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId)).filter( Boolean )]
-      } else {
-        // filter out undefined values
-        // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
-        const task = allTasks.find(t => t["@id"] === it)
-        if (task === undefined) {
-          console.error("Could not find task at id " + it)
-        } else {
-          acc.push(task)
-        }
-      }
-      return acc
-    }, [])
-  }
+  (taskList, allTasks, allTours) => flattenTaskListItemsAsListOfTasks(taskList, allTasks, allTours)
+)
 
+export const selectAssignedTasks = createSelector(
+  taskListSelectors.selectAll,
+  selectAllTasks,
+  tourSelectors.selectAll,
+  (taskLists, allTasks, allTours) => taskLists.reduce((acc, taskList) => {
+    return acc.concat(flattenTaskListItemsAsListOfTasks(taskList, allTasks, allTours))
+  }, [])
+)
+
+export const selectUnassignedTasks = createSelector(
+  selectAllTasks,
+  selectAssignedTasks,
+  (allTasks, assignedTasks) => _.filter(allTasks, task => !assignedTasks.find(t => t['@id'] === task['@id']))
 )
 
 export const selectAllTours = createSelector(

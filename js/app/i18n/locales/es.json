@@ -114,6 +114,7 @@
         "ADMIN_DASHBOARD_TOOLTIP_FAILED": "Fallida",
         "ADMIN_DASHBOARD_TOOLTIP_INCIDENT_REPORTED": "Informe de incidente",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Total",
+        "ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP": "Ocultar/mostrar en el mapa",
         "ADMIN_WAREHOUSE_FORM_TITLE": "Crear un almacén",
         "ADMIN_WAREHOUSE_NAME_LABEL": "Nombre",
         "ADMIN_WAREHOUSE_ADDRESS_LABEL": "Dirección",

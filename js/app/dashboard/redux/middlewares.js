@@ -12,6 +12,7 @@ import {
   setGeneralSettings,
   MODIFY_TASK_LIST_REQUEST,
   setOptimResult,
+  setMapFilterValue,
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
@@ -116,6 +117,11 @@ export const persistFilters = ({ getState }) => (next) => (action) => {
   if (action.type === SET_FILTER_VALUE) {
     state = getState()
     window.localStorage.setItem("cpccl__dshbd__fltrs", JSON.stringify(state.settings.filters))
+  }
+
+  if (action.type === setMapFilterValue.type) {
+    state = getState()
+    window.localStorage.setItem("cpccl__dshbd__map__fltrs", JSON.stringify(state.settings.mapFilters))
   }
 
   if (action.type === RESET_FILTERS) {
