@@ -42,13 +42,15 @@ final class Version20240911103649 extends AbstractMigration
             }
 
             if ($details['amount_breakdown']['edenred'] > 0) {
-                $this->addSql('INSERT INTO sylius_payment (method_id, order_id, currency_code, amount, state, details, created_at, updated_at) VALUES (:method_id, :order_id, :currency_code, :amount, :state, :details)', [
+                $this->addSql('INSERT INTO sylius_payment (method_id, order_id, currency_code, amount, state, details, created_at, updated_at) VALUES (:method_id, :order_id, :currency_code, :amount, :state, :details, :created_at, :updated_at)', [
                     'method_id' => $edenredPaymentMethodId,
                     'order_id' => $payment['order_id'],
                     'currency_code' => $payment['currency_code'],
                     'amount' => $details['amount_breakdown']['edenred'],
                     'state' => $payment['state'],
                     'details' => json_encode($edenredDetails),
+                    'created_at' => $payment['created_at'],
+                    'updated_at' => $payment['updated_at'],
                 ]);
             }
 
@@ -65,7 +67,7 @@ final class Version20240911103649 extends AbstractMigration
 
         }
 
-        $this->addSql('UPDATE sylius_payment_method SET enabled = \'f\' WHERE code = \'EDENRED+CARD\'');
+        $this->addSql('UPDATE sylius_payment_method SET is_enabled = \'f\' WHERE code = \'EDENRED+CARD\'');
     }
 
     public function down(Schema $schema): void
