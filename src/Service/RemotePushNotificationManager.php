@@ -51,12 +51,7 @@ class RemotePushNotificationManager
             return;
         }
 
-        try {
-            $firebaseMessaging = $this->firebaseFactory->createMessaging();
-        } catch (ServiceAccountDiscoveryFailed $e) {
-            $this->pushNotificationLogger->error($e);
-            return;
-        }
+        $firebaseMessaging = $this->firebaseFactory->createMessaging();
 
         // @see https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
         // @see https://developer.android.com/guide/topics/ui/notifiers/notifications#ManageChannels
@@ -106,7 +101,7 @@ class RemotePushNotificationManager
         // Make sure to have a zero-indexed array
         $deviceTokens = array_values($deviceTokens);
 
-        // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html?#send-messages-to-multiple-devices-multicast
+        // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html#send-messages-in-batches
         $report = $firebaseMessaging->sendMulticast($message, $deviceTokens);
 
         if ($report->hasFailures()) {

@@ -1203,3 +1203,8 @@ acseo_typesense:
                     entity_attribute: 'AppBundle\Typesense\Converter\ShopConverter::getImageURL'
                     optional: true
             default_sorting_field: sortable_id
+
+kreait_firebase:
+    projects:
+        coopcycle:
+            credentials: '%env(FIREBASE_CREDENTIALS)%'
