@@ -388,7 +388,18 @@ class OrderController extends AbstractController
 
             $this->objectManager->flush();
 
-            // TODO Check if all $payments have succeeded
+            $failedPayments = $payments->filter(
+                fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_FAILED);
+
+            if (count($failedPayments) > 0) {
+                $errors = $failedPayments->map(fn (PaymentInterface $payment): string => $payment->getLastError());
+                $error = implode("\n", $errors->toArray());
+
+                return $this->render('order/payment.html.twig', array_merge($parameters, [
+                    'form' => $form->createView(),
+                    'error' => $error,
+                ]));
+            }
 
             return $this->redirectToOrderConfirm($order);
         }
