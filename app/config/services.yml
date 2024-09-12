@@ -117,6 +117,7 @@ services:
   Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
   League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
+  Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
