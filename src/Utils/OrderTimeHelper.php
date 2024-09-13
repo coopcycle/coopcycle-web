@@ -97,11 +97,12 @@ class OrderTimeHelper
 
     private function getAsapChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
     {
-        $hash = sprintf('%s-%s-%s',
+        $hash = sprintf('%s-%s-%s-%s',
             $cart->getFulfillmentMethod(),
             implode(',', array_map(function($vendor) {
                 return $vendor->getRestaurant()->getId();
             }, $cart->getVendors()->toArray())),
+            $cart->getShippingAddress() ? $cart->getShippingAddress()->getId() : 'null',
             spl_object_hash($cart));
 
         $this->logger->debug(sprintf('OrderTimeHelper::getAsapChoices | is using cached value? %s',
@@ -109,6 +110,7 @@ class OrderTimeHelper
             [
                 'order' => $this->loggingUtils->getOrderId($cart),
                 'vendor' => $this->loggingUtils->getVendors($cart),
+                'hash' => $hash,
             ]);
 
         if (!isset($this->choicesCache[$hash])) {
