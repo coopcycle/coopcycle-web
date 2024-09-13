@@ -54,6 +54,11 @@ class ExportOrdersCommand extends BaseExportCommand
         $handledStamp = $envelope->last(HandledStamp::class);
         $export = $handledStamp->getResult();
 
+        if (is_null($export)) {
+            $output->writeln('No orders found');
+            return Command::SUCCESS;
+        }
+
         switch ($input->getOption('format')) {
             case 'parquet':
                 $export = $this->csv2parquet($export);
