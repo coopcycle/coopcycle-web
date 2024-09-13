@@ -300,6 +300,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?string $paygreenShopId = null;
 
+    protected string $billingMethod;
+
     /**
      * @Groups({"restaurant"})
      */
@@ -1203,5 +1205,15 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function supportsPaygreen(): bool
     {
         return null !== $this->getPaygreenShopId();
+    }
+
+    public function setBillingMethod(string $billingMethod): void
+    {
+        $this->billingMethod = $billingMethod;
+    }
+
+    public function getBillingMethod(): string
+    {
+        return $this->billingMethod;
     }
 }

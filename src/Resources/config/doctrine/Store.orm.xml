@@ -31,6 +31,11 @@
     <field name="packagesRequired" type="boolean" column="packages_required"/>
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
     <field name="transporter" type="string" column="transporter" nullable="true" unique="true" />
+    <field name="billingMethod" type="string" column="billing_method" nullable="false">
+      <options>
+        <option name="default">per_task</option>
+      </options>
+    </field>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

@@ -178,6 +178,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $transporter = null;
 
+    protected string $billingMethod;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -614,5 +616,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function getRrules()
     {
         return $this->rrules;
+    }
+
+    public function setBillingMethod(string $billingMethod): void
+    {
+        $this->billingMethod = $billingMethod;
+    }
+
+    public function getBillingMethod(): string
+    {
+        return $this->billingMethod;
     }
 }

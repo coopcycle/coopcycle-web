@@ -81,7 +81,14 @@ class StoreType extends LocalBusinessType
                     ],
                     'help_html' => true,
 
-                ));
+                ))->add('billingMethod', ChoiceType::class, [
+                    'label' => 'form.billing_method.label',
+                    'help' => 'form.billing_method.help',
+                    'choices' => [
+                        'form.billing_method.per_task' => 'per_task',
+                        'form.billing_method.total_percentage' => 'total_percentage',
+                    ]
+                ]);
 
             if ($this->transportersEnabled) {
                 $transporterConfig = $this->transportersConfig;

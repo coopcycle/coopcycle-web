@@ -15,6 +15,7 @@ use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -109,7 +110,14 @@ class RestaurantType extends LocalBusinessType
                         '%entity%' => 'restaurant',
                     ],
                     'help_html' => true,
-                ));
+                ))->add('billingMethod', ChoiceType::class, [
+                    'label' => 'form.billing_method.label',
+                    'help' => 'form.billing_method.help',
+                    'choices' => [
+                        'form.billing_method.per_task' => 'per_task',
+                        'form.billing_method.total_percentage' => 'total_percentage',
+                    ]
+                ]);
 
             if ($this->cashOnDeliveryOptinEnabled) {
                 $builder
