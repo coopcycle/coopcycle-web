@@ -35,7 +35,7 @@ class ShippingTimeCalculator
             $dropoffAddress->getId(),
             spl_object_hash($order));
 
-        return $this->cache->get($hash, function () use ($dropoffAddress, $pickupAddresses, $hash, $order) {
+        return $this->cache->get($hash, function () use ($dropoffAddress, $pickupAddresses) {
             $addresses = $this->optimizer->optimizePickupsAndDelivery($pickupAddresses, $dropoffAddress);
 
             $coordinates = array_map(fn(Address $a) => $a->getGeo(), $addresses);
