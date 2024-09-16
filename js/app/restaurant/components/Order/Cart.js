@@ -44,7 +44,7 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="cart__empty">
+      <div className="cart__empty" data-testid="cart.empty">
         <img src={ cartEmptySvg } />
         <div className="alert alert-info w-100 mt-3">
           <i className="fa fa-info-circle"></i>&nbsp;{ t('CART_EMPTY') }
