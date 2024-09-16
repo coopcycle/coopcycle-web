@@ -183,6 +183,12 @@ See more command line options [here](https://behat.org/en/latest/user_guide/comm
 make jest
 ```
 
+or to run only one test file:
+
+```sh
+sh ./bin/jest path/to/test/file.test.js
+```
+
 ### Launch the Cypress tests
 
 Cypress is a JS program for end-to-end testing and integration testing of components. You will launch a server in the test environment and run cypress on your own machine.
