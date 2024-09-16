@@ -7,6 +7,7 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -40,7 +41,21 @@ class CheckoutHandler
         $payments = $order->getPayments()->filter(
             fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
 
-        // TODO Make sure card payment is always *BEFORE* Edenred payment
+        // Make sure card payment is always *BEFORE* Edenred payment
+        $iterator = $payments->getIterator();
+        $iterator->uasort(function (PaymentInterface $a, PaymentInterface $b) {
+
+            $methodA = $a->getMethod()->getCode();
+            $methodB = $b->getMethod()->getCode();
+
+            if ($methodA === $methodB) {
+
+                return 0;
+            }
+
+            return $methodA === 'CARD' ? -1 : 1;
+        });
+        $payments = new ArrayCollection(iterator_to_array($iterator));
 
         foreach ($payments as $payment) {
 
