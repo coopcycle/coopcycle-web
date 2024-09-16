@@ -32,7 +32,7 @@ class EmailManager
         RendererInterface $mjml,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
-        LoggerInterface $logger,
+        private LoggerInterface $logger,
         $transactionalAddress)
     {
         $this->mailer = $mailer;
