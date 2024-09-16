@@ -120,7 +120,7 @@ Testing
 #### Create the test database
 
 ```sh
-docker-compose run php bin/console doctrine:schema:create --env=test
+docker compose run php bin/console doctrine:schema:create --env=test
 ```
 
 ### Launch the PHPUnit tests
@@ -225,8 +225,8 @@ make enable-xdebug
 ```
 > **Note:** If you've been working with this stack before you'll need to rebuild the php image for this command to work:
 > ```
-> docker-compose build php
-> docker-compose restart php nginx
+> docker compose build php
+> docker compose restart php nginx
 > ```
 
 #### 2. Enable php debug in VSCode
@@ -259,7 +259,7 @@ make enable-xdebug
 3. If you're having issues connecting the debugger yo can restart nginx and php containers to reload the xdebug extension.
 
 ```sh
-docker-compose restart php nginx
+docker compose restart php nginx
 ```
 
 Running migrations
