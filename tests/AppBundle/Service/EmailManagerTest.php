@@ -22,6 +22,7 @@ class EmailManagerTest extends TestCase
         $this->mjml = $this->prophesize(RendererInterface::class);
         $this->translator = $this->prophesize(TranslatorInterface::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
+        $this->logger = $this->prophesize(\Psr\Log\LoggerInterface::class);
 
         $this->emailManager = new EmailManager(
             $this->mailer->reveal(),
@@ -29,6 +30,7 @@ class EmailManagerTest extends TestCase
             $this->mjml->reveal(),
             $this->translator->reveal(),
             $this->settingsManager->reveal(),
+            $this->logger->reveal(),
             'transactional@coopcycle.org'
         );
     }
