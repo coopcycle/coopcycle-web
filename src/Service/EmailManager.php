@@ -9,6 +9,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Task;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -31,6 +32,7 @@ class EmailManager
         RendererInterface $mjml,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
+        LoggerInterface $logger,
         $transactionalAddress)
     {
         $this->mailer = $mailer;
@@ -94,7 +96,11 @@ class EmailManager
 
         $message->to(...$addresses);
 
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+        } catch(\Exception $e) {
+            $this->logger->error(sprintf("Failed to send email: %s", $e->getMessage()));
+        }
     }
 
     /**
