@@ -66,6 +66,10 @@ describe('Selectors', () => {
             },
           },
         },
+        tours: {
+          ids: [],
+          entities: {}
+        }
       },
       ui: {
         taskListsLoading: false,
