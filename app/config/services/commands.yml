@@ -166,3 +166,11 @@ services:
   AppBundle\Command\EmailCubeQueryResultCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:cube:email-results' }
+
+  AppBundle\Command\ExportTasksCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:export:tasks' }
+
+  AppBundle\Command\ExportOrdersCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:export:orders' }

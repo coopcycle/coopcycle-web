@@ -189,7 +189,7 @@ export default function TimeRangeChangedModal() {
     <Modal
       isOpen={isModalOpen}
       onAfterOpen={() => {
-        trackEvent('Checkout', 'openModal', 'timeRangeChanged')
+        trackEvent('Checkout', 'openTimeRangeChangedModal')
       }}
       contentLabel={t('CART_CHANGE_TIME_MODAL_LABEL')}
       className="TimeRangeChangedModal__Content">
