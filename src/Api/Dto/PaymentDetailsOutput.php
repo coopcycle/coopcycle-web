@@ -13,10 +13,4 @@ final class PaymentDetailsOutput
      * @Groups({"order"})
      */
     public $stripeAccount;
-
-    /**
-     * @var array|null
-     * @Groups({"order"})
-     */
-    public $breakdown;
 }

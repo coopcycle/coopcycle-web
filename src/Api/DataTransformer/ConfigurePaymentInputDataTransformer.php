@@ -5,8 +5,9 @@ namespace AppBundle\Api\DataTransformer;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
-use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 
@@ -17,7 +18,8 @@ class ConfigurePaymentInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
-        private EdenredClient $edenredClient)
+        private PaymentContext $paymentContext,
+        private OrderProcessorInterface $orderPaymentProcessor)
     {}
 
     /**
@@ -34,22 +36,9 @@ class ConfigurePaymentInputDataTransformer implements DataTransformerInterface
             throw new \Exception(sprintf('Payment method "%s" not found', $code));
         }
 
-        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-        $payment->setMethod($paymentMethod);
+        $this->paymentContext->setMethod($code);
 
-        switch ($code) {
-            // At this step, the customer may not have connected the Edenred account yet
-            case 'EDENRED+CARD':
-            case 'EDENRED':
-                if ($order->getCustomer()->hasEdenredCredentials()) {
-                    $breakdown = $this->edenredClient->splitAmounts($order);
-                    $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
-                }
-                break;
-            default:
-                $payment->clearAmountBreakdown();
-                break;
-        }
+        $this->orderPaymentProcessor->process($order);
 
         return $order;
     }

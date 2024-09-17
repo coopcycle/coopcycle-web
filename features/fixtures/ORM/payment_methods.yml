@@ -4,3 +4,8 @@ Sylius\Component\Payment\Model\PaymentMethod:
     currentLocale: fr
     name: Card
     enabled: true
+  payment_method_edenred:
+    code: EDENRED
+    currentLocale: fr
+    name: Edenred
+    enabled: true
