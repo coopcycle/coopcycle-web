@@ -96,7 +96,7 @@ class ExportOrdersCommand extends BaseExportCommand
         }
 
         $__s = fn (string $s): ?string => trim($s) ?: null;
-        $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d', $d) ?: null;
+        $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d H:i', $d) ?: null;
         $__m = fn (string $m): int => intval(floatval($m) * 100);
 
         return [
@@ -131,7 +131,7 @@ class ExportOrdersCommand extends BaseExportCommand
         $schema = Schema::with(
             FlatColumn::string('restaurant'),
             FlatColumn::string('order_code'),
-            FlatColumn::date('completed_at'),
+            FlatColumn::dateTime('completed_at'),
             FlatColumn::string('courier'),
             FlatColumn::string('fullfillment'),
             FlatColumn::string('payment_method'),
