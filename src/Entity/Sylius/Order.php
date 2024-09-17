@@ -16,6 +16,7 @@ use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
 use AppBundle\Action\Order\FinishPreparing as OrderFinishPreparing;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
+use AppBundle\Action\Order\ConfigurePayment as ConfigurePaymentController;
 use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
 use AppBundle\Action\Order\CreateSetupIntentOrAttachPM;
 use AppBundle\Action\Order\Delay as OrderDelay;
@@ -34,6 +35,7 @@ use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsControlle
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
+use AppBundle\Api\Dto\ConfigurePaymentOutput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
@@ -444,7 +446,11 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/payment",
  *       "security"="is_granted('edit', object)",
  *       "input"=ConfigurePaymentInput::class,
+ *       "controller"=ConfigurePaymentController::class,
+ *       "output"=ConfigurePaymentOutput::class,
+ *       "validate"=false,
  *       "denormalization_context"={"groups"={"order_configure_payment"}},
+ *       "normalization_context"={"api_sub_level"=true, "groups"={"order_configure_payment"}},
  *       "openapi_context"={
  *         "summary"="Configure payment for a Order resource."
  *       }
@@ -1832,7 +1838,6 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     /**
-<<<<<<< HEAD
      * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
      * @return Collection all bookmarks set by different users
      */

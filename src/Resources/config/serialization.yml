@@ -214,11 +214,11 @@ AppBundle\Entity\Delivery\FailureReason:
 Sylius\Component\Payment\Model\Payment:
   attributes:
     amount:
-      groups: ['payment']
+      groups: ['payment', 'order_configure_payment']
     method:
-      groups: ['payment']
+      groups: ['payment', 'order_configure_payment']
 
 Sylius\Component\Payment\Model\PaymentMethod:
   attributes:
     code:
-      groups: ['payment']
+      groups: ['payment', 'order_configure_payment']
