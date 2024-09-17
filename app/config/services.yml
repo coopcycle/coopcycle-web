@@ -108,6 +108,7 @@ services:
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
+  Hashids\Hashids $hashids16: '@hashids.16'
   BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
   ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
   ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
@@ -1357,6 +1358,10 @@ services:
   hashids.12:
     class: Hashids\Hashids
     arguments: ['%secret%', 12]
+
+  hashids.16:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 16]
 
   woopit.grant_type:
     class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType

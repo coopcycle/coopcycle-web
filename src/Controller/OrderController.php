@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
+use AppBundle\Controller\Utils\SelectPaymentMethodTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
@@ -60,6 +61,7 @@ class OrderController extends AbstractController
     use OrderConfirmTrait;
     use UserTrait;
     use InjectAuthTrait;
+    use SelectPaymentMethodTrait;
 
     public function __construct(
         private EntityManagerInterface $objectManager,
@@ -413,11 +415,9 @@ class OrderController extends AbstractController
      * @Route("/order/payment-method", name="order_select_payment_method", methods={"POST"})
      */
     public function selectPaymentMethodAction(Request $request,
-        OrderManager $orderManager,
         CartContextInterface $cartContext,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
-        EdenredClient $edenredClient,
         NormalizerInterface $normalizer,
         PaymentContext $paymentContext,
         OrderProcessorInterface $orderPaymentProcessor,
@@ -435,58 +435,54 @@ class OrderController extends AbstractController
             return new JsonResponse(['message' => 'Order does not have any customer'], 400);
         }
 
-        $data = $request->toArray();
+        return $this->selectPaymentMethodForOrder(
+            $order,
+            $request,
+            $paymentMethodRepository,
+            $entityManager,
+            $normalizer,
+            $paymentContext,
+            $orderPaymentProcessor,
+            $hashids8
+        );
+    }
 
-        if (!isset($data['method'])) {
+    /**
+     * @Route("/order/{hashid}/payment-method", name="order_by_hashid16_select_payment_method", methods={"POST"})
+     */
+    public function selectPaymentMethodByHashid16Action($hashid, Request $request,
+        OrderRepository $orderRepository,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        EntityManagerInterface $entityManager,
+        NormalizerInterface $normalizer,
+        PaymentContext $paymentContext,
+        OrderProcessorInterface $orderPaymentProcessor,
+        Hashids $hashids16,
+        Hashids $hashids8)
+    {
+        $decoded = $hashids16->decode($hashid);
 
-            return new JsonResponse(['message' => 'No payment method found in request'], 400);
+        if (count($decoded) !== 1) {
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
         }
 
-        $code = strtoupper($data['method']);
+        $id = current($decoded);
+        $order = $orderRepository->findCartById($id);
 
-        $paymentMethod = $paymentMethodRepository->findOneByCode($code);
-
-        if (null === $paymentMethod) {
-
-            return new JsonResponse(['message' => 'Payment method does not exist'], 404);
+        if (null === $order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
-        // The "CASH_ON_DELIVERY" payment method may not be enabled,
-        // however if it's enabled at shop level, it is allowed
-        $bypass = $code === 'CASH_ON_DELIVERY' && $order->supportsCashOnDelivery();
-
-        if (!$paymentMethod->isEnabled() && !$bypass) {
-
-            return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
-        }
-
-        $paymentContext->setMethod($code);
-
-        $orderPaymentProcessor->process($order);
-
-        $entityManager->flush();
-
-        $payments = array_values($order->getPayments()->toArray());
-
-        $cardPayment = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
-            return $payment->getMethod()->getCode() === 'CARD' && $payment->getState() === PaymentInterface::STATE_CART;
-        })->first();
-
-        $stripe = [];
-        if ($cardPayment) {
-            $hashId = $hashids8->encode($cardPayment->getId());
-            $stripe = [
-                'createPaymentIntentURL' => $this->generateUrl('stripe_create_payment_intent', ['hashId' => $hashId]),
-                'account' => $cardPayment->getStripeUserId(),
-                'clonePaymentMethodToConnectedAccountURL' => $this->generateUrl('stripe_clone_payment_method', ['hashId' => $hashId]),
-                'createSetupIntentOrAttachPMURL' => $this->generateUrl('stripe_create_setup_intent_or_attach_pm', ['hashId' => $hashId]),
-            ];
-        }
-
-        return new JsonResponse([
-            'payments' => $normalizer->normalize($payments, 'json', ['groups' => ['payment']]),
-            'stripe' => $stripe,
-        ]);
+        return $this->selectPaymentMethodForOrder(
+            $order,
+            $request,
+            $paymentMethodRepository,
+            $entityManager,
+            $normalizer,
+            $paymentContext,
+            $orderPaymentProcessor,
+            $hashids8
+        );
     }
 
     /**

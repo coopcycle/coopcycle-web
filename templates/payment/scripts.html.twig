@@ -36,7 +36,7 @@
   amount: order.total,
   gatewayConfigs: gateway_configs,
   tokenElement: token_element_selector,
-  selectPaymentMethodURL: path('order_select_payment_method')
+  selectPaymentMethodURL: select_payment_method_url|default(path('order_select_payment_method'))
 } %}
 
 {% if with_saved_cards|default(false) %}
