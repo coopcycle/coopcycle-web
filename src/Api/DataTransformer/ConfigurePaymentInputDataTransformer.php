@@ -7,6 +7,7 @@ use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
+use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
@@ -19,7 +20,8 @@ class ConfigurePaymentInputDataTransformer implements DataTransformerInterface
     public function __construct(
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private PaymentContext $paymentContext,
-        private OrderProcessorInterface $orderPaymentProcessor)
+        private OrderProcessorInterface $orderPaymentProcessor,
+        private EntityManagerInterface $entityManager)
     {}
 
     /**
@@ -39,6 +41,8 @@ class ConfigurePaymentInputDataTransformer implements DataTransformerInterface
         $this->paymentContext->setMethod($code);
 
         $this->orderPaymentProcessor->process($order);
+
+        $this->entityManager->flush();
 
         return $order;
     }

@@ -23,15 +23,19 @@ class PaymentDetails
     {
         $output = new PaymentDetailsOutput();
 
-        $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
+        $payments = $data->getPayments()->filter(
+            fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
 
-        if (!$payment) {
-            throw new BadRequestHttpException(sprintf('Order #%d has no payment', $data->getId()));
+        $cardPayment = $payments->filter(
+            fn (PaymentInterface $payment): bool => $payment->getMethod()->getCode() === 'CARD')->first();
+
+        if ($cardPayment) {
+            // We keep this for backward compatibility,
+            // but this should not be at top level
+            $output->stripeAccount = $cardPayment->getStripeUserId();
         }
 
-        $this->stripeManager->configurePayment($payment);
-
-        $output->stripeAccount = $payment->getStripeUserId();
+        $output->payments = $payments;
 
         return $output;
     }
