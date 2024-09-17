@@ -129,7 +129,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
- *       "normalization_context"={"api_sub_level"=true},
+ *       "normalization_context"={"api_sub_level"=true, "groups"={"payment_details"}},
  *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
