@@ -147,7 +147,9 @@
         "league/flysystem-ftp": "^3.0",
         "coopcycle/transporter": "dev-master",
         "league/flysystem-sftp-v3": "^3.0",
-        "paygreen/paygreen-php": "*"
+        "paygreen/paygreen-php": "*",
+        "flow-php/parquet": "^0.9.2",
+        "flow-php/filesystem": "^0.9.2"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
