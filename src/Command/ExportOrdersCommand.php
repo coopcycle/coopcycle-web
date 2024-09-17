@@ -99,8 +99,6 @@ class ExportOrdersCommand extends BaseExportCommand
         $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d', $d) ?: null;
         $__m = fn (string $m): int => intval(floatval($m) * 100);
 
-        var_dump($__d($row[4]));
-
         return [
             'restaurant' => $__s($row[0]),
             'order_code' => $__s($row[2]),
