@@ -96,25 +96,28 @@ class ExportOrdersCommand extends BaseExportCommand
         }
 
         $__s = fn (string $s): ?string => trim($s) ?: null;
-        $__dt = fn (string $d): ?\DateTime => \DateTime::createFromFormat('d/m/Y H:i:s', $d) ?: null;
+        $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d', $d) ?: null;
+        $__m = fn (string $m): int => intval(floatval($m) * 100);
+
+        var_dump($__d($row[4]));
 
         return [
             'restaurant' => $__s($row[0]),
             'order_code' => $__s($row[2]),
-            'completed_at' => $__dt($row[4]),
+            'completed_at' => $__d($row[4]),
             'courier' => $__s($row[1]),
             'fullfillment' => $__s($row[3]),
             'payment_method' => $__s($row[19]),
-            'delivery_fee' => floatval($row[13]),
-            'tip' => floatval($row[16]),
-            'promotions' => floatval($row[17]),
-            'total_products_excl_vat' => floatval($row[8]),
-            'total_products_incl_vat' => floatval($row[12]),
-            'total_vat' => floatval($row[18]),
-            'stripe_fee' => floatval($row[20]),
-            'platform_fee' => floatval($row[21]),
-            'refunds' => floatval($row[22]),
-            'net_revenue' => floatval($row[23]),
+            'delivery_fee' => $__m($row[13]),
+            'tip' => $__m($row[16]),
+            'promotions' => $__m($row[17]),
+            'total_products_excl_vat' => $__m($row[8]),
+            'total_products_incl_vat' => $__m($row[12]),
+            'total_vat' => $__m($row[18]),
+            'stripe_fee' => $__m($row[20]),
+            'platform_fee' => $__m($row[21]),
+            'refunds' => $__m($row[22]),
+            'net_revenue' => $__m($row[23]),
         ];
     }
 
@@ -130,20 +133,20 @@ class ExportOrdersCommand extends BaseExportCommand
         $schema = Schema::with(
             FlatColumn::string('restaurant'),
             FlatColumn::string('order_code'),
-            FlatColumn::dateTime('completed_at'),
+            FlatColumn::date('completed_at'),
             FlatColumn::string('courier'),
             FlatColumn::string('fullfillment'),
             FlatColumn::string('payment_method'),
-            FlatColumn::float('delivery_fee'),
-            FlatColumn::float('tip'),
-            FlatColumn::float('promotions'),
-            FlatColumn::float('total_products_excl_vat'),
-            FlatColumn::float('total_products_incl_vat'),
-            FlatColumn::float('total_vat'),
-            FlatColumn::float('stripe_fee'),
-            FlatColumn::float('platform_fee'),
-            FlatColumn::float('refunds'),
-            FlatColumn::float('net_revenue')
+            FlatColumn::int32('delivery_fee'),
+            FlatColumn::int32('tip'),
+            FlatColumn::int32('promotions'),
+            FlatColumn::int32('total_products_excl_vat'),
+            FlatColumn::int32('total_products_incl_vat'),
+            FlatColumn::int32('total_vat'),
+            FlatColumn::int32('stripe_fee'),
+            FlatColumn::int32('platform_fee'),
+            FlatColumn::int32('refunds'),
+            FlatColumn::int32('net_revenue')
         );
 
         $writer = new Writer(Compressions::GZIP);

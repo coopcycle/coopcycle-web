@@ -87,7 +87,8 @@ class ExportTasksCommand extends BaseExportCommand
      */
     private function formatRow(array $row): array {
         $__s = fn (string $s): ?string => trim($s) ?: null;
-        $__dt = fn (string $d, string $t): ?\DateTime => \DateTime::createFromFormat('d/m/Y H:i:s', sprintf('%s %s', $d, $t)) ?: null;
+        $__dt = fn (string $d, string $t): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('j/n/Y H:i:s', sprintf('%s %s', $d, $t)) ?: null;
+        $__m = fn (string $m): int => intval(floatval($m) * 100);
 
         [$lat, $long] = explode(',', $row['address.latlng']);
 
@@ -95,8 +96,8 @@ class ExportTasksCommand extends BaseExportCommand
             'id' => intval($row['#']),
             'order_id' => intval($row['# order']) ?: null,
             'order_code' => $__s($row['orderCode']),
-            'order_total' => floatval($row['orderTotal']),
-            'order_revenue' => floatval($row['orderRevenue']),
+            'order_total' => $__m(($row['orderTotal'])),
+            'order_revenue' => $__m($row['orderRevenue']),
             'type' => $row['type'],
             'address' => [
                 'contact' => $__s($row['address.contactName']),
@@ -127,8 +128,8 @@ class ExportTasksCommand extends BaseExportCommand
             FlatColumn::int32('id'),
             FlatColumn::int32('order_id'),
             FlatColumn::string('order_code'),
-            FlatColumn::float('order_total'),
-            FlatColumn::float('order_revenue'),
+            FlatColumn::int32('order_total'),
+            FlatColumn::int32('order_revenue'),
             FlatColumn::enum('type'),
             NestedColumn::struct('address', [
                 FlatColumn::string('contact'),
