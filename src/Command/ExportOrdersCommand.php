@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\Message\ExportOrders;
-use DateTime;
 use Flow\Parquet\ParquetFile\Compressions;
 use Flow\Parquet\ParquetFile\Schema;
 use Flow\Parquet\ParquetFile\Schema\FlatColumn;
@@ -97,7 +96,7 @@ class ExportOrdersCommand extends BaseExportCommand
 
         $__s = fn (string $s): ?string => trim($s) ?: null;
         $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d H:i', $d) ?: null;
-        $__m = fn (string $m): int => intval(floatval($m) * 100);
+        $__m = fn (string $m): int => intval(floatval(str_replace(',', '.', $m)) * 100);
 
         return [
             'restaurant' => $__s($row[0]),
