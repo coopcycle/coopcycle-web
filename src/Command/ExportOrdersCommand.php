@@ -111,7 +111,7 @@ class ExportOrdersCommand extends BaseExportCommand
             'promotions' => $__m($row[17]),
             'total_products_excl_vat' => $__m($row[8]),
             'total_products_incl_vat' => $__m($row[12]),
-            'total_vat' => $__m($row[18]),
+            'total_incl_tax' => $__m($row[18]),
             'stripe_fee' => $__m($row[20]),
             'platform_fee' => $__m($row[21]),
             'refunds' => $__m($row[22]),
