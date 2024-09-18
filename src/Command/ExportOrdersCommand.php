@@ -140,7 +140,7 @@ class ExportOrdersCommand extends BaseExportCommand
             FlatColumn::int32('promotions'),
             FlatColumn::int32('total_products_excl_vat'),
             FlatColumn::int32('total_products_incl_vat'),
-            FlatColumn::int32('total_vat'),
+            FlatColumn::int32('total_incl_tax'),
             FlatColumn::int32('stripe_fee'),
             FlatColumn::int32('platform_fee'),
             FlatColumn::int32('refunds'),
