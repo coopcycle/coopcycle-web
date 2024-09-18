@@ -7,7 +7,8 @@ class ExportOrders {
     public function __construct(
         private \DateTime $from,
         private \DateTime $to,
-        private bool $withMessenger = false
+        private bool $withMessenger = false,
+        private ?string $locale = null
     )
     { }
 
@@ -24,6 +25,11 @@ class ExportOrders {
     public function isWithMessenger(): bool
     {
         return $this->withMessenger;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
     }
 
 }
