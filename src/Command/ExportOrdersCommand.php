@@ -46,7 +46,7 @@ class ExportOrdersCommand extends BaseExportCommand
         $envelope = $this->messageBus->dispatch(new ExportOrders(
             $this->parseDate($input->getOption('date-start')),
             $this->parseDate($input->getOption('date-end')),
-            true
+            true, 'en'
         ));
 
         /** @var HandledStamp $handledStamp */
