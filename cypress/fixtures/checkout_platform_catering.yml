@@ -1,11 +1,6 @@
 include:
   - foodtech.yml
-
-AppBundle\Entity\BusinessAccount:
-  business_account1:
-    name: 'Business Account 1'
-    address: '@address_1'
-    businessRestaurantGroup: '@business_restaurant_group1'
+  - business_account.yml
 
 AppBundle\Entity\User:
   bob:

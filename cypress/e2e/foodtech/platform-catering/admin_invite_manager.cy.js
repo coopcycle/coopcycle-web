@@ -19,7 +19,7 @@ describe('Platform catering; admin', () => {
     cy.get('#company_name').clear('')
     cy.get('#company_name').type('Business01')
     cy.get('#company_managerEmail').clear()
-    cy.get('#company_managerEmail').type('business01@demo.coopcycle.org')
+    cy.get('#company_managerEmail').type('manager01@demo.coopcycle.org')
     cy.searchAddress(
       '#company_address',
       '91 rue de rivoli paris',

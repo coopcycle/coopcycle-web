@@ -1,5 +1,5 @@
 AppBundle\Entity\User:
-  bob:
+  admin:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'admin'
