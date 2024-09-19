@@ -697,7 +697,6 @@ Feature: Stores
       }
       """
 
-  @debug
   Scenario: Retrieve timeslots opening hours
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -738,5 +737,41 @@ Feature: Stores
                    "label": "Aujourd'hui entre 14:00 et 17:00"
                }
            ]
+      }
+      """
+
+  @debug
+  Scenario: Retrieve packages
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/stores/1/packages"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+           "@context": "/api/contexts/Store",
+           "@id": "/api/stores",
+           "@type": "hydra:Collection",
+           "hydra:member": [
+               {
+                   "@type": "Package",
+                   "@id": @string@,
+                   "name": "SMALL"
+               },
+               {
+                   "@type": "Package",
+                   "@id": @string@,
+                   "name": "XL"
+               }
+           ],
+           "hydra:totalItems": 2
       }
       """
