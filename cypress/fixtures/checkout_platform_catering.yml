@@ -1,9 +1,5 @@
 include:
-  - settings.yml
-  - sylius_channels.yml
-  - addresses.yml
-  - restaurants.yml
-  - payment_methods.yml
+  - foodtech.yml
 
 AppBundle\Entity\BusinessAccount:
   business_account1:

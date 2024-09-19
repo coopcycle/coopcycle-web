@@ -1,0 +1,7 @@
+include:
+  - settings.yml
+  - users.yml
+  - sylius_channels.yml
+  - addresses.yml
+  - restaurants.yml
+  - payment_methods.yml
