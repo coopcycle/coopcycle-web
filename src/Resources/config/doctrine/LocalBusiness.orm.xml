@@ -120,7 +120,7 @@
     <field name="paygreenShopId" type="string" column="paygreen_shop_id" nullable="true"/>
     <field name="billingMethod" type="string" column="billing_method" nullable="false">
       <options>
-        <option name="default">per_task</option>
+        <option name="default">unit</option>
       </options>
     </field>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
