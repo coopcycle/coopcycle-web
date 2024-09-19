@@ -1,28 +1,4 @@
 include:
   - foodtech.yml
   - business_account.yml
-
-AppBundle\Entity\User:
-  bob:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'business_account_admin'
-        - '12345678'
-        - 'bob@demo.coopcycle.org'
-        - true
-        - false
-    roles: [ 'ROLE_USER', 'ROLE_BUSINESS_ACCOUNT' ]
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
-    businessAccount: '@business_account1'
-  jane:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'employee'
-        - '12345678'
-        - 'jane@demo.coopcycle.org'
-        - true
-        - false
-    roles: [ 'ROLE_USER' ]
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
-    addresses: [ "@address_4" ]
-    businessAccount: '@business_account1'
+  - business_account_manager.yml

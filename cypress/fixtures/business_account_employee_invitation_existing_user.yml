@@ -1,0 +1,27 @@
+include:
+  - foodtech.yml
+  - business_account.yml
+  - business_account_manager.yml
+
+AppBundle\Entity\User:
+  user01:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'user01'
+        - '12345678'
+        - 'user01@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\Entity\Invitation:
+  invitation1:
+    code: 'INVITATION_EMPLOYEE'
+    email: 'manager01@demo.coopcycle.org'
+    user: '@manager01'
+
+AppBundle\Entity\BusinessAccountInvitation:
+  business_account_invitation1:
+    businessAccount: '@business_account1'
+    invitation: '@invitation1'

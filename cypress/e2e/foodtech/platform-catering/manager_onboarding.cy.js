@@ -7,7 +7,7 @@ describe('Platform catering; manager; onboarding', () => {
 
   it('should activate a business account with a new user account', () => {
     cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_invitation_new_user.yml',
+      'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_new_user.yml',
     )
 
     cy.visit('/invitation/define-password/INVITATION_MANAGER')
@@ -29,12 +29,13 @@ describe('Platform catering; manager; onboarding', () => {
     // Company info step
     cy.get('.btn-primary').click()
 
+    // Confirmation page
     cy.url().should('include', '/register/confirmed')
   })
 
   it('should activate a business account with an existing user account', () => {
     cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_invitation_existing_user.yml',
+      'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_existing_user.yml',
     )
 
     cy.visit('/invitation/define-password/INVITATION_MANAGER')
@@ -47,6 +48,7 @@ describe('Platform catering; manager; onboarding', () => {
     // Company info step
     cy.get('.btn-primary').click()
 
+    // Confirmation page
     cy.url().should('include', '/register/confirmed')
   })
 })
