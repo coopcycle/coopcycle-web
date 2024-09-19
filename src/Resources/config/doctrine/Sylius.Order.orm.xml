@@ -18,11 +18,6 @@
       </options>
     </field>
     <field name="vytalCode" type="string" column="vytal_code" nullable="true"/>
-    <field name="billingMethod" type="string" column="billing_method" nullable="false">
-      <options>
-        <option name="default">per_task</option>
-      </options>
-    </field>
     <one-to-one field="delivery" target-entity="AppBundle\Entity\Delivery" mapped-by="order">
       <cascade>
         <cascade-persist/>
