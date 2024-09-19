@@ -37,66 +37,6 @@ class ExportOrdersCommand extends BaseExportCommand
         return $handledStamp->getResult();
     }
 
-    /*
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        if (!$this->lock()) {
-            $output->writeln('The command is already running in another process.');
-            return Command::FAILURE;
-        }
-
-        [$target, $options] = $this->parseTarget(
-            $input->getOption('target'),
-            $input->getOption('unsecure')
-        );
-
-        // TODO Validate target & format here
-
-        foreach ($this->getDatePeriod($input) as $date) {
-
-            $envelope = $this->messageBus->dispatch(new ExportOrders(
-                clone $date,
-                clone $date,
-                true,
-                'en'
-            ));
-
-            $handledStamp = $envelope->last(HandledStamp::class);
-            $export = $handledStamp->getResult();
-
-            if (empty($export)) {
-                continue;
-            }
-
-            switch ($input->getOption('format')) {
-                case 'parquet':
-                    $export = $this->csv2parquet($export);
-                    break;
-            }
-
-            switch ($target) {
-                case 's3':
-
-                    $path = sprintf('%s/%s', $options['key'], $this->getHivePartitioningPath($date, $input->getOption('format')));
-
-                    $this->pushToS3(
-                        $path,
-                        $export,
-                        $options,
-                        $input->getOption('s3-access-key'),
-                        $input->getOption('s3-secret-key')
-                    );
-
-                    break;
-            }
-        }
-
-        return Command::SUCCESS;
-    }
-    */
-
-
-
     /**
      * @param array<mixed> $row
      * @return array<mixed>
