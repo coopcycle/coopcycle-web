@@ -114,8 +114,8 @@ class RestaurantType extends LocalBusinessType
                     'label' => 'form.billing_method.label',
                     'help' => 'form.billing_method.help',
                     'choices' => [
-                        'form.billing_method.per_task' => 'per_task',
-                        'form.billing_method.total_percentage' => 'total_percentage',
+                        'form.billing_method.unit' => 'unit',
+                        'form.billing_method.percentage' => 'percentage',
                     ]
                 ]);
 
