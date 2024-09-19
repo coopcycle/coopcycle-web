@@ -25,13 +25,14 @@ class ExportOrdersHandler implements MessageHandlerInterface
 
     public function __invoke(ExportOrders $message): ?string
     {
+        $locale = $message->getLocale() ?? $this->container->getParameter('kernel.default_locale');
         $stats = new RestaurantStats(
             $this->entityManager,
             $message->getFrom()->setTime(0, 0, 1),
             $message->getTo()->setTime(23, 59, 59),
             null,
             $this->paginator,
-            $this->container->getParameter('kernel.default_locale'),
+            $locale,
             $this->translator,
             $this->taxesHelper,
             true,

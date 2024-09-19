@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\Message\ExportOrders;
-use DateTime;
 use Flow\Parquet\ParquetFile\Compressions;
 use Flow\Parquet\ParquetFile\Schema;
 use Flow\Parquet\ParquetFile\Schema\FlatColumn;
@@ -13,18 +12,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 class ExportOrdersCommand extends BaseExportCommand
 {
-    use LockableTrait;
-
-    public function __construct(
-        private MessageBusInterface $messageBus
-    )
-    { parent::__construct(); }
-
     protected function configure(): void
     {
         $this->addOptions($this)
@@ -32,57 +23,18 @@ class ExportOrdersCommand extends BaseExportCommand
             ->setDescription('Export orders');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function exportData(\DateTimeInterface $start, \DateTimeInterface $end): ?string
     {
-        if (!$this->lock()) {
-            $output->writeln('The command is already running in another process.');
-            return Command::FAILURE;
-        }
-
-        [$target, $options] = $this->parseTarget(
-            $input->getOption('target'),
-            $input->getOption('unsecure')
-        );
-
         $envelope = $this->messageBus->dispatch(new ExportOrders(
-            $this->parseDate($input->getOption('date-start')),
-            $this->parseDate($input->getOption('date-end')),
-            true
+            $start,
+            $end,
+            true,
+            'en'
         ));
 
         /** @var HandledStamp $handledStamp */
         $handledStamp = $envelope->last(HandledStamp::class);
-        $export = $handledStamp->getResult();
-
-        if (is_null($export)) {
-            $output->writeln('No orders found');
-            return Command::SUCCESS;
-        }
-
-        switch ($input->getOption('format')) {
-            case 'parquet':
-                $export = $this->csv2parquet($export);
-                break;
-            case 'csv': break;
-            default:
-                throw new \Exception('Unsupported format');
-        }
-
-        switch ($target) {
-            case 's3':
-                $this->pushToS3(
-                    $export,
-                    $options,
-                    $input->getOption('s3-access-key'),
-                    $input->getOption('s3-secret-key')
-                );
-                break;
-            default:
-                throw new \Exception('Unsupported target');
-        }
-
-
-        return Command::SUCCESS;
+        return $handledStamp->getResult();
     }
 
     /**
@@ -96,8 +48,8 @@ class ExportOrdersCommand extends BaseExportCommand
         }
 
         $__s = fn (string $s): ?string => trim($s) ?: null;
-        $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d', $d) ?: null;
-        $__m = fn (string $m): int => intval(floatval($m) * 100);
+        $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d H:i', $d) ?: null;
+        $__m = fn (string $m): int => intval(floatval(str_replace(',', '.', $m)) * 100);
 
         return [
             'restaurant' => $__s($row[0]),
@@ -111,7 +63,7 @@ class ExportOrdersCommand extends BaseExportCommand
             'promotions' => $__m($row[17]),
             'total_products_excl_vat' => $__m($row[8]),
             'total_products_incl_vat' => $__m($row[12]),
-            'total_vat' => $__m($row[18]),
+            'total_incl_tax' => $__m($row[18]),
             'stripe_fee' => $__m($row[20]),
             'platform_fee' => $__m($row[21]),
             'refunds' => $__m($row[22]),
@@ -119,8 +71,7 @@ class ExportOrdersCommand extends BaseExportCommand
         ];
     }
 
-
-    private function csv2parquet(string $csv): string {
+    protected function csv2parquet(string $csv): string {
 
         $reader = Reader::createFromString($csv)
             ->addFormatter(fn($row) => $this->formatRow($row));
@@ -131,7 +82,7 @@ class ExportOrdersCommand extends BaseExportCommand
         $schema = Schema::with(
             FlatColumn::string('restaurant'),
             FlatColumn::string('order_code'),
-            FlatColumn::date('completed_at'),
+            FlatColumn::dateTime('completed_at'),
             FlatColumn::string('courier'),
             FlatColumn::string('fullfillment'),
             FlatColumn::string('payment_method'),
@@ -140,7 +91,7 @@ class ExportOrdersCommand extends BaseExportCommand
             FlatColumn::int32('promotions'),
             FlatColumn::int32('total_products_excl_vat'),
             FlatColumn::int32('total_products_incl_vat'),
-            FlatColumn::int32('total_vat'),
+            FlatColumn::int32('total_incl_tax'),
             FlatColumn::int32('stripe_fee'),
             FlatColumn::int32('platform_fee'),
             FlatColumn::int32('refunds'),
@@ -162,5 +113,4 @@ class ExportOrdersCommand extends BaseExportCommand
 
         return $csv;
     }
-
- }
+}

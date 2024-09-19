@@ -190,16 +190,18 @@ class RestaurantStats implements \Countable
 
         $this->result = array_map(function ($order) use ($byOrderId) {
 
-            foreach ($byOrderId[$order->id] as $entry) {
+            if (array_key_exists($order->id, $byOrderId)) {
+                foreach ($byOrderId[$order->id] as $entry) {
 
-                $order->adjustments[] = [
-                    'type'          => 'items_total_excl_tax',
-                    'amount'        => $entry['items_total_excl_tax'],
-                    'neutral'       => true,
-                    'order_id'      => $order->id,
-                    'order_item_id' => null,
-                    'origin_code'   => $entry['tax_rate_code'],
-                ];
+                    $order->adjustments[] = [
+                        'type'          => 'items_total_excl_tax',
+                        'amount'        => $entry['items_total_excl_tax'],
+                        'neutral'       => true,
+                        'order_id'      => $order->id,
+                        'order_item_id' => null,
+                        'origin_code'   => $entry['tax_rate_code'],
+                    ];
+                }
             }
 
             return $order;

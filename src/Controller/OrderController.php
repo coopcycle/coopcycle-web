@@ -24,6 +24,7 @@ use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -63,6 +64,7 @@ class OrderController extends AbstractController
         private EntityManagerInterface $objectManager,
         private OrderFactory $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
+        private TimingRegistry $timingRegistry,
         private ValidatorInterface $validator,
         private OrderAccessTokenManager $orderAccessTokenManager,
         private LoggerInterface $checkoutLogger,
@@ -738,8 +740,9 @@ class OrderController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $order->getRestaurant(),
-            'times' => $orderTimeHelper->getTimeInfo($order),
+            'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($order->getRestaurant()),
             'cart_form' => $cartForm->createView(),
+            'cart_timing' => $orderTimeHelper->getTimeInfo($order),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
