@@ -8,7 +8,8 @@ class ExportOrders {
         private \DateTime $from,
         private \DateTime $to,
         private bool $withMessenger = false,
-        private ?string $locale = null
+        private ?string $locale = null,
+        private bool $withBillingMethod = false
     )
     { }
 
@@ -32,4 +33,8 @@ class ExportOrders {
         return $this->locale;
     }
 
+    public function isWithBillingMethod(): bool
+    {
+        return $this->withBillingMethod;
+    }
 }

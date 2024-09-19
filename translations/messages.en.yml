@@ -1547,3 +1547,4 @@ form.billing_method.label: Billing method
 form.billing_method.help: Billing method used
 form.billing_method.unit: Per unit
 form.billing_method.percentage: Percentage of order amount
+order.export.heading.billing_method: Billing method
