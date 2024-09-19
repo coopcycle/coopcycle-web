@@ -12,18 +12,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 class ExportOrdersCommand extends BaseExportCommand
 {
-    use LockableTrait;
-
-    public function __construct(
-        private MessageBusInterface $messageBus
-    )
-    { parent::__construct(); }
-
     protected function configure(): void
     {
         $this->addOptions($this)
@@ -31,6 +23,21 @@ class ExportOrdersCommand extends BaseExportCommand
             ->setDescription('Export orders');
     }
 
+    protected function exportData(\DateTimeInterface $start, \DateTimeInterface $end): ?string
+    {
+        $envelope = $this->messageBus->dispatch(new ExportOrders(
+            $start,
+            $end,
+            true,
+            'en'
+        ));
+
+        /** @var HandledStamp $handledStamp */
+        $handledStamp = $envelope->last(HandledStamp::class);
+        return $handledStamp->getResult();
+    }
+
+    /*
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->lock()) {
@@ -43,46 +50,52 @@ class ExportOrdersCommand extends BaseExportCommand
             $input->getOption('unsecure')
         );
 
-        $envelope = $this->messageBus->dispatch(new ExportOrders(
-            $this->parseDate($input->getOption('date-start')),
-            $this->parseDate($input->getOption('date-end')),
-            true, 'en'
-        ));
+        // TODO Validate target & format here
 
-        /** @var HandledStamp $handledStamp */
-        $handledStamp = $envelope->last(HandledStamp::class);
-        $export = $handledStamp->getResult();
+        foreach ($this->getDatePeriod($input) as $date) {
 
-        if (is_null($export)) {
-            $output->writeln('No orders found');
-            return Command::SUCCESS;
+            $envelope = $this->messageBus->dispatch(new ExportOrders(
+                clone $date,
+                clone $date,
+                true,
+                'en'
+            ));
+
+            $handledStamp = $envelope->last(HandledStamp::class);
+            $export = $handledStamp->getResult();
+
+            if (empty($export)) {
+                continue;
+            }
+
+            switch ($input->getOption('format')) {
+                case 'parquet':
+                    $export = $this->csv2parquet($export);
+                    break;
+            }
+
+            switch ($target) {
+                case 's3':
+
+                    $path = sprintf('%s/%s', $options['key'], $this->getHivePartitioningPath($date, $input->getOption('format')));
+
+                    $this->pushToS3(
+                        $path,
+                        $export,
+                        $options,
+                        $input->getOption('s3-access-key'),
+                        $input->getOption('s3-secret-key')
+                    );
+
+                    break;
+            }
         }
-
-        switch ($input->getOption('format')) {
-            case 'parquet':
-                $export = $this->csv2parquet($export);
-                break;
-            case 'csv': break;
-            default:
-                throw new \Exception('Unsupported format');
-        }
-
-        switch ($target) {
-            case 's3':
-                $this->pushToS3(
-                    $export,
-                    $options,
-                    $input->getOption('s3-access-key'),
-                    $input->getOption('s3-secret-key')
-                );
-                break;
-            default:
-                throw new \Exception('Unsupported target');
-        }
-
 
         return Command::SUCCESS;
     }
+    */
+
+
 
     /**
      * @param array<mixed> $row
@@ -118,8 +131,7 @@ class ExportOrdersCommand extends BaseExportCommand
         ];
     }
 
-
-    private function csv2parquet(string $csv): string {
+    protected function csv2parquet(string $csv): string {
 
         $reader = Reader::createFromString($csv)
             ->addFormatter(fn($row) => $this->formatRow($row));
@@ -161,5 +173,4 @@ class ExportOrdersCommand extends BaseExportCommand
 
         return $csv;
     }
-
- }
+}

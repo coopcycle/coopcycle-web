@@ -3,7 +3,6 @@
 namespace AppBundle\Command;
 
 use AppBundle\Message\ExportTasks;
-use DateTime;
 use Flow\Parquet\ParquetFile\Compressions;
 use Flow\Parquet\ParquetFile\Schema;
 use Flow\Parquet\ParquetFile\Schema\FlatColumn;
@@ -14,18 +13,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 
 class ExportTasksCommand extends BaseExportCommand
 {
-    use LockableTrait;
-
-    public function __construct(
-        private MessageBusInterface $messageBus
-    )
-    { parent::__construct(); }
-
     protected function configure(): void
     {
         $this->addOptions($this)
@@ -33,59 +24,24 @@ class ExportTasksCommand extends BaseExportCommand
             ->setDescription('Export tasks');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function exportData(\DateTimeInterface $start, \DateTimeInterface $end): ?string
     {
-        if (!$this->lock()) {
-            $output->writeln('The command is already running in another process.');
-            return Command::FAILURE;
-        }
-
-        [$target, $options] = $this->parseTarget(
-            $input->getOption('target'),
-            $input->getOption('unsecure')
-        );
-
         $envelope = $this->messageBus->dispatch(new ExportTasks(
-            $this->parseDate($input->getOption('date-start')),
-            $this->parseDate($input->getOption('date-end'))
+            $start,
+            $end
         ));
 
         /** @var HandledStamp $handledStamp */
         $handledStamp = $envelope->last(HandledStamp::class);
-        $export = $handledStamp->getResult();
-
-        switch ($input->getOption('format')) {
-            case 'parquet':
-                $export = $this->csv2parquet($export);
-                break;
-            case 'csv': break;
-            default:
-                throw new \Exception('Unsupported format');
-        }
-
-        switch ($target) {
-            case 's3':
-                $this->pushToS3(
-                    $export,
-                    $options,
-                    $input->getOption('s3-access-key'),
-                    $input->getOption('s3-secret-key')
-                );
-                break;
-            default:
-                throw new \Exception('Unsupported target');
-        }
-
-
-        return Command::SUCCESS;
+        return $handledStamp->getResult();
     }
-
 
     /**
      * @param array<mixed> $row
      * @return array<mixed>
      */
-    private function formatRow(array $row): array {
+    private function formatRow(array $row): array
+    {
         $__s = fn (string $s): ?string => trim($s) ?: null;
         $__dt = fn (string $d, string $t): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('j/n/Y H:i:s', sprintf('%s %s', $d, $t)) ?: null;
         $__m = fn (string $m): int => intval(floatval(str_replace(',', '.', $m)) * 100);
@@ -116,8 +72,8 @@ class ExportTasksCommand extends BaseExportCommand
         ];
     }
 
-    private function csv2parquet(string $csv): string {
-
+    protected function csv2parquet(string $csv): string
+    {
         $reader = Reader::createFromString($csv)
             ->setHeaderOffset(0)
             ->addFormatter(fn($row) => $this->formatRow($row));
@@ -162,5 +118,4 @@ class ExportTasksCommand extends BaseExportCommand
 
         return $csv;
     }
-
- }
+}
