@@ -28,7 +28,7 @@ class ShippingDateFilter
      * @return bool
      * @throws \RedisException
      */
-    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null, int $dispatchDelayForPickup = 0): bool
+    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null, int $priorNoticeDelay = 0, int $dispatchDelayForPickup = 0): bool
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -54,10 +54,16 @@ class ShippingDateFilter
 
         $preparation = $timeline->getPreparationExpectedAt();
 
-        if ($preparation <= $now) {
+        $preparationCanStartAt = clone $now;
+        if ($priorNoticeDelay > 0) {
+            $preparationCanStartAt = $pickupCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $priorNoticeDelay)));
+        }
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" is in the past',
-                $preparation->format(\DateTime::ATOM)),
+        if ($preparation <= $preparationCanStartAt) {
+
+            $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" with prior notice "%s" is in the past',
+                $preparation->format(\DateTime::ATOM),
+                strval($priorNoticeDelay)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
                     'vendor' => $this->loggingUtils->getVendors($order),

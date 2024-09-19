@@ -41,22 +41,25 @@ class OrderTimeHelper
     {
         $choicesLogged = 0;
         $acceptedChoicesLogged = 0;
-        $orderingDelayMinutes = $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes());
+        $priorNoticeDelay = $fulfillmentMethod->getOrderingDelayMinutes();
+        $dispatchDelayForPickup = $this->getShippingDelay();
 
         return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $orderingDelayMinutes, &$choicesLogged, &$acceptedChoicesLogged) {
 
             $result = $this->shippingDateFilter->accept(
                 $cart,
                 $choice->toTsRange(),
-                dispatchDelayForPickup: $orderingDelayMinutes
+                $priorNoticeDelay: $priorNoticeDelay,
+                dispatchDelayForPickup: $dispatchDelayForPickup
             );
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
 
-                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s with delay %s',
+                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s with prior notice delay %s and dispatch delay %s',
                     var_export($result, true),
                     (string)$choice,
-                    (string)$orderingDelayMinutes
+                    (string)$priorNoticeDelay,
+                    (string)$dispatchDelayForPickup
                     ),
                     ['order' => $this->loggingUtils->getOrderId($cart),
                     'vendor' => $this->loggingUtils->getVendors($cart),
@@ -83,7 +86,7 @@ class OrderTimeHelper
         return (int) $value;
     }
 
-    private function getExtraTime(): int
+    private function getShippingDelay(): int
     {
         if (null === $this->extraTime) {
             $extraTime = 0;
@@ -95,11 +98,6 @@ class OrderTimeHelper
         }
 
         return $this->extraTime;
-    }
-
-    private function getOrderingDelayMinutes(int $value)
-    {
-        return $value + $this->getExtraTime();
     }
 
     /**
