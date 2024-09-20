@@ -16,12 +16,16 @@ class OrderSubscriber implements EventSubscriber
         protected RecordsMessages $eventRecorder,
         protected CommandBus $commandBus,
         protected TaskManager $taskManager)
-    {}
+    {
+    }
+
+    private array $changedTasks = [];
 
     public function getSubscribedEvents()
     {
         return array(
             Events::onFlush,
+            Events::postFlush,
         );
     }
 
@@ -56,9 +60,16 @@ class OrderSubscriber implements EventSubscriber
                     $task->setMetadata('order_number', $newValue);
                     $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($task)), $task);
 
-                    $this->taskManager->update($task);
+                    $this->changedTasks[] = $task;
                 }
             }
+        }
+    }
+
+    public function postFlush(): void
+    {
+        foreach ($this->changedTasks as $task) {
+            $this->taskManager->update($task);
         }
     }
 }
