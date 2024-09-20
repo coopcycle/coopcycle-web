@@ -44,12 +44,12 @@ class OrderTimeHelper
         $priorNoticeDelay = $fulfillmentMethod->getOrderingDelayMinutes();
         $dispatchDelayForPickup = $this->getShippingDelay();
 
-        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $orderingDelayMinutes, &$choicesLogged, &$acceptedChoicesLogged) {
+        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $dispatchDelayForPickup, $priorNoticeDelay, &$choicesLogged, &$acceptedChoicesLogged) {
 
             $result = $this->shippingDateFilter->accept(
                 $cart,
                 $choice->toTsRange(),
-                $priorNoticeDelay: $priorNoticeDelay,
+                priorNoticeDelay: $priorNoticeDelay,
                 dispatchDelayForPickup: $dispatchDelayForPickup
             );
 
