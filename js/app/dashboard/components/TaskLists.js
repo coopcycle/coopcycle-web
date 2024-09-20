@@ -22,6 +22,7 @@ class TaskLists extends React.Component {
           <span className="pull-right">
             <Tooltip
               title={this.props.t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
+              placement="left"
               className="mr-2"
             >
               <Switch
