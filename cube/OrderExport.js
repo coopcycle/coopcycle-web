@@ -58,6 +58,11 @@ cube(`OrderExport`, {
       type: `sum`,
       format: `currency`
     },
+    total_incl_tax_avg: {
+      sql: `total_incl_tax / 100`,
+      type: `avg`,
+      format: `currency`
+    },
     platform_fee: {
       sql: `platform_fee / 100`,
       type: `sum`,
