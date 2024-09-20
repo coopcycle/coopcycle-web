@@ -178,7 +178,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $transporter = null;
 
-    protected string $billingMethod;
+    protected string $billingMethod = 'unit';
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();

@@ -300,7 +300,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?string $paygreenShopId = null;
 
-    protected string $billingMethod;
+    protected string $billingMethod = 'unit';
 
     /**
      * @Groups({"restaurant"})
