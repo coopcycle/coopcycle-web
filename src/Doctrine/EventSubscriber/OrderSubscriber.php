@@ -28,7 +28,7 @@ class OrderSubscriber implements EventSubscriber
     /**
      * Save the order number in task.metadata.order_number for non-foodtech orders
      */
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -38,7 +38,6 @@ class OrderSubscriber implements EventSubscriber
         };
 
         $updatedOrders = array_filter($uow->getScheduledEntityUpdates(), $isOrder);
-        $needsRecompute = false;
 
         foreach ($updatedOrders as $order) {
             $entityChangeSet = $uow->getEntityChangeSet($order);
@@ -53,16 +52,13 @@ class OrderSubscriber implements EventSubscriber
             $delivery = $order->getDelivery();
 
             if (is_null($oldValue) && !is_null($newValue) && !is_null($delivery)) {
-                foreach($delivery->getTasks() as $task) {
+                foreach ($delivery->getTasks() as $task) {
                     $task->setMetadata('order_number', $newValue);
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($task)), $task);
+
                     $this->taskManager->update($task);
-                    $needsRecompute = true;
                 }
             }
-        }
-
-        if ($needsRecompute) {
-            $uow->computeChangeSets();
         }
     }
 }
