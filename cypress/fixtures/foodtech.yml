@@ -1,7 +1,3 @@
 include:
-  - settings.yml
-  - admin_user.yml
-  - sylius_channels.yml
-  - addresses.yml
+  - base.yml
   - restaurants.yml
-  - payment_methods.yml
