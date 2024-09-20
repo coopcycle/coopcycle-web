@@ -56,7 +56,7 @@ class ShippingDateFilter
 
         $preparationCanStartAt = clone $now;
         if ($priorNoticeDelay > 0) {
-            $preparationCanStartAt = $pickupCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $priorNoticeDelay)));
+            $preparationCanStartAt = $preparationCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $priorNoticeDelay)));
         }
 
         if ($preparation <= $preparationCanStartAt) {
