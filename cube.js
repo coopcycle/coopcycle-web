@@ -25,7 +25,8 @@ module.exports = {
     {
       securityContext: {
         database: 'coopcycle',
-        base_url: 'http://nginx'
+        base_url: 'http://nginx',
+        s3_path: '/images/exports/%type%/instance=default'
       },
     },
   ],

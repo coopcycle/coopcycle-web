@@ -5,8 +5,11 @@ const partitionPath = ({instance, year, month}) => {
   return `${_("instance", instance)}/${_("year", year)}/${_("month", month)}`
 }
 
+const resolvePath = ({ s3_path }) => s3_path && s3_path.replace(/^\/|\/$/g, '').replace('%type%', 'orders')
+
 cube(`OrderExport`, {
-  sql: `SELECT * FROM read_parquet('s3://coopcycle-data/exports/orders/instance=naofood/*/*/*.parquet', hive_partitioning = true)`,
+
+  sql: `SELECT * FROM read_parquet('s3://${resolvePath(securityContext)}/*/*/*.parquet', hive_partitioning = true)`,
 
   // TODO: Check join per instances to avoid order code collision
   // joins: {
