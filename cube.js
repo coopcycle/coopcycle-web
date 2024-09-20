@@ -4,7 +4,8 @@ const PostgresDriver = require('@cubejs-backend/postgres-driver');
 const DuckDbDriver = require('@cubejs-backend/duckdb-driver');
 
 module.exports = {
-  contextToAppId: ({ securityContext: {database, instance, year, month} }) => ['CUBEJS_APP', database, instance, year, month].filter(t => t).join('_'),
+  contextToAppId: ({ securityContext }) =>
+    `CUBEJS_APP_${securityContext && securityContext.database ? securityContext.database : 'coopcycle'}`,
   contextToOrchestratorId: ({ securityContext }) =>
     `CUBEJS_APP_${securityContext && securityContext.database ? securityContext.database : 'coopcycle'}`,
   driverFactory: ({ securityContext, dataSource }) => {
