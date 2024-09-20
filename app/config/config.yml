@@ -70,6 +70,7 @@ parameters:
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
     business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
     transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+    billing_enabled: '%env(bool:BILLING_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

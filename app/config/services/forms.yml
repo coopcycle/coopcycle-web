@@ -111,12 +111,14 @@ services:
       $country: '%country_iso%'
       $debug: '%kernel.debug%'
       $cashOnDeliveryOptinEnabled: '%env(bool:CASH_ON_DELIVERY_OPTIN_ENABLED)%'
+      $billingEnabled: '%billing_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\StoreType:
     arguments:
       $country: '%country_iso%'
       $transportersConfig: '%transporters_config%'
+      $billingEnabled: '%billing_enabled%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:
