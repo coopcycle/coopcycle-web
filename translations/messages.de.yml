@@ -480,6 +480,14 @@ form.reusable_packaging.is_tracked.label: Tracking aktiviert
 form.reusable_packaging.name.label: Name
 form.package.volume_units.label: Volumeneinheiten
 form.package.name.label: Name
+form.package.description.label: Beschreibung für den Kunden
+form.package.average_volume_units.label: Durchschnittliche Volumeneinheiten (VU)
+form.package.max_volume_units.label: Maximale Volumeneinheiten (VU)
+form.package.average_estimation: Geschätzt auf 75 % des Maximums, wenn nicht festgelegt
+form.package.average_weight.label: Durchschnittsgewicht (kg)
+form.package.max_weight.label: Maximalgewicht (kg)
+form.package.shortCode.label: 2-Buchstaben-Code
+form.package.enter_details:  Details ein-/ausblenden
 form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name
 form.time_slot_choice.end_time.label: Endzeit

@@ -887,6 +887,14 @@ form.package.volume_units.label: Unité de volume
 form.package.name.label: Nom
 form.package_set.packages.label: Emballages
 form.package_set.name.label: Nom
+form.package.description.label: Description pour le client
+form.package.enter_details: Masquer/afficher les détails
+form.package.average_volume_units.label: Unités de volume moyen (VU)
+form.package.max_volume_units.label: Unités de volume maximum (VU)
+form.package.average_estimation: Estimé à 75 % du maximum si non défini
+form.package.average_weight.label: Poids moyen (kg)
+form.package.max_weight.label: Poids maximum (kg)
+form.package.shortCode.label: Code de 2 lettres
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
