@@ -674,7 +674,7 @@ form.package.average_estimation: Stimato al 75 % del massimo se non impostato
 form.package.average_weight.label: Peso medio (kg)
 form.package.max_weight.label: Peso massimo (kg)
 form.package.shortCode.label: Codice di 2 lettere
-form.package.enter_details: Clicca per inserire i dettagli del pacchetto
+form.package.enter_details: Mostra/nascondi i dettagli
 form.reusable_packaging.name.label: Nome
 form.reusable_packaging.is_tracked.label: Abilità tracciamento
 form.reusable_packaging.price.label: Prezzo

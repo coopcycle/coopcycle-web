@@ -750,7 +750,7 @@ form.time_slot_choice.start_time.label: Hora de inicio
 form.time_slot_choice.end_time.label: Hora de finalización
 form.package_set.name.label: Nombre
 form.package_set.packages.label: Paquetes
-form.package.enter_details: Clic para ingresar los detalles del paquete
+form.package.enter_details: Mostrar/ocultar detalles
 form.package.name.label: Nombre
 form.package.description.label: Descripción para el cliente
 form.package.average_volume_units.label: Unidades de volumen promedio (VU)
