@@ -1331,6 +1331,7 @@ services:
     arguments:
       $databaseName: '%database_name%'
       $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+      $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
 
   AppBundle\Translation\DatePeriodFormatter:
     arguments:
