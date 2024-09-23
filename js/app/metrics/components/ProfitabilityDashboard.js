@@ -21,10 +21,10 @@ const Dashboard = ({ cubejsApi, dateRange }) => {
         <InputNumber defaultValue={ fixedCosts } onChange={ setFixedCostsDebounced } />
       </Form.Item>
       <div className="metrics-grid">
-        <ChartPanel title="Profitability Heatmap" className="d-block">
+        <ChartPanel title="Income per day of week and hour range" className="d-block">
           <ProfitabilityHeatmap cubejsApi={ cubejsApi } dateRange={ dateRange } fixedCosts={ fixedCosts } />
         </ChartPanel>
-        <ChartPanel title="Profitability Bar Chart">
+        <ChartPanel title="Income per week">
           <ProfitabilityBars cubejsApi={ cubejsApi } dateRange={ dateRange } fixedCosts={ fixedCosts } />
         </ChartPanel>
       </div>
