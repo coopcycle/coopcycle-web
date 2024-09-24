@@ -34,6 +34,14 @@ final class Version20240911103649 extends AbstractMigration
 
             $details = json_decode($payment['details'], true);
 
+            if (!array_key_exists('amount_breakdown', $details)) {
+                 $this->addSql('UPDATE sylius_payment SET method_id = :method_id WHERE id = :id', [
+                    'method_id' => $cardPaymentMethodId,
+                    'id' => $payment['id']
+                ]);
+                continue;
+            }
+
             $edenredDetails = [];
             foreach ($details as $key => $value) {
                 if (str_starts_with($key, 'edenred_')) {
