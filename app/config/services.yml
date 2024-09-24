@@ -108,6 +108,7 @@ services:
   Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
+  Hashids\Hashids $hashids16: '@hashids.16'
   BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
   ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
   ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
@@ -118,6 +119,7 @@ services:
   League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
   Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
+  Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1152,7 +1154,16 @@ services:
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
 
-  AppBundle\Payment\Gateway: ~
+  AppBundle\Payment\Gateway\Stripe: ~
+  AppBundle\Payment\Gateway\Edenred: ~
+  AppBundle\Payment\Gateway\MercadoPago: ~
+
+  AppBundle\Payment\Gateway:
+    arguments:
+      $gateways:
+        stripe: '@AppBundle\Payment\Gateway\Stripe'
+        edenred: '@AppBundle\Payment\Gateway\Edenred'
+        mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
 
   AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
@@ -1349,6 +1360,10 @@ services:
     class: Hashids\Hashids
     arguments: ['%secret%', 12]
 
+  hashids.16:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 16]
+
   woopit.grant_type:
     class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
     arguments: [
@@ -1459,3 +1474,5 @@ services:
     arguments:
       - '@paygreen.http_client'
       - '@Paygreen\Sdk\Payment\V3\Environment'
+
+  AppBundle\Sylius\Payment\Context: ~

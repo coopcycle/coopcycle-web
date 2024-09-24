@@ -34,48 +34,6 @@ trait EdenredTrait
         }
     }
 
-    public function setAmountBreakdown(int $edenredAmount, int $cardAmount)
-    {
-        $this->details = array_merge($this->details, [
-            'amount_breakdown' => [
-                'edenred' => $edenredAmount,
-                'card'    => $cardAmount,
-            ]
-        ]);
-    }
-
-    public function clearAmountBreakdown()
-    {
-        if (isset($this->details['amount_breakdown'])) {
-            unset($this->details['amount_breakdown']);
-        }
-    }
-
-    public function getAmountBreakdown()
-    {
-        if (isset($this->details['amount_breakdown'])) {
-            return $this->details['amount_breakdown'];
-        }
-
-        return [
-            'card' => $this->getAmount(),
-        ];
-    }
-
-    public function getAmountForMethod($method)
-    {
-        $breakdown = $this->getAmountBreakdown();
-
-        return $breakdown[strtolower($method)];
-    }
-
-    public function isEdenredWithCard()
-    {
-        $method = $this->getMethod();
-
-        return null !== $method && $method->getCode() === 'EDENRED+CARD';
-    }
-
     public function setEdenredCancelId($cancelId)
     {
         $this->details = array_merge($this->details, [
@@ -89,18 +47,5 @@ trait EdenredTrait
 
             return $this->details['edenred_cancel_id'];
         }
-    }
-
-    public function getRefundableAmountForMethod($method, $amount = null)
-    {
-        switch ($method) {
-            case 'CARD':
-                return min($this->getAmountForMethod('CARD'), $amount ?? $this->getAmount());
-
-            case 'EDENRED':
-                return min($this->getAmountForMethod('CARD'), ($amount ?? $this->getAmount()) - $this->getRefundableAmountForMethod('CARD'));
-        }
-
-        return 0;
     }
 }

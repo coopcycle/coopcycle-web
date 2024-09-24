@@ -46,13 +46,13 @@
         {% include "_partials/order/items.html.twig" %}
       </div>
 
-      {% if last_payment.state == 'failed' %}
-        <div class="alert alert-danger">{{ last_payment.lastError }}</div>
+      {% if failed_payment is not empty %}
+        <div class="alert alert-danger">{{ failed_payment.lastError }}</div>
       {% endif %}
 
-      {% if last_payment.state == 'completed' %}
+      {% if completed_payment is not empty %}
         <div class="alert alert-success">
-          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': last_payment.updatedAt|format_datetime('medium', 'short') }) }}
+          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': completed_payment.updatedAt|format_datetime('medium', 'short') }) }}
         </div>
       {% endif %}
 
@@ -108,9 +108,9 @@ new CoopCycle.DeliveryMap('map', {
 {% if payment_form is defined %}
   {% include 'payment/scripts.html.twig' with {
     order: order,
-    payment: last_payment,
     payment_form_selector: 'form[name="checkout_payment"]',
-    token_element_selector: '#checkout_payment_stripePayment_stripeToken'
+    token_element_selector: '#checkout_payment_stripePayment_stripeToken',
+    select_payment_method_url: path('order_by_hashid16_select_payment_method', { hashid: order|hashid(16) })
   } %}
 {% endif %}
 {% endblock %}

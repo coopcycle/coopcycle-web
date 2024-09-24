@@ -10,7 +10,7 @@
       data-default-value="{{ month|date('Y-m') }}"></div>
   </div>
 
-  {% if payments|length > 0 %}
+  {% if orders|length > 0 %}
   <div class="alert alert-info">
     <i class="fa fa-info-circle mr-2"></i>
     <span>
@@ -19,7 +19,7 @@
   </div>
   {% endif %}
 
-  {% for restaurant in payments %}
+  {% for restaurant in orders %}
 
     {% set total_amount = 0 %}
     {% set edenred_amount = 0 %}
@@ -41,29 +41,31 @@
         <th class="text-right">{{ 'order.export.heading.platform_fee'|trans }}</th>
       </thead>
       <tbody>
-      {% for payment in payments[restaurant] %}
+      {% for order in orders[restaurant] %}
+      {% set edenred_payment =
+        order.payments|filter(payment => payment.method.code == 'EDENRED' and payment.state == 'completed')|first %}
       {% set is_captured =
-        payment.edenredAuthorizationId is not empty and payment.edenredCaptureId is not empty %}
+        edenred_payment.edenredAuthorizationId is not empty and edenred_payment.edenredCaptureId is not empty %}
       <tr class="{{ not is_captured ? 'danger' : '' }}">
         <td>
-          <span class="text-monospace">{{ payment.order.number }}</span>
+          <span class="text-monospace">{{ order.number }}</span>
         </td>
         <td>
-          <span>{{ payment.order.shippingTimeRange|time_range_for_humans_short }}</span>
+          <span>{{ order.shippingTimeRange|time_range_for_humans_short }}</span>
         </td>
         <td class="text-right">
-          <span class="text-monospace">{{ payment.amount|price_format }}</span>
+          <span class="text-monospace">{{ order.total|price_format }}</span>
         </td>
         <td class="text-right">
-          <span class="text-monospace">{{ payment.getAmountForMethod('EDENRED')|price_format }}</span>
+          <span class="text-monospace">{{ edenred_payment.amount|price_format }}</span>
         </td>
         <td class="text-right">
-          <span class="text-monospace">{{ payment.order.feeTotal|price_format }}</span>
+          <span class="text-monospace">{{ order.feeTotal|price_format }}</span>
         </td>
       </tr>
-      {% set total_amount   = (total_amount + payment.amount) %}
-      {% set edenred_amount = (edenred_amount + payment.getAmountForMethod('EDENRED')) %}
-      {% set platform_fee   = (platform_fee + payment.order.feeTotal) %}
+      {% set total_amount   = (total_amount + order.total) %}
+      {% set edenred_amount = (edenred_amount + edenred_payment.amount) %}
+      {% set platform_fee   = (platform_fee + order.feeTotal) %}
       {% endfor %}
       </tbody>
       {% if total_amount > 0 %}

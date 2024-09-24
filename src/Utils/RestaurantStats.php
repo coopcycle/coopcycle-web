@@ -437,7 +437,10 @@ class RestaurantStats implements \Countable
 
                 // This allows showing fewer columns
                 if (!in_array($taxRateCode, $this->taxColumns)) {
-                    $taxRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
+                    $matchingBaseRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
+                    if (!empty($matchingBaseRateCode)) {
+                        $taxRateCode = $matchingBaseRateCode;
+                    }
                 }
 
                 $this->taxTotals[$order->getId()][$taxRateCode] += $adjustment['amount'];

@@ -1068,6 +1068,9 @@ guest_checkout.user_with_same_email_exists: Ya existe una cuenta con el mismo co
 guest_checkout.use_another_email: Usar otro correo electrónico
 form.store_type.package_set.placeholder: Elija un paquete conjunto
 form.store_type.time_slot.placeholder: Elija una franja horaria
+form.store_type.defaultCourier.label: Mensajero·a predeterminado
+form.store_type.defaultCourier.placeholder: Ninguno
+form.store_type.defaultCourier.help: Los pedidos realizados para esta tienda se asignarán automáticamente a este mensajero·a
 profile.fullName: Nombre completo
 restaurant.form.section.taxonomy: Taxonomía
 localBusiness.form.business_address.label: Dirección comercial
@@ -1276,12 +1279,6 @@ order.adjustment_type.reusable_packaging.loopeat.help: Esta cuota cubre los gast
 form.settings.geocoding_provider.help: Utilizado por la API y cuando se importan hojas
   de cálculo
 form.settings.geocoding_provider.label: Proveedor de geocodificación
-form.payment.refund_breakdown: Cantidad reembolsable por tarjeta %card%, cantidad
-  reembolsable por Edenred %edenred%
-form.payment.edenred_disclaimer: Esta orden se pagó con Edenred y se completó con
-  una tarjeta de crédito. El reembolso será hecho basándose en la prioridad de la
-  cantidad pagada por la tarjeta de crédito, y si es necesario en la cantidad pagada
-  por Edenred.
 form.settings.addresses.title: Direcciones
 restaurant.form.vytal_enabled.label: Habilitar el sistema de depósito y reembolso
   de Vytal
