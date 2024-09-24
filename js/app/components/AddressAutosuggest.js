@@ -572,7 +572,7 @@ class AddressAutosuggest extends Component {
               type="button"
               className="address-autosuggest__close-button address-autosuggest__clear"
               onClick={ () => this.onClear() }
-              tabindex="-1"
+              tabIndex="-1"
             >
               <i className="fa fa-times-circle"></i>
             </button>
