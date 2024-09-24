@@ -2750,15 +2750,15 @@ Feature: Tasks
           {
             "@type":"FailureReason",
             "@id":"@string@",
-            "code":"REFUSED",
-            "description":"Refused",
+            "code":"DAMAGED",
+            "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
             "@id":"@string@",
-            "code":"DAMAGED",
-            "description":"Damaged",
+            "code":"REFUSED",
+            "description":"Refused",
             "metadata":[]
           }
         ],
