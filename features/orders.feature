@@ -17,6 +17,7 @@ Feature: Orders
   Scenario: Not authorized to retrieve order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -475,6 +476,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
@@ -514,6 +516,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
@@ -1013,6 +1016,7 @@ Feature: Orders
     Given the current time is "2017-09-02 12:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -1067,6 +1071,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -1237,6 +1242,7 @@ Feature: Orders
     Given the current time is "2017-09-03 12:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -1291,6 +1297,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
@@ -1340,6 +1347,7 @@ Feature: Orders
   Scenario: Validate cart
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1380,6 +1388,7 @@ Feature: Orders
   Scenario: Get cart payment details
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1417,6 +1426,7 @@ Feature: Orders
   Scenario: Get cart payment methods for guest
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1487,6 +1497,7 @@ Feature: Orders
   Scenario: Get cart payment details for guest
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1555,6 +1566,7 @@ Feature: Orders
   Scenario: Get cart payment methods
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1595,6 +1607,7 @@ Feature: Orders
   Scenario: Retrieve Centrifugo connection details for order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"

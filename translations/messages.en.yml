@@ -1266,9 +1266,6 @@ restaurant.form.vytal_enabled.label: Enable Vytal deposit-refund system
 form.settings.addresses.title: Addresses
 form.settings.autocomplete_provider.label: Suggestions provider
 form.settings.google_api_key_custom.label: Google API Key
-form.payment.edenred_disclaimer: This order was paid with Edenred and a supplement by credit card.
-  The refund will be made in priority on the amount paid by credit card, and on the Edenred amount if necessary.
-form.payment.refund_breakdown: Amount refundable by card %card%, amount refundable by Edenred %edenred%
 form.settings.geocoding_provider.label: Geocoding provider
 form.settings.geocoding_provider.help: Used by the API and when importing spreadsheets
 products.on_demand_delivery.name: On demand delivery

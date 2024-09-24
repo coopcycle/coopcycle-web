@@ -8,7 +8,6 @@ use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
-use AppBundle\Sylius\Payment\Context as PaymentContext;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -60,13 +59,9 @@ class CheckoutPaymentType extends AbstractType
 
             if ($order->supportsEdenred()) {
                 if ($order->getCustomer()->hasEdenredCredentials()) {
-                    $amounts = $this->edenredPayment->splitAmounts($order);
-                    if ($amounts['edenred'] > 0) {
-                        if ($amounts['card'] > 0) {
-                            $choices['Edenred'] = PaymentContext::METHOD_EDENRED_PLUS_CARD;
-                        } else {
-                            $choices['Edenred'] = PaymentContext::METHOD_EDENRED;
-                        }
+                    $edenredAmount = $this->edenredPayment->getMaxAmount($order);
+                    if ($edenredAmount > 0) {
+                        $choices['Edenred'] = 'edenred';
                     }
                 } else {
                     // The customer will be presented with the button
@@ -90,8 +85,7 @@ class CheckoutPaymentType extends AbstractType
                             Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
 
                             switch ($value) {
-                                case PaymentContext::METHOD_EDENRED:
-                                case PaymentContext::METHOD_EDENRED_PLUS_CARD:
+                                case 'edenred':
                                     return [
                                         'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
                                         'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)

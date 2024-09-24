@@ -5,7 +5,7 @@ import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
-import i18n, { getCountry } from '../../i18n'
+import i18n from '../../i18n'
 import SavedCreditCard from './SavedCreditCard'
 import MealVoucherDetails from './MealVoucherDetails'
 import { isGuest } from './utils'
@@ -121,16 +121,14 @@ const CardholderNameInput = ({ onChange }) => {
   )
 }
 
-const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards, onSaveCreditCardChange, onSavedCreditCardSelected, formOptions }) => {
+const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCreditCardChange, onSavedCreditCardSelected, formOptions }) => {
 
   const { t } = useTranslation()
 
   const [addNewCard, setAddNewCard] = useState(false)
 
-  const hasBreakdown = !!options
-    && Object.prototype.hasOwnProperty.call(options, 'amount_breakdown')
-    && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'edenred')
-    && Object.prototype.hasOwnProperty.call(options.amount_breakdown, 'card')
+  const edenred = !!options && _.find(options.payments, p => p.method.code === 'EDENRED')
+  const card    = !!options && _.find(options.payments, p => p.method.code === 'CARD')
 
   const thereAreCardsToShow = cards && cards.length
 
@@ -160,8 +158,8 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
 
   return (
     <React.Fragment>
-      { hasBreakdown && (
-        <MealVoucherDetails { ...options.amount_breakdown } />
+      { edenred && (
+        <MealVoucherDetails edenred={ edenred?.amount || 0 } card={ card.amount } />
       )}
       {
         thereAreCardsToShow ?
@@ -197,12 +195,6 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, country, cards,
               { t('PAYMENT_FORM_TITLE') }
             </label>
             <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
-            { (!hasBreakdown && _.includes(['es', 'fr'], country)) && (
-              <span className="help-block mt-3">
-                <i className="fa fa-info-circle mr-2"></i>
-                <span>{ t('PAYMENT_FORM_NOT_SUPPORTED') }</span>
-              </span>
-            )}
           </div>
           {
             !isGuest(formOptions) ?
@@ -232,6 +224,11 @@ export default {
     this.saveCard = false
     this.savedPaymentMethod = null
 
+    this.config.gatewayConfig = {
+      ...this.config.gatewayConfig,
+      ...options.stripe
+    }
+
     let resultCards = []
     if (!isGuest(formOptions)) { // avoid this API call if the customer is a guest
       resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
@@ -250,7 +247,6 @@ export default {
 
             return (
               <StripeForm
-                country={ getCountry() }
                 onChange={ this.config.onChange }
                 onCardholderNameChange={ cardholderName => {
                   this.cardholderName = cardholderName

@@ -677,16 +677,23 @@ class StripeManagerTest extends TestCase
 
     public function testCreateIntentWithAmountBreakdownForEdenred()
     {
+        $edenred = $this->prophesize(PaymentMethodInterface::class);
+        $edenred->getCode()->willReturn('EDENRED');
+
+        $card = $this->prophesize(PaymentMethodInterface::class);
+        $card->getCode()->willReturn('CARD');
+
+        $edenredPayment = new Payment();
+        $edenredPayment->setAmount(2650);
+        $edenredPayment->setCurrencyCode('EUR');
+        $edenredPayment->setPaymentMethod('pm_123456');
+        $edenredPayment->setMethod($edenred->reveal());
+
         $payment = new Payment();
-        $payment->setAmount(3000);
+        $payment->setAmount(350);
         $payment->setCurrencyCode('EUR');
         $payment->setPaymentMethod('pm_123456');
-
-        $edenredPlusCard = $this->prophesize(PaymentMethodInterface::class);
-        $edenredPlusCard->getCode()->willReturn('EDENRED+CARD');
-
-        $payment->setMethod($edenredPlusCard->reveal());
-        $payment->setAmountBreakdown(2650, 350);
+        $payment->setMethod($card->reveal());
 
         $restaurant = $this->createRestaurant('acct_123456');
 
@@ -712,6 +719,28 @@ class StripeManagerTest extends TestCase
         $order
             ->getFeeTotal()
             ->willReturn(750);
+        $order
+            ->getPayments()
+            ->willReturn(new ArrayCollection([ $edenredPayment, $payment ]));
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
 
         $payment->setOrder($order->reveal());
 
@@ -723,6 +752,7 @@ class StripeManagerTest extends TestCase
             "confirmation_method" => "manual",
             "confirm" => "true",
             "capture_method" => "manual",
+            "customer" => "cus_123456abcdef",
         ]);
 
         $this->stripeManager->createIntent($payment);

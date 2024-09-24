@@ -8,14 +8,10 @@
 
 {% set stripe_config = {
   publishableKey: coopcycle_setting('stripe_publishable_key'),
-  createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid })
 } %}
 
 {% if with_saved_cards|default(false) %}
   {% set stripe_config = stripe_config|merge({
-    account: payment.stripeUserId ? payment.stripeUserId : null,
-    clonePaymentMethodToConnectedAccountURL: path('stripe_clone_payment_method', { hashId: payment|hashid }),
-    createSetupIntentOrAttachPMURL: path('stripe_create_setup_intent_or_attach_pm', { hashId: payment|hashid }),
     customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
   }) %}
 {% endif %}
@@ -40,7 +36,7 @@
   amount: order.total,
   gatewayConfigs: gateway_configs,
   tokenElement: token_element_selector,
-  selectPaymentMethodURL: path('order_payment_select_method', { hashId: payment|hashid })
+  selectPaymentMethodURL: select_payment_method_url|default(path('order_select_payment_method'))
 } %}
 
 {% if with_saved_cards|default(false) %}

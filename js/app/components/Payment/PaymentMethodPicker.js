@@ -55,7 +55,6 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
             )
 
           case 'edenred':
-          case 'edenred+card':
 
             return (
               <div style={ methodStyles }key={ m.type }>
