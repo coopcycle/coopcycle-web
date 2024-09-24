@@ -72,3 +72,4 @@ spreadsheet.alternative_columns: You must provide a « %column% » or a « %othe
 spreadsheet.csv_encoding: CSV files must be encoded in UTF-8
 
 siret.invalid: Invalid SIRET number
+siret.head_office: You must provide an establishment SIRET number, not head office.
