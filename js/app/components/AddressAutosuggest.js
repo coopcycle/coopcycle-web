@@ -568,7 +568,12 @@ class AddressAutosuggest extends Component {
             </div>
           ) }
           { this.state.value && (
-            <button className="address-autosuggest__close-button address-autosuggest__clear" onClick={ () => this.onClear() }>
+            <button
+              type="button"
+              className="address-autosuggest__close-button address-autosuggest__clear"
+              onClick={ () => this.onClear() }
+              tabindex="-1"
+            >
               <i className="fa fa-times-circle"></i>
             </button>
           )}
@@ -619,12 +624,6 @@ class AddressAutosuggest extends Component {
 
     const { value, suggestions, multiSection } = this.state
 
-    const disableEnter = (event) => {
-      if (event.key === 'Enter') {
-          event.preventDefault();
-      }
-    }
-
     const inputProps = {
       placeholder: this.placeholder(),
       value,
@@ -632,7 +631,6 @@ class AddressAutosuggest extends Component {
       type: "search",
       required: this.props.required,
       disabled: this.props.disabled || this.state.loading,
-      onKeyDown: e => disableEnter(e),
       // FIXME
       // We may override important props such as value, onChange
       // We need to omit some props
