@@ -107,7 +107,7 @@ class Client
         $body = [
             "mid" => $order->getRestaurant()->getEdenredMerchantId(),
             "order_ref" => $order->getNumber(),
-            "amount" => $payment->getAmountForMethod('EDENRED'),
+            "amount" => $payment->getAmount(),
             "capture_mode" => "manual",
             "tstamp" => (new \DateTime())->format(\DateTime::ATOM),
         ];
@@ -150,7 +150,7 @@ class Client
         $order = $payment->getOrder();
 
         $body = [
-            'amount' => $payment->getAmountForMethod('EDENRED'),
+            'amount' => $payment->getAmount(),
             'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
         ];
 
@@ -183,11 +183,8 @@ class Client
         }
     }
 
-    public function splitAmounts(OrderInterface $order)
+    public function getMaxAmount(OrderInterface $order): int
     {
-        // FIXME
-        // If the order is click & collect, customer can pay it all
-
         $total = $order->getTotal();
 
         $notPayableAmount = array_sum([
@@ -201,15 +198,10 @@ class Client
         $balance = $this->getBalance($order->getCustomer());
 
         if ($payableAmount > $balance) {
-            $rest = $payableAmount - $balance;
-            $notPayableAmount += $rest;
-            $payableAmount = $balance;
+            return $balance;
         }
 
-        return [
-            'edenred' => $payableAmount,
-            'card' => $notPayableAmount,
-        ];
+        return $payableAmount;
     }
 
     public function cancelTransaction(PaymentInterface $payment)
@@ -217,7 +209,7 @@ class Client
         $order = $payment->getOrder();
 
         $body = [
-            'amount' => $payment->getAmountForMethod('EDENRED'),
+            'amount' => $payment->getAmount(),
             'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
         ];
 
@@ -255,7 +247,7 @@ class Client
         $order = $payment->getOrder();
 
         $body = [
-            'amount' => $amount ?? $payment->getAmountForMethod('EDENRED'),
+            'amount' => $amount ?? $payment->getAmount(),
             'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
         ];
 

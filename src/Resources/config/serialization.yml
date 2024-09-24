@@ -208,3 +208,15 @@ AppBundle\Entity\Delivery\FailureReason:
       groups: ['task']
     description:
       groups: ['task']
+
+Sylius\Component\Payment\Model\Payment:
+  attributes:
+    amount:
+      groups: ['payment']
+    method:
+      groups: ['payment']
+
+Sylius\Component\Payment\Model\PaymentMethod:
+  attributes:
+    code:
+      groups: ['payment']

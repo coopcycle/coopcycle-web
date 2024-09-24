@@ -38,6 +38,7 @@ Feature: Orders Adhoc
     And the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | products.yml        |
       | hubs.yml     |
     And the user "sarah" is loaded:
@@ -148,7 +149,7 @@ Feature: Orders Adhoc
         "preparationTime": null,
         "shippingTime": null,
         "hasReceipt": false,
-        "paymentMethod": "",
+        "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
@@ -164,6 +165,7 @@ Feature: Orders Adhoc
     And the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | products.yml        |
       | hubs.yml     |
     And the user "sarah" is loaded:
@@ -274,7 +276,7 @@ Feature: Orders Adhoc
         "preparationTime": null,
         "shippingTime": null,
         "hasReceipt": false,
-        "paymentMethod": "",
+        "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
@@ -399,7 +401,7 @@ Feature: Orders Adhoc
         "preparationTime": null,
         "shippingTime": null,
         "hasReceipt": false,
-        "paymentMethod": "",
+        "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"

@@ -56,3 +56,8 @@
 {% if form.failureReasonSet is defined %}
   {{ form_row(form.failureReasonSet) }}
 {% endif %}
+
+{% if form.defaultCourier is defined %}
+  <hr>
+  {{ form_row(form.defaultCourier) }}
+{% endif %}

@@ -1564,19 +1564,19 @@ trait RestaurantTrait
         SlugifyInterface $slugify,
         Request $request)
     {
-        $qb = $this->getDoctrine()->getRepository(PaymentInterface::class)
-            ->createQueryBuilder('p');
+        $qb = $this->getDoctrine()->getRepository(OrderInterface::class)
+            ->createQueryBuilder('o');
 
-        $qb->join(OrderInterface::class, 'o', Expr\Join::WITH, 'p.order = o.id');
+        $qb->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id');
         $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
 
-        $edenredWithCard = 'EDENRED+CARD';
+        $edenred = 'EDENRED';
 
         $qb->andWhere('pm.code = :code');
         $qb->andWhere('o.state = :order_state');
         $qb->andWhere('p.state = :payment_state');
 
-        $qb->setParameter('code', $edenredWithCard);
+        $qb->setParameter('code', $edenred);
         $qb->setParameter('order_state', OrderInterface::STATE_FULFILLED);
         $qb->setParameter('payment_state', PaymentInterface::STATE_COMPLETED);
 
@@ -1601,17 +1601,17 @@ trait RestaurantTrait
 
         $hash = new \SplObjectStorage();
 
-        $payments = $qb->getQuery()->getResult();
+        $orders = $qb->getQuery()->getResult();
 
-        foreach ($payments as $payment) {
+        foreach ($orders as $order) {
 
-            $restaurant = $payment->getOrder()->getRestaurant();
+            $restaurant = $order->getRestaurant();
 
             if (!$hash->contains($restaurant)) {
                 $hash->attach($restaurant, []);
             }
 
-            $hash->attach($restaurant, array_merge($hash[$restaurant], [ $payment ]));
+            $hash->attach($restaurant, array_merge($hash[$restaurant], [ $order ]));
         }
 
         if ($request->isMethod('POST') && $request->request->has('restaurant')) {
@@ -1674,7 +1674,7 @@ trait RestaurantTrait
         return $this->render('restaurant/edenred_transactions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'month' => $month,
-            'payments' => $hash,
+            'orders' => $hash,
         ]));
     }
 

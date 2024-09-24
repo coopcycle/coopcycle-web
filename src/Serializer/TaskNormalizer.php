@@ -87,11 +87,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                     ->createQueryBuilder('t');
 
                 $query = $qb
-                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.volumeUnits AS volume_per_package')
+                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.id', 'p.name', 'p.volumeUnits')
+                    ->groupBy('p.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
                     ->setParameter('deliveryId', $deliveryId)
                     ->getQuery();
 
@@ -115,7 +115,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->createQueryBuilder('t');
 
             $data['packages'] = $qb
-                ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.volumeUnits AS volume_per_package')
+                ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                 ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                 ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                 ->andWhere('t.id = :taskId')

@@ -17,7 +17,6 @@ export default ({ code, height }) => {
       )
 
     case 'edenred':
-    case 'edenred+card':
       return (
         <img src={ edenredLogo } height={ height } />
       )

@@ -4,10 +4,15 @@ namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class DeliveryListener
 {
+    public function __construct(protected EntityManagerInterface $entityManager)
+    {
+        
+    }
     public function prePersist(Delivery $delivery, LifecycleEventArgs $args)
     {
         $comments = '';
@@ -50,6 +55,21 @@ class DeliveryListener
                     $dropoff->setNext(null);
                 }
             }
+        }
+    }
+
+    public function postPersist(Delivery $delivery)
+    {
+        
+        if ($delivery->getStore() && $delivery->getStore()->getDefaultCourier()) {
+            $courier = $delivery->getStore()->getDefaultCourier();
+            
+            foreach ($delivery->getTasks() as $task) {
+                $task->assignTo($courier, $task->getBefore());
+                $this->entityManager->persist($task);
+            }
+
+            $this->entityManager->flush();
         }
     }
 

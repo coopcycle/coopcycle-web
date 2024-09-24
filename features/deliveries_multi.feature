@@ -171,7 +171,8 @@ Feature: Multi-step deliveries
               "type":"XL",
               "name":"XL",
               "quantity":4,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -205,7 +206,8 @@ Feature: Multi-step deliveries
               "type":"XL",
               "name":"XL",
               "quantity":2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -287,7 +289,8 @@ Feature: Multi-step deliveries
               "type":"XL",
               "name":"XL",
               "quantity":2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -321,7 +324,8 @@ Feature: Multi-step deliveries
               "type":"XL",
               "name":"XL",
               "quantity":2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -401,7 +405,8 @@ Feature: Multi-step deliveries
               "type":"XL",
               "name":"XL",
               "quantity":2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -435,7 +440,8 @@ Feature: Multi-step deliveries
               "type":"XL",
               "name":"XL",
               "quantity":2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"

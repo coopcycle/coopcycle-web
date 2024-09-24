@@ -83,9 +83,9 @@ class StripeManager
 
         // If it is a complementary payment,
         // we do not take application fee
-        if ($payment->isEdenredWithCard()) {
+        if ($payment->isMealVoucherComplement()) {
 
-            return $payload;
+            return $this->addCustomerParameter($payment, $payload);
         }
 
         $attrs = [];
@@ -110,20 +110,36 @@ class StripeManager
         }
 
         if (null === $stripeAccount || !$restaurantPaysStripeFee) {
-            /** For payments done directly in the platform account
-             *  we send the Customer paramater to associate the payment to the customer.
-             * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
-             */
+
             if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
                 $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
 
                 if (null !== $stripeCustomer) {
-                    $attrs['customer'] = $stripeCustomer;
+                    $attrs = $this->addCustomerParameter($payment, $attrs);
                 }
             }
         }
 
         return $payload + $attrs;
+    }
+
+    /**
+     * For payments done directly in the platform account
+     * we send the Customer paramater to associate the payment to the customer.
+     * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
+     */
+    private function addCustomerParameter(PaymentInterface $payment, array $payload): array
+    {
+        $order = $payment->getOrder();
+
+        if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
+            $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
+            if (null !== $stripeCustomer) {
+                $payload = array_merge($payload, ['customer' => $stripeCustomer]);
+            }
+        }
+
+        return $payload;
     }
 
     /**
@@ -136,7 +152,7 @@ class StripeManager
         $order = $payment->getOrder();
 
         $payload = [
-            'amount' => $payment->getAmountForMethod('CARD'),
+            'amount' => $payment->getAmount(),
             'currency' => strtolower($payment->getCurrencyCode()),
             'description' => sprintf('Order %s', $order->getNumber()),
             'payment_method' => $payment->getPaymentMethod(),
@@ -201,7 +217,7 @@ class StripeManager
         // Make sure the payment intent needs to be captured
         if ($intent->capture_method === 'manual' && $intent->amount_capturable > 0) {
             $intent->capture([
-                'amount_to_capture' => $payment->getAmountForMethod('CARD')
+                'amount_to_capture' => $payment->getAmount()
             ]);
         }
 

@@ -5,7 +5,7 @@ asyncModule(async () => {
   const { securityContext } = COMPILE_CONTEXT;
 
   let taxRates = []
-  if (securityContext.hasOwnProperty('base_url')) {
+  if (securityContext && securityContext.hasOwnProperty('base_url')) {
     try {
       const response = await fetch(`${securityContext.base_url}/api/tax_rates`)
       if (response.status === 200) {

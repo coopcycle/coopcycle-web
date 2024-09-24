@@ -47,7 +47,7 @@ const CollapsedUnassignedTours = ({ unassignedToursCount, splitCollapseAction })
       (<div className="dashboard__panel">
           <h4 className="dashboard__panel__header d-flex justify-content-center dashboard__panel__collapsed">
             <a onClick={() => splitCollapseAction()}>
-              <Tooltip title={ t('DASHBOARD_UNASSIGNED_TOURS') }>
+              <Tooltip placement="left" title={ t('DASHBOARD_UNASSIGNED_TOURS') }>
                 <span>({ unassignedToursCount })</span><br />
                 <i className="fa fa-caret-right"></i>
               </Tooltip>
@@ -98,6 +98,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
           <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
           <span className="mr-2">({ tours.length + groups.length })</span>
           <Tooltip
+            placement="left"
             title={t("EXPAND_COLLAPSE")}
           >
             { splitDirection == 'vertical' ?
@@ -106,21 +107,24 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
             }
           </Tooltip>
         </a>
-        <Tooltip
-          title={t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
-          className="mr-2"
-        >
-          <Switch
-            unCheckedChildren={"0"}
-            checkedChildren={"I"}
-            defaultChecked={mapFiltersSettings.showUnassignedTours}
-            checked={mapFiltersSettings.showUnassignedTours}
-            onChange={checked => {
-              dispatch(setMapFilterValue({key: "showUnassignedTours", value: checked}))
-            }}
-          />
-        </Tooltip>
-        <Buttons />
+        <span className="pull-right">
+          <Tooltip
+            placement="left"
+            title={t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
+            className="mr-2"
+          >
+            <Switch
+              unCheckedChildren={"0"}
+              checkedChildren={"I"}
+              defaultChecked={mapFiltersSettings.showUnassignedTours}
+              checked={mapFiltersSettings.showUnassignedTours}
+              onChange={checked => {
+                dispatch(setMapFilterValue({key: "showUnassignedTours", value: checked}))
+              }}
+            />
+          </Tooltip>
+          <Buttons />
+        </span>
       </h4>
       <div className="dashboard__panel__scroll">
         <Droppable

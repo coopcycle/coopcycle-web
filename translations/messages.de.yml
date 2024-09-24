@@ -367,6 +367,9 @@ form.store_type.setAsDefault.label: Als Hauptadresse festlegen
 form.store_type.defaultAddress.label: Hauptadresse
 form.store_type.time_slot.label: Zeitraum
 form.store_type.package_set.label: Paketset
+form.store_type.defaultCourier.label: Standardkurier
+form.store_type.defaultCourier.placeholder: Keiner
+form.store_type.defaultCourier.help: Bestellungen für diesen Laden werden automatisch diesem Kurier zugewiesen
 form.delivery.vehicle.placeholder: Wähle Fahrzeugtyp aus
 form.delivery.vehicle.label: Fahrzeug order Cargobike?
 form.delivery.distance.label: Entfernung
@@ -480,6 +483,14 @@ form.reusable_packaging.is_tracked.label: Tracking aktiviert
 form.reusable_packaging.name.label: Name
 form.package.volume_units.label: Volumeneinheiten
 form.package.name.label: Name
+form.package.description.label: Beschreibung für den Kunden
+form.package.average_volume_units.label: Durchschnittliche Volumeneinheiten (VU)
+form.package.max_volume_units.label: Maximale Volumeneinheiten (VU)
+form.package.average_estimation: Geschätzt auf 75 % des Maximums, wenn nicht festgelegt
+form.package.average_weight.label: Durchschnittsgewicht (kg)
+form.package.max_weight.label: Maximalgewicht (kg)
+form.package.shortCode.label: 2-Buchstaben-Code
+form.package.enter_details:  Details ein-/ausblenden
 form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name
 form.time_slot_choice.end_time.label: Endzeit

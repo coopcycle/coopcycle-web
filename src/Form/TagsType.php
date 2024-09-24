@@ -29,7 +29,11 @@ class TagsType extends AbstractType
     {
         $builder->addModelTransformer(new CallbackTransformer(
             function ($tagsAsArray): string {
-                return implode(' ', $tagsAsArray);
+                if (is_null($tagsAsArray)) {
+                    return implode(' ', []);
+                } else {
+                    return implode(' ', $tagsAsArray);
+                }
             },
             function ($tagsAsString): array {
                 return explode(' ', $tagsAsString);

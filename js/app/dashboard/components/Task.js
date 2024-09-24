@@ -13,7 +13,7 @@ import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-fronte
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
-import { getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
+import { getTaskPackages, getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 import { formatVolumeUnits, formatWeight } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
@@ -271,10 +271,12 @@ class Task extends React.Component {
           <TaskComments task={ task } />
           { showWeightAndVolumeUnit ?
             (
-              <div>
-                <span>{ formatWeight(task.weight) }</span>
+              <div className="text-muted">
+                <span>{ formatWeight(task.weight) } kg</span>
                 <span className="mx-2">|</span>
-                <span>{ formatVolumeUnits(getTaskVolumeUnits(task)) }</span>
+                <span>{ formatVolumeUnits(getTaskVolumeUnits(task)) } VU</span>
+                <span className="mx-2">|</span>
+                <span>{ getTaskPackages(task) }</span>
               </div>
             )
             : null

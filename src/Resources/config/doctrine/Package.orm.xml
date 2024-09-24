@@ -5,7 +5,13 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
-    <field name="volumeUnits" type="integer" column="volume_units"/>
+    <field name="description" type="string" column="description"/>
+    <field name="color" length="7" type="string" column="color"/>
+    <field name="averageVolumeUnits" type="integer" column="average_volume_units"/>
+    <field name="maxVolumeUnits" type="integer" column="max_volume_units"/>
+    <field name="averageWeight" type="integer" column="average_weight" nullable="true" />
+    <field name="maxWeight" type="integer" column="max_weight" nullable="true" />
+    <field name="shortCode" type="string" column="short_code" length="2"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

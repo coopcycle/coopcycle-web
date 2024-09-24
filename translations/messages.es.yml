@@ -750,7 +750,15 @@ form.time_slot_choice.start_time.label: Hora de inicio
 form.time_slot_choice.end_time.label: Hora de finalización
 form.package_set.name.label: Nombre
 form.package_set.packages.label: Paquetes
+form.package.enter_details: Mostrar/ocultar detalles
 form.package.name.label: Nombre
+form.package.description.label: Descripción para el cliente
+form.package.average_volume_units.label: Unidades de volumen promedio (VU)
+form.package.max_volume_units.label: Unidades de volumen máximo (VU)
+form.package.average_estimation: Estimado al 75 % del máximo si no se establece
+form.package.average_weight.label: Peso promedio (kg)
+form.package.max_weight.label: Peso máximo (kg)
+form.package.shortCode.label: Código de 2 letras
 form.package.volume_units.label: Unidades de volumen
 basics.date_range: Desde %start% hasta %end%
 basics.total_including_tax: Total incluyendo todos los impuestos
@@ -1060,6 +1068,9 @@ guest_checkout.user_with_same_email_exists: Ya existe una cuenta con el mismo co
 guest_checkout.use_another_email: Usar otro correo electrónico
 form.store_type.package_set.placeholder: Elija un paquete conjunto
 form.store_type.time_slot.placeholder: Elija una franja horaria
+form.store_type.defaultCourier.label: Mensajero·a predeterminado
+form.store_type.defaultCourier.placeholder: Ninguno
+form.store_type.defaultCourier.help: Los pedidos realizados para esta tienda se asignarán automáticamente a este mensajero·a
 profile.fullName: Nombre completo
 restaurant.form.section.taxonomy: Taxonomía
 localBusiness.form.business_address.label: Dirección comercial
@@ -1268,12 +1279,6 @@ order.adjustment_type.reusable_packaging.loopeat.help: Esta cuota cubre los gast
 form.settings.geocoding_provider.help: Utilizado por la API y cuando se importan hojas
   de cálculo
 form.settings.geocoding_provider.label: Proveedor de geocodificación
-form.payment.refund_breakdown: Cantidad reembolsable por tarjeta %card%, cantidad
-  reembolsable por Edenred %edenred%
-form.payment.edenred_disclaimer: Esta orden se pagó con Edenred y se completó con
-  una tarjeta de crédito. El reembolso será hecho basándose en la prioridad de la
-  cantidad pagada por la tarjeta de crédito, y si es necesario en la cantidad pagada
-  por Edenred.
 form.settings.addresses.title: Direcciones
 restaurant.form.vytal_enabled.label: Habilitar el sistema de depósito y reembolso
   de Vytal

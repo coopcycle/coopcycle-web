@@ -24,11 +24,20 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('symfonyConsole', (command) => {
+Cypress.Commands.add('terminal', command => {
   const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `bin/console ${ command } --env="test"`
+  let cmd = `${command}`
   if (prefix) {
-    cmd = `${ prefix } ${ cmd }`
+    cmd = `${prefix} ${cmd}`
+  }
+  cy.exec(cmd)
+})
+
+Cypress.Commands.add('symfonyConsole', command => {
+  const prefix = Cypress.env('COMMAND_PREFIX')
+  let cmd = `bin/console ${command} --env="test"`
+  if (prefix) {
+    cmd = `${prefix} ${cmd}`
   }
   cy.exec(cmd)
 })

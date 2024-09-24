@@ -16,19 +16,23 @@ class OrderSubscriber implements EventSubscriber
         protected RecordsMessages $eventRecorder,
         protected CommandBus $commandBus,
         protected TaskManager $taskManager)
-    {}
+    {
+    }
+
+    private array $changedTasks = [];
 
     public function getSubscribedEvents()
     {
         return array(
             Events::onFlush,
+            Events::postFlush,
         );
     }
 
     /**
      * Save the order number in task.metadata.order_number for non-foodtech orders
      */
-    public function onFlush(OnFlushEventArgs $args)
+    public function onFlush(OnFlushEventArgs $args): void
     {
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -38,7 +42,6 @@ class OrderSubscriber implements EventSubscriber
         };
 
         $updatedOrders = array_filter($uow->getScheduledEntityUpdates(), $isOrder);
-        $needsRecompute = false;
 
         foreach ($updatedOrders as $order) {
             $entityChangeSet = $uow->getEntityChangeSet($order);
@@ -53,16 +56,20 @@ class OrderSubscriber implements EventSubscriber
             $delivery = $order->getDelivery();
 
             if (is_null($oldValue) && !is_null($newValue) && !is_null($delivery)) {
-                foreach($delivery->getTasks() as $task) {
+                foreach ($delivery->getTasks() as $task) {
                     $task->setMetadata('order_number', $newValue);
-                    $this->taskManager->update($task);
-                    $needsRecompute = true;
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($task)), $task);
+
+                    $this->changedTasks[] = $task;
                 }
             }
         }
+    }
 
-        if ($needsRecompute) {
-            $uow->computeChangeSets();
+    public function postFlush(): void
+    {
+        foreach ($this->changedTasks as $task) {
+            $this->taskManager->update($task);
         }
     }
 }

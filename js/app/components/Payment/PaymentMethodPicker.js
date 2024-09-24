@@ -55,7 +55,6 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
             )
 
           case 'edenred':
-          case 'edenred+card':
 
             return (
               <div style={ methodStyles }key={ m.type }>
@@ -78,7 +77,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'cash_on_delivery':
 
             return (
-              <div style={ methodStyles }key={ m.type }>
+              <div style={ methodStyles }key={ m.type } data-testid="pm.cash">
                 <label>{ t('PM_CASH') }</label>
                 <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => setMethod('cash_on_delivery') }>

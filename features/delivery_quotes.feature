@@ -5,6 +5,7 @@ Feature: Delivery quotes
       | sylius_channels.yml |
       | sylius_taxation.yml |
       | sylius_products.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "subject_to_vat" has value "1"
@@ -109,6 +110,7 @@ Feature: Delivery quotes
       | sylius_channels.yml |
       | sylius_taxation.yml |
       | sylius_products.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the setting "default_tax_category" has value "tva_livraison"
     And the setting "subject_to_vat" has value "1"
