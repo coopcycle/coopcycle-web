@@ -970,6 +970,9 @@ form.store_type.packages_required.label: Richiesta di pacchetti
 form.store_type.weight_required.label: Richiesta di peso
 form.store_type.package_set.placeholder: Scegli un set di pacchi
 form.store_type.time_slot.placeholder: Scegli una fascia oraria
+form.store_type.defaultCourier.label: Corriere predefinito
+form.store_type.defaultCourier.placeholder: Nessuno
+form.store_type.defaultCourier.help: Gli ordini effettuati per questo negozio verranno automaticamente assegnati a questo corriere
 checkout.breadcrumb.confirm: Conferma
 order.payer.identificationNumber: Numero del documento
 order.payer.identificationType: Tipo di documento
