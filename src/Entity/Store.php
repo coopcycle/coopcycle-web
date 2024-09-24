@@ -175,6 +175,12 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $transporter = null;
 
+    /**
+     * The deliveries of this store will be linked by default to this rider
+     * @var User
+    */
+    private $defaultCourier;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -603,6 +609,16 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this;
     }
 
+    public function getDefaultCourier(): ?User
+    {
+        return $this->defaultCourier;
+    }
+
+    public function setDefaultCourier(?User $defaultCourier): Store
+    {
+        $this->defaultCourier = $defaultCourier;
+        return $this;
+    }
 
     /**
      * Get the recurrence rules linked to this store

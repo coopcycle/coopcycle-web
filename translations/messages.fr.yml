@@ -1259,6 +1259,9 @@ form.delivery.arbitrary_price.label: Definir le prix manuellement
 form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
+form.store_type.defaultCourier.label: Livreur·euse par défaut
+form.store_type.defaultCourier.placeholder: Aucun
+form.store_type.defaultCourier.help: Les commandes passées pour ce magasin seront automatiquement attribuées à ce·tte livreur·euse
 homepage.featured: À la une
 homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés

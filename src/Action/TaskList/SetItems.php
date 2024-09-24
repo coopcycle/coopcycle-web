@@ -17,45 +17,27 @@ use Symfony\Component\HttpFoundation\Request;
 final class SetItems
 {
     public function __construct(
-        private EntityManagerInterface $objectManager,
+        private EntityManagerInterface $entityManager,
         private UserManager $userManager,
         private TaskListManager $taskListManager,
         private TaskListNormalizer $taskListNormalizer
     )
-    {
-    }
-
-    private function getTaskList(\DateTime $date, User $user)
-    {
-        $taskList = $this->objectManager
-            ->getRepository(TaskList::class)
-            ->findOneBy(['date' => $date, 'courier' => $user]);
-
-        if (null === $taskList) {
-            $taskList = new TaskList();
-            $taskList->setDate($date);
-            $taskList->setCourier($user);
-            $this->objectManager->persist($taskList);
-            $this->objectManager->flush();
-        }
-
-        return $taskList;
-    }
+    {}
 
     public function __invoke(Request $request)
     {
         $date = new \DateTime($request->get('date'));
         $user = $this->userManager->findUserByUsername($request->get('username'));
 
-        $taskList = $this->getTaskList($date, $user);
+        $taskList = $this->taskListManager->getTaskListForUser($date, $user);
 
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);
 
         $this->taskListManager->assign($taskList, $data['items']);
 
-        $this->objectManager->persist($taskList);
-        $this->objectManager->flush();
+        $this->entityManager->persist($taskList);
+        $this->entityManager->flush();
 
         return new JsonResponse($this->taskListNormalizer->normalize($taskList, 'jsonld', [
             'resource_class' => TaskList::class,
