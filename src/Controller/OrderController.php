@@ -469,10 +469,14 @@ class OrderController extends AbstractController
         }
 
         $id = current($decoded);
-        $order = $orderRepository->findCartById($id);
+        $order = $orderRepository->find($id);
 
         if (null === $order) {
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        if (!in_array($order->getState(), [OrderInterface::STATE_CART, OrderInterface::STATE_NEW])) {
+            throw new BadRequestHttpException(sprintf('Order #%d is not in an expected state', $id));
         }
 
         return $this->selectPaymentMethodForOrder(

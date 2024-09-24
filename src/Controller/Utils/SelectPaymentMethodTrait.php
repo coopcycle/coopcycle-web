@@ -58,9 +58,14 @@ trait SelectPaymentMethodTrait
 
         $payments = array_values($order->getPayments()->toArray());
 
-        $cardPayment = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
-            return $payment->getMethod()->getCode() === 'CARD' && $payment->getState() === PaymentInterface::STATE_CART;
-        })->first();
+        $paymentStates = [
+            PaymentInterface::STATE_CART,
+            PaymentInterface::STATE_NEW,
+        ];
+
+        $cardPayment = $order->getPayments()->filter(fn (PaymentInterface $payment): bool =>
+            $payment->getMethod()->getCode() === 'CARD' && in_array($payment->getState(), $paymentStates)
+        )->first();
 
         $stripe = [];
         if ($cardPayment) {
