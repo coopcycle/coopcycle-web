@@ -50,11 +50,11 @@ class PackagesResolverTest extends TestCase
 
         $packageOne = new Package();
         $packageOne->setName('PackageOne');
-        $packageOne->setVolumeUnits(1.0);
+        $packageOne->setMaxVolumeUnits(1.0);
 
         $packageTwo = new Package();
         $packageTwo->setName('PackageTwo');
-        $packageTwo->setVolumeUnits(2.5);
+        $packageTwo->setMaxVolumeUnits(2.5);
 
         $delivery->addPackageWithQuantity($packageOne, 2);
         $delivery->addPackageWithQuantity($packageTwo, 2);

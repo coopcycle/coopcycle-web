@@ -7,6 +7,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,10 @@ class TaskListManager {
         protected IriConverterInterface $iriConverter,
         protected LoggerInterface $logger
     ) {}
-
+    
+    /*
+        Assign items (tours and tasks). Works like a PUT, i.e. remove items non-present in $newItemsIris. 
+    */
     public function assign(TaskList $taskList, $newItemsIris) {
 
         $currentItems =  array_merge(array(), $taskList->getItems()->toArray());
@@ -71,6 +75,23 @@ class TaskListManager {
         foreach ($newTasks as $task) {
             $task->assignTo($taskList->getCourier(), $taskList->getDate());
         }
+    }
+
+    public function getTaskListForUser(\DateTime $date, User $user)
+    {
+        $taskList = $this->entityManager
+            ->getRepository(TaskList::class)
+            ->findOneBy(['date' => $date, 'courier' => $user]);
+
+        if (null === $taskList) {
+            $taskList = new TaskList();
+            $taskList->setDate($date);
+            $taskList->setCourier($user);
+            $this->entityManager->persist($taskList);
+            $this->entityManager->flush();
+        }
+
+        return $taskList;
     }
 
 }

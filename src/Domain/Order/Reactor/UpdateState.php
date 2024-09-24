@@ -133,12 +133,18 @@ class UpdateState
 
             if (null !== $payment) {
 
-                $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+                if ($payment instanceof PaymentInterface) {
+                    $payment = [ $payment ];
+                }
 
-                if ($stateMachine->can(PaymentTransitions::TRANSITION_AUTHORIZE)) {
-                    $stateMachine->apply(PaymentTransitions::TRANSITION_AUTHORIZE);
-                } elseif ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
-                    $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                foreach ($payment as $p) {
+                    $stateMachine = $this->stateMachineFactory->get($p, PaymentTransitions::GRAPH);
+
+                    if ($stateMachine->can(PaymentTransitions::TRANSITION_AUTHORIZE)) {
+                        $stateMachine->apply(PaymentTransitions::TRANSITION_AUTHORIZE);
+                    } elseif ($stateMachine->can(PaymentTransitions::TRANSITION_COMPLETE)) {
+                        $stateMachine->apply(PaymentTransitions::TRANSITION_COMPLETE);
+                    }
                 }
             }
 

@@ -17,7 +17,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 Class EdenredCommand extends Command
 {
-    const PAYMENT_METHOD = 'EDENRED+CARD';
+    const PAYMENT_METHOD = 'EDENRED';
 
     public function __construct(
         EntityManagerInterface $entityManager,

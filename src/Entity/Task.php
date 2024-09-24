@@ -1033,6 +1033,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $wrappedPackage = $this->resolvePackage($package);
         $wrappedPackage->setQuantity($wrappedPackage->getQuantity() + $quantity);
 
+        $packageTags = $wrappedPackage->getPackage()->getTags();
+        $this->addTags($packageTags);
+
         if (!$this->packages->contains($wrappedPackage)) {
             $this->packages->add($wrappedPackage);
         }

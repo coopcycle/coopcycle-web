@@ -887,6 +887,14 @@ form.package.volume_units.label: Unité de volume
 form.package.name.label: Nom
 form.package_set.packages.label: Emballages
 form.package_set.name.label: Nom
+form.package.description.label: Description pour le client
+form.package.enter_details: Masquer/afficher les détails
+form.package.average_volume_units.label: Unités de volume moyen (VU)
+form.package.max_volume_units.label: Unités de volume maximum (VU)
+form.package.average_estimation: Estimé à 75 % du maximum si non défini
+form.package.average_weight.label: Poids moyen (kg)
+form.package.max_weight.label: Poids maximum (kg)
+form.package.shortCode.label: Code de 2 lettres
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
@@ -1204,11 +1212,6 @@ restaurants.edenred_transactions.title: Transactions Edenred
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.
-form.payment.edenred_disclaimer: Cette commande a été payée avec Edenred et un complément
-  par carte bancaire. Le remboursement se fera en priorité sur le montant payé par
-  carte bancaire, et sur le montant Edenred le cas échéant.
-form.payment.refund_breakdown: Montant remboursable par carte %card%, montant remboursable
-  par Edenred %edenred%
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
@@ -1256,6 +1259,9 @@ form.delivery.arbitrary_price.label: Definir le prix manuellement
 form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
+form.store_type.defaultCourier.label: Livreur·euse par défaut
+form.store_type.defaultCourier.placeholder: Aucun
+form.store_type.defaultCourier.help: Les commandes passées pour ce magasin seront automatiquement attribuées à ce·tte livreur·euse
 homepage.featured: À la une
 homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés

@@ -274,8 +274,6 @@ class EmbedController extends AbstractController
 
                 if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
 
-                    $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
                     $data = [
                         'stripeToken' => $paymentForm->get('stripePayment')->get('stripeToken')->getData()
                     ];
@@ -291,19 +289,28 @@ class EmbedController extends AbstractController
                         $order->setDelivery($delivery);
                     }
 
+                    // Keep a copy of the payments before trying authorization
+                    $payments = $order->getPayments()->filter(
+                        fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
+
                     $orderManager->checkout($order, $data);
                     $objectManager->flush();
 
-                    if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+                    $failedPayments = $payments->filter(
+                        fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_FAILED);
+
+                    if (count($failedPayments) > 0) {
+                        $errors = $failedPayments->map(fn (PaymentInterface $payment): string => $payment->getLastError());
+                        $error = implode("\n", $errors->toArray());
+
                         return $this->render('embed/delivery/summary.html.twig', [
                             'hashid' => $hashid,
                             'delivery' => $delivery,
                             'price' => $price,
                             'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                             'form' => $paymentForm->createView(),
-                            'payment' => $payment,
                             'order' => $order,
-                            'error' => $payment->getLastError(),
+                            'error' => $error,
                             'submission_hashid' => $request->query->get('data'),
                         ]);
                     }
@@ -325,7 +332,6 @@ class EmbedController extends AbstractController
                         'price' => $price,
                         'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                         'form' => $paymentForm->createView(),
-                        'payment' => $order->getLastPayment(PaymentInterface::STATE_CART),
                         'order' => $order,
                         'submission_hashid' => $request->query->get('data'),
                     ]);
@@ -352,15 +358,12 @@ class EmbedController extends AbstractController
             $objectManager->persist($order);
             $objectManager->flush();
 
-            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
             return $this->render('embed/delivery/summary.html.twig', [
                 'hashid' => $hashid,
                 'delivery' => $delivery,
                 'price' => $price,
                 'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                 'form' => $paymentForm->createView(),
-                'payment' => $payment,
                 'order' => $order,
                 'submission_hashid' => $request->query->get('data'),
             ]);

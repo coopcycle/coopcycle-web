@@ -1185,11 +1185,6 @@ restaurant_promotion.items_total: Na základě celkového počtu položek
 products.on_demand_delivery.name: Dodávka na vyžádání
 form.settings.geocoding_provider.help: Používá se v rozhraní API a při importu tabulek
 form.settings.geocoding_provider.label: Poskytovatel geokódování
-form.payment.refund_breakdown: Částka vratná kartou %card%, částka vratná Edenred
-  %edenred%
-form.payment.edenred_disclaimer: Tato objednávka byla zaplacena kreditní kartou Edenred
-  a doplatkem. Vrácení peněz bude provedeno přednostně z částky zaplacené kreditní
-  kartou a v případě potřeby z částky Edenred.
 form.settings.google_api_key_custom.label: Google API Key
 form.settings.autocomplete_provider.label: Poskytovatel návrhů
 form.settings.addresses.title: Adresy
