@@ -1,7 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
 
-import Navbar from './Navbar'
 import ChartPanel from './ChartPanel'
 import AverageDistance from './AverageDistance'
 import NumberOfTasks from './NumberOfTasks'
@@ -15,7 +14,6 @@ const Dashboard = ({ cubejsApi, dateRange, tasksMetricsEnabled }) => {
 
   return (
     <div>
-      <Navbar />
       <div className="metrics-grid">
         <ChartPanel title="Average distance">
           <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />

@@ -111,5 +111,7 @@
       </join-columns>
     </many-to-one>
     <one-to-many field="rrules" target-entity="AppBundle\Entity\Task\RecurrenceRule" mapped-by="store" />
+    <many-to-one field="defaultCourier" target-entity="AppBundle\Entity\User">
+    </many-to-one>
   </entity>
 </doctrine-mapping>

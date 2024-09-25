@@ -59,6 +59,12 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Pizza Reina
     code: PIZZA_REINA_DEFAULT
     price: 1000
+  sandwich_lunch_special_default:
+    taxCategory: "@tva_conso_immediate"
+    currentLocale: fr
+    name: Sandwich
+    code: SANDWICH_LUNCH_SPECIAL_DEFAULT
+    price: 3000
   hamburger_default_{crazy_hamburger, restaurant_with_cash_on_delivery}:
     taxCategory: "@tva_conso_immediate"
     currentLocale: fr
@@ -105,6 +111,13 @@ AppBundle\Entity\Sylius\Product:
     slug: pizza-reina
     enabled: true
     variants: [ "@pizza_reina_default" ]
+  sandwich_lunch_special:
+    code: SANDWICH_LUNCH_SPECIAL
+    currentLocale: fr
+    name: Sandwich Lunch Special
+    slug: sandwich-lunch-special
+    enabled: true
+    variants: [ "@sandwich_lunch_special_default" ]
   hamburger_{crazy_hamburger, restaurant_with_cash_on_delivery}:
     code: 'HAMBURGER_<current()>'
     currentLocale: fr
@@ -193,6 +206,20 @@ AppBundle\Entity\Sylius\Taxon:
     name: Default
     __calls:
       - addChild: [ "@pizza_express_section_pizzas" ]
+  lunch_menu_main:
+    code: LUNCH_MENU_MAIN
+    currentLocale: fr
+    slug: lunch-menu-main
+    name: Main
+    __calls:
+      - addProduct: [ "@sandwich_lunch_special" ]
+  lunch_menu:
+    code: LUNCH_MENU
+    currentLocale: fr
+    slug: lunch-menu
+    name: Default
+    __calls:
+      - addChild: [ "@lunch_menu_main" ]
   zero_waste_inc_section_salads:
     code: ZERO_WASTE_SALADS
     currentLocale: fr
@@ -241,7 +268,9 @@ AppBundle\Entity\LocalBusiness:
       - addProduct: [ "@cheeseburger_crazy_hamburger" ]
       - addProduct: [ "@cheesecake_crazy_hamburger" ]
       - addProduct: [ "@carrotcake_crazy_hamburger" ]
+      - addProduct: [ "@sandwich_lunch_special" ]
       - addTaxon: [ "@menu_crazy_hamburger" ]
+      - addTaxon: [ "@lunch_menu" ]
       - setMenuTaxon: [ "@menu_crazy_hamburger" ]
   restaurant_with_cash_on_delivery:
     name: Restaurant with cash on delivery
@@ -317,3 +346,19 @@ AppBundle\Entity\User:
         - false
     roles: [ 'ROLE_RESTAURANT' ]
     restaurants: [ '@restaurant_with_cash_on_delivery' ]
+
+AppBundle\Entity\BusinessRestaurantGroup:
+  business_restaurant_group1:
+    name: 'Business Restaurant Group 1'
+    contract: "@contract_4"
+    __calls:
+      - setOpeningHours:
+          - ['Mo-Fr 11:30-14:30']
+          - 'delivery'
+
+AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu:
+  platform_catering_crazy_hamburger:
+    businessRestaurantGroup: "@business_restaurant_group1"
+    restaurant: "@crazy_hamburger"
+    menu: "@lunch_menu"
+

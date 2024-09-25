@@ -61,3 +61,8 @@
   <hr>
   {{ form_row(form.billingMethod) }}
 {% endif %}
+
+{% if form.defaultCourier is defined %}
+  <hr>
+  {{ form_row(form.defaultCourier) }}
+{% endif %}

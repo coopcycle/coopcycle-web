@@ -38,7 +38,7 @@ class PackageWithQuantityType extends AbstractType
                 ->createQueryBuilder('p')
                 ->where('p.packageSet = :package_set')
                 ->setParameter('package_set', $options['package_set'])
-                ->orderBy('p.name', 'ASC');
+                ->orderBy('p.maxVolumeUnits', 'ASC');
 
             if (null !== $data) {
                 // This is here to make sure the dropdownn displays something

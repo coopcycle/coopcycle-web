@@ -21,8 +21,6 @@ const renderChart = ({ resultSet, error }) => {
     return <Spin />;
   }
 
-  console.log(resultSet.categories())
-
   const data = {
     labels: resultSet.categories().map((c) => c.x),
     datasets: resultSet.series().map((s) => {
@@ -57,30 +55,21 @@ const Chart = ({ cubejsApi, dateRange }) => {
   return (
     <QueryRenderer
       query={{
+        "dimensions": [
+          "OrderExport.restaurant"
+        ],
         "measures": [
-          "Restaurant.orderCount"
+          "OrderExport.count"
         ],
         "timeDimensions": [
           {
-            "dimension": "Order.shippingTimeRange",
+            "dimension": "OrderExport.completed_at",
             "dateRange": getCubeDateRange(dateRange)
           }
         ],
         "order": {
-          "Restaurant.orderCount": "desc"
+          "OrderExport.count": "desc"
         },
-        "filters": [
-          {
-            "member": "Order.state",
-            "operator": "equals",
-            "values": [
-              "fulfilled"
-            ]
-          }
-        ],
-        "dimensions": [
-          "Restaurant.name"
-        ],
         "limit": 10
       }}
       cubejsApi={cubejsApi}
@@ -90,7 +79,7 @@ const Chart = ({ cubejsApi, dateRange }) => {
         chartType: 'pie',
         pivotConfig: {
           "x": [
-            "Restaurant.name"
+            "OrderExport.restaurant"
           ],
           "y": [
             "measures"

@@ -150,13 +150,13 @@ monolog:
         # include all info or higher messages from all channels except the channels excluded in channels
         upload_info:
             type: filter
-            channels: [ "!php", "!cache", "!security" ]
+            channels: [ "!php", "!cache", "!security", "!request" ]
             min_level: info
             handler: logs_to_upload
         # still upload warning and higher messages from the excluded channels
         upload_warning:
             type: filter
-            channels: [ php, cache, security ]
+            channels: [ php, cache, security, request ]
             min_level: warning
             handler: logs_to_upload
 

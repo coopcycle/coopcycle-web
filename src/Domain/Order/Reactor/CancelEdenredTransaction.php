@@ -29,7 +29,7 @@ class CancelEdenredTransaction
         }
 
         $authorizedEdenredPayments = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
-            return in_array($payment->getMethod()->getCode(), ['EDENRED', 'EDENRED+CARD'])
+            return $payment->getMethod()->getCode() === 'EDENRED'
                 && $payment->getState() === PaymentInterface::STATE_AUTHORIZED;
         });
 

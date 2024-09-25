@@ -1,4 +1,4 @@
-describe('Checkout (happy path)', () => {
+describe('Checkout (happy path); (non business context)', () => {
   beforeEach(() => {
 
     cy.symfonyConsole(

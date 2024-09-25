@@ -16,7 +16,8 @@ class PackageSetType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'form.package_set.name.label'
+                'label' => "form.package_set.name.label",
+                'label_html' => true,
             ])
             ->add('packages', CollectionType::class, [
                 'entry_type' => PackageType::class,

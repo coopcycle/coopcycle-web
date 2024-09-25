@@ -2462,7 +2462,8 @@ Feature: Tasks
                "type":"SMALL",
                "name":"SMALL",
                "quantity":4,
-               "volume_per_package": 1
+               "volume_per_package": 1,
+               "short_code": "AB"
             }
          ],
          "@*@": "@*@"
@@ -2749,15 +2750,15 @@ Feature: Tasks
           {
             "@type":"FailureReason",
             "@id":"@string@",
-            "code":"REFUSED",
-            "description":"Refused",
+            "code":"DAMAGED",
+            "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
             "@id":"@string@",
-            "code":"DAMAGED",
-            "description":"Damaged",
+            "code":"REFUSED",
+            "description":"Refused",
             "metadata":[]
           }
         ],

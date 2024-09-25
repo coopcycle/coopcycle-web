@@ -348,7 +348,8 @@ Feature: Deliveries
               "type": "XL",
               "name": "XL",
               "quantity": 2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -382,7 +383,8 @@ Feature: Deliveries
               "type": "XL",
               "name": "XL",
               "quantity": 2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -1222,6 +1224,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has order creation enabled
     And the store with name "Acme" has an OAuth client named "Acme"

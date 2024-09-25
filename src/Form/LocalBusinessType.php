@@ -23,6 +23,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Security\UserManager;
 
 abstract class LocalBusinessType extends AbstractType
 {
@@ -45,6 +46,7 @@ abstract class LocalBusinessType extends AbstractType
         SerializerInterface $serializer,
         GatewayResolver $gatewayResolver,
         UrlGeneratorInterface $urlGenerator,
+        protected UserManager $userManager,
         protected FormFieldUtils $formFieldUtils,
         string $country,
         bool $debug = false,

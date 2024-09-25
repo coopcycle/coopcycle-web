@@ -6,14 +6,12 @@ import AverageCart from './AverageCart'
 import OrderCountPerDayOfWeek from './OrderCountPerDayOfWeek'
 import OrderCountPerHourRange from './OrderCountPerHourRange'
 import OrderCountPerZone from './OrderCountPerZone'
-import Navbar from './Navbar'
 import ChartPanel from './ChartPanel'
 
 const Dashboard = ({ cubejsApi, dateRange }) => {
 
   return (
     <div>
-      <Navbar />
       <div className="metrics-grid">
         <ChartPanel title="Best restaurants">
           <BestRestaurants cubejsApi={ cubejsApi } dateRange={ dateRange } />

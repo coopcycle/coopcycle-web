@@ -33,15 +33,18 @@ class GatewayTest extends TestCase
     {
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
-        $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
         $this->edenred = $this->prophesize(EdenredClient::class);
 
+        $this->stripeGateway = new Gateway\Stripe($this->stripeManager->reveal());
+        $this->edenredGateway = new Gateway\Edenred($this->edenred->reveal());
+
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
-            $this->stripeManager->reveal(),
-            $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            [
+                'stripe' => $this->stripeGateway,
+                'edenred' => $this->edenredGateway,
+            ]
         );
     }
 
@@ -123,40 +126,6 @@ class GatewayTest extends TestCase
         $this->assertInstanceOf(Collection::class, $payment->getRefunds());
     }
 
-    public function testRefundEdenredWithCard()
-    {
-        $method = new PaymentMethod();
-        $method->setCode('EDENRED+CARD');
-
-        $payment = new Payment();
-        $payment->setState(PaymentInterface::STATE_COMPLETED);
-        $payment->setMethod($method);
-        $payment->setAmount(3800 + 550);
-        $payment->setAmountBreakdown(3800, 550);
-
-        $stripeRefund = Stripe\Refund::constructFrom([
-            'id' => 're_123456',
-            'amount' => 550,
-        ]);
-
-        $this->stripeManager
-            ->refund($payment, 550)
-            ->willReturn($stripeRefund)
-            ->shouldBeCalled();
-
-        $this->edenred
-            ->refund($payment, 450)
-            ->shouldBeCalled();
-
-        $this->assertFalse($payment->hasRefunds());
-
-        $this->gateway->refund($payment, 1000);
-
-        $this->assertTrue($payment->hasRefunds());
-        $this->assertCount(1, $payment->getRefunds());
-        $this->assertInstanceOf(Collection::class, $payment->getRefunds());
-    }
-
     public function testRefundEdenred()
     {
         $method = new PaymentMethod();
@@ -166,14 +135,9 @@ class GatewayTest extends TestCase
         $payment->setState(PaymentInterface::STATE_COMPLETED);
         $payment->setMethod($method);
         $payment->setAmount(3800);
-        $payment->setAmountBreakdown(3800, 0);
-
-        $this->stripeManager
-            ->refund($payment, Argument::type('int'))
-            ->shouldNotBeCalled();
 
         $this->edenred
-            ->refund($payment, 3800)
+            ->refund($payment, 1000)
             ->shouldBeCalled();
 
         $this->assertFalse($payment->hasRefunds());
