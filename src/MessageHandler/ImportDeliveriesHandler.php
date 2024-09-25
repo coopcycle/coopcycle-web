@@ -40,22 +40,24 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
     {
         RemotePushNotificationManager::disable();
 
-        // Download file locally
-        $tempDir = sys_get_temp_dir();
-        $tempnam = tempnam($tempDir, 'coopcycle_delivery_import');
-
-        if (false === file_put_contents($tempnam, $this->deliveryImportsFilesystem->read($message->getFilename()))) {
-            $this->logger->error('Could not write temp file');
-            return;
-        }
-
         $queue = $this->entityManager
             ->getRepository(DeliveryImportQueue::class)
             ->findOneByFilename($message->getFilename());
 
         if (null === $queue) {
             $this->logger->error(sprintf('Could not find job for filename %s', $message->getFilename()));
-            unlink($tempnam);
+            return;
+        } else if (DeliveryImportQueue::STATUS_PENDING !== $queue->getStatus()) {
+            $this->logger->warning(sprintf('Job for filename %s is already processing', $message->getFilename()));
+            return;
+        }
+
+        // Download file locally
+        $tempDir = sys_get_temp_dir();
+        $tempnam = tempnam($tempDir, 'coopcycle_delivery_import');
+
+        if (false === file_put_contents($tempnam, $this->deliveryImportsFilesystem->read($message->getFilename()))) {
+            $this->logger->error(sprintf('Could not write file for filename %s', $message->getFilename()));
             return;
         }
 
