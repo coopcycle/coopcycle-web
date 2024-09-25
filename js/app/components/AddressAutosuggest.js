@@ -387,6 +387,9 @@ class AddressAutosuggest extends Component {
     this.highlightFirstSuggestion = localize('highlightFirstSuggestion', adapter, this)
     this.useCache = localize('useCache', adapter, this)
 
+    this.getFirstSuggestion = this.getFirstSuggestion.bind(this)
+    this.getSuggestionsLength = this.getSuggestionsLength.bind(this)
+
     this.state = this.getInitialState()
   }
 
@@ -620,9 +623,40 @@ class AddressAutosuggest extends Component {
     )
   }
 
+  getSuggestionsLength () {
+    const { suggestions, multiSection } = this.state
+    if (multiSection) {
+      return suggestions.reduce((acc, section) => acc + section['suggestions'].length, 0)
+    } else {
+      return suggestions.length
+    }
+  }
+
+  getFirstSuggestion () {
+    const { suggestions, multiSection } = this.state
+    let suggestionsValues = []
+
+    if (multiSection) {
+      suggestionsValues = suggestions.reduce((acc, section) => acc.concat(section['suggestions']), [])
+    } else {
+      suggestionsValues = suggestions
+    }
+
+    return suggestionsValues[0]
+  }
+
   render() {
 
     const { value, suggestions, multiSection } = this.state
+
+    const selectFirstSuggestionOnEnter = (event) => {
+      if (event.key === 'Enter' && this.getSuggestionsLength() > 0) {
+          event.preventDefault()
+          const selected = this.getFirstSuggestion()
+          this.onSuggestionSelected({}, {suggestion: selected})
+          this.setState({ value: selected.value })
+      }
+    }
 
     const inputProps = {
       placeholder: this.placeholder(),
@@ -631,6 +665,8 @@ class AddressAutosuggest extends Component {
       type: "search",
       required: this.props.required,
       disabled: this.props.disabled || this.state.loading,
+      onKeyDown: e => selectFirstSuggestionOnEnter(e),
+      'data-is-address-picker': true, // used to differentiate from the search input to search in the AddressBook
       // FIXME
       // We may override important props such as value, onChange
       // We need to omit some props
