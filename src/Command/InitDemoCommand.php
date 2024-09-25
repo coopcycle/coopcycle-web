@@ -74,6 +74,10 @@ class InitDemoCommand extends Command
             ->addOption(
                 'no-create-admin',
                 mode: InputOption::VALUE_NONE
+            )
+            ->addOption(
+                'latlng',
+                mode: InputOption::VALUE_REQUIRED
             );
     }
 
@@ -224,12 +228,16 @@ class InitDemoCommand extends Command
         $className = $this->configEntityName;
         $em = $this->doctrine->getManagerForClass($className);
 
-        try {
-            $mapCenterValue = $this->craueConfig->get('latlng');
-        } catch (\RuntimeException $e) {
-            $mapCenterValue = implode(',', self::$parisFranceCoords);
-            $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
-            $em->persist($mapCenter);
+        if ($input->hasOption('latlng')) {
+            $mapCenterValue = $input->getOption('latlng');
+        } else {
+            try {
+                $mapCenterValue = $this->craueConfig->get('latlng');
+            } catch (\RuntimeException $e) {
+                $mapCenterValue = implode(',', self::$parisFranceCoords);
+                $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
+                $em->persist($mapCenter);
+            }
         }
 
         try {
@@ -256,8 +264,8 @@ class InitDemoCommand extends Command
         }
 
         // Make sure we use a language supported by Photon
-        // "language es is not supported, supported languages are: default, en, fr, de, it"
-        $geocoderLocale = in_array($this->defaultLocale, ['en', 'fr', 'de', 'it']) ? $this->defaultLocale : 'en';
+        // "Language it is not supported, supported languages are: default, en, de, fr"
+        $geocoderLocale = in_array($this->defaultLocale, ['en', 'de', 'fr']) ? $this->defaultLocale : 'en';
 
         $providers[] = PhotonProvider::withKomootServer($httpAdapter);
 
