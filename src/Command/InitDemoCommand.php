@@ -33,6 +33,7 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
@@ -69,7 +70,11 @@ class InitDemoCommand extends Command
     {
         $this
             ->setName('coopcycle:demo:init')
-            ->setDescription('Initialize CoopCycle demo.');
+            ->setDescription('Initialize CoopCycle demo.')
+            ->addOption(
+                'no-create-admin',
+                mode: InputOption::VALUE_NONE
+            );
     }
 
     public function __construct(
@@ -115,6 +120,7 @@ class InitDemoCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $createSuperUsers = !$input->hasOption('no-create-admin');
         $lock = $this->lockFactory->createLock('orm-purger');
 
         if ($lock->acquire()) {
@@ -128,9 +134,11 @@ class InitDemoCommand extends Command
             $output->writeln('Resetting sequences…');
             $this->resetSequences();
 
-            $output->writeln('Creating super users…');
-            foreach (self::$users as $username => $params) {
-                $this->createUser($username, $params);
+            if ($createSuperUsers) {
+                $output->writeln('Creating super users…');
+                foreach (self::$users as $username => $params) {
+                    $this->createUser($username, $params);
+                }
             }
 
             $output->writeln('Creating users…');
