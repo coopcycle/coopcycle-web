@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
-import { Popover, Form, Input, Button } from 'antd'
+import {  Input, Button } from 'antd'
 import { UserOutlined, PhoneOutlined, StarOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import Modal from 'react-modal'
 
@@ -48,19 +47,21 @@ function getUnformattedValue(prop, value) {
     return phoneNumber ? phoneNumber.format('E.164') : value
   }
 
+  console.log(value)
+
   // If value is null or undefined, we make sure to return an empty string,
   // because React treats value={ undefined | null } as an uncontrolled component
   // https://stackoverflow.com/questions/49969577/warning-when-changing-controlled-input-value-in-react
   return value ?? ''
 }
 
-const AddressPopover = ({ baseTestId, address, prop, onChange, id, name, required }) => {
+const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
   const { t } = useTranslation()
   const [ visible, setVisible ] = useState(false)
 
-  const [ form ] = Form.useForm()
+  // const [ form ] = Form.useForm()
 
   useEffect(() => {
     if (visible) {
@@ -86,61 +87,32 @@ const AddressPopover = ({ baseTestId, address, prop, onChange, id, name, require
 
   const value = address[prop]
 
+  const onInputBlur = (event) => {
+    let d = {}
+    d[prop] = event.target.value
+    onFinish(d)
+  }
+
   return (
-    <Popover
-      trigger="click"
-      placement="bottom"
-      open={ visible }
-      onOpenChange={ visible => setVisible(visible) }
-      content={
-        <Form form={ form } name={ `${baseTestId}_${prop}__popover` } layout="inline" onFinish={ onFinish }
-          initialValues={{ [ prop ]: getFormattedValue(prop, value) }}>
-          <Form.Item
-            name={ prop }
-            rules={[{ required }]}
-          >
-            <Input
-              prefix={<AddressPopoverIcon prop={ prop } />}
-              placeholder={ prop === 'telephone' ? '' : t(`${transKeys[prop]}_PLACEHOLDER`) }
-              ref={ inputRef } />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
-              { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
-            </Button>
-          </Form.Item>
-        </Form> }
-    >
-      <span style={{ position: 'relative', display: 'inline-block' }} data-testid={ `address_${prop}__popover_pill` }>
-        <button
-          type="button"
-          className={ classNames({
-            'border': true,
-            'rounded-pill': true,
-            'py-2': true,
-            'px-4': true,
-            'mr-2': true,
-            'mb-2': true,
-            'border-primary': !_.isEmpty(value),
-          }) }>
-          <span className="mr-2"><AddressPopoverIcon prop={ prop } /></span>
-          <span className={ classNames({
-            'font-weight-bold': prop === 'name',
-          }) }>{ !_.isEmpty(value) ? getFormattedValue(prop, value) : t(`${transKeys[prop]}_LABEL`) }</span>
-        </button>
-        {/* https://stackoverflow.com/questions/50917016/make-hidden-field-required */}
-        <input type="text"
+      <>
+        <Input
+          style={{ width: '33%' }}
+          prefix={<AddressPopoverIcon prop={ prop } />}
+          placeholder={ prop === 'telephone' ? '' : t(`${transKeys[prop]}_PLACEHOLDER`) }
+          ref={ inputRef }
+          onBlur={ onInputBlur }
+          defaultValue={ getFormattedValue(prop, value) }
+        />
+        <input
+          type="text"
+          tabIndex="-1"
           style={{ opacity: 0, width: 0, position: 'absolute', left: '50%', top: 0, bottom: 0, pointerEvents: 'none' }}
           id={ id }
           name={ name }
           value={ getUnformattedValue(prop, value) }
           onChange={ () => null }
           required={ required } />
-      </span>
-    </Popover>
+    </>
   )
 }
 
@@ -203,7 +175,8 @@ const AddressBook = ({
           { ...otherProps } />
       </div>
       { address &&
-      <div className="mt-4 mb-2">
+      <div className="my-4 p-2" style={{border: "1px solid grey", borderRadius: '4px'}}>
+        <Input.Group compact>
         { _.map(details, item => (
           <AddressPopover
             key={ item.prop }
@@ -212,6 +185,11 @@ const AddressBook = ({
             onChange={ value => onAddressPropChange(address, item.prop, value) }
             { ...item } />
         )) }
+        {
+          address['@id'] ? <span className="text-muted pull-right">From address book</span>: null
+        }
+        </Input.Group>
+
       </div> }
       <Modal
         isOpen={ isModalOpen }
@@ -223,8 +201,9 @@ const AddressBook = ({
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <p>{ t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER') }</p>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-center">
           <Button
+            className="mr-4"
             onClick={ () => {
               onDuplicateAddress(false)
               setModalOpen(false)
