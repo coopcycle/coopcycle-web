@@ -591,7 +591,7 @@ class RestaurantStats implements \Countable
         }
         if ($this->withBillingMethod) {
             $headings[] = 'billing_method';
-            $headings[] = 'store_type';
+            $headings[] = 'applied_billing';
         }
 
         return $headings;
@@ -675,7 +675,7 @@ class RestaurantStats implements \Countable
                 return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
             case 'billing_method':
                 return $order->billingMethod ?? 'unit';
-            case 'store_type':
+            case 'applied_billing':
                 return $order->hasVendor() ? Order::STORE_TYPE_FOODTECH : Order::STORE_TYPE_LASTMILE;
         }
 
