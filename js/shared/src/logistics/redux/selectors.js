@@ -78,9 +78,13 @@ const flattenTaskListItemsAsListOfTasks = (taskList, allTasks, allTours) => {
   return taskList.items.reduce((acc, it) => {
     if (it.startsWith('/api/tours')) {
       const tour = allTours.find(t => t['@id'] === it)
-      // filter out undefined values
-      // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
-      acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId)).filter( Boolean )]
+      if (!tour) {
+        console.log(`Could not find tour at id ${it}`)
+      } else {
+        // filter out undefined values
+        // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+        acc = [...acc, ...tour.items.map(tId => allTasks.find(t => t['@id'] === tId)).filter( Boolean )]
+      }
     } else {
       // filter out undefined values
       // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
