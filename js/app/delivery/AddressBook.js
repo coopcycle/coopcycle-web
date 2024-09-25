@@ -47,8 +47,6 @@ function getUnformattedValue(prop, value) {
     return phoneNumber ? phoneNumber.format('E.164') : value
   }
 
-  console.log(value)
-
   // If value is null or undefined, we make sure to return an empty string,
   // because React treats value={ undefined | null } as an uncontrolled component
   // https://stackoverflow.com/questions/49969577/warning-when-changing-controlled-input-value-in-react
@@ -60,8 +58,6 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   const inputRef = useRef(null)
   const { t } = useTranslation()
   const [ visible, setVisible ] = useState(false)
-
-  // const [ form ] = Form.useForm()
 
   useEffect(() => {
     if (visible) {
@@ -127,6 +123,8 @@ const AddressBook = ({
   allowSearchSavedAddresses,
   ...otherProps
 }) => {
+
+  console.log(initialAddress)
 
   const { t } = useTranslation()
   const [ address, setAddress ] = useState(initialAddress)
