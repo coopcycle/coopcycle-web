@@ -11,7 +11,7 @@ import AddressAutosuggest from '../components/AddressAutosuggest'
 import { getCountry } from '../i18n'
 
 import './AddressBook.scss'
-import { SavedAddressesBox } from './SavedAddressBox'
+import SavedAddressesBox from './SavedAddressBox'
 
 const AddressPopoverIcon = ({ prop }) => {
   switch (prop) {
@@ -152,10 +152,13 @@ const AddressBook = ({
   return (
     <div>
        {allowSearchSavedAddresses &&
-          <SavedAddressesBox addresses={addresses} address={address} onSelected={(selected) => {
-            setAddress(selected)
-            onAddressSelected(selected.streetAddress, selected)
-          }}/>
+          <SavedAddressesBox
+            addresses={addresses}
+            address={address} onSelected={(selected) => {
+              setAddress(selected)
+              onAddressSelected(selected.streetAddress, selected)
+            }}
+          />
        }
       <div>
         <AddressAutosuggest
@@ -391,7 +394,6 @@ export default function(el, options) {
       // The onAddressSelected callback is *ALSO* called when
       // an address prop (name, telephone, contactName) is modified
       onAddressSelected={ (value, address) => {
-
         if (address['@id']) {
           existingAddressControlHidden.value = address['@id']
           isNewAddressControlHidden.remove()

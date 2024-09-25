@@ -1,63 +1,52 @@
+import { AutoComplete, Input, Select } from 'antd'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useCombobox } from 'downshift'
 
-function getAddressesFilter(inputValue) {
-  const lowerCasedInputValue = inputValue.toLowerCase()
+export default ({ addresses, onSelected }) => {
 
-  return function addressesFilter(address) {
+  const [results, setResults] = useState(addresses)
+  const { t } = useTranslation()
+
+  const resultsDisplay = results.map((address, index) => {
     return (
-      !inputValue ||
-      address.name?.toLowerCase().includes(lowerCasedInputValue)
+      <Select.Option key={index} >
+        {address.name} - {address.streetAddress}
+      </Select.Option>
+    )})
+
+  const [inputValue, setInputValue] = useState('')
+
+  const search = (inputValue) => {
+    const lowerCasedInputValue = inputValue.toLowerCase()
+
+    setResults(
+      addresses.filter(address =>
+        address.name?.toLowerCase().includes(lowerCasedInputValue) || address.streetAddress?.toLowerCase().includes(lowerCasedInputValue)
+      )
     )
   }
-}
-
-export const SavedAddressesBox = ({ addresses, address, onSelected }) => {
-  const [items, setItems] = useState([])
-  const { t } = useTranslation()
-  const {
-    isOpen,
-    getMenuProps,
-    getInputProps,
-    getItemProps,
-  } = useCombobox({
-    onInputValueChange({ inputValue }) {
-      setItems(addresses.filter(getAddressesFilter(inputValue)))
-    },
-    items,
-    itemToString(item) {
-      return item ? `${item.name} - ${item.streetAddress}` : ''
-    },
-    onSelectedItemChange({ selectedItem }) {
-      onSelected(selectedItem)
-    }
-  })
 
   return (
-    <div className="mb-2">
-      <label className="control-label">{t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}</label>
-      <div className="form-group-search">
-        <input
-          placeholder={t('TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER')}
-          className="form-control"
-          {...getInputProps()} />
-      </div>
-      <ul
-        className={`SavedAddressesBox__Results list-unstyled bg-white shadow-md ${!isOpen && 'hidden'}`}
-        {...getMenuProps()}
-      >
-        {isOpen &&
-          items.map((item, index) => (
-            <li
-              className={`py-2 px-3 shadow-sm ${(address && address["@id"] === item["@id"]) && 'font-weight-bold'}`}
-              key={item['@id']}
-              {...getItemProps({ item, index })}
-            >
-              <span>{item.name} - {item.streetAddress}</span>
-            </li>
-          ))}
-      </ul>
-    </div>
+    <AutoComplete
+      style={{"width": "100%"}}
+      className="mb-2"
+      value={ inputValue }
+      onSearch={ value => {
+        search(value)
+        setInputValue(value)
+      }}
+      onSelect={(index) => {
+        const result = results[index]
+        setInputValue(result.name)
+        onSelected(results[index])
+      }}
+      dataSource={resultsDisplay}
+      dropdownStyle={{zIndex: 1}}
+    >
+      <Input
+        addonBefore={<i className="fa fa-search"></i>}
+        placeholder={ t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME') }
+      />
+    </AutoComplete>
   )
 }
