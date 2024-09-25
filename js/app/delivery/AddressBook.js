@@ -162,7 +162,6 @@ const AddressBook = ({
        }
       <div>
         <AddressAutosuggest
-          addresses={ addresses }
           address={ address }
           required={ true }
           reportValidity={ true }
