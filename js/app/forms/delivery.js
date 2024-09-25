@@ -598,7 +598,7 @@ export default function(name, options) {
           return false
         }
 
-        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"]`);
+        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"][data-is-address-picker="true"]`);
         const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
         const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
         const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
