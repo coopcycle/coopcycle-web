@@ -4,6 +4,7 @@ namespace AppBundle\Form;
 
 use AppBundle\Service\FormFieldUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -36,6 +37,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $cashOnDeliveryOptinEnabled;
     protected bool $transportersEnabled;
     protected array $transportersConfig;
+    protected bool $billingEnabled;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -50,6 +52,7 @@ abstract class LocalBusinessType extends AbstractType
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false,
         array $transportersConfig = [],
+        bool $billingEnabled = false,
     )
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -63,6 +66,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->gatewayResolver = $gatewayResolver;
         $this->transportersEnabled = !empty($transportersConfig);
         $this->transportersConfig = $transportersConfig;
+        $this->billingEnabled = $billingEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -86,6 +90,17 @@ abstract class LocalBusinessType extends AbstractType
                 'required' => false,
                 'label' => 'localBusiness.form.telephone',
             ]);
+
+        if ($this->billingEnabled) {
+            $builder->add('billingMethod', ChoiceType::class, [
+                'label' => 'form.billing_method.label',
+                'help' => 'form.billing_method.help',
+                'choices' => [
+                    'form.billing_method.unit' => 'unit',
+                    'form.billing_method.percentage' => 'percentage',
+                ]
+            ]);
+        }
 
         foreach ($options['additional_properties'] as $key => $constraints) {
 
