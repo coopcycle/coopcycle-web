@@ -25,8 +25,14 @@ async function _putTimeSlots(id, data) {
 
 async function _updateTimeSlots(id, timeSlots, setFetching) {
 
+  let payload = { timeSlots }
+  // If all timeslots are removed, we also clear the default one
+  if (timeSlots.length === 0) {
+    payload = { ...payload, timeSlot: null }
+  }
+
   setFetching(true)
-  const { error } = await _putTimeSlots(id, { timeSlots });
+  const { error } = await _putTimeSlots(id, payload);
   setFetching(false)
 
   if (error && error.response) {
