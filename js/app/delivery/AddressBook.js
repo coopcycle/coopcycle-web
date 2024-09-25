@@ -13,7 +13,7 @@ import { getCountry } from '../i18n'
 import './AddressBook.scss'
 import SavedAddressesBox from './SavedAddressBox'
 
-const AddressPopoverIcon = ({ prop }) => {
+const AddressDetailsIcon = ({ prop }) => {
   switch (prop) {
     case 'name':
       return <StarOutlined />
@@ -55,7 +55,7 @@ function getUnformattedValue(prop, value) {
   return value ?? ''
 }
 
-const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
+const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
   const { t } = useTranslation()
@@ -97,8 +97,8 @@ const AddressPopover = ({ address, prop, onChange, id, name, required }) => {
       <>
         <Input
           style={{ width: '33%' }}
-          prefix={<AddressPopoverIcon prop={ prop } />}
-          placeholder={ prop === 'telephone' ? '' : t(`${transKeys[prop]}_PLACEHOLDER`) }
+          prefix={<AddressDetailsIcon prop={ prop } />}
+          placeholder={ t(`${transKeys[prop]}_PLACEHOLDER`) }
           ref={ inputRef }
           onBlur={ onInputBlur }
           defaultValue={ getFormattedValue(prop, value) }
@@ -180,7 +180,7 @@ const AddressBook = ({
       <div className="my-4 p-2" style={{border: "1px solid grey", borderRadius: '4px'}}>
         <Input.Group compact>
         { _.map(details, item => (
-          <AddressPopover
+          <AddressDetails
             key={ item.prop }
             baseTestId={ baseTestId }
             address={ address }
