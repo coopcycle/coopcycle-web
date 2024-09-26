@@ -124,7 +124,7 @@ class InitDemoCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $createSuperUsers = !$input->hasOption('no-create-admin');
+        $createSuperUsers = !$input->getOption('no-create-admin');
         $lock = $this->lockFactory->createLock('orm-purger');
 
         if ($lock->acquire()) {
@@ -228,9 +228,9 @@ class InitDemoCommand extends Command
         $className = $this->configEntityName;
         $em = $this->doctrine->getManagerForClass($className);
 
-        if ($input->hasOption('latlng')) {
-            $mapCenterValue = $input->getOption('latlng');
-        } else {
+        $mapCenterValue = $input->getOption('latlng');
+        if (null === $mapCenterValue) {
+            // in this case, the option was not passed when running the command
             try {
                 $mapCenterValue = $this->craueConfig->get('latlng');
             } catch (\RuntimeException $e) {
