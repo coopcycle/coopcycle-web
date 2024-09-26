@@ -11,9 +11,9 @@ use Psr\Log\LoggerInterface;
 class LoggerSubscriber implements EventSubscriber
 {
 
-    private array $insertions = [];
-    private array $updates = [];
-    private array $deletions = [];
+    private array $entityInsertions = [];
+    private array $entityUpdates = [];
+    private array $entityDeletions = [];
 
     public function __construct(
         private readonly LoggerInterface $databaseLogger)
@@ -33,9 +33,10 @@ class LoggerSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->insertions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions());
-        $this->updates = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates());
-        $this->deletions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions());
+        $this->entityInsertions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions());
+        $this->entityUpdates = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates());
+        $this->entityDeletions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions());
+        //TODO; there are also collectionUpdates and collectionDeletions that can be logged
     }
 
     public function postFlush(PostFlushEventArgs $args): void
@@ -43,22 +44,21 @@ class LoggerSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->databaseLogger->info(sprintf('Insertions: %d; %s',
-            count($this->insertions),
-            implode(', ', array_map(fn($entity) => $this->formatEntity($uow, $entity), $this->insertions))));
-        $this->databaseLogger->info(sprintf('Updates: %d; %s',
-            count($this->updates),
-            implode(', ', array_map(fn($entity) => $this->formatEntity($uow, $entity), $this->updates))));
-        $this->databaseLogger->info(sprintf('Deletions: %d; %s',
-            count($this->deletions),
-            implode(', ', array_map(fn($entity) => $this->formatEntity($uow, $entity), $this->deletions))));
+        $this->log($uow, 'insertions', $this->entityInsertions);
+        $this->log($uow, 'updates', $this->entityUpdates);
+        $this->log($uow, 'deletions', $this->entityDeletions);
     }
 
-    private function formatEntity($unitOfWork, EntityItem $entityItem): string
+    private function log($uow, string $action, array $list): void
     {
-        return sprintf('%s#%s',
-            (new \ReflectionClass($entityItem->entity))->getShortName(),
-            implode(',', $entityItem->getDatabaseIdentifier($unitOfWork)));
+        if (count($list) === 0) {
+            return;
+        }
+
+        $this->databaseLogger->info(sprintf('Entity %s: %d; %s',
+            $action,
+            count($list),
+            implode(', ', array_map(fn($entity) => $entity->format($uow), $list))));
     }
 }
 
@@ -68,7 +68,7 @@ class EntityItem
 
     public function __construct(
         $unitOfWork,
-        public $entity,
+        private $entity,
     )
     {
         try {
@@ -79,7 +79,7 @@ class EntityItem
         }
     }
 
-    public function getDatabaseIdentifier($unitOfWork)
+    private function getDatabaseIdentifier($unitOfWork)
     {
         $isPersisted = count($this->initialIdentifier) !== 0;
 
@@ -89,5 +89,12 @@ class EntityItem
         } else {
             return $unitOfWork->getEntityIdentifier($this->entity);
         }
+    }
+
+    function format($unitOfWork): string
+    {
+        return sprintf('%s#%s',
+            (new \ReflectionClass($this->entity))->getShortName(),
+            implode(',', $this->getDatabaseIdentifier($unitOfWork)));
     }
 }
