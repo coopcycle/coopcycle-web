@@ -236,7 +236,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -406,7 +407,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -699,7 +701,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -856,7 +859,8 @@ Feature: Orders
         "hasReceipt":@boolean@,
         "invitation":null,
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1008,7 +1012,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -1234,7 +1239,8 @@ Feature: Orders
         "assignedTo":null,
         "invitation":null,
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1419,7 +1425,8 @@ Feature: Orders
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 
@@ -1559,7 +1566,8 @@ Feature: Orders
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 
