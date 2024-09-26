@@ -29,6 +29,9 @@
     {% if form.multiDropEnabled is defined %}
       {{ form_row(form.multiDropEnabled) }}
     {% endif %}
+    {% if form.checkExpression is defined %}
+      {{ form_row(form.checkExpression) }}
+    {% endif %}
   {% endif %}
   <hr>
 {% endif %}

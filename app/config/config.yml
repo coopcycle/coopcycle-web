@@ -234,6 +234,7 @@ twig:
     form_themes:
         - 'form/address_book.html.twig'
         - 'form/price_with_tax.html.twig'
+        - 'form/delivery_zone_picker.html.twig'
         - 'form/delivery.html.twig'
         - '@VichUploader/Form/fields.html.twig'
     globals:

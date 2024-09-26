@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import OpeningHoursInput from '../widgets/OpeningHoursInput'
 import DeliveryZonePicker from '../components/DeliveryZonePicker'
 import OrdersRateLimiter from "../components/OrdersRateLimiter";
@@ -53,12 +53,13 @@ $(function() {
 
       const container = document.createElement('div')
 
-      render(
+      createRoot(container).render(
         <DeliveryZonePicker
           zones={ JSON.parse(el.dataset.zones) }
           expression={ el.dataset.defaultValue }
           onExprChange={ expr => $(input).val(expr) }
-        />, container)
+        />
+      )
 
       el.appendChild(container)
     }
@@ -72,12 +73,11 @@ $(function() {
       const container = document.createElement('div')
       const input = widget.querySelector('input[type="hidden"]')
 
-      render(
+      createRoot(container).render(
         <OrdersRateLimiter
           defaultValue={widget.dataset.defaultValue}
           onChange={v => input.value = v}
-        />,
-        container
+        />
       )
 
       widget.appendChild(container)
