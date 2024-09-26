@@ -34,6 +34,8 @@ class OrderSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args): void
     {
+        $this->changedTasks = [];
+
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
