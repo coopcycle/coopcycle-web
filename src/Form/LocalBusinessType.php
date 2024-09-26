@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Service\FormFieldUtils;
+use AppBundle\Validator\Constraints\Siret as AssertSiret;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -108,6 +109,7 @@ abstract class LocalBusinessType extends AbstractType
                 'required' => false,
                 'mapped' => false,
                 'label' => sprintf('form.local_business.iso_code.%s.%s', $this->country, $key),
+                'trim' => true,
             ];
             if (!empty($constraints)) {
                 $additionalPropertyOptions['constraints'] = $constraints;
@@ -170,7 +172,10 @@ abstract class LocalBusinessType extends AbstractType
 
         switch ($this->country) {
             case 'fr':
-                $additionalProperties['siret'] = [ new Assert\Luhn(message: 'siret.invalid') ];
+                $additionalProperties['siret'] = [
+                    new Assert\Luhn(message: 'siret.invalid'),
+                    new AssertSiret(),
+                ];
                 $additionalProperties['vat_number'] = [];
                 $additionalProperties['rcs_number'] = [];
                 break;

@@ -108,3 +108,10 @@ services:
   AppBundle\Validator\Constraints\PackageSetDeleteValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\SiretValidator:
+    arguments:
+      $apiKey: '%env(INSEE_API_KEY)%'
+      $apiSecret: '%env(INSEE_API_SECRET)%'
+    tags:
+      - { name: validator.constraint_validator }

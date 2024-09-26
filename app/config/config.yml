@@ -224,6 +224,8 @@ framework:
                 base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
                 query:
                     api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
+            insee.client:
+                base_uri: "https://api.insee.fr/"
 
 # Twig Configuration
 twig:
