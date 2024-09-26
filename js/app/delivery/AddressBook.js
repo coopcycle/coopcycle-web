@@ -57,7 +57,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
   const { t } = useTranslation()
-  const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, inputValue))
+  const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, address[prop]))
 
   if (!address) {
     return null
