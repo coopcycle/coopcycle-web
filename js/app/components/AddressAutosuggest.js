@@ -650,7 +650,7 @@ class AddressAutosuggest extends Component {
     const { value, suggestions, multiSection } = this.state
 
     const selectFirstSuggestionOnEnter = (event) => {
-      if (event.key === 'Enter' && this.getSuggestionsLength() > 0) {
+      if (event.key === 'Enter' && this.getSuggestionsLength() === 1) {
           event.preventDefault()
           const selected = this.getFirstSuggestion()
           this.onSuggestionSelected({}, {suggestion: selected})
