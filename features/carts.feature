@@ -96,7 +96,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -175,7 +176,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -254,7 +256,8 @@ Feature: Carts
         },
         "fulfillmentMethod": "delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -318,7 +321,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -385,7 +389,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -514,7 +519,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -575,7 +581,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -683,7 +690,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -791,7 +799,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1575,7 +1584,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1701,7 +1711,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1978,7 +1989,8 @@ Feature: Carts
           "incident":[]
         },
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
