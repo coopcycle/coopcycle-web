@@ -60,17 +60,6 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   const [ visible, setVisible ] = useState(false)
   const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, inputValue))
 
-  useEffect(() => {
-    if (visible) {
-      inputRef.current && inputRef.current.focus({
-        cursor: _.isEmpty(value) ? 'start' : 'end',
-        // Make sure the page is not scrolled to top when focusing
-        // https://github.com/coopcycle/coopcycle-web/issues/3411
-        preventScroll: true,
-      })
-    }
-  }, [ visible ]);
-
   if (!address) {
     return null
   }
