@@ -389,6 +389,7 @@ class AddressAutosuggest extends Component {
 
     this.getFirstSuggestion = this.getFirstSuggestion.bind(this)
     this.getSuggestionsLength = this.getSuggestionsLength.bind(this)
+    this.handleKeyDown = this.handleKeyDown.bind(this)
 
     this.state = this.getInitialState()
   }
@@ -585,6 +586,10 @@ class AddressAutosuggest extends Component {
     )
   }
 
+  onSuggestionHighlighted({ suggestion }) {
+    this.setState({highlightedSuggestion: suggestion})
+  }
+
   renderSuggestionsContainer({ containerProps , children }) {
 
     // https://github.com/moroshko/react-autosuggest/issues/699#issuecomment-568798287
@@ -645,18 +650,19 @@ class AddressAutosuggest extends Component {
     return suggestionsValues[0]
   }
 
+  handleKeyDown = (event) => {
+    if ((event.key === 'Enter' || event.key === 'Tab') && this.getSuggestionsLength() > 0 && this.state.highlightedSuggestion) {
+      // this.setState({ value: this.state.highlightedSuggestion })
+      console.log(this.state.highlightedSuggestion)
+      const selected = this.state.highlightedSuggestion
+      this.onSuggestionSelected({}, {suggestion: selected})
+      this.setState({ value: selected.value })
+    }
+  }
+
   render() {
 
     const { value, suggestions, multiSection } = this.state
-
-    const selectFirstSuggestionOnEnter = (event) => {
-      if (event.key === 'Enter' && this.getSuggestionsLength() === 1) {
-          event.preventDefault()
-          const selected = this.getFirstSuggestion()
-          this.onSuggestionSelected({}, {suggestion: selected})
-          this.setState({ value: selected.value })
-      }
-    }
 
     const inputProps = {
       placeholder: this.placeholder(),
@@ -665,15 +671,13 @@ class AddressAutosuggest extends Component {
       type: "search",
       required: this.props.required,
       disabled: this.props.disabled || this.state.loading,
-      onKeyDown: e => selectFirstSuggestionOnEnter(e),
+      onKeyDown: e => this.handleKeyDown(e),
       'data-is-address-picker': true, // used to differentiate from the search input to search in the AddressBook
       // FIXME
       // We may override important props such as value, onChange
       // We need to omit some props
       ...this.props.inputProps,
     }
-
-    const highlightFirstSuggestion = this.highlightFirstSuggestion()
 
     let otherProps = {}
     if (Object.prototype.hasOwnProperty.call(this.props, 'id')) {
@@ -690,13 +694,14 @@ class AddressAutosuggest extends Component {
         onSuggestionsFetchRequested={ this.onSuggestionsFetchRequested }
         onSuggestionsClearRequested={ this.onSuggestionsClearRequested.bind(this) }
         onSuggestionSelected={ this.onSuggestionSelected.bind(this) }
+        onSuggestionHighlighted={ this.onSuggestionHighlighted.bind(this) }
         getSuggestionValue={ getSuggestionValue }
         renderInputComponent={ this.renderInputComponent.bind(this) }
         renderSuggestionsContainer={ this.renderSuggestionsContainer.bind(this) }
         renderSuggestion={ renderSuggestion }
         shouldRenderSuggestions={ shouldRenderSuggestions.bind(this) }
         renderSectionTitle={ renderSectionTitle }
-        highlightFirstSuggestion={ highlightFirstSuggestion }
+        highlightFirstSuggestion={ this.highlightFirstSuggestion.bind(this) }
         getSectionSuggestions={ getSectionSuggestions }
         multiSection={ multiSection }
         inputProps={ inputProps }
