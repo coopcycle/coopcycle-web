@@ -69,6 +69,8 @@ class Pay
             if ('mercadopago' === $this->gatewayResolver->resolve()) {
                 return $this->handleMercadopagoPayment($data, $payment, $body);
             } else {
+                // This is the 1st step of a Stripe payment, it will create a payment intent
+                // Then this endpoint will be called a 2nd time to confirm the intent
                 return $this->handleStripePaymentIntent($data, $payment, $body);
             }
         }
@@ -77,6 +79,7 @@ class Pay
             return $this->handleCashOnDelivery($data, $payment, $body);
         }
 
+        // This is the 2nd step of a Stripe payment, to confirm the payment intent
         if (isset($body['paymentIntentId'])) {
 
             $this->orderManager->checkout($data, $body['paymentIntentId']);
