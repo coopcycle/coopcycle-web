@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 import {  Input, Button } from 'antd'
@@ -57,7 +57,6 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
   const { t } = useTranslation()
-  const [ visible, setVisible ] = useState(false)
   const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, inputValue))
 
   if (!address) {
@@ -65,7 +64,6 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   }
 
   const saveInputValue = (value) => {
-    setVisible(false)
     setInputValue(value)
     onChange(getUnformattedValue(prop, value))
   }
