@@ -46,6 +46,7 @@ class RestaurantStats implements \Countable
     private $numberFormatter;
 
     private bool $nonProfitsEnabled;
+    private bool $withBillingMethod;
 
     const MAX_RESULTS = 50;
 
@@ -590,6 +591,7 @@ class RestaurantStats implements \Countable
         }
         if ($this->withBillingMethod) {
             $headings[] = 'billing_method';
+            $headings[] = 'applied_billing';
         }
 
         return $headings;
@@ -653,7 +655,7 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT), !$formatted);
             case 'promotions':
                 $promotionsTotal =
-                    $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
+                $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
                     +
                     $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT);
                 return $this->formatNumber($promotionsTotal, !$formatted);
@@ -673,6 +675,8 @@ class RestaurantStats implements \Countable
                 return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
             case 'billing_method':
                 return $order->billingMethod ?? 'unit';
+            case 'applied_billing':
+                return $order->hasVendor() ? Order::STORE_TYPE_FOODTECH : Order::STORE_TYPE_LASTMILE;
         }
 
         return '';

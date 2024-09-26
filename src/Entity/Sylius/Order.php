@@ -441,6 +441,13 @@ class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;
 
+    const STORE_TYPE_FOODTECH = 'FOODTECH';
+    const STORE_TYPE_LASTMILE = 'LASTMILE';
+    const STORE_TYPE = [
+        self::STORE_TYPE_FOODTECH,
+        self::STORE_TYPE_LASTMILE
+    ];
+
     protected $customer;
 
     /**
@@ -705,6 +712,23 @@ class Order extends BaseOrder implements OrderInterface
     public function hasVendor(): bool
     {
         return count($this->getVendors()) > 0;
+    }
+
+    public function getStoreType(): ?string
+    {
+        if ($this->isMultiVendor()) {
+            return null;
+        }
+
+        if (!is_null($this->getRestaurant())) {
+            return self::STORE_TYPE_FOODTECH;
+        }
+
+        if (!is_null($this->getDelivery()?->getStore())) {
+            return self::STORE_TYPE_LASTMILE;
+        }
+
+        throw new \LogicException('Cannot get store type for order without delivery or restaurant');
     }
 
     /**
