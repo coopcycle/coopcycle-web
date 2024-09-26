@@ -58,6 +58,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   const inputRef = useRef(null)
   const { t } = useTranslation()
   const [ visible, setVisible ] = useState(false)
+  const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, inputValue))
 
   useEffect(() => {
     if (visible) {
@@ -71,22 +72,21 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   }, [ visible ]);
 
   if (!address) {
-
     return null
   }
 
-  const onFinish = (values) => {
-    const value = values[prop]
+  const saveInputValue = (value) => {
     setVisible(false)
+    setInputValue(value)
     onChange(getUnformattedValue(prop, value))
   }
 
-  const value = address[prop]
-
   const onInputBlur = (event) => {
-    let d = {}
-    d[prop] = event.target.value
-    onFinish(d)
+    saveInputValue(event.target.value)
+  }
+
+  const onInputChange = (event) => {
+    saveInputValue(event.target.value)
   }
 
   return (
@@ -97,7 +97,8 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
           placeholder={ t(`${transKeys[prop]}_PLACEHOLDER`) }
           ref={ inputRef }
           onBlur={ onInputBlur }
-          defaultValue={ getFormattedValue(prop, value) }
+          onChange={ onInputChange }
+          value={ inputValue }
         />
         <input
           type="text"
@@ -105,7 +106,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
           style={{ opacity: 0, width: 0, position: 'absolute', left: '50%', top: 0, bottom: 0, pointerEvents: 'none' }}
           id={ id }
           name={ name }
-          value={ getUnformattedValue(prop, value) }
+          value={ getUnformattedValue(prop, inputValue) }
           onChange={ () => null }
           required={ required } />
     </>
