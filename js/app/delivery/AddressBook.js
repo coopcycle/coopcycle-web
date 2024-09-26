@@ -112,11 +112,10 @@ const AddressBook = ({
   ...otherProps
 }) => {
 
-  console.log(initialAddress)
-
   const { t } = useTranslation()
   const [ address, setAddress ] = useState(initialAddress)
   const [ isModalOpen, setModalOpen ] = useState(false)
+  const [ alreadyAskedForDuplicate, setAlreadyAskedForDuplicate ] = useState(false)
 
   const onAddressPropChange = (address, prop, value) => {
 
@@ -127,7 +126,8 @@ const AddressBook = ({
     setAddress(newAddress)
     onAddressSelected(newAddress.streetAddress, newAddress)
 
-    if (address['@id']) {
+    if (!alreadyAskedForDuplicate && address['@id']) {
+      setAlreadyAskedForDuplicate(true)
       const oldValue = address[prop]
       if (!_.isEmpty(oldValue) && oldValue !== value) {
         setModalOpen(true)
