@@ -82,12 +82,10 @@ HEALTHCHECK \
 COPY composer.json ./
 COPY composer.lock ./
 
-RUN mkdir -p var/cache var/logs web/images/products web/images/restaurants web/images/tasks vendor \
+RUN mkdir -p var/cache vendor \
     # Permissions hack because setfacl does not work on Mac and Windows
     && chown -R www-data var \
-    && chown -R www-data web/images \
     && chmod -R a+w var \
-    && chmod -R a+w web/images \
     && chown -R www-data vendor
 
 COPY app app/
