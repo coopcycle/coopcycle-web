@@ -124,6 +124,10 @@ jobs:
       # so that it can be removed without problems.
       - name: Create node_modules directory
         run: mkdir node_modules
+      # create the directory manually, because if it's done from the code it fails with
+      # request.CRITICAL: Uncaught PHP Exception ErrorException: "Warning: mkdir(): Permission denied" at /var/www/html/src/Controller/UserController.php line 150
+      - name: Create avatars directory
+        run: mkdir web/images/avatars
       - name: Start Docker containers
         run: docker compose up -d
       - name: Wait for PHP-FPM
