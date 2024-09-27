@@ -127,7 +127,7 @@ jobs:
       # create the directory manually, because if it's done from the code it fails with
       # request.CRITICAL: Uncaught PHP Exception ErrorException: "Warning: mkdir(): Permission denied" at /var/www/html/src/Controller/UserController.php line 150
       - name: Create avatars directory
-        run: mkdir web/images/avatars && chown -R www-data web/avatars
+        run: mkdir web/images/avatars && chown -R www-data web/images/avatars
       - name: Start Docker containers
         run: docker compose up -d
       - name: Wait for PHP-FPM
