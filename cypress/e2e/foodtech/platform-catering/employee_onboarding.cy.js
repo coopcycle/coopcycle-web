@@ -28,6 +28,7 @@ describe('Platform catering; employee; onboarding', () => {
 
     // Confirmation page
     cy.url().should('include', '/register/confirmed')
+    cy.get('.content').should('contain', 'Félicitations')
   })
 
   it('should onboard an employee with an existing user account', () => {

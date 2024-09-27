@@ -31,6 +31,7 @@ describe('Platform catering; manager; onboarding', () => {
 
     // Confirmation page
     cy.url().should('include', '/register/confirmed')
+    cy.get('.content').should('contain', 'Félicitations')
   })
 
   it('should activate a business account with an existing user account', () => {
@@ -50,5 +51,6 @@ describe('Platform catering; manager; onboarding', () => {
 
     // Confirmation page
     cy.url().should('include', '/register/confirmed')
+    cy.get('.content').should('contain', 'Félicitations')
   })
 })
