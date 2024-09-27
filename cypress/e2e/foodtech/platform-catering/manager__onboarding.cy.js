@@ -27,6 +27,14 @@ describe('Platform catering; manager; onboarding', () => {
     cy.get('button[type="submit"]').click()
 
     // Company info step
+    cy.get('#businessAccountRegistration_businessAccount_legalName').clear('')
+    cy.get('#businessAccountRegistration_businessAccount_legalName').type(
+      'Business Name Ltd',
+    )
+    cy.get('#businessAccountRegistration_businessAccount_vatNumber').clear('')
+    cy.get('#businessAccountRegistration_businessAccount_vatNumber').type(
+      'FR12345678901',
+    )
     cy.get('.btn-primary').click()
 
     // Confirmation page
@@ -47,6 +55,14 @@ describe('Platform catering; manager; onboarding', () => {
     cy.get('button[type="submit"]').click()
 
     // Company info step
+    cy.get('#businessAccountRegistration_businessAccount_legalName').clear('')
+    cy.get('#businessAccountRegistration_businessAccount_legalName').type(
+      'Business Name Ltd',
+    )
+    cy.get('#businessAccountRegistration_businessAccount_vatNumber').clear('')
+    cy.get('#businessAccountRegistration_businessAccount_vatNumber').type(
+      'FR12345678901',
+    )
     cy.get('.btn-primary').click()
 
     // Confirmation page

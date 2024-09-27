@@ -1,0 +1,7 @@
+AppBundle\Entity\BusinessAccount:
+  business_account1:
+    name: 'Business Account 1'
+    legalName: ''
+    vatNumber: ''
+    address: '@address_1'
+    businessRestaurantGroup: '@business_restaurant_group1'

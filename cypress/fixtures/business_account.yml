@@ -1,6 +1,8 @@
 AppBundle\Entity\BusinessAccount:
   business_account1:
     name: 'Business Account 1'
+    legalName: 'Business Account 1'
+    vatNumber: 'FR12345678901'
     address: '@address_1'
     businessRestaurantGroup: '@business_restaurant_group1'
 
