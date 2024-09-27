@@ -315,9 +315,11 @@ trait StoreTrait
 
         $form = $this->createForm(NewOrderType::class, $delivery, [
             'arbitrary_price' => $previousArbitraryPrice,
+            'validation_groups' => ['Default', 'delivery_check']
         ]);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();

@@ -11,6 +11,7 @@ class CheckDelivery extends Constraint
 {
     public $notValidMessage = 'delivery.check.notValid';
     public $noStoreMessage = 'delivery.check.noStore';
+    public $outOfBoundsMessage = 'delivery.check.outOfBounds';
 
     public function validatedBy()
     {
