@@ -71,6 +71,7 @@ services:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'
       - 'php_cache:/var/www/html/var/cache'
+      - 'php_public_images:/var/www/html/web/images'
     cap_add:
       - SYS_ADMIN
 
@@ -89,6 +90,7 @@ services:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'
       - 'php_cache:/var/www/html/var/cache'
+      - 'php_public_images:/var/www/html/web/images'
 
   nginx:
     image: 'nginx:1.25-alpine'
@@ -101,6 +103,7 @@ services:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
       - './web:/var/www/html/web:ro'
       - './vendor:/var/www/html/vendor:ro'
+      - 'php_public_images:/var/www/html/web/images:ro'
 
   nginx_test:
     image: 'nginx:1.25-alpine'
@@ -112,6 +115,7 @@ services:
       - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
       - './web:/var/www/html/web:ro'
       - './vendor:/var/www/html/vendor:ro'
+      - 'php_public_images:/var/www/html/web/images:ro'
 
   smtp:
     image: namshi/smtp
@@ -292,3 +296,4 @@ volumes:
   typesense_data:
   webpack_php_cache:
   php_logs:
+  php_public_images:
