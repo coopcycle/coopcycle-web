@@ -4,6 +4,8 @@
   </div>
   <div class="form rounded-bottom">
     {{ form_row(form.name) }}
+    {{ form_row(form.legalName) }}
+    {{ form_row(form.vatNumber) }}
     {{ form_row(form.address) }}
     <div class="d-none">
       {{ form_widget(form.differentAddressForBilling) }}
