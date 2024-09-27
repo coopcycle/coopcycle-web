@@ -20,7 +20,8 @@ use AppBundle\Vroom\Shipment as VroomShipment;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
+ *       "pagination_enabled"=false
  *     },
  *     "post"={
  *       "method"="POST",

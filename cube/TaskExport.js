@@ -8,7 +8,7 @@ const partitionPath = ({instance, year, month}) => {
 const resolvePath = ({ s3_path }) => s3_path && s3_path.replace(/^\/|\/$/g, '').replace('%type%', 'tasks')
 
 cube(`TaskExport`, {
-  sql: `SELECT * FROM read_parquet('s3://${resolvePath(securityContext)}/*/*/*.parquet', hive_partitioning = true)`,
+  sql: `SELECT * FROM read_parquet('s3://${resolvePath(securityContext)}/${partitionPath(securityContext)}/*.parquet', hive_partitioning = true)`,
 
   refresh_key: {
     every: "1 second"

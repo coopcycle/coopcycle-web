@@ -1551,3 +1551,9 @@ form.settings.paygreen_secret_key.label: Paygreen secret key
 form.settings.paygreen_shop_id.label: Paygreen Shop ID
 restaurant.form.paygreen_shop_id.label: Paygreen Shop ID
 form.local_business.paygreen_account.title: Paygreen account
+form.billing_method.label: Billing method
+form.billing_method.help: Billing method used
+form.billing_method.unit: Per unit
+form.billing_method.percentage: Percentage of order amount
+order.export.heading.billing_method: Billing method
+order.export.heading.applied_billing: Applied billing

@@ -740,7 +740,7 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
-  AppBundle\Doctrine\EventSubscriber\CheckoutSubscriber:
+  AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
     tags:
       - { name: doctrine.event_subscriber }
 

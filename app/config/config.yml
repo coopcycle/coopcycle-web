@@ -70,6 +70,7 @@ parameters:
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
     business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
     transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+    billing_enabled: '%env(bool:BILLING_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -223,6 +224,8 @@ framework:
                 base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
                 query:
                     api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
+            insee.client:
+                base_uri: "https://api.insee.fr/"
 
 # Twig Configuration
 twig:
@@ -231,6 +234,7 @@ twig:
     form_themes:
         - 'form/address_book.html.twig'
         - 'form/price_with_tax.html.twig'
+        - 'form/delivery_zone_picker.html.twig'
         - 'form/delivery.html.twig'
         - '@VichUploader/Form/fields.html.twig'
     globals:
@@ -273,7 +277,7 @@ twig:
 
 monolog:
   # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
-  channels: [ 'domain_event', 'checkout', 'push_notification', 'real_time_message' ]
+  channels: [ 'domain_event', 'checkout', 'database', 'push_notification', 'real_time_message' ]
 
 # Doctrine Configuration
 doctrine:

@@ -90,17 +90,10 @@ const bindDelete = (packageWidgetEl) => {
   })
 }
 
-const bindCollapse = (packageWidgetEl) => {
-  packageWidgetEl.querySelector('.collapse-trigger').addEventListener('click', function () {
-    packageWidgetEl.querySelector('.package-entry-body').classList.toggle('in')
-  })
-}
-
 const initJSBindingsForPackageEntry = (packageWidgetEl) => {
   mountTagsSelect(packageWidgetEl)
   mountColorPicker(packageWidgetEl)
   bindDelete(packageWidgetEl)
-  bindCollapse(packageWidgetEl)
 }
 
 document.querySelectorAll(".package-entry").forEach((packageWidgetEl) => {

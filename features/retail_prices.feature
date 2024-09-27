@@ -504,3 +504,69 @@ Feature: Retail prices
         }
       }
       """
+
+  Scenario: Can't calculate a price for another store
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "bob" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris, France",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 403
+
+  Scenario: Get delivery price with JWT with explicit store
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "bob" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the user "bob" is authenticated
+    And the store with name "Acme" belongs to user "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris, France",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        }
+      }
+      """
