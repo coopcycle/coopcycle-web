@@ -1,4 +1,4 @@
-describe('Platform catering; admin', () => {
+describe('Platform catering; admin; invite manager', () => {
   beforeEach(() => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/foodtech.yml',

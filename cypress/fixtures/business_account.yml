@@ -3,3 +3,14 @@ AppBundle\Entity\BusinessAccount:
     name: 'Business Account 1'
     address: '@address_1'
     businessRestaurantGroup: '@business_restaurant_group1'
+
+AppBundle\Entity\Invitation:
+  invitation1:
+    code: 'INVITATION_EMPLOYEE'
+    email: 'manager01@demo.coopcycle.org'
+    user: '@manager01'
+
+AppBundle\Entity\BusinessAccountInvitation:
+  business_account_invitation1:
+    businessAccount: '@business_account1'
+    invitation: '@invitation1'
