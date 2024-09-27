@@ -26,15 +26,14 @@ class PackageType extends AbstractType
                 'required' => false
             ])
             ->add('color', TextType::class, [
-                'label' => 'form.package.color.label'
+                'label' => 'form.package.color.label',
+                'empty_data' => '#03fcdf',
+                'required' => false
             ])
             ->add('averageVolumeUnits', IntegerType::class, [
                 'label' => 'form.package.average_volume_units.label',
                 'help' => 'form.package.average_estimation',
                 'required' => false,
-                'attr' => [
-                    'min' => 1
-                ]
             ])
             ->add('maxVolumeUnits', IntegerType::class, [
                 'label' => 'form.package.max_volume_units.label',
@@ -46,9 +45,6 @@ class PackageType extends AbstractType
                 'label' => 'form.package.average_weight.label',
                 'help' => 'form.package.average_estimation',
                 'required' => false,
-                'attr' => [
-                    'min' => 1
-                ]
             ])
             ->add('maxWeight', IntegerType::class, [
                 'label' => 'form.package.max_weight.label',
@@ -81,7 +77,7 @@ class PackageType extends AbstractType
             }
 
             $averageWeight = $package->getAverageWeight();
-            if (is_null($averageWeight)) {
+            if (is_null($averageWeight) || $averageWeight === 0) {
                 $package->setAverageWeight(0.75 * $package->getMaxWeight()); // Estimated to 75% of max if not set* 0.75); // Estimated to 75% of max if not set
             }
 
@@ -90,7 +86,7 @@ class PackageType extends AbstractType
             $package->setMaxWeight(round($package->getMaxWeight()*1000));
 
             $averageVolumeUnits = $package->getAverageVolumeUnits();
-            if (is_null($averageVolumeUnits)) {
+            if (is_null($averageVolumeUnits) || $averageVolumeUnits === 0) {
                 $package->setAverageVolumeUnits(round(0.75 * $package->getMaxVolumeUnits())); // Estimated to 75% of max if not set* 0.75); // Estimated to 75% of max if not set
             }
         });
