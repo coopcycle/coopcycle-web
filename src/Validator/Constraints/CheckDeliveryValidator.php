@@ -5,6 +5,7 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\Entity\Delivery;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\RoutingInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -12,19 +13,29 @@ class CheckDeliveryValidator extends ConstraintValidator
 {
     private $storeExtractor;
     private $expressionLanguage;
+    private $routing;
 
     public function __construct(
         TokenStoreExtractor $storeExtractor,
-        ExpressionLanguage $expressionLanguage)
+        ExpressionLanguage $expressionLanguage,
+        RoutingInterface $routing)
     {
         $this->storeExtractor = $storeExtractor;
         $this->expressionLanguage = $expressionLanguage;
+        $this->routing = $routing;
     }
 
     public function validate($object, Constraint $constraint)
     {
         if (!$object instanceof Delivery) {
             throw new \InvalidArgumentException(sprintf('$object should be an instance of %s', Delivery::class));
+        }
+
+        if (null === $object->getDistance()) {
+            $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $object->getTasks());
+            $distance = $this->routing->getDistance(...$coords);
+
+            $object->setDistance(ceil($distance));
         }
 
         // TODO Also resolve store from getStore() method
@@ -43,7 +54,7 @@ class CheckDeliveryValidator extends ConstraintValidator
                 $checkExpression = $object->getStore()->getCheckExpression();
 
                 if (null !== $checkExpression && !$this->expressionLanguage->evaluate($checkExpression, Delivery::toExpressionLanguageValues($object))) {
-                    $this->context->buildViolation($constraint->notValidMessage)
+                    $this->context->buildViolation($constraint->outOfBoundsMessage)
                         ->atPath('items')
                         ->addViolation();
                 }
@@ -56,7 +67,7 @@ class CheckDeliveryValidator extends ConstraintValidator
         }
 
         if (!$this->expressionLanguage->evaluate($checkExpression, Delivery::toExpressionLanguageValues($object))) {
-            $this->context->buildViolation($constraint->notValidMessage)
+            $this->context->buildViolation($constraint->outOfBoundsMessage)
                 ->atPath('items')
                 ->addViolation();
         }

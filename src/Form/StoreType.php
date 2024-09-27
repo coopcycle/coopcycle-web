@@ -11,6 +11,7 @@ use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
@@ -77,7 +78,10 @@ class StoreType extends LocalBusinessType
                     ],
                     'help_html' => true,
 
-                ));
+                ))
+                ->add('checkExpression', HiddenType::class, [
+                    'label' => 'form.store.check_expression'
+                ]);
 
             if ($this->transportersEnabled) {
                 $transporterConfig = $this->transportersConfig;

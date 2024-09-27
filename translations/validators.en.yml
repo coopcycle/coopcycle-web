@@ -27,6 +27,7 @@ delivery.tasks.pickupAfterDropoff: Dropoff date must be after pickup date.
 
 delivery.check.notValid: Your request is not feasible
 delivery.check.noStore: You must provide a store
+delivery.check.outOfBounds: Your request is out of the accepted zone or too far
 
 time_range.empty: You have not selected any value
 time_range.no_weekday: You did not select a day of the week
