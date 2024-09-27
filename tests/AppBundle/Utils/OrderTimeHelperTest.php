@@ -419,9 +419,12 @@ class OrderTimeHelperTest extends KernelTestCase
 
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
         $range = $shippingTimeRanges[0];
-
-        $this->assertEquals(new \DateTime('2021-01-27 20:00:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-27 20:10:00'), $range->getUpper());
+        
+        // 20min prep time and pickup 25min before drop
+        // 90min delay for the pickup
+        // -> 115min later
+        $this->assertEquals(new \DateTime('2021-01-27 19:10:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-27 19:20:00'), $range->getUpper());
     }
 
     public function testWith2HoursDelay()
@@ -618,8 +621,10 @@ class OrderTimeHelperTest extends KernelTestCase
 
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
         $range = $shippingTimeRanges[0];
-
-        $this->assertEquals(new \DateTime('2021-01-29 14:00:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-29 14:10:00'), $range->getUpper());
+        
+        // 120min delay means first slot is the first one tomorrow
+        // 20min prep time starting at the opening
+        $this->assertEquals(new \DateTime('2021-01-29 12:00:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-29 12:10:00'), $range->getUpper());
     }
 }
