@@ -45,7 +45,7 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
         $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
-        $this->redis = $this->prophesize(Redis::class);
+        $this->redis = self::$container->get(Redis::class);
 
         $this->timeRegistry = $this->prophesize(TimeRegistry::class);
         $this->timeRegistry->getAveragePreparationTime()->willReturn(0);
@@ -57,7 +57,7 @@ class OrderTimeHelperTest extends KernelTestCase
             self::$container->get(ShippingDateFilter::class),
             $this->preparationTimeCalculator->reveal(),
             $this->shippingTimeCalculator->reveal(),
-            $this->redis->reveal(),
+            $this->redis,
             $this->timeRegistry->reveal(),
             $this->fulfillmentMethodResolver->reveal(),
             'fr',
@@ -119,20 +119,22 @@ class OrderTimeHelperTest extends KernelTestCase
         }
     }
 
-    public function testAsapWithSameDayShippingChoices()
-    {
-        Carbon::setTestNow(Carbon::parse('2020-03-31T14:25:00+02:00'));
+    public function setUpFullfillmentMethodForTest($openingHoursArray, $priorNotice = 0) {
+        $fulfillmentMethod = new FulfillmentMethod();
+        $fulfillmentMethod->setOpeningHours($openingHoursArray);
+        $fulfillmentMethod->setOpeningHoursBehavior('asap');
+        $fulfillmentMethod->setOrderingDelayMinutes($priorNotice);
+
+        return $fulfillmentMethod;
+    }
+
+    public function setUpRestaurantForTest($fulfillmentMethod) {
 
         $restaurant = $this->prophesize(LocalBusiness::class);
 
         $restaurant
             ->getId()
             ->willReturn(1);
-
-        $fulfillmentMethod = new FulfillmentMethod();
-        $fulfillmentMethod->setOpeningHours(["Mo-Su 13:00-15:00"]);
-        $fulfillmentMethod->setOpeningHoursBehavior('asap');
-        $fulfillmentMethod->setOrderingDelayMinutes(0);
 
         $restaurant
             ->getShippingOptionsDays()
@@ -154,6 +156,11 @@ class OrderTimeHelperTest extends KernelTestCase
         $restaurant
             ->getRateLimitAmount()
             ->willReturn(false);
+
+        return $restaurant;
+    }
+
+    public function setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now) {
 
         $cart = $this->prophesize(OrderInterface::class);
         $cart
@@ -179,17 +186,12 @@ class OrderTimeHelperTest extends KernelTestCase
         $cart
             ->getCreatedAt()
             ->willReturn(
-                new \DateTime('2017-10-04 17:00:00')
+                $now
             );
 
         $this->fulfillmentMethodResolver
             ->resolveForOrder($cart)
             ->willReturn($fulfillmentMethod);
-
-        $orderVendor = $this->prophesize(OrderVendor::class);
-        $orderVendor
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
 
         $cart
             ->getVendors()
@@ -210,6 +212,30 @@ class OrderTimeHelperTest extends KernelTestCase
         $cart
             ->getFulfillmentMethod()
             ->willReturn('delivery');
+
+        return $cart;
+    }
+
+    public function setUpOrderVendorForTest($restaurant) {
+        $orderVendor = $this->prophesize(OrderVendor::class);
+        $orderVendor
+            ->getRestaurant()
+            ->willReturn($restaurant->reveal());
+        return $orderVendor;
+    }
+
+    public function testAsapWithSameDayShippingChoices()
+    {
+        $now = Carbon::parse('2020-03-31T14:25:00+02:00');
+        Carbon::setTestNow($now);
+
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 13:00-15:00"]);
+
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
+
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
+
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
 
         $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
 
@@ -217,97 +243,18 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->assertEquals(new \DateTime('2020-04-01 13:40:00'), $shippingTimeRange->getUpper());
     }
 
-    public function testWithDelayedOrders()
+    public function testWith2DaysPriorNotice()
     {
-        Carbon::setTestNow(Carbon::parse('2017-10-04T17:00:00+02:00'));
+        $now = Carbon::parse('2017-10-04T17:00:00+02:00');
+        Carbon::setTestNow($now);
 
-        $restaurant = $this->prophesize(LocalBusiness::class);
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 09:00-19:00"], 2 * 24 * 60);
 
-        $restaurant
-            ->getId()
-            ->willReturn(1);
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
 
-        $fulfillmentMethod = new FulfillmentMethod();
-        $fulfillmentMethod->setOpeningHours(["Mo-Su 09:00-19:00"]);
-        $fulfillmentMethod->setOpeningHoursBehavior('asap');
-        $fulfillmentMethod->setOrderingDelayMinutes(2 * 24 * 60); // should order two days in advance;
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
 
-        $restaurant
-            ->getShippingOptionsDays()
-            ->willReturn(1);
-
-        $restaurant
-            ->getOpeningHours('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHours());
-        $restaurant
-            ->getOpeningHoursBehavior('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHoursBehavior());
-        $restaurant
-            ->getFulfillmentMethod('delivery')
-            ->willReturn($fulfillmentMethod);
-
-        $restaurant
-            ->getClosingRules()
-            ->willReturn(new ArrayCollection());
-        $restaurant
-            ->getRateLimitAmount()
-            ->willReturn(false);
-
-        $cart = $this->prophesize(OrderInterface::class);
-        $cart
-            ->getId()
-            ->willReturn(null);
-        $cart
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $cart
-            ->getRestaurants()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getPickupAddresses()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getShippingAddress()
-            ->willReturn(null);
-        $cart
-            ->getVendorConditions()
-            ->willReturn(
-                $restaurant->reveal()
-            );
-        $cart
-            ->getCreatedAt()
-            ->willReturn(
-                new \DateTime('2017-10-04 17:00:00')
-            );
-
-        $orderVendor = $this->prophesize(OrderVendor::class);
-        $orderVendor
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-
-        $cart
-            ->getVendors()
-            ->willReturn(
-                new ArrayCollection([ $orderVendor->reveal() ])
-            );
-        $cart
-            ->hasVendor()
-            ->willReturn(
-                true
-            );
-        $cart
-            ->isMultiVendor()
-            ->willReturn(
-                false
-            );
-
-        $cart
-            ->getFulfillmentMethod()
-            ->willReturn('delivery');
-
-        $this->fulfillmentMethodResolver
-            ->resolveForOrder($cart)
-            ->willReturn($fulfillmentMethod);
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
 
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
 
@@ -324,201 +271,40 @@ class OrderTimeHelperTest extends KernelTestCase
         ], $shippingTimeRanges);
 
     }
-    public function testEscaleDuJapon()
+    public function testWith90minPriorNotice()
     {
-        // It's a Wednesday
-        Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-27 17:08:00'));
+        $now = Carbon::parse('2021-01-27 17:08:00');
+        Carbon::setTestNowAndTimezone($now);
 
-        $restaurant = $this->prophesize(LocalBusiness::class);
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Sa 11:30-14:00","Mo-Sa 18:00-20:30"], 90);
 
-        $restaurant
-            ->getId()
-            ->willReturn(1);
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
 
-        $fulfillmentMethod = new FulfillmentMethod();
-        $fulfillmentMethod->setOpeningHours(["Mo-Sa 11:30-14:00","Mo-Sa 18:00-20:30"]);
-        $fulfillmentMethod->setOpeningHoursBehavior('asap');
-        $fulfillmentMethod->setOrderingDelayMinutes(90); // delay of 1h30
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
 
-        $restaurant
-            ->getShippingOptionsDays()
-            ->willReturn(1);
-
-        $restaurant
-            ->getOpeningHours('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHours());
-        $restaurant
-            ->getOpeningHoursBehavior('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHoursBehavior());
-        $restaurant
-            ->getFulfillmentMethod('delivery')
-            ->willReturn($fulfillmentMethod);
-
-        $restaurant
-            ->getClosingRules()
-            ->willReturn(new ArrayCollection());
-        $restaurant
-            ->getRateLimitAmount()
-            ->willReturn(false);
-
-        $cart = $this->prophesize(OrderInterface::class);
-        $cart
-            ->getId()
-            ->willReturn(null);
-        $cart
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $cart
-            ->getRestaurants()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getPickupAddresses()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getShippingAddress()
-            ->willReturn(null);
-        $cart
-            ->getVendorConditions()
-            ->willReturn(
-                $restaurant->reveal()
-            );
-        $cart
-            ->getCreatedAt()
-            ->willReturn(
-                new \DateTime('2021-01-27 17:08:00')
-            );
-
-        $orderVendor = $this->prophesize(OrderVendor::class);
-        $orderVendor
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-
-        $cart
-            ->getVendors()
-            ->willReturn(
-                new ArrayCollection([ $orderVendor->reveal() ])
-            );
-        $cart
-            ->hasVendor()
-            ->willReturn(
-                true
-            );
-        $cart
-            ->isMultiVendor()
-            ->willReturn(
-                false
-            );
-
-        $cart
-            ->getFulfillmentMethod()
-            ->willReturn('delivery');
-
-        $this->fulfillmentMethodResolver
-            ->resolveForOrder($cart)
-            ->willReturn($fulfillmentMethod);
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
 
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
         $range = $shippingTimeRanges[0];
         
-        // 20min prep time and pickup 25min before drop
-        // 90min delay for the pickup
-        // -> 115min later
         $this->assertEquals(new \DateTime('2021-01-27 19:10:00'), $range->getLower());
         $this->assertEquals(new \DateTime('2021-01-27 19:20:00'), $range->getUpper());
     }
 
-    public function testWith2HoursDelay()
+    public function testWith2HoursPriorNotice()
     {
+        $now = Carbon::parse('2021-01-28 11:30:00');
+
         // It's a Thursday
-        Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-28 11:30:00'));
+        Carbon::setTestNowAndTimezone($now);
 
-        $restaurant = $this->prophesize(LocalBusiness::class);
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Fr 11:30-14:30"], 120);
 
-        $restaurant
-            ->getId()
-            ->willReturn(1);
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
 
-        $fulfillmentMethod = new FulfillmentMethod();
-        $fulfillmentMethod->setOpeningHours(["Mo-Fr 11:30-14:30"]);
-        $fulfillmentMethod->setOpeningHoursBehavior('asap');
-        $fulfillmentMethod->setOrderingDelayMinutes(120); // delay of 2h
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
 
-        $restaurant
-            ->getShippingOptionsDays()
-            ->willReturn(1);
-
-        $restaurant
-            ->getOpeningHours('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHours());
-        $restaurant
-            ->getOpeningHoursBehavior('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHoursBehavior());
-        $restaurant
-            ->getFulfillmentMethod('delivery')
-            ->willReturn($fulfillmentMethod);
-
-        $restaurant
-            ->getClosingRules()
-            ->willReturn(new ArrayCollection());
-        $restaurant
-            ->getRateLimitAmount()
-            ->willReturn(false);
-
-        $cart = $this->prophesize(OrderInterface::class);
-        $cart
-            ->getId()
-            ->willReturn(null);
-        $cart
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $cart
-            ->getRestaurants()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getPickupAddresses()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getShippingAddress()
-            ->willReturn(null);
-        $cart
-            ->getVendorConditions()
-            ->willReturn(
-                $restaurant->reveal()
-            );
-        $cart
-            ->getCreatedAt()
-            ->willReturn(
-                new \DateTime('2021-01-28 11:30:00')
-            );
-
-        $orderVendor = $this->prophesize(OrderVendor::class);
-        $orderVendor
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-
-        $cart
-            ->getVendors()
-            ->willReturn(
-                new ArrayCollection([ $orderVendor->reveal() ])
-            );
-        $cart
-            ->hasVendor()
-            ->willReturn(
-                true
-            );
-        $cart
-            ->isMultiVendor()
-            ->willReturn(
-                false
-            );
-
-        $cart
-            ->getFulfillmentMethod()
-            ->willReturn('delivery');
-
-        $this->fulfillmentMethodResolver
-            ->resolveForOrder($cart)
-            ->willReturn($fulfillmentMethod);
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
 
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
         $range = $shippingTimeRanges[0];
@@ -527,97 +313,19 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->assertEquals(new \DateTime('2021-01-28 14:10:00'), $range->getUpper());
     }
 
-    public function testWith2HoursDelayProposesNextDayOpening()
+    public function testWith2HoursPriorNoticeProposesNextDayOpening()
     {
-         $restaurant = $this->prophesize(LocalBusiness::class);
+        $now = Carbon::parse('2021-01-28 12:30:00');
 
-        $restaurant
-            ->getId()
-            ->willReturn(1);
+        Carbon::setTestNow($now);
 
-        $fulfillmentMethod = new FulfillmentMethod();
-        $fulfillmentMethod->setOpeningHours(["Mo-Fr 11:30-14:30"]);
-        $fulfillmentMethod->setOpeningHoursBehavior('asap');
-        $fulfillmentMethod->setOrderingDelayMinutes(120); // delay of 2h
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Fr 11:30-14:30"], 120);
 
-        $restaurant
-            ->getShippingOptionsDays()
-            ->willReturn(1);
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
 
-        $restaurant
-            ->getOpeningHours('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHours());
-        $restaurant
-            ->getOpeningHoursBehavior('delivery')
-            ->willReturn($fulfillmentMethod->getOpeningHoursBehavior());
-        $restaurant
-            ->getFulfillmentMethod('delivery')
-            ->willReturn($fulfillmentMethod);
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
 
-        $restaurant
-            ->getClosingRules()
-            ->willReturn(new ArrayCollection());
-        $restaurant
-            ->getRateLimitAmount()
-            ->willReturn(false);
-
-        $cart = $this->prophesize(OrderInterface::class);
-        $cart
-            ->getId()
-            ->willReturn(null);
-        $cart
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-        $cart
-            ->getRestaurants()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getPickupAddresses()
-            ->willReturn(new ArrayCollection([]));
-        $cart
-            ->getShippingAddress()
-            ->willReturn(null);
-        $cart
-            ->getVendorConditions()
-            ->willReturn(
-                $restaurant->reveal()
-            );
-        $cart
-            ->getCreatedAt()
-            ->willReturn(
-                new \DateTime('2021-01-28 11:30:00')
-            );
-
-        $orderVendor = $this->prophesize(OrderVendor::class);
-        $orderVendor
-            ->getRestaurant()
-            ->willReturn($restaurant->reveal());
-
-        $cart
-            ->getVendors()
-            ->willReturn(
-                new ArrayCollection([ $orderVendor->reveal() ])
-            );
-        $cart
-            ->hasVendor()
-            ->willReturn(
-                true
-            );
-        $cart
-            ->isMultiVendor()
-            ->willReturn(
-                false
-            );
-
-        $cart
-            ->getFulfillmentMethod()
-            ->willReturn('delivery');
-
-        $this->fulfillmentMethodResolver
-            ->resolveForOrder($cart)
-            ->willReturn($fulfillmentMethod);
-
-        Carbon::setTestNowAndTimezone(Carbon::parse('2021-01-28 12:30:00'));
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
 
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
         $range = $shippingTimeRanges[0];
@@ -626,5 +334,63 @@ class OrderTimeHelperTest extends KernelTestCase
         // 20min prep time starting at the opening
         $this->assertEquals(new \DateTime('2021-01-29 12:00:00'), $range->getLower());
         $this->assertEquals(new \DateTime('2021-01-29 12:10:00'), $range->getUpper());
+    }
+
+    public function testAsapWith40minPickupDelay()
+    {   
+        $now = Carbon::parse('2024-09-27T13:00:00+02:00');
+
+        Carbon::setTestNow($now);
+
+        $this->redis->set('foodtech:preparation_delay', 40);
+
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 13:00-15:00"]);
+
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
+
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
+
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
+
+        $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
+
+        // prep time is 20min (default)
+        // shipping time is 25min (default)
+        // pickup delay is 40min
+        // 20min prep time removes 13:00 to 13:20 timeslots
+        // 40min shipping time removes 13:00 to 13:40 timeslots
+        $this->assertEquals(new \DateTime('2024-09-27 14:00:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2024-09-27 14:10:00'), $shippingTimeRange->getUpper());
+
+        $this->redis->delete('foodtech:preparation_delay');
+    }
+
+    public function testAsapWith20minPickupDelayDoesNotInfluence()
+    {   
+        $now = Carbon::parse('2024-09-27T13:00:00+02:00');
+
+        Carbon::setTestNow($now);
+
+        $this->redis->set('foodtech:preparation_delay', 20);
+
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 13:00-15:00"]);
+
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
+
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
+
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
+
+        $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
+
+        // prep time is 20min (default)
+        // shipping time is 25min (default)
+        // pickup delay is 20min
+        // 20min prep time removes 13:00 to 13:20 timeslots
+        // 20min shipping time removes 13:00 to 13:20 timeslots -> no effect
+        $this->assertEquals(new \DateTime('2024-09-27 13:40:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2024-09-27 13:50:00'), $shippingTimeRange->getUpper());
+
+        $this->redis->delete('foodtech:preparation_delay');
     }
 }
