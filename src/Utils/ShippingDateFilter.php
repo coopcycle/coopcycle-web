@@ -82,7 +82,7 @@ class ShippingDateFilter
 
         if ($pickup <= $pickupCanStartAt) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | pickup time "%s" with delay "%s" minutes is in the past',
+            $this->logger->info(sprintf('ShippingDateFilter::accept | pickup time "%s" with pickup delay "%s" minutes is in the past',
                 $pickup->format(\DateTime::ATOM),
                 strval($dispatchDelayForPickup)),
                 [
@@ -97,14 +97,10 @@ class ShippingDateFilter
         $vendorConditions = $order->getVendorConditions();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        // I am not sure if we should include the delay here.
-        // Having the delay included means: if there is 30min delay + 25min prep+shipping then the restaurant needs to be open 55min in advance so it has the time to prepare the order.
-        // Regarding prior notice, it means that a restaurant that opens at 6PM and has a 1H prior notice can not deliver someone before 7:25PM
         if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s" with delay "%s" minutes',
-                $preparation->format(\DateTime::ATOM),
-                strval($dispatchDelayForPickup)),
+            $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
+                $preparation->format(\DateTime::ATOM)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
                     'vendor' => $this->loggingUtils->getVendors($order),
