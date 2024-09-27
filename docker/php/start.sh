@@ -8,6 +8,10 @@ mkdir -p var/logs
 chgrp www-data var/logs
 chmod g+w var/logs
 
+mkdir -p web/images
+chgrp -R www-data web/images
+chmod -R g+w web/images
+
 if [ ! -d var/jwt ]; then
     mkdir -p var/jwt
 fi
