@@ -114,6 +114,7 @@ class OrderTimeHelper
      */
     private function getAsapChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
     {
+        // maybe this should be reseted when the dispatcher changes the pickup delay? GH issue https://github.com/coopcycle/coopcycle-web/issues/4666
         $hash = sprintf('%s-%s-%s',
             $cart->getFulfillmentMethod(),
             implode(',', array_map(function($vendor) {
