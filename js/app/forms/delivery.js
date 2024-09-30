@@ -497,9 +497,10 @@ function createOnTasksChanged(onChange) {
     const result = next(action)
     const state = getState()
 
-    // trigger the suggestions when we changed the address of the last added task
-    if (state.tasks.length > 2 && prevState.tasks.at(-1)?.address?.geo !==  state.tasks.at(-1)?.address?.geo) {
-      onChange(state, true)
+    if (prevState.tasks !== state.tasks) {
+      // trigger the suggestions when we changed the address of the two last tasks have an address set + different geo
+      const shouldLoadSuggestions = state.tasks.length > 2 && state.tasks.at(-2)?.address &&  state.tasks.at(-1)?.address && state.tasks.at(-2)?.address?.geo !==  state.tasks.at(-1)?.address?.geo
+      onChange(state, shouldLoadSuggestions)
     }
 
     return result
