@@ -86,6 +86,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
           onBlur={ onInputBlur }
           onChange={ onInputChange }
           value={ inputValue }
+          id={id + '__display'}
         />
         <input
           type="text"
