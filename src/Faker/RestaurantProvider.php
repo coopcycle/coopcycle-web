@@ -201,7 +201,7 @@ class RestaurantProvider extends BaseProvider
         return ucfirst($this->generator->parse($format));
     }
 
-    public function dishName()
+    public function dishName($cuisine)
     {
         $format = static::randomElement(static::$dishFormats);
 
