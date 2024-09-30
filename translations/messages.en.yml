@@ -1559,3 +1559,4 @@ form.billing_method.unit: Per unit
 form.billing_method.percentage: Percentage of order amount
 order.export.heading.billing_method: Billing method
 order.export.heading.applied_billing: Applied billing
+deliveries.import_upload_error: The file couldn't be uploaded. Please try again later.
