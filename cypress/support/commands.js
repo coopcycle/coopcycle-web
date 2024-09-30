@@ -94,10 +94,10 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
 
   cy.wait(500)
 
-  cy.get(`${ selector } input[type="search"]`)
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .should('be.visible')
 
-  cy.get(`${ selector } input[type="search"]`)
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
     .type(search, { timeout: 5000, delay: 50 })
 

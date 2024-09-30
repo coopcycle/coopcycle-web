@@ -195,6 +195,7 @@ Cypress is a JS program for end-to-end testing and integration testing of compon
 
 ```sh
 npm install -g cypress @cypress/webpack-preprocessor @cypress/react18
+docker compose exec -T php bin/console typesense:create --env=test # install typesense for test env
 ```
 
 Launch php container on his own in the test env:
