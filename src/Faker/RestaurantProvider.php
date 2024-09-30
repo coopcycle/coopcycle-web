@@ -6,6 +6,15 @@ use Faker\Provider\Base as BaseProvider;
 
 class RestaurantProvider extends BaseProvider
 {
+    /* Cuisines */
+    protected static $cuisines = [
+        'pizza',
+        'asian',
+        'burger',
+        'sushi',
+        'vegan',
+    ];
+
     /* Formats */
 
     protected static $storeFormat = '{{storeActivity}} {{storeAdjective}}';
@@ -201,11 +210,13 @@ class RestaurantProvider extends BaseProvider
         return ucfirst($this->generator->parse($format));
     }
 
-    public function dishName($cuisine)
+    public function dishName($cuisine = null)
     {
-        $format = static::randomElement(static::$dishFormats);
+        if (null === $cuisine) {
+            $cuisine = static::randomElement(array_keys(static::$dishes));
+        }
 
-        return ucfirst($this->generator->parse($format));
+        return ucfirst(static::randomElement(static::$dishes[$cuisine]));
     }
 
     public function dessertName()

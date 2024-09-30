@@ -3,6 +3,7 @@
 namespace AppBundle\Faker\fr;
 
 use AppBundle\Faker\RestaurantProvider as BaseRestaurantProvider;
+use Faker\Generator;
 
 class RestaurantProvider extends BaseRestaurantProvider
 {
@@ -97,4 +98,35 @@ class RestaurantProvider extends BaseRestaurantProvider
         'aux raisons secs', 'aux fruits confits', 'à la rhubarbe', 'au sucre glace',
         'au café'
     );
+
+    protected static $dishes = [
+        // https://en.wikipedia.org/wiki/List_of_Chinese_dishes
+        'asian' => [
+            'nouilles chinoises',
+            'chow mein',
+            'soupe de nouilles',
+            'zhajiangmian',
+            'lamian',
+            'liangpi',
+        ],
+        'sushi' => [
+            'sushis au saumon',
+            'sushis au thon',
+            'california roll',
+            'tempuras de légumes',
+            'tempuras de crevettes',
+        ],
+        'burger' => [
+            'cheeseburger',
+            'cheeseburger au bacon',
+            'hamburger au poulet',
+        ],
+        'pizza' => [
+            'pizza margherita',
+            'pizza au chèvre',
+            'pizza jambon champignons',
+            'pizza 4 fromages',
+            'pizza 4 saisons',
+        ],
+    ];
 }
