@@ -28,7 +28,8 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
  *       "method"="GET",
  *       "path"="/time_slots/{id}/choices",
  *       "controller"=OpeningHours::class,
- *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true}
+ *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
+ *       "security"="is_granted('edit', object)"
  *     },
  *   },
  *   collectionOperations={
