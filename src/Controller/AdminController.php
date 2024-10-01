@@ -434,14 +434,16 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function foodtechSettingsAction(Request $request, Redis $redis)
+    public function foodtechSettingsAction(Request $request, Redis $redis, LoggerInterface $logger)
     {
-        $preparationDelay = $request->request->get('preparation_delay');
+        $preparationDelay = $request->request->get('preparation_delay', 0);
         if (0 === $preparationDelay) {
             $redis->del('foodtech:dispatch_delay_for_pickup');
         } else {
             $redis->set('foodtech:dispatch_delay_for_pickup', $preparationDelay);
         }
+
+        $logger->info(sprintf('Set foodtech delay to %s', strval($preparationDelay)));
 
         return new JsonResponse([
             'preparation_delay' => $preparationDelay,
