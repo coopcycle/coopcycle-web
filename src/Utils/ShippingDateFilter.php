@@ -3,21 +3,27 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
-use Spatie\OpeningHours\OpeningHours;
+use Redis;
 
 class ShippingDateFilter
 {
+    private $extraTime;
+
     public function __construct(
+        private Redis $redis,
         private OrderTimelineCalculator $orderTimelineCalculator,
         private OrdersRateLimit         $ordersRateLimit,
+        private FulfillmentMethodResolver $fulfillmentMethodResolver,
         private LoggerInterface         $logger,
-        private LoggingUtils $loggingUtils)
+        private LoggingUtils $loggingUtils
+    )
     {
     }
 
@@ -28,7 +34,7 @@ class ShippingDateFilter
      * @return bool
      * @throws \RedisException
      */
-    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null, int $priorNoticeDelay = 0, int $dispatchDelayForPickup = 0): bool
+    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null): bool
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -54,13 +60,14 @@ class ShippingDateFilter
 
         $preparation = $timeline->getPreparationExpectedAt();
 
+        $priorNoticeDelay = $this->fulfillmentMethodResolver->resolveForOrder($order)->getOrderingDelayMinutes();
+
         $preparationCanStartAt = clone $now;
         if ($priorNoticeDelay > 0) {
             $preparationCanStartAt = $preparationCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $priorNoticeDelay)));
         }
 
         if ($preparation <= $preparationCanStartAt) {
-
             $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" with prior notice "%s" is in the past',
                 $preparation->format(\DateTime::ATOM),
                 strval($priorNoticeDelay)),
@@ -74,6 +81,7 @@ class ShippingDateFilter
         }
 
         $pickup = $timeline->getPickupExpectedAt();
+        $dispatchDelayForPickup = $this->getDispatchDelayForPickup();
 
         $pickupCanStartAt = clone $now;
         if ($dispatchDelayForPickup > 0) {
@@ -140,5 +148,19 @@ class ShippingDateFilter
         );
 
         return $oh->isOpenAt($date);
+    }
+
+    private function getDispatchDelayForPickup(): int
+    {
+        if (null === $this->extraTime) {
+            $extraTime = 0;
+            if ($value = $this->redis->get('foodtech:dispatch_delay_for_pickup')) {
+                $extraTime = intval($value);
+            }
+
+            $this->extraTime = $extraTime;
+        }
+
+        return $this->extraTime;
     }
 }

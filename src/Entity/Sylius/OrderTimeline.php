@@ -141,12 +141,11 @@ class OrderTimeline
 
         if ('collection' === $order->getFulfillmentMethod()) {
 
-            $preparation = clone $range->getLower();
+            $preparation = clone $range->getMidPoint();
             $preparation->sub(date_interval_create_from_date_string($preparationTime));
-
-            $timeline->setPickupExpectedAt($range->getLower());
             $timeline->setPreparationExpectedAt($preparation);
 
+            $timeline->setPickupExpectedAt($range->getMidPoint());
         } else {
 
             $dropoff = $range->getMidPoint();
