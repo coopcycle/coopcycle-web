@@ -419,7 +419,7 @@ class AdminController extends AbstractController
             'groups' => ['order_minimal']
         ]);
 
-        $preparationDelay = $redis->get('foodtech:preparation_delay');
+        $preparationDelay = $redis->get('foodtech:dispatch_delay_for_pickup');
         if (!$preparationDelay) {
             $preparationDelay = 0;
         }
@@ -438,9 +438,9 @@ class AdminController extends AbstractController
     {
         $preparationDelay = $request->request->get('preparation_delay');
         if (0 === $preparationDelay) {
-            $redis->del('foodtech:preparation_delay');
+            $redis->del('foodtech:dispatch_delay_for_pickup');
         } else {
-            $redis->set('foodtech:preparation_delay', $preparationDelay);
+            $redis->set('foodtech:dispatch_delay_for_pickup', $preparationDelay);
         }
 
         return new JsonResponse([

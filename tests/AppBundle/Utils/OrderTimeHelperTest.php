@@ -342,7 +342,7 @@ class OrderTimeHelperTest extends KernelTestCase
 
         Carbon::setTestNow($now);
 
-        $this->redis->set('foodtech:preparation_delay', 40);
+        $this->redis->set('foodtech:dispatch_delay_for_pickup', 40);
 
         $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 13:00-15:00"]);
 
@@ -362,7 +362,7 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->assertEquals(new \DateTime('2024-09-27 14:00:00'), $shippingTimeRange->getLower());
         $this->assertEquals(new \DateTime('2024-09-27 14:10:00'), $shippingTimeRange->getUpper());
 
-        $this->redis->delete('foodtech:preparation_delay');
+        $this->redis->delete('foodtech:dispatch_delay_for_pickup');
     }
 
     public function testAsapWith20minPickupDelayDoesNotInfluence()
@@ -371,7 +371,7 @@ class OrderTimeHelperTest extends KernelTestCase
 
         Carbon::setTestNow($now);
 
-        $this->redis->set('foodtech:preparation_delay', 20);
+        $this->redis->set('foodtech:dispatch_delay_for_pickup', 20);
 
         $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 13:00-15:00"]);
 
@@ -391,6 +391,6 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->assertEquals(new \DateTime('2024-09-27 13:40:00'), $shippingTimeRange->getLower());
         $this->assertEquals(new \DateTime('2024-09-27 13:50:00'), $shippingTimeRange->getUpper());
 
-        $this->redis->delete('foodtech:preparation_delay');
+        $this->redis->delete('foodtech:dispatch_delay_for_pickup');
     }
 }

@@ -42,7 +42,7 @@ class OrderTimeHelper
         $choicesLogged = 0;
         $acceptedChoicesLogged = 0;
         $priorNoticeDelay = $fulfillmentMethod->getOrderingDelayMinutes();
-        $dispatchDelayForPickup = $this->getShippingDelay();
+        $dispatchDelayForPickup = $this->getDispatchDelayForPickup();
 
         return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $dispatchDelayForPickup, $priorNoticeDelay, &$choicesLogged, &$acceptedChoicesLogged) {
 
@@ -86,11 +86,11 @@ class OrderTimeHelper
         return (int) $value;
     }
 
-    private function getShippingDelay(): int
+    private function getDispatchDelayForPickup(): int
     {
         if (null === $this->extraTime) {
             $extraTime = 0;
-            if ($value = $this->redis->get('foodtech:preparation_delay')) {
+            if ($value = $this->redis->get('foodtech:dispatch_delay_for_pickup')) {
                 $extraTime = intval($value);
             }
 
