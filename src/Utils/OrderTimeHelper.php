@@ -14,7 +14,7 @@ use AppBundle\Service\TimeRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
-use Redis;
+
 
 class OrderTimeHelper
 {
@@ -22,13 +22,11 @@ class OrderTimeHelper
     const MAX_ACCEPTED_CHOICES_LOGGED = 3;
 
     private $choicesCache = [];
-    private $extraTime;
 
     public function __construct(
         private ShippingDateFilter $shippingDateFilter,
         private PreparationTimeCalculator $preparationTimeCalculator,
         private ShippingTimeCalculator $shippingTimeCalculator,
-        private Redis $redis,
         private TimeRegistry $timeRegistry,
         private FulfillmentMethodResolver $fulfillmentMethodResolver,
         private string $country,
@@ -41,26 +39,19 @@ class OrderTimeHelper
     {
         $choicesLogged = 0;
         $acceptedChoicesLogged = 0;
-        $priorNoticeDelay = $fulfillmentMethod->getOrderingDelayMinutes();
-        $dispatchDelayForPickup = $this->getDispatchDelayForPickup();
 
-        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, $dispatchDelayForPickup, $priorNoticeDelay, &$choicesLogged, &$acceptedChoicesLogged) {
+        return array_filter($choices, function (TsRangeChoice $choice) use ($cart, &$choicesLogged, &$acceptedChoicesLogged) {
 
             $result = $this->shippingDateFilter->accept(
                 $cart,
                 $choice->toTsRange(),
-                priorNoticeDelay: $priorNoticeDelay,
-                dispatchDelayForPickup: $dispatchDelayForPickup
             );
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
 
-                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s with prior notice delay %s and dispatch delay %s',
+                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
                     var_export($result, true),
-                    (string)$choice,
-                    (string)$priorNoticeDelay,
-                    (string)$dispatchDelayForPickup
-                    ),
+                    (string)$choice),
                     ['order' => $this->loggingUtils->getOrderId($cart),
                     'vendor' => $this->loggingUtils->getVendors($cart),
                 ]);
@@ -84,20 +75,6 @@ class OrderTimeHelper
         $value = (round($n) % $x === 0) ? round($n) : round(($n + $x / 2) / $x) * $x;
 
         return (int) $value;
-    }
-
-    private function getDispatchDelayForPickup(): int
-    {
-        if (null === $this->extraTime) {
-            $extraTime = 0;
-            if ($value = $this->redis->get('foodtech:dispatch_delay_for_pickup')) {
-                $extraTime = intval($value);
-            }
-
-            $this->extraTime = $extraTime;
-        }
-
-        return $this->extraTime;
     }
 
     /**

@@ -3,10 +3,10 @@
 namespace Tests\AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderVendor;
-use AppBundle\Form\Type\TsRangeChoice;
 use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -17,8 +17,6 @@ use AppBundle\Utils\ShippingDateFilter;
 use AppBundle\Utils\ShippingTimeCalculator;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Redis;
@@ -57,7 +55,6 @@ class OrderTimeHelperTest extends KernelTestCase
             self::$container->get(ShippingDateFilter::class),
             $this->preparationTimeCalculator->reveal(),
             $this->shippingTimeCalculator->reveal(),
-            $this->redis,
             $this->timeRegistry->reveal(),
             $this->fulfillmentMethodResolver->reveal(),
             'fr',
@@ -238,9 +235,9 @@ class OrderTimeHelperTest extends KernelTestCase
         $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
 
         $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
-
-        $this->assertEquals(new \DateTime('2020-04-01 13:30:00'), $shippingTimeRange->getLower());
-        $this->assertEquals(new \DateTime('2020-04-01 13:40:00'), $shippingTimeRange->getUpper());
+        
+        $this->assertEquals(new \DateTime('2020-03-31 14:50:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2020-03-31 15:00:00'), $shippingTimeRange->getUpper());
     }
 
     public function testWith2DaysPriorNotice()
@@ -287,8 +284,11 @@ class OrderTimeHelperTest extends KernelTestCase
         $shippingTimeRanges = $this->helper->getShippingTimeRanges($cart->reveal());
         $range = $shippingTimeRanges[0];
         
-        $this->assertEquals(new \DateTime('2021-01-27 19:10:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-27 19:20:00'), $range->getUpper());
+        // 19h05 for drop
+        // -> -15min for pickup -> 18h50
+        // -> 1h30 notice + 20min prep time -> 17h for can start prep 
+        $this->assertEquals(new \DateTime('2021-01-27 19:00:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-27 19:10:00'), $range->getUpper());
     }
 
     public function testWith2HoursPriorNotice()
@@ -332,8 +332,8 @@ class OrderTimeHelperTest extends KernelTestCase
         
         // 120min delay means first slot is the first one tomorrow
         // 20min prep time starting at the opening
-        $this->assertEquals(new \DateTime('2021-01-29 12:00:00'), $range->getLower());
-        $this->assertEquals(new \DateTime('2021-01-29 12:10:00'), $range->getUpper());
+        $this->assertEquals(new \DateTime('2021-01-29 11:50:00'), $range->getLower());
+        $this->assertEquals(new \DateTime('2021-01-29 12:00:00'), $range->getUpper());
     }
 
     public function testAsapWith40minPickupDelay()
@@ -355,7 +355,7 @@ class OrderTimeHelperTest extends KernelTestCase
         $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
 
         // prep time is 20min (default)
-        // shipping time is 25min (default)
+        // shipping time is 10min (default)
         // pickup delay is 40min
         // 20min prep time removes 13:00 to 13:20 timeslots
         // 40min shipping time removes 13:00 to 13:40 timeslots
@@ -384,12 +384,66 @@ class OrderTimeHelperTest extends KernelTestCase
         $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
 
         // prep time is 20min (default)
-        // shipping time is 25min (default)
+        // shipping time is 10min (default)
         // pickup delay is 20min
         // 20min prep time removes 13:00 to 13:20 timeslots
         // 20min shipping time removes 13:00 to 13:20 timeslots -> no effect
         $this->assertEquals(new \DateTime('2024-09-27 13:40:00'), $shippingTimeRange->getLower());
         $this->assertEquals(new \DateTime('2024-09-27 13:50:00'), $shippingTimeRange->getUpper());
+
+        $this->redis->delete('foodtech:dispatch_delay_for_pickup');
+    }
+
+    public function testAsapWith40minPickupDelayAndInFirstHalfOfTimeslot()
+    {   
+        $now = Carbon::parse('2024-09-27T19:41:00+02:00');
+
+        Carbon::setTestNow($now);
+
+        $this->redis->set('foodtech:dispatch_delay_for_pickup', 35);
+
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 19:00-22:00"]);
+
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
+
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
+
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
+
+        $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
+
+        // prep time is 20min (default)
+        // shipping time is 10min (default)
+        // pickup delay is 40min
+        $this->assertEquals(new \DateTime('2024-09-27 20:30:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2024-09-27 20:40:00'), $shippingTimeRange->getUpper());
+
+        $this->redis->delete('foodtech:dispatch_delay_for_pickup');
+    }
+
+    public function testAsapWith40minPickupDelayAndSecondHalfOfTimeslot()
+    {   
+        $now = Carbon::parse('2024-09-27T19:41:00+02:00');
+
+        Carbon::setTestNow($now);
+
+        $this->redis->set('foodtech:dispatch_delay_for_pickup', 40);
+
+        $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Su 19:00-22:00"]);
+
+        $restaurant = $this->setUpRestaurantForTest($fulfillmentMethod);
+
+        $orderVendor = $this->setUpOrderVendorForTest($restaurant); 
+
+        $cart = $this->setUpCartForTest($fulfillmentMethod, $restaurant, $orderVendor, $now);
+
+        $shippingTimeRange = $this->helper->getShippingTimeRange($cart->reveal());
+
+        // prep time is 20min (default)
+        // shipping time is 10min (default)
+        // pickup delay is 40min
+        $this->assertEquals(new \DateTime('2024-09-27 20:40:00'), $shippingTimeRange->getLower());
+        $this->assertEquals(new \DateTime('2024-09-27 20:50:00'), $shippingTimeRange->getUpper());
 
         $this->redis->delete('foodtech:dispatch_delay_for_pickup');
     }

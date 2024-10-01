@@ -6,9 +6,6 @@ use DateTime;
 
 class TsRange
 {
-    public $lower;
-    public $upper;
-
     const TIME_RANGE_PATTERN = '/^(?<lower>[0-9-T:\+]+) - (?<upper>[0-9-T:\+]+)$/';
 
     /**
@@ -66,7 +63,10 @@ class TsRange
      */
     public function getMidPoint(): \DateTimeInterface
     {
-        return new DateTime($this->lower->getTimestamp() + round($this->lower->getTimestamp() + $this->upper->getTimestamp()) / 2);
+        $dt = new DateTime();
+        $ts = $this->lower->getTimestamp() + round(($this->upper->getTimestamp() - $this->lower->getTimestamp()) / 2);
+        $dt->setTimestamp($ts);
+        return $dt;
     }
 
     public static function parse(string $text): ?TsRange
