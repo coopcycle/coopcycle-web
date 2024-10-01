@@ -37,6 +37,7 @@ use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
@@ -571,8 +572,12 @@ class OrderController extends AbstractController
         $exp->modify('+3 hours');
 
         $customMessage = null;
-        if ($assetsFilesystem->fileExists('order_confirm.md')) {
-            $customMessage = $assetsFilesystem->read('order_confirm.md');
+        try {
+            if ($assetsFilesystem->fileExists('order_confirm.md')) {
+                $customMessage = $assetsFilesystem->read('order_confirm.md');
+            }
+        } catch (UnableToCheckFileExistence $e) {
+            $this->checkoutLogger->error($e->getMessage());
         }
 
         return $this->render('order/foodtech.html.twig', [
