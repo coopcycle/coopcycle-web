@@ -11,12 +11,12 @@ class TsRange
     /**
     * @var \DateTime
     */
-    private $lower;
+    public $lower;
 
     /**
     * @var \DateTime
     */
-    private $upper;
+    public $upper;
 
     /**
      * @return \DateTime
