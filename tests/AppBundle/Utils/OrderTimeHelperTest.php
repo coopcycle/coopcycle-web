@@ -286,7 +286,7 @@ class OrderTimeHelperTest extends KernelTestCase
         
         // 19h05 for drop
         // -> -15min for pickup -> 18h50
-        // -> 1h30 notice + 20min prep time -> 17h for can start prep 
+        // -> 1h30 notice + 10min prep time -> 17h10 can start prep
         $this->assertEquals(new \DateTime('2021-01-27 19:00:00'), $range->getLower());
         $this->assertEquals(new \DateTime('2021-01-27 19:10:00'), $range->getUpper());
     }

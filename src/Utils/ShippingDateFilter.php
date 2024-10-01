@@ -80,6 +80,7 @@ class ShippingDateFilter
             return false;
         }
 
+
         $pickup = $timeline->getPickupExpectedAt();
         $dispatchDelayForPickup = $this->getDispatchDelayForPickup();
 
