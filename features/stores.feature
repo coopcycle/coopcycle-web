@@ -125,7 +125,9 @@ Feature: Stores
           "name":null
         },
         "timeSlot":"/api/time_slots/1",
-        "timeSlots":[]
+        "timeSlots":@array@,
+        "weightRequired":@boolean@,
+        "packagesRequired":@boolean@
       }
       """
 
@@ -162,7 +164,9 @@ Feature: Stores
           "name":null
         },
         "timeSlot":"/api/time_slots/1",
-        "timeSlots":[]
+        "timeSlots":@array@,
+        "weightRequired":@boolean@,
+        "packagesRequired":@boolean@
       }
       """
 
@@ -625,7 +629,9 @@ Feature: Stores
           "timeSlots": [
               "/api/time_slots/1",
               "/api/time_slots/2"
-          ]
+          ],
+          "weightRequired":@boolean@,
+          "packagesRequired":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -658,7 +664,9 @@ Feature: Stores
               "/api/time_slots/2",
               "/api/time_slots/1",
               "/api/time_slots/3"
-          ]
+          ],
+          "weightRequired":@boolean@,
+          "packagesRequired":@boolean@
       }
       """
 
