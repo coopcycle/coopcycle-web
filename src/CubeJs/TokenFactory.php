@@ -12,7 +12,8 @@ class TokenFactory
         Configuration $cubeJsJwtConfiguration,
         private string $databaseName,
         private string $baseUrl,
-        private string $s3Path)
+        private string $s3Path,
+        private string $appName)
     {
         $this->config = $cubeJsJwtConfiguration;
     }
@@ -26,7 +27,8 @@ class TokenFactory
             ->expiresAt($now->modify('+1 hour'))
             ->withClaim('database', $this->databaseName)
             ->withClaim('base_url', $this->baseUrl)
-            ->withClaim('s3_path', $this->s3Path);
+            ->withClaim('s3_path', $this->s3Path)
+            ->withClaim('instance', $this->appName);
 
         foreach ($customClaims as $key => $value) {
             $token = $token->withClaim($key, $value);
