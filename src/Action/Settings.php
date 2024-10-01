@@ -4,9 +4,9 @@ namespace AppBundle\Action;
 
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimeRegistry;
-use Aws\S3\Exception\S3Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
 use Symfony\Component\Routing\Annotation\Route;
@@ -95,7 +95,7 @@ class Settings
             if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
                 $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
             }
-        } catch (S3Exception $e) {
+        } catch (UnableToCheckFileExistence $e) {
             // TODO Log error
         }
 
@@ -116,8 +116,12 @@ class Settings
         }
 
         $orderConfirmMessage = '';
-        if ($this->assetsFilesystem->fileExists('order_confirm.md')) {
-            $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
+        try {
+            if ($this->assetsFilesystem->fileExists('order_confirm.md')) {
+                $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
+            }
+        } catch (UnableToCheckFileExistence $e) {
+            // TODO Log error
         }
         $data['order_confirm_message'] = $orderConfirmMessage;
 

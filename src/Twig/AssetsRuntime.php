@@ -3,11 +3,10 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Assets\PlaceholderImageResolver;
-use Aws\S3\Exception\S3Exception;
 use Twig\Extension\RuntimeExtensionInterface;
 use Intervention\Image\ImageManagerStatic;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -81,7 +80,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
             try {
                 return $this->assetsFilesystem->fileExists('banner.svg');
-            } catch (S3Exception $e) {
+            } catch (UnableToCheckFileExistence $e) {
                 return false;
             }
         });

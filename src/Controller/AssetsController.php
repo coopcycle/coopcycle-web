@@ -6,6 +6,7 @@ use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Pixabay\Client as PixabayClient;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Exception\Imagine\Filter\NonExistingFilterException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
@@ -34,7 +35,11 @@ class AssetsController extends AbstractController
      */
     public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
-        if (!$assetsFilesystem->fileExists('banner.svg')) {
+        try {
+            if (!$assetsFilesystem->fileExists('banner.svg')) {
+                throw $this->createNotFoundException();
+            }
+        } catch (UnableToCheckFileExistence $e) {
             throw $this->createNotFoundException();
         }
 
