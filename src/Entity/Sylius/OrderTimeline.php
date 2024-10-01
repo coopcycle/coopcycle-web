@@ -149,7 +149,7 @@ class OrderTimeline
 
         } else {
 
-            $dropoff = $range->getLower();
+            $dropoff = $range->getMidPoint();
             $timeline->setDropoffExpectedAt($dropoff);
 
             // The pickup time is when the messenger grabs the bag
