@@ -740,7 +740,6 @@ Feature: Stores
       }
       """
 
-  @debug
   Scenario: Retrieve packages
     Given the fixtures files are loaded:
       | sylius_channels.yml |
