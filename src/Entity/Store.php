@@ -24,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
 
 /**
  * A retail good store.
@@ -57,6 +58,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "patch"={
  *       "method"="PATCH",
  *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "time_slots"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/time_slots",
+ *       "controller"=TimeSlots::class,
+ *       "normalization_context"={"groups"={"store_time_slots"}}
  *     }
  *   },
  *   subresourceOperations={
