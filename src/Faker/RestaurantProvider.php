@@ -8,11 +8,10 @@ class RestaurantProvider extends BaseProvider
 {
     /* Cuisines */
     protected static $cuisines = [
-        'pizza',
         'asian',
-        'burger',
         'sushi',
-        'vegan',
+        'burger',
+        'italian',
     ];
 
     /* Formats */
@@ -203,11 +202,13 @@ class RestaurantProvider extends BaseProvider
         return ucfirst($this->generator->parse($format));
     }
 
-    public function appetizerName()
+    public function appetizerName($cuisine = null)
     {
-        $format = static::randomElement(static::$appetizerFormats);
+        if (null === $cuisine) {
+            $cuisine = static::randomElement(array_keys(static::$appetizers));
+        }
 
-        return ucfirst($this->generator->parse($format));
+        return ucfirst(static::randomElement(static::$appetizers[$cuisine]));
     }
 
     public function dishName($cuisine = null)

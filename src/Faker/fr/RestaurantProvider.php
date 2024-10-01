@@ -99,6 +99,26 @@ class RestaurantProvider extends BaseRestaurantProvider
         'au café'
     );
 
+    protected static $appetizers = [
+        'asian' => [
+            'rouleaux de printemps',
+            'nems au poulet',
+            'nems au porc',
+        ],
+        'sushi' => [
+            'soupe miso',
+            'tofu',
+        ],
+        'burger' => [
+            'coleslaw',
+            'épi de maïs',
+        ],
+        'italian' => [
+            'mozzarella',
+            'burrata',
+        ],
+    ];
+
     protected static $dishes = [
         // https://en.wikipedia.org/wiki/List_of_Chinese_dishes
         'asian' => [
@@ -121,7 +141,7 @@ class RestaurantProvider extends BaseRestaurantProvider
             'cheeseburger au bacon',
             'hamburger au poulet',
         ],
-        'pizza' => [
+        'italian' => [
             'pizza margherita',
             'pizza au chèvre',
             'pizza jambon champignons',
