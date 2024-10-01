@@ -64,13 +64,15 @@ use AppBundle\Action\Store\Packages as Packages;
  *       "method"="GET",
  *       "path"="/stores/{id}/time_slots",
  *       "controller"=TimeSlots::class,
- *       "normalization_context"={"groups"={"store_time_slots"}}
+ *       "normalization_context"={"groups"={"store_time_slots"}},
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "packages"={
  *       "method"="GET",
  *       "path"="/stores/{id}/packages",
  *       "controller"=Packages::class,
- *       "normalization_context"={"groups"={"store_packages"}}
+ *       "normalization_context"={"groups"={"store_packages"}},
+ *       "security"="is_granted('edit', object)"
  *     }
  *   },
  *   subresourceOperations={
