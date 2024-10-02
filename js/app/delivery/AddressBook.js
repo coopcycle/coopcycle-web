@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
 import {  Input, Button } from 'antd'
@@ -59,6 +59,10 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   const { t } = useTranslation()
   const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, address[prop]))
 
+  useEffect(() => {
+    setInputValue(address[prop])
+  }, [address])
+
   if (!address) {
     return null
   }
@@ -86,6 +90,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
           onBlur={ onInputBlur }
           onChange={ onInputChange }
           value={ inputValue }
+          defaultValue={ inputValue }
           id={id + '__display'}
         />
         <input
