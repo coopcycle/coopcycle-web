@@ -312,8 +312,8 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-18T12:00:00+02:00",
-          "2020-09-18T12:10:00+02:00"
+          "2020-09-18T11:50:00+02:00",
+          "2020-09-18T12:00:00+02:00"
         ],
         "today":false,
         "fast": false,
