@@ -30,9 +30,9 @@ class OrderTimelineTest extends TestCase
             $shippingTime = '7 minutes'
         );
 
-        $this->assertEquals(new \DateTime('2020-01-23 19:30:00'), $timeline->getDropoffExpectedAt());
-        $this->assertEquals(new \DateTime('2020-01-23 19:18:00'), $timeline->getPickupExpectedAt());
-        $this->assertEquals(new \DateTime('2020-01-23 19:03:00'), $timeline->getPreparationExpectedAt());
+        $this->assertEquals(new \DateTime('2020-01-23 19:35:00'), $timeline->getDropoffExpectedAt());
+        $this->assertEquals(new \DateTime('2020-01-23 19:23:00'), $timeline->getPickupExpectedAt());
+        $this->assertEquals(new \DateTime('2020-01-23 19:08:00'), $timeline->getPreparationExpectedAt());
     }
 
     public function testCreateForCollection()
@@ -52,7 +52,7 @@ class OrderTimelineTest extends TestCase
         );
 
         $this->assertNull($timeline->getDropoffExpectedAt());
-        $this->assertEquals(new \DateTime('2020-01-23 19:30:00'), $timeline->getPickupExpectedAt());
-        $this->assertEquals(new \DateTime('2020-01-23 19:15:00'), $timeline->getPreparationExpectedAt());
+        $this->assertEquals(new \DateTime('2020-01-23 19:35:00'), $timeline->getPickupExpectedAt());
+        $this->assertEquals(new \DateTime('2020-01-23 19:20:00'), $timeline->getPreparationExpectedAt());
     }
 }
