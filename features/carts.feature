@@ -2058,7 +2058,7 @@ Feature: Carts
         ],
         "today":true,
         "fast":false,
-        "diff":"60 - 70",
+        "diff":"50 - 60",
         "ranges":@array@,
         "choices":@array@
       }
