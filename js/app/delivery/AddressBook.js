@@ -140,7 +140,7 @@ const AddressBook = ({
       }
     }
   }
-
+  console.log(address)
   return (
     <div>
        {allowSearchSavedAddresses &&
@@ -184,8 +184,10 @@ const AddressBook = ({
         }
         </Input.Group>
 
-      </div> }
-      <Modal
+      </div> 
+      }
+      { address &&
+        <Modal
         isOpen={ isModalOpen }
         onRequestClose={ () => setModalOpen(false) }
         shouldCloseOnOverlayClick={ false }
@@ -194,6 +196,7 @@ const AddressBook = ({
         className="ReactModal__Content--addressProp"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
+        <h4 className='text-center'>{address.name} - {address.streetAddress}</h4>
         <p>{ t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER') }</p>
         <div className="d-flex justify-content-center">
           <Button
@@ -209,6 +212,7 @@ const AddressBook = ({
             }}>{ t('ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE') }</Button>
         </div>
       </Modal>
+      }
     </div>
   )
 }
