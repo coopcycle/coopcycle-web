@@ -90,7 +90,7 @@ describe('Failed checkout; restaurant is closed', () => {
             cy.get(
               '[data-testid="cart.time"]:visible')
               .invoke('text')
-              .should('match', /^Demain entre 10:00 et 10:10/i)
+              .should('match', /^Demain entre 09:50 et 10:00/i)
 
             cy.get('.order-button:visible').click()
 
@@ -181,7 +181,7 @@ describe('Failed checkout; restaurant is closed', () => {
               cy.get(
                 '[data-testid="order.time"]:visible')
                 .invoke('text')
-                .should('match', /^Demain entre 10:00 et 10:10/i)
+                .should('match', /^Demain entre 09:50 et 10:00/i)
 
               cy.contains('Commander').click()
 
@@ -279,7 +279,7 @@ describe('Failed checkout; restaurant is closed', () => {
             cy.get(
               '[data-testid="order.time"]:visible')
               .invoke('text')
-              .should('match', /^Demain entre 10:00 et 10:10/i)
+              .should('match', /^Demain entre 09:50 et 10:00/i)
 
             cy.intercept('POST', '/stripe/payment/*/create-intent')
               .as('createStripePaymentIntent')
