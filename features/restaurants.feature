@@ -317,7 +317,7 @@ Feature: Manage restaurants
         ],
         "today":false,
         "fast": false,
-        "diff":"1260 - 1270"
+        "diff":"1250 - 1260"
       },
       "collection":null
     }
