@@ -465,7 +465,7 @@ Feature: Orders
         ],
         "today":true,
         "fast":false,
-        "diff":"60 - 70",
+        "diff":"50 - 60",
         "choices":@array@,
         "ranges":@array@,
         "behavior":@string@
