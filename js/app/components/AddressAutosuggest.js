@@ -246,9 +246,7 @@ const generic = {
       <span></span>
     )
   },
-  highlightFirstSuggestion: function() {
-    return false
-  },
+  highlightFirstSuggestion: false,
   useCache: function() {
     return false
   },
@@ -384,7 +382,6 @@ class AddressAutosuggest extends Component {
     this.placeholder = localize('placeholder', adapter, this)
     this.poweredBy = localize('poweredBy', adapter, this)
     this.theme = localize('theme', adapter, this)
-    this.highlightFirstSuggestion = localize('highlightFirstSuggestion', adapter, this)
     this.useCache = localize('useCache', adapter, this)
 
     this.getFirstSuggestion = this.getFirstSuggestion.bind(this)
@@ -701,7 +698,6 @@ class AddressAutosuggest extends Component {
         renderSuggestion={ renderSuggestion }
         shouldRenderSuggestions={ shouldRenderSuggestions.bind(this) }
         renderSectionTitle={ renderSectionTitle }
-        highlightFirstSuggestion={ this.highlightFirstSuggestion.bind(this) }
         getSectionSuggestions={ getSectionSuggestions }
         multiSection={ multiSection }
         inputProps={ inputProps }
