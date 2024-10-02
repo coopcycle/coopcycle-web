@@ -24,6 +24,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
+use AppBundle\Action\Store\Packages as Packages;
 
 /**
  * A retail good store.
@@ -57,6 +59,20 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "patch"={
  *       "method"="PATCH",
  *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "time_slots"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/time_slots",
+ *       "controller"=TimeSlots::class,
+ *       "normalization_context"={"groups"={"store_time_slots"}},
+ *       "security"="is_granted('edit', object)"
+ *     },
+ *     "packages"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/packages",
+ *       "controller"=Packages::class,
+ *       "normalization_context"={"groups"={"store_packages"}},
+ *       "security"="is_granted('edit', object)"
  *     }
  *   },
  *   subresourceOperations={
@@ -161,8 +177,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $checkExpression;
 
+    /**
+     * @Groups({"store"})
+     */
     private $weightRequired = false;
 
+    /**
+     * @Groups({"store"})
+     */
     private $packagesRequired = false;
 
     private $multiDropEnabled = false;
