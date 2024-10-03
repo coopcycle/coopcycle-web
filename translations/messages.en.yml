@@ -756,7 +756,7 @@ form.package.name.label: Name
 form.package.color.label: Color (click to select)
 form.package.enter_details: Show/hide details
 form.package.description.label: Description for the customer
-form.package.maxWeight.help: Not applied yet
+form.package.maxWeight.help: (Not used elsewhere in the platform yet)
 form.package.average_volume_units.label: Average volume units (VU)
 form.package.max_volume_units.label: Max volume units (VU)
 form.package.average_estimation: Estimated to 75% of max if not set
