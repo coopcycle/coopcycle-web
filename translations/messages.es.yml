@@ -756,6 +756,7 @@ form.package.description.label: Descripción para el cliente
 form.package.average_volume_units.label: Unidades de volumen promedio (VU)
 form.package.max_volume_units.label: Unidades de volumen máximo (VU)
 form.package.average_estimation: Estimado al 75 % del máximo si no se establece
+form.package.max_volume_units: Este valor se utilizará para calcular los precios en función del volumen
 form.package.average_weight.label: Peso promedio (kg)
 form.package.max_weight.label: Peso máximo (kg)
 form.package.shortCode.label: Código de 2 letras

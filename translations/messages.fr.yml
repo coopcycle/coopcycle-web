@@ -892,6 +892,8 @@ form.package.enter_details: Masquer/afficher les détails
 form.package.average_volume_units.label: Unités de volume moyen (VU)
 form.package.max_volume_units.label: Unités de volume maximum (VU)
 form.package.average_estimation: Estimé à 75 % du maximum si non défini
+form.package.max_volume_units : Cette valeur sera utilisée pour calculer les prix en fonction du volume
+form.package.tags.label: Tags à appliquer automatiquement aux tâches
 form.package.average_weight.label: Poids moyen (kg)
 form.package.max_weight.label: Poids maximum (kg)
 form.package.shortCode.label: Code de 2 lettres

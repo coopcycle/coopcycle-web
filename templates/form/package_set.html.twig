@@ -47,6 +47,7 @@
         </div>
           <div class="col-md-3">
           {{ form_label(form.maxWeight) }}<i class="text-danger">*</i> {{ form_widget(form.maxWeight) }}
+          {{ form_help(form.maxWeight) }}
         </div>
         <div class="col-md-3 ">
           {{ form_label(form.averageVolumeUnits) }} {{ form_widget(form.averageVolumeUnits) }}
@@ -54,11 +55,13 @@
         </div>
         <div class="col-md-3 ">
           {{ form_label(form.maxVolumeUnits) }}<i class="text-danger">*</i> {{ form_widget(form.maxVolumeUnits) }}
+          {{ form_help(form.maxVolumeUnits) }}
         </div>
       </div>
       <div class="row m-0">
         <div class="col-md-12">
           {{ form_row(form.tags, { 'attr': {'class': 'package_tags'}}) }}
+          {{ form_help(form.tags) }}
         </div>
       </div>
     </div>

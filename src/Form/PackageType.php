@@ -24,7 +24,7 @@ class PackageType extends AbstractType
             ->add('description', TextType::class, [
                 'label' => 'form.package.description.label',
                 'empty_data' => '',
-                'required' => false
+                'required' => false,
             ])
             ->add('color', TextType::class, [
                 'label' => 'form.package.color.label',
@@ -38,6 +38,7 @@ class PackageType extends AbstractType
             ])
             ->add('maxVolumeUnits', IntegerType::class, [
                 'label' => 'form.package.max_volume_units.label',
+                'help' => 'form.package.max_volume_units',
                 'attr' => [
                     'min' => 1
                 ]
@@ -53,14 +54,19 @@ class PackageType extends AbstractType
                 'scale' => 2,
                 'attr' => [
                     'min' => 1
-                ]
+                ],
+                'help' => 'form.package.maxWeight.help'
             ])
             ->add('shortCode', TextType::class, [
                 'label' => 'form.package.shortCode.label',
                 'required' => false
             ])
-            ->add('tags', TagsType::class)
-            ;
+            ->add(
+                'tags',
+                TagsType::class, [
+                    'label' => 'form.package.tags.label',
+                ]
+            );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (PreSetDataEvent $event) {
             $package = $event->getData();
