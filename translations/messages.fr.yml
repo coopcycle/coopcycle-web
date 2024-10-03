@@ -1549,6 +1549,7 @@ form.product.business_restaurant_group.price_definition.placeholder: "Veuillez e
 business_restaurant_group.label: "Groupe de restaurants d'affaires"
 business_restaurant_group.form.invalid: "Il y a des erreurs ou des informations manquantes, veuillez vérifier toutes les sections de la configuration."
 business_restaurant_group.form.fill_all_pages: "Veuillez remplir les trois pages de paramètres."
+business_account.registration.title: Création de compte entreprise
 business_account.registration.user_with_same_email_exists: "Un compte avec votre email existe déjà. Veuillez vous connecter pour continuer la configuration de votre compte d'affaires."
 registration.business_account.loggin.warning_message: "Connectez-vous pour associer votre compte à l'entreprise %name%."
 registration.email.taken.loggin.warning_message: "Entrez votre mot de passe pour vous connecter."
