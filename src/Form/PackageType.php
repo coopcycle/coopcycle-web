@@ -6,6 +6,7 @@ use AppBundle\Entity\Package;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -41,13 +42,15 @@ class PackageType extends AbstractType
                     'min' => 1
                 ]
             ])
-            ->add('averageWeight', IntegerType::class, [
+            ->add('averageWeight', NumberType::class, [
                 'label' => 'form.package.average_weight.label',
                 'help' => 'form.package.average_estimation',
+                'scale' => 2,
                 'required' => false,
             ])
-            ->add('maxWeight', IntegerType::class, [
+            ->add('maxWeight', NumberType::class, [
                 'label' => 'form.package.max_weight.label',
+                'scale' => 2,
                 'attr' => [
                     'min' => 1
                 ]
