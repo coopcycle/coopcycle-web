@@ -351,7 +351,7 @@
         "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "L'intervallo di tempo selezionato non è più disponibile per oggi",
         "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "L'orario di apertura non consente di effettuare l'ordine oggi",
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Per favore, scegli un altro intervallo di tempo",
-        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambia orario di consegna"
+        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambia orario di consegna",
         "SCHEDULE_ORDER": "Preordinare",
         "ADMIN_DASHBOARD_PACKAGES": "Pacchetti",
         "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "Hai appena cambiato una proprietà dell'indirizzo. Vuoi cambiare questa proprietà per tutte le consegne passate e future di questo indirizzo o solamente una volta?",
