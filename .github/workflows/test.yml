@@ -138,8 +138,6 @@ jobs:
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
       - name: Run Cypress
         uses: cypress-io/github-action@v6
-        env:
-          DEBUG: 'cypress:*'
         with:
           # Maybe we could run a build step before starting tests
           # https://symfony.com/doc/current/frontend/encore/installation.html
