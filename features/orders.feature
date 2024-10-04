@@ -1419,9 +1419,7 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
@@ -1560,9 +1558,7 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
