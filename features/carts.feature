@@ -1750,7 +1750,8 @@ Feature: Carts
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1802,7 +1803,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1837,7 +1839,8 @@ Feature: Carts
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1889,7 +1892,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
