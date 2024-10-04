@@ -138,13 +138,13 @@ jobs:
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
       - name: Run Cypress
         uses: cypress-io/github-action@v6
+        env:
+          DEBUG: 'cypress:*'
         with:
           # Maybe we could run a build step before starting tests
           # https://symfony.com/doc/current/frontend/encore/installation.html
           # https://github.com/cypress-io/github-action?tab=readme-ov-file#build-app
           # build: npm run dev
-          env:
-            DEBUG: 'cypress:*'
           spec: |
             cypress/e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots
