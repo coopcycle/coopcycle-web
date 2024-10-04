@@ -451,7 +451,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -908,7 +909,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1659,7 +1661,8 @@ Feature: Carts
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
