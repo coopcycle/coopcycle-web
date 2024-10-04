@@ -50,7 +50,7 @@ describe('Checkout (happy path); (business context)', () => {
       'John Doe',
     )
 
-    cy.contains('Commander').click()
+    cy.get('button[type="submit"]').contains('Commander').click()
 
     cy.location('pathname').should('eq', '/order/payment')
 
