@@ -143,7 +143,8 @@ jobs:
           # https://symfony.com/doc/current/frontend/encore/installation.html
           # https://github.com/cypress-io/github-action?tab=readme-ov-file#build-app
           # build: npm run dev
-          env: DEBUG=cypress:*
+          env:
+            DEBUG: 'cypress:*'
           spec: |
             cypress/e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots
