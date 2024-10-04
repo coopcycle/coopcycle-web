@@ -1,19 +1,7 @@
 include:
-  - settings.yml
-  - sylius_channels.yml
-  - addresses.yml
+  - base.yml
 
 AppBundle\Entity\User:
-  bob:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'admin'
-        - '12345678'
-        - 'admin@demo.coopcycle.org'
-        - true
-        - false
-    roles: [ 'ROLE_ADMIN' ]
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   jane:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':

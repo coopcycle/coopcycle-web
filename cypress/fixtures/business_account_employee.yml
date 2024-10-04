@@ -1,0 +1,13 @@
+AppBundle\Entity\User:
+  employee01:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'employee'
+        - '12345678'
+        - 'jane@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    addresses: [ "@address_4" ]
+    businessAccount: '@business_account1'

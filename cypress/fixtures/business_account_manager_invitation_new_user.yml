@@ -1,0 +1,16 @@
+include:
+  - foodtech.yml
+  - business_account_new.yml
+
+AppBundle\Entity\Invitation:
+  invitation1:
+    code: 'INVITATION_MANAGER'
+    email: 'manager01@demo.coopcycle.org'
+    user: '@admin'
+    __calls:
+      - addRole: [ "ROLE_BUSINESS_ACCOUNT" ]
+
+AppBundle\Entity\BusinessAccountInvitation:
+  business_account_invitation1:
+    businessAccount: '@business_account1'
+    invitation: '@invitation1'

@@ -733,6 +733,8 @@ class LazyProductVariantResolverTest extends KernelTestCase
 
         $businessAccount = new BusinessAccount();
         $businessAccount->setName('Acme');
+        $businessAccount->setLegalName('Acme Ltd.');
+        $businessAccount->setVatNumber('1234567890');
         $businessAccount->setBusinessRestaurantGroup($restaurantGroup);
 
         $this->businessContext->isActive()->willReturn(true);

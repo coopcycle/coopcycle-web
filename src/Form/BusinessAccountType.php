@@ -21,21 +21,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class BusinessAccountType extends AbstractType
 {
-    private $authorizationChecker;
-    private $objectManager;
-
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
-        EntityManagerInterface $objectManager)
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly EntityManagerInterface $objectManager)
     {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->objectManager = $objectManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', TextType::class, ['label' => 'registration.step.company.name'])
+            ->add('name', TextType::class, [
+                'label' => 'registration.step.company.name'
+            ])
+            ->add('legalName', TextType::class, [
+                'label' => 'registration.step.company.legal_name',
+                'required' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
+                'empty_data' => ''])
+            ->add('vatNumber', TextType::class, [
+                'label' => 'registration.step.company.vat_number',
+                'required' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
+                'empty_data' => ''])
             ->add('address', AddressType::class, [
                 'with_widget' => true,
                 'with_description' => false,
@@ -70,7 +75,7 @@ class BusinessAccountType extends AbstractType
                 ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use($options) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
             $businessAccount = $event->getData();
             $form = $event->getForm();
 
@@ -87,8 +92,8 @@ class BusinessAccountType extends AbstractType
                                 'help' => 'form.business_account.manager.email_sent.help',
                                 'help_html' => true,
                                 'disabled' => true,
-                                'required'=> false,
-                                'mapped'=> false,
+                                'required' => false,
+                                'mapped' => false,
                                 'data' => $businessAccountInvitation->getInvitation()->getEmail(),
                             ])
                             ->add('invitationId', HiddenType::class, [
@@ -108,8 +113,8 @@ class BusinessAccountType extends AbstractType
                         ],
                         'label' => 'form.business_account.manager.email.label',
                         'help' => 'form.business_account.manager.email.help',
-                        'required'=> true,
-                        'mapped'=> false,
+                        'required' => true,
+                        'mapped' => false,
                     ]);
                 }
             }
@@ -135,7 +140,8 @@ class BusinessAccountType extends AbstractType
         ));
     }
 
-    public function getBlockPrefix() {
-		return 'company';
-	}
+    public function getBlockPrefix()
+    {
+        return 'company';
+    }
 }
