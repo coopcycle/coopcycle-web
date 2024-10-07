@@ -97,8 +97,8 @@ delivery.tracking_link: Odkaz na sledování
 delivery.with_id: "'Doručení #%id%'"
 help.title: Nápověda
 help.home: Úvodní strana
-restaurants.no_results: Nebyly nalezeny žádné restaurace odpovídající vašemu hledání.
-  ☹<br> Zkuste jinou adresu
+restaurants.no_results: Nenašli jsme žádné restaurace odpovídající vašemu hledání
+  ☹<br>Zkuste to s jinou adresou nebo jinými filtry
 localBusiness.form.orderingDelayMinutes: Další zpoždění před objednáním
 localBusiness.form.orderingDelayMinutes.help: Pomocí tohoto pole můžete přidat nějaký
   čas, než si zákazník může objednat. Toto nastavení nemění čas potřebný pro vaření
@@ -149,7 +149,7 @@ restaurant.form.exclusive.label: Tato restaurace je exkluzivní
 restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky (např.:
   catering)'
 restaurant.form.loopeat_enabled.label: Povolit systém vkladu a vrácení peněz LoopEat
-restaurant.form.loopeat_disconnect.label: Odpojit LoopEat
+restaurant.form.loopeat_disconnect.label: Odpojit %name%
 restaurant.form.featured.label: Tato restaurace je uvedena na domovské stránce
 restaurant.form.fulfillment_methods.label: Způsoby plnění
 restaurant.form.section.general: Obecné
@@ -1240,3 +1240,35 @@ restaurant.canOrderForTomorrow: Stále si však můžete objednat na zítřek!
 restaurant.closedOpensAfterTomorrowWarning: Tato restaurace je uzavřena do <strong>%date%</strong>.
 restaurant.canOrderForOtherDay: Na tento den si však stále můžete objednat!
 restaurant.closedNowWarning: Tato restaurace je nyní zavřená.
+adminDashboard.tooltip.organizations: Řízení organizace
+subscriptions.title: Odběry
+subscription.generated_order: Tato objednávka byla vytvořena na základě odběru
+restaurant.form.allow_mercadopago_connect.label: Umožnit restauraci spravovat účet
+  Mercadopago samostatně
+restaurant.form.auto_accept_orders_enabled.label: Automaticky přijímat objednávky
+restaurant.ordersRateLimiter.title: Limit objednávek
+restaurant.ordersRateLimiter.help: Funkce limitu objednávek umožňuje kontrolovat počet
+  objednávek, které můžete přijmout v daném časovém období. Nastavením limitu se můžete
+  vyhnout přijímání většího počtu objednávek, než jste schopni zpracovat. Stačí zadat
+  maximální počet objednávek a dobu trvání časového období. Další objednávky se automaticky
+  přesunou do dalšího volného časového úseku. Tato funkce vám pomůže lépe řídit výrobní
+  kapacitu a vyhnout se zpožděním a chybám.
+docs.label: Dokumenty
+adminDashboard.users.export.optins.title: Vyberte, co chcete exportovat
+adminDashboard.users.export.optins.newsletter: Uživatelé, kteří souhlasí se zasíláním
+  zpravodaje
+adminDashboard.users.export.optins.marketting: Uživatelé, kteří souhlasí se zasíláním
+  promo akcí
+adminDashboard.pricing.duplicate: Duplikát
+adminDashboard.pricing.copyOf: Kopie %rule_set_name%
+button.suggest.submitted.label: Zpět domů
+adminDashboard.organizations.title: Organizace
+adminDashboard.orders.noOrders: Momentálně žádné objednávky
+admin.deliveries.to_be_confirmed.alert: Máte dodávky, které je třeba potvrdit. Klikněte
+  na ikonu "Doručení " v pravém sloupci.
+subscription.title: 'Odběr #%id%'
+subscription.view: Zobrazit odběr
+restaurant.form.auto_accept_orders_enabled.docs_path: /en/admin/restaurants/general-settings/#auto-accept-orders
+profile.businessAccount: Podnikatelský účet
+profile.orders: Objednávky
+profile.configuration: Konfigurace
