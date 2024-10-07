@@ -19,10 +19,6 @@ describe('Address Autosuggest', () => {
         }
       })
 
-    cy.window().then((win) => {
-      win.sessionStorage.clear()
-    })
-
   })
 
   it('search address (gb)', function () {
