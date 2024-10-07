@@ -1264,7 +1264,7 @@ edenred.oauth_connect.success: ¡Cuenta Edenred conectada exitosamente!
 profile.edenred.connect: Conectar mi cuenta Edenred
 profile.edenred.connected: Cuenta Edenred conectada
 notifications.delivery_created: Una entrega para recoger el %date% ha sido creado
-ordering_delay.admin_reminder: Configuró un retraso en todos los pedidos
+ordering_delay.admin_reminder: Ha configurado un retraso de pickup global para pedidos de foodtech
 ordering_delay.disclaimer: ¡Estamos recibiendo muchos pedidos, los tiempos de entrega
   se retrasaran!
 form.fulfillment_method.options.range_duration.label: Margen de tolerancia
