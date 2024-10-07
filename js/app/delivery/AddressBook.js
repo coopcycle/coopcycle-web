@@ -11,7 +11,7 @@ import AddressAutosuggest from '../components/AddressAutosuggest'
 import { getCountry } from '../i18n'
 
 import './AddressBook.scss'
-import SavedAddressesBox from './SavedAddressBox'
+import { SavedAddressesBox } from './SavedAddressesBox'
 
 const AddressDetailsIcon = ({ prop }) => {
   switch (prop) {

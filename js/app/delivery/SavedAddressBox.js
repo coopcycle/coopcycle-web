@@ -2,7 +2,7 @@ import { AutoComplete, Input, Select } from 'antd'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
-export default ({ addresses, onSelected }) => {
+export const SavedAddressesBox = ({ addresses, onSelected }) => {
 
   const [results, setResults] = useState(addresses)
   const { t } = useTranslation()
