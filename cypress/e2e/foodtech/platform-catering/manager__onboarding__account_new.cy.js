@@ -3,13 +3,13 @@ describe('Platform catering; manager; onboarding with a new user account', () =>
     cy.window().then(win => {
       win.sessionStorage.clear()
     })
-  })
 
-  it('should activate a business account', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_new_user.yml',
     )
+  })
 
+  it('should activate a business account', () => {
     cy.visit('/invitation/define-password/INVITATION_MANAGER')
 
     // Personal info step
