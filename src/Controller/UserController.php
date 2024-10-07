@@ -256,7 +256,8 @@ class UserController extends AbstractController
                 } else if ($request->isMethod('POST')) {
                     $logger->info('Form is not valid', [
                         'errors' => $submittedForm->getErrors(true, false),
-                        'data' => $submittedForm->getData(),
+                        '$plainPasswordFirst' => $form->get('user')->get('plainPassword')->get('first')->getData(),
+                        '$plainPasswordSecond' => $form->get('user')->get('plainPassword')->get('second')->getData()
                     ]);
                 }
 
