@@ -489,6 +489,16 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   }
 }
 
+function submitAfterSuggestionsShown() {
+
+  return ({ getState }) => (next) => (action) => {
+    if(action.type === '') {
+
+    }
+    
+  }
+}
+
 function createOnTasksChanged(onChange) {
 
   return ({ getState }) => (next) => (action) => {
@@ -498,9 +508,7 @@ function createOnTasksChanged(onChange) {
     const state = getState()
 
     if (prevState.tasks !== state.tasks) {
-      // trigger the suggestions when we changed the address of the two last tasks have an address set + different geo
-      const shouldLoadSuggestions = state.tasks.length > 2 && state.tasks.at(-2)?.address &&  state.tasks.at(-1)?.address && state.tasks.at(-2)?.address?.geo !==  state.tasks.at(-1)?.address?.geo
-      onChange(state, shouldLoadSuggestions)
+      onChange(state)
     }
 
     return result
@@ -527,6 +535,7 @@ export default function(name, options) {
 
   const onChange = options.onChange.bind(form)
   const onReady = options.onReady.bind(form)
+  const onSubmit = options.onSubmit.bind(form)
 
   if (el) {
 
@@ -585,6 +594,8 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
+      e.preventDefault()
+
       const hasInvalidInput = _.find(taskForms, taskEl => {
 
         const type = taskEl.getAttribute('id').replace(name + '_', '')
@@ -615,6 +626,9 @@ export default function(name, options) {
           rule: recurrenceRule
         })
       }
+
+      onSubmit(reduxStore.getState(), true)
+      return false
 
     }, false)
 
