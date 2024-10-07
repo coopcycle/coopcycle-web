@@ -3,14 +3,14 @@ describe('Platform catering; manager; onboarding; failed', () => {
     cy.window().then(win => {
       win.sessionStorage.clear()
     })
-  })
 
-  it('should fail due to the missing info', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_existing_user.yml',
     )
+  })
 
-    cy.visit('/invitation/define-password/INVITATION_MANAGER')
+  it('should fail due to the missing info', () => {
+    cy.visit('/invitation/define-password/INVITATION_MANAGER_1')
 
     // Personal info step
     cy.get('#guest-checkout-password').clear('')

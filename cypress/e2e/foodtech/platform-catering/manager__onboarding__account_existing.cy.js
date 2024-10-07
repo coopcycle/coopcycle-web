@@ -10,7 +10,7 @@ describe('Platform catering; manager; onboarding with an existing user account',
   })
 
   it('should activate a business account', () => {
-    cy.visit('/invitation/define-password/INVITATION_MANAGER_A')
+    cy.visit('/invitation/define-password/INVITATION_MANAGER_1')
 
     // Personal info step
     cy.get('#guest-checkout-password').clear('')

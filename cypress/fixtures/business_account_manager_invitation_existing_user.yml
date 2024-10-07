@@ -16,7 +16,7 @@ AppBundle\Entity\User:
 
 AppBundle\Entity\Invitation:
   invitation1:
-    code: 'INVITATION_MANAGER_A'
+    code: 'INVITATION_MANAGER_1'
     email: 'user01@demo.coopcycle.org'
     user: '@admin'
     __calls:

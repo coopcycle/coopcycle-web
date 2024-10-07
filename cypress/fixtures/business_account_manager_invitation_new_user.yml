@@ -3,8 +3,8 @@ include:
   - business_account_new.yml
 
 AppBundle\Entity\Invitation:
-  invitation1:
-    code: 'INVITATION_MANAGER_B'
+  invitation2:
+    code: 'INVITATION_MANAGER_2'
     email: 'manager01@demo.coopcycle.org'
     user: '@admin'
     __calls:
@@ -13,4 +13,4 @@ AppBundle\Entity\Invitation:
 AppBundle\Entity\BusinessAccountInvitation:
   business_account_invitation1:
     businessAccount: '@business_account1'
-    invitation: '@invitation1'
+    invitation: '@invitation2'
