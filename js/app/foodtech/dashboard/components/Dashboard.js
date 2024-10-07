@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Modal from 'react-modal'
-import { DatePicker, Slider, Col, Row, Switch, ConfigProvider } from 'antd'
+import { DatePicker, Slider, Col, Row, Switch, ConfigProvider, Tooltip } from 'antd'
 import moment from 'moment'
 
 import Column from './Column'
@@ -103,13 +103,16 @@ export default function Dashboard({ onDateChange }) {
         { showSettings && (
           <div className="FoodtechDashboard__Navbar__Slider">
             <Row type="flex" align="middle">
-              <Col span={ 6 }>
+              <Col span={ 4 }>
                   <span>
-                    <i className="fa fa-clock-o"></i> { t(
-                    'RESTAURANT_DASHBOARD_DELAY_SETTING') }
+                    <i className="fa fa-clock-o mr-1"></i>
+                    { t('RESTAURANT_DASHBOARD_DELAY_SETTING') }
+                    <Tooltip title={ t('RESTAURANT_DASHBOARD_DELAY_SETTING_HELP')}>
+                      <i className='ml-1 fa fa-question-circle'></i>
+                    </Tooltip>
                   </span>
               </Col>
-              <Col span={ 18 }>
+              <Col span={ 20 }>
                 <Slider
                   max={ 180 }
                   defaultValue={ preparationDelay }

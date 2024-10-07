@@ -206,6 +206,7 @@
         "RESTAURANT_DASHBOARD_FULFILLED_ORDERS": "Commandes terminées",
         "RESTAURANT_DASHBOARD_CANCELLED_REFUSED_ORDERS": "Commandes annulées / refusées",
         "RESTAURANT_DASHBOARD_DELAY_SETTING": "Retard",
+        "RESTAURANT_DASHBOARD_DELAY_SETTING_HELP": "La plateforme ne proposera pas au client des horaires de livraisons qui impliquerait un pickup dans les X prochaines minutes. Ce délai est indépendant du temps de préparation et du rush mode des restaurants.",
         "RESTAURANT_DASHBOARD_DELAY_MARK_NONE": "Aucun",
         "RESTAURANT_DASHBOARD_ORDER_TITLE": "Commande {{number}}",
         "RESTAURANT_DASHBOARD_PREPARATION_AT": "Préparation à {{time}}",

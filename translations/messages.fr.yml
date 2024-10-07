@@ -1158,7 +1158,7 @@ form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case,
 form.fulfillment_method.options.range_duration.label: Durée des créneaux
 ordering_delay.disclaimer: Nous recevons actuellement beaucoup de commandes, les délais
   s'allongent !
-ordering_delay.admin_reminder: Vous avez défini un retard global pour les commandes
+ordering_delay.admin_reminder: Vous avez configuré un délai de pickup global pour les commandes foodtech
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
 notifications.tap_to_open: Appuyez pour ouvrir
