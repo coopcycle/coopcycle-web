@@ -9,16 +9,19 @@ describe('Platform catering; manager; onboarding with a new user account', () =>
     cy.visit('/invitation/define-password/INVITATION_MANAGER')
 
     // Personal info step
+    cy.intercept('GET', '/register/suggest?*').as('getSuggest')
+
     cy.get('#businessAccountRegistration_user_username').clear('')
     cy.get('#businessAccountRegistration_user_username').type('manager01')
-    cy.get('#businessAccountRegistration_user_plainPassword_first').clear('')
-    cy.get('#businessAccountRegistration_user_plainPassword_first').type(
-      '12345678',
-    )
-    cy.get('#businessAccountRegistration_user_plainPassword_second').clear('')
-    cy.get('#businessAccountRegistration_user_plainPassword_second').type(
-      '12345678',
-    )
+
+    cy.wait('@getSuggest', { timeout: 5000 })
+
+    cy.get(
+      'input[name="businessAccountRegistration[user][plainPassword][first]"]',
+    ).type('12345678')
+    cy.get(
+      'input[name="businessAccountRegistration[user][plainPassword][second]"]',
+    ).type('12345678')
     cy.get('#businessAccountRegistration_user_legal').check()
     cy.get('button[type="submit"]').click()
 
