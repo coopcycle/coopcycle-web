@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use Fidry\AliceDataFixtures\LoaderInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +18,8 @@ class LoadFixturesCommand extends Command
     public function __construct(
         private readonly LoaderInterface $fixturesLoader,
         private readonly string $projectDir,
-        private readonly string $environment)
+        private readonly string $environment,
+        private readonly LoggerInterface $logger)
     {
         parent::__construct();
     }
@@ -52,6 +54,8 @@ class LoadFixturesCommand extends Command
         }
 
         $file = $input->getOption('file');
+
+        $this->logger->info('Loading fixtures from file ' . $file);
 
         $files = [
             $this->projectDir . '/' . $file
