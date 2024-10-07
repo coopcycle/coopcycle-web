@@ -109,11 +109,11 @@ class AddressBookType extends AbstractType
                     'mapped' => false,
                 ])
                 ->add('telephone', TextType::class, [
-                    'required' => $this->authorizationChecker->isGranted('ROLE_ADMIN') || $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
+                    'required' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
                     'mapped' => false,
                 ])
                 ->add('contactName', TextType::class, [
-                    'required' => $this->authorizationChecker->isGranted('ROLE_ADMIN') || $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
+                    'required' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
                     'mapped' => false,
                 ]);
         }
