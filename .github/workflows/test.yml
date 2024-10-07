@@ -155,7 +155,7 @@ jobs:
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
       - name: Show Symfony logs on failure
         if: failure()
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep CRITICAL
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log
   COMPONENT:
     name: Run component tests with Cypress
     runs-on: ubuntu-latest
