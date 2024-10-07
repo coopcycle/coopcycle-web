@@ -1,4 +1,4 @@
-describe('Platform catering; manager; onboarding with a new user account', () => {
+describe.only('Platform catering; manager; onboarding with a new user account', () => {
   beforeEach(() => {
     cy.window().then(win => {
       win.sessionStorage.clear()
