@@ -43,8 +43,8 @@ class SiretValidator extends ConstraintValidator
             $data = $response->toArray();
 
             // We filter out closed establishments
-            $etablissements = array_filter($data['etablissements'], function($etablissement) {
-                if ('F' === $etablissement['uniteLegale']['etatAdministratifUniteLegale']) {
+            $etablissements = array_values(array_filter($data['etablissements'], function($etablissement) {
+                if ('C' === $etablissement['uniteLegale']['etatAdministratifUniteLegale']) {
                     return false;
                 }
 
@@ -57,11 +57,12 @@ class SiretValidator extends ConstraintValidator
                 }
 
                 return true;
-            });
+            }));
 
             // When there is only one establishment, it's also the head office
             if (count($etablissements) === 1) {
-                return;
+                $etablissement = current($etablissements);
+                return $etablissement['siret'] === $value;
             }
 
             foreach ($etablissements as $etablissement) {
