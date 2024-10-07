@@ -649,8 +649,6 @@ class AddressAutosuggest extends Component {
 
   handleKeyDown = (event) => {
     if ((event.key === 'Enter' || event.key === 'Tab') && this.getSuggestionsLength() > 0 && this.state.highlightedSuggestion) {
-      // this.setState({ value: this.state.highlightedSuggestion })
-      console.log(this.state.highlightedSuggestion)
       const selected = this.state.highlightedSuggestion
       this.onSuggestionSelected({}, {suggestion: selected})
       this.setState({ value: selected.value })
