@@ -14,7 +14,7 @@ use AppBundle\Service\TimeRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
-use Redis;
+
 
 class OrderTimeHelper
 {
@@ -22,13 +22,11 @@ class OrderTimeHelper
     const MAX_ACCEPTED_CHOICES_LOGGED = 3;
 
     private $choicesCache = [];
-    private $extraTime;
 
     public function __construct(
         private ShippingDateFilter $shippingDateFilter,
         private PreparationTimeCalculator $preparationTimeCalculator,
         private ShippingTimeCalculator $shippingTimeCalculator,
-        private Redis $redis,
         private TimeRegistry $timeRegistry,
         private FulfillmentMethodResolver $fulfillmentMethodResolver,
         private string $country,
@@ -37,23 +35,26 @@ class OrderTimeHelper
     {
     }
 
-    private function filterChoices(OrderInterface $cart, array $choices): array
+    private function filterChoices(OrderInterface $cart, array $choices, $fulfillmentMethod): array
     {
         $choicesLogged = 0;
         $acceptedChoicesLogged = 0;
 
         return array_filter($choices, function (TsRangeChoice $choice) use ($cart, &$choicesLogged, &$acceptedChoicesLogged) {
 
-            $result = $this->shippingDateFilter->accept($cart, $choice->toTsRange());
+            $result = $this->shippingDateFilter->accept(
+                $cart,
+                $choice->toTsRange(),
+            );
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
-                $this->logger->debug(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
+
+                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
                     var_export($result, true),
                     (string)$choice),
-                    [
-                        'order' => $this->loggingUtils->getOrderId($cart),
-                        'vendor' => $this->loggingUtils->getVendors($cart),
-                    ]);
+                    ['order' => $this->loggingUtils->getOrderId($cart),
+                    'vendor' => $this->loggingUtils->getVendors($cart),
+                ]);
 
                 if ($result) {
                     $acceptedChoicesLogged++;
@@ -76,27 +77,21 @@ class OrderTimeHelper
         return (int) $value;
     }
 
-    private function getExtraTime(): int
-    {
-        if (null === $this->extraTime) {
-            $extraTime = 0;
-            if ($value = $this->redis->get('foodtech:preparation_delay')) {
-                $extraTime = intval($value);
-            }
-
-            $this->extraTime = $extraTime;
-        }
-
-        return $this->extraTime;
-    }
-
-    private function getOrderingDelayMinutes(int $value)
-    {
-        return $value + $this->getExtraTime();
-    }
-
+    /**
+     * Generate dropoff time choices for 'ASAP ordering'
+     * 1. Generate the TimeRanges choices from opening hours
+     * 2. Filter out regarding 3 criterias:
+     *    - preparation time
+     *    - shipping time
+     *    - ordering delay
+     * 3. Sort availabilities
+     * 4. Cache the result
+     *
+     * @return array
+     */
     private function getAsapChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
     {
+        // maybe this should be reseted when the dispatcher changes the pickup delay? GH issue https://github.com/coopcycle/coopcycle-web/issues/4666
         $hash = sprintf('%s-%s-%s',
             $cart->getFulfillmentMethod(),
             implode(',', array_map(function($vendor) {
@@ -119,13 +114,12 @@ class OrderTimeHelper
                 $fulfillmentMethod->getOpeningHours(),
                 $this->timeRegistry,
                 $vendorConditions->getClosingRules(),
-                $this->getOrderingDelayMinutes($fulfillmentMethod->getOrderingDelayMinutes()),
                 $fulfillmentMethod->getOption('range_duration', 10),
                 $fulfillmentMethod->isPreOrderingAllowed()
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
-            $values = $this->filterChoices($cart, $choiceList->getChoices());
+            $values = $this->filterChoices($cart, $choiceList->getChoices(), $fulfillmentMethod);
 
             // FIXME Sort availabilities
 

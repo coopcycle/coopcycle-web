@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Modal from 'react-modal'
-import { DatePicker, Slider, Col, Row, Switch, ConfigProvider } from 'antd'
+import { DatePicker, Slider, Col, Row, Switch, ConfigProvider, Tooltip } from 'antd'
 import moment from 'moment'
 
 import Column from './Column'
@@ -51,11 +51,13 @@ export default function Dashboard({ onDateChange }) {
 
   const sliderMarks = {
     0: t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
-    15: '15min',
-    30: '30min',
-    45: '45min',
+    10: '10min',
+    20: '20',
+    30: '30',
+    40: '40',
+    50: '50',
     60: '1h',
-    75: '1h15',
+    70: '1h10',
     90: '1h30',
     120: '2h',
     150: '2h30',
@@ -94,19 +96,23 @@ export default function Dashboard({ onDateChange }) {
     return sliderMarks[value]
   }
 
+
   return (
     <div className="FoodtechDashboard">
       <div className="FoodtechDashboard__Navbar">
         { showSettings && (
           <div className="FoodtechDashboard__Navbar__Slider">
             <Row type="flex" align="middle">
-              <Col span={ 6 }>
+              <Col span={ 4 }>
                   <span>
-                    <i className="fa fa-clock-o"></i> { t(
-                    'RESTAURANT_DASHBOARD_DELAY_SETTING') }
+                    <i className="fa fa-clock-o mr-1"></i>
+                    { t('RESTAURANT_DASHBOARD_DELAY_SETTING') }
+                    <Tooltip title={ t('RESTAURANT_DASHBOARD_DELAY_SETTING_HELP')}>
+                      <i className='ml-1 fa fa-question-circle'></i>
+                    </Tooltip>
                   </span>
               </Col>
-              <Col span={ 18 }>
+              <Col span={ 20 }>
                 <Slider
                   max={ 180 }
                   defaultValue={ preparationDelay }

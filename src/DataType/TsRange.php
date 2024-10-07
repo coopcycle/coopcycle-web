@@ -2,12 +2,21 @@
 
 namespace AppBundle\DataType;
 
+use DateTime;
+
 class TsRange
 {
-    public $lower;
-    public $upper;
-
     const TIME_RANGE_PATTERN = '/^(?<lower>[0-9-T:\+]+) - (?<upper>[0-9-T:\+]+)$/';
+
+    /**
+    * @var \DateTime
+    */
+    public $lower;
+
+    /**
+    * @var \DateTime
+    */
+    public $upper;
 
     /**
      * @return \DateTime
@@ -47,6 +56,17 @@ class TsRange
         $this->upper = $upper;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getMidPoint(): \DateTimeInterface
+    {
+        $dt = new DateTime();
+        $ts = $this->lower->getTimestamp() + round(($this->upper->getTimestamp() - $this->lower->getTimestamp()) / 2);
+        $dt->setTimestamp($ts);
+        return $dt;
     }
 
     public static function parse(string $text): ?TsRange

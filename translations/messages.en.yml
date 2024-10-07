@@ -1257,7 +1257,7 @@ form.fulfillment_method.pre_ordering_allowed.label: Allow pre-ordering
 form.fulfillment_method.pre_ordering_allowed.help: If you uncheck this box, customers will only be allowed to place same-day orders.
 form.fulfillment_method.options.range_duration.label: Range duration
 ordering_delay.disclaimer: We are currently receiving a lot of orders, delivery times are getting longer!
-ordering_delay.admin_reminder: You have configured a global ordering delay
+ordering_delay.admin_reminder: You have configured a global pickup delay for foodtech orders
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.tap_to_open: Tap to open

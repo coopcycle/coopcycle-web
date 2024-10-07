@@ -749,7 +749,7 @@ form.fulfillment_method.pre_ordering_allowed.help: 'Ha nem jelölöd be ezt a n�
 form.fulfillment_method.options.range_duration.label: 'Tartomány időtartama'
 ordering_delay.disclaimer: 'Jelenleg rengeteg megrendelés érkezik hozzánk, a szállítási
   idők egyre hosszabbak!'
-ordering_delay.admin_reminder: 'Globális rendeléskésleltetést állítottál be'
+ordering_delay.admin_reminder: 'Globális átvételi késleltetést állított be az foodtech rendelésekhez'
 notifications.delivery_created: 'Egy %date% átvehető szállítást hoztunk létre'
 notifications.tasks_changed_today: 'A mai napra vonatkozó feladataid frissültek'
 notifications.tap_to_open: 'Koppintson a megnyitáshoz'

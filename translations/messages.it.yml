@@ -1204,7 +1204,7 @@ profile.edenred.connected: Conto Edenred connesso
 notifications.tap_to_open: Toccare per aprire
 notifications.tasks_changed_today: Gli incarichi per oggi sono stati aggiornati
 notifications.delivery_created: Una consegna con ritiro per il %date% è stata creata
-ordering_delay.admin_reminder: Hai configurato un ritardo per tutti gli ordini
+ordering_delay.admin_reminder: Hai configurato un ritardo di pickup globale per gli ordini foodtech
 ordering_delay.disclaimer: Stiamo ricevendo molti ordini, i tempi di consegna subiranno
   un ritardo!
 form.fulfillment_method.options.range_duration.label: Durata dell'intervallo
