@@ -4,7 +4,7 @@ include:
 
 AppBundle\Entity\Invitation:
   invitation1:
-    code: 'INVITATION_MANAGER'
+    code: 'INVITATION_MANAGER_B'
     email: 'manager01@demo.coopcycle.org'
     user: '@admin'
     __calls:
