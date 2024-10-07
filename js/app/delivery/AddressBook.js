@@ -140,7 +140,7 @@ const AddressBook = ({
       }
     }
   }
-  console.log(address)
+
   return (
     <div>
        {allowSearchSavedAddresses &&

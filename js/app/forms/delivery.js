@@ -447,11 +447,11 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
 
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault()
-      taskEl.remove()
       reduxStore.dispatch({
         type: 'REMOVE_DROPOFF',
         taskIndex: domIndex(taskEl),
       })
+      taskEl.remove()
       // We want at least one dropoff
       if (collectionHolder.children.length === 2) {
         document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
