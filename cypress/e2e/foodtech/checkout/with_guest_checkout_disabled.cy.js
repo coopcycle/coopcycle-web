@@ -4,10 +4,6 @@ describe('Checkout (happy path); with guest checkout disabled', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
-    cy.window().then((win) => {
-      win.sessionStorage.clear()
-    })
-
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
 

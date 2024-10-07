@@ -3,10 +3,6 @@ describe('Platform catering; admin; modify company data', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/checkout_platform_catering.yml',
     )
-
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
   })
 
   it("should change company (business account's) name", () => {

@@ -1,9 +1,5 @@
 describe('Platform catering; manager; onboarding with an existing user account', () => {
   beforeEach(() => {
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
-
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_existing_user.yml',
     )
