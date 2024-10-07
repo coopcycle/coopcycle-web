@@ -60,7 +60,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, address[prop]))
 
   useEffect(() => {
-    setInputValue(address[prop])
+    setInputValue(getFormattedValue(prop, address[prop]))
   }, [address])
 
   if (!address) {
