@@ -42,12 +42,29 @@ class SiretValidator extends ConstraintValidator
 
             $data = $response->toArray();
 
+            // We filter out closed establishments
+            $etablissements = array_filter($data['etablissements'], function($etablissement) {
+                if ('F' === $etablissement['uniteLegale']['etatAdministratifUniteLegale']) {
+                    return false;
+                }
+
+                $lastPeriod = current(array_filter($etablissement['periodesEtablissement'], function($periode) {
+                    return null === $periode['dateFin'];
+                }));
+
+                if ('F' === $lastPeriod['etatAdministratifEtablissement']) {
+                    return false;
+                }
+
+                return true;
+            });
+
             // When there is only one establishment, it's also the head office
-            if (count($data['etablissements']) === 1) {
+            if (count($etablissements) === 1) {
                 return;
             }
 
-            foreach ($data['etablissements'] as $etablissement) {
+            foreach ($etablissements as $etablissement) {
                 if ($etablissement['siret'] === $value && true === $etablissement['etablissementSiege']) {
                     $this->context->buildViolation($constraint->headOfficeNumber)
                         ->addViolation();
