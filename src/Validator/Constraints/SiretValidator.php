@@ -44,7 +44,7 @@ class SiretValidator extends ConstraintValidator
 
             // We filter out closed establishments
             $etablissements = array_filter($data['etablissements'], function($etablissement) {
-                if ('F' === $etablissement['uniteLegale']['etatAdministratifUniteLegale']) {
+                if ('C' === $etablissement['uniteLegale']['etatAdministratifUniteLegale']) {
                     return false;
                 }
 
