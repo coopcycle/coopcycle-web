@@ -1,32 +1,27 @@
-/**
- * FIXME; This test is not working on CI for some reason, while it works locally.
- * will debug in https://github.com/coopcycle/coopcycle-web/pull/4684
- */
-describe.skip('Platform catering; manager; onboarding with a new user account', () => {
+describe('Platform catering; manager; onboarding with a new user account', () => {
   beforeEach(() => {
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
-  })
-
-  it('should activate a business account', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_new_user.yml',
     )
+  })
 
+  it('should activate a business account', () => {
     cy.visit('/invitation/define-password/INVITATION_MANAGER')
 
     // Personal info step
+    cy.intercept('GET', '/register/suggest?*').as('getSuggest')
+
     cy.get('#businessAccountRegistration_user_username').clear('')
     cy.get('#businessAccountRegistration_user_username').type('manager01')
-    cy.get('#businessAccountRegistration_user_plainPassword_first').clear('')
-    cy.get('#businessAccountRegistration_user_plainPassword_first').type(
-      '12345678',
-    )
-    cy.get('#businessAccountRegistration_user_plainPassword_second').clear('')
-    cy.get('#businessAccountRegistration_user_plainPassword_second').type(
-      '12345678',
-    )
+
+    cy.wait('@getSuggest', { timeout: 5000 })
+
+    cy.get(
+      'input[name="businessAccountRegistration[user][plainPassword][first]"]',
+    ).type('12345678')
+    cy.get(
+      'input[name="businessAccountRegistration[user][plainPassword][second]"]',
+    ).type('12345678')
     cy.get('#businessAccountRegistration_user_legal').check()
     cy.get('button[type="submit"]').click()
 

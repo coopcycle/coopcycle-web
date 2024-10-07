@@ -4,10 +4,6 @@ describe('Failed checkout; time range is not valid any more', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
-    cy.window().then((win) => {
-      win.sessionStorage.clear()
-    })
-
     cy.visit('/login')
 
     cy.login('bob', '12345678')

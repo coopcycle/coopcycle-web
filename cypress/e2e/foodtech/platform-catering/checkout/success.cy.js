@@ -4,10 +4,6 @@ describe('Checkout (happy path); (business context)', () => {
       'coopcycle:fixtures:load -f cypress/fixtures/checkout_platform_catering.yml',
     )
 
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
-
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
   })

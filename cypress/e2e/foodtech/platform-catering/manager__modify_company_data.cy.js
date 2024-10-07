@@ -1,9 +1,5 @@
 describe('Platform catering; manager; modify company data', () => {
   beforeEach(() => {
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
-
     cy.symfonyConsole(
       'coopcycle:fixtures:load -f cypress/fixtures/checkout_platform_catering.yml',
     )

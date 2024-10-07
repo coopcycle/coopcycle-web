@@ -8,10 +8,6 @@ describe('Failed checkout; restaurant is closed', () => {
         cy.symfonyConsole(
           'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
-        cy.window().then((win) => {
-          win.sessionStorage.clear()
-        })
-
         switch (customerType) {
           case 'logged in customer': {
             cy.visit('/login')
