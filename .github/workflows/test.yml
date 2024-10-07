@@ -88,7 +88,7 @@ jobs:
         run: docker compose exec -T php vendor/bin/behat -f progress
       - name: Show Symfony logs on failure
         if: ${{ failure() }}
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep CRITICAL
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep INFO
       - name: Run Jest
         run: docker compose exec -T webpack npm run jest
   E2E:
@@ -155,7 +155,7 @@ jobs:
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
       - name: Show Symfony logs on failure
         if: failure()
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep INFO
   COMPONENT:
     name: Run component tests with Cypress
     runs-on: ubuntu-latest
