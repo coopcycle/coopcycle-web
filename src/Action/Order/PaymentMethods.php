@@ -12,13 +12,16 @@ class PaymentMethods
 {
     private $settingsManager;
     private $cashEnabled;
+    private $edenredEnabled;
 
     public function __construct(
         SettingsManager $settingsManager,
-        bool $cashEnabled)
+        bool $cashEnabled,
+        bool $edenredEnabled)
     {
         $this->settingsManager = $settingsManager;
         $this->cashEnabled = $cashEnabled;
+        $this->edenredEnabled = $edenredEnabled;
     }
 
     public function __invoke($data): PaymentMethodsOutput
@@ -31,6 +34,11 @@ class PaymentMethods
 
         if ($this->cashEnabled || $data->supportsCashOnDelivery()) {
             $output->addMethod('cash_on_delivery');
+        }
+
+        if ($this->edenredEnabled || $data->supportsEdenred()) {
+            // TODO Also check if balance is > 0
+            $output->addMethod('edenred');
         }
 
         return $output;
