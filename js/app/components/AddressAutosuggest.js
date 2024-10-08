@@ -587,7 +587,11 @@ class AddressAutosuggest extends Component {
   }
 
   onSuggestionHighlighted({ suggestion }) {
-    this.setState({highlightedSuggestion: suggestion})
+    // safeguard against an infinite componentDidUpdate loop in AddressAutosuggest when modifying input value then selecting
+    // (I didn't get why it was entering in such loop)
+    if (this.state?.highlightedSuggestion?.id !== suggestion?.id) {
+      this.setState({highlightedSuggestion: suggestion})
+    }
   }
 
   renderSuggestionsContainer({ containerProps , children }) {
