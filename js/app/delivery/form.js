@@ -126,7 +126,7 @@ if (arbitraryPriceEl) {
   })
 }
 
-const updateData = (form, delivery, shouldLoadSuggestions = false) => {
+const updateData = (form, delivery) => {
   markersLayerGroup.clearLayers()
   delivery.tasks.forEach((task, index) => {
     if (task.address) {
@@ -155,36 +155,6 @@ const updateData = (form, delivery, shouldLoadSuggestions = false) => {
       })
     })
 
-    const loadSuggestions = new Promise((resolve) => {
-
-      $.getJSON(window.Routing.generate('profile_jwt'))
-        .then(result => {
-
-          axios({
-            method: 'post',
-            url: `${baseURL}/api/deliveries/suggest_optimizations`,
-            data: {
-              ...delivery,
-              tasks: delivery.tasks.slice(0).map(t => ({
-                ...t,
-                address: serializeAddress(t.address)
-              }))
-            },
-            headers: {
-              Accept: 'application/ld+json',
-              'Content-Type': 'application/ld+json',
-              Authorization: `Bearer ${result.jwt}`
-            }
-          })
-          .then(response => {
-            if (response.data.suggestions.length > 0) {
-              form.showSuggestions(response.data.suggestions)
-            }
-            resolve()
-          })
-        })
-    })
-
     const updatePrice = new Promise((resolve) => {
       if (delivery.store && pricePreview) {
 
@@ -205,9 +175,6 @@ const updateData = (form, delivery, shouldLoadSuggestions = false) => {
     })
 
     promises.push(updateDistance)
-    if (shouldLoadSuggestions) {
-      promises.push(loadSuggestions)
-    }
     promises.push(updatePrice)
 
     Promise.all(promises)
@@ -219,11 +186,48 @@ const updateData = (form, delivery, shouldLoadSuggestions = false) => {
   }
 }
 
+const checkSuggestionsOnSubmit = async (form, formHTMLEl, delivery) => {
+  form.disable()
+
+  if (!delivery.tasks.length > 2) {
+    formHTMLEl.submit()
+  }
+
+  const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+  const jwt = jwtResp.jwt
+  const url = `${baseURL}/api/deliveries/suggest_optimizations` 
+  const response = await axios.post(
+    url, 
+    {
+      ...delivery,
+      tasks: delivery.tasks.slice(0).map(t => ({
+        ...t,
+        address: serializeAddress(t.address)
+      }))
+    },
+    {
+      headers: {
+        Accept: 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+        Authorization: `Bearer ${jwt}`
+      }
+    })
+  
+  if (response.data.suggestions.length > 0) {
+    form.showSuggestions(response.data.suggestions)
+  } else {
+    formHTMLEl.submit()
+  }
+}
+
 new DeliveryForm('delivery', {
   onReady: function(delivery) {
     updateData(this, delivery)
   },
-  onChange: function(delivery, shouldLoadSuggestions) {
-    updateData(this, delivery, shouldLoadSuggestions)
+  onChange: function(delivery) {
+    updateData(this, delivery)
+  },
+  onSubmit: function(formHTMLEl, delivery) {
+    checkSuggestionsOnSubmit(this, formHTMLEl, delivery)
   }
 })

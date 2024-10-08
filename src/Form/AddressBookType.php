@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -37,8 +38,9 @@ class AddressBookType extends AbstractType
     public function __construct(
         IriConverterInterface $iriConverter,
         SerializerInterface $serializer,
-        PhoneNumberUtil $phoneNumberUtil,
-        string $country)
+        private PhoneNumberUtil $phoneNumberUtil,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private string $country)
     {
         $this->iriConverter = $iriConverter;
         $this->serializer = $serializer;
@@ -107,11 +109,11 @@ class AddressBookType extends AbstractType
                     'mapped' => false,
                 ])
                 ->add('telephone', TextType::class, [
-                    'required' => true,
+                    'required' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
                     'mapped' => false,
                 ])
                 ->add('contactName', TextType::class, [
-                    'required' => true,
+                    'required' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
                     'mapped' => false,
                 ]);
         }
