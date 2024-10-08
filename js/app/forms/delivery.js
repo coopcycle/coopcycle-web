@@ -515,12 +515,12 @@ export default function(name, options) {
   const onReady = options.onReady.bind(form)
   const onSubmit = options.onSubmit.bind(form)
 
-  // Reorder tasks in the DOM when suggestion is accepted
-  const reorderTasks = () => (next) => (action) => {
+  const handleSuggestionsAfterSubmit = () => (next) => (action) => {
 
     const result = next(action)
 
     if (acceptSuggestions.match(action) && action.payload.length > 0) {
+        // Reorder tasks in the DOM when suggestion is accepted
       reorder(action.payload[0].order)
     }
 
@@ -575,7 +575,7 @@ export default function(name, options) {
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([createOnTasksChanged(onChange), reorderTasks]),
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange), handleSuggestionsAfterSubmit]),
     })
 
     onReady(preloadedState)
