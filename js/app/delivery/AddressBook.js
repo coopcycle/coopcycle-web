@@ -168,7 +168,8 @@ const AddressBook = ({
           }}
           { ...otherProps } />
       </div>
-      { address &&
+      {/* details may not be asked, for example in the embed delivery form they are asked elsewhere */}
+      { Object.keys(details).length > 0 && address &&
       <div className="my-4 p-2" style={{border: "1px solid grey", borderRadius: '4px'}}>
         <Input.Group compact>
         { _.map(details, item => (
