@@ -186,12 +186,11 @@ const updateData = (form, delivery) => {
   }
 }
 
-const checkSuggestionsOnSubmit = async (form, delivery) => {
+const checkSuggestionsOnSubmit = async (form, formHTMLEl, delivery) => {
   form.disable()
 
   if (!delivery.tasks.length > 2) {
-    form.submit()
-    return
+    formHTMLEl.submit()
   }
 
   const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
@@ -217,7 +216,7 @@ const checkSuggestionsOnSubmit = async (form, delivery) => {
   if (response.data.suggestions.length > 0) {
     form.showSuggestions(response.data.suggestions)
   } else {
-    form.submit()
+    formHTMLEl.submit()
   }
 }
 
@@ -228,7 +227,7 @@ new DeliveryForm('delivery', {
   onChange: function(delivery) {
     updateData(this, delivery)
   },
-  onSubmit: function(delivery) {
-    checkSuggestionsOnSubmit(this, delivery)
+  onSubmit: function(formHTMLEl, delivery) {
+    checkSuggestionsOnSubmit(this, formHTMLEl, delivery)
   }
 })

@@ -21,7 +21,7 @@ import {
   selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
-import { suggestionsSlice, showSuggestions, acceptSuggestions } from './redux/suggestionsSlice'
+import { suggestionsSlice, showSuggestions, acceptSuggestions, rejectSuggestions } from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 
@@ -489,16 +489,6 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   }
 }
 
-function submitAfterSuggestionsShown() {
-
-  return ({ getState }) => (next) => (action) => {
-    if(action.type === '') {
-
-    }
-    
-  }
-}
-
 function createOnTasksChanged(onChange) {
 
   return ({ getState }) => (next) => (action) => {
@@ -515,18 +505,6 @@ function createOnTasksChanged(onChange) {
   }
 }
 
-// Reorder tasks in the DOM when suggestion is accepted
-const reorderTasks = () => (next) => (action) => {
-
-  const result = next(action)
-
-  if (acceptSuggestions.match(action) && action.payload.length > 0) {
-    reorder(action.payload[0].order)
-  }
-
-  return result
-}
-
 export default function(name, options) {
 
   const el = document.querySelector(`form[name="${name}"]`)
@@ -536,6 +514,22 @@ export default function(name, options) {
   const onChange = options.onChange.bind(form)
   const onReady = options.onReady.bind(form)
   const onSubmit = options.onSubmit.bind(form)
+
+  // Reorder tasks in the DOM when suggestion is accepted
+  const reorderTasks = () => (next) => (action) => {
+
+    const result = next(action)
+
+    if (acceptSuggestions.match(action) && action.payload.length > 0) {
+      reorder(action.payload[0].order)
+    }
+
+    if (acceptSuggestions.match(action) || rejectSuggestions.match(action)) {
+      el.submit()
+    }
+
+    return result
+  }
 
   if (el) {
 
@@ -627,7 +621,7 @@ export default function(name, options) {
         })
       }
 
-      onSubmit(reduxStore.getState(), true)
+      onSubmit(el, reduxStore.getState())
       return false
 
     }, false)
