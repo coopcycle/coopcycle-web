@@ -83,7 +83,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
   it('should add a bookmark to an existing order', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.url().should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -98,8 +98,19 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
     cy.get('#delivery_bookmark').check()
     cy.get('#delivery-submit').click()
 
+    cy.url().should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
+
     // (all) Deliveries page
-    cy.get('[href="/admin/stores"]').click()
+    // add .deliveries-nav so we don't click on the breadcrumb link - a nicer solution would be 
+    cy.get('a[href="/admin/stores"]').click()
+    cy.url().should(
+      'match',
+      /\/admin\/stores$/,
+    )
+
     cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
 
     // Store page
