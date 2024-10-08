@@ -1,5 +1,5 @@
 global.changesSaved: Your changes have been saved.
-docs.label: Learn more
+docs.label: Docs
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
@@ -10,6 +10,7 @@ base.footer.legal: Legal notice
 base.footer.suggest: Suggest a business
 base.footer.privacy: Privacy
 base.footer.terms: Terms of service
+button.suggest.submitted.label: Return to home
 adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Manage restaurants orders
@@ -17,6 +18,7 @@ adminDashboard.tooltip.deliveries: Manage deliveries
 adminDashboard.tooltip.stores: Manage stores
 adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
+adminDashboard.tooltip.organizations: Organization management
 adminDashboard.dashboard.title: Dashboard
 adminDashboard.dashboard.import: Import
 adminDashboard.dashboard.export: Export
@@ -36,6 +38,8 @@ adminDashboard.deliveries.deliveryAddress: Delivery address
 adminDashboard.embed.title: Forms
 adminDashboard.package_sets.title: Packages
 adminDashboard.customize.title: Customize
+adminDashboard.organizations.title: Organizations
+adminDashboard.orders.noOrders: No orders at the moment
 embed.delivery.title: Delivery creation form
 embed.delivery.configure_pricing_rule_set: You must first configure a pricing rule
   to apply
@@ -105,6 +109,8 @@ adminDashboard.back.title: Back to website
 adminDashboard.promotions.title: Promotions
 adminDashboard.pledges.title: Suggestions
 adminDashboard.time_slots.title: Time slots
+admin.deliveries.to_be_confirmed.alert: You have deliveries to confirm.
+  Click on the "Delivery" icon in the right column.
 deliveryForm.noPriceWarning: No price could be calculated. Please enter it.
 deliveryForm.noPriceFromPricingWarning: No price could be calculated from the pricing.
   Please enter it manually or edit the pricing.
@@ -355,6 +361,9 @@ order.reusable_packaging.alert: This order must be packed in reusable packaging
 order.public_link: Shareable link
 order.payments: Payments
 order.notes: Customer notes
+order.net_total_including_tax: Net total (including tax)
+order.stripe_fee: Bank fees
+order.fee: Platform fees
 payment.state.cart: Cart
 payment.state.new: New
 payment.state.authorized: Authorized
@@ -417,6 +426,7 @@ demo.disclaimer.subtitle: <a target="_blank" href="https://coopcycle.org/en/help
 maintenance.disclaimer: Maintenance mode is enabled
 cart.widget.title: Your delivery details
 cart.widget.button: Order
+cart.title: Cart
 checkout.breadcrumb.address: Address
 checkout.breadcrumb.payment: Payment
 checkout.breadcrumb.confirm: Confirmation
@@ -458,6 +468,7 @@ form.delivery.package.label: Package
 form.delivery.packages.label: Packages
 form.delivery.time_slot.label: Time slot
 form.delivery.view_order: View order
+form.delivery.confirm.label: Confirm
 form.order.accept.label: Accept
 form.order.accept.help: Once you have accepted the order, the customer will be notified
   by email.
@@ -570,6 +581,8 @@ pledge.vote_count_equals_two: '%first_user% and %second_user% have voted for thi
 pledge.vote_count_equals_one: '%username% has voted for this restaurant'
 pledge.accept: Accept
 pledge.reject: Reject
+pledge.vote_count_human: '%number_of_votes% votes: %usernames% and %rest% other(s)'
+suggest.submitted.title: Thank you for suggesting this restaurant!
 form.maintenance.enable.label: Enable maintenance
 form.maintenance.disable.label: Disable maintenance
 form.maintenance.enable.alert: You are going to enable maintenance mode.<br>Only administrators
@@ -724,6 +737,35 @@ form.checkout_address.takeaway.no_show_disclaimer: Please note - If you do not c
   you will be charged the full amount for the order.
 form.checkout_payment.method.label: Please choose a payment option
 form.checkout_address.reusable_packaging.loopeat.learn_more: Learn more about LoopEat
+form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Your order includes <strong>%count%</strong> dish suitable for zero waste delivery, for a total of <strong>%amount%</strong> deposit|Your order includes <strong>%count%</strong> dishes suitable for zero waste delivery, for a total of <strong>%amount%</strong> deposit
+form.checkout_address.reusable_packaging.loopeat.available_credits.label: You have <strong>%amount%</strong> in your %name% wallet
+form.checkout_address.reusable_packaging.loopeat.available_credits.help: (1 credit = 1 dish in a lunchbox)
+form.checkout_address.reusable_packaging.loopeat.containers.label: You have <strong>%count%</strong> box at home, for a total of <strong>%amount%</strong>|You have <strong>%count%</strong> boxes at home, for a total of <strong>%amount%</strong>
+form.checkout_address.reusable_packaging.loopeat.return_pledge_label: You will return %field% LoopEat lunchbox to the courier
+form.checkout_address.reusable_packaging.loopeat.no_pledge_label: You have no lunchbox to return.
+form.checkout_address.reusable_packaging.loopeat.enough_credits: Everything is good, you can finalize your order!
+form.checkout_address.reusable_packaging.loopeat.confirm: Confirm
+form.checkout_address.reusable_packaging.loopeat.add: Add %missing% credits
+form.checkout_address.reusable_packaging.loopeat.manage_account: Manage my zero waste account
+form.checkout_address.reusable_packaging.loopeat.website: website %name%
+form.checkout_address.reusable_packaging.loopeat.how_it_works: How it works?
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activate the zero waste option to benefit from a reusable box service for your order
+form.checkout_address.reusable_packaging.loopeat.connect: Please create or connect your %name% account to %brand_name% to settle your deposit, or disable the zero waste option.
+form.checkout_address.reusable_packaging.loopeat.connect_account: Connect to %name%
+form.checkout_address.reusable_packaging.loopeat.add_credits: Add credits to my wallet
+form.checkout_address.reusable_packaging.loopeat.manage_deposit: Manage my deposit
+form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: We suggest you return your boxes during delivery
+form.checkout_address.reusable_packaging.loopeat.returns.label: You will return
+  <strong>%count%</strong> box, for a total of <strong>%amount%</strong>|You will return
+  <strong>%count%</strong> boxes, for a total of <strong>%amount%</strong>
+form.checkout_address.reusable_packaging_dabba_enabled.label: I want to use Dabba
+  containers
+form.checkout_address.reusable_packaging.dabba.learn_more: Learn more about Dabba
+form.checkout_address.reusable_packaging.dabba.wallet.label: You have <strong>%amount%</strong> on your Dabba wallet
+form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% per lunchbox)
+form.checkout_address.reusable_packaging.dabba.return_pledge_label: You will return %field%
+  Dabba deposit(s) to the courier
+form.checkout_address.reusable_packaging.dabba.add: Add %missing% to your wallet
 form.task_export.start.label: Start
 form.task_export.end.label: End
 form.api_app.name.label: App name
@@ -756,12 +798,16 @@ form.package.name.label: Name
 form.package.color.label: Color (click to select)
 form.package.enter_details: Show/hide details
 form.package.description.label: Description for the customer
+form.package.maxWeight.help: (Not used elsewhere in the platform yet)
 form.package.average_volume_units.label: Average volume units (VU)
 form.package.max_volume_units.label: Max volume units (VU)
 form.package.average_estimation: Estimated to 75% of max if not set
+form.package.max_volume_units: This value will be used to calculate prices based on volume
 form.package.average_weight.label: Average weight (kg)
 form.package.max_weight.label: Max weight (kg)
+form.package.tags.label: Tags to apply automatically to tasks
 form.package.shortCode.label: 2 letter code
+form.package.volume_units.label: Volume unit
 form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled
 form.reusable_packaging.price.label: Price
@@ -800,6 +846,7 @@ user.edit.roles.help: Configure the permissions of this user
 user.edit.enabled.label: Enabled
 user.edit.enabled.help: A deactivated user will be logged out and can't login back
   on the platform.
+user.edit.disabled.label: Disabled
 user.profile.familyName: Family name
 user.profile.givenName: Given name
 roles.ROLE_ADMIN.help: "Administrator: Full access to all features\n"
@@ -893,6 +940,9 @@ basics.net_income: Net income
 basics.send_invitation: Send an invitation
 basics.send_invitation.confirm: Your invitation has been sent! You can now edit the
   settings of the new user.
+basics.send_invitation.invitated_user_after_password_confirmation: Your account
+  has been created,
+  please check your <a target="_blank" href="%restaurantEditUrl%">personal information</a>
 basics.configure: Configure
 basics.select_all: Select all
 basics.delete_selected: Delete selected
@@ -1150,9 +1200,24 @@ refund.list.disclaimer.admin: "When the platform is responsible for the incident
   \ merchant actually refunded the customer."
 form.time_slot.choices.error.empty: The list of choices cannot be empty
 form.attach_to_org.modal.title: Attach to store
+dabba.oauth_connect.success: Dabba account connected successfully!
+dabba.oauth_redirect.warning: You will be redirected to the Dabba website to login or create your account
 loopeat.oauth_connect.success: '%name% account connected successfully!'
 loopeat.oauth_redirect.warning: You will be redirected to the LoopEat website to login
   or create your account
+loopeat.how_it_works.title: |
+  Your restaurant is part of the « %name% » network: enjoy takeout or delivery in reusable boxes. You can disable this option at any time in your order basket.
+loopeat.how_it_works.step_1.title: I sign up
+loopeat.how_it_works.step_1.text: Sign up on %name% when finalizing your order.
+loopeat.how_it_works.step_2.title: I pay my first deposit
+loopeat.how_it_works.step_2.text: Credit your wallet to borrow your first reusable boxes.
+loopeat.how_it_works.step_3.title: I order
+loopeat.how_it_works.step_3.text: Get delivered in reusable boxes.
+loopeat.how_it_works.step_4.title: I return my boxes
+loopeat.how_it_works.step_4.text: Return your boxes with your next order and get the deposit back in your wallet.
+loopeat.manage_modal.title: I settle my deposit %name%
+loopeat.manage_modal.text: You can settle the deposit with an amount to be charged to your wallet or by returning your reusable boxes.
+loopeat.task_comments.returns: Attention, you need to collect boxes from the customer
 authentication.register_benefits: Register for a faster checkout experience. You will
   also be able to find your previous orders history.
 form.checkout_address.telephone.help: To contact you in case of a problem
@@ -1192,7 +1257,7 @@ form.fulfillment_method.pre_ordering_allowed.label: Allow pre-ordering
 form.fulfillment_method.pre_ordering_allowed.help: If you uncheck this box, customers will only be allowed to place same-day orders.
 form.fulfillment_method.options.range_duration.label: Range duration
 ordering_delay.disclaimer: We are currently receiving a lot of orders, delivery times are getting longer!
-ordering_delay.admin_reminder: You have configured a global ordering delay
+ordering_delay.admin_reminder: You have configured a global pickup delay for foodtech orders
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.tasks_changed_today: Your tasks for today have been updated
 notifications.tap_to_open: Tap to open
@@ -1220,6 +1285,8 @@ form.business_account.save_and_send_invitation.label: Save and send invitation
 form.business_acount.send_invitation.confirm: Invitation email to Coopcycle has been sent
 form.business_acount.resend_invitation.confirm: Invitation email to Coopcycle has been resent
 form.business_acount.resend_invitation.failed: There has been an error trying to resend the Business Account registration email
+form.business_account.hub.label: Hub
+form.business_account.hub.placeholder: Choose a hub
 adminDashboard.business_restaurant_group_list.title: Business restaurant group list
 adminDashboard.business_restaurant_group.title: Business restaurant group
 adminDashboard.business_restaurant_group.createNew: Create a new business restaurant group
@@ -1322,13 +1389,6 @@ warehouses.breadcrumb.help: Define warehouses
 form.task_export.dv4cul.label: Export using DV4CUL format
 restaurant.form.section.dabba: Dabba
 restaurant.form.dabba_enabled.label: Enable Dabba deposit-refund system
-dabba.oauth_redirect.warning: You will be redirected to the Dabba website to login or create your account
-form.checkout_address.reusable_packaging_dabba_enabled.label: I want to use Dabba
-  containers
-form.checkout_address.reusable_packaging.dabba.learn_more: Learn more about Dabba
-dabba.oauth_connect.success: Dabba account connected successfully!
-form.checkout_address.reusable_packaging.dabba.wallet.label: You have <strong>%amount%</strong> on your Dabba wallet
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% per lunchbox)
 restaurant.form.dabba_code.label: Dabba restaurant code
 adminDashboard.integrations.title: Integrations
 adminDashboard.integrations.help: Allow to configure the constraints of an integration
@@ -1484,6 +1544,8 @@ registration.company.address: "Address"
 registration.company.address.different.for.billing: "Different address for billing"
 registration.company.billing.address: "Billing address"
 registration.step.company.name: "Name of the company"
+registration.step.company.legal_name: "Legal name of the company"
+registration.step.company.vat_number: "VAT number"
 registration.step.invitation.copy.link: "Copy the link below and send it to your colleagues"
 registration.step.invitation.copy.button: "Copy the link"
 registration.step.invitation.link.copied: "Copied"
@@ -1528,6 +1590,7 @@ restaurants.edenred.refresh.no_updates: "The restaurant '%restaurant_name%' does
 restaurants.edenred.refresh.has_updates: "The restaurant '%restaurant_name%' has had an update from Edenred servers."
 restaurants.edenred.added_list.actions: Actions
 business_restaurant_group.form.fill_all_pages: "Please, fill out all three settings pages."
+business_account.registration.title: Business account creation
 business_account.registration.user_with_same_email_exists: An account with the your email already
   exists. Please log in to continue with your business account configuration.
 registration.email.taken.use.another: You can use an other email if you want to.
@@ -1558,3 +1621,5 @@ form.billing_method.percentage: Percentage of order amount
 order.export.heading.billing_method: Billing method
 order.export.heading.applied_billing: Applied billing
 deliveries.import_upload_error: The file couldn't be uploaded. Please try again later.
+organizations.breadcrumb: Organizations
+organizations.new: New organization

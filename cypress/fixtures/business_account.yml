@@ -1,0 +1,18 @@
+AppBundle\Entity\BusinessAccount:
+  business_account1:
+    name: 'Business Account 1'
+    legalName: 'Business Account 1'
+    vatNumber: 'FR12345678901'
+    address: '@address_1'
+    businessRestaurantGroup: '@business_restaurant_group1'
+
+AppBundle\Entity\Invitation:
+  invitation1:
+    code: 'INVITATION_EMPLOYEE'
+    email: 'manager01@demo.coopcycle.org'
+    user: '@manager01'
+
+AppBundle\Entity\BusinessAccountInvitation:
+  business_account_invitation1:
+    businessAccount: '@business_account1'
+    invitation: '@invitation1'

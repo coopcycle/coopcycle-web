@@ -20,7 +20,7 @@ class Package implements TaggableInterface
 
     /**
      * @Assert\NotBlank
-     * @Groups({"store_with_packages"})
+     * @Groups({"store_with_packages", "store_packages"})
      */
     protected $name;
     protected $packageSet;

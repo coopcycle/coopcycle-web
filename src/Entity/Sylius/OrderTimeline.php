@@ -141,26 +141,28 @@ class OrderTimeline
 
         if ('collection' === $order->getFulfillmentMethod()) {
 
-            $preparation = clone $range->getLower();
+            $preparation = clone $range->getMidPoint();
             $preparation->sub(date_interval_create_from_date_string($preparationTime));
-
-            $timeline->setPickupExpectedAt($range->getLower());
             $timeline->setPreparationExpectedAt($preparation);
 
+            $timeline->setPickupExpectedAt($range->getMidPoint());
         } else {
 
+            $dropoff = $range->getMidPoint();
+            $timeline->setDropoffExpectedAt($dropoff);
+
             // The pickup time is when the messenger grabs the bag
-            $pickup = clone $range->getLower();
+            $pickup = clone $dropoff;
             $pickup->sub(date_interval_create_from_date_string($shippingTime));
 
             // Substract 5 additional minutes to say goodbye, unlock the bike...
             $pickup->sub(date_interval_create_from_date_string('5 minutes'));
 
+            $timeline->setPickupExpectedAt($pickup);
+
             $preparation = clone $pickup;
             $preparation->sub(date_interval_create_from_date_string($preparationTime));
 
-            $timeline->setDropoffExpectedAt($range->getLower());
-            $timeline->setPickupExpectedAt($pickup);
             $timeline->setPreparationExpectedAt($preparation);
         }
 

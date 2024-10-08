@@ -5,10 +5,6 @@ context(
       cy.symfonyConsole(
         'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml',
       )
-
-      cy.window().then(win => {
-        win.sessionStorage.clear()
-      })
     })
 
     it('should show a prompt to either start a new order or return to a previous order', () => {

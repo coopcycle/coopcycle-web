@@ -529,6 +529,8 @@ services:
   AppBundle\Utils\PreparationTimeResolver: ~
 
   AppBundle\Utils\ShippingDateFilter:
+    arguments:
+      $redis: "@snc_redis.default"
     tags:
       - { name: monolog.logger, channel: timing }
 
@@ -537,7 +539,6 @@ services:
   AppBundle\Utils\OrderTimeHelper:
     arguments:
       $country: "%country_iso%"
-      $redis: "@snc_redis.default"
     tags:
       - { name: monolog.logger, channel: timing }
 
@@ -888,6 +889,12 @@ services:
       $country: "%country_iso%"
       $locale: '%env(COOPCYCLE_LOCALE)%'
 
+  AppBundle\Action\TimeSlot\StoreOpeningHours:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
@@ -1215,6 +1222,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\DeliveryImportQueueVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\TimeSlotVoter:
     tags: [ 'security.voter' ]
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.

@@ -2051,14 +2051,14 @@ Feature: Carts
         "behavior":"asap",
         "preparation":"10 minutes",
         "shipping":"10 minutes",
-        "asap":"2020-10-02T12:05:00+02:00",
+        "asap":"2020-10-02T11:55:00+02:00",
         "range":[
-          "2020-10-02T12:00:00+02:00",
-          "2020-10-02T12:10:00+02:00"
+          "2020-10-02T11:50:00+02:00",
+          "2020-10-02T12:00:00+02:00"
         ],
         "today":true,
         "fast":false,
-        "diff":"60 - 70",
+        "diff":"50 - 60",
         "ranges":@array@,
         "choices":@array@
       }

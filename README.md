@@ -193,8 +193,12 @@ sh ./bin/jest path/to/test/file.test.js
 
 Cypress is a JS program for end-to-end testing and integration testing of components. You will launch a server in the test environment and run cypress on your own machine.
 
+Installation:
+
+(take the current versions from `package.json`)
+
 ```sh
-npm install -g cypress @cypress/webpack-preprocessor @cypress/react18
+npm install -g cypress@x.x.x @cypress/webpack-preprocessor@x.x.x @cypress/react18@x.x.x
 ```
 
 Launch php container on his own in the test env:

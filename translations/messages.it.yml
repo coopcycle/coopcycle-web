@@ -151,8 +151,8 @@ restaurant.disabledWarning: "Il ristorante è disabilitato quindi il visitatore 
   >attivarlo nel pannello di amministrazione</a>.\n"
 restaurant.closedWarningWithDelay: Ordina adesso per dopo. Ordina almeno %delay% in
   anticipo.
-restaurant.temporaryClosedWarning: Questo ristorante è chiuso fino alle <strong>%date%</strong>.
-  Puoi comunque ordinare per più tardi!
+restaurant.temporaryClosedWarning: Questo ristorante è chiuso e non disponibile per
+  gli ordini fino al <strong>%date%</strong>.
 restaurant.form.loopeat_enabled.label: Abilita il sistema di deposito e rimborso LoopEat
 restaurant.deliveryPerimeterExpression.help: Definisci il perimetro per la consegna.
   Puoi selezionare un raggio (in km) o una zona
@@ -671,6 +671,7 @@ form.package.description.label: Descrizione per il cliente
 form.package.average_volume_units.label: Unità di volume medio (VU)
 form.package.max_volume_units.label: Unità di volume massimo (VU)
 form.package.average_estimation: Stimato al 75 % del massimo se non impostato
+form.package.max_volume_units: Questo valore verrà utilizzato per calcolare i prezzi in base al volume
 form.package.average_weight.label: Peso medio (kg)
 form.package.max_weight.label: Peso massimo (kg)
 form.package.shortCode.label: Codice di 2 lettere
@@ -1203,7 +1204,7 @@ profile.edenred.connected: Conto Edenred connesso
 notifications.tap_to_open: Toccare per aprire
 notifications.tasks_changed_today: Gli incarichi per oggi sono stati aggiornati
 notifications.delivery_created: Una consegna con ritiro per il %date% è stata creata
-ordering_delay.admin_reminder: Hai configurato un ritardo per tutti gli ordini
+ordering_delay.admin_reminder: Hai configurato un ritardo di pickup globale per gli ordini foodtech
 ordering_delay.disclaimer: Stiamo ricevendo molti ordini, i tempi di consegna subiranno
   un ritardo!
 form.fulfillment_method.options.range_duration.label: Durata dell'intervallo
@@ -1288,3 +1289,43 @@ delivery.state:
   delivered: 'Consegnato'
   failed: 'Fallito'
   cancelled: 'Annullato'
+restaurants.pre_order: Preordina
+restaurant.form.en_boite_le_plat_enabled.label: Abilitare il sistema di depositi e
+  cauzioni di En Boîte Le Plat
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: Voglio i
+  contenitori riutilizzabili di <a href="https://enboiteleplat.fr/rennes/" target="_blank">En
+  Boîte Le Plat</a>.
+restaurant.closedOpensAfterTomorrowWarning: Il ristorante è chiuso fino a <strong>%date%</strong>.
+form.store_type.multi_drop_enabled.help: Permettere all'utente di aggiungere ulteriori
+  dropoff quando crea una consegna
+adminDashboard.users.confirmDeleteUser: Sei sicuro di voler eliminare l'utente con
+  email %email%?
+adminDashboard.users.userHasBeenDeleted: L'utente è stato eliminato.
+restaurant.closedOpensTodayLaterWarning: Il ristorante è chiuso al momento ma apre
+  oggi alle <strong>%time%</strong>.
+restaurant.canOrderForLater: Puoi comunque ordinare per più tardi!
+restaurant.closedOpensTomorrowWarning: Il ristorante è chiuso per oggi ma apre domani
+  alle <strong>%time%</strong>.
+restaurant.canOrderForTomorrow: Puoi comunque ordinare per domani!
+restaurant.canOrderForOtherDay: Puoi comunque ordinare per quel giorno!
+restaurant.closedNowWarning: Il ristorante è chiuso al momento.
+form.store_type.multi_drop_enabled.label: Attivare dropoff multipli
+api_apps.regenerate_secret_warning: Ogni applicazione che usa questa API endpoint
+  con la chiave segreta precedente smetterà di funzionare.
+form.api_app.type.label: Meccanismo di autenticazione API
+form.api_app.type.oauth.label: OAuth - per WordPress
+form.api_app.type.api_key.label: Chiave API - per Urbantz
+form.settings.mercadopago.client_secret.label: Cliente segreto
+localBusiness.form.business_address.help: Questo indirizzo sarà usato per le ricevute
+form.local_business.mercadopago.connected: Connesso
+restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
+order.cart.donation: Donazione
+order.export.heading.nonprofit: No profit
+adminDashboard.nonprofits.createNew: Aggiungere una nuova no profit
+adminDashboard.nonprofits.title: No profit
+adminDashboard.nonprofits.confirm_delete: Sei sicuro di voler eliminare questa no
+  profit?
+order.cart.donation.disclaimer: Ti proponiamo di donare %percentage% del ricavo del
+  tuo ordine a una delle nostre associazioni partner. Non pagherai di più.
+form.checkout_address.nonprofit.placeholder: Scegli la tua no profit preferita
+form.delivery.arbitrary_price.label: Definisci il prezzo manualmente

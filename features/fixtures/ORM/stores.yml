@@ -107,7 +107,9 @@ AppBundle\Entity\Store:
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
+    packageSet: '@package_set_1'
     timeSlot: '@time_slot_1'
+    timeSlots: [ "@time_slot_1", "@time_slot_2" ]
     __calls:
       - addAddress: [ "@address_1" ]
   store_2:

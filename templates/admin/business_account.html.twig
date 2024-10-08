@@ -48,6 +48,8 @@
             {{ form_row(form.managerEmail) }}
           {% endif %}
           {% if is_granted('ROLE_ADMIN') %}
+            {{ form_row(form.legalName) }}
+            {{ form_row(form.vatNumber) }}
             {{ form_row(form.address) }}
             {{ form_row(form.businessRestaurantGroup) }}
           {% endif %}

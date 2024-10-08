@@ -1070,7 +1070,7 @@ form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu,
   egun bereko eskaerak soilik egin ahalko dituzte.
 ordering_delay.disclaimer: Eskaera asko jasotzen ari gara, banaketa-denborak luzetzen
   ari dira!
-ordering_delay.admin_reminder: Eskaera atzerapen globala konfiguratu duzu
+ordering_delay.admin_reminder: Foodtech picku^ bilketa-atzerapen globala konfiguratu duzu
 notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
 store.PAWN_SHOP: Bahitetxea
 order.adjustment_type.reusable_packaging.loopeat.help: Kuota honek garbitze, jatetxearen

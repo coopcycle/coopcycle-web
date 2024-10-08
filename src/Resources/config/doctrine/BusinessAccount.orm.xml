@@ -5,6 +5,8 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name"/>
+    <field name="legalName" type="string" column="legal_name"/>
+    <field name="vatNumber" type="string" column="vat_number"/>
     <one-to-one field="address" target-entity="AppBundle\Entity\Address">
       <cascade>
         <cascade-persist/>

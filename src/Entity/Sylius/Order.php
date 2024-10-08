@@ -1834,4 +1834,26 @@ class Order extends BaseOrder implements OrderInterface
     {
         $this->subscription = $subscription;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastPaymentByMethod(string $method, ?string $state = null): ?PaymentInterface
+    {
+        if ($this->payments->isEmpty()) {
+            return null;
+        }
+
+        $iterator = $this->payments->getIterator();
+        $iterator->uasort(function ($a, $b) {
+            return ($a->getCreatedAt() < $b->getCreatedAt()) ? -1 : 1;
+        });
+        $payments = new ArrayCollection(iterator_to_array($iterator));
+
+        $payment = $payments->filter(function (PaymentInterface $payment) use ($method, $state): bool {
+            return (null === $state || $payment->getState() === $state) && $payment->getMethod()->getCode() === $method;
+        })->last();
+
+        return $payment !== false ? $payment : null;
+    }
 }

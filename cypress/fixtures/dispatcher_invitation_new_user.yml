@@ -1,0 +1,10 @@
+include:
+  - base.yml
+
+AppBundle\Entity\Invitation:
+  invitation1:
+    code: 'INVITATION_DISPATCHER'
+    email: 'dispatch01@demo.coopcycle.org'
+    user: '@admin'
+    __calls:
+      - addRole: [ "ROLE_DISPATCHER" ]

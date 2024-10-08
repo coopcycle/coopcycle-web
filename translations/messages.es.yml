@@ -756,6 +756,7 @@ form.package.description.label: Descripción para el cliente
 form.package.average_volume_units.label: Unidades de volumen promedio (VU)
 form.package.max_volume_units.label: Unidades de volumen máximo (VU)
 form.package.average_estimation: Estimado al 75 % del máximo si no se establece
+form.package.max_volume_units: Este valor se utilizará para calcular los precios en función del volumen
 form.package.average_weight.label: Peso promedio (kg)
 form.package.max_weight.label: Peso máximo (kg)
 form.package.shortCode.label: Código de 2 letras
@@ -1263,7 +1264,7 @@ edenred.oauth_connect.success: ¡Cuenta Edenred conectada exitosamente!
 profile.edenred.connect: Conectar mi cuenta Edenred
 profile.edenred.connected: Cuenta Edenred conectada
 notifications.delivery_created: Una entrega para recoger el %date% ha sido creado
-ordering_delay.admin_reminder: Configuró un retraso en todos los pedidos
+ordering_delay.admin_reminder: Ha configurado un retraso de pickup global para pedidos de foodtech
 ordering_delay.disclaimer: ¡Estamos recibiendo muchos pedidos, los tiempos de entrega
   se retrasaran!
 form.fulfillment_method.options.range_duration.label: Margen de tolerancia
@@ -1419,6 +1420,8 @@ registration.company.address: "Dirección"
 registration.company.address.different.for.billing: "Usar una dirección diferente para facturación"
 registration.company.billing.address: "Dirección de facturación"
 registration.step.company.name: "Nombre de la empresa"
+registration.step.company.legal_name: "Nombre legal de la empresa"
+registration.step.company.vat_number: "Número de IVA"
 registration.step.invitation.copy.link: "Copia el siguiente enlace y envíalo a tus colegas"
 registration.confirm.invitation.link.title: "Usa el siguiente enlace para invitar a tus colegas de trabajo a unirse"
 registration.step.invitation.copy.button: "Copiar el enlace"
