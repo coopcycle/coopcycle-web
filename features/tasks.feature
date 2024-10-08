@@ -2725,7 +2725,7 @@ Feature: Tasks
       }
       """
 
-  Scenario: Retrieve failure reasons
+  Scenario: Retrieve custom failure reasons
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
       | tasks.yml            |
@@ -2740,6 +2740,8 @@ Feature: Tasks
     And the task with id "2" belongs to organization with name "Acme"
     And the store with name "Acme" has failure reason set "Default"
     When the user "bob" sends a "GET" request to "/api/tasks/2/failure_reasons"
+    Then the response status code should be 200
+    And the response should be in JSON
     And the JSON should match:
       """
       {
@@ -2768,6 +2770,36 @@ Feature: Tasks
           "hydra:template":"/api/tasks/2/failure_reasons{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve default failure reasons
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | tasks.yml            |
+      | stores_with_orgs.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the task with id "2" belongs to organization with name "Acme"
+    And the store with name "Acme" has failure reason set "Default"
+    When the user "bob" sends a "GET" request to "/api/tasks/2/failure_reasons"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":@array@,
+        "hydra:totalItems":21,
+        "hydra:search":{
+          "@*@":"@*@"
         }
       }
       """

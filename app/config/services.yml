@@ -1487,3 +1487,5 @@ services:
       - '@Paygreen\Sdk\Payment\V3\Environment'
 
   AppBundle\Sylius\Payment\Context: ~
+
+  AppBundle\Entity\Delivery\FailureReasonRegistry: ~
