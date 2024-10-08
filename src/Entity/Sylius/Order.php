@@ -43,6 +43,7 @@ use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
@@ -1855,5 +1856,21 @@ class Order extends BaseOrder implements OrderInterface
         })->last();
 
         return $payment !== false ? $payment : null;
+    }
+
+    public function getLoopeatFormatById(int $formatId): ?array
+    {
+        $reusablePackagings = $this->getRestaurant()->getReusablePackagings();
+
+        foreach ($reusablePackagings as $reusablePackaging) {
+            if (ReusablePackaging::TYPE_LOOPEAT === $reusablePackaging->getType()) {
+                $data = $reusablePackaging->getData();
+                if ($data['id'] === $formatId) {
+                    return $data;
+                }
+            }
+        }
+
+        return null;
     }
 }

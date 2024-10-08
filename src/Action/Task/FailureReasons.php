@@ -16,13 +16,22 @@ class FailureReasons
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private FailureReasonRegistry $failureReasonRegistry
+        private FailureReasonRegistry $failureReasonRegistry,
+        private array $failureReasonsResolvers
     )
     { }
 
     private function getDefaultReasons(Task $task): array
     {
-        return $this->failureReasonRegistry->getFailureReasons();
+        $reasons = $this->failureReasonRegistry->getFailureReasons();
+
+        foreach ($this->failureReasonsResolvers as $failureReasonsResolver) {
+            if ($failureReasonsResolver->supports($task)) {
+                $reasons = array_merge($reasons, $failureReasonsResolver->getFailureReasons($task));
+            }
+        }
+
+        return $reasons;
     }
 
     private function getFailureReasons(
