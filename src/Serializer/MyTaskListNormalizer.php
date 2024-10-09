@@ -8,7 +8,6 @@ use AppBundle\Api\Dto\MyTaskList;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Tour;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -17,8 +16,7 @@ class MyTaskListNormalizer implements NormalizerInterface
 
     public function __construct(
         protected ObjectNormalizer $normalizer,
-        protected IriConverterInterface $iriConverterInterface,
-        private LoggerInterface $checkoutLogger
+        protected IriConverterInterface $iriConverterInterface
     )
     {
         $this->normalizer = $normalizer;
@@ -46,8 +44,6 @@ class MyTaskListNormalizer implements NormalizerInterface
 
     public function normalize($object, $format = null, array $context = array())
     {
-        $this->checkoutLogger->info('MyTaskListNormalizer::normalize');
-
         // legacy serialization for API endpoints that output TaskList.items as a list of tasks
         // look for "setTempLegacyTaskStorage" usage in the code.
         // known usage at the time of the writing :
@@ -110,14 +106,6 @@ class MyTaskListNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        $result = $this->normalizer->supportsNormalization($data, $format) && $data instanceof MyTaskList;
-
-        $this->checkoutLogger->info('MyTaskListNormalizer::supportsNormalization', [
-            'result' => $result,
-            'data' => $data,
-            'format' => $format,
-        ]);
-
-        return $result;
+        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof MyTaskList;
     }
 }
