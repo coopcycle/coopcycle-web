@@ -3,7 +3,7 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Api\Dto\MyTaskList;
-use AppBundle\Api\Dto\TaskDto;
+use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Api\Dto\TaskMetadataDto;
 use AppBundle\Api\Dto\TaskPackageDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -40,13 +40,14 @@ class TaskListRepository extends ServiceEntityRepository
         $queryResult = $this->entityManager->createQueryBuilder()
             ->select([
                 't',
-                // objects listed here will be hydrated / pre-fetched by Doctrine
-                // https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/dql-doctrine-query-language.html#result-format
                 'o.number AS orderNumber',
                 'o.total AS orderTotal',
                 'org.name AS organizationName',
+                // objects are listed below to force them being hydrated / pre-fetched by Doctrine
+                // https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/dql-doctrine-query-language.html#result-format
                 'taskPackage',
-                'package'
+                'package',
+                'incidents',
             ])
             ->from(Task::class, 't')
             ->leftJoin('t.delivery', 'd')
@@ -54,6 +55,7 @@ class TaskListRepository extends ServiceEntityRepository
             ->leftJoin('t.organization', 'org')
             ->leftJoin('t.packages', 'taskPackage')
             ->leftJoin('taskPackage.package', 'package')
+            ->leftJoin('t.incidents', 'incidents')
             ->where('t.id IN (:taskIds)')
             ->setParameter('taskIds', $taskIds)
             ->getQuery()
@@ -63,7 +65,7 @@ class TaskListRepository extends ServiceEntityRepository
 
         $tasks = array_map(function ($row) {
             $task = $row[0];
-            $taskDto = new TaskDto(
+            $taskDto = new MyTaskDto(
                 $task->getId(),
                 $task->getCreatedAt(),
                 $task->getUpdatedAt(),
@@ -74,13 +76,15 @@ class TaskListRepository extends ServiceEntityRepository
                 $task->getDoneBefore(),
                 $task->getPrevious()?->getId(),
                 $task->getNext()?->getId(),
+                $task->getTags(),
+                $task->isDoorstep(),
                 $task->getComments(),
                 $task->getPackages()->map(function (Task\Package $package) {
                     return new TaskPackageDto(
                         $package->getPackage()->getName(),
                         $package->getQuantity());
                 })->toArray(),
-                false, //TODO
+                $task->getHasIncidents(),
                 $row['organizationName'],
                 new TaskMetadataDto(
                     $task->getMetadata()['delivery_position'] ?? null, //TODO extract from query

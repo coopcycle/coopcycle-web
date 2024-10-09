@@ -6,7 +6,7 @@ use AppBundle\Entity\Address;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-final class TaskDto
+final class MyTaskDto
 {
     #[Groups(["task"])]
     public readonly int $id;
@@ -18,12 +18,14 @@ final class TaskDto
     public readonly DateTime $updatedAt;
 
     #[Groups(["task"])]
+    public readonly string $orgName;
+
+    #[Groups(["task"])]
     public readonly string $type;
 
     #[Groups(["task"])]
     public readonly string $status;
 
-    //TODO; make non-nullable
     #[Groups(["task"])]
     public readonly Address $address;
 
@@ -54,6 +56,12 @@ final class TaskDto
     public readonly ?int $next;
 
     #[Groups(["task"])]
+    public readonly array $tags;
+
+    #[Groups(["task"])]
+    public readonly bool $doorstep;
+
+    #[Groups(["task"])]
     public readonly ?string $comment;
 
     #[Groups(["task"])]
@@ -63,28 +71,8 @@ final class TaskDto
     public readonly bool $hasIncidents;
 
     #[Groups(["task"])]
-    public readonly string $orgName;
-
-    #[Groups(["task"])]
     public readonly TaskMetadataDto $metadata;
 
-    /**
-     * @param int $id
-     * @param DateTime $createdAt
-     * @param DateTime $updatedAt
-     * @param string $type
-     * @param string $status
-     * @param Address $address
-     * @param DateTime $after
-     * @param DateTime $before
-     * @param int|null $previous
-     * @param int|null $next
-     * @param string|null $comment
-     * @param array $packages
-     * @param bool $hasIncidents
-     * @param string $orgName
-     * @param TaskMetadataDto $metadata
-     */
     public function __construct(
         int $id,
         DateTime $createdAt,
@@ -96,6 +84,8 @@ final class TaskDto
         DateTime $before,
         ?int $previous,
         ?int $next,
+        array $tags,
+        bool $doorstep,
         ?string $comment,
         array $packages,
         bool $hasIncidents,
@@ -114,6 +104,8 @@ final class TaskDto
         $this->before = $before;
         $this->previous = $previous;
         $this->next = $next;
+        $this->tags = $tags;
+        $this->doorstep = $doorstep;
         $this->comment = $comment;
         $this->packages = $packages;
         $this->hasIncidents = $hasIncidents;

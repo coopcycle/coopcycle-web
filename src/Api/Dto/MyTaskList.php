@@ -58,7 +58,7 @@ class MyTaskList
      * @param DateTime $updatedAt
      * @param DateTime $date
      * @param string $username
-     * @param TaskDto[] $items
+     * @param MyTaskDto[] $items
      * @param int $distance
      * @param int $duration
      * @param string $polyline
