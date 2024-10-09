@@ -865,7 +865,7 @@ Feature: Tasks
       }
       """
 
-  Scenario: Mark task as failed with failure reason via incidents endpoint
+  Scenario: Report incident
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | tasks.yml           |
@@ -875,67 +875,36 @@ Feature: Tasks
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
-    When the user "bob" sends a "GET" request to "/api/tasks/2"
-    Then the response status code should be 200
-    And the response should be in JSON
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "PUT" request to "/api/tasks/2/incidents" with body:
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
       """
       {
-        "reason": "DAMAGED",
-        "notes": "PACKAGE WET"
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
-        "@type":"Task",
-        "id":2,
-        "type":"DROPOFF",
-        "status":"TODO",
-        "address":@...@,
-        "after":"2018-03-02T11:30:00+01:00",
-        "before":"2018-03-02T12:00:00+01:00",
-        "doneAfter":"2018-03-02T11:30:00+01:00",
-        "doneBefore":"2018-03-02T12:00:00+01:00",
-        "comments":@string@,
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "title":"Endommagé",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"DAMAGED",
+        "description":"PACKAGE WET",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/1",
+        "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
-        "isAssigned":true,
-        "assignedTo":"bob",
-        "previous":null,
-        "group":null,
-        "hasIncidents": true,
-        "tags":@array@
-      }
-      """
-    And the user "bob" sends a "GET" request to "/api/tasks/2/events"
-    Then the response status code should be 200
-    And the response should be in JSON
-    And the JSON should match:
-      """
-      {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
-        "@type":"hydra:Collection",
-        "hydra:member":[
-          "@...@",
-          {
-            "@id":"@string@.startsWith('/api/task_events')",
-            "@type":"TaskEvent",
-            "name":"task:incident-reported",
-            "data":{"reason":"DAMAGED","notes":"PACKAGE WET"},
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
-        "hydra:totalItems":3,
-        "hydra:search":{
-          "@*@":"@*@"
-        }
+        "tags":[]
       }
       """
 
