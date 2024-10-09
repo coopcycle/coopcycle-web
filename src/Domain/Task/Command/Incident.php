@@ -2,6 +2,7 @@
 
 namespace AppBundle\Domain\Task\Command;
 
+use AppBundle\Entity\Incident\Incident as IncidentObject;
 use AppBundle\Entity\Task;
 
 class Incident
@@ -10,7 +11,8 @@ class Incident
         private Task $task,
         private string $reason,
         private ?string $notes = null,
-        private array $data = []
+        private array $data = [],
+        private ?IncidentObject $incident = null
    )
     { }
 
@@ -32,6 +34,11 @@ class Incident
     public function getData(): array
     {
         return $this->data;
+    }
+
+    public function getIncident(): ?IncidentObject
+    {
+        return $this->incident;
     }
 }
 
