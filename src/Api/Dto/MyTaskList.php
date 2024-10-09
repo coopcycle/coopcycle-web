@@ -58,14 +58,25 @@ class MyTaskList
      * @param DateTime $updatedAt
      * @param DateTime $date
      * @param string $username
-     * @param MyTask[] $items
+     * @param TaskDto[] $items
      * @param int $distance
      * @param int $duration
      * @param string $polyline
      * @param Vehicle|null $vehicle
      * @param Trailer|null $trailer
      */
-    public function __construct(int $id, DateTime $createdAt, DateTime $updatedAt, DateTime $date, string $username, array $items, int $distance, int $duration, string $polyline, ?Vehicle $vehicle, ?Trailer $trailer)
+    public function __construct(
+        int $id,
+        DateTime $createdAt,
+        DateTime $updatedAt,
+        DateTime $date,
+        string $username,
+        array $items,
+        int $distance,
+        int $duration,
+        string $polyline,
+        ?Vehicle $vehicle,
+        ?Trailer $trailer)
     {
         $this->id = $id;
         $this->createdAt = $createdAt;

@@ -2,9 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Api\Dto\Metadata;
-use AppBundle\Api\Dto\MyTask;
 use AppBundle\Api\Dto\MyTaskList;
+use AppBundle\Api\Dto\TaskDto;
+use AppBundle\Api\Dto\TaskMetadataDto;
+use AppBundle\Api\Dto\TaskPackageDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -12,7 +13,10 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class TaskListRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly EntityManagerInterface $entityManager)
+    public function __construct(
+        ManagerRegistry $registry,
+        private readonly EntityManagerInterface $entityManager
+    )
     {
         parent::__construct($registry, TaskList::class);
 
@@ -35,53 +39,53 @@ class TaskListRepository extends ServiceEntityRepository
 
         $queryResult = $this->entityManager->createQueryBuilder()
             ->select([
-                't.id',
-                't.createdAt',
-                't.updatedAt',
-                't.type',
-                't.status',
-//                'a', //TODO
-                't.doneAfter',
-                't.doneBefore',
-//                't.previous', //TODO
-//                't.next', //TODO
-                't.comments',
-                't.metadata',
+                't',
+                // objects listed here will be hydrated / pre-fetched by Doctrine
+                // https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/dql-doctrine-query-language.html#result-format
+                'o.number AS orderNumber',
                 'o.total AS orderTotal',
-                'org.name AS orgName',
+                'org.name AS organizationName',
+                'taskPackage',
+                'package'
             ])
             ->from(Task::class, 't')
-            ->leftJoin('t.address', 'a')
             ->leftJoin('t.delivery', 'd')
             ->leftJoin('d.order', 'o')
             ->leftJoin('t.organization', 'org')
+            ->leftJoin('t.packages', 'taskPackage')
+            ->leftJoin('taskPackage.package', 'package')
             ->where('t.id IN (:taskIds)')
             ->setParameter('taskIds', $taskIds)
             ->getQuery()
-            ->getArrayResult();
-//            ->getResult(\AppBundle\Api\Dto\Task::class);
+            ->getResult();
 
         //TODO; sort by position
 
         $tasks = array_map(function ($row) {
-            $taskDto = new MyTask(
-                $row['id'],
-                $row['createdAt'],
-                $row['updatedAt'],
-                $row['type'],
-                $row['status'],
-                null, //TODO: $row['address'],
-                $row['doneAfter'],
-                $row['doneBefore'],
-                null, //TODO: $row['previous'],
-                null, //TODO: $row['next'],
-                $row['comments'],
+            $task = $row[0];
+            $taskDto = new TaskDto(
+                $task->getId(),
+                $task->getCreatedAt(),
+                $task->getUpdatedAt(),
+                $task->getType(),
+                $task->getStatus(),
+                $task->getAddress(),
+                $task->getDoneAfter(),
+                $task->getDoneBefore(),
+                $task->getPrevious()?->getId(),
+                $task->getNext()?->getId(),
+                $task->getComments(),
+                $task->getPackages()->map(function (Task\Package $package) {
+                    return new TaskPackageDto(
+                        $package->getPackage()->getName(),
+                        $package->getQuantity());
+                })->toArray(),
                 false, //TODO
-                $row['orgName'],
-                new Metadata(
-                    $row['metadata']['delivery_position'],
-                    $row['metadata']['order_number'],
-                    $row['metadata']['payment_method'],
+                $row['organizationName'],
+                new TaskMetadataDto(
+                    $task->getMetadata()['delivery_position'] ?? null, //TODO extract from query
+                    $row['orderNumber'],
+                    $task->getMetadata()['payment_method'] ?? null, //TODO extract from query
                     $row['orderTotal']
                 ),
             );
