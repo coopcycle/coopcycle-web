@@ -1463,12 +1463,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "8fc9532b3263341b99f1abeba0b7c79d8586c4df"
+                "reference": "4eecfa5af75df5c4f4eadb024ad3fdd81e51d73a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/8fc9532b3263341b99f1abeba0b7c79d8586c4df",
-                "reference": "8fc9532b3263341b99f1abeba0b7c79d8586c4df",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/4eecfa5af75df5c4f4eadb024ad3fdd81e51d73a",
+                "reference": "4eecfa5af75df5c4f4eadb024ad3fdd81e51d73a",
                 "shasum": ""
             },
             "require": {
@@ -1498,7 +1498,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-10-09T01:56:07+00:00"
+            "time": "2024-10-09T04:08:11+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -24431,18 +24431,18 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "league/geotools": 0,
-        "drupal/core-vendor-hardening": 20,
-        "nucleos/profile-bundle": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
-        "behatch/contexts": 20
+        "drupal/core-vendor-hardening": 20,
+        "league/geotools": 0,
+        "nucleos/profile-bundle": 20,
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
