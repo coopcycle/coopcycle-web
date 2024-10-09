@@ -11,13 +11,11 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FailureReasons
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private TranslatorInterface $translator,
         private FailureReasonRegistry $failureReasonRegistry
     )
     { }
