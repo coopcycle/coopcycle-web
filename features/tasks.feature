@@ -882,7 +882,11 @@ Feature: Tasks
       {
         "description": "PACKAGE WET",
         "failureReasonCode": "DAMAGED",
-        "task": "/api/tasks/2"
+        "task": "/api/tasks/2",
+        "metadata": [
+          {"foo":"bar"},
+          {"baz":"bat"}
+        ]
       }
       """
     Then the response status code should be 201
@@ -904,7 +908,11 @@ Feature: Tasks
         "createdBy":"/api/users/1",
         "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
-        "tags":[]
+        "tags":[],
+        "metadata": [
+          {"foo": "bar"},
+          {"baz": "bat"}
+        ]
       }
       """
 
