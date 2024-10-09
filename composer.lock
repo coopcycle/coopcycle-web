@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d640d340bb1cca8921098cce28686402",
+    "content-hash": "c5280cae3c97a1d7b1622cf4d056fd68",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1463,12 +1463,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "43a0bee9416c8aeb9ce73c54a3307e15b2a8201f"
+                "reference": "8fc9532b3263341b99f1abeba0b7c79d8586c4df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/43a0bee9416c8aeb9ce73c54a3307e15b2a8201f",
-                "reference": "43a0bee9416c8aeb9ce73c54a3307e15b2a8201f",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/8fc9532b3263341b99f1abeba0b7c79d8586c4df",
+                "reference": "8fc9532b3263341b99f1abeba0b7c79d8586c4df",
                 "shasum": ""
             },
             "require": {
@@ -1498,7 +1498,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-07-04T11:45:00+00:00"
+            "time": "2024-10-09T01:56:07+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -11835,12 +11835,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "67ff6943d656d8bd5910aaa47d5c9e45f5a9091a"
+                "reference": "b2b3b93201bcc21eab0d8a07a5f3321cbf56499e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/67ff6943d656d8bd5910aaa47d5c9e45f5a9091a",
-                "reference": "67ff6943d656d8bd5910aaa47d5c9e45f5a9091a",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/b2b3b93201bcc21eab0d8a07a5f3321cbf56499e",
+                "reference": "b2b3b93201bcc21eab0d8a07a5f3321cbf56499e",
                 "shasum": ""
             },
             "require-dev": {
@@ -11880,7 +11880,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-generator/tree/master"
             },
-            "time": "2024-04-12T16:11:11+00:00"
+            "time": "2024-10-09T01:47:46+00:00"
         },
         {
             "name": "php-edifact/edifact-mapping",
