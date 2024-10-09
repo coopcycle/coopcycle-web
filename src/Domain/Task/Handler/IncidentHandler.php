@@ -20,7 +20,8 @@ class IncidentHandler
         $reason = $command->getReason();
         $notes = $command->getNotes();
         $data = $command->getData();
+        $incident = $command->getIncident();
 
-        $this->eventRecorder->record(new Event\TaskIncidentReported($task, $reason, $notes, $data));
+        $this->eventRecorder->record(new Event\TaskIncidentReported($task, $reason, $notes, $data, $incident));
     }
 }

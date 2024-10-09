@@ -420,7 +420,7 @@ class Client
 
     public function updateDeliverFormats(OrderInterface $order)
     {
-        $this->logger->info(sprintf('Updating formats for order "%s", with id "%s"', $order->getNumber(), $order->getLoopeatOrderId()));
+        $this->logger->info(sprintf('Updating "deliver" formats for order "%s", with id "%s"', $order->getNumber(), $order->getLoopeatOrderId()));
 
         $response = $this->client->request('GET', sprintf('/api/v1/partners/orders/%s/formats', $order->getLoopeatOrderId()), [
             'headers' => [
@@ -446,7 +446,7 @@ class Client
 
                 try {
 
-                    $this->logger->info(sprintf('Updating formats for order "%s", setting format "%s" quantity to "%s"',
+                    $this->logger->info(sprintf('Updating "deliver" formats for order "%s", setting format "%s" quantity to "%s"',
                         $order->getNumber(), $format['format_id'], $format['quantity']));
 
                     $restaurant = $order->getRestaurant();
@@ -495,6 +495,53 @@ class Client
         } catch (RequestException $e) {
             $this->logger->error($e->getMessage());
             return false;
+        }
+    }
+
+    public function updatePickupFormat(OrderInterface $order, $formatId, $quantity)
+    {
+        $this->logger->info(sprintf('Updating "pickup" formats for order "%s", with id "%s"', $order->getNumber(), $order->getLoopeatOrderId()));
+
+        $response = $this->client->request('GET', sprintf('/api/v1/partners/orders/%s/formats', $order->getLoopeatOrderId()), [
+            'headers' => [
+                'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+            ],
+        ]);
+
+        $res = json_decode((string) $response->getBody(), true);
+
+        $orderFormats = $res['data'];
+
+        $getOrderFormatId = function($formatId) use ($orderFormats) {
+            foreach ($orderFormats as $orderFormat) {
+                if ($orderFormat['act'] === 'pickup' && (int) $orderFormat['details']['id'] === (int) $formatId) {
+                    return $orderFormat['id'];
+                }
+            }
+        };
+
+        try {
+
+            $this->logger->info(sprintf('Updating "pickup" formats for order "%s", setting format "%s" quantity to "%s"',
+                $order->getNumber(), $formatId, $quantity));
+
+            $url = sprintf('/api/v1/partners/orders/%s/formats/%s', $order->getLoopeatOrderId(), $getOrderFormatId($formatId));
+
+            $response = $this->client->request('PATCH', $url, [
+                'headers' => [
+                    'Authorization' => sprintf('Basic %s', $this->getPartnerToken())
+                ],
+                'json' => [
+                    'order_format' => [
+                        'quantity' => $quantity,
+                    ]
+                ],
+            ]);
+
+            $res = json_decode((string) $response->getBody(), true);
+
+        } catch (RequestException $e) {
+            $this->logger->error($e->getMessage());
         }
     }
 }
