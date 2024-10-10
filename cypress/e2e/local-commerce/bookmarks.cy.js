@@ -66,8 +66,6 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
-   
-    cy.get('#delivery_tasks_1_comments').type('Pickup comments')
 
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
