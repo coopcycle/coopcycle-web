@@ -24,20 +24,37 @@ class TaskListRepository extends ServiceEntityRepository
 
     public function findMyTaskListAsDto(UserInterface $user, \DateTime $date): ?MyTaskList
     {
-        $taskList = $this->findOneBy([
-            'courier' => $user,
-            'date' => $date,
-        ]);
+        $taskListQueryResult = $this->entityManager->createQueryBuilder()
+            ->select([
+                'tl',
+                // objects are listed below to force them being hydrated / pre-fetched by Doctrine
+                // https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/dql-doctrine-query-language.html#result-format
+                'item',
+                'tour',
+                'tourItem',
+            ])
+            ->from(TaskList::class, 'tl')
+            ->leftJoin('tl.items', 'item')
+            ->leftJoin('item.tour', 'tour')
+            ->leftJoin('tour.items', 'tourItem')
+            ->where('tl.courier = :courier')
+            ->andWhere('tl.date = :date')
+            ->setParameter('courier', $user)
+            ->setParameter('date', $date)
+            ->getQuery()
+            ->getResult();
+
+        $taskList = $taskListQueryResult[0] ?? null;
 
         if (null === $taskList) {
             return null;
         }
 
-        $taskIds = $taskList->getItems()->map(function (TaskList\Item $item) {
-            return $item->getTask()->getId();
-        });
+        $orderedTaskIds = array_map(function (Task $task) {
+            return $task->getId();
+        }, $taskList->getTasks());
 
-        $queryResult = $this->entityManager->createQueryBuilder()
+        $tasksQueryResult = $this->entityManager->createQueryBuilder()
             ->select([
                 't',
                 'o.number AS orderNumber',
@@ -57,11 +74,9 @@ class TaskListRepository extends ServiceEntityRepository
             ->leftJoin('taskPackage.package', 'package')
             ->leftJoin('t.incidents', 'incidents')
             ->where('t.id IN (:taskIds)')
-            ->setParameter('taskIds', $taskIds)
+            ->setParameter('taskIds', $orderedTaskIds) // using IN might cause problems with large number of tasks
             ->getQuery()
             ->getResult();
-
-        //TODO; sort by position
 
         $tasks = array_map(function ($row) {
             $task = $row[0];
@@ -95,7 +110,17 @@ class TaskListRepository extends ServiceEntityRepository
             );
 
             return $taskDto;
-        }, $queryResult);
+        }, $tasksQueryResult);
+
+        $tasksById = array_reduce($tasks, function ($carry, $task) {
+            $carry[$task->id] = $task;
+            return $carry;
+        }, []);
+
+        //restore order of tasks
+        $orderedTasks = array_map(function ($taskId) use ($tasksById) {
+            return $tasksById[$taskId];
+        }, $orderedTaskIds);
 
         $taskListDto = new MyTaskList(
             $taskList->getId(),
@@ -103,7 +128,7 @@ class TaskListRepository extends ServiceEntityRepository
             $taskList->getUpdatedAt(),
             $taskList->getDate(),
             $user->getUsername(),
-            $tasks,
+            $orderedTasks,
             $taskList->getDistance(),
             $taskList->getDuration(),
             $taskList->getPolyline(),
