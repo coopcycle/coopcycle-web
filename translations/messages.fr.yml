@@ -1586,3 +1586,5 @@ form.billing_method.percentage: "Pourcentage du montant de la commande"
 order.export.heading.billing_method: "Méthode de facturation"
 order.export.heading.applied_billing: "Facturation appliquée"
 deliveries.import_upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
+form.task_export.colisactiv.label: Exporter au format ColivActiv
+form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées

@@ -58,6 +58,7 @@ class DataExportType extends AbstractType
         }
         if ($this->colisactivEnabled) {
             $formats['form.task_export.colisactiv.label'] = 'colisactiv';
+            $formats['form.task_export.colisactiv_all.label'] = 'colisactiv_all';
         }
 
         if (count($formats) > 0) {

@@ -1280,7 +1280,16 @@ services:
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
   AppBundle\Spreadsheet\DV4CULDataExporter: ~
-  AppBundle\Spreadsheet\ColisActivDataExporter: ~
+
+  colisactiv:
+    class: AppBundle\Spreadsheet\ColisActivDataExporter
+    arguments:
+      $includeAllTasks: false
+
+  colisactiv_all:
+    class: AppBundle\Spreadsheet\ColisActivDataExporter
+    arguments:
+      $includeAllTasks: true
 
   AppBundle\Edenred\Authentication:
     arguments:
