@@ -1856,4 +1856,22 @@ class Order extends BaseOrder implements OrderInterface
 
         return $payment !== false ? $payment : null;
     }
+
+    public function isZeroWaste(): bool
+    {
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                if ($product->hasReusablePackagings()) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
