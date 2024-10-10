@@ -125,7 +125,7 @@ final class ColisActivDataExporter implements DataExporterInterface
                     'package_count' => $packageCountByTask[$dropoff['id']] ?? '',
                 ];
 
-                if (includeIfExists) {
+                if ($includeAllTasks) {
                     $row['status'] = $dropoff['status'];
                 }
 
