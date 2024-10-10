@@ -22,15 +22,15 @@ use League\Csv\Writer as CsvWriter;
 
 final class ColisActivDataExporter implements DataExporterInterface
 {
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private bool $includeAllTasks = false
+    )
+    { }
 
     public function export(
         \DateTime $start,
         \DateTime $end,
-        bool $includeAllTasks = false
     ): string
     {
     	// 1. We load all the deliveries whose tasks are matching the date range
@@ -81,7 +81,7 @@ final class ColisActivDataExporter implements DataExporterInterface
             )
             ->setParameter('task_done_event', 'task:done');
 
-        if (!$includeAllTasks) {
+        if (!$this->includeAllTasks) {
            $qb
                 ->andWhere('t.status = :status_done')
                 ->setParameter('status_done', Task::STATUS_DONE);
@@ -125,7 +125,7 @@ final class ColisActivDataExporter implements DataExporterInterface
                     'package_count' => $packageCountByTask[$dropoff['id']] ?? '',
                 ];
 
-                if ($includeAllTasks) {
+                if ($this->includeAllTasks) {
                     $row['status'] = $dropoff['status'];
                 }
 

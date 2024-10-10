@@ -88,14 +88,7 @@ class DataExportType extends AbstractType
 
             try {
 
-                switch ($data['format']) {
-                    case 'colisactiv_all':
-                        $content = $exporter->export($start, $end, true);
-                        break;
-                    default:
-                        $content = $exporter->export($start, $end);
-                        break;
-                }
+                $content = $exporter->export($start, $end);
 
                 $event->getForm()->setData([
                     'content' => $content,
