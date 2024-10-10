@@ -90,6 +90,11 @@ final class ColisActivDataExporter implements DataExporterInterface
         $tasks = $qb->getQuery()->getArrayResult();
 
         $taskIds = array_map(fn ($task) => $task['id'], $tasks);
+
+        if (count($taskIds) === 0) {
+            throw new NoDataException();
+        }
+
         $packageCountByTask = $this->countPackagesByTask($taskIds);
 
         $deliveries = array();
