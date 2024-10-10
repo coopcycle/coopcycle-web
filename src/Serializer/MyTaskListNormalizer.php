@@ -49,7 +49,7 @@ class MyTaskListNormalizer implements NormalizerInterface
         // known usage at the time of the writing :
         //  - used for the rider/dispatcher smartphone app (does not display or handle tours)
         //  - used for stores to access /api/task_lists/ and display only tasks linked to the org (it is only used by Tricargo coop and should be considered legacy)
-        if ($object->isTempLegacyTaskStorage) {
+//        if ($object->isTempLegacyTaskStorage) {
             $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
             $data = $this->normalizer->normalize($object, $format, $context);
 
@@ -73,27 +73,27 @@ class MyTaskListNormalizer implements NormalizerInterface
                 return $taskData;
                 }, $object->items
             );
-        }
-        // legacy serialization for app and events
-        // see https://github.com/coopcycle/coopcycle-app/issues/1803
-        else if (in_array('task', $context['groups'])) {
-            $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
-            $data = $this->normalizer->normalize($object, $format, $context);
-            $data['items'] = array_map(function($task) {
-                return $this->normalizer->normalize(
-                    $task,
-                    'jsonld',
-                    ['groups' => ["task_list", "task_collection", "task", "delivery", "address"]]
-                );
-                }, $object->getTasks()
-            );
-        } else  {
-            $data = $this->normalizer->normalize($object, $format, $context);
-
-            if (isset($data['items'])) {
-                $data['items'] = $this->flattenItemsUris($data['items']);
-            }
-        }
+//        }
+//        // legacy serialization for app and events
+//        // see https://github.com/coopcycle/coopcycle-app/issues/1803
+//        else if (in_array('task', $context['groups'])) {
+//            $context[AbstractNormalizer::IGNORED_ATTRIBUTES] = ['items'];
+//            $data = $this->normalizer->normalize($object, $format, $context);
+//            $data['items'] = array_map(function($task) {
+//                return $this->normalizer->normalize(
+//                    $task,
+//                    'jsonld',
+//                    ['groups' => ["task_list", "task_collection", "task", "delivery", "address"]]
+//                );
+//                }, $object->getTasks()
+//            );
+//        } else  {
+//            $data = $this->normalizer->normalize($object, $format, $context);
+//
+//            if (isset($data['items'])) {
+//                $data['items'] = $this->flattenItemsUris($data['items']);
+//            }
+//        }
 
         // Legacy
         if (isset($context['item_operation_name']) && $context['item_operation_name'] === 'my_tasks') {

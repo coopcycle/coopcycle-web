@@ -25,7 +25,7 @@ class MyTaskList
     public readonly string $username;
 
     /**
-     * @var MyTask[]
+     * @var MyTaskDto[]
      */
     #[Groups(["task_list"])]
     public readonly array $items;
@@ -46,11 +46,6 @@ class MyTaskList
     //TODO
     #[Groups(["task_list"])]
     public readonly ?Trailer $trailer;
-
-    /**
-     * @deprecated
-     */
-    public readonly bool $isTempLegacyTaskStorage;
 
     /**
      * @param int $id
@@ -89,6 +84,5 @@ class MyTaskList
         $this->polyline = $polyline;
         $this->vehicle = $vehicle;
         $this->trailer = $trailer;
-        $this->isTempLegacyTaskStorage = true;
     }
 }

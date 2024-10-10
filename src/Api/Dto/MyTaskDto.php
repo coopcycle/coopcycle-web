@@ -29,20 +29,6 @@ final class MyTaskDto
     #[Groups(["task"])]
     public readonly Address $address;
 
-    /**
-     * @var DateTime
-     * @deprecated
-     */
-    #[Groups(["task"])]
-    public readonly DateTime $doneAfter;
-
-    /**
-     * @var DateTime
-     * @deprecated
-     */
-    #[Groups(["task"])]
-    public readonly DateTime $doneBefore;
-
     #[Groups(["task"])]
     public readonly DateTime $after;
 
@@ -98,8 +84,6 @@ final class MyTaskDto
         $this->type = $type;
         $this->status = $status;
         $this->address = $address;
-        $this->doneAfter = $after;
-        $this->doneBefore = $before;
         $this->after = $after;
         $this->before = $before;
         $this->previous = $previous;
