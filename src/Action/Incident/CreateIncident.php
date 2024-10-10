@@ -58,7 +58,8 @@ class CreateIncident
             $data->getDescription(),
             [
                 'incident_id' => $data->getId()
-            ]
+            ],
+            $data
         );
 
         return $data;

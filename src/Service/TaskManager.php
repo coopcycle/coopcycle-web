@@ -6,13 +6,14 @@ use AppBundle\Domain\Task\Command\AddToGroup;
 use AppBundle\Domain\Task\Command\Cancel;
 use AppBundle\Domain\Task\Command\Update;
 use AppBundle\Domain\Task\Command\DeleteGroup;
-use AppBundle\Domain\Task\Command\Incident;
+use AppBundle\Domain\Task\Command\Incident as IncidentCommand;
 use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Command\RemoveFromGroup;
 use AppBundle\Domain\Task\Command\Reschedule;
 use AppBundle\Domain\Task\Command\Restore;
 use AppBundle\Domain\Task\Command\Start;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
@@ -75,8 +76,8 @@ class TaskManager
         $this->commandBus->handle(new Reschedule($task, $rescheduledAfter, $rescheduledBefore));
     }
 
-    public function incident(Task $task, string $reason, ?string $notes = null, array $data = []): void
+    public function incident(Task $task, string $reason, ?string $notes = null, array $data = [], Incident $incident = null): void
     {
-        $this->commandBus->handle(new Incident($task, $reason, $notes, $data));
+        $this->commandBus->handle(new IncidentCommand($task, $reason, $notes, $data, $incident));
     }
 }

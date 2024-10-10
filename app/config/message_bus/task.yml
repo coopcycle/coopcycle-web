@@ -191,3 +191,12 @@ services:
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed
+
+  coopcycle.domain.task.reactor.notify_loopeat:
+    class: AppBundle\Domain\Task\Reactor\NotifyLoopeat
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+      - '@monolog.logger.loopeat'
+    tags:
+      - name: event_subscriber
+        subscribes_to: task:incident-reported
