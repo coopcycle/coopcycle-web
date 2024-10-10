@@ -105,6 +105,11 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[data-testid="delivery_id"]').click();
 
     // Delivery page
@@ -139,6 +144,11 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[data-testid="delivery_id"]').click();
 
     // Delivery page

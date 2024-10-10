@@ -97,6 +97,10 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[href="/admin/stores"]').click()
     cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
 
