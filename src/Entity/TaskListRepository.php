@@ -74,7 +74,9 @@ class TaskListRepository extends ServiceEntityRepository
             ->leftJoin('taskPackage.package', 'package')
             ->leftJoin('t.incidents', 'incidents')
             ->where('t.id IN (:taskIds)')
+            ->andWhere('t.status != :statusCancelled')
             ->setParameter('taskIds', $orderedTaskIds) // using IN might cause problems with large number of tasks
+            ->setParameter('statusCancelled', Task::STATUS_CANCELLED)
             ->getQuery()
             ->getResult();
 
@@ -118,9 +120,14 @@ class TaskListRepository extends ServiceEntityRepository
         }, []);
 
         //restore order of tasks
-        $orderedTasks = array_map(function ($taskId) use ($tasksById) {
-            return $tasksById[$taskId];
-        }, $orderedTaskIds);
+        $orderedTasks = [];
+        foreach ($orderedTaskIds as $taskId) {
+            // skip tasks that are not returned by the query
+            // that can happen if a task is cancelled, for example
+            if (isset($tasksById[$taskId])) {
+                $orderedTasks[] = $tasksById[$taskId];
+            }
+        }
 
         $taskListDto = new MyTaskList(
             $taskList->getId(),
