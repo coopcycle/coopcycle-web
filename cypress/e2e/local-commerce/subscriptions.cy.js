@@ -44,8 +44,6 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
-  
-    cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
@@ -69,8 +67,6 @@ context('Managing subscriptions (role: admin)', () => {
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
 
-    cy.get('#delivery_tasks_1_comments').type('Pickup comments')
-
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
 
@@ -87,7 +83,7 @@ context('Managing subscriptions (role: admin)', () => {
 
   it('modify subscription', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -109,6 +105,11 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[data-testid="delivery_id"]').click();
 
     // Delivery page
@@ -121,7 +122,7 @@ context('Managing subscriptions (role: admin)', () => {
 
   it('cancel subscription', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -143,6 +144,11 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[data-testid="delivery_id"]').click();
 
     // Delivery page

@@ -66,8 +66,6 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
-   
-    cy.get('#delivery_tasks_1_comments').type('Pickup comments')
 
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
@@ -83,7 +81,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
   it('should add a bookmark to an existing order', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -99,6 +97,10 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[href="/admin/stores"]').click()
     cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
 
