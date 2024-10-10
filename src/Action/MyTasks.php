@@ -63,7 +63,7 @@ final class MyTasks
 
             // reset array index to 0 with array_values, otherwise you might get weird stuff in the serializer
             $notCancelled = array_values(
-                    array_filter(array_filter($taskList->getTasks(), function (Task $task) {
+                array_filter(array_filter($taskList->getTasks(), function (Task $task) {
                     return !$task->isCancelled();
                 }))
             );
