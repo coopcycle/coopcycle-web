@@ -48,15 +48,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "path"="/incidents/{id}/action",
  *       "controller"=IncidentAction::class,
  *     }
- *   }
+ *   },
+ *   normalizationContext={"groups"={"incident"}}
  * )
  */
 class Incident implements TaggableInterface {
     use TaggableTrait;
 
-    /**
-     * @Groups({"incident"})
-     */
     protected $id;
 
     /**
@@ -234,4 +232,12 @@ class Incident implements TaggableInterface {
         return $this->getTask()->getDelivery()?->getOrder()?->getCustomer()?->getUser();
     }
 
+    /**
+     * Redefined to make it serializable.
+     * @Groups({"incident"})
+     */
+    public function getTags(): array
+    {
+        return $this->tags;
+    }
 }

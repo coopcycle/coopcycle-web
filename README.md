@@ -199,6 +199,7 @@ Installation:
 
 ```sh
 npm install -g cypress@x.x.x @cypress/webpack-preprocessor@x.x.x @cypress/react18@x.x.x
+docker compose exec -T php bin/console typesense:create --env=test # install typesense for test env
 ```
 
 Launch php container on his own in the test env:

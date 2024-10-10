@@ -8,7 +8,6 @@ import { createSelector } from 'reselect'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
-import { diff } from 'deep-object-diff'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -22,7 +21,7 @@ import {
   selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
-import { suggestionsSlice, showSuggestions, acceptSuggestions } from './redux/suggestionsSlice'
+import { suggestionsSlice, showSuggestions, acceptSuggestions, rejectSuggestions } from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 
@@ -448,11 +447,11 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
 
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault()
-      taskEl.remove()
       reduxStore.dispatch({
         type: 'REMOVE_DROPOFF',
         taskIndex: domIndex(taskEl),
       })
+      taskEl.remove()
       // We want at least one dropoff
       if (collectionHolder.children.length === 2) {
         document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
@@ -499,28 +498,11 @@ function createOnTasksChanged(onChange) {
     const state = getState()
 
     if (prevState.tasks !== state.tasks) {
-
-      const firstTaskWithAddressDiff =
-        _.find(diff(prevState.tasks, state.tasks), t => t?.address && t?.address?.geo)
-      const shouldLoadSuggestions = !!firstTaskWithAddressDiff
-
-      onChange(state, shouldLoadSuggestions)
+      onChange(state)
     }
 
     return result
   }
-}
-
-// Reorder tasks in the DOM when suggestion is accepted
-const reorderTasks = () => (next) => (action) => {
-
-  const result = next(action)
-
-  if (acceptSuggestions.match(action) && action.payload.length > 0) {
-    reorder(action.payload[0].order)
-  }
-
-  return result
 }
 
 export default function(name, options) {
@@ -531,6 +513,23 @@ export default function(name, options) {
 
   const onChange = options.onChange.bind(form)
   const onReady = options.onReady.bind(form)
+  const onSubmit = options.onSubmit.bind(form)
+
+  const handleSuggestionsAfterSubmit = () => (next) => (action) => {
+
+    const result = next(action)
+
+    if (acceptSuggestions.match(action) && action.payload.length > 0) {
+        // Reorder tasks in the DOM when suggestion is accepted
+      reorder(action.payload[0].order)
+    }
+
+    if (acceptSuggestions.match(action) || rejectSuggestions.match(action)) {
+      el.submit()
+    }
+
+    return result
+  }
 
   if (el) {
 
@@ -576,7 +575,7 @@ export default function(name, options) {
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([createOnTasksChanged(onChange), reorderTasks]),
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange), handleSuggestionsAfterSubmit]),
     })
 
     onReady(preloadedState)
@@ -589,6 +588,8 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
+      e.preventDefault()
+
       const hasInvalidInput = _.find(taskForms, taskEl => {
 
         const type = taskEl.getAttribute('id').replace(name + '_', '')
@@ -598,7 +599,7 @@ export default function(name, options) {
           return false
         }
 
-        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"]`);
+        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"][data-is-address-picker="true"]`);
         const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
         const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
         const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
@@ -619,6 +620,9 @@ export default function(name, options) {
           rule: recurrenceRule
         })
       }
+
+      onSubmit(el, reduxStore.getState())
+      return false
 
     }, false)
 

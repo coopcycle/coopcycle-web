@@ -33,44 +33,17 @@ context('Managing subscriptions (role: admin)', () => {
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
     )
 
-    cy.get('[data-form="task"]:nth-of-type(1)')
-      .find('[data-testid=address_name__popover_pill]')
-      .click()
-    cy.get('form[id=delivery_tasks_0_address_name__popover]')
-      .find('input')
-      .clear()
-    cy.get('form[id=delivery_tasks_0_address_name__popover]')
-      .find('input')
+    cy.get('#delivery_tasks_0_address_name__display')
+    .clear()
+    cy.get('#delivery_tasks_0_address_name__display')
       .type('Office')
-    cy.get('form[id=delivery_tasks_0_address_name__popover]')
-      .find('button')
-      .click()
 
-    cy.get('[data-form="task"]:nth-of-type(1)')
-      .find('[data-testid=address_telephone__popover_pill]')
-      .click()
-    cy.get('form[id=delivery_tasks_0_address_telephone__popover]')
-      .find('input')
-      .clear()
-    cy.get('form[id=delivery_tasks_0_address_telephone__popover]')
-      .find('input')
+    cy.get('#delivery_tasks_0_address_telephone__display').clear()
+    cy.get('#delivery_tasks_0_address_telephone__display')
       .type('+33112121212')
-    cy.get('form[id=delivery_tasks_0_address_telephone__popover]')
-      .find('button')
-      .click()
 
-    cy.get('[data-form="task"]:nth-of-type(1)')
-      .find('[data-testid=address_contactName__popover_pill]')
-      .click()
-    cy.get('form[id=delivery_tasks_0_address_contactName__popover]')
-      .find('input')
-      .clear()
-    cy.get('form[id=delivery_tasks_0_address_contactName__popover]')
-      .find('input')
-      .type('John Doe')
-    cy.get('form[id=delivery_tasks_0_address_contactName__popover]')
-      .find('button')
-      .click()
+    cy.get('#delivery_tasks_0_address_contactName__display').clear()
+    cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
 
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
@@ -82,44 +55,17 @@ context('Managing subscriptions (role: admin)', () => {
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
     )
 
-    cy.get('[data-form="task"]:nth-of-type(2)')
-      .find('[data-testid=address_name__popover_pill]')
-      .click()
-    cy.get('form[id=delivery_tasks_1_address_name__popover]')
-      .find('input')
-      .clear()
-    cy.get('form[id=delivery_tasks_1_address_name__popover]')
-      .find('input')
-      .type('Warehouse')
-    cy.get('form[id=delivery_tasks_1_address_name__popover]')
-      .find('button')
-      .click()
+    cy.get('#delivery_tasks_1_address_name__display')
+    .clear()
+    cy.get('#delivery_tasks_1_address_name__display')
+      .type('Office')
 
-    cy.get('[data-form="task"]:nth-of-type(2)')
-      .find('[data-testid=address_telephone__popover_pill]')
-      .click()
-    cy.get('form[id=delivery_tasks_1_address_telephone__popover]')
-      .find('input')
-      .clear()
-    cy.get('form[id=delivery_tasks_1_address_telephone__popover]')
-      .find('input')
-      .type('+33114141414')
-    cy.get('form[id=delivery_tasks_1_address_telephone__popover]')
-      .find('button')
-      .click()
+    cy.get('#delivery_tasks_1_address_telephone__display').clear()
+    cy.get('#delivery_tasks_1_address_telephone__display')
+      .type('+33112121212')
 
-    cy.get('[data-form="task"]:nth-of-type(2)')
-      .find('[data-testid=address_contactName__popover_pill]')
-      .click()
-    cy.get('form[id=delivery_tasks_1_address_contactName__popover]')
-      .find('input')
-      .clear()
-    cy.get('form[id=delivery_tasks_1_address_contactName__popover]')
-      .find('input')
-      .type('Jane Smith')
-    cy.get('form[id=delivery_tasks_1_address_contactName__popover]')
-      .find('button')
-      .click()
+    cy.get('#delivery_tasks_1_address_contactName__display').clear()
+    cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
 
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
@@ -137,7 +83,7 @@ context('Managing subscriptions (role: admin)', () => {
 
   it('modify subscription', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -159,6 +105,11 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[data-testid="delivery_id"]').click();
 
     // Delivery page
@@ -171,7 +122,7 @@ context('Managing subscriptions (role: admin)', () => {
 
   it('cancel subscription', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -193,6 +144,11 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    // (all) Deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
     cy.get('[data-testid="delivery_id"]').click();
 
     // Delivery page
