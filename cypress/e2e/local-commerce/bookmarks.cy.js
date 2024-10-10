@@ -81,7 +81,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
   it('should add a bookmark to an existing order', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )

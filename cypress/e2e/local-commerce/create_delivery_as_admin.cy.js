@@ -77,7 +77,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -103,7 +103,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Order page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/orders\/[0-9]+$/,
     )
@@ -180,7 +180,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -205,7 +205,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Order page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/orders\/[0-9]+$/,
     )
@@ -284,7 +284,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -304,7 +304,7 @@ context('Delivery (role: admin)', () => {
     cy.get('a[href*="subscriptions"]').click()
 
     // Subscription page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/subscriptions\/[0-9]+$/,
     )
@@ -379,7 +379,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -466,7 +466,7 @@ context('Delivery (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )

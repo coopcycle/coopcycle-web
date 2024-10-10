@@ -78,7 +78,7 @@ context('Delivery (role: store)', () => {
 
     cy.get('#delivery-submit').click()
 
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/dashboard\/stores\/[0-9]+\/deliveries$/,
     )

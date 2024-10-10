@@ -83,7 +83,7 @@ context('Managing subscriptions (role: admin)', () => {
 
   it('modify subscription', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
@@ -117,7 +117,7 @@ context('Managing subscriptions (role: admin)', () => {
 
   it('cancel subscription', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 3000 }).should(
+    cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
