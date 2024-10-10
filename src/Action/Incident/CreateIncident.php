@@ -37,7 +37,8 @@ class CreateIncident
             return $failure_reason->getDescription();
         }
 
-        return null;
+        // FIXME The title field is actually NOT NULL in database
+        return 'N/A';
     }
 
     public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
