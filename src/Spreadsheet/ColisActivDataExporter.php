@@ -27,7 +27,11 @@ final class ColisActivDataExporter implements DataExporterInterface
         $this->entityManager = $entityManager;
     }
 
-    public function export(\DateTime $start, \DateTime $end): string
+    public function export(
+        \DateTime $start,
+        \DateTime $end,
+        bool $includeAllTasks = false
+    ): string
     {
     	// 1. We load all the deliveries whose tasks are matching the date range
         // We need to do this, because some deliveries may have one task inside the range,
@@ -64,6 +68,7 @@ final class ColisActivDataExporter implements DataExporterInterface
         $qb
             ->select('t.id')
             ->addSelect('t.type')
+            ->addSelect('t.status')
             ->addSelect('IDENTITY(t.delivery) AS delivery')
             ->addSelect('a.geo')
             ->addSelect('o.name AS orgName')
@@ -71,12 +76,16 @@ final class ColisActivDataExporter implements DataExporterInterface
             ;
 
         $qb
-            ->andWhere('t.status = :status_done')
             ->andWhere(
                 $qb->expr()->in('t.delivery', $deliveryIds)
             )
-            ->setParameter('status_done', Task::STATUS_DONE)
             ->setParameter('task_done_event', 'task:done');
+
+        if (!$includeAllTasks) {
+           $qb
+                ->andWhere('t.status = :status_done')
+                ->setParameter('status_done', Task::STATUS_DONE);
+        }
 
         $tasks = $qb->getQuery()->getArrayResult();
 
@@ -103,19 +112,24 @@ final class ColisActivDataExporter implements DataExporterInterface
             foreach ($delivery['DROPOFF'] as $dropoff) {
 
             	$coords = GeoUtils::asGeoCoordinates($dropoff['geo']);
-
-            	$data[] = [
+            	$row = [
 	            	'tour_id' => $id,
 	            	'carrier_id' => $pickup['orgName'],
 	            	'transport_type' => 'bike',
-                    'pickup_time' => $pickup['completedAt']->getTimestamp(),
+                    'pickup_time' => $pickup['completedAt']?->getTimestamp() ?? '',
 	            	'pickup_latitude' => $pickupCoords->getLatitude(),
 	            	'pickup_longitude' => $pickupCoords->getLongitude(),
-                    'delivery_time' => $dropoff['completedAt']->getTimestamp(),
+                    'delivery_time' => $dropoff['completedAt']?->getTimestamp() ?? '',
 	            	'delivery_latitude' => $coords->getLatitude(),
 	            	'delivery_longitude' => $coords->getLongitude(),
                     'package_count' => $packageCountByTask[$dropoff['id']] ?? '',
-	            ];
+                ];
+
+                if (includeIfExists) {
+                    $row['status'] = $dropoff['status'];
+                }
+
+                $data[] = $row;
             }
         }
 

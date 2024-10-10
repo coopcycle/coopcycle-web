@@ -58,6 +58,7 @@ class DataExportType extends AbstractType
         }
         if ($this->colisactivEnabled) {
             $formats['form.task_export.colisactiv.label'] = 'colisactiv';
+            $formats['form.task_export.colisactiv_all.label'] = 'colisactiv_all';
         }
 
         if (count($formats) > 0) {
@@ -87,7 +88,14 @@ class DataExportType extends AbstractType
 
             try {
 
-                $content = $exporter->export($start, $end);
+                switch ($data['format']) {
+                    case 'colisactiv_all':
+                        $content = $exporter->export($start, $end, true);
+                        break;
+                    default:
+                        $content = $exporter->export($start, $end);
+                        break;
+                }
 
                 $event->getForm()->setData([
                     'content' => $content,

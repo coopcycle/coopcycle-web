@@ -277,6 +277,7 @@ services:
         default: '@AppBundle\Spreadsheet\DeliveryDataExporter'
         dv4cul: '@AppBundle\Spreadsheet\DV4CULDataExporter'
         colisactiv: '@AppBundle\Spreadsheet\ColisActivDataExporter'
+        colisactiv_all: '@AppBundle\Spreadsheet\ColisActivDataExporter'
     tags: [ form.type ]
 
   AppBundle\Form\Order\AdhocOrderType:
