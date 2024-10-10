@@ -4,7 +4,6 @@ const diffHoursRegexp = /diff_hours\(pickup\) (<|>|==) ([\d]+)/
 const vehicleRegexp = /(vehicle)\s+== "(cargo_bike|bike)"/
 const inRegexp = /([\w.]+) in ([\d]+)\.\.([\d]+)/
 const comparatorRegexp = /([\w.]+) (<|>) ([\d]+)/
-const doorstepDropoffRegexp = /(dropoff.doorstep)\s+== (true|false)/
 const packagesContainsAtLeastOneRegexp = /packages\.containsAtLeastOne\(['|"](.+)['|"]\)/
 
 const parseToken = token => {
@@ -51,15 +50,6 @@ const parseToken = token => {
       left: vehicleTest[1],
       operator: '==',
       right: vehicleTest[2]
-    }
-  }
-
-  const doorstepDropoffTest = doorstepDropoffRegexp.exec(token)
-  if (doorstepDropoffTest) {
-    return {
-      left: doorstepDropoffTest[1],
-      operator: '==',
-      right: doorstepDropoffTest[2]
     }
   }
 
@@ -141,13 +131,7 @@ const traverseNode = (node, accumulator) => {
       })
 
     } else {
-      if (node.nodes.left.nodes.node?.attributes.name === 'dropoff' && node.nodes.left.nodes.attribute?.attributes.value === 'doorstep') {
-        accumulator.push({
-          left:     `${node.nodes.left.nodes.node.attributes.name}.${node.nodes.left.nodes.attribute.attributes.value}`,
-          operator: node.attributes.operator,
-          right:    node.nodes.right.attributes.value,
-        })
-      } else if (node.nodes.left.nodes.node?.attributes.name === 'order' && node.nodes.left.nodes.attribute?.attributes.value === 'itemsTotal') {
+      if (node.nodes.left.nodes.node?.attributes.name === 'order' && node.nodes.left.nodes.attribute?.attributes.value === 'itemsTotal') {
         let $right
         if ('in' === node.attributes.operator) {
           $right = [

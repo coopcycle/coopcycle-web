@@ -651,7 +651,6 @@ form.preparation_time_rule.expression.label: Ekspresja
 form.store_type.package_set.label: Zestaw paczek
 form.store_type.prefill_pickup_address.label: Wypełnij automatycznie adres odbioru
 task.type.DROPOFF: Doręczenie
-form.task.dropoff.doorstep.label: Dostawa pod próg drzwi
 task.status.todo: Do zrobienia
 task.status.failed: Niepowodzenie
 task.status.done: Powodzenie

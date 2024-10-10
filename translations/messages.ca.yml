@@ -854,7 +854,6 @@ order.adjustment_type.reusable_packaging: Embalatge
 order_item.adjustment_type.reusable_packaging: '%quantity% × paquet(s)'
 form.task.address.label: Adreça
 form.task.recipient.help: Especifiqui nom de la persona de contacte
-form.task.dropoff.doorstep.label: Llindar de lliurament
 form.delivery.pickup.address_placeholder: Número de casa i nom del carrer, àrea, codi
   postal, ciutat
 form.delivery.dropoff.address_placeholder: Número de casa i nom del carrer, àrea,

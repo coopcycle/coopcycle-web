@@ -607,7 +607,6 @@ restaurant.contract.calculation_info: Sie können dem Restaurant einen anderen B
   Sie dem Kunden kostenfreie Lieferungen anbieten, obwohl dem Restaurant ein fester
   Betrag abgebucht wird.  <br> Sie können auch einen dynamischen Betrag festlegen
   (e.g.,  auf Distanz basiert).
-form.task.dropoff.doorstep.label: Türschwelle-Zustellung
 form.delivery.pickup.address_placeholder: Straßenname und Hausnummer, Postleitzahl,
   Stadt
 form.delivery.bookmark.label: Zu gespeicherten Bestellungen hinzufügen

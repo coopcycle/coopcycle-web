@@ -442,11 +442,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $imageCount = 0;
 
     /**
-     * @Groups({"task", "task_create", "task_edit"})
-     */
-    private $doorstep = false;
-
-    /**
      * @Groups({"task", "task_create"})
      */
     private $ref;
@@ -908,18 +903,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->setBefore($before);
     }
 
-    public function setDoorstep($doorstep)
-    {
-        $this->doorstep = $doorstep;
-
-        return $this;
-    }
-
-    public function isDoorstep()
-    {
-        return $this->doorstep;
-    }
-
     /**
      * @SerializedName("orgName")
      * @Groups({"task"})
@@ -1111,7 +1094,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $taskObject->createdAt = $this->getCreatedAt();
         $taskObject->after = $this->getAfter();
         $taskObject->before = $this->getBefore();
-        $taskObject->doorstep = $this->isDoorstep();
 
         return $taskObject;
     }
@@ -1125,7 +1107,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $emptyObject->createdAt = null;
         $emptyObject->after = null;
         $emptyObject->before = null;
-        $emptyObject->doorstep = false;
 
         $thisObj = $this->toExpressionLanguageObject();
 

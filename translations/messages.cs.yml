@@ -350,7 +350,6 @@ form.task.status.label: Stav
 form.task.telephone.label: Telefon
 form.task.recipient.label: Kontakt
 form.task.recipient.help: Zadejte jméno kontaktní osoby
-form.task.dropoff.doorstep.label: Zanechání zásilky u dveří
 form.task_event.notes.placeholder: 'Příklad: adresa nebyla nalezena, žádný problém…'
 form.task_event.notes.help: Komentář můžete upravit
 form.task_complete.done.label: Hotovo

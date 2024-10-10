@@ -712,7 +712,6 @@ form.task_complete.fail.label: Informar problemas
 form.task_complete.done.label: Concluída
 form.task_event.notes.help: Pode editar o comentário
 form.task_event.notes.placeholder: 'Ex: sitio não encontrado, sem problemas…'
-form.task.dropoff.doorstep.label: Desembarque na porta
 form.task.recipient.help: Especifique o nome da pessoa de contato
 form.task.recipient.label: Contato
 form.task.telephone.label: Telefone

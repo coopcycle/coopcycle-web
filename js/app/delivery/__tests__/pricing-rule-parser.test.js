@@ -3,7 +3,6 @@ import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'
 import withDiffHours from './with-diff-hours.json'
-import withDropoffDoorstep from './with-dropoff-doorstep.json'
 import withOrderItemsTotal from './with-order-items-total.json'
 import withOrderItemsTotalRange from './with-order-items-total-range.json'
 import withTotalVolumeUnits from './with-packages-total-volume-units.json'
@@ -131,16 +130,6 @@ describe('Pricing rule parser', function() {
     }])
   })
 
-  it('should parse doorstep dropoff', function() {
-    const expression = 'dropoff.doorstep == true'
-    const result = parsePricingRule(expression)
-    expect(result).toEqual([{
-      left: 'dropoff.doorstep',
-      operator: '==',
-      right: 'true'
-    }])
-  })
-
   it('should parse diff_days with equality', function() {
     const expression = 'diff_days(pickup) == 1'
     const result = parsePricingRule(expression)
@@ -239,20 +228,6 @@ describe('Pricing rule parser (AST)', function() {
       [
         { left: 'distance', operator: 'in', right: [ 16000, 17000 ] },
         { left: 'diff_hours(pickup)', operator: '<', right: 3 }
-      ]
-    )
-
-  })
-
-  it('should parse AST with dropoff doorstep', function() {
-
-    const result = parseAST(withDropoffDoorstep)
-
-    expect(result).toEqual(
-      [
-        { left: 'distance', operator: 'in', right: [ 1000, 8000 ] },
-        { left: 'pickup.address', operator: 'in_zone', right: 'Test' },
-        { left: 'dropoff.doorstep', operator: '==', right: true }
       ]
     )
 

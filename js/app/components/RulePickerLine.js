@@ -33,7 +33,6 @@ const typeToOperators = {
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
   'diff_hours(pickup)': ['==', '<', '>'],
-  'dropoff.doorstep': ['=='],
   'packages': ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
@@ -213,10 +212,6 @@ class RulePickerLine extends React.Component {
         )
       }
 
-      if (this.state.type === 'dropoff.doorstep') {
-        return this.renderBooleanInput()
-      }
-
       return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
     // weight, distance, diff_days(pickup)
     case 'in':
@@ -260,7 +255,6 @@ class RulePickerLine extends React.Component {
               <option value="dropoff.address">{ this.props.t('RULE_PICKER_LINE_DROPOFF_ADDRESS') }</option>
               <option value="diff_hours(pickup)">{ this.props.t('RULE_PICKER_LINE_PICKUP_DIFF_HOURS') }</option>
               <option value="diff_days(pickup)">{ this.props.t('RULE_PICKER_LINE_PICKUP_DIFF_DAYS') }</option>
-              <option value="dropoff.doorstep">{ this.props.t('RULE_PICKER_LINE_DROPOFF_DOORSTEP') }</option>
               <option value="packages">{ this.props.t('RULE_PICKER_LINE_PACKAGES') }</option>
               <option value="packages.totalVolumeUnits()">{ this.props.t('RULE_PICKER_LINE_VOLUME_UNITS') }</option>
               <option value="time_range_length(pickup, 'hours')">{ this.props.t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS') }</option>

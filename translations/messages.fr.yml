@@ -342,7 +342,6 @@ form.task.status.label: Status
 form.task.telephone.label: Téléphone
 form.task.recipient.label: Contact
 form.task.recipient.help: Spécifiez le nom de la personne à contacter
-form.task.dropoff.doorstep.label: Dépôt au pas de la porte
 form.task_event.notes.placeholder: 'Ex : adresse introuvable, aucun problème…'
 form.task_event.notes.help: Vous pouvez modifier le commentaire
 form.task_complete.done.label: Terminer

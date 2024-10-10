@@ -177,24 +177,6 @@ class TaskType extends AbstractType
             ]);
         }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
-
-            $form = $event->getForm();
-            $task = $event->getData();
-
-            $taskType = null !== $task ? $task->getType() : Task::TYPE_DROPOFF;
-
-            if (Task::TYPE_DROPOFF === $taskType) {
-                if ($options['with_doorstep']) {
-                    $form
-                        ->add('doorstep', CheckboxType::class, [
-                            'label' => 'form.task.dropoff.doorstep.label',
-                            'required' => false,
-                        ]);
-                }
-            }
-        });
-
         if ($builder->has('tagsAsString')) {
             $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 

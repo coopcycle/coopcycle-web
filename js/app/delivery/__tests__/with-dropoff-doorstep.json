@@ -111,14 +111,6 @@
                   "name":"dropoff"
                 }
               },
-              "attribute":{
-                "nodes":[
-
-                ],
-                "attributes":{
-                  "value":"doorstep"
-                }
-              },
               "arguments":{
                 "nodes":[
 

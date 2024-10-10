@@ -858,7 +858,6 @@ localBusiness.form.openingHoursBehavior.time_slot: Intervalo de tiempo
 restaurant.quotes_disclaimer.authenticated: Este restaurante también acepta pedidos
   de cotización. Para crear presupuestos, debe ser un cliente referenciado.<a href="%contact_us%">Contact
   us</a>para más información.
-form.task.dropoff.doorstep.label: Umbral de entrega
 form.reusable_packaging.is_tracked.label: Seguimiento habilitado
 form.new_order.variant_name.help: El nombre que aparecerá en el resumen del pedido
   y la factura

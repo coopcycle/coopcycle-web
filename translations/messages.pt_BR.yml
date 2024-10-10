@@ -353,7 +353,6 @@ form.task.status.label: Estado
 form.task.telephone.label: Telefone
 form.task.recipient.label: Contato
 form.task.recipient.help: Especifique o nome da pessoa de contato
-form.task.dropoff.doorstep.label: Entrega no pé da porta
 form.task_event.notes.placeholder: 'Ex: endereço não encontrado, sem problemas…'
 form.task_event.notes.help: Você pode alterar o comentário
 form.task_complete.done.label: Finalizar

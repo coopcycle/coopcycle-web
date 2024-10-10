@@ -411,7 +411,6 @@ form.task.status.label: Status
 form.task.telephone.label: Telephone
 form.task.recipient.label: Contact
 form.task.recipient.help: Specify the name of the contact person
-form.task.dropoff.doorstep.label: Doorstep dropoff
 form.task_event.notes.placeholder: 'Ex: address not found, no problem…'
 form.task_event.notes.help: You can edit the comment
 form.task_complete.done.label: Complete

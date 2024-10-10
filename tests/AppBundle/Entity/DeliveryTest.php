@@ -46,7 +46,6 @@ class DeliveryTest extends TestCase
         $delivery->getDropoff()->setAddress($dropoffAddress);
         $delivery->addPackageWithQuantity($smallPackage, 1);
         $delivery->addPackageWithQuantity($mediumPackage, 2);
-        $delivery->getDropoff()->setDoorstep(true);
 
         $values = Delivery::toExpressionLanguageValues($delivery);
 
@@ -61,7 +60,6 @@ class DeliveryTest extends TestCase
 
         $this->assertEquals($pickupAddress, $language->evaluate('pickup.address', $values));
         $this->assertEquals($dropoffAddress, $language->evaluate('dropoff.address', $values));
-        $this->assertTrue($language->evaluate('dropoff.doorstep', $values));
 
         $this->assertInstanceOf(PackagesResolver::class, $language->evaluate('packages', $values));
         $this->assertEquals(1, $language->evaluate('packages.quantity("S")', $values));
@@ -160,7 +158,6 @@ class DeliveryTest extends TestCase
         $delivery->getDropoff()->setAddress($dropoffAddress);
         $delivery->addPackageWithQuantity($smallPackage, 1);
         $delivery->addPackageWithQuantity($mediumPackage, 2);
-        $delivery->getDropoff()->setDoorstep(true);
 
         $language = new ExpressionLanguage();
 
@@ -272,7 +269,6 @@ class DeliveryTest extends TestCase
         $delivery->setDistance(2500);
         $delivery->getPickup()->setAddress($pickupAddress);
         $delivery->getDropoff()->setAddress($dropoffAddress);
-        $delivery->getDropoff()->setDoorstep(true);
 
         $otherDrop = new Task();
         $otherDrop->setAddress($otherDropoffAddress);
@@ -291,7 +287,6 @@ class DeliveryTest extends TestCase
 
         $this->assertEquals($pickupAddress, $language->evaluate('pickup.address', $values));
         $this->assertEquals($otherDropoffAddress, $language->evaluate('dropoff.address', $values));
-        $this->assertFalse($language->evaluate('dropoff.doorstep', $values));
     }
 
     public function testGetPackages()

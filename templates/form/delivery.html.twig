@@ -50,10 +50,6 @@ col-md-9
 
   {{ form_row(form.comments) }}
 
-  {% if form.doorstep is defined %}
-    {{ form_row(form.doorstep) }}
-  {% endif %}
-
   {% if form.tagsAsString is defined %}
     {{ form_row(form.tagsAsString) }}
   {% endif %}

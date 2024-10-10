@@ -12,7 +12,6 @@
     <field name="doneAfter" type="datetime" column="done_after" nullable="false"/>
     <field name="doneBefore" type="datetime" column="done_before" nullable="false"/>
     <field name="comments" type="text" column="comments" nullable="true"/>
-    <field name="doorstep" type="boolean" column="doorstep"/>
     <field name="ref" type="string" column="ref" nullable="true"/>
     <field name="imageCount" type="integer" column="image_count" nullable="false">
       <options>

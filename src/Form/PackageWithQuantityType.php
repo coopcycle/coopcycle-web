@@ -41,7 +41,7 @@ class PackageWithQuantityType extends AbstractType
                 ->orderBy('p.maxVolumeUnits', 'ASC');
 
             if (null !== $initialData) {
-                // This is here to make sure the dropdownn displays something
+                // This is here to make sure the dropdown displays something
                 // even if the package set does not contain the package
                 // This can happen if the configured package set has been changed
                 $qb->orWhere('p.id = :package_id');

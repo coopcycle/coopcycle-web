@@ -462,7 +462,6 @@ receipt.billing_details: Ordine pagato tramite %payment_method% il %date%
 form.delivery_import.file.label: File
 notifications.messenger_approaching: Ciao %customer%! Il nostro corriere %messenger%
   è vicino a te. Preparati!
-form.task.dropoff.doorstep.label: Consegna alla porta
 form.task_event.notes.help: Puoi modificare il commento
 form.task_complete.done.label: Completa
 form.task_complete.fail.label: Segnala un problema
