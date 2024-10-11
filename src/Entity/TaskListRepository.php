@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use AppBundle\Api\Dto\MyTaskList;
+use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Api\Dto\TaskPackageDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -20,7 +20,7 @@ class TaskListRepository extends ServiceEntityRepository
         parent::__construct($registry, TaskList::class);
     }
 
-    public function findMyTaskListAsDto(UserInterface $user, \DateTime $date): ?MyTaskList
+    public function findMyTaskListAsDto(UserInterface $user, \DateTime $date): ?MyTaskListDto
     {
         $taskListQueryResult = $this->entityManager->createQueryBuilder()
             ->select([
@@ -166,7 +166,7 @@ class TaskListRepository extends ServiceEntityRepository
             }
         }
 
-        $taskListDto = new MyTaskList(
+        $taskListDto = new MyTaskListDto(
             $taskList->getId(),
             $taskList->getCreatedAt(),
             $taskList->getUpdatedAt(),

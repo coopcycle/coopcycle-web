@@ -7,7 +7,7 @@ use AppBundle\Entity\Vehicle;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class MyTaskList
+class MyTaskListDto
 {
     #[Groups(["task_list"])]
     public readonly int $id;

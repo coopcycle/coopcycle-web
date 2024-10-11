@@ -4,14 +4,14 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ObjectNormalizer;
-use AppBundle\Api\Dto\MyTaskList;
+use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Tour;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class MyTaskListNormalizer implements NormalizerInterface
+class MyTaskListDtoNormalizer implements NormalizerInterface
 {
 
     public function __construct(
@@ -100,6 +100,6 @@ class MyTaskListNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof MyTaskList;
+        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof MyTaskListDto;
     }
 }
