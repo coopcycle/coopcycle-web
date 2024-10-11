@@ -1,0 +1,114 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+  geo_3:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75010'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75010'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_2"
+  address_3:
+    addressLocality: 'Paris'
+    postalCode: '75010'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_3"
+
+AppBundle\Entity\Tag:
+  tag_important:
+    name: Important
+    color: '#FF0000'
+
+AppBundle\Entity\Task\Group:
+  task_group_1:
+    name: 'Group #1'
+    tags: [ 'important' ]
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-03-02 10:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 11:00:00'))>
+    comments: ""
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-03-02 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    comments: "#bob"
+    group: "@task_group_1"
+  task_3:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
+    comments: "#bob"
+    status: "DONE"
+  task_4:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-03-03 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-03 12:30:00'))>
+    comments: "#bob"
+  task_5:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-03-03 13:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-03 13:30:00'))>
+    comments: "#bob"
+    previous: "@task_4"
+  task_6:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
+    comments: "#bob"
+    status: "CANCELLED"
+  task_7:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-02-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-02-02 12:30:00'))>
+    comments: "#bob"
+    status: "DONE"
+  task_8:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 12:30:00'))>
+    comments: "#bob"
+    type: "DROPOFF"
+  task_9:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 12:30:00'))>
+    comments: "#bob"
+    type: "PICKUP"
+  task_10:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 10:30:00'))>
+    comments: "#bob"
+    type: "PICKUP"
+  task_11:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-04-03 08:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-04-03 10:30:00'))>
+    comments: "#bob"
+    type: "DROPOFF"
+
+AppBundle\Entity\Tour:
+  tour_1:
+    name: "Example tour"
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    __calls:
+      - addTask: [ "@task_1" ]
+      - addTask: [ "@task_2" ]
+
+AppBundle\Entity\TaskImage:
+  image_1:
+    imageName: "abcd1234.jpg"
+  image_2:
+    imageName: "efgh5678.jpg"
