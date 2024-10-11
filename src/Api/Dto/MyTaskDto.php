@@ -60,7 +60,16 @@ final class MyTaskDto
     public readonly bool $hasIncidents;
 
     #[Groups(["task"])]
-    public readonly TaskMetadataDto $metadata;
+    public readonly ?int $delivery_position;
+
+    #[Groups(["task"])]
+    public readonly ?string $order_number;
+
+    #[Groups(["task"])]
+    public readonly ?string $payment_method;
+
+    #[Groups(["task"])]
+    public readonly ?int $order_total;
 
     public function __construct(
         int $id,
@@ -80,7 +89,11 @@ final class MyTaskDto
         ?int $weight,
         bool $hasIncidents,
         string $orgName,
-        TaskMetadataDto $metadata)
+        ?int $deliveryPosition,
+        ?string $orderNumber,
+        ?string $paymentMethod,
+        ?int $orderTotal
+    )
     {
         $this->id = $id;
         $this->createdAt = $createdAt;
@@ -99,6 +112,9 @@ final class MyTaskDto
         $this->weight = $weight;
         $this->hasIncidents = $hasIncidents;
         $this->orgName = $orgName;
-        $this->metadata = $metadata;
+        $this->delivery_position = $deliveryPosition;
+        $this->order_number = $orderNumber;
+        $this->payment_method = $paymentMethod;
+        $this->order_total = $orderTotal;
     }
 }
