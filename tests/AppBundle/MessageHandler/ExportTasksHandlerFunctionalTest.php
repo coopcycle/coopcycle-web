@@ -25,17 +25,14 @@ class ExportTasksHandlerFunctionalTest extends KernelTestCase
         parent::setUp();
         self::bootKernel();
 
-        $this->cubejsClient = self::$container->get('cubejs.client');
-        $this->tokenFactory = self::$container->get(TokenFactory::class);
         $this->priceFormatter = self::$container->get(PriceFormatter::class);
 
+        $this->entityManager = self::$container->get(EntityManagerInterface::class);
         $this->handler = new ExportTasksHandler(
-            $this->cubejsClient,
-            $this->tokenFactory,
+            $this->entityManager,
             $this->priceFormatter
         );
 
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
 
         $purger = new ORMPurger($this->entityManager);
         $purger->purge();
