@@ -8,6 +8,7 @@ use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Api\Dto\MyTaskListDto;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Filter\DateFilter;
@@ -88,6 +89,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *        "path"="/me/tasks/v2/{date}",
  *        "controller"=MyTasksController2::class,
  *        "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+ *        "output"=MyTaskListDto::class,
  *        "read"=false,
  *        "write"=false,
  *        "normalization_context"={"groups"={"task_list", "task", "delivery", "address"}},
