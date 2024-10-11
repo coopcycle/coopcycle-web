@@ -19,7 +19,6 @@ class TaskListRepository extends ServiceEntityRepository
     )
     {
         parent::__construct($registry, TaskList::class);
-
     }
 
     public function findMyTaskListAsDto(UserInterface $user, \DateTime $date): ?MyTaskList
@@ -57,6 +56,7 @@ class TaskListRepository extends ServiceEntityRepository
         $tasksQueryResult = $this->entityManager->createQueryBuilder()
             ->select([
                 't',
+                'd.id AS deliveryId',
                 'o.number AS orderNumber',
                 'o.total AS orderTotal',
                 'org.name AS organizationName',
@@ -80,7 +80,43 @@ class TaskListRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
 
-        $tasks = array_map(function ($row) {
+        $tasksByDeliveryId = array_reduce($tasksQueryResult, function ($carry, $row) {
+            $deliveryId = $row['deliveryId'] ?? null;
+
+            if (null === $deliveryId) {
+                return $carry;
+            }
+
+            $task = $row[0];
+            $carry[$deliveryId][] = $task;
+            return $carry;
+        }, []);
+
+        $tasks = array_map(function ($row) use ($tasksByDeliveryId) {
+            $task = $row[0];
+            $deliveryId = $row['deliveryId'] ?? null;
+
+            $taskPackages = [];
+            $weight = null;
+
+            $tasksInTheSameDelivery = $deliveryId ? $tasksByDeliveryId[$deliveryId] : [];
+
+            if ($task->isPickup()) {
+                // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and
+                // the packages are the "sum" of the dropoffs packages
+                foreach ($tasksInTheSameDelivery as $task) {
+                    if ($task->isPickup()) {
+                        continue;
+                    }
+
+                    $taskPackages = array_merge($taskPackages, $task->getPackages()->toArray());
+                    $weight += $task->getWeight();
+                }
+            } else {
+                $taskPackages = $task->getPackages()->toArray();
+                $weight = $task->getWeight();
+            }
+
             $task = $row[0];
             $taskDto = new MyTaskDto(
                 $task->getId(),
@@ -96,11 +132,15 @@ class TaskListRepository extends ServiceEntityRepository
                 $task->getTags(),
                 $task->isDoorstep(),
                 $task->getComments(),
-                $task->getPackages()->map(function (Task\Package $package) {
+                array_map(function (Task\Package $taskPackage) {
+                    $package = $taskPackage->getPackage();
                     return new TaskPackageDto(
-                        $package->getPackage()->getName(),
-                        $package->getQuantity());
-                })->toArray(),
+                        $package->getShortCode(),
+                        $package->getName(),
+                        $package->getAverageVolumeUnits(),
+                        $taskPackage->getQuantity());
+                }, $taskPackages),
+                $weight,
                 $task->getHasIncidents(),
                 $row['organizationName'],
                 new TaskMetadataDto(

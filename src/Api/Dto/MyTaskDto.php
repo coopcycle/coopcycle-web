@@ -54,6 +54,9 @@ final class MyTaskDto
     public readonly array $packages;
 
     #[Groups(["task"])]
+    public readonly ?int $weight;
+
+    #[Groups(["task"])]
     public readonly bool $hasIncidents;
 
     #[Groups(["task"])]
@@ -74,6 +77,7 @@ final class MyTaskDto
         bool $doorstep,
         ?string $comment,
         array $packages,
+        ?int $weight,
         bool $hasIncidents,
         string $orgName,
         TaskMetadataDto $metadata)
@@ -92,6 +96,7 @@ final class MyTaskDto
         $this->doorstep = $doorstep;
         $this->comment = $comment;
         $this->packages = $packages;
+        $this->weight = $weight;
         $this->hasIncidents = $hasIncidents;
         $this->orgName = $orgName;
         $this->metadata = $metadata;
