@@ -54,8 +54,8 @@ class ExportTasksHandler implements MessageHandlerInterface
     public function __invoke(ExportTasks $message): string
     {
 
-        $afterDate = $message->getFrom()->setTime(0, 0, 0)->format('Y-m-d');
-        $beforeDate = $message->getTo()->setTime(23, 59, 59)->format('Y-m-d');
+        $afterDate = $message->getFrom()->setTime(0, 0, 0)->format('Y-m-d H:i:s');
+        $beforeDate = $message->getTo()->setTime(23, 59, 59)->format('Y-m-d H:i:s');
 
         $statement = $this->en->getConnection()->prepare(<<<SQL
             WITH task_events AS (
