@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Dto\MyTaskDto;
+use AppBundle\Api\Dto\MyTaskMetadataDto;
 use AppBundle\Api\Dto\TaskPackageDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -142,10 +143,12 @@ class TaskListRepository extends ServiceEntityRepository
                 $weight,
                 $task->getHasIncidents(),
                 $row['organizationName'],
-                $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
-                $row['orderNumber'] ?? null,
-                $task->getMetadata()['payment_method'] ?? null, //FIXME extract from the query
-                $row['orderTotal'] ?? null,
+                new MyTaskMetadataDto(
+                    $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
+                    $row['orderNumber'] ?? null,
+                    $task->getMetadata()['payment_method'] ?? null, //FIXME extract from the query
+                    $row['orderTotal'] ?? null,
+                )
             );
 
             return $taskDto;

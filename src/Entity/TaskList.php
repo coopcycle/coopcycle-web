@@ -3,7 +3,6 @@
 namespace AppBundle\Entity;
 
 use AppBundle\Action\MyTasks as MyTasksController;
-use AppBundle\Action\MyTasks2 as MyTasksController2;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
@@ -69,6 +68,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "path"="/me/tasks/{date}",
  *       "controller"=MyTasksController::class,
+ *       "output"=MyTaskListDto::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
  *       "read"=false,
  *       "write"=false,
@@ -84,26 +84,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *         }}
  *       }
  *     },
- *     "my_tasks_v2"={
- *        "method"="GET",
- *        "path"="/me/tasks/v2/{date}",
- *        "controller"=MyTasksController2::class,
- *        "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *        "output"=MyTaskListDto::class,
- *        "read"=false,
- *        "write"=false,
- *        "normalization_context"={"groups"={"task_list", "task", "delivery", "address"}},
- *        "openapi_context"={
- *          "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
- *          "parameters"={{
- *            "in"="path",
- *            "name"="date",
- *            "required"=true,
- *            "type"="string",
- *            "format"="date"
- *          }}
- *        }
- *      },
  *     "optimize"={
  *        "method"="GET",
  *        "path"="/task_lists/{id}/optimize",

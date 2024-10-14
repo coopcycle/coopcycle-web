@@ -35,6 +35,18 @@ final class MyTaskDto
     #[Groups(["task"])]
     public readonly DateTime $before;
 
+    /**
+     * @deprecated use $after instead
+     */
+    #[Groups(["task"])]
+    public readonly DateTime $doneAfter;
+
+    /**
+     * @deprecated use $before instead
+     */
+    #[Groups(["task"])]
+    public readonly DateTime $doneBefore;
+
     #[Groups(["task"])]
     public readonly ?int $previous;
 
@@ -60,16 +72,8 @@ final class MyTaskDto
     public readonly bool $hasIncidents;
 
     #[Groups(["task"])]
-    public readonly ?int $delivery_position;
+    public readonly MyTaskMetadataDto $metadata;
 
-    #[Groups(["task"])]
-    public readonly ?string $order_number;
-
-    #[Groups(["task"])]
-    public readonly ?string $payment_method;
-
-    #[Groups(["task"])]
-    public readonly ?int $order_total;
 
     public function __construct(
         int $id,
@@ -89,10 +93,7 @@ final class MyTaskDto
         ?int $weight,
         bool $hasIncidents,
         string $orgName,
-        ?int $deliveryPosition,
-        ?string $orderNumber,
-        ?string $paymentMethod,
-        ?int $orderTotal
+        MyTaskMetadataDto $metadata
     )
     {
         $this->id = $id;
@@ -103,6 +104,8 @@ final class MyTaskDto
         $this->address = $address;
         $this->after = $after;
         $this->before = $before;
+        $this->doneAfter = $after;
+        $this->doneBefore = $before;
         $this->previous = $previous;
         $this->next = $next;
         $this->tags = $tags;
@@ -112,9 +115,6 @@ final class MyTaskDto
         $this->weight = $weight;
         $this->hasIncidents = $hasIncidents;
         $this->orgName = $orgName;
-        $this->delivery_position = $deliveryPosition;
-        $this->order_number = $orderNumber;
-        $this->payment_method = $paymentMethod;
-        $this->order_total = $orderTotal;
+        $this->metadata = $metadata;
     }
 }

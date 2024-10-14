@@ -2,11 +2,12 @@
 
 namespace AppBundle\Action;
 
+use AppBundle\Entity\TaskListRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -14,23 +15,30 @@ final class MyTasks
 {
     use TokenStorageTrait;
 
+    /**
+     * @var TaskListRepository
+     */
+    private readonly EntityRepository $taskListRepository;
+
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        protected EntityManagerInterface $entityManager)
+        private readonly EntityManagerInterface $entityManager)
     {
         $this->tokenStorage = $tokenStorage;
+        $this->taskListRepository = $this->entityManager->getRepository(TaskList::class);
     }
 
     public function __invoke(Request $request)
     {
+        $user = $this->getUser();
         $date = new \DateTime($request->get('date'));
 
-        $taskList = $this->loadExisting($date);
+        $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
 
-        if (null === $taskList) {
+        if (null === $taskListDto) {
 
             $taskList = new TaskList();
-            $taskList->setCourier($this->getUser());
+            $taskList->setCourier($user);
             $taskList->setDate($date);
 
             try {
@@ -40,40 +48,10 @@ final class MyTasks
                 // If 2 requests are received at the very same time,
                 // we can have a race condition
                 // @see https://github.com/coopcycle/coopcycle-app/issues/1265
-                $taskList = $this->loadExisting($date);
+                $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
             }
         }
 
-        return $taskList;
-    }
-
-    /**
-     * @param \DateTime $date
-     * @return TaskList|null
-     */
-    private function loadExisting(\DateTime $date): ?TaskList
-    {
-        $taskList = $this->entityManager->getRepository(TaskList::class)
-            ->findOneBy([
-                'courier' => $this->getUser(),
-                'date' => $date,
-            ]);
-
-        if ($taskList) {
-
-            // reset array index to 0 with array_values, otherwise you might get weird stuff in the serializer
-            $notCancelled = array_values(
-                array_filter(array_filter($taskList->getTasks(), function (Task $task) {
-                    return !$task->isCancelled();
-                }))
-            );
-
-            // supports the legacy display of TaskList as tasks for the app courier part
-            $taskList->setTempLegacyTaskStorage($notCancelled);
-
-            return $taskList;
-        }
-
-        return null;
+        return $taskListDto;
     }
 }
