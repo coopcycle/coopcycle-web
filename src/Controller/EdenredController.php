@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -95,5 +96,27 @@ class EdenredController extends AbstractController
             // TODO Redirect depending on context
             return $this->redirectToRoute('profile_edit');
         }
+    }
+
+    /**
+     * Proxies authorization_code requests to Edenred server, to avoid exposing the client secret.
+     * This is used on the app.
+     *
+     * @Route("/edenred/connect/token", name="edenred_connect_token")
+     */
+    public function connectTokenAction(Request $request)
+    {
+        $response = new JsonResponse();
+
+        // TODO Make sure client_id matches & grant_type == authorization_code
+
+        try {
+            $data = $this->authentication->authorizationCode($request->get('code'), $request->get('redirect_uri'));
+            $response->setData($data);
+        } catch (HttpExceptionInterface $e) {
+            $response->setJson($e->getResponse()->getContent());
+        }
+
+        return $response;
     }
 }

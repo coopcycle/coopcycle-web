@@ -156,7 +156,8 @@ Feature: Orders Adhoc
         },
         "invitation": "@string@||@null@",
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
     """
 
@@ -283,7 +284,8 @@ Feature: Orders Adhoc
         },
         "invitation": "@string@||@null@",
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
     """
     When the user "bob" is loaded:
@@ -408,6 +410,7 @@ Feature: Orders Adhoc
         },
         "invitation": "@string@||@null@",
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
     """
