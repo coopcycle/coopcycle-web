@@ -278,6 +278,10 @@ class Client
 
     public function hasValidCredentials(Customer $customer): bool
     {
+        if (is_null($customer->getEdenredCredentials())) {
+            return false;
+        }
+
         try {
 
             $this->authentication->userInfo($customer);
