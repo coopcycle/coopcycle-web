@@ -278,7 +278,7 @@ class Client
 
     public function hasValidCredentials(Customer $customer): bool
     {
-        if (is_null($customer->getEdenredCredentials())) {
+        if (!$customer->hasEdenredCredentials()) {
             return false;
         }
 
