@@ -4,6 +4,7 @@ namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\LoopEat\Context as LoopeatContext;
@@ -46,7 +47,8 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         private TranslatorInterface $translator,
         private LoopeatClient $loopeatClient,
         private LoopeatContextInitializer $loopeatContextInitializer,
-        private GatewayResolver $paymentGatewayResolver)
+        private GatewayResolver $paymentGatewayResolver,
+        private EdenredClient $edenredClient)
     {}
 
     public function normalize($object, $format = null, array $context = array())
@@ -172,6 +174,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $data['paymentGateway'] = $this->paymentGatewayResolver->resolveForOrder($object);
+
+        // Make sure the customer has *VALID* Edenred credentials
+        if (array_key_exists('hasEdenredCredentials', $data) && true === $data['hasEdenredCredentials']) {
+            $data['hasEdenredCredentials'] = $this->edenredClient->hasValidCredentials($object->getCustomer());
+        }
 
         return $data;
     }

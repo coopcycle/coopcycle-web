@@ -268,6 +268,9 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
         $this->setLastName('');
     }
 
+    /**
+     * @return EdenredCustomerCredentials|null
+     */
     public function getEdenredCredentials(): ?EdenredCustomerCredentials
     {
         return $this->edenredCredentials;
@@ -276,7 +279,7 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
     public function hasEdenredCredentials(): bool
     {
         return null !== $this->edenredCredentials &&
-            ($this->edenredCredentials->getAccessToken() !== null && $this->edenredCredentials->getRefreshToken());
+            ($this->edenredCredentials->getAccessToken() !== null && $this->edenredCredentials->getRefreshToken() !== null);
     }
 
     public function setEdenredAccessToken($accessToken)

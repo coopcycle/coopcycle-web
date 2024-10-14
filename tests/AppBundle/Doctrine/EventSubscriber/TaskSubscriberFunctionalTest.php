@@ -10,6 +10,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Fidry\AliceDataFixtures\LoaderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 

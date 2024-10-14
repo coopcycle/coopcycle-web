@@ -49,6 +49,11 @@ class Client
 
     public function getBalance(Customer $customer): int
     {
+        if (!$customer->hasEdenredCredentials()) {
+
+            return 0;
+        }
+
         try {
 
             $userInfo = $this->authentication->userInfo($customer);
@@ -77,10 +82,6 @@ class Client
 
         } catch (BadResponseException $e) {
             // This means the refresh token has expired
-            if (401 === $e->getResponse()->getStatusCode()) {
-                $this->logger->error('Refresh token has expired, clearing credentials');
-                $customer->clearEdenredCredentials();
-            }
         } catch (RequestException $e) {
             $this->logger->error(sprintf(
                 'Could not get customer balance: "%s"',
@@ -278,5 +279,28 @@ class Client
 
             throw $e;
         }
+    }
+
+    public function hasValidCredentials(Customer $customer): bool
+    {
+        if (!$customer->hasEdenredCredentials()) {
+            return false;
+        }
+
+        try {
+
+            $this->authentication->userInfo($customer);
+
+            return true;
+
+        } catch (BadResponseException $e) {
+            // This means the refresh token has expired
+        } catch (RequestException $e) {
+            // We do *NOT* rethrow the exception.
+            // This way, if the Edenred server has problems,
+            // it doesn't break the checkout.
+        }
+
+        return false;
     }
 }

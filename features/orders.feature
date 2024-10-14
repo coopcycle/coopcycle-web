@@ -236,7 +236,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -406,7 +407,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -699,7 +701,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -856,7 +859,8 @@ Feature: Orders
         "hasReceipt":@boolean@,
         "invitation":null,
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1008,7 +1012,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -1234,7 +1239,8 @@ Feature: Orders
         "assignedTo":null,
         "invitation":null,
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1413,13 +1419,12 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 
@@ -1553,13 +1558,12 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 

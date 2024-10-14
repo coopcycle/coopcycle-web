@@ -16,7 +16,8 @@ describe('Platform catering; manager; modify company data', () => {
 
     cy.get('button[name="company[save]"]').click()
 
-    cy.get('.alert-success').should('exist')
-    cy.get('input[id=company_name]').should('have.value', 'NEW NAME')
+    cy.url().should('include', '/profile/business-account')
+    cy.get('.alert-success', { timeout: 30000 }).should('exist')
+    cy.get('input[id=company_name]', { timeout: 30000 }).should('have.value', 'NEW NAME')
   })
 })

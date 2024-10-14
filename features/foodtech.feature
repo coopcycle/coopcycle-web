@@ -93,7 +93,8 @@ Feature: Food Tech
             "hasReceipt":@boolean@,
             "invitation": "@string@||@null@",
             "events":@array@,
-            "paymentGateway":@string@
+            "paymentGateway":@string@,
+            "hasEdenredCredentials":@boolean@
           }
         ],
         "hydra:totalItems":1,

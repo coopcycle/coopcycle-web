@@ -28,7 +28,7 @@ class ExportOrdersHandler implements MessageHandlerInterface
         $locale = $message->getLocale() ?? $this->container->getParameter('kernel.default_locale');
         $stats = new RestaurantStats(
             $this->entityManager,
-            $message->getFrom()->setTime(0, 0, 1),
+            $message->getFrom()->setTime(0, 0, 0),
             $message->getTo()->setTime(23, 59, 59),
             null,
             $this->paginator,

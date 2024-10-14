@@ -57,8 +57,10 @@ class CheckoutPaymentType extends AbstractType
                 $choices['Credit card'] = 'card';
             }
 
+            $hasValidEdenredCredentials = false;
             if ($order->supportsEdenred()) {
-                if ($order->getCustomer()->hasEdenredCredentials()) {
+                $hasValidEdenredCredentials = $this->edenredPayment->hasValidCredentials($order->getCustomer());
+                if ($hasValidEdenredCredentials) {
                     $edenredAmount = $this->edenredPayment->getMaxAmount($order);
                     if ($edenredAmount > 0) {
                         $choices['Edenred'] = 'edenred';
@@ -78,7 +80,7 @@ class CheckoutPaymentType extends AbstractType
                 ->add('method', ChoiceType::class, [
                     'label' => count($choices) > 1 ? 'form.checkout_payment.method.label' : false,
                     'choices' => $choices,
-                    'choice_attr' => function($choice, $key, $value) use ($order) {
+                    'choice_attr' => function($choice, $key, $value) use ($order, $hasValidEdenredCredentials) {
 
                         if (null !== $order->getCustomer()) {
 
@@ -87,7 +89,7 @@ class CheckoutPaymentType extends AbstractType
                             switch ($value) {
                                 case 'edenred':
                                     return [
-                                        'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
+                                        'data-edenred-is-connected' => $hasValidEdenredCredentials,
                                         'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)
                                     ];
                             }
