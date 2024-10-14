@@ -18,15 +18,21 @@ class MyTaskMetadataDto
     #[Groups(["task"])]
     public readonly ?int $order_total;
 
+    #[Groups(["task"])]
+    public readonly bool $has_loopeat_returns;
+
     public function __construct(
         ?int $delivery_position,
         ?string $order_number,
         ?string $payment_method,
-        ?int $order_total)
+        ?int $order_total,
+        bool $has_loopeat_returns
+    )
     {
         $this->delivery_position = $delivery_position;
         $this->order_number = $order_number;
         $this->payment_method = $payment_method;
         $this->order_total = $order_total;
+        $this->has_loopeat_returns = $has_loopeat_returns;
     }
 }

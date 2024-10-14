@@ -60,6 +60,7 @@ class TaskListRepository extends ServiceEntityRepository
                 'o.number AS orderNumber',
                 'o.total AS orderTotal',
                 'org.name AS organizationName',
+                'loopeatDetails.returns AS loopeatReturns',
                 // objects are listed below to force them being hydrated / pre-fetched by Doctrine
                 // https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/dql-doctrine-query-language.html#result-format
                 'taskPackage',
@@ -73,6 +74,7 @@ class TaskListRepository extends ServiceEntityRepository
             ->leftJoin('t.packages', 'taskPackage')
             ->leftJoin('taskPackage.package', 'package')
             ->leftJoin('t.incidents', 'incidents')
+            ->leftJoin('o.loopeatDetails', 'loopeatDetails')
             ->where('t.id IN (:taskIds)')
             ->andWhere('t.status != :statusCancelled')
             ->setParameter('taskIds', $orderedTaskIds) // using IN might cause problems with large number of tasks
@@ -148,6 +150,7 @@ class TaskListRepository extends ServiceEntityRepository
                     $row['orderNumber'] ?? null,
                     $task->getMetadata()['payment_method'] ?? null, //FIXME extract from the query
                     $row['orderTotal'] ?? null,
+                    $task->isDropoff() && $row['loopeatReturns'] && count($row['loopeatReturns']) > 0
                 )
             );
 
