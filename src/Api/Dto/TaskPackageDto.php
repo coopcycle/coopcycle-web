@@ -7,13 +7,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class TaskPackageDto
 {
     #[Groups(["task"])]
-    public readonly string $shortCode;
+    public readonly string $short_code;
 
     #[Groups(["task"])]
     public readonly string $name;
 
     #[Groups(["task"])]
-    public readonly int $averageVolumeUnits;
+    public readonly string $type;
+
+    #[Groups(["task"])]
+    public readonly int $volume_per_package;
 
     #[Groups(["task"])]
     public readonly int $quantity;
@@ -24,9 +27,11 @@ class TaskPackageDto
         int $averageVolumeUnits,
         int $quantity)
     {
-        $this->shortCode = $shortCode;
+        $this->short_code = $shortCode;
         $this->name = $name;
-        $this->averageVolumeUnits = $averageVolumeUnits;
+        //FIXME; why do we have name and type with the same value?
+        $this->type = $name;
+        $this->volume_per_package = $averageVolumeUnits;
         $this->quantity = $quantity;
     }
 }

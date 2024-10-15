@@ -30,14 +30,16 @@ services:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
+  AppBundle\Serializer\MyTaskMetadataDtoNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\TaskPackageDtoNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
   AppBundle\Serializer\MyTaskDtoNormalizer:
-    arguments:
-      - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\MyTaskListDtoNormalizer:
-    arguments:
-      - "@api_platform.jsonld.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\TaskImageNormalizer:

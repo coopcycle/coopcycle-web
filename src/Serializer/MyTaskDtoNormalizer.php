@@ -3,63 +3,67 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Api\Dto\MyTaskDto;
+use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 
-class MyTaskDtoNormalizer implements NormalizerInterface
+class MyTaskDtoNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
 {
+    use NormalizerAwareTrait;
+
+    private const ALREADY_CALLED = 'MyTaskDtoNormalizer_ALREADY_CALLED';
+
     public function __construct(
-        private ItemNormalizer $normalizer,
-        private IriConverterInterface $iriConverter,
-        private TagManager $tagManager,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly TagManager $tagManager,
     )
-    {}
+    {
+    }
 
     public function normalize($object, $format = null, array $context = array())
     {
+        $context[self::ALREADY_CALLED] = true;
+
         $data = $this->normalizer->normalize($object, $format, $context);
-
         if (!is_array($data)) {
-
             return $data;
         }
+
+        // override json-ld to match the existing API
+        $data['@context'] = '/api/contexts/Task';
+        $data['@type'] = 'Task';
+        $data['@id'] = "/api/tasks/" . $object->id;
 
         // Make sure "comments" is a string
         if (array_key_exists('comments', $data) && null === $data['comments']) {
             $data['comments'] = '';
         }
 
-        if (isset($data['tags']) && is_array($data['tags']) && count($data['tags']) > 0) {
+        if (isset($data['tags']) && count($data['tags']) > 0) {
             $data['tags'] = $this->tagManager->expand($data['tags']);
         }
 
-        $data['previous'] = null;
-        if ($object->hasPrevious()) {
-            $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
+        if ($object->previous) {
+            $data['previous'] = $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $object->previous]);
         }
 
-        $data['next'] = null;
-        if ($object->hasNext()) {
-            $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
+        if ($object->next) {
+            $data['next'] = $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $object->next]);
         }
-
-        //TODO; fix me
-//        if (array_key_exists('metadata', $data) && is_array($data['metadata'])) {
-//            if ($order = $object->getDelivery()?->getOrder()) {
-//                $data['metadata'] = array_merge($data['metadata'], ['zero_waste' => $order->isZeroWaste()]);
-//                if ($object->isDropoff()) {
-//                    $data['metadata'] = array_merge($data['metadata'], ['has_loopeat_returns' => $order->hasLoopeatReturns()]);
-//                }
-//            }
-//        }
 
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, ?string $format = null, array $context = [])
     {
-        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof MyTaskDto;
+        // Make sure we're not called twice
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
+
+        return $data instanceof MyTaskDto;
     }
 }
