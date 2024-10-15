@@ -6,6 +6,7 @@ use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Api\Dto\MyTaskMetadataDto;
 use AppBundle\Api\Dto\TaskPackageDto;
+use AppBundle\Entity\Sylius\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -49,6 +50,7 @@ class TaskListRepository extends ServiceEntityRepository
             return null;
         }
 
+
         $orderedTaskIds = array_map(function (Task $task) {
             return $task->getId();
         }, $taskList->getTasks());
@@ -56,7 +58,8 @@ class TaskListRepository extends ServiceEntityRepository
         $tasksQueryResult = $this->entityManager->createQueryBuilder()
             ->select([
                 't',
-                'd.id AS deliveryId',
+                'delivery.id AS deliveryId',
+                'o.id AS orderId',
                 'o.number AS orderNumber',
                 'o.total AS orderTotal',
                 'org.name AS organizationName',
@@ -65,22 +68,21 @@ class TaskListRepository extends ServiceEntityRepository
                 // https://www.doctrine-project.org/projects/doctrine-orm/en/3.2/reference/dql-doctrine-query-language.html#result-format
                 'taskPackage',
                 'package',
-                'incidents',
             ])
             ->from(Task::class, 't')
-            ->leftJoin('t.delivery', 'd')
-            ->leftJoin('d.order', 'o')
+            ->leftJoin('t.delivery', 'delivery')
+            ->leftJoin('delivery.order', 'o')
             ->leftJoin('t.organization', 'org')
+            ->leftJoin('o.loopeatDetails', 'loopeatDetails')
             ->leftJoin('t.packages', 'taskPackage')
             ->leftJoin('taskPackage.package', 'package')
-            ->leftJoin('t.incidents', 'incidents')
-            ->leftJoin('o.loopeatDetails', 'loopeatDetails')
             ->where('t.id IN (:taskIds)')
             ->andWhere('t.status != :statusCancelled')
-            ->setParameter('taskIds', $orderedTaskIds) // using IN might cause problems with large number of tasks
+            ->setParameter('taskIds', $orderedTaskIds) // using IN might cause problems with large number of items
             ->setParameter('statusCancelled', Task::STATUS_CANCELLED)
             ->getQuery()
             ->getResult();
+
 
         $tasksByDeliveryId = array_reduce($tasksQueryResult, function ($carry, $row) {
             $deliveryId = $row['deliveryId'] ?? null;
@@ -94,9 +96,63 @@ class TaskListRepository extends ServiceEntityRepository
             return $carry;
         }, []);
 
-        $tasks = array_map(function ($row) use ($tasksByDeliveryId) {
+
+        $tasksWithIncidentsQueryResult = $this->entityManager->createQueryBuilder()
+            ->select([
+                't.id AS taskId',
+                'COUNT(incidents.id) AS incidentCount',
+            ])
+            ->from(Task::class, 't')
+            ->leftJoin('t.incidents', 'incidents')
+            ->where('t.id IN (:taskIds)')
+            ->setParameter('taskIds', $orderedTaskIds) // using IN might cause problems with large number of items
+            ->groupBy('t.id')
+            ->getQuery()
+            ->getResult();
+
+        $tasksWithIncidents = array_reduce($tasksWithIncidentsQueryResult, function ($carry, $row) {
+            $carry[$row['taskId']] = $row['incidentCount'];
+            return $carry;
+        }, []);
+
+
+        $orderIds = array_reduce($tasksQueryResult, function ($carry, $row) {
+            $orderId = $row['orderId'] ?? null;
+
+            if (null === $orderId) {
+                return $carry;
+            }
+
+            $carry[$orderId] = $orderId; // using an associative array to avoid duplicates
+            return $carry;
+        }, []);
+
+        $zeroWasteOrdersQueryResult = $this->entityManager->createQueryBuilder()
+            ->select([
+                'o.id AS orderId',
+                'COUNT(reusablePackaging.id) AS reusablePackagingCount',
+            ])
+            ->from(Order::class, 'o')
+            ->leftJoin('o.items', 'orderItem')
+            ->leftJoin('orderItem.variant', 'productVariant')
+            ->leftJoin('productVariant.product', 'product')
+            ->leftJoin('product.reusablePackagings', 'reusablePackaging')
+            ->where('o.id IN (:orderIds)')
+            ->andWhere('product.reusablePackagingEnabled = TRUE')
+            ->setParameter('orderIds', $orderIds) // using IN might cause problems with large number of items
+            ->groupBy('o.id')
+            ->getQuery()
+            ->getResult();
+
+        $zeroWasteOrders = array_reduce($zeroWasteOrdersQueryResult, function ($carry, $row) {
+            $carry[$row['orderId']] = $row['reusablePackagingCount'];
+            return $carry;
+        }, []);
+
+        $tasks = array_map(function ($row) use ($tasksByDeliveryId, $tasksWithIncidents, $zeroWasteOrders) {
             $task = $row[0];
             $deliveryId = $row['deliveryId'] ?? null;
+            $orderId = $row['orderId'] ?? null;
 
             $taskPackages = [];
             $weight = null;
@@ -119,7 +175,6 @@ class TaskListRepository extends ServiceEntityRepository
                 $weight = $task->getWeight();
             }
 
-            $task = $row[0];
             $taskDto = new MyTaskDto(
                 $task->getId(),
                 $task->getCreatedAt(),
@@ -143,14 +198,15 @@ class TaskListRepository extends ServiceEntityRepository
                         $taskPackage->getQuantity());
                 }, $taskPackages),
                 $weight,
-                $task->getHasIncidents(),
+                ($tasksWithIncidents[$task->getId()] ?? 0) > 0,
                 $row['organizationName'],
                 new MyTaskMetadataDto(
                     $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
                     $row['orderNumber'] ?? null,
                     $task->getMetadata()['payment_method'] ?? null, //FIXME extract from the query
                     $row['orderTotal'] ?? null,
-                    $task->isDropoff() && $row['loopeatReturns'] && count($row['loopeatReturns']) > 0
+                    $task->isDropoff() && $row['loopeatReturns'] && count($row['loopeatReturns']) > 0,
+                    $orderId && ($zeroWasteOrders[$orderId] ?? 0) > 0
                 )
             );
 
