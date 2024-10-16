@@ -7,7 +7,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\TaskList;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -15,14 +14,13 @@ final class MyTasks
 {
     use TokenStorageTrait;
 
-    private readonly EntityRepository $taskListRepository;
-
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        private readonly EntityManagerInterface $entityManager)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TaskListRepository $taskListRepository
+    )
     {
         $this->tokenStorage = $tokenStorage;
-        $this->taskListRepository = $this->entityManager->getRepository(TaskList::class);
     }
 
     public function __invoke(Request $request)
