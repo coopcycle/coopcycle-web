@@ -27,6 +27,10 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
         unset($data['@type']);
         unset($data['@id']);
 
+        if (null === $data['has_loopeat_returns']) {
+            unset($data['has_loopeat_returns']);
+        }
+
         return $data;
     }
 

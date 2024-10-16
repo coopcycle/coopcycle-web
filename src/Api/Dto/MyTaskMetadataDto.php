@@ -19,7 +19,7 @@ class MyTaskMetadataDto
     public readonly ?int $order_total;
 
     #[Groups(["task"])]
-    public readonly bool $has_loopeat_returns;
+    public readonly ?bool $has_loopeat_returns;
 
     #[Groups(["task"])]
     public readonly bool $zero_waste;
@@ -29,7 +29,7 @@ class MyTaskMetadataDto
         ?string $order_number,
         ?string $payment_method,
         ?int $order_total,
-        bool $has_loopeat_returns,
+        ?bool $has_loopeat_returns,
         bool $zero_waste
     )
     {

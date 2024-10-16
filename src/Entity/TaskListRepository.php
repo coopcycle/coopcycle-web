@@ -24,6 +24,15 @@ class TaskListRepository extends ServiceEntityRepository
 
     public function findMyTaskListAsDto(UserInterface $user, \DateTime $date): ?MyTaskListDto
     {
+
+        /**
+         * IMPORTANT: The queries below are optimized for list operations.
+         * So that the number of queries is constant and does not depend on the number of tasks.
+         * Be careful when adding/modifying them
+         * (check Symfony Profiler/Doctine, the number of "Database Queries"
+         * should be equal to the number of "Different statements").
+         */
+
         $taskListQueryResult = $this->entityManager->createQueryBuilder()
             ->select([
                 'tl',
@@ -205,7 +214,7 @@ class TaskListRepository extends ServiceEntityRepository
                     $row['orderNumber'] ?? null,
                     $task->getMetadata()['payment_method'] ?? null, //FIXME extract from the query
                     $row['orderTotal'] ?? null,
-                    $task->isDropoff() && $row['loopeatReturns'] && count($row['loopeatReturns']) > 0,
+                    $task->isDropoff() ? ($row['loopeatReturns'] && count($row['loopeatReturns']) > 0) : null,
                     $orderId && ($zeroWasteOrders[$orderId] ?? 0) > 0
                 )
             );
