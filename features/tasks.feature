@@ -893,6 +893,7 @@ Feature: Tasks
         "@context":"/api/contexts/Incident",
         "@id":"@string@",
         "@type":"Incident",
+        "id":@integer@,
         "title":"Endommagé",
         "status":"OPEN",
         "priority":@integer@,
