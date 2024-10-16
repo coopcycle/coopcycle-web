@@ -55,6 +55,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Incident implements TaggableInterface {
     use TaggableTrait;
 
+    /**
+     * @Groups({"incident"})
+     */
     protected $id;
 
     /**
