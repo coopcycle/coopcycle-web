@@ -15,9 +15,6 @@ final class MyTasks
 {
     use TokenStorageTrait;
 
-    /**
-     * @var TaskListRepository
-     */
     private readonly EntityRepository $taskListRepository;
 
     public function __construct(
