@@ -158,6 +158,7 @@ class TaskListRepository extends ServiceEntityRepository
             return $carry;
         }, []);
 
+
         $tasks = array_map(function ($row) use ($tasksByDeliveryId, $tasksWithIncidents, $zeroWasteOrders) {
             $task = $row[0];
             $deliveryId = $row['deliveryId'] ?? null;
@@ -222,6 +223,7 @@ class TaskListRepository extends ServiceEntityRepository
             return $taskDto;
         }, $tasksQueryResult);
 
+
         $tasksById = array_reduce($tasks, function ($carry, $task) {
             $carry[$task->id] = $task;
             return $carry;
@@ -236,6 +238,7 @@ class TaskListRepository extends ServiceEntityRepository
                 $orderedTasks[] = $tasksById[$taskId];
             }
         }
+
 
         $taskListDto = new MyTaskListDto(
             $taskList->getId(),
