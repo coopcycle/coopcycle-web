@@ -587,7 +587,7 @@ form.settings.latlng.help: "Especifique a latitude e longitude padrão. Você po
   \ em <a href=\"https://www.latlong.net/\"> latlong.net </a>\n"
 form.settings.latlng.label: Cordenadas geográficas
 form.settings.stripe_connect_client_id.help: "Obtenha o identificador na <a href=\"\
-  https://dashboard.stripe.com/account/applications/settings\"> página de parâmetros\
+  https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"> página de parâmetros\
   \ </a>\n"
 form.settings.stripe_connect_client_id.label: ID do Stripe Connect
 form.settings.stripe_secret_key.label: Chave secreta de Stripe

@@ -362,7 +362,7 @@ form.settings.stripe_secret_key.help: "Crea una cuenta Stripe para obtener tu <a
   https://stripe.com/docs/dashboard#api-keys\">clave secreta</a>\n"
 form.settings.stripe_connect_client_id.label: Identificador de Stripe Connect
 form.settings.stripe_connect_client_id.help: "Puedes encontrar tu identificador en\
-  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">la página\
+  \ <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">la página\
   \ de parámetros</a>\n"
 form.settings.latlng.label: Coordinadas geográficas
 form.settings.latlng.help: "Especifica la latitud y longitud por defecto del mapa.\

@@ -408,7 +408,7 @@ form.settings.latlng.help: "Bestimme die standardmäßigen Längen- und Breiteng
   \ Du erhältst sie auf <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.latlng.label: Geo-Koordinaten
 form.settings.stripe_connect_client_id.help: "Den Identifier erhältst Du auf der <a\
-  \ href=\"https://dashboard.stripe.com/account/applications/settings\">Einstellungen-Seite</a>\
+  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">Einstellungen-Seite</a>\
   \ von Stripe Connect\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect Identifier
 form.settings.stripe_secret_key.help: "Erstelle ein Stripe-Konto um die <a href=\"\

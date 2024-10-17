@@ -365,7 +365,7 @@ form.settings.stripe_secret_key.label: 'Stripe titkos kulcs'
 form.settings.stripe_secret_key.help: "Hozz létre egy Stripe-fiókot a <a href=\"https://stripe.com/docs/dashboard#api-keys\"\
   >nyilvános kulcs</a> megszerzéséhez.\n"
 form.settings.stripe_connect_client_id.label: 'Stripe Connect azonosító'
-form.settings.stripe_connect_client_id.help: "Az azonosítót a <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+form.settings.stripe_connect_client_id.help: "Az azonosítót a <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >paraméterek oldalon</a> találhatod meg.\n"
 form.settings.latlng.label: 'Földrajzi koordináták'
 form.settings.latlng.help: "A alapértelmezett szélességi és hosszúsági fokok megadásához\
