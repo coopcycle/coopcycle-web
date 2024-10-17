@@ -896,6 +896,14 @@ services:
       $country: "%country_iso%"
       $locale: '%env(COOPCYCLE_LOCALE)%'
 
+  AppBundle\Incident\LoopeatFailureReasonsResolver: ~
+
+  AppBundle\Action\Task\FailureReasons:
+    public: true
+    arguments:
+      $failureReasonsResolvers:
+        - '@AppBundle\Incident\LoopeatFailureReasonsResolver'
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }

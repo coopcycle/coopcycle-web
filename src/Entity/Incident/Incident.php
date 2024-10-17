@@ -55,6 +55,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Incident implements TaggableInterface {
     use TaggableTrait;
 
+    /**
+     * @Groups({"incident"})
+     */
     protected $id;
 
     /**
@@ -110,6 +113,10 @@ class Incident implements TaggableInterface {
      */
     protected ?User $createdBy = null;
 
+    /**
+     * @Groups({"incident"})
+     */
+    protected array $metadata = [];
 
     /**
      * @Groups({"incident"})
@@ -218,6 +225,16 @@ class Incident implements TaggableInterface {
     public function setCreatedBy(?User $created_by): self {
         $this->createdBy = $created_by;
         return $this;
+    }
+
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(array $metadata)
+    {
+        $this->metadata = $metadata;
     }
 
     public function getCreatedAt(): mixed {

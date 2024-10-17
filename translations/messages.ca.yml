@@ -356,7 +356,7 @@ form.settings.stripe_secret_key.help: "Creeu un compte Stripe per obtenir-ne <a 
   https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect identificador
 form.settings.stripe_connect_client_id.help: "Obteniu l'identificador a la secció\
-  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">pàgina\
+  \ <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">pàgina\
   \ de paràmetres</a>\n"
 form.settings.latlng.label: Coordenades geogràfiques
 form.settings.latlng.help: "Especifiqueu la latitud i la longitud predeterminades.\

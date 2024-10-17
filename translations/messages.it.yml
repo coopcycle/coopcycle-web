@@ -558,7 +558,7 @@ form.settings.stripe_publishable_key.help: "Crea un account Stripe per ottenere 
 form.settings.stripe_secret_key.help: "Crea un account Stripe per ottenere la tua<a\
   \ href=\"https://stripe.com/docs/dashboard#api-keys\">chiave segreta</a>\n"
 form.settings.stripe_connect_client_id.help: "Ottieni l'identificativo nella <a href=\"\
-  https://dashboard.stripe.com/account/applications/settings\">pagina dei parametri</a>\n"
+  https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">pagina dei parametri</a>\n"
 form.settings.latlng.label: Coordinate geografiche
 form.settings.latlng.help: "Specifica la latitudine e longitudine predefinita. La\
   \ puoi ottenere su <a href=\"https://www.latlong.net/\">latlong.net</a>\n"

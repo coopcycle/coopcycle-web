@@ -168,9 +168,13 @@ services:
       - { name: 'console.command', command: 'coopcycle:cube:email-results' }
 
   AppBundle\Command\ExportTasksCommand:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:export:tasks' }
 
   AppBundle\Command\ExportOrdersCommand:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:export:orders' }

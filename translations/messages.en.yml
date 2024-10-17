@@ -542,7 +542,7 @@ form.settings.stripe_secret_key.help: "Create a Stripe account to obtain your <a
   https://stripe.com/docs/dashboard#api-keys\">publishable key</a>\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect identifier
 form.settings.stripe_connect_client_id.help: "Get the identifier on the <a href=\"\
-  https://dashboard.stripe.com/account/applications/settings\">parameters page</a>\n"
+  https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">parameters page</a>\n"
 form.settings.latlng.label: Geographical coordinates
 form.settings.latlng.help: "Specify the default latitude and longitude. You can get\
   \ it on <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
@@ -1624,3 +1624,4 @@ order.export.heading.applied_billing: Applied billing
 deliveries.import_upload_error: The file couldn't be uploaded. Please try again later.
 organizations.breadcrumb: Organizations
 organizations.new: New organization
+loopeat.incident.unexpected_returns: Unexpected number of zero waste returns

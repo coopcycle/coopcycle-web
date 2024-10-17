@@ -448,7 +448,7 @@ form.settings.stripe_secret_key.help: "Vytvořte si účet Stripe a získejte <a
   https://stripe.com/docs/dashboard#api-keys\"> veřejný klíč </a>\n"
 form.settings.stripe_connect_client_id.label: identifikátor Stripe Connect
 form.settings.stripe_connect_client_id.help: "Identifikátor získáte na stránce <a\
-  \ href=\"https://dashboard.stripe.com/account/applications/settings\"> parametry\
+  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"> parametry\
   \ </a>\n"
 form.settings.latlng.label: Zeměpisné souřadnice
 form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete ji získat\

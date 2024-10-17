@@ -476,7 +476,7 @@ form.settings.stripe_secret_key.label: 'Stripe gako sekretua'
 form.settings.stripe_secret_key.help: "tu Stripe kontu bat zure <a href=\"https://stripe.com/docs/dashboard#api-keys\"\
   >gako sekretua</a> lortzeko\n"
 form.settings.stripe_connect_client_id.label: 'Stripe Connect identifikatzailea'
-form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >parametro orrian</a>\n"
 form.settings.google_api_key.label: 'Google API gakoa'
 form.settings.google_api_key.help: "Sortu Google kontu bat zure <a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=eu\"\

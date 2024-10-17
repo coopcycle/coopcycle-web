@@ -458,7 +458,7 @@ form.settings.stripe_secret_key.help: "Créez un compte Stripe pour récupérer 
   \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clé secrète</a>\n"
 form.settings.stripe_connect_client_id.label: Identifiant Stripe Connect
 form.settings.stripe_connect_client_id.help: "Récupérez l'identifiant Stripe Connect\
-  \ sur la <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+  \ sur la <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >page des paramètres</a>\n"
 form.settings.latlng.label: Coordonnées géographiques
 form.settings.latlng.help: "Spécifiez la latitude et la longitude par défaut. Vous\
