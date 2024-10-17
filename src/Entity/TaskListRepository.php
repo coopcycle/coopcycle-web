@@ -101,7 +101,7 @@ class TaskListRepository extends ServiceEntityRepository
             }
 
             $task = $row[0];
-            $carry[$deliveryId][] = $task;
+            $carry[$deliveryId][] = $task; // append to an array
             return $carry;
         }, []);
 
@@ -136,6 +136,26 @@ class TaskListRepository extends ServiceEntityRepository
             return $carry;
         }, []);
 
+
+        $paymentMethodsQueryResult = $this->entityManager->createQueryBuilder()
+            ->select([
+                'o.id AS orderId',
+                'paymentMethod.code AS paymentMethodCode',
+            ])
+            ->from(Order::class, 'o')
+            ->leftJoin('o.payments', 'payment')
+            ->leftJoin('payment.method', 'paymentMethod')
+            ->where('o.id IN (:orderIds)')
+            ->setParameter('orderIds', $orderIds) // using IN might cause problems with large number of items
+            ->getQuery()
+            ->getResult();
+
+        $paymentMethodsByOrderId = array_reduce($paymentMethodsQueryResult, function ($carry, $row) {
+            $carry[$row['orderId']][] = $row['paymentMethodCode']; // append to an array
+            return $carry;
+        }, []);
+
+
         $zeroWasteOrdersQueryResult = $this->entityManager->createQueryBuilder()
             ->select([
                 'o.id AS orderId',
@@ -159,7 +179,7 @@ class TaskListRepository extends ServiceEntityRepository
         }, []);
 
 
-        $tasks = array_map(function ($row) use ($tasksByDeliveryId, $tasksWithIncidents, $zeroWasteOrders) {
+        $tasks = array_map(function ($row) use ($tasksByDeliveryId, $tasksWithIncidents, $paymentMethodsByOrderId, $zeroWasteOrders) {
             $task = $row[0];
             $deliveryId = $row['deliveryId'] ?? null;
             $orderId = $row['orderId'] ?? null;
@@ -213,7 +233,7 @@ class TaskListRepository extends ServiceEntityRepository
                 new MyTaskMetadataDto(
                     $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
                     $row['orderNumber'] ?? null,
-                    $task->getMetadata()['payment_method'] ?? null, //FIXME extract from the query
+                    $paymentMethodsByOrderId[$orderId] ? $paymentMethodsByOrderId[$orderId][0] : null, //FIXME what payment method to show if there are multiple?
                     $row['orderTotal'] ?? null,
                     $task->isDropoff() ? ($row['loopeatReturns'] && count($row['loopeatReturns']) > 0) : null,
                     $orderId && ($zeroWasteOrders[$orderId] ?? 0) > 0
