@@ -18,7 +18,7 @@ final class MyTaskDto
     public readonly DateTime $updatedAt;
 
     #[Groups(["task"])]
-    public readonly string $orgName;
+    public readonly ?string $orgName;
 
     #[Groups(["task"])]
     public readonly string $type;
@@ -92,7 +92,7 @@ final class MyTaskDto
         array $packages,
         ?int $weight,
         bool $hasIncidents,
-        string $orgName,
+        ?string $orgName,
         MyTaskMetadataDto $metadata
     )
     {
