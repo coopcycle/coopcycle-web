@@ -192,13 +192,13 @@ class TaskListRepository extends ServiceEntityRepository
             if ($task->isPickup()) {
                 // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and
                 // the packages are the "sum" of the dropoffs packages
-                foreach ($tasksInTheSameDelivery as $task) {
-                    if ($task->isPickup()) {
+                foreach ($tasksInTheSameDelivery as $t) {
+                    if ($t->isPickup()) {
                         continue;
                     }
 
-                    $taskPackages = array_merge($taskPackages, $task->getPackages()->toArray());
-                    $weight += $task->getWeight();
+                    $taskPackages = array_merge($taskPackages, $t->getPackages()->toArray());
+                    $weight += $t->getWeight();
                 }
             } else {
                 $taskPackages = $task->getPackages()->toArray();
@@ -244,18 +244,19 @@ class TaskListRepository extends ServiceEntityRepository
         }, $tasksQueryResult);
 
 
-        $tasksById = array_reduce($tasks, function ($carry, $task) {
+        $taskDtosById = array_reduce($tasks, function ($carry, $task) {
             $carry[$task->id] = $task;
             return $carry;
         }, []);
+
 
         //restore order of tasks
         $orderedTasks = [];
         foreach ($orderedTaskIds as $taskId) {
             // skip tasks that are not returned by the query
             // that can happen if a task is cancelled, for example
-            if (isset($tasksById[$taskId])) {
-                $orderedTasks[] = $tasksById[$taskId];
+            if (isset($taskDtosById[$taskId])) {
+                $orderedTasks[] = $taskDtosById[$taskId];
             }
         }
 
