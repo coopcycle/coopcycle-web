@@ -43,8 +43,9 @@ final class MyTasks
                 // If 2 requests are received at the very same time,
                 // we can have a race condition
                 // @see https://github.com/coopcycle/coopcycle-app/issues/1265
-                $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
             }
+
+            $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
         }
 
         return $taskListDto;
