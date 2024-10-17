@@ -25,7 +25,7 @@ adminDashboard.deliveries.type: Typ
 adminDashboard.deliveries.dueDate: Datum vypršení
 adminDashboard.deliveries.courier: Kurýr
 adminDashboard.deliveries.address: Adresa
-adminDashboard.deliveries.delivery: Dodávka
+adminDashboard.deliveries.delivery: Doručení
 adminDashboard.deliveries.originAddress: Původní adresa
 adminDashboard.deliveries.deliveryAddress: Doručovací adresa
 adminDashboard.embed.title: Formuláře
@@ -148,7 +148,7 @@ restaurant.form.createRestaurant: Vytvořit restauraci
 restaurant.form.exclusive.label: Tato restaurace je exkluzivní
 restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky (např.:
   catering)'
-restaurant.form.loopeat_enabled.label: Povolit systém vkladu a vrácení peněz LoopEat
+restaurant.form.loopeat_enabled.label: Povolit systém záloh a vrácení peněz ke krabičkám
 restaurant.form.loopeat_disconnect.label: Odpojit %name%
 restaurant.form.featured.label: Tato restaurace je uvedena na domovské stránce
 restaurant.form.fulfillment_methods.label: Způsoby plnění
@@ -482,7 +482,8 @@ pledge.vote_count_equals_one: '%username% hlasoval pro tuto restauraci'
 pledge.accept: Přijmout
 pledge.reject: Odmítnout
 index.view_all_shops: Zobrazit všechny obchody
-form.checkout_address.reusable_packaging.loopeat.learn_more: Další informace o LoopEat
+form.checkout_address.reusable_packaging.loopeat.learn_more: Další informace o zálohovaných
+  krabičkách
 users.sort.newest: Nedávno registrovaní
 users.sort.alphabetically: Abecedně
 users.administrators: Administrátoři
@@ -575,8 +576,8 @@ task.receipt.message: Tímto potvrzujeme, že jsme vaši zásilku doručili na <
   v <strong>%date%</strong>
 task.receipt.greeting: Vážený zákazníku,
 basics.free: zdarma
-profile.loopeat.connected: Účet LoopEat připojen
-profile.loopeat.connect: Připojit můj účet LoopEat
+profile.loopeat.connected: '%name% účet připojen'
+profile.loopeat.connect: Připojit můj účet %name%
 notifications.restaurant.new_order: Nová objednávka k přijetí
 basics.view_example: Ukázat příklad
 form.delivery_import.store.label: Obchod
@@ -584,7 +585,7 @@ form.delivery_import.file.label: Soubor
 delivery.import.success_message: Váš soubor byl úspěšně zpracován, %count% dodávek
   bylo vytvořeno
 receipt.emitter_details: Objednávka v restauraci <strong>%restaurant_name%</strong>
-receipt.billing_details: Objednávka placená kreditní kartou dne %date%
+receipt.billing_details: Objednávka uhrazena %payment_method% dne %date%
 receipt.total: Celkem (vč. DPH)
 receipt.footer_item.total_incl_tax: Celkem (vč. DPH)
 receipt.footer_item.total_excl_tax: Celkem (bez DPH)
@@ -733,7 +734,7 @@ admin.settings.missing_mandatory_settings: "Chybí povinná nastavení.\nChcete-
 meta.title: Dodací platforma pro podnikání vlastněné pracovníky
 stores.addresses: Adresy
 stores.deliveries.task_unassigned: Nepřiřazeno
-stores.deliveries.heading: 'Doručení #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading: 'Doručení %delivery_id% - %delivery_distance%'
 stores.deliveries: Dodávky
 stores.api_keys: API klíče
 stores.pricing_rule_set: Ceny
@@ -810,8 +811,8 @@ form.checkout_address.add_tip.label: Použít
 form.checkout_address.tip_amount.help: Děkujeme ❤
 form.checkout_address.tip_amount.label: Spropitné
 form.checkout_address.add_promotion.label: Použít
-form.checkout_address.reusable_packaging_loopeat_enabled.label: Chci používat kontejnery
-  LoopEat (%price%)
+form.checkout_address.reusable_packaging_loopeat_enabled.label: Chci používat znovupoužitelné
+  krabičky
 form.checkout_address.reusable_packaging_enabled.label: Chci opakovaně použitelný
   obal (%price%)
 form.checkout_address.telephone.label: Telefonní číslo
@@ -1049,7 +1050,7 @@ restaurant.embed.step_1: Přidejte na stránku skript <code>coopcycle.js</code>
 guest_checkout.user_with_same_email_exists: Účet se stejným e-mailem již existuje.
   Chcete-li pokračovat, přihlaste se, nebo použijte jiný e-mail k objednání bez vytvoření
   účtu.
-loopeat.oauth_connect.success: Účet LoopEat byl úspěšně připojen!
+loopeat.oauth_connect.success: Účet %name% byl úspěšně připojen!
 search.orders: Vyhledat objednávku (číslo, e-mail zákazníka…)
 form.mercadopago_livemode.disable_and_enable_maintenance.label: Přepnout do režimu
   «test» a povolit údržbu
@@ -1065,8 +1066,8 @@ restaurant.embed.disclaimer: Pokladnu můžete vložit přímo na svůj web. Za�
   níže uvedených pokynů.
 guest_checkout.use_another_email: Použijte jiný e-mail
 form.checkout_address.telephone.help: Kontaktovat vás v případě problému
-loopeat.oauth_redirect.warning: Budete přesměrováni na web LoopEat, abyste se přihlásili
-  nebo vytvořili svůj účet
+loopeat.oauth_redirect.warning: Budete přesměrováni na web vratné krabičky, abyste
+  se přihlásili nebo vytvořili svůj účet
 form.attach_to_org.modal.title: Připojit k obchodu
 deliveries.section.upcoming: Nadcházející
 form.settings.mercadopago_enable_livemode.help: Chcete-li aktivovat režim «live»,
@@ -1097,7 +1098,7 @@ profile.fullName: Celé jméno
 promotion_action.fixed_discount: '%amount% sleva'
 promotion_action.delivery_percentage_discount: '%percentage% sleva na dopravě'
 promotion_action.percentage_discount: '%percentage% sleva'
-profile.loopeat.disconnect: Odpojit LoopEat
+profile.loopeat.disconnect: Odpojit %name%
 form.credit_note.percentage.label: Procento
 form.credit_note.type.label: Typ slevy
 form.credit_note.user_search.label: Uživatel
@@ -1214,8 +1215,8 @@ form.local_business.mercadopago.connected: Připojeno
 restaurant.form.section.en_boite_le_plat: Konzervované jídlo
 restaurant.form.en_boite_le_plat_enabled.label: Povolit zálohový systém na misky pro
   jídlo
-form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: Chci <a href="https://www.rekrabicka.cz/"
-  target="_blank">Rekrabičky </a> jako zálohované misky na jídlo.
+form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: Chci zálohované
+  <a href="%url%" target="_blank">Krabičky </a> na jídlo.
 order.cart.donation: Dary
 order.export.heading.nonprofit: Neziskové organizace
 adminDashboard.nonprofits.createNew: Přidat novou neziskovou organizaci
@@ -1272,3 +1273,445 @@ restaurant.form.auto_accept_orders_enabled.docs_path: /en/admin/restaurants/gene
 profile.businessAccount: Podnikatelský účet
 profile.orders: Objednávky
 profile.configuration: Konfigurace
+form.package.color.label: Barva (kliknutím vyberte)
+pledge.vote_count_human: '%number_of_votes% votes: %usernames% a %rest% other(s)'
+form.package.average_estimation: Odhadem 75 % maxima, pokud není nastaveno
+form.package.max_volume_units: Tato hodnota se použije pro výpočet cen na základě
+  objemu
+roles.ROLE_DISPATCHER.help: "Dispečer: Plný přístup k úkolům\n"
+form.registration.terms.and.conditions.help: Zaškrtnutím tohoto políčka souhlasíte
+  s našimi <a href="%terms_url%">Obchodními podmínkami</a>.
+activity.order.delayed: "Objednávka #order/#%aggregate_id% byla odložena\n"
+form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label: Vaše objednávka
+  obsahuje <strong>%count%</strong> nádobí vhodných pro doručení bez odpadu, v celkové
+  výši <strong>%amount%</strong> zálohy|Vaše objednávka obsahuje <strong>%count%</strong>
+  nádobí vhodných pro doručení bez odpadu, celkem je <strong>%amount%</strong> záloha
+form.checkout_address.reusable_packaging.loopeat.website: webové stránky %name%
+basics.send_invitation.invitated_user_after_password_confirmation: Váš účet byl vytvořen,
+  zkontrolujte prosím své <a target="_blank" href="%restaurantEditUrl%">osobní údaje</a>
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Aktivujte si možnost
+  nulového odpadu a využijte službu opakovaně použitelných krabiček pro svou objednávku
+basics.select_all: Vybrat vše
+form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: Doporučujeme
+  vám vrátit krabičky během doručení
+authentication.unsubscribe: Z odběru se můžete kdykoli snadno odhlásit prostřednictvím
+  odhlašovacích odkazů v každém z našich e-mailů
+orders.duplicate: Duplikovat objednávku
+users.dispatchers: Dispečeři
+loopeat.how_it_works.title: "Vaše restaurace je součástí sítě \" %name% \": vychutnejte\
+  \ si jídlo s sebou nebo rozvoz v opakovaně použitelných krabičkách. Tuto možnost\
+  \ můžete kdykoli vypnout v objednávkovém košíku.\n"
+loopeat.how_it_works.step_2.text: Zaplaťte si v peněžence kredit, abyste si mohli
+  půjčit první krabičky na opakované použití.
+loopeat.how_it_works.step_4.text: Vraťte krabičky s další objednávkou a získejte zálohu
+  zpět do peněženky.
+adminDashboard.business_accounts.title: Firemní účty
+form.business_account.businessRestaurantGroup.label: Obchodní skupina restaurací
+form.business_account.manager.email.help: Bude zaslán e-mail s pozvánkou na Coopcycle
+delivery.failure_reason:
+  default:
+    incorrect_address: Nesprávná adresa
+    routing_problems: Problémy s navigací
+    packaging_problems: Problémy s balením
+    damaged: Poškozené
+    lost: Ztracené
+    late: Pozdní doručení
+    customer_refused: Zákazník odmítl dodávku
+    item_missing: Položka chybí
+    incorrect_item: Dodání nesprávné položky
+    bad_weather: Špatné povětrnostní podmínky
+    vehicle_breakdown: Porucha vozidla
+    traffic_delays: Dopravní zpoždění
+    customs_issues: Problémy s celním řízením
+    inventory_shortage: Nedostatek zásob
+    address_unreachable: Adresa je nedostupná
+    insufficient_funds: Nedostatečné finance
+    data_entry_error: Chyba při zadávání údajů
+    holiday_closure: Zavření o prázdninách
+    closed_store: Uzavřený obchod
+    address_review_needed: Nutná kontrola adresy
+    not_at_home: Zákazník není doma
+  transporter:
+    reason:
+      ava: Poškozeno
+      rca: Rezervy pro případ velkých škod
+      tar: Odmítnuté doručení příliš pozdě
+      snc: Odmítnuto neobjednáno
+      dia: Neznámý adresát na adrese
+      lna: Doručení na novou adresu
+      spd: 'Utrpení: Odmítnuté depo'
+      srb: 'Utrpení: Odmítnutí úhrady'
+      pvi: Sjednejte si schůzku
+      cfm: Vyhovuje
+      mqp: Rezervace pro chybějící balíček (balíčky)
+      mqt: Celkem chybějících balíčků
+      ouv: Otevřený balíček
+      pve: Zjevně nesprávná hmotnost
+      avi: Doporučený příjemce
+      cad: Doplňující adresa
+      daf: Destinace zavřená nebo nepřítomná
+      fhb: Týdenní uzavření
+      rma: Rezervy pro případ nedostatku a škod
+      div: Ostatní rezervy
+      nju: Neoprávněné
+      dem: Příjemce odebrán
+    state:
+      raq: Zůstává v depu
+      aar: V depu
+      mlv: Probíhá
+      liv: Doručeno
+      ren: Odmítnuto
+      rst: Nedodáno příjemci
+form.business_account.manager.email_sent.help: E-mail s pozvánkou na Coopcycle byl
+  odeslán. <a href="#">Klikněte zde</a> pro opětovné odeslání e-mailu.
+form.checkout_address.reusable_packaging.loopeat.containers.label: Máte doma <strong>%count%</strong>
+  krabiček, celkem <strong>%amount%</strong>|Máte doma <strong>%count%</strong> krabiček,
+  celkem <strong>%amount%</strong>
+form.checkout_address.reusable_packaging.loopeat.returns.label: Vrátíte <strong>%count%</strong>
+  krabiček, celkem <strong>%amount%</strong>|Vrátíte <strong>count%</strong> krabiček,
+  celkem <strong>%amount%</strong>
+form.store_type.failure_reason_set.help: Vyberte ze seznamu <a href="%failure_reason_set%">příčin
+  neúspěchů</a>, které mají být použity v této %entity%.
+form.settings.notifications.order.updated: Objednávka aktualizována
+form.delivery.bookmark.label: Přidat do uložených objednávek
+form.settings.notifications.task.unassigned: Úkol nepřiřazen
+form.store_type.time_slots.set_as_default: Nastavit jako výchozí časový slot
+payment_method:
+  cash_on_delivery: V hotovosti při dodání
+  card: Kreditní karta
+  edenred: Edenred
+  edenred+card: Edenred
+form.local_business.mercadopago.remove.connection: Odstranit spojení s Mercadopago
+form.task_export.dv4cul.label: Export ve formátu DV4CUL
+restaurant.form.dabba_enabled.label: Povolení systému vracení záloh Dabba
+adminDashboard.integrations.help: Umožňuje konfigurovat omezení integrace
+form.integration.maxLength.label: Maximální povolená délka (cm)
+tasks.mark_as_done.has_previous: 'Úkol #%failed_task% nemohl být dokončen, protože
+  má předchozí úkol #%previous_task%, který musí být dokončen jako první.'
+import.delivery.price.error.priceCalculation.row: Cenu dodávky se nepodařilo vypočítat
+  pro řádek %row_number%
+registration.info.text: Na CoopCycle si můžete objednat jídlo z restaurací ve vašem
+  okolí, které vám doručí místní družstvo. Jsme hrdí na to, že jsme etickou alternativou
+  k uberizaci naší společnosti!
+registration.step.invitation.copy.link: Zkopírujte níže uvedený odkaz a pošlete ho
+  svým kolegům
+deliveries.importing: Soubor %filename% je importován.
+form.product.business_restaurant_group.price_definition.label: Definice cen pro podnikatelské
+  skupiny restaurací
+business_restaurant_group.form.invalid: Vyskytly se chyby nebo chybějící informace,
+  zkontrolujte všechny části konfigurace.
+restaurants.edenred.already_sent: Restaurace, které jsou v seznamu přeškrtnuté, jsou
+  způsobeny tím, že již byly odeslány společnosti Edenred k začlenění. Chcete-li zkontrolovat
+  jejich stav, <a href="%link%">klikněte sem</a>.
+business_account.registration.user_with_same_email_exists: Účet s vaším e-mailem již
+  existuje. Pro pokračování v konfiguraci firemního účtu se prosím přihlaste.
+business_account.employee.associated: Váš účet byl úspěšně přidružen ke společnosti
+  %name%
+business_account.loggedin_employee.association.text: Jste přihlášeni pomocí e-mailu
+  <strong>%user_email%</strong>. Chcete svůj účet přidružit ke společnosti <strong>%business_account_name%</strong>?
+notifications.restaurant.accepted_order: Nová objednávka
+adminDashboard.failureSet.title: Příčiny neúspěchu
+adminDashboard.failureSet.help: Nastavte příčiny, pro které mohou být vaše dodávky
+  neúspěšné.
+adminDashboard.failureSet.nofailureSet: Žádné příčiny selhání
+adminDashboard.failureSet.createNew: Vytvoření nové příčiny
+adminDashboard.failureSet.settings: Nastavení
+adminDashboard.failureSet.cant_delete_failure_reason_used: Tato příčina nemůže být
+  vymazána, protože se používá v obchodech.
+form.settings.notifications.title: Oznámení
+form.settings.notifications.order.created: Objednávka vytvořena
+form.settings.notifications.order.picked: Objednávka vyzvednuta
+form.pricing_rule_set.options.label: Možnosti
+form.pricing_rule_set.options.map_all_tasks.label: Použít na všechny úkoly
+tags.featured: Doporučené
+tags.exclusive: Exkluzivní
+tags.shops.new: Nové prodejny
+tags.zero_waste: Bezodpadový systém
+delivery.state:
+  pending: Čeká, K vyzvednutí
+  in_delivery: Vyzvednuto, doručuje se
+  delivered: Doručeno
+  failed: Selhalo
+  cancelled: Zrušeno
+form.settings.notifications.help: Při vypnutí upozornění na níže uvedené události
+  nebudou správci dostávat e-maily ani upozornění na horním panelu.
+registration.form.title: Vaše informace
+registration.step.personal: Osobní údaje
+registration.step.company: Informace o firmě
+registration.alert.business.account.text: Vítejte v CoopCycle - %brandName% ! Před
+  první objednávkou si prosím vytvořte svůj obchodní účet.
+registration.step.invitation: Pozvěte své kolegy
+registration.flow.next: Další
+adminDashboard.business_restaurant_groups.title: Obchodní skupiny restaurací
+navbar.switch_to_personal: Osobní účet
+form.settings.company_legal_name.label: Právní název společnosti
+form.settings.company_legal_name.help: Uveďte celý právní název společnosti, jak je
+  uveden v jejích oficiálních dokumentech.
+form.settings.company_legal_id.label: Registrační číslo společnosti nebo IČO
+form.settings.company_legal_id.help: Toto číslo je obvykle k dispozici na oficiálních
+  dokumentech společnosti, jako jsou faktury nebo smlouvy.
+business_restaurant_group.label: Obchodní skupina restaurací
+navbar.switch_to_business: účet %name%
+restaurants.edenred.sending_failed.no_siret: Restaurace '%restaurant_name%' nemá definovaný
+  Siret.
+restaurant.form.edenred_enabled.label: Povolit Edenred
+restaurants.edenred.sending_failed.errors: 'V některých restauracích se vyskytují
+  chyby:'
+business_account.switch.order_with_business: Objednat u mé společnosti
+business_account.switch.ordering_with_business: Objednání u mé společnosti
+form.settings.paygreen.title: Konfigurace Paygreen
+restaurant.businessAccount.notAvilable: "Tato restaurace není zahrnuta v restauracích\
+  \ vaší firemní konfigurace. <br> Dostupné restaurace pro vaši společnost si můžete\
+  \ prohlédnout <a href=\"%path%\">kliknutím sem</a>.\n"
+restaurant.form.deposit_refund_enabled.docs_path: /cs/admin/restaurace/obecna-nastaveni/#vraceni-vkladu
+restaurant.form.exclusive.docs_path: /cs/admin/restaurace/obecna-nastaveni/#exkluzivni
+restaurant.form.quotes_allowed.docs_path: /cs/admin/restaurace/obecne-nastaveni/#uvozovky-povoleno
+restaurant.form.featured.docs_path: /cs/admin/restaurace/obecna-nastaveni/#vlastni
+order.state.started: Připravuje se
+order.state.ready: Připraveno
+order.net_total_including_tax: Čistá částka (včetně daně)
+order.stripe_fee: Bankovní poplatky
+order.fee: Poplatky platformy
+cart.title: Košík
+form.delivery.confirm.label: Potvrdit
+suggest.submitted.title: Děkujeme za doporučení této restaurace!
+form.registration.terms.and.conditions.label: Souhlasím se smluvními podmínkami
+form.registration.privacy.policy.label: Souhlasím se zásadami ochrany osobních údajů
+form.registration.privacy.policy.help: Zaškrtnutím tohoto políčka souhlasíte s našimi
+  <a href="%privacy_url%">Zásadami ochrany osobních údajů</a>.
+form.registration.optin.newsletter.label: Souhlasím se zasíláním zpravodaje %brand_name%.
+form.registration.optin.marketing.label: Souhlasím se zasíláním příležitostných propagačních
+  akcí.
+form.checkout_address.reusable_packaging.loopeat.available_credits.label: V peněžence
+  %name% máte <strong>%amount%</strong>
+form.checkout_address.reusable_packaging.loopeat.available_credits.help: (1 kredit
+  = 1 jídlo v krabičce na oběd)
+form.checkout_address.reusable_packaging.loopeat.return_pledge_label: Vrátíte %field%
+  zálohovanou krabičku kurýrovi
+form.checkout_address.reusable_packaging.loopeat.no_pledge_label: Nemáte žádnou krabičku
+  k vrácení.
+form.checkout_address.reusable_packaging.loopeat.enough_credits: Vše je v pořádku,
+  můžete dokončit objednávku!
+form.checkout_address.reusable_packaging.loopeat.confirm: Potvrdit
+form.checkout_address.reusable_packaging.loopeat.add: Přidat %missing% kredity
+form.checkout_address.reusable_packaging.loopeat.manage_account: Spravovat můj účet
+  s nulovým odpadem
+form.checkout_address.reusable_packaging.loopeat.how_it_works: Jak to funguje?
+form.checkout_address.reusable_packaging.loopeat.connect: Vytvořte nebo připojte svůj
+  účet %name% k účtu %brand_name%, abyste mohli uhradit zálohu, nebo deaktivujte možnost
+  nulového odpadu.
+form.checkout_address.reusable_packaging.loopeat.connect_account: Připojit se k %name%
+form.checkout_address.reusable_packaging.loopeat.add_credits: Přidat kredity do mé
+  peněženky
+form.checkout_address.reusable_packaging.loopeat.manage_deposit: Správa mého vkladu
+form.checkout_address.reusable_packaging_dabba_enabled.label: Chci použít odnosné
+  dózy s víkem
+form.checkout_address.reusable_packaging.dabba.learn_more: Více info k odnosným dózám
+  s víkem
+form.checkout_address.reusable_packaging.dabba.wallet.label: V peněžence Dabba máte
+  <strong>%amount%</strong>
+form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% za krabičku na
+  oběd)
+form.checkout_address.reusable_packaging.dabba.return_pledge_label: Kurýrovi vrátíte
+  zálohu (zálohy) %field%
+form.checkout_address.reusable_packaging.dabba.add: Přidejte %missing% do své peněženky
+form.embed_settings.show_home_page.label: Zobrazit na úvodní stránce
+form.package.enter_details: Zobrazit/skrýt detaily
+form.package.description.label: Popis pro zákazníka
+form.package.maxWeight.help: (Zatím se v platformě nepoužívá)
+form.package.average_volume_units.label: Průměrné jednotky objemu (JO)
+form.package.max_volume_units.label: Maximální jednotky objemu (JO)
+form.package.average_weight.label: Průměrná hmotnost (kg)
+form.package.max_weight.label: Maximální váha (kg)
+form.package.tags.label: Automatické použití značek na úkoly
+form.package.shortCode.label: 2 písmenný kód
+roles.ROLE_DISPATCHER: Dispečer
+user.edit.disabled.label: Vypnuto
+stores.deliveries.heading2: Doručení %delivery_id%
+stores.deliveries.bookmarks: Uložené objednávky
+stores.deliveries.bookmarks.empty_message: Zakládání objednávek na stránce Doručení
+  pro jejich pozdější snadné nalezení
+activity.order.cancelled: "Objednávka #order/#%aggregate_id% je zrušena\n"
+activity.order.updated: "Objednávka #order/%aggregate_id% byla aktualizována\n"
+activity.order.restored: 'Objednávka #order/%aggregate_id% byla obnovena'
+basics.delete_selected: Smazat vybrané
+basics.address: Adresa
+loopeat.how_it_works.step_1.title: Zaregistruji se
+dabba.oauth_connect.success: Účet na zálohované boxy na jídlo úspěšně připojen!
+dabba.oauth_redirect.warning: Budete přesměrováni na webovou stránku Poskytovatele
+  boxů na jídlo, kde se můžete přihlásit nebo si vytvořit účet
+loopeat.how_it_works.step_1.text: Při dokončování objednávky se zaregistrujte na %name%.
+loopeat.how_it_works.step_2.title: Zaplatím první zálohu
+loopeat.how_it_works.step_3.title: Objednávám
+loopeat.how_it_works.step_3.text: Doručují se v opakovaně použitelných krabičkách.
+loopeat.how_it_works.step_4.title: Vracím své krabičky
+loopeat.manage_modal.title: Vyrovnávám svou zálohu %name%
+loopeat.manage_modal.text: Zálohu můžete uhradit částkou, která bude připsána na vaši
+  peněženku, nebo vrácením opakovaně použitelných krabiček.
+loopeat.task_comments.returns: Pozor, od zákazníka je třeba vyzvednout krabičky
+adminDashboard.business_accounts.createNew: Vytvořit nový firemní účet
+form.business_account.businessRestaurantGroup.placeholder: Vyberte obchodní skupinu
+  restaurací
+form.business_account.employees.label: Seznam zaměstnanců
+form.business_account.restaurants.add: Přidat restauraci
+form.business_account.employees.add: Přidat zaměstnance
+form.business_account.manager.email.label: E-mail manažera účtu
+form.business_account.save_and_send_invitation.label: Uložit a odeslat pozvánku
+form.business_acount.send_invitation.confirm: E-mail s pozvánkou do Coopcycle byl
+  odeslán
+form.business_acount.resend_invitation.confirm: E-mail s pozvánkou do Coopcycle byl
+  znovu zaslán
+form.business_acount.resend_invitation.failed: Při pokusu o opětovné odeslání registračního
+  e-mailu k podnikatelskému účtu došlo k chybě
+form.business_account.hub.label: Centrála
+form.business_account.hub.placeholder: Vyberte centrálu
+adminDashboard.business_restaurant_group_list.title: Seznam obchodních skupin restaurací
+adminDashboard.business_restaurant_group.title: Obchodní skupina restaurací
+adminDashboard.business_restaurant_group.createNew: Vytvoření nové obchodní skupiny
+  restaurací
+form.store_type.time_slots.label: Časové sloty
+form.store_type.defaultCourier.label: Výchozí kurýr
+form.store_type.defaultCourier.placeholder: Žádný
+form.store_type.defaultCourier.help: Objednávky zadané pro tento obchod budou automaticky
+  přiřazeny tomuto kurýrovi
+homepage.featured: Doporučené
+homepage.exclusive: Exkluzivní
+homepage.shops.new: Nové prodejny
+users.disabled: Vypnuto
+shops.filters.clear_all: Vymazat vše
+shops.filters.title.types: Typy
+shops.filters.title.categories: Kategorie
+shops.filters.title.cuisines: Kuchyně
+shops.filters.title: Filtry
+form.local_business.mercadopago.remove.connection.success: Připojení Mercadopago úspěšně
+  odstraněno
+form.vehicle.volume_units.label: Jednotky objemu
+form.vehicle.max_weight.label: Maximální hmotnost (kg)
+vehicles.breadcrumb: Vozidla
+vehicles.breadcrumb.help: Definujte vozový park
+warehouses.breadcrumb: Sklady
+warehouses.breadcrumb.help: Definujte sklady
+restaurant.form.section.dabba: Dabba
+restaurant.form.dabba_code.label: Kód restaurace Dabba
+adminDashboard.integrations.title: Integrace
+integrations.breadcrumb: Integrace
+form.integration.name.label: Název Integrace
+form.integration.store.label: Prodejna
+form.integration.zone.label: Zóna
+form.integration.maxWeight.label: Maximální povolená hmotnost (kg)
+form.integration.maxHeight.label: Maximální povolená výška (cm)
+form.integration.maxWidth.label: Maximální povolená šířka (cm)
+form.integration.productTypes.label: Povolené typy produktů
+form.integration.woopitStoreId.label: Identifikátor obchodu Woopit
+integration.created.message: Integrace byla vytvořena.
+profile.dabba.disconnect: Odpojit Dabba
+form.task_export.colisactiv.label: Export ve formátu ColivActiv
+form.task_export.format.label: Formát exportu
+import.errors.at.row: Chyby na řádku %row_number%
+import.address.geocode.error: Nepodařilo se geokódovat adresu %failed_address%
+import.time.range.error: Časový rozsah "%value%" v %key% není platný
+import.successful.rows: 'Váš soubor byl zpracován a bylo vytvořeno %count% dodávek
+  pro řádky: %rows%'
+import.unsuccessful.rows: 'Došlo k chybám a dodávky nebylo možné vytvořit pro řádky:
+  %rows%.'
+security.login.remember_me: Zapamatuj si mě
+stores.filters.input.placeholder: 'Hledání podle adresy, jména nebo #id'
+basics.filter: Filtr
+stores.search.results_for: Výsledky hledání pro <mark>%query%</mark>
+activity.task.rescheduled: "@%owner% přeplánoval úkol #task/%aggregate_id%\n"
+form.failure_reason_set.name.label: Název
+form.failure_reason.code.label: Kód
+form.failure_reason.description.label: Popis
+basics.manage: Spravovat
+basics.settings: Nastavení
+form.store_type.failure_reason_set.label: Příčiny neúspěchu
+adminDashboard.incidents.title: Incidenty
+adminDashboard.incidents.help: Správa incidentů.
+adminDashboard.incidents.createNew: Vytvořit nový incident
+profile.delete_my_account: Smazat můj účet
+profile.type_username_to_confirm: 'Upozornění na zastarání: Příkaz {name!r} je zastaralý'
+form.settings.notifications.order.accepted: Objednávka přijata
+form.settings.notifications.order.refused: Objednávka odmítnuta
+form.settings.notifications.order.delayed: Objednávka zpožděna
+form.settings.notifications.order.cancelled: Objednávka zrušena
+form.settings.notifications.order.dropped: Objednávka doručena
+form.settings.notifications.order.fulfilled: Objednávka vyřízena
+form.settings.notifications.task.created: Úkol vytvořen
+form.settings.notifications.task.assigned: Úkol přiřazen
+form.settings.notifications.task.started: Úkol zahájen
+form.settings.notifications.task.done: Úkol splněn
+form.settings.notifications.task.failed: Úkol nesplněn
+form.settings.notifications.task.cancelled: Úkol zrušen
+form.settings.notifications.task.rescheduled: Úkol přeložen na jindy
+order.export.heading.payment_method: Způsob platby
+registration.navigation.title: Vytvoření osobního účtu
+registration.info.title: Co je CoopCycle?
+registration.info.business.account.attachment: Budete připojeni k obchodnímu účtu
+  %businessAccountName%, ale můžete také zadávat příkazy pod svým jménem.
+registration.alert.text: K vytvoření účtu na %brandName% vás pozval %invitedBy%.
+registration.flow.back: Zpět
+registration.flow.finish: Dokončit registraci
+registration.company.address: Adresa
+registration.company.address.different.for.billing: Jiná adresa pro fakturaci
+registration.company.billing.address: Fakturační adresa
+registration.step.company.name: Název firmy
+registration.step.company.legal_name: Právní název společnosti
+registration.step.company.vat_number: DIČ
+registration.step.invitation.copy.button: Kopírovat odkaz
+registration.step.invitation.link.copied: Zkopírováno
+registration.confirm.invitation.link.title: Pomocí tohoto odkazu pozvěte své kolegy,
+  aby se připojili
+error.404: Stránka nenalezena.
+error.502: Server má překročenou kapacitu. Zkuste to prosím později.
+error.504: Odpověď serveru trvala příliš dlouho.
+error.return_to_homepage: Zpět na domovskou stránku
+deliveries.imports: Importované soubory
+deliveries.imports.created_at: Vytvořeno v
+business.account.settings.link: Propojení s mým účtem
+form.business_restaurant_group.restaurants_with_menu: Restaurace s jídelním lístkem
+form.business_restaurant_group.restaurant: Restaurace
+form.business_restaurant_group.menu: Jídelní lístek
+form.product.business_restaurant_group.price_definition.placeholder: Vyberte jednu
+  z nich
+restaurants.edenred.add_restaurants: Přidat restaurace
+restaurants.edenred.add_list_title: Seznam restaurací k odeslání do Edenred
+restaurants.edenred.added_restaurants: Přidané restaurace
+restaurants.edenred.added_list.name: Název
+restaurants.edenred.added_list.merchant_id: ID prodejce
+restaurants.edenred.added_list.tr_card_enabled: Karta TR povolena
+restaurants.edenred.sending_success: Restaurace byla úspěšně odeslána do společnosti
+  Edenred.
+restaurants.edenred.sending_failed: Chyba při pokusu o odeslání restaurace do společnosti
+  Edenred. Zkuste to prosím později.
+restaurants.edenred.refresh.no_updates: Restaurace '%restaurant_name%' zatím nemá
+  na serverech Edenred žádné aktualizace.
+restaurants.edenred.refresh.has_updates: Restaurace '%restaurant_name%' byla aktualizována
+  servery Edenred.
+restaurants.edenred.added_list.actions: Akce
+business_restaurant_group.form.fill_all_pages: Vyplňte všechny tři stránky nastavení.
+business_account.registration.title: Vytvoření firemního účtu
+registration.email.taken.use.another: Pokud chcete, můžete použít jiný e-mail.
+registration.link.to.login: Pro přihlášení klikněte sem.
+registration.email.taken: Tento e-mail je již obsazen, chcete se přihlásit pomocí
+  něj?
+registration.business_account.loggin.warning_message: Přihlaste se a přiřaďte svůj
+  účet ke společnosti %name%.
+registration.email.taken.loggin.warning_message: Pro přihlášení zadejte heslo.
+business_account.loggedin_employee.association.title: Pozvánka ke spojení vašeho účtu
+  s firemním účtem
+topbar.action.admin_business_account: Správa mého firemního účtu
+basics.order_now: Objednat nyní
+form.settings.paygreen_public_key.label: Veřejný klíč Paygreen
+form.settings.paygreen_secret_key.label: Tajný klíč Paygreen
+form.settings.paygreen_shop_id.label: Paygreen Shop ID
+restaurant.form.paygreen_shop_id.label: Paygreen Shop ID
+form.local_business.paygreen_account.title: Účet Paygreen
+form.billing_method.label: Způsob účtování
+form.billing_method.help: Použitý způsob účtování
+form.billing_method.unit: Na jednotku
+form.billing_method.percentage: Procento z částky objednávky
+order.export.heading.billing_method: Způsob účtování
+order.export.heading.applied_billing: Použité účtování
+deliveries.import_upload_error: Soubor se nepodařilo nahrát. Zkuste to prosím později.
+organizations.breadcrumb: Organizace
+organizations.new: Nová organizace
