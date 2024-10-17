@@ -16,7 +16,7 @@ abstract class BaseExportCommand extends Command {
 
     use LockableTrait;
 
-    public function __construct(protected MessageBusInterface $messageBus)
+    public function __construct(protected string $appName, protected MessageBusInterface $messageBus)
     {
         parent::__construct();
     }
@@ -61,7 +61,8 @@ abstract class BaseExportCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$this->lock()) {
+        $lockName = sprintf('%s_%s', $this->appName, $this->getName());
+        if (!$this->lock($lockName)) {
             $output->writeln('The command is already running in another process.');
             return Command::FAILURE;
         }
