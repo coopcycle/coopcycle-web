@@ -233,7 +233,7 @@ class TaskListRepository extends ServiceEntityRepository
                 new MyTaskMetadataDto(
                     $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
                     $row['orderNumber'] ?? null,
-                    $paymentMethodsByOrderId[$orderId] ? $paymentMethodsByOrderId[$orderId][0] : null, //FIXME what payment method to show if there are multiple?
+                    $this->getPaymentMethod($paymentMethodsByOrderId, $orderId),
                     $row['orderTotal'] ?? null,
                     $task->isDropoff() ? ($row['loopeatReturns'] && count($row['loopeatReturns']) > 0) : null,
                     $orderId && ($zeroWasteOrders[$orderId] ?? 0) > 0
@@ -275,5 +275,21 @@ class TaskListRepository extends ServiceEntityRepository
             $taskList->getTrailer(),
         );
         return $taskListDto;
+    }
+
+    private function getPaymentMethod($paymentMethodsByOrderId, ?int $orderId): ?string
+    {
+        if (null === $orderId) {
+            return null;
+        }
+
+        $paymentMethods = $paymentMethodsByOrderId[$orderId] ?? null;
+
+        if (null === $paymentMethods || count($paymentMethods) === 0) {
+            return null;
+        }
+
+        //FIXME what payment method to show if there are multiple?
+        return $paymentMethods[0];
     }
 }
