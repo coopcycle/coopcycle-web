@@ -38,18 +38,7 @@ class MyTaskListDto
 
     #[Groups(["task_list"])]
     public readonly string $polyline;
-
-    /**
-     * @param int $id
-     * @param DateTime $createdAt
-     * @param DateTime $updatedAt
-     * @param DateTime $date
-     * @param string $username
-     * @param MyTaskDto[] $items
-     * @param int $distance
-     * @param int $duration
-     * @param string $polyline
-     */
+    
     public function __construct(
         int $id,
         DateTime $createdAt,
