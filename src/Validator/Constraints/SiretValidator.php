@@ -29,48 +29,16 @@ class SiretValidator extends ConstraintValidator
             return;
         }
 
+        // Remove spaces
+        $value = preg_replace('/\s+/', '', $value);
+
         try {
 
-            $siren = substr($value, 0, strlen($value) - 5);
-
-            // We search all the establishments corresponding to the SIREN
-            $response = $this->inseeClient->request('GET', sprintf('entreprises/sirene/V3.11/siret/?q=siren:%s', $siren), [
+            $this->inseeClient->request('GET', sprintf('entreprises/sirene/V3.11/siret/%s', $value), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $this->getToken()),
                 ]
             ]);
-
-            $data = $response->toArray();
-
-            // We filter out closed establishments
-            $etablissements = array_values(array_filter($data['etablissements'], function($etablissement) {
-                if ('C' === $etablissement['uniteLegale']['etatAdministratifUniteLegale']) {
-                    return false;
-                }
-
-                $lastPeriod = current(array_filter($etablissement['periodesEtablissement'], function($periode) {
-                    return null === $periode['dateFin'];
-                }));
-
-                if ('F' === $lastPeriod['etatAdministratifEtablissement']) {
-                    return false;
-                }
-
-                return true;
-            }));
-
-            // When there is only one establishment, it's also the head office
-            if (count($etablissements) === 1) {
-                $etablissement = current($etablissements);
-                return $etablissement['siret'] === $value;
-            }
-
-            foreach ($etablissements as $etablissement) {
-                if ($etablissement['siret'] === $value && true === $etablissement['etablissementSiege']) {
-                    $this->context->buildViolation($constraint->headOfficeNumber)
-                        ->addViolation();
-                }
-            }
 
         } catch (ClientException $e) {
 
