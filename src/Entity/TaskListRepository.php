@@ -235,8 +235,8 @@ class TaskListRepository extends ServiceEntityRepository
                     $row['orderNumber'] ?? null,
                     $this->getPaymentMethod($paymentMethodsByOrderId, $orderId),
                     $row['orderTotal'] ?? null,
-                    $task->isDropoff() ? ($row['loopeatReturns'] && count($row['loopeatReturns']) > 0) : null,
-                    $orderId && ($zeroWasteOrders[$orderId] ?? 0) > 0
+                    $this->getLoopeatReturns($orderId, $task, $row),
+                    $this->getIsZeroWaste($orderId, $zeroWasteOrders)
                 )
             );
 
@@ -291,5 +291,27 @@ class TaskListRepository extends ServiceEntityRepository
 
         //FIXME what payment method to show if there are multiple?
         return $paymentMethods[0];
+    }
+
+    private function getLoopeatReturns(?int $orderId, $task, $row): ?bool
+    {
+        if (null === $orderId) {
+            return null;
+        }
+
+        if (!$task->isDropoff()) {
+            return false;
+        }
+
+        return $row['loopeatReturns'] && count($row['loopeatReturns']) > 0;
+    }
+
+    private function getIsZeroWaste(?int $orderId, $zeroWasteOrders): ?bool
+    {
+        if (null === $orderId) {
+            return null;
+        }
+
+        return ($zeroWasteOrders[$orderId] ?? 0) > 0;
     }
 }

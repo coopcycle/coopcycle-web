@@ -27,11 +27,25 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
         unset($data['@type']);
         unset($data['@id']);
 
-        if (null === $data['has_loopeat_returns']) {
-            unset($data['has_loopeat_returns']);
-        }
+        $this->unsetIfNull($data, [
+            'delivery_position',
+            'order_number',
+            'payment_method',
+            'order_total',
+            'has_loopeat_returns',
+            'zero_waste'
+        ]);
 
         return $data;
+    }
+
+    private function unsetIfNull(&$data, $fields): void
+    {
+        foreach ($fields as $field) {
+            if (null === $data[$field]) {
+                unset($data[$field]);
+            }
+        }
     }
 
     public function supportsNormalization($data, ?string $format = null, array $context = [])

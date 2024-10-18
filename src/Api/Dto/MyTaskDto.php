@@ -60,7 +60,7 @@ final class MyTaskDto
     public readonly bool $doorstep;
 
     #[Groups(["task"])]
-    public readonly ?string $comment;
+    public readonly ?string $comments;
 
     #[Groups(["task"])]
     public readonly array $packages;
@@ -88,7 +88,7 @@ final class MyTaskDto
         ?int $next,
         array $tags,
         bool $doorstep,
-        ?string $comment,
+        ?string $comments,
         array $packages,
         ?int $weight,
         bool $hasIncidents,
@@ -110,7 +110,7 @@ final class MyTaskDto
         $this->next = $next;
         $this->tags = $tags;
         $this->doorstep = $doorstep;
-        $this->comment = $comment;
+        $this->comments = $comments;
         $this->packages = $packages;
         $this->weight = $weight;
         $this->hasIncidents = $hasIncidents;

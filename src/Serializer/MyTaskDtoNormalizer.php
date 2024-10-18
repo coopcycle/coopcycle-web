@@ -54,6 +54,11 @@ class MyTaskDtoNormalizer implements ContextAwareNormalizerInterface, Normalizer
             $data['next'] = $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $object->next]);
         }
 
+        // Make sure "orgName" is a string
+        if (array_key_exists('orgName', $data) && null === $data['orgName']) {
+            $data['orgName'] = '';
+        }
+
         return $data;
     }
 
