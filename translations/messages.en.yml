@@ -1625,3 +1625,4 @@ deliveries.import_upload_error: The file couldn't be uploaded. Please try again 
 organizations.breadcrumb: Organizations
 organizations.new: New organization
 loopeat.incident.unexpected_returns: Unexpected number of zero waste returns
+form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
