@@ -271,8 +271,6 @@ class TaskListRepository extends ServiceEntityRepository
             $taskList->getDistance(),
             $taskList->getDuration(),
             $taskList->getPolyline(),
-            $taskList->getVehicle(),
-            $taskList->getTrailer(),
         );
         return $taskListDto;
     }

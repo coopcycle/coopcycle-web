@@ -39,14 +39,6 @@ class MyTaskListDto
     #[Groups(["task_list"])]
     public readonly string $polyline;
 
-    //TODO
-    #[Groups(["task_list"])]
-    public readonly ?Vehicle $vehicle;
-
-    //TODO
-    #[Groups(["task_list"])]
-    public readonly ?Trailer $trailer;
-
     /**
      * @param int $id
      * @param DateTime $createdAt
@@ -57,8 +49,6 @@ class MyTaskListDto
      * @param int $distance
      * @param int $duration
      * @param string $polyline
-     * @param Vehicle|null $vehicle
-     * @param Trailer|null $trailer
      */
     public function __construct(
         int $id,
@@ -69,9 +59,8 @@ class MyTaskListDto
         array $items,
         int $distance,
         int $duration,
-        string $polyline,
-        ?Vehicle $vehicle,
-        ?Trailer $trailer)
+        string $polyline
+    )
     {
         $this->id = $id;
         $this->createdAt = $createdAt;
@@ -82,7 +71,5 @@ class MyTaskListDto
         $this->distance = $distance;
         $this->duration = $duration;
         $this->polyline = $polyline;
-        $this->vehicle = $vehicle;
-        $this->trailer = $trailer;
     }
 }
