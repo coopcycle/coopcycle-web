@@ -2,23 +2,28 @@
 
 namespace AppBundle\Domain\Task\Event;
 
+use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Domain\Event as BaseEvent;
 use AppBundle\Domain\SerializableEventInterface;
-use AppBundle\Entity\TaskList;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskListUpdated extends BaseEvent implements SerializableEventInterface
 {
-    protected $collection;
 
-    public function __construct(TaskList $collection)
+    public function __construct(
+        private readonly UserInterface $courier,
+        private readonly MyTaskListDto $collection
+    )
     {
-        $this->collection = $collection;
     }
 
-    public function getTaskList(): TaskList
+    public function getCourier(): UserInterface
+    {
+        return $this->courier;
+    }
+
+    public function getTaskList(): MyTaskListDto
     {
         return $this->collection;
     }
@@ -26,7 +31,7 @@ class TaskListUpdated extends BaseEvent implements SerializableEventInterface
     public function normalize(NormalizerInterface $serializer)
     {
         $normalized = $serializer->normalize($this->collection, 'jsonld', [
-            'resource_class' => TaskList::class,
+            'resource_class' => MyTaskListDto::class,
             'operation_type' => 'item',
             'item_operation_name' => 'get',
             'groups' => ['task_list', "task_collection", "task", "delivery", "address"]
