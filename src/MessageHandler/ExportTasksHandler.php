@@ -51,7 +51,7 @@ class ExportTasksHandler implements MessageHandlerInterface
     )
     { }
 
-    public function __invoke(ExportTasks $message): string
+    public function __invoke(ExportTasks $message): ?string
     {
 
         $afterDate = $message->getFrom()->setTime(0, 0, 0)->format('Y-m-d H:i:s');
@@ -164,6 +164,10 @@ class ExportTasksHandler implements MessageHandlerInterface
             'cancelled' => OrderInterface::STATE_CANCELLED,
             'refused' => OrderInterface::STATE_REFUSED,
         ])->fetchAllAssociative();
+
+        if (empty($content)) {
+            return null;
+        }
 
         $csv = Writer::createFromString('');
         $csv->insertOne(self::$columns);
