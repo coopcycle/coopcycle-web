@@ -28,7 +28,7 @@ Feature: Urbantz
             "city":"Nantes",
             "zip":"44000",
             "country":"FR",
-            "address":"Rue Perrault 4 44000 Nantes FR",
+            "address":"Rue Perrault 4 44000 Nantes FR"
           },
           "location":{
             "location":{
@@ -617,7 +617,7 @@ Feature: Urbantz
             "streetAddress":"4 Rue Perrault, 44000 Nantes",
             "telephone":null,
             "name":null,
-            "description": null
+            "description": "4ème étage"
           },
           "comments":"",
           "after":"@string@.isDateTime()",
