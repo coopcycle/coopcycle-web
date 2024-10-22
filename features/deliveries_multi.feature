@@ -52,7 +52,8 @@ Feature: Multi-step deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -79,7 +80,8 @@ Feature: Multi-step deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -158,7 +160,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"4 × XL\n3.00 kg",
           "weight":3000,
@@ -193,7 +196,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -276,7 +280,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"2 × XL\n1.50 kg",
           "weight":1500,
@@ -311,7 +316,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -392,7 +398,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"2 × XL\n1.50 kg",
           "weight":1500,
@@ -427,7 +434,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
