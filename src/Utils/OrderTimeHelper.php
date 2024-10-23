@@ -49,7 +49,7 @@ class OrderTimeHelper
 
             if ($choicesLogged < self::MAX_CHOICES_LOGGED && $acceptedChoicesLogged < self::MAX_ACCEPTED_CHOICES_LOGGED) {
 
-                $this->logger->info(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
+                $this->logger->debug(sprintf('OrderTimeHelper::filterChoices | ShippingDateFilter::accept() returned %s for %s',
                     var_export($result, true),
                     (string)$choice),
                     ['order' => $this->loggingUtils->getOrderId($cart),
