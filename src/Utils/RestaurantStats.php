@@ -586,6 +586,7 @@ class RestaurantStats implements \Countable
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
         $headings[] = 'net_revenue';
+        $headings[] = 'incident_adjustments';
         if ($this->nonProfitsEnabled) {
             $headings[] = 'nonprofit';
         }
@@ -673,6 +674,8 @@ class RestaurantStats implements \Countable
                 return $order->getNonprofit();
             case 'payment_method':
                 return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
+            case 'incident_adjustments':
+            return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::INCIDENT_ADJUSTMENT), !$formatted);
             case 'billing_method':
                 return $order->billingMethod ?? 'unit';
             case 'applied_billing':
