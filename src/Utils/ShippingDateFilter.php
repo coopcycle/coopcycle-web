@@ -68,7 +68,7 @@ class ShippingDateFilter
         }
 
         if ($preparation <= $preparationCanStartAt) {
-            $this->logger->info(sprintf('ShippingDateFilter::accept | preparation time "%s" with prior notice "%s" is in the past',
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | preparation time "%s" with prior notice "%s" is in the past',
                 $preparation->format(\DateTime::ATOM),
                 strval($priorNoticeDelay)),
                 [
@@ -91,7 +91,7 @@ class ShippingDateFilter
 
         if ($pickup <= $pickupCanStartAt) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | pickup time "%s" with pickup delay "%s" minutes is in the past',
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | pickup time "%s" with pickup delay "%s" minutes is in the past',
                 $pickup->format(\DateTime::ATOM),
                 strval($dispatchDelayForPickup)),
                 [
@@ -108,7 +108,7 @@ class ShippingDateFilter
 
         if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
                 $preparation->format(\DateTime::ATOM)),
                 [
                     'order' => $this->loggingUtils->getOrderId($order),
