@@ -77,7 +77,8 @@ export function createClient(dispatch) {
   client.paginatedRequest = async (requestConfig) => {
       const firstResp = await client.request(requestConfig)
       const data = [firstResp.data['hydra:member']]
-      if (!Object.hasOwn(firstResp.data, 'hydra:view')) {
+
+      if (!Object.hasOwn(firstResp.data, 'hydra:view') || !Object.hasOwn(firstResp.data['hydra:view'], 'hydra:last')) {
         return data[0]
       }
 
