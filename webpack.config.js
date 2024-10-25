@@ -39,6 +39,7 @@ Encore
   .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
   .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
+  .addEntry('monitoring', './js/app/monitoring.js')
   .addEntry('optins', './js/app/optins/index.js')
   .addEntry('order-index', './js/app/order/index.js')
   .addEntry('order-payment', './js/app/order/payment/index.js')
