@@ -122,7 +122,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -149,7 +150,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -227,7 +229,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -254,7 +257,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -335,7 +339,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -370,7 +375,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -455,7 +461,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -482,7 +489,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime().startsWith(\"2022-03-25T12:30:00\")",
@@ -543,7 +551,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -570,7 +579,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -627,7 +637,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -654,7 +665,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -715,7 +727,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -742,7 +755,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": "John Doe"
+            "contactName": "John Doe",
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -805,7 +819,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -832,7 +847,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": "John Doe"
+            "contactName": "John Doe",
+            "description": "Code A1B2"
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -893,7 +909,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -920,7 +937,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -982,7 +1000,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -1009,7 +1028,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"2020-04-02T12:00:00+02:00",
           "after":"2020-04-02T12:00:00+02:00",
@@ -1081,7 +1101,8 @@ Feature: Deliveries
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -1265,7 +1286,8 @@ Feature: Deliveries
                 },
                 "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
                 "telephone": null,
-                "name": null
+                "name": null,
+                "description": null
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
@@ -1292,7 +1314,8 @@ Feature: Deliveries
                 },
                 "streetAddress": @string@,
                 "telephone": null,
-                "name": null
+                "name": null,
+                "description": null                
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
@@ -1366,7 +1389,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -1393,7 +1417,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime().startsWith(\"2022-05-06T11:50:00\")",

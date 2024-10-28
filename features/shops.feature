@@ -33,7 +33,8 @@ Feature: Manage shops
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
-          "name":null
+          "name":null,
+          "description": null
         },
         "state":"normal",
         "telephone":null,

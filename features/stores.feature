@@ -122,7 +122,8 @@ Feature: Stores
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
-          "name":null
+          "name":null,
+          "description": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -161,7 +162,8 @@ Feature: Stores
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
-          "name":null
+          "name":null,
+          "description": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -590,7 +592,8 @@ Feature: Stores
             },
             "streetAddress":"18 Rue des Batignolles",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           }
         ],
         "hydra:totalItems":1,

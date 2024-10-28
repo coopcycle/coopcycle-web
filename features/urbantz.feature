@@ -588,7 +588,8 @@ Feature: Urbantz
             },
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"Coopcycle\n\nCommande n° 1269-00099999991\n0 × bac(s)\n1.082 kg\n\n\n1.08 kg",
           "after":"@string@.isDateTime()",
@@ -615,7 +616,8 @@ Feature: Urbantz
             },
             "streetAddress":"4 Rue Perrault, 44000 Nantes",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": "4ème étage"
           },
           "comments":"",
           "after":"@string@.isDateTime()",
