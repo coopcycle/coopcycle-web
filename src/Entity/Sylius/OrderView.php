@@ -29,6 +29,8 @@ class OrderView
 
     public $refunds = [];
 
+    public $incidents = [];
+
     public $nonprofitId;
     public $nonprofitName;
     public $storeName;
@@ -188,6 +190,7 @@ class OrderView
         $order->takeaway          = $data['takeaway'];
         $order->itemsTotal        = $data['itemsTotal'];
         $order->total             = $data['total'];
+        $order->incidents         = explode('\n', $data['incident_titles']);
 
         if (isset($data['nonprofit_id'])) {
             $order->nonprofitId = $data['nonprofit_id'];
@@ -209,5 +212,10 @@ class OrderView
     public function getNonprofit(): ?string
     {
         return $this->nonprofitName;
+    }
+
+    public function getIncidents(): array
+    {
+        return $this->incidents;
     }
 }

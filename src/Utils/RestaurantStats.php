@@ -5,6 +5,7 @@ namespace AppBundle\Utils;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Refund;
@@ -587,6 +588,7 @@ class RestaurantStats implements \Countable
         $headings[] = 'refund_total';
         $headings[] = 'net_revenue';
         $headings[] = 'incident_adjustments';
+        $headings[] = 'incidents';
         if ($this->nonProfitsEnabled) {
             $headings[] = 'nonprofit';
         }
@@ -675,7 +677,9 @@ class RestaurantStats implements \Countable
             case 'payment_method':
                 return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
             case 'incident_adjustments':
-            return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::INCIDENT_ADJUSTMENT), !$formatted);
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::INCIDENT_ADJUSTMENT), !$formatted);
+            case 'incidents':
+                return implode('\n', $order->getIncidents());
             case 'billing_method':
                 return $order->billingMethod ?? 'unit';
             case 'applied_billing':
@@ -770,15 +774,24 @@ class RestaurantStats implements \Countable
 
         $rsm->addRootEntityFromClassMetadata(Order::class, 'o');
         $rsm->addJoinedEntityResult(OrderVendor::class, 'v', 'o', 'vendors');
+        // Add this line to map the incident_titles scalar result
+        $rsm->addScalarResult('incident_titles', 'incident_titles');
 
-        $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
+        $sql = 'SELECT ' . $rsm->generateSelectClause() . ',
+            (
+            SELECT string_agg(DISTINCT i.title, E\'\n\')
+            FROM delivery d
+            JOIN task t ON t.delivery_id = d.id
+            JOIN incident i ON i.task_id = t.id
+            WHERE d.order_id = o.id
+            ) as incident_titles '
             . 'FROM sylius_order o '
             . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
             . 'LEFT JOIN sylius_order_event evt ON (o.id = evt.aggregate_id AND type = :event_type) '
             . 'WHERE '
             . 'evt.created_at BETWEEN :start AND :end '
             . 'AND o.state = :state'
-            ;
+        ;
 
         if (null !== $restaurant) {
             $sql .= ' AND v.restaurant_id = :restaurant';
@@ -797,7 +810,17 @@ class RestaurantStats implements \Countable
 
         $result = $query->getArrayResult();
 
-        $orders = array_map(fn ($data) => OrderView::create($data, $restaurant), $result);
+        // Modify the mapping to handle the mixed result (entities + scalar)
+        $orders = array_map(function ($data) use ($restaurant) {
+            // Extract the order entity and incident_titles from the mixed result
+            $orderData = $data[0]; // The first element contains the Order entity data
+            $incidentTitles = $data['incident_titles']; // Get the scalar result
+
+            // Add incident_titles to the order data
+            $orderData['incident_titles'] = $incidentTitles;
+
+            return OrderView::create($orderData, $restaurant);
+        }, $result);
 
         return $orders;
     }

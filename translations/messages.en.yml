@@ -1080,6 +1080,7 @@ order.export.heading.net_revenue: Net revenue
 order.export.heading.completed_by: Completed by
 order.export.heading.refund_total: Refunds
 order.export.heading.incident_adjustments: Incident adjustments
+order.export.heading.incidents: Incidents
 order.export.empty: There are no orders to export
 form.order_export.messenger.label: Add column with messenger who completed the order
 basics.show: Show
