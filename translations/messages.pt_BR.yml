@@ -152,7 +152,6 @@ restaurant.form.quotes_allowed.label: 'Este restaurante também aceita cotaçõe
 restaurant.form.loopeat_enabled.label: Habilitar sistema de reembolso LoopEat
 restaurant.form.loopeat_disconnect.label: Desconectar LoopEat
 restaurant.form.featured.label: Este restaurante está destacado na página inicial
-restaurant.form.giropay_enabled.label: Habilitar Giropay
 restaurant.form.fulfillment_methods.label: Métodos de finalização
 restaurant.form.section.general: Geral
 restaurant.form.section.options: Opções
@@ -457,7 +456,7 @@ form.settings.stripe_secret_key.help: "Cria uma conta Stripe para obter sua <a h
   https://stripe.com/docs/dashboard#api-keys\">chave secreta</a>\n"
 form.settings.stripe_connect_client_id.label: Indetificador Stripe Connect
 form.settings.stripe_connect_client_id.help: "Obtenha seu identificador na <a href=\"\
-  https://dashboard.stripe.com/account/applications/settings\">página de parâmetros</a>\n"
+  https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">página de parâmetros</a>\n"
 form.settings.latlng.label: Coordenadas geográficas
 form.settings.latlng.help: "Especifique sua latitude e longitude padrão. Você pode\
   \ obter em <a href=\"https://www.latlong.net/\">latlong.net</a>\n"

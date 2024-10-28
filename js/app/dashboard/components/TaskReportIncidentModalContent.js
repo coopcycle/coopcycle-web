@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { selectSelectedTasks } from "../redux/selectors";
 import { Select, Skeleton, Form, Input, Button, notification } from "antd";
 import { useTranslation } from "react-i18next";
@@ -53,10 +53,12 @@ function FailureReasonSelector({ task, onChange, value }) {
   );
 }
 
-function TaskReportIncidentModalContent({ task }) {
+function TaskReportIncidentModalContent() {
   const [loading, setLoading] = useState(false);
   const [incident, setIncident] = useState(null);
   const { t } = useTranslation();
+
+  const task = useSelector(selectSelectedTasks)[0]
 
   return (
     <Form
@@ -106,17 +108,5 @@ function TaskReportIncidentModalContent({ task }) {
   );
 }
 
-function mapStateToProps(state) {
-  return {
-    task: selectSelectedTasks(state).shift(),
-  };
-}
 
-function mapDispatchToProps() {
-  return {};
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(TaskReportIncidentModalContent);
+export default TaskReportIncidentModalContent

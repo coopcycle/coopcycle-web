@@ -1,10 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { render } from 'react-dom'
 import _ from 'lodash'
-import { Popover, Form, Input, Button } from 'antd'
+import {  Input, Button } from 'antd'
 import { UserOutlined, PhoneOutlined, StarOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import Modal from 'react-modal'
 
@@ -12,9 +11,9 @@ import AddressAutosuggest from '../components/AddressAutosuggest'
 import { getCountry } from '../i18n'
 
 import './AddressBook.scss'
-import { SavedAddressesBox } from './SavedAddressBox'
+import { SavedAddressesBox } from './SavedAddressesBox'
 
-const AddressPopoverIcon = ({ prop }) => {
+const AddressDetailsIcon = ({ prop }) => {
   switch (prop) {
     case 'name':
       return <StarOutlined />
@@ -54,93 +53,56 @@ function getUnformattedValue(prop, value) {
   return value ?? ''
 }
 
-const AddressPopover = ({ baseTestId, address, prop, onChange, id, name, required }) => {
+const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
 
   const inputRef = useRef(null)
   const { t } = useTranslation()
-  const [ visible, setVisible ] = useState(false)
-
-  const [ form ] = Form.useForm()
+  const [ inputValue, setInputValue ] = useState(getFormattedValue(prop, address[prop]))
 
   useEffect(() => {
-    if (visible) {
-      inputRef.current && inputRef.current.focus({
-        cursor: _.isEmpty(value) ? 'start' : 'end',
-        // Make sure the page is not scrolled to top when focusing
-        // https://github.com/coopcycle/coopcycle-web/issues/3411
-        preventScroll: true,
-      })
-    }
-  }, [ visible ]);
+    setInputValue(getFormattedValue(prop, address[prop]))
+  }, [address])
 
   if (!address) {
-
     return null
   }
 
-  const onFinish = (values) => {
-    const value = values[prop]
-    setVisible(false)
+  const saveInputValue = (value) => {
+    setInputValue(value)
     onChange(getUnformattedValue(prop, value))
   }
 
-  const value = address[prop]
+  const onInputBlur = (event) => {
+    saveInputValue(event.target.value)
+  }
+
+  const onInputChange = (event) => {
+    saveInputValue(event.target.value)
+  }
 
   return (
-    <Popover
-      trigger="click"
-      placement="bottom"
-      open={ visible }
-      onOpenChange={ visible => setVisible(visible) }
-      content={
-        <Form form={ form } name={ `${baseTestId}_${prop}__popover` } layout="inline" onFinish={ onFinish }
-          initialValues={{ [ prop ]: getFormattedValue(prop, value) }}>
-          <Form.Item
-            name={ prop }
-            rules={[{ required }]}
-          >
-            <Input
-              prefix={<AddressPopoverIcon prop={ prop } />}
-              placeholder={ prop === 'telephone' ? '' : t(`${transKeys[prop]}_PLACEHOLDER`) }
-              ref={ inputRef } />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-            >
-              { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
-            </Button>
-          </Form.Item>
-        </Form> }
-    >
-      <span style={{ position: 'relative', display: 'inline-block' }} data-testid={ `address_${prop}__popover_pill` }>
-        <button
-          type="button"
-          className={ classNames({
-            'border': true,
-            'rounded-pill': true,
-            'py-2': true,
-            'px-4': true,
-            'mr-2': true,
-            'mb-2': true,
-            'border-primary': !_.isEmpty(value),
-          }) }>
-          <span className="mr-2"><AddressPopoverIcon prop={ prop } /></span>
-          <span className={ classNames({
-            'font-weight-bold': prop === 'name',
-          }) }>{ !_.isEmpty(value) ? getFormattedValue(prop, value) : t(`${transKeys[prop]}_LABEL`) }</span>
-        </button>
-        {/* https://stackoverflow.com/questions/50917016/make-hidden-field-required */}
-        <input type="text"
+      <>
+        <Input
+          style={{ width: '33%' }}
+          prefix={<AddressDetailsIcon prop={ prop } />}
+          placeholder={ t(`${transKeys[prop]}_PLACEHOLDER`) }
+          ref={ inputRef }
+          onBlur={ onInputBlur }
+          onChange={ onInputChange }
+          value={ inputValue }
+          defaultValue={ inputValue }
+          id={id + '__display'}
+        />
+        <input
+          type="text"
+          tabIndex="-1"
           style={{ opacity: 0, width: 0, position: 'absolute', left: '50%', top: 0, bottom: 0, pointerEvents: 'none' }}
           id={ id }
           name={ name }
-          value={ getUnformattedValue(prop, value) }
+          value={ getUnformattedValue(prop, inputValue) }
           onChange={ () => null }
           required={ required } />
-      </span>
-    </Popover>
+    </>
   )
 }
 
@@ -159,6 +121,7 @@ const AddressBook = ({
   const { t } = useTranslation()
   const [ address, setAddress ] = useState(initialAddress)
   const [ isModalOpen, setModalOpen ] = useState(false)
+  const [ alreadyAskedForDuplicate, setAlreadyAskedForDuplicate ] = useState(false)
 
   const onAddressPropChange = (address, prop, value) => {
 
@@ -169,7 +132,8 @@ const AddressBook = ({
     setAddress(newAddress)
     onAddressSelected(newAddress.streetAddress, newAddress)
 
-    if (address['@id']) {
+    if (!alreadyAskedForDuplicate && address['@id']) {
+      setAlreadyAskedForDuplicate(true)
       const oldValue = address[prop]
       if (!_.isEmpty(oldValue) && oldValue !== value) {
         setModalOpen(true)
@@ -180,14 +144,16 @@ const AddressBook = ({
   return (
     <div>
        {allowSearchSavedAddresses &&
-          <SavedAddressesBox addresses={addresses} address={address} onSelected={(selected) => {
-            setAddress(selected)
-            onAddressSelected(selected.streetAddress, selected)
-          }}/>
+          <SavedAddressesBox
+            addresses={addresses}
+            address={address} onSelected={(selected) => {
+              setAddress(selected)
+              onAddressSelected(selected.streetAddress, selected)
+            }}
+          />
        }
       <div>
         <AddressAutosuggest
-          addresses={ addresses }
           address={ address }
           required={ true }
           reportValidity={ true }
@@ -202,18 +168,27 @@ const AddressBook = ({
           }}
           { ...otherProps } />
       </div>
-      { address &&
-      <div className="mt-4 mb-2">
+      {/* details may not be asked, for example in the embed delivery form they are asked elsewhere */}
+      { Object.keys(details).length > 0 && address &&
+      <div className="my-4 p-2" style={{border: "1px solid grey", borderRadius: '4px'}}>
+        <Input.Group compact>
         { _.map(details, item => (
-          <AddressPopover
+          <AddressDetails
             key={ item.prop }
             baseTestId={ baseTestId }
             address={ address }
             onChange={ value => onAddressPropChange(address, item.prop, value) }
             { ...item } />
         )) }
-      </div> }
-      <Modal
+        {
+          address['@id'] ? <span className="text-muted pull-right">From address book</span>: null
+        }
+        </Input.Group>
+
+      </div> 
+      }
+      { address &&
+        <Modal
         isOpen={ isModalOpen }
         onRequestClose={ () => setModalOpen(false) }
         shouldCloseOnOverlayClick={ false }
@@ -222,9 +197,11 @@ const AddressBook = ({
         className="ReactModal__Content--addressProp"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
+        <h4 className='text-center'>{address.name} - {address.streetAddress}</h4>
         <p>{ t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER') }</p>
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-center">
           <Button
+            className="mr-4"
             onClick={ () => {
               onDuplicateAddress(false)
               setModalOpen(false)
@@ -236,6 +213,7 @@ const AddressBook = ({
             }}>{ t('ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE') }</Button>
         </div>
       </Modal>
+      }
     </div>
   )
 }
@@ -412,7 +390,6 @@ export default function(el, options) {
       // The onAddressSelected callback is *ALSO* called when
       // an address prop (name, telephone, contactName) is modified
       onAddressSelected={ (value, address) => {
-
         if (address['@id']) {
           existingAddressControlHidden.value = address['@id']
           isNewAddressControlHidden.remove()

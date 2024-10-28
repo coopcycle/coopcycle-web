@@ -15,6 +15,7 @@
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\DeliveryListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
+        <lifecycle-callback type="postPersist" method="postPersist"/>
       </entity-listener>
     </entity-listeners>
   </entity>

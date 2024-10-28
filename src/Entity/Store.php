@@ -6,9 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
-use AppBundle\Action\Store\UpdateTimeSlots;
 use AppBundle\Entity\Base\LocalBusiness;
-use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
@@ -20,13 +18,14 @@ use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
-use IncidentableTrait;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
+use AppBundle\Action\Store\Packages as Packages;
 
 /**
  * A retail good store.
@@ -60,6 +59,20 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "patch"={
  *       "method"="PATCH",
  *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "time_slots"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/time_slots",
+ *       "controller"=TimeSlots::class,
+ *       "normalization_context"={"groups"={"store_time_slots"}},
+ *       "security"="is_granted('edit', object)"
+ *     },
+ *     "packages"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/packages",
+ *       "controller"=Packages::class,
+ *       "normalization_context"={"groups"={"store_packages"}},
+ *       "security"="is_granted('edit', object)"
  *     }
  *   },
  *   subresourceOperations={
@@ -164,8 +177,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $checkExpression;
 
+    /**
+     * @Groups({"store"})
+     */
     private $weightRequired = false;
 
+    /**
+     * @Groups({"store"})
+     */
     private $packagesRequired = false;
 
     private $multiDropEnabled = false;
@@ -177,6 +196,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     private $timeSlots;
 
     private ?string $transporter = null;
+
+    /**
+     * The deliveries of this store will be linked by default to this rider
+     * @var User
+    */
+    private $defaultCourier;
+
+    protected string $billingMethod = 'unit';
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
@@ -606,6 +633,16 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this;
     }
 
+    public function getDefaultCourier(): ?User
+    {
+        return $this->defaultCourier;
+    }
+
+    public function setDefaultCourier(?User $defaultCourier): Store
+    {
+        $this->defaultCourier = $defaultCourier;
+        return $this;
+    }
 
     /**
      * Get the recurrence rules linked to this store
@@ -614,5 +651,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function getRrules()
     {
         return $this->rrules;
+    }
+
+    public function setBillingMethod(string $billingMethod): void
+    {
+        $this->billingMethod = $billingMethod;
+    }
+
+    public function getBillingMethod(): string
+    {
+        return $this->billingMethod;
     }
 }

@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.16.0] - 2024-10-09
+
+### Fixed
+* The delivery order form is now navigatable with TAB key
+* Multi-dropoff reorder suggestions show only on delivery form submit
+* You can select with TAB or ENTER key from the address autossugest dropdown
+* Phone number and contact name are now optional for admins in the delivery order form
+
+## [3.15.0] - 2024-10-07
+
+### Fixed
+* The "global foodtech delay" now solely applies to pickup times
+
+## [3.14.11] - 2024-09-27
+
+### Added
+* Allow limiting deliveries to a zone/distance for a store.
+
+## [3.14.8] - 2024-09-26
+
+### Added
+* Validate SIRET using INSEE APIs, to make sure it works with Edenred.
+
+## [3.14.0] - 2024-09-24
+
+### Added
+* Allow auto-assiging deliveries from a store to a rider.
+
+## [3.13.0] - 2024-09-24
+
+### Changed
+* Paying with Edenred with a credit card complement now generates two payments.
+
+## [3.9.11] - 2024-09-12
+
+### Added
+* Ability to filter out unassigned tours on dispatch map
+* Ability to filter out assigned tasks on dispatch map
+
+### Fixed
+* Deliveries/orders created from dispatch recurrent rules are not in the right order
+
+## [3.9.6] - 2024-09-10
+
+### Added
+* Show order number in the dispatch panel, not task id
+
+### Fixed
+* Crash when creating an incident from the dispatch panel
+
 ## [3.8.1] - 2024-08-21
 
 ### Added

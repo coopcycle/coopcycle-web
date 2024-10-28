@@ -12,18 +12,11 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class TriggerWebhook
 {
-    private $messageBus;
-    private $iriConverter;
-
     public function __construct(
-        MessageBusInterface $messageBus,
-        IriConverterInterface $iriConverter,
-        EntityManagerInterface $entityManager)
-    {
-        $this->messageBus = $messageBus;
-        $this->iriConverter = $iriConverter;
-        $this->entityManager = $entityManager;
-    }
+        private MessageBusInterface $messageBus,
+        private IriConverterInterface $iriConverter,
+        private EntityManagerInterface $entityManager)
+    {}
 
     public function __invoke(Event $event)
     {
@@ -100,4 +93,3 @@ class TriggerWebhook
         return '';
     }
 }
-

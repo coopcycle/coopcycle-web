@@ -116,7 +116,7 @@ class TaskList implements TaskCollectionInterface
      * Can be get and set, but not persisted to the database
      * @deprecated
      */
-    protected $tempLegacyTaskStorage;
+    protected $tempLegacyTaskStorage = null;
 
     private $date;
 

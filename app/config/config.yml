@@ -70,6 +70,7 @@ parameters:
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
     business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
     transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+    billing_enabled: '%env(bool:BILLING_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -139,6 +140,8 @@ framework:
             messenger.bus.default:
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
+                    # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    - 'AppBundle\Messenger\RequestIdMiddleware'
                     # each time a message is handled, the Doctrine connection
                     # is "pinged" and reconnected if it's closed. Useful
                     # if your workers run for a long time and the database
@@ -221,6 +224,8 @@ framework:
                 base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
                 query:
                     api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
+            insee.client:
+                base_uri: "https://api.insee.fr/"
 
 # Twig Configuration
 twig:
@@ -229,6 +234,7 @@ twig:
     form_themes:
         - 'form/address_book.html.twig'
         - 'form/price_with_tax.html.twig'
+        - 'form/delivery_zone_picker.html.twig'
         - 'form/delivery.html.twig'
         - '@VichUploader/Form/fields.html.twig'
     globals:
@@ -268,6 +274,10 @@ twig:
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
 
     exception_controller: null
+
+monolog:
+  # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+  channels: [ 'domain_event', 'checkout', 'database', 'push_notification', 'real_time_message' ]
 
 # Doctrine Configuration
 doctrine:
@@ -1198,3 +1208,8 @@ acseo_typesense:
                     entity_attribute: 'AppBundle\Typesense\Converter\ShopConverter::getImageURL'
                     optional: true
             default_sorting_field: sortable_id
+
+kreait_firebase:
+    projects:
+        coopcycle:
+            credentials: '%env(FIREBASE_CREDENTIALS)%'

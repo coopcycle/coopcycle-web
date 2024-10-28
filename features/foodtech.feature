@@ -93,7 +93,8 @@ Feature: Food Tech
             "hasReceipt":@boolean@,
             "invitation": "@string@||@null@",
             "events":@array@,
-            "paymentGateway":@string@
+            "paymentGateway":@string@,
+            "hasEdenredCredentials":@boolean@
           }
         ],
         "hydra:totalItems":1,
@@ -222,6 +223,7 @@ Feature: Food Tech
   Scenario: Not authorized to delay order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -388,6 +390,7 @@ Feature: Food Tech
   Scenario: Not authorized to accept order (with empty JSON payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"

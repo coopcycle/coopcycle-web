@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
+use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
 /**
  * @ApiResource(
@@ -22,7 +23,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "delete"={
  *       "method"="DELETE",
  *       "security"="is_granted('ROLE_ADMIN')"
- *     }
+ *     },
+ *     "choices"={
+ *       "method"="GET",
+ *       "path"="/time_slots/{id}/choices",
+ *       "controller"=OpeningHours::class,
+ *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
+ *       "security"="is_granted('edit', object)"
+ *     },
  *   },
  *   collectionOperations={
  *     "get"={
@@ -41,9 +49,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "openapi_context"={
  *         "summary"="Retrieves choices for time slot"
  *       }
- *     }
- *   }
- * )
+ *     },
+ *   })
  */
 class TimeSlot
 {
@@ -53,7 +60,7 @@ class TimeSlot
 
     /**
      * @var string
-     * @Groups({"time_slot"})
+     * @Groups({"time_slot", "store_time_slots"})
      */
     private $name;
 

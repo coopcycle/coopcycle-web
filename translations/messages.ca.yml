@@ -356,7 +356,7 @@ form.settings.stripe_secret_key.help: "Creeu un compte Stripe per obtenir-ne <a 
   https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect identificador
 form.settings.stripe_connect_client_id.help: "Obteniu l'identificador a la secció\
-  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">pàgina\
+  \ <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">pàgina\
   \ de paràmetres</a>\n"
 form.settings.latlng.label: Coordenades geogràfiques
 form.settings.latlng.help: "Especifiqueu la latitud i la longitud predeterminades.\
@@ -879,7 +879,6 @@ store.PAWN_SHOP: Casa de préstecs
 store.PET_STORE: Botiga de mascotes
 food_establishment.BAKERY: Forn de pa
 form.time_slot.prior_notice_hours.label: Avís previ (hores)
-restaurant.form.giropay_enabled.label: Habilita Giropay
 activity.task.started: "@%owner% va començar tasca #task/%*aggregate_id%\n"
 form.min_max.infinity.label: Sense màxim
 receipt.billing_details: Comanda pagada amb targeta de crèdit el %date%

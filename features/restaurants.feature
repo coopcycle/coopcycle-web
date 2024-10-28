@@ -76,7 +76,8 @@ Feature: Manage restaurants
             },
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "state":"normal",
           "openingHoursSpecification":[
@@ -161,7 +162,8 @@ Feature: Manage restaurants
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "telephone":"+33612345678",
       "image":@string@,
@@ -242,7 +244,8 @@ Feature: Manage restaurants
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "telephone":"+33612345678",
       "image":@string@,
@@ -312,12 +315,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-18T12:00:00+02:00",
-          "2020-09-18T12:10:00+02:00"
+          "2020-09-18T11:50:00+02:00",
+          "2020-09-18T12:00:00+02:00"
         ],
         "today":false,
         "fast": false,
-        "diff":"1260 - 1270"
+        "diff":"1250 - 1260"
       },
       "collection":null
     }
@@ -368,6 +371,7 @@ Feature: Manage restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "6" has menu:

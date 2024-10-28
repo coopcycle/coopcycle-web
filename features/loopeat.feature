@@ -3,6 +3,7 @@ Feature: Loopeat
 	Scenario: Update Loopeat returns
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -26,10 +27,10 @@ Feature: Loopeat
       """
     Then print last response
 
-  @debug
   Scenario: Update Loopeat formats
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:

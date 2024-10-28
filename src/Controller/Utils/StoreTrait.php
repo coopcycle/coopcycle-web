@@ -36,6 +36,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
+use League\Flysystem\FilesystemException;
+use League\Flysystem\UnableToWriteFile;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
@@ -315,9 +317,11 @@ trait StoreTrait
 
         $form = $this->createForm(NewOrderType::class, $delivery, [
             'arbitrary_price' => $previousArbitraryPrice,
+            'validation_groups' => ['Default', 'delivery_check']
         ]);
 
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             $delivery = $form->getData();
@@ -839,20 +843,33 @@ trait StoreTrait
 
         $filename = sprintf('%s.%s', $hashids->encode($queue->getId()), $uploadedFile->guessExtension());
 
-        $filesystem->write($filename, $uploadedFile->getContent());
-        $queue->setFilename($filename);
+        try {
 
-        $entityManager->flush();
+            $filesystem->write($filename, $uploadedFile->getContent());
 
-        $messageBus->dispatch(
-            new ImportDeliveries($filename),
-            [ new DelayStamp(5000) ]
-        );
+            $queue->setFilename($filename);
+            $entityManager->flush();
 
-        $this->addFlash(
-            'notice',
-            $this->translator->trans('deliveries.importing', ['%filename%' => $filename])
-        );
+            $messageBus->dispatch(
+                new ImportDeliveries($filename),
+                [ new DelayStamp(5000) ]
+            );
+
+            $this->addFlash(
+                'notice',
+                $this->translator->trans('deliveries.importing', ['%filename%' => $filename])
+            );
+
+        } catch (FilesystemException | UnableToWriteFile $e) {
+
+            $entityManager->remove($queue);
+            $entityManager->flush();
+
+            $this->addFlash(
+                'error',
+                $this->translator->trans('deliveries.import_upload_error')
+            );
+        }
 
         return $this->redirectToRoute($routeTo, ['section' => 'imports']);
     }

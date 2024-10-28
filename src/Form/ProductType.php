@@ -343,7 +343,9 @@ class ProductType extends AbstractType
                 foreach ($businessRestaurantGroups as $businessRestaurantGroup) {
                     if (!in_array($businessRestaurantGroup->getId(), $submitedBusinessRestaurantGroups->toArray())) {
                         $variantToRemove = $this->variantResolver->getVariantForBusinessRestaurantGroup($product, $businessRestaurantGroup);
-                        $product->removeVariant($variantToRemove);
+                        if (null !== $variantToRemove) {
+                            $product->removeVariant($variantToRemove);
+                        }
                     }
                 }
             }

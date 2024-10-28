@@ -7,6 +7,7 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
@@ -23,61 +24,73 @@ class CheckoutHandler
     {
     }
 
-    private function getLastPayment(OrderInterface $order): ?PaymentInterface
-    {
-        if ($payment = $order->getLastPayment(PaymentInterface::STATE_CART)) {
-
-            return $payment;
-        }
-
-        if ($payment = $order->getLastPayment(PaymentInterface::STATE_PROCESSING)) {
-
-            return $payment;
-        }
-
-        return null;
-    }
-
     public function __invoke(Checkout $command)
     {
         $order = $command->getOrder();
         $stripeToken = $command->getStripeToken();
 
-        $payment = $this->getLastPayment($order);
+        // Assign a number to the order in any case
+        $this->orderNumberAssigner->assignNumber($order);
 
-        $isFreeOrder = null === $payment && $order->isFree();
-        $isCashOnDelivery = null !== $payment && $payment->isCashOnDelivery();
-        $isMercadopagoPaymentApproved = null !== $payment && 'approved' === $payment->getMercadopagoPaymentStatus();
-
-        if ($isFreeOrder || $isCashOnDelivery || $isMercadopagoPaymentApproved) {
-            $this->orderNumberAssigner->assignNumber($order);
-            $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
-
+        // Bail early if order is free
+        if ($order->isFree()) {
+            $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
             return;
         }
 
-        // TODO Check if $payment !== null
+        $payments = $order->getPayments()->filter(
+            fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
 
-        $data = $command->getData();
+        // Make sure card payment is always *BEFORE* Edenred payment
+        $iterator = $payments->getIterator();
+        $iterator->uasort(function (PaymentInterface $a, PaymentInterface $b) {
 
-        if (is_array($data)) {
-            if (isset($data['mercadopagoPaymentMethod'])) {
-                $payment->setMercadopagoPaymentMethod($data['mercadopagoPaymentMethod']);
+            $methodA = $a->getMethod()->getCode();
+            $methodB = $b->getMethod()->getCode();
+
+            if ($methodA === $methodB) {
+
+                return 0;
             }
-            if (isset($data['mercadopagoInstallments'])) {
-                $payment->setMercadopagoInstallments($data['mercadopagoInstallments']);
+
+            return $methodA === 'CARD' ? -1 : 1;
+        });
+        $payments = new ArrayCollection(iterator_to_array($iterator));
+
+        foreach ($payments as $payment) {
+
+            // Do nothing for "offline" payments, i.e cash on delivery
+            if ($payment->isOffline()) {
+                continue;
+            }
+
+            if ('approved' === $payment->getMercadopagoPaymentStatus()) {
+                continue;
+            }
+
+            if ($payment->getMethod()->getCode() === 'CARD') {
+                $data = $command->getData();
+                if (is_array($data)) {
+                    if (isset($data['mercadopagoPaymentMethod'])) {
+                        $payment->setMercadopagoPaymentMethod($data['mercadopagoPaymentMethod']);
+                    }
+                    if (isset($data['mercadopagoInstallments'])) {
+                        $payment->setMercadopagoInstallments($data['mercadopagoInstallments']);
+                    }
+                }
+            }
+
+            try {
+                $this->gateway->authorize($payment, ['token' => $stripeToken]);
+            } catch (\Exception $e) {
+                $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
+                    ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
+
+                $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
+                return;
             }
         }
 
-        try {
-            $this->orderNumberAssigner->assignNumber($order);
-            $this->gateway->authorize($payment, ['token' => $stripeToken]);
-            $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payment));
-        } catch (\Exception $e) {
-            $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
-                ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
-
-            $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
-        }
+        $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payments));
     }
 }

@@ -367,6 +367,9 @@ form.store_type.setAsDefault.label: Als Hauptadresse festlegen
 form.store_type.defaultAddress.label: Hauptadresse
 form.store_type.time_slot.label: Zeitraum
 form.store_type.package_set.label: Paketset
+form.store_type.defaultCourier.label: Standardkurier
+form.store_type.defaultCourier.placeholder: Keiner
+form.store_type.defaultCourier.help: Bestellungen für diesen Laden werden automatisch diesem Kurier zugewiesen
 form.delivery.vehicle.placeholder: Wähle Fahrzeugtyp aus
 form.delivery.vehicle.label: Fahrzeug order Cargobike?
 form.delivery.distance.label: Entfernung
@@ -405,7 +408,7 @@ form.settings.latlng.help: "Bestimme die standardmäßigen Längen- und Breiteng
   \ Du erhältst sie auf <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.latlng.label: Geo-Koordinaten
 form.settings.stripe_connect_client_id.help: "Den Identifier erhältst Du auf der <a\
-  \ href=\"https://dashboard.stripe.com/account/applications/settings\">Einstellungen-Seite</a>\
+  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">Einstellungen-Seite</a>\
   \ von Stripe Connect\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect Identifier
 form.settings.stripe_secret_key.help: "Erstelle ein Stripe-Konto um die <a href=\"\
@@ -480,6 +483,15 @@ form.reusable_packaging.is_tracked.label: Tracking aktiviert
 form.reusable_packaging.name.label: Name
 form.package.volume_units.label: Volumeneinheiten
 form.package.name.label: Name
+form.package.description.label: Beschreibung für den Kunden
+form.package.average_volume_units.label: Durchschnittliche Volumeneinheiten (VU)
+form.package.max_volume_units.label: Maximale Volumeneinheiten (VU)
+form.package.average_estimation: Geschätzt auf 75 % des Maximums, wenn nicht festgelegt
+form.package.max_volume_units: Dieser Wert wird verwendet, um die Preise basierend auf dem Volumen zu berechnen
+form.package.average_weight.label: Durchschnittsgewicht (kg)
+form.package.max_weight.label: Maximalgewicht (kg)
+form.package.shortCode.label: 2-Buchstaben-Code
+form.package.enter_details:  Details ein-/ausblenden
 form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name
 form.time_slot_choice.end_time.label: Endzeit
@@ -635,7 +647,6 @@ form.product.reusable_packaging_enabled.label: Aktivieren Sie wiederverwendbare 
   für dieses Produkt
 form.product_option.values.help: Sie müssen eine Liste an Werte für diese Option festlegen
 restaurant.form.loopeat_disconnect.label: LoopEat trennen
-restaurant.form.giropay_enabled.label: Aktiviere Giropay
 restaurant.form.featured.label: Dieses Restaurant soll auf dem Homepage gezeigt werden
 restaurant.quotes_disclaimer.not_authenticated: Dieses Restaurant bietet auch Caterings.
   Melde dich ein <a href="%login%">Einmelden</a> um ein Kostenvoranschlag anzufragen.
@@ -687,25 +698,26 @@ checkout.breadcrumb.confirm: Bestätigung
 products.on_demand_delivery.name: Lieferung auf Anfrage
 security.login.remember_me: An mich erinnern
 delivery.failure_reason:
-  damaged: "Beschädigt"
-  lost: "Verloren"
-  late: "Verspätete Lieferung"
-  incorrect_address: "Falsche Adresse"
-  customer_refused: "Kunde hat die Lieferung verweigert"
-  item_missing: "Fehlendes Element"
-  incorrect_item: "Falsches Element geliefert"
-  bad_weather: "Schlechtes Wetter"
-  vehicle_breakdown: "Fahrzeugausfall"
-  traffic_delays: "Verkehrsverzögerungen"
-  routing_problems: "Routing-Probleme"
-  customs_issues: "Zollprobleme"
-  inventory_shortage: "Inventurmangel"
-  address_unreachable: "Nicht erreichbare Adresse"
-  insufficient_funds: "Unzureichende Mittel"
-  data_entry_error: "Datenfehler"
-  packaging_problems: "Probleme der Verpackung"
-  holiday_closure: "Ferienverlängerung"
-  closed_store: "Geschäft geschlossen"
+  default:
+    damaged: "Beschädigt"
+    lost: "Verloren"
+    late: "Verspätete Lieferung"
+    incorrect_address: "Falsche Adresse"
+    customer_refused: "Kunde hat die Lieferung verweigert"
+    item_missing: "Fehlendes Element"
+    incorrect_item: "Falsches Element geliefert"
+    bad_weather: "Schlechtes Wetter"
+    vehicle_breakdown: "Fahrzeugausfall"
+    traffic_delays: "Verkehrsverzögerungen"
+    routing_problems: "Routing-Probleme"
+    customs_issues: "Zollprobleme"
+    inventory_shortage: "Inventurmangel"
+    address_unreachable: "Nicht erreichbare Adresse"
+    insufficient_funds: "Unzureichende Mittel"
+    data_entry_error: "Datenfehler"
+    packaging_problems: "Probleme der Verpackung"
+    holiday_closure: "Ferienverlängerung"
+    closed_store: "Geschäft geschlossen"
 adminDashboard.failureSet.title: "Fehlergründe"
 adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen fehlschlagen können."
 adminDashboard.failureSet.nofailureSet: "Keine Fehlergründe"

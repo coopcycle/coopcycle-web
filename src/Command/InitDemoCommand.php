@@ -33,6 +33,7 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
@@ -69,7 +70,15 @@ class InitDemoCommand extends Command
     {
         $this
             ->setName('coopcycle:demo:init')
-            ->setDescription('Initialize CoopCycle demo.');
+            ->setDescription('Initialize CoopCycle demo.')
+            ->addOption(
+                'no-create-admin',
+                mode: InputOption::VALUE_NONE
+            )
+            ->addOption(
+                'latlng',
+                mode: InputOption::VALUE_REQUIRED
+            );
     }
 
     public function __construct(
@@ -115,6 +124,7 @@ class InitDemoCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $createSuperUsers = !$input->getOption('no-create-admin');
         $lock = $this->lockFactory->createLock('orm-purger');
 
         if ($lock->acquire()) {
@@ -128,9 +138,11 @@ class InitDemoCommand extends Command
             $output->writeln('Resetting sequences…');
             $this->resetSequences();
 
-            $output->writeln('Creating super users…');
-            foreach (self::$users as $username => $params) {
-                $this->createUser($username, $params);
+            if ($createSuperUsers) {
+                $output->writeln('Creating super users…');
+                foreach (self::$users as $username => $params) {
+                    $this->createUser($username, $params);
+                }
             }
 
             $output->writeln('Creating users…');
@@ -216,12 +228,16 @@ class InitDemoCommand extends Command
         $className = $this->configEntityName;
         $em = $this->doctrine->getManagerForClass($className);
 
-        try {
-            $mapCenterValue = $this->craueConfig->get('latlng');
-        } catch (\RuntimeException $e) {
-            $mapCenterValue = implode(',', self::$parisFranceCoords);
-            $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
-            $em->persist($mapCenter);
+        $mapCenterValue = $input->getOption('latlng');
+        if (null === $mapCenterValue) {
+            // in this case, the option was not passed when running the command
+            try {
+                $mapCenterValue = $this->craueConfig->get('latlng');
+            } catch (\RuntimeException $e) {
+                $mapCenterValue = implode(',', self::$parisFranceCoords);
+                $mapCenter = $this->createCraueConfigSetting('latlng', $mapCenterValue);
+                $em->persist($mapCenter);
+            }
         }
 
         try {
@@ -248,8 +264,8 @@ class InitDemoCommand extends Command
         }
 
         // Make sure we use a language supported by Photon
-        // "language es is not supported, supported languages are: default, en, fr, de, it"
-        $geocoderLocale = in_array($this->defaultLocale, ['en', 'fr', 'de', 'it']) ? $this->defaultLocale : 'en';
+        // "Language it is not supported, supported languages are: default, en, de, fr"
+        $geocoderLocale = in_array($this->defaultLocale, ['en', 'de', 'fr']) ? $this->defaultLocale : 'en';
 
         $providers[] = PhotonProvider::withKomootServer($httpAdapter);
 

@@ -151,7 +151,6 @@ restaurant.form.quotes_allowed.label: 'Tato restaurace také přijímá nabídky
 restaurant.form.loopeat_enabled.label: Povolit systém vkladu a vrácení peněz LoopEat
 restaurant.form.loopeat_disconnect.label: Odpojit LoopEat
 restaurant.form.featured.label: Tato restaurace je uvedena na domovské stránce
-restaurant.form.giropay_enabled.label: Povolit Giropay
 restaurant.form.fulfillment_methods.label: Způsoby plnění
 restaurant.form.section.general: Obecné
 restaurant.form.section.options: Možnosti
@@ -449,7 +448,7 @@ form.settings.stripe_secret_key.help: "Vytvořte si účet Stripe a získejte <a
   https://stripe.com/docs/dashboard#api-keys\"> veřejný klíč </a>\n"
 form.settings.stripe_connect_client_id.label: identifikátor Stripe Connect
 form.settings.stripe_connect_client_id.help: "Identifikátor získáte na stránce <a\
-  \ href=\"https://dashboard.stripe.com/account/applications/settings\"> parametry\
+  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"> parametry\
   \ </a>\n"
 form.settings.latlng.label: Zeměpisné souřadnice
 form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete ji získat\
@@ -1112,7 +1111,7 @@ profile.edenred.connected: Účet Edenred připojen
 notifications.tap_to_open: Klepnutím otevřete
 notifications.tasks_changed_today: Vaše dnešní úkoly byly aktualizovány
 notifications.delivery_created: Byla vytvořena dodávka k vyzvednutí %date%
-ordering_delay.admin_reminder: Nakonfigurovali jste globální zpoždění objednávek
+ordering_delay.admin_reminder: Nastavili jste globální zpoždění vyzvednutí Foodtech
 ordering_delay.disclaimer: V současné době dostáváme spoustu objednávek, dodací lhůty
   se prodlužují!
 form.fulfillment_method.options.range_duration.label: Rozsah dosahu
@@ -1186,11 +1185,6 @@ restaurant_promotion.items_total: Na základě celkového počtu položek
 products.on_demand_delivery.name: Dodávka na vyžádání
 form.settings.geocoding_provider.help: Používá se v rozhraní API a při importu tabulek
 form.settings.geocoding_provider.label: Poskytovatel geokódování
-form.payment.refund_breakdown: Částka vratná kartou %card%, částka vratná Edenred
-  %edenred%
-form.payment.edenred_disclaimer: Tato objednávka byla zaplacena kreditní kartou Edenred
-  a doplatkem. Vrácení peněz bude provedeno přednostně z částky zaplacené kreditní
-  kartou a v případě potřeby z částky Edenred.
 form.settings.google_api_key_custom.label: Google API Key
 form.settings.autocomplete_provider.label: Poskytovatel návrhů
 form.settings.addresses.title: Adresy

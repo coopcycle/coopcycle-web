@@ -272,19 +272,6 @@ class StripeController extends AbstractController
             return new Response('', 200);
         }
 
-        $order = $payment->getOrder();
-
-        // At the moment, we only manage successful intent via webhooks for Giropay
-        if ($payment->isGiropay() && PaymentInterface::STATE_PROCESSING === $payment->getState()) {
-
-            // FIXME
-            // Here we should check if the time range is still realistic
-            // We have no idea when the webhook is called actually
-
-            $orderManager->checkout($order);
-            $this->entityManager->flush();
-        }
-
         return new Response('', 200);
     }
 
@@ -300,23 +287,6 @@ class StripeController extends AbstractController
             $this->logger->error(sprintf('Payment Intent "%s" not found', $paymentIntent->id));
 
             return new Response('', 200);
-        }
-
-        $order = $payment->getOrder();
-
-        // At the moment, we only manage payment failed intent via webhooks for Giropay
-        if ($payment->isGiropay() && PaymentInterface::STATE_PROCESSING === $payment->getState()) {
-
-            // This will change payment state to "failed"
-            $eventBus->handle(
-                new CheckoutFailed($order, $payment, $paymentIntent->last_payment_error->message)
-            );
-            $this->entityManager->flush();
-
-            $emailManager->sendTo(
-                $emailManager->createOrderPaymentFailedMessage($order),
-                sprintf('%s <%s>', $order->getCustomer()->getFullName(), $order->getCustomer()->getEmail())
-            );
         }
 
         return new Response('', 200);
@@ -401,40 +371,6 @@ class StripeController extends AbstractController
 
     private function handleChargeSucceeded(Stripe\Event $event): Response
     {
-        $charge = $event->data->object;
-
-        // We handle this event *ONLY* if Giropay was used
-        if ($charge->payment_method_details->type !== 'giropay') {
-
-            return new Response('', 200);
-        }
-
-        $stripeFee = $this->getStripeFee($event);
-
-        $this->logger->info(sprintf('Stripe fee  = %d', $stripeFee));
-
-        if ($stripeFee > 0) {
-
-            // Can happen when using Stripe CLI
-            if (empty($charge->payment_intent)) {
-                $this->logger->error(sprintf('Charge "%s" has no payment intent, skipping', $charge->id));
-
-                return new Response('', 200);
-            }
-
-            $this->logger->info(sprintf('Retrieving payment intent "%s"', $charge->payment_intent));
-
-            $payment = $this->findOneByPaymentIntent($charge->payment_intent);
-
-            if (null === $payment) {
-                $this->logger->error(sprintf('Payment Intent "%s" not found', $charge->payment_intent));
-
-                return new Response('', 200);
-            }
-
-            $this->addStripeFeeAdjustment($payment->getOrder(), $stripeFee);
-        }
-
         return new Response('', 200);
     }
 
@@ -733,73 +669,5 @@ class StripeController extends AbstractController
         ];
 
         return new JsonResponse($response);
-    }
-
-    /**
-     * @see https://stripe.com/docs/payments/giropay/accept-a-payment#create-payment-intent
-     *
-     * @Route("/stripe/payment/{hashId}/giropay/create-intent", name="stripe_create_giropay_payment_intent", methods={"POST"})
-     */
-    public function createGiropayPaymentIntentAction($hashId, Request $request,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        StripeManager $stripeManager)
-    {
-        $hashids = new Hashids($this->secret, 8);
-
-        $decoded = $hashids->decode($hashId);
-        if (count($decoded) !== 1) {
-
-            return new JsonResponse(['error' =>
-                ['message' => sprintf('Payment with hash "%s" does not exist', $hashId)]
-            ], 400);
-        }
-
-        $paymentId = current($decoded);
-
-        $payment = $this->entityManager
-            ->getRepository(PaymentInterface::class)
-            ->find($paymentId);
-
-        if (null === $payment) {
-
-            return new JsonResponse(['error' =>
-                ['message' => sprintf('Payment with id "%d" does not exist', $paymentId)]
-            ], 400);
-        }
-
-        $order = $payment->getOrder();
-
-        // Assign order number now because it is needed for Stripe
-        $orderNumberAssigner->assignNumber($order);
-
-        try {
-
-            $payment->setState(PaymentInterface::STATE_PROCESSING);
-            $payment->setPaymentMethodTypes(['giropay']);
-
-            $intent = $stripeManager->createGiropayIntent($payment);
-            $payment->setPaymentIntent($intent);
-
-            $this->entityManager->flush();
-
-        } catch (ApiErrorException $e) {
-
-            return new JsonResponse(['error' =>
-                ['message' => $e->getMessage()]
-            ], 400);
-        }
-
-        $this->logger->info(
-            sprintf('Order #%d | Created payment intent %s', $order->getId(), $payment->getPaymentIntent())
-        );
-
-        $returnUrl = $this->generateUrl('payment_confirm', [
-            'hashId' => $hashids->encode($payment->getId()),
-        ], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return new JsonResponse([
-            'payment_intent_client_secret' => $payment->getPaymentIntentClientSecret(),
-            'return_url' => $returnUrl,
-        ]);
     }
 }

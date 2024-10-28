@@ -16,7 +16,7 @@ import Navbar from './components/Navbar'
 import Modals from './components/Modals'
 import { updateRightPanelSize } from './redux/actions'
 import { recurrenceRulesAdapter } from './redux/selectors'
-import { initialState as settingsInitialState, defaultFilters, defaultSettings } from './redux/settingsReducers'
+import { initialState as settingsInitialState, defaultFilters, defaultSettings, defaultMapFilters } from './redux/settingsReducers'
 
 import 'react-phone-number-input/style.css'
 import './dashboard.scss'
@@ -98,9 +98,11 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
   }
 
   const persistedFilters = JSON.parse(window.localStorage.getItem("cpccl__dshbd__fltrs"))
+  const persistedMapFilters = JSON.parse(window.localStorage.getItem("cpccl__dshbd__map__fltrs"))
   const persistedSettings = JSON.parse(window.localStorage.getItem("cpccl__dshbd__settings"))
 
   const initialFilters = {...defaultFilters, ...persistedFilters}
+  const initialMapFilters = {...defaultMapFilters, ...persistedMapFilters}
   const initialSettings = {...defaultSettings, ...persistedSettings}
 
   preloadedState = {
@@ -108,6 +110,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
     settings: {
       ...initialSettings,
       filters: initialFilters,
+      mapFilters: initialMapFilters,
       isDefaultFilters: persistedFilters ? _.isEqual(persistedFilters, defaultFilters) : true
     }
   }

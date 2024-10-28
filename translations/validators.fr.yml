@@ -26,6 +26,7 @@ delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
 delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.
 
 delivery.check.notValid: Votre demande n'est pas réalisable
+delivery.check.outOfBounds: Votre demande est en dehors de la zone acceptée ou trop éloignée
 
 time_range.empty: Vous n'avez sélectionné aucune valeur
 time_range.no_weekday: Vous n'avez pas sélectionné de jour de la semaine
@@ -61,3 +62,12 @@ spreadsheet.missing_column: Vous devez définir une colonne « %column% »
 spreadsheet.missing_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% »
 spreadsheet.alternative_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% » column, mais pas les deux
 spreadsheet.csv_encoding: Les fichiers CSV doivent être encodés en UTF-8
+
+siret.head_office: Vous devez fournir le numéro SIRET de l'établissement, et non du siège social.
+
+delivery.check.noStore: Vous devez fournir un magasin
+order.state.notModifiable: La commande ne peut plus être modifiée
+order.collection.not_available: La méthode de réalisation "collection" n'est pas disponible
+task_group.ref.duplicate: La référence "%ref%" apparaît plusieurs fois
+pricing_rule.expression.syntax_error: Erreur de syntaxe dans l'expression "%expression%"
+order.adjustments.unexpectedCount: Nombre inattendu d'ajustements "%type%"

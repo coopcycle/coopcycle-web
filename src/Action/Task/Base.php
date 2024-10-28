@@ -22,29 +22,19 @@ abstract class Base
 
     protected function getNotes(Request $request)
     {
-        $data = [];
-        $content = $request->getContent();
-        if (!empty($content)) {
-            $data = json_decode($content, true);
-        }
+        $data = $request->toArray();
 
         if (isset($data['notes'])) {
             return $data['notes'];
         }
 
         // FIXME Remove when the app is ok
-        if (isset($data['reason'])) {
-            return $data['reason'];
-        }
+        return $this->getReason($request);
     }
 
     protected function getContactName(Request $request)
     {
-        $data = [];
-        $content = $request->getContent();
-        if (!empty($content)) {
-            $data = json_decode($content, true);
-        }
+        $data = $request->toArray();
 
         if (isset($data['contactName'])) {
             return $data['contactName'];
@@ -55,11 +45,7 @@ abstract class Base
 
     protected function getReason(Request $request)
     {
-        $data = [];
-        $content = $request->getContent();
-        if (!empty($content)) {
-            $data = json_decode($content, true);
-        }
+        $data = $request->toArray();
 
         if (isset($data['reason'])) {
             return $data['reason'];
@@ -88,8 +74,7 @@ abstract class Base
      */
     protected function getDateTimeKey(Request $request, string $key): ?\DateTime
     {
-        $content = $request->getContent();
-        $data = !empty($content) ? json_decode($content, true) : [];
+        $data = $request->toArray();
 
         return isset($data[$key]) ? new \DateTime($data[$key]) : null;
     }

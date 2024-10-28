@@ -102,6 +102,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     paymentMethod:
       groups: ['order', 'order_update', 'order_minimal']
+    hasEdenredCredentials:
+      groups: ['cart', 'order', 'order_update']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
@@ -208,3 +210,15 @@ AppBundle\Entity\Delivery\FailureReason:
       groups: ['task']
     description:
       groups: ['task']
+
+Sylius\Component\Payment\Model\Payment:
+  attributes:
+    amount:
+      groups: ['payment', 'order_configure_payment', 'payment_details']
+    method:
+      groups: ['payment', 'order_configure_payment', 'payment_details']
+
+Sylius\Component\Payment\Model\PaymentMethod:
+  attributes:
+    code:
+      groups: ['payment', 'order_configure_payment', 'payment_details']

@@ -31,6 +31,11 @@
     <field name="packagesRequired" type="boolean" column="packages_required"/>
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
     <field name="transporter" type="string" column="transporter" nullable="true" unique="true" />
+    <field name="billingMethod" type="string" column="billing_method" nullable="false">
+      <options>
+        <option name="default">unit</option>
+      </options>
+    </field>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>
@@ -106,5 +111,7 @@
       </join-columns>
     </many-to-one>
     <one-to-many field="rrules" target-entity="AppBundle\Entity\Task\RecurrenceRule" mapped-by="store" />
+    <many-to-one field="defaultCourier" target-entity="AppBundle\Entity\User">
+    </many-to-one>
   </entity>
 </doctrine-mapping>

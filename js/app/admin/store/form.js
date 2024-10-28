@@ -1,9 +1,9 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import TagsSelect from '../../components/TagsSelect'
 import { addressMapper } from '../../widgets/addressForm'
 import i18n from '../../i18n'
-
+import DeliveryZonePicker from '../../components/DeliveryZonePicker'
 
 var tagsEl = document.querySelector('#store_tags');
 
@@ -17,14 +17,15 @@ if (tagsEl) {
   const tags = JSON.parse(tagsEl.dataset.tags)
   const defaultValue = tagsEl.value
 
-  render(
+  createRoot(el).render(
     <TagsSelect
       tags={ tags }
       defaultValue={ defaultValue }
       onChange={ tags => {
         const slugs = tags.map(tag => tag.slug)
         tagsEl.value = slugs.join(' ')
-      } } />, el)
+      } } />
+  )
 }
 
 $('#address-form-modal').on('show.bs.modal', function (event) {
@@ -140,5 +141,25 @@ if (timeSlotsEl && timeSlotEl) {
 $('#store_delete').on('click', e => {
   if (!window.confirm(i18n.t('CONFIRM_DELETE'))) {
     e.preventDefault()
+  }
+})
+
+document.querySelectorAll('[data-widget="delivery-perimeter-expression"]').forEach(el => {
+
+  const input = el.querySelector('input[type="hidden"]')
+
+  if (input) {
+
+    const container = document.createElement('div')
+
+    createRoot(container).render(
+      <DeliveryZonePicker
+        zones={ JSON.parse(el.dataset.zones) }
+        expression={ el.dataset.defaultValue }
+        onExprChange={ expr => $(input).val(expr) }
+      />
+    )
+
+    el.appendChild(container)
   }
 })

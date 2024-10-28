@@ -30,7 +30,7 @@ class PackageWithQuantityType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
-            $data = $event->getData();
+            $initialData = $event->getData();
 
             $this->entityManager->getFilters()->enable('soft_deleteable');
 
@@ -38,30 +38,36 @@ class PackageWithQuantityType extends AbstractType
                 ->createQueryBuilder('p')
                 ->where('p.packageSet = :package_set')
                 ->setParameter('package_set', $options['package_set'])
-                ->orderBy('p.name', 'ASC');
+                ->orderBy('p.maxVolumeUnits', 'ASC');
 
-            if (null !== $data) {
+            if (null !== $initialData) {
                 // This is here to make sure the dropdownn displays something
                 // even if the package set does not contain the package
                 // This can happen if the configured package set has been changed
                 $qb->orWhere('p.id = :package_id');
-                $qb->setParameter('package_id', $data->getPackage()->getId());
+                $qb->setParameter('package_id', $initialData->getPackage()->getId());
             }
 
             $data = $qb->getQuery()->getResult();
 
             $this->entityManager->getFilters()->disable('soft_deleteable');
 
+            $packageFieldOptions = [
+                'class' => Package::class,
+                'choices' => $data,
+                'label' => 'form.package_with_quantity.package.label',
+                'choice_label' => 'name',
+                'choice_value' => 'name',
+                'placeholder' => 'form.package_with_quantity.package.placeholder',
+            ];
+
+            // if a new delivery + just 1 choice set default to this choice
+            if (is_null($initialData) && count($data) === 1) {
+                $packageFieldOptions['data'] = $data[0];
+            }
+
             $form
-                ->add('package', EntityType::class, [
-                    'class' => Package::class,
-                    'choices' => $data,
-                    'data' => count($data) === 1 ? $data[0] : null,
-                    'label' => 'form.package_with_quantity.package.label',
-                    'choice_label' => 'name',
-                    'choice_value' => 'name',
-                    'placeholder' => 'form.package_with_quantity.package.placeholder',
-                ])
+                ->add('package', EntityType::class, $packageFieldOptions)
                 ->add('quantity', IntegerType::class, [
                     'label' => 'form.package_with_quantity.quantity.label',
                 ]);

@@ -81,7 +81,7 @@ class OrderRuntime implements RuntimeExtensionInterface
 
     public function hasDelayConfigured(): bool
     {
-        if ($value = $this->redis->get('foodtech:preparation_delay')) {
+        if ($value = $this->redis->get('foodtech:dispatch_delay_for_pickup')) {
             return intval($value) > 0;
         }
 

@@ -2,17 +2,19 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class BusinessAccount
 {
-    private $id;
-    private $name;
-    private $address;
-    private $businessRestaurantGroup;
-    private $employees;
-    private $billingAddress;
-    private $orders;
+    private ?int $id;
+    private string $name;
+    private string $legalName;
+    private string $vatNumber;
+    private Address $address;
+    private ?Address $billingAddress;
+    private ?BusinessRestaurantGroup $businessRestaurantGroup;
+    private Collection $employees;
+    private Collection $orders;
 
     /**
      * Only to keep data in form flow
@@ -21,121 +23,93 @@ class BusinessAccount
 
     public function __construct()
     {
-        $this->employees = new ArrayCollection();
+        $this->id = null;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param mixed $name
-     *
-     * @return self
-     */
-    public function setName($name)
+    public function setName(string $name): BusinessAccount
     {
         $this->name = $name;
-
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getAddress()
+    public function getLegalName(): string
+    {
+        return $this->legalName;
+    }
+
+    public function setLegalName(string $legalName): BusinessAccount
+    {
+        $this->legalName = $legalName;
+        return $this;
+    }
+
+    public function getVatNumber(): string
+    {
+        return $this->vatNumber;
+    }
+
+    public function setVatNumber(string $vatNumber): BusinessAccount
+    {
+        $this->vatNumber = $vatNumber;
+        return $this;
+    }
+
+    public function getAddress(): Address
     {
         return $this->address;
     }
 
-    /**
-     * @param mixed $address
-     *
-     * @return self
-     */
-    public function setAddress($address)
+    public function setAddress(Address $address): BusinessAccount
     {
         $this->address = $address;
-
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getBillingAddress()
+    public function getBillingAddress(): ?Address
     {
         return $this->billingAddress;
     }
 
-    /**
-     * @param mixed $billingAddress
-     *
-     * @return self
-     */
-    public function setBillingAddress($billingAddress)
+    public function setBillingAddress(?Address $billingAddress): BusinessAccount
     {
         $this->billingAddress = $billingAddress;
-
         return $this;
     }
 
-    /**
-     * @return BusinessRestaurantGroup
-     */
     public function getBusinessRestaurantGroup(): ?BusinessRestaurantGroup
     {
         return $this->businessRestaurantGroup;
     }
 
-    /**
-     * @param mixed $businessRestaurantGroup
-     *
-     * @return self
-     */
-    public function setBusinessRestaurantGroup($businessRestaurantGroup)
+    public function setBusinessRestaurantGroup(?BusinessRestaurantGroup $businessRestaurantGroup): BusinessAccount
     {
         $this->businessRestaurantGroup = $businessRestaurantGroup;
-
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEmployees()
+    public function getEmployees(): Collection
     {
         return $this->employees;
     }
 
-    /**
-     * @param mixed $employees
-     *
-     * @return self
-     */
-    public function setEmployees($employees)
+    public function setEmployees(Collection $employees): BusinessAccount
     {
         $this->employees = $employees;
-
         return $this;
     }
 
-    /**
-     * @param User $employee
-     */
-    public function addEmployee(User $employee)
+
+    public function addEmployee(User $employee): void
     {
         if (!$this->employees->contains($employee)) {
             $employee->setBusinessAccount($this);
@@ -143,9 +117,6 @@ class BusinessAccount
         }
     }
 
-    /**
-     * @param User $employee
-     */
     public function removeEmployee(User $employee): void
     {
         $this->employees->removeElement($employee);
@@ -163,24 +134,14 @@ class BusinessAccount
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getOrders()
+    public function getOrders(): Collection
     {
         return $this->orders;
     }
 
-    /**
-     * @param mixed $orders
-     *
-     * @return self
-     */
-    public function setOrders($orders)
+    public function setOrders(Collection $orders): BusinessAccount
     {
         $this->orders = $orders;
-
         return $this;
     }
-
 }

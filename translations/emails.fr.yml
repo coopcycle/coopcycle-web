@@ -167,3 +167,20 @@ task.dropoff.failed.body: |
   La livraison <strong>#%id%</strong> n'a pas pû être déposée à l'adresse suivante :
   <br>
   %address%
+
+order.payment_failed.subject: "Une erreur s'est produite lors du traitement de votre paiement"
+order.payment_failed.body: "Bonjour,\n<br>\nNous sommes désolés, une erreur s'est produite lors du traitement de votre paiement. Veuillez réessayer avec un autre moyen de paiement."
+order.payment_failed.return_to_order: "Retourner à la commande"
+
+order.adhoc.body: |
+  Bonjour,
+  <br>
+  Une nouvelle commande a été créée pour vous.
+  <br>
+  Pour finaliser votre commande, cliquez sur le lien ci-dessous pour spécifier votre adresse, choisir un créneau de livraison et payer par carte bleue.
+
+business_account.send_invitation.body: |
+  Bonjour %name%,
+  <br>
+  Ceci est une invitation à configurer le compte entreprise sur CoopCycle, pour continuer l'activation veuillez cliquer sur le lien suivant.
+business_account.send_invitation.cta: "Continuer l'activation"

@@ -40,7 +40,7 @@ class PackagesResolver
         $total = 0;
 
         foreach ($this->delivery->getPackages() as $package) {
-            $total += ($package->getPackage()->getVolumeUnits() * $this->delivery->getQuantityForPackage($package->getPackage()));
+            $total += ($package->getPackage()->getMaxVolumeUnits() * $this->delivery->getQuantityForPackage($package->getPackage()));
         }
 
         return $total;

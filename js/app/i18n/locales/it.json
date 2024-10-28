@@ -84,6 +84,7 @@
         "ADMIN_DASHBOARD_CREATE_TOUR": "Crea tour",
         "ADMIN_DASHBOARD_INCLUDE_TASKS_FROM_ORDER": "Includi tutte le attività dall'ordini",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Totale",
+        "ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP": "Nascondi/mostra sulla mappa",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Ordine creato",
         "ORDER_TIMELINE_ACCEPTED_TITLE": "{{date}} Ordine confermato",
         "ORDER_TIMELINE_PICKED_TITLE": "{{date}} Ordine ritirato",
@@ -350,6 +351,15 @@
         "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "L'intervallo di tempo selezionato non è più disponibile per oggi",
         "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "L'orario di apertura non consente di effettuare l'ordine oggi",
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Per favore, scegli un altro intervallo di tempo",
-        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambia orario di consegna"
+        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambia orario di consegna",
+        "SCHEDULE_ORDER": "Preordinare",
+        "ADMIN_DASHBOARD_PACKAGES": "Pacchetti",
+        "ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER": "Hai appena cambiato una proprietà dell'indirizzo. Vuoi cambiare questa proprietà per tutte le consegne passate e future di questo indirizzo o solamente una volta?",
+        "ADMIN_DASHBOARD_WEIGHT": "Peso",
+        "ADDRESS_BOOK_PROP_CHANGED_UPDATE": "Modificare l'indirizzo esistente",
+        "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Modificare solo questa volta",
+        "ADMIN_DASHBOARD_CREATE_GROUP": "Crea gruppo",
+        "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Nome del gruppo",
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Unità di volume"
     }
 }

@@ -2,57 +2,40 @@
 
 namespace AppBundle\Action\Task;
 
+use AppBundle\Entity\Delivery\FailureReasonRegistry;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Organization;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Yaml\Parser as YamlParser;
-use Symfony\Component\Yaml\Yaml;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class FailureReasons
 {
-
     public function __construct(
         private EntityManagerInterface $em,
-        private TranslatorInterface $translator
+        private FailureReasonRegistry $failureReasonRegistry,
+        private array $failureReasonsResolvers
     )
     { }
 
-    private function loadFailureReasonsConfig(): array
+    private function getDefaultReasons(Task $task): array
     {
-        $path = realpath(__DIR__ . '/../../Resources/config/failure_reasons.yml');
-        $parser = new YamlParser();
-        return $parser->parseFile($path, Yaml::PARSE_CONSTANT);
-    }
+        $reasons = $this->failureReasonRegistry->getFailureReasons();
 
-    private function getDefaultReasons(): array
-    {
-        $config = $this->loadFailureReasonsConfig();
-        return array_map(function($failure_reason) {
-            return [
-                'code' => $failure_reason['code'],
-                'description' => $this->translator->trans($failure_reason['description'])
-            ];
-        }, $config['failure_reasons']['default']);
-    }
+        foreach ($this->failureReasonsResolvers as $failureReasonsResolver) {
+            if ($failureReasonsResolver->supports($task)) {
+                $reasons = array_merge($reasons, $failureReasonsResolver->getFailureReasons($task));
+            }
+        }
 
-    private function getTransporterReasons(string $transporter): array
-    {
-        $config = $this->loadFailureReasonsConfig();
-        return array_map(function($failure_reason) {
-            return [
-                'code' => $failure_reason['code'],
-                'description' => $this->translator->trans($failure_reason['description']),
-                'option' => $failure_reason['option'] ?? null,
-                'only' => $failure_reason['only'] ?? null
-            ];
-        }, $config['failure_reasons'][$transporter]);
+        return $reasons;
     }
 
     private function getFailureReasons(
+        Task $task,
         CustomFailureReasonInterface $entity,
         bool $transporter
     ): array
@@ -63,34 +46,29 @@ class FailureReasons
             $entity->isTransporterEnabled()
         ) {
             //TODO: Support multi transporter
-            return $this->getTransporterReasons('dbschenker');
+            return $this->failureReasonRegistry->getFailureReasons('dbschenker');
         }
         $set = $entity->getFailureReasonSet();
         if (is_null($set)) {
-            return $this->getDefaultReasons();
+            return $this->getDefaultReasons($task);
         }
         return $set->getReasons()->toArray();
     }
 
     public function __invoke($data, Request $request)
     {
-
         $org = $data->getOrganization();
 
         $transporter = boolval($request->get('transporter', false));
 
-        if (is_null($org)) {
-            return $this->getDefaultReasons();
+        if (null !== $org) {
+            $reverse = $this->em->getRepository(Organization::class)
+                ->reverseFindByOrganization($org);
+            if (null !== $reverse) {
+                return $this->getFailureReasons($data, $reverse, $transporter);
+            }
         }
 
-        $reverse = $this->em->getRepository(Organization::class)
-            ->reverseFindByOrganization($org);
-
-
-        if ($reverse instanceof LocalBusiness || $reverse instanceof Store) {
-            return $this->getFailureReasons($reverse, $transporter);
-        }
-
-        return $this->getDefaultReasons();
+        return $this->getDefaultReasons($data);
     }
 }

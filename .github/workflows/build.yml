@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v2
       - uses: actions/setup-python@v1
         with:
-          python-version: 3.7
+          python-version: '3.x'
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -21,7 +21,7 @@ jobs:
           tools: composer:v2
           extensions: redis
         env:
-          GITHUB_TOKEN: ${{ secrets.COMPOSER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
       - name: Install dependencies

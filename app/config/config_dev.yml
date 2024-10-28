@@ -18,7 +18,8 @@ web_profiler:
     intercept_redirects: false
 
 monolog:
-    channels: ['checkout', 'push_notification', 'real_time_message'] # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+    # channels to use with autowire are configured in config.yml
+    # https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
         main:
             type: rotating_file
@@ -39,48 +40,42 @@ monolog:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
             level: info
-            formatter: monolog.formatter.json
             max_files: 3
             channels: [api]
         fee_calculation:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/fee_calculation.%kernel.environment%.log"
             level: info
-            formatter: monolog.formatter.json
             max_files: 3
             channels: [fee_calculation]
         timing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
-            level: info
+            level: debug
             max_files: 3
             channels: [timing]
         checkout:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/checkout.%kernel.environment%.log"
             level: debug
-            formatter: monolog.formatter.json
             max_files: 3
             channels: [ checkout, coopcycle.order_processing ]
         geofencing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
             level: info
-            formatter: monolog.formatter.json
             max_files: 3
             channels: [geofencing]
         push_notification:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/push_notification.%kernel.environment%.log"
             level: debug
-            formatter: monolog.formatter.json
             max_files: 3
             channels: [ push_notification ]
         real_time_message:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/real_time_message.%kernel.environment%.log"
             level: debug
-            formatter: monolog.formatter.json
             max_files: 3
             channels: [ real_time_message ]
         stripe:

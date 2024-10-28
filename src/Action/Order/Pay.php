@@ -48,13 +48,9 @@ class Pay
         $this->logger = $logger ?? new NullLogger();
     }
 
-    public function __invoke($data, Request $request)
+    public function __invoke($data, Request $request): OrderInterface|StripeOutput
     {
-        $body = [];
-        $content = $request->getContent();
-        if (!empty($content)) {
-            $body = json_decode($content, true);
-        }
+        $body = $request->toArray();
 
         if ($data->isFree()) {
             $this->orderManager->checkout($data);
@@ -69,58 +65,21 @@ class Pay
 
         $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
 
+        if (isset($body['paymentMethodId']) && !isset($body['paymentIntentId'])) {
+            if ('mercadopago' === $this->gatewayResolver->resolve()) {
+                return $this->handleMercadopagoPayment($data, $payment, $body);
+            } else {
+                // This is the 1st step of a Stripe payment, it will create a payment intent
+                // Then this endpoint will be called a 2nd time to confirm the intent
+                return $this->handleStripePaymentIntent($data, $payment, $body);
+            }
+        }
+
         if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
-
-            if (!$this->cashEnabled && !$data->supportsCashOnDelivery()) {
-                throw new BadRequestHttpException('Cash on delivery is not enabled');
-            }
-
-            $paymentMethod = $this->paymentMethodRepository->findOneByCode('CASH_ON_DELIVERY');
-            if (null === $paymentMethod) {
-                throw new BadRequestHttpException('Payment method "CASH_ON_DELIVERY" not found');
-            }
-
-            $payment->setMethod($paymentMethod);
-
-            $this->orderManager->checkout($data);
-            $this->entityManager->flush();
-
-            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-                throw new BadRequestHttpException($payment->getLastError());
-            }
-
-            return $data;
+            return $this->handleCashOnDelivery($data, $payment, $body);
         }
 
-        switch ($this->gatewayResolver->resolve()) {
-            case 'mercadopago':
-                $payment->setMercadopagoPaymentId($body['paymentId']);
-
-                $mpPayment = $this->mercadopagoManager->getPayment($payment);
-
-                if (!$mpPayment) {
-                    throw new BadRequestHttpException(sprintf('Mercadopago payment with id %s not found', $body['paymentId']));
-                } else if ($mpPayment->status !== 'approved') {
-                    throw new BadRequestHttpException(sprintf('Mercadopago payment with id %s is not approved. Status: %s', $body['paymentId'], $mpPayment->status));
-                }
-
-                $payment->setMercadopagoPaymentStatus($mpPayment->status);
-                $payment->setMercadopagoPaymentMethod($mpPayment->payment_method_id);
-                $payment->setMercadopagoInstallments($mpPayment->installments);
-
-                $paymentMethod = $this->paymentMethodRepository->findOneByCode($body['paymentMethodId']);
-                $payment->setMethod($paymentMethod);
-
-                $this->orderManager->checkout($data);
-                $this->entityManager->flush();
-
-                if (PaymentInterface::STATE_FAILED === $payment->getState()) {
-                    throw new BadRequestHttpException($payment->getLastError());
-                }
-
-                return $data;
-        }
-
+        // This is the 2nd step of a Stripe payment, to confirm the payment intent
         if (isset($body['paymentIntentId'])) {
 
             $this->orderManager->checkout($data, $body['paymentIntentId']);
@@ -133,6 +92,11 @@ class Pay
             return $data;
         }
 
+        return $data;
+    }
+
+    private function handleStripePaymentIntent(OrderInterface $data, PaymentInterface $payment, array $body): StripeOutput
+    {
         // Assign order number now because it is needed for Stripe
         $this->orderNumberAssigner->assignNumber($data);
 
@@ -181,5 +145,57 @@ class Pay
         }
 
         return $response;
+    }
+
+    private function handleMercadopagoPayment(OrderInterface $data, PaymentInterface $payment, array $body): OrderInterface
+    {
+        $payment->setMercadopagoPaymentId($body['paymentId']);
+
+        $mpPayment = $this->mercadopagoManager->getPayment($payment);
+
+        if (!$mpPayment) {
+            throw new BadRequestHttpException(sprintf('Mercadopago payment with id %s not found', $body['paymentId']));
+        } else if ($mpPayment->status !== 'approved') {
+            throw new BadRequestHttpException(sprintf('Mercadopago payment with id %s is not approved. Status: %s', $body['paymentId'], $mpPayment->status));
+        }
+
+        $payment->setMercadopagoPaymentStatus($mpPayment->status);
+        $payment->setMercadopagoPaymentMethod($mpPayment->payment_method_id);
+        $payment->setMercadopagoInstallments($mpPayment->installments);
+
+        $paymentMethod = $this->paymentMethodRepository->findOneByCode($body['paymentMethodId']);
+        $payment->setMethod($paymentMethod);
+
+        $this->orderManager->checkout($data);
+        $this->entityManager->flush();
+
+        if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+            throw new BadRequestHttpException($payment->getLastError());
+        }
+
+        return $data;
+    }
+
+    private function handleCashOnDelivery(OrderInterface $data, PaymentInterface $payment, array $body): OrderInterface
+    {
+        if (!$this->cashEnabled && !$data->supportsCashOnDelivery()) {
+            throw new BadRequestHttpException('Cash on delivery is not enabled');
+        }
+
+        $paymentMethod = $this->paymentMethodRepository->findOneByCode('CASH_ON_DELIVERY');
+        if (null === $paymentMethod) {
+            throw new BadRequestHttpException('Payment method "CASH_ON_DELIVERY" not found');
+        }
+
+        $payment->setMethod($paymentMethod);
+
+        $this->orderManager->checkout($data);
+        $this->entityManager->flush();
+
+        if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+            throw new BadRequestHttpException($payment->getLastError());
+        }
+
+        return $data;
     }
 }

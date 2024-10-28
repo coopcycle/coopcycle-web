@@ -162,7 +162,6 @@ restaurant.form.quotes_allowed.label: 'Jatetxe honek aipuak ere onartzen ditu (a
 restaurant.form.loopeat_enabled.label: 'Gaitu LoopEat gordailu-itzulera sistema'
 restaurant.form.loopeat_disconnect.label: 'Deskonektatu LoopEat'
 restaurant.form.featured.label: 'Jatetxe hau hasiera orrian aipatzen da'
-restaurant.form.giropay_enabled.label: 'Gaitu Giropay'
 restaurant.form.fulfillment_methods.label: 'Osatze metodoak'
 restaurant.form.section.general: 'Orokorra'
 restaurant.form.section.options: 'Aukerak'
@@ -477,7 +476,7 @@ form.settings.stripe_secret_key.label: 'Stripe gako sekretua'
 form.settings.stripe_secret_key.help: "tu Stripe kontu bat zure <a href=\"https://stripe.com/docs/dashboard#api-keys\"\
   >gako sekretua</a> lortzeko\n"
 form.settings.stripe_connect_client_id.label: 'Stripe Connect identifikatzailea'
-form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >parametro orrian</a>\n"
 form.settings.google_api_key.label: 'Google API gakoa'
 form.settings.google_api_key.help: "Sortu Google kontu bat zure <a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=eu\"\
@@ -1071,7 +1070,7 @@ form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu,
   egun bereko eskaerak soilik egin ahalko dituzte.
 ordering_delay.disclaimer: Eskaera asko jasotzen ari gara, banaketa-denborak luzetzen
   ari dira!
-ordering_delay.admin_reminder: Eskaera atzerapen globala konfiguratu duzu
+ordering_delay.admin_reminder: Foodtech picku^ bilketa-atzerapen globala konfiguratu duzu
 notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
 store.PAWN_SHOP: Bahitetxea
 order.adjustment_type.reusable_packaging.loopeat.help: Kuota honek garbitze, jatetxearen
@@ -1123,8 +1122,6 @@ restaurants.edenred_transactions.disclaimer: Orri honek Edenred-en bidez ordaind
   eskaera guztiak zerrendatzen ditu, partzialki edo osorik. Eskaera honentzat, diru
   guztia jatetxeak batu du. Beraz, jatetxe bakoitzari faktura bat bidali behar diozu,
   ordaindu beharreko komisioak eskatzeko.
-form.payment.refund_breakdown: Txartel bidez itzuli daitekeen kopurua %card%, Edenred-ek
-  itzuli dezakeen kopurua %edenred%
 form.settings.geocoding_provider.help: APIak erabiltzen du kalkulu-orriak inportatzerakoan
 promotion_rule.is_items_total_above: Elementuen totala %amount% gainetik dago
 form.store_type.multi_drop_enabled.label: Gaitu hainbat banaketa-puntu
@@ -1198,9 +1195,6 @@ guest_checkout.user_with_same_email_exists: Helbide elektroniko berdina duen kon
   bat dago jada. Mesedez, hasi saioa aurrera jarraitzeko, edo erabili beste e-posta
   bat eskaera egiteko kontua sortu gabe.
 homepage.zerowaste: Ezagutu gure hondakinik gabeko jatetxeak!
-form.payment.edenred_disclaimer: Eskaera hau Edenred-ekin ordaindu da kreditu-txartel
-  batekin. Itzulpena kreditu-txartelak ordaindutako kopuruaren prioritatearen arabera
-  egingo da, eta beharrezkoa bada Edenred kopuruarena.
 form.settings.mercadopago.app_id.help: <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">Aplikazio
   bat sortu</a> behar duzu zure aplikazio IDa lortzeko.
 embed.delivery.confirm_message: Zure banaketa eskaera sortu da eta laster e-posta

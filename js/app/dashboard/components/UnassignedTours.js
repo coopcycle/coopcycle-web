@@ -6,13 +6,13 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 
 import Tour from './Tour'
-import { appendToUnassignedTours, deleteGroup, editGroup, openCreateTourModal } from '../redux/actions'
+import { appendToUnassignedTours, deleteGroup, editGroup, openCreateTourModal, setMapFilterValue } from '../redux/actions'
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
-import { selectAreToursEnabled, selectGroups, selectIsTourDragging, selectOrderOfUnassignedToursAndGroups, selectSplitDirection } from '../redux/selectors'
+import { selectAreToursEnabled, selectGroups, selectIsTourDragging, selectMapFiltersSetting, selectOrderOfUnassignedToursAndGroups, selectSplitDirection } from '../redux/selectors'
 import classNames from 'classnames'
 import { getDroppableListStyle } from '../utils'
-import { Tooltip } from 'antd'
+import { Switch, Tooltip } from 'antd'
 
 
 const Buttons = () => {
@@ -47,7 +47,7 @@ const CollapsedUnassignedTours = ({ unassignedToursCount, splitCollapseAction })
       (<div className="dashboard__panel">
           <h4 className="dashboard__panel__header d-flex justify-content-center dashboard__panel__collapsed">
             <a onClick={() => splitCollapseAction()}>
-              <Tooltip title={ t('DASHBOARD_UNASSIGNED_TOURS') }>
+              <Tooltip placement="left" title={ t('DASHBOARD_UNASSIGNED_TOURS') }>
                 <span>({ unassignedToursCount })</span><br />
                 <i className="fa fa-caret-right"></i>
               </Tooltip>
@@ -71,6 +71,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
   const unassignedToursOrGroupsOrderIds = useSelector(selectOrderOfUnassignedToursAndGroups)
   const toursEnabled = useSelector(selectAreToursEnabled)
   const splitDirection = useSelector(selectSplitDirection)
+  const mapFiltersSettings = useSelector(selectMapFiltersSetting) || {}
 
 
   useEffect(() => {
@@ -94,14 +95,34 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
     <div className="dashboard__panel">
       <h4 className="dashboard__panel__header d-flex justify-content-between">
         <a onClick={() => splitCollapseAction()}>
-            <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
-            <span className="mr-2">({ tours.length + groups.length })</span>
+          <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
+          <span className="mr-2">({ tours.length + groups.length })</span>
+          <Tooltip
+            placement="left"
+            title={t("EXPAND_COLLAPSE")}
+          >
             { splitDirection == 'vertical' ?
                 <i className="fa fa-caret-up"></i>
               : <i className="fa fa-caret-left"></i>
             }
-          </a>
-        <span>
+          </Tooltip>
+        </a>
+        <span className="pull-right">
+          <Tooltip
+            placement="left"
+            title={t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
+            className="mr-2"
+          >
+            <Switch
+              unCheckedChildren={"0"}
+              checkedChildren={"I"}
+              defaultChecked={mapFiltersSettings.showUnassignedTours}
+              checked={mapFiltersSettings.showUnassignedTours}
+              onChange={checked => {
+                dispatch(setMapFilterValue({key: "showUnassignedTours", value: checked}))
+              }}
+            />
+          </Tooltip>
           <Buttons />
         </span>
       </h4>

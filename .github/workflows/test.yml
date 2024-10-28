@@ -48,6 +48,10 @@ jobs:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
     steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v2
       - name: Create .env file
         run: cp .env.dist .env
@@ -84,7 +88,7 @@ jobs:
         run: docker compose exec -T php vendor/bin/behat -f progress
       - name: Show Symfony logs on failure
         if: ${{ failure() }}
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep CRITICAL
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep INFO
       - name: Run Jest
         run: docker compose exec -T webpack npm run jest
   E2E:
@@ -99,6 +103,10 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v2
       - name: Create .env file
         run: cp .env.dist .env
@@ -147,7 +155,7 @@ jobs:
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
       - name: Show Symfony logs on failure
         if: failure()
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep CRITICAL
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep INFO
   COMPONENT:
     name: Run component tests with Cypress
     runs-on: ubuntu-latest

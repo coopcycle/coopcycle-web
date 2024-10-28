@@ -11,6 +11,9 @@ registration.email.textMessage: |
   Welcome to %brand_name%, %username%,\n\n
   You’re receiving this message because you recently signed up for a %brand_name% account.\n
   To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+registration.company: Company registration request
+registration.restaurant: New restaurant addition request
+
 resetting.email.message: <h2>Hello %username%</h2> To reset your password, please
   click the button below.
 resetting.email.reset: Reset password
@@ -114,6 +117,13 @@ order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error proce
   \ your payment. Please try again with a different payment method."
 order.payment_failed.return_to_order: Return to order
 
+order.loopeat.accepted: |
+  <p>You have chosen the zero waste option, congratulations!</p>
+  <p>Remember to return the lunchbox(es) and the fabric bag to the courier during your next meal delivery.</p>
+  <p>Thanks to you, we are changing the world, one meal at a time.</p>
+  <p>Spread the word, every action counts!</p>
+  <p>Enjoy your meal! LoopEat</p>
+
 task.pickup.done.subject: 'The delivery #%id% has been picked'
 task.pickup.done.body: |
   Hello,
@@ -156,6 +166,7 @@ order.adhoc.body: |
   A new order has been created for you.
   <br>
   In order to finalize your order, click on the link below to specify your address, choose a delivery slot, and pay by credit card.
+
 business_account.send_invitation.body: |
   Hello %name%,
   <br>

@@ -3,7 +3,9 @@
 namespace AppBundle\Form;
 
 use AppBundle\Service\FormFieldUtils;
+use AppBundle\Validator\Constraints\Siret as AssertSiret;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use libphonenumber\PhoneNumberFormat;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
@@ -22,6 +24,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Form\Type\VichImageType;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Security\UserManager;
 
 abstract class LocalBusinessType extends AbstractType
 {
@@ -35,6 +38,7 @@ abstract class LocalBusinessType extends AbstractType
     protected $cashOnDeliveryOptinEnabled;
     protected bool $transportersEnabled;
     protected array $transportersConfig;
+    protected bool $billingEnabled;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -43,11 +47,13 @@ abstract class LocalBusinessType extends AbstractType
         SerializerInterface $serializer,
         GatewayResolver $gatewayResolver,
         UrlGeneratorInterface $urlGenerator,
+        protected UserManager $userManager,
         protected FormFieldUtils $formFieldUtils,
         string $country,
         bool $debug = false,
         bool $cashOnDeliveryOptinEnabled = false,
-        array $transportersConfig = []
+        array $transportersConfig = [],
+        bool $billingEnabled = false,
     )
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -61,6 +67,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->gatewayResolver = $gatewayResolver;
         $this->transportersEnabled = !empty($transportersConfig);
         $this->transportersConfig = $transportersConfig;
+        $this->billingEnabled = $billingEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -85,18 +92,24 @@ abstract class LocalBusinessType extends AbstractType
                 'label' => 'localBusiness.form.telephone',
             ]);
 
-        foreach ($options['additional_properties'] as $key => $constraints) {
+        if ($this->billingEnabled) {
+            $builder->add('billingMethod', ChoiceType::class, [
+                'label' => 'form.billing_method.label',
+                'help' => 'form.billing_method.help',
+                'choices' => [
+                    'form.billing_method.unit' => 'unit',
+                    'form.billing_method.percentage' => 'percentage',
+                ]
+            ]);
+        }
 
-            $additionalPropertyOptions = [
+        foreach ($options['additional_properties'] as $key => $opts) {
+            $builder->add($key, TextType::class, array_merge($opts, [
                 'required' => false,
                 'mapped' => false,
                 'label' => sprintf('form.local_business.iso_code.%s.%s', $this->country, $key),
-            ];
-            if (!empty($constraints)) {
-                $additionalPropertyOptions['constraints'] = $constraints;
-            }
-
-            $builder->add($key, TextType::class, $additionalPropertyOptions);
+                'trim' => true,
+            ]));
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
@@ -153,7 +166,14 @@ abstract class LocalBusinessType extends AbstractType
 
         switch ($this->country) {
             case 'fr':
-                $additionalProperties['siret'] = [ new Assert\Luhn(message: 'siret.invalid') ];
+                $additionalProperties['siret'] = [
+                    'constraints' => [
+                        new Assert\Luhn(message: 'siret.invalid'),
+                        new AssertSiret(),
+                    ],
+                    'help' => sprintf('form.local_business.iso_code.%s.siret.help', $this->country),
+                    'help_html' => true,
+                ];
                 $additionalProperties['vat_number'] = [];
                 $additionalProperties['rcs_number'] = [];
                 break;

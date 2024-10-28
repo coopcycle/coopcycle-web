@@ -13,6 +13,8 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class DeliveryInputDataTransformer implements DataTransformerInterface
 {
@@ -20,12 +22,14 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
         RoutingInterface $routing,
         IriConverterInterface $iriConverter,
         ManagerRegistry $doctrine,
-        DeliveryManager $deliveryManager)
+        DeliveryManager $deliveryManager,
+        AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->routing = $routing;
         $this->iriConverter = $iriConverter;
         $this->doctrine = $doctrine;
         $this->deliveryManager = $deliveryManager;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -49,14 +53,19 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
                 $dropoff->setPrevious($pickup);
 
                 $delivery->addTask($dropoff);
-
-                $this->deliveryManager->setDefaults($delivery);
             }
         }
 
         if ($data->store && $data->store instanceof Store) {
+
+            if (!$this->authorizationChecker->isGranted('edit', $data->store)) {
+                throw new AccessDeniedHttpException('');
+            }
+
             $delivery->setStore($data->store);
         }
+
+        $this->deliveryManager->setDefaults($delivery);
 
         if ($data->packages && is_array($data->packages)) {
             $packageRepository = $this->doctrine->getRepository(Package::class);

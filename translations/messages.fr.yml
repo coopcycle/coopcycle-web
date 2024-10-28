@@ -458,7 +458,7 @@ form.settings.stripe_secret_key.help: "Créez un compte Stripe pour récupérer 
   \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clé secrète</a>\n"
 form.settings.stripe_connect_client_id.label: Identifiant Stripe Connect
 form.settings.stripe_connect_client_id.help: "Récupérez l'identifiant Stripe Connect\
-  \ sur la <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+  \ sur la <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >page des paramètres</a>\n"
 form.settings.latlng.label: Coordonnées géographiques
 form.settings.latlng.help: "Spécifiez la latitude et la longitude par défaut. Vous\
@@ -887,6 +887,16 @@ form.package.volume_units.label: Unité de volume
 form.package.name.label: Nom
 form.package_set.packages.label: Emballages
 form.package_set.name.label: Nom
+form.package.description.label: Description pour le client
+form.package.enter_details: Masquer/afficher les détails
+form.package.average_volume_units.label: Unités de volume moyen (VU)
+form.package.max_volume_units.label: Unités de volume maximum (VU)
+form.package.average_estimation: Estimé à 75 % du maximum si non défini
+form.package.max_volume_units : Cette valeur sera utilisée pour calculer les prix en fonction du volume
+form.package.tags.label: Tags à appliquer automatiquement aux tâches
+form.package.average_weight.label: Poids moyen (kg)
+form.package.max_weight.label: Poids maximum (kg)
+form.package.shortCode.label: Code de 2 lettres
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
@@ -1030,7 +1040,6 @@ restaurant.form.section.taxonomy: Taxonomie
 localBusiness.form.use_different_business_address.label: Utiliser une adresse commerciale
   différente
 localBusiness.form.business_address.label: Adresse commerciale
-restaurant.form.giropay_enabled.label: Activer Giropay
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option
@@ -1149,7 +1158,7 @@ form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case,
 form.fulfillment_method.options.range_duration.label: Durée des créneaux
 ordering_delay.disclaimer: Nous recevons actuellement beaucoup de commandes, les délais
   s'allongent !
-ordering_delay.admin_reminder: Vous avez défini un retard global pour les commandes
+ordering_delay.admin_reminder: Vous avez configuré un délai de pickup global pour les commandes foodtech
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
 notifications.tap_to_open: Appuyez pour ouvrir
@@ -1205,11 +1214,6 @@ restaurants.edenred_transactions.title: Transactions Edenred
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.
-form.payment.edenred_disclaimer: Cette commande a été payée avec Edenred et un complément
-  par carte bancaire. Le remboursement se fera en priorité sur le montant payé par
-  carte bancaire, et sur le montant Edenred le cas échéant.
-form.payment.refund_breakdown: Montant remboursable par carte %card%, montant remboursable
-  par Edenred %edenred%
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
@@ -1257,6 +1261,9 @@ form.delivery.arbitrary_price.label: Definir le prix manuellement
 form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
+form.store_type.defaultCourier.label: Livreur·euse par défaut
+form.store_type.defaultCourier.placeholder: Aucun
+form.store_type.defaultCourier.help: Les commandes passées pour ce magasin seront automatiquement attribuées à ce·tte livreur·euse
 homepage.featured: À la une
 homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés
@@ -1312,26 +1319,28 @@ form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendr
 loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client
 activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"
 delivery.failure_reason:
-  damaged: "Endommagé"
-  lost: "Perdu"
-  late: "Livraison en retard"
-  incorrect_address: "Adresse incorrecte"
-  customer_refused: "Refus du client"
-  item_missing: "Article manquant"
-  incorrect_item: "Article incorrect"
-  bad_weather: "Mauvaises conditions météorologiques"
-  vehicle_breakdown: "Panne de véhicule"
-  traffic_delays: "Retards de circulation"
-  routing_problems: "Problèmes de routage"
-  customs_issues: "Problèmes de dédouanement"
-  inventory_shortage: "Rupture de stock"
-  address_unreachable: "Adresse inaccessible"
-  insufficient_funds: "Fonds insuffisants"
-  data_entry_error: "Erreur de saisie des données"
-  packaging_problems: "Problèmes d'emballage"
-  holiday_closure: "Fermeture pour congé"
-  closed_store: "Magasin fermé"
-  not_at_home: "Client absent"
+  default:
+    damaged: "Endommagé"
+    lost: "Perdu"
+    late: "Livraison en retard"
+    incorrect_address: "Adresse incorrecte"
+    customer_refused: "Refus du client"
+    item_missing: "Article manquant"
+    incorrect_item: "Article incorrect"
+    bad_weather: "Mauvaises conditions météorologiques"
+    vehicle_breakdown: "Panne de véhicule"
+    traffic_delays: "Retards de circulation"
+    routing_problems: "Problèmes de routage"
+    customs_issues: "Problèmes de dédouanement"
+    inventory_shortage: "Rupture de stock"
+    address_unreachable: "Adresse inaccessible"
+    insufficient_funds: "Fonds insuffisants"
+    data_entry_error: "Erreur de saisie des données"
+    packaging_problems: "Problèmes d'emballage"
+    holiday_closure: "Fermeture pour congé"
+    closed_store: "Magasin fermé"
+    address_review_needed: "Nécessité d'un réexamen de l'adresse"
+    not_at_home: "Client absent"
 adminDashboard.failureSet.title: "Motifs d'échec"
 adminDashboard.failureSet.help: "Définissez les motifs pour lesquelles vos livraisons peuvent échouer."
 adminDashboard.failureSet.nofailureSet: "Aucun motif d'échec"
@@ -1344,6 +1353,7 @@ form.failure_reason.description.label: Description
 basics.manage: Gérer
 basics.settings: Paramètres
 form.store_type.failure_reason_set.label: "Motifs d'échec"
+form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">raisons d\'échec</a> à utiliser dans ce %entity%.
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options
@@ -1406,6 +1416,8 @@ registration.form.title: "Vos informations"
 registration.step.personal: "Informations personnelles"
 registration.step.company: "Informations société"
 registration.step.company.name: "Nom de la société"
+registration.step.company.legal_name: "Nom légal de la société"
+registration.step.company.vat_number: "Numéro de TVA"
 registration.step.invitation: "Invitez vos collègues"
 registration.step.invitation.copy.link: "Copiez le lien ci-dessous et envoyez-le à vos collègues"
 registration.step.invitation.copy.button: "Copier le lien"
@@ -1434,3 +1446,146 @@ form.settings.company_legal_id.label: "Numéro de SIRET"
 form.settings.company_legal_id.help: "Ce numéro est généralement disponible sur les documents officiels de l'entreprise, tels que les factures ou les contrats."
 restaurant.form.edenred_enabled.label: Activer Edenred
 restaurant.form.paygreen_shop_id.label: Identifiant de boutique Paygreen
+adminDashboard.users.export.optins.title: "Sélectionnez ce que vous souhaitez exporter"
+adminDashboard.users.export.optins.newsletter: "Utilisateurs qui acceptent de recevoir la newsletter"
+adminDashboard.users.export.optins.marketting: "Utilisateurs qui acceptent de recevoir des promotions"
+adminDashboard.pricing.duplicate: "Dupliquer"
+adminDashboard.pricing.copyOf: "Copie de %rule_set_name%"
+restaurant.form.allow_mercadopago_connect.label: "Permettre au restaurant de gérer son compte Mercadopago de manière autonome"
+restaurant.form.auto_accept_orders_enabled.label: "Accepter automatiquement les commandes"
+profile.orders: "Commandes"
+profile.configuration: "Configuration"
+order.payer.title: "Informations sur l'acheteur"
+order.payer.email: "E-mail"
+order.payer.identificationType: "Type d'identification"
+order.payer.identificationNumber: "Numéro d'identification"
+order.state.started: "En préparation"
+order.state.ready: "Prêt"
+form.payment.refund_liable.label: "Partie responsable"
+form.payment.refund_application_fee.help: "Si vous cochez cette case, la commission facturée par la plateforme au partenaire sera remboursée proportionnellement\n<br>\n<a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">En savoir plus</a>\n"
+form.registration.terms.and.conditions.label: "J'accepte les Conditions Générales"
+form.registration.terms.and.conditions.help: "En cochant cette case, vous acceptez nos <a href=\"%terms_url%\">Conditions Générales</a>."
+form.registration.privacy.policy.label: "J'accepte la Politique de Confidentialité"
+form.registration.privacy.policy.help: "En cochant cette case, vous acceptez notre <a href=\"%privacy_url%\">Politique de Confidentialité</a>."
+form.credit_note.user_search.label: "Utilisateur"
+form.credit_note.type.label: "Type de réduction"
+form.credit_note.percentage.label: "Pourcentage"
+form.embed_settings.show_home_page.label: "Afficher sur la page d'accueil"
+form.package.color.label: "Couleur (cliquez pour sélectionner)"
+form.package.maxWeight.help: "(Non utilisé ailleurs sur la plateforme pour le moment)"
+roles.ROLE_DISPATCHER: "Dispatcheur"
+roles.ROLE_DISPATCHER.help: "Dispatcheur : Accès complet aux tâches\n"
+activity.order.updated: "La commande #order/%aggregate_id% a été mise à jour\n"
+basics.select_all: "Tout sélectionner"
+basics.delete_selected: "Supprimer la sélection"
+delivery.table.heading.owner: "Propriétaire"
+delivery.import.success_message: "Votre fichier a été traité avec succès, %count% livraisons ont été créées"
+form.delivery_import.file.label: "Fichier"
+notifications.restaurant.accepted_order: "Nouvelle commande"
+food_establishment.CAFE_OR_COFFEE_SHOP: "Café ou salon de thé"
+food_establishment.DISTILLERY: "Distillerie"
+food_establishment.FAST_FOOD_RESTAURANT: "Restaurant de restauration rapide"
+food_establishment.ICE_CREAM_SHOP: "Glacier"
+food_establishment.RESTAURANT: "Restaurant"
+store.DEPARTMENT_STORE: "Grand magasin"
+store.HARDWARE_STORE: "Quincaillerie"
+store.LIQUOR_STORE: "Magasin de spiritueux"
+store.MENS_CLOTHING_STORE: "Magasin de vêtements pour hommes"
+store.MOBILE_PHONE_STORE: "Magasin de téléphones mobiles"
+store.MOVIE_RENTAL_STORE: "Magasin de location de films"
+store.OFFICE_EQUIPMENT_STORE: "Magasin de matériel de bureau"
+store.OUTLET_STORE: "Magasin d'usine"
+store.PAWN_SHOP: "Prêteur sur gages"
+store.PET_STORE: "Magasin pour animaux"
+store.SPORTING_GOODS_STORE: "Magasin d'articles de sport"
+store.TIRE_SHOP: "Magasin de pneus"
+store.WHOLESALE_STORE: "Magasin de vente en gros"
+form.local_business_type.food_establishment: "Établissement alimentaire"
+form.local_business_type.store: "Magasin"
+form.local_business_type.label: "Type d'entreprise"
+form.local_business_type.help: "Les types utilisent le vocabulaire de <a href=\"https://schema.org/\">schema.org</a> pour les <a href=\"https://schema.org/FoodEstablishment\">établissements alimentaires</a> et les <a href=\"https://schema.org/Store\">magasins</a>"
+users.dispatchers: "Dispatcheurs"
+refund.list.disclaimer.admin: "Lorsque la plateforme est responsable de l'incident, cela signifie que la plateforme doit au commerçant le montant du remboursement, car le commerçant a effectivement remboursé le client."
+dabba.oauth_connect.success: "Compte Dabba connecté avec succès !"
+promotion_action.percentage_discount: "%percentage% de réduction"
+promotion_action.delivery_percentage_discount: "%percentage% de réduction sur les frais de livraison"
+promotion_action.fixed_discount: "%amount% de réduction"
+form.customize.order_confirm_enabled.label: Afficher un message de confirmation de commande personnalisé
+form.customize.order_confirm.label: "Ce message apparaîtra sur la page de confirmation de commande"
+order.export.heading.promotions: "Promotions"
+form.business_account.businessRestaurantGroup.label: "Groupe de restaurants d'affaires"
+form.business_account.businessRestaurantGroup.placeholder: "Choisissez un groupe de restaurants d'affaires"
+form.business_acount.resend_invitation.confirm: "L'email d'invitation à Coopcycle a été renvoyé"
+form.business_acount.resend_invitation.failed: "Une erreur s'est produite lors de la tentative de renvoi de l'email d'inscription au compte d'affaires"
+adminDashboard.business_restaurant_group_list.title: "Liste des groupes de restaurants d'affaires"
+adminDashboard.business_restaurant_group.title: "Groupe de restaurants d'affaires"
+adminDashboard.business_restaurant_group.createNew: "Créer un nouveau groupe de restaurants d'affaires"
+form.time_slot.preview_title: "Aperçu du créneau horaire"
+form.checkout_address.reusable_packaging_vytal_enabled.label: "Je veux utiliser des conteneurs Vytal"
+vytal.code.disclaimer: "Ouvrez l'application Vytal, générez un jeton de livraison, puis entrez-le ci-dessous. <a href=\"https://www.vytal.org/bestellen\" target=\"_blank\">En savoir plus</a>"
+restaurant.form.section.vytal: "Vytal"
+restaurant.form.vytal_enabled.label: "Activer le système de consigne Vytal"
+form.settings.addresses.title: "Adresses"
+form.settings.autocomplete_provider.label: "Fournisseur de suggestions"
+form.settings.google_api_key_custom.label: "Clé API Google"
+form.settings.geocoding_provider.label: "Fournisseur de géocodage"
+form.settings.geocoding_provider.help: "Utilisé par l'API et lors de l'importation de feuilles de calcul"
+form.vehicle.volume_units.label: "Unités de volume"
+form.vehicle.max_weight.label: "Poids maximum (kg)"
+vehicles.breadcrumb: "Véhicules"
+vehicles.breadcrumb.help: "Définir la flotte de véhicules"
+tasks.mark_as_done.has_previous: "La tâche #%failed_task% n'a pas pu être complétée car elle a une tâche précédente #%previous_task% qui doit être complétée en premier."
+import.errors.at.row: "Erreurs à la ligne %row_number%"
+import.address.geocode.error: "Impossible de géocoder l'adresse %failed_address%"
+import.time.range.error: "La plage horaire \"%value%\" dans %key% n'est pas valide"
+import.successful.rows: "Votre fichier a été traité et %count% livraisons ont été créées pour les lignes : %rows%"
+import.delivery.price.error.priceCalculation.row: "Le prix de la livraison n'a pas pu être calculé pour la ligne %row_number%"
+import.unsuccessful.rows: "Il y a eu des erreurs et les livraisons n'ont pas pu être créées pour les lignes : %rows%"
+adminDashboard.incidents.title: "Incidents"
+adminDashboard.incidents.help: "Gérer les incidents."
+adminDashboard.incidents.createNew: "Créer un nouvel incident"
+registration.confirm.invitation.link.title: "Utilisez le lien ci-dessous pour inviter des collègues à rejoindre"
+form.business_restaurant_group.restaurants_with_menu: "Restaurants avec menu"
+form.business_restaurant_group.restaurant: "Restaurant"
+form.business_restaurant_group.menu: "Menu"
+form.product.business_restaurant_group.price_definition.label: "Définir les prix pour les groupes de restaurants d'affaires"
+form.product.business_restaurant_group.price_definition.placeholder: "Veuillez en sélectionner un"
+business_restaurant_group.label: "Groupe de restaurants d'affaires"
+business_restaurant_group.form.invalid: "Il y a des erreurs ou des informations manquantes, veuillez vérifier toutes les sections de la configuration."
+business_restaurant_group.form.fill_all_pages: "Veuillez remplir les trois pages de paramètres."
+business_account.registration.title: Création de compte entreprise
+business_account.registration.user_with_same_email_exists: "Un compte avec votre email existe déjà. Veuillez vous connecter pour continuer la configuration de votre compte d'affaires."
+registration.business_account.loggin.warning_message: "Connectez-vous pour associer votre compte à l'entreprise %name%."
+registration.email.taken.loggin.warning_message: "Entrez votre mot de passe pour vous connecter."
+business_account.employee.associated: "Votre compte a été associé avec succès à l'entreprise %name%"
+business_account.loggedin_employee.association.text: "Vous êtes connecté avec l'email <strong>%user_email%</strong>. Voulez-vous associer votre compte à l'entreprise <strong>%business_account_name%</strong>?"
+business_account.loggedin_employee.association.title: "Invitation à associer votre compte à un compte d'affaires"
+topbar.action.admin_business_account: "Administrer mon compte d'affaires"
+basics.order_now: "Commander maintenant"
+restaurant.businessAccount.notAvilable: "Ce restaurant n'est pas inclus dans les restaurants de la configuration de votre entreprise. <br> Vous pouvez voir les restaurants disponibles pour votre entreprise <a href=\"%path%\">en cliquant ici</a>.\n"
+business_account.switch.order_with_business: "Commander avec mon entreprise"
+business_account.switch.ordering_with_business: "Commander avec mon entreprise"
+restaurants.edenred.add_restaurants: "Ajouter des restaurants"
+restaurants.edenred.add_list_title: "Liste des restaurants à envoyer à Edenred"
+restaurants.edenred.added_restaurants: "Restaurants ajoutés"
+restaurants.edenred.already_sent: "Les restaurants qui apparaissent barrés dans la liste sont ceux qui ont déjà été envoyés à Edenred pour incorporation. Veuillez <a href=\"%link%\">cliquer ici</a> pour vérifier leur statut."
+restaurants.edenred.added_list.name: "Nom"
+restaurants.edenred.added_list.merchant_id: "ID du commerçant"
+restaurants.edenred.added_list.tr_card_enabled: "Carte TR activée"
+restaurants.edenred.sending_success: "Les restaurants ont été envoyés avec succès à Edenred."
+restaurants.edenred.sending_failed: "Erreur lors de l'envoi des restaurants à Edenred. Veuillez réessayer plus tard."
+restaurants.edenred.sending_failed.errors: "Il y a des erreurs avec certains restaurants :"
+restaurants.edenred.sending_failed.no_siret: "Le restaurant '%restaurant_name%' n'a pas de Siret défini."
+restaurants.edenred.refresh.no_updates: "Le restaurant '%restaurant_name%' n'a pas encore de mises à jour sur les serveurs d'Edenred."
+restaurants.edenred.refresh.has_updates: "Le restaurant '%restaurant_name%' a eu une mise à jour des serveurs d'Edenred."
+restaurants.edenred.added_list.actions: "Actions"
+form.billing_method.label: "Méthode de facturation"
+form.billing_method.help: "Méthode de facturation utilisée"
+form.billing_method.unit: "Par unité"
+form.billing_method.percentage: "Pourcentage du montant de la commande"
+order.export.heading.billing_method: "Méthode de facturation"
+order.export.heading.applied_billing: "Facturation appliquée"
+deliveries.import_upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
+form.task_export.colisactiv.label: Exporter au format ColivActiv
+form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées
+form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>

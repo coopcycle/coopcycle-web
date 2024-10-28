@@ -7,6 +7,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
+use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +19,10 @@ class TaskListManager {
         protected IriConverterInterface $iriConverter,
         protected LoggerInterface $logger
     ) {}
-
+    
+    /*
+        Assign items (tours and tasks). Works like a PUT, i.e. remove items non-present in $newItemsIris. 
+    */
     public function assign(TaskList $taskList, $newItemsIris) {
 
         $currentItems =  array_merge(array(), $taskList->getItems()->toArray());
@@ -28,23 +32,23 @@ class TaskListManager {
         $taskList->clear();
 
         foreach($newItemsIris as $position => $newItemIri) {
-            $this->logger->info('match new item IRI ' .$newItemIri);
+            $this->logger->debug('match new item IRI ' .$newItemIri);
 
             $existingItem = array_filter(
                 $currentItems,
                 function (Item $item) use ($newItemIri) {
-                    $this->logger->info('try match with item IRI ' .$newItemIri);
+                    $this->logger->debug('try match with item IRI ' .$newItemIri);
                     return $item->getItemIri($this->iriConverter) === $newItemIri;}
             );
             // update position
             if (count($existingItem) > 0) {
-                $this->logger->info('found match for ' .$newItemIri);
+                $this->logger->debug('found match for ' .$newItemIri);
                 $existingItem = array_shift($existingItem);
                 $existingItem->setPosition($position);
                 $taskList->addItem($existingItem);
             // items that were added to the tasklist
             } else {
-                $this->logger->info('not found match for ' .$newItemIri);
+                $this->logger->debug('not found match for ' .$newItemIri);
                 $taskOrTour = $this->iriConverter->getItemFromIri($newItemIri);
                 $item = new Item();
                 $item->setPosition($position);
@@ -71,6 +75,23 @@ class TaskListManager {
         foreach ($newTasks as $task) {
             $task->assignTo($taskList->getCourier(), $taskList->getDate());
         }
+    }
+
+    public function getTaskListForUser(\DateTime $date, User $user)
+    {
+        $taskList = $this->entityManager
+            ->getRepository(TaskList::class)
+            ->findOneBy(['date' => $date, 'courier' => $user]);
+
+        if (null === $taskList) {
+            $taskList = new TaskList();
+            $taskList->setDate($date);
+            $taskList->setCourier($user);
+            $this->entityManager->persist($taskList);
+            $this->entityManager->flush();
+        }
+
+        return $taskList;
     }
 
 }

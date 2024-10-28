@@ -87,13 +87,13 @@ To configure geocoding, create an account on [OpenCage](https://opencagedata.com
 We have prebuilt some images and uploaded them to [Docker Hub](https://hub.docker.com/u/coopcycle).
 To avoid building those images locally, you can pull them first.
 
-```
+```sh
 docker compose pull
 ```
 
 Populate your local `.env` file:
 
-```
+```sh
 cp .env.dist .env
 ```
 
@@ -110,7 +110,7 @@ make install
 ```
 
 #### Open the platform in your browser
-```
+```sh
 open http://localhost
 ```
 
@@ -119,8 +119,8 @@ Testing
 
 #### Create the test database
 
-```
-docker-compose run php bin/console doctrine:schema:create --env=test
+```sh
+docker compose run php bin/console doctrine:schema:create --env=test
 ```
 
 ### Launch the PHPUnit tests
@@ -179,20 +179,31 @@ See more command line options [here](https://behat.org/en/latest/user_guide/comm
 
 ### Launch the Jest tests
 
-```
+```sh
 make jest
+```
+
+or to run only one test file:
+
+```sh
+sh ./bin/jest path/to/test/file.test.js
 ```
 
 ### Launch the Cypress tests
 
 Cypress is a JS program for end-to-end testing and integration testing of components. You will launch a server in the test environment and run cypress on your own machine.
 
-```
-npm install -g cypress @cypress/webpack-preprocessor @cypress/react18
+Installation:
+
+(take the current versions from `package.json`)
+
+```sh
+npm install -g cypress@x.x.x @cypress/webpack-preprocessor@x.x.x @cypress/react18@x.x.x
+docker compose exec -T php bin/console typesense:create --env=test # install typesense for test env
 ```
 
 Launch php container on his own in the test env:
-```
+```sh
 docker compose run --service-ports -e APP_ENV=test php
 docker compose up
 # might need to reboot the PHP container here because the link with nginx is not good
@@ -220,13 +231,13 @@ Debugging
 ------------------
 #### 1. Install and enable xdebug in the php container
 
-```
+```sh
 make enable-xdebug
 ```
 > **Note:** If you've been working with this stack before you'll need to rebuild the php image for this command to work:
 > ```
-> docker-compose build php
-> docker-compose restart php nginx
+> docker compose build php
+> docker compose restart php nginx
 > ```
 
 #### 2. Enable php debug in VSCode
@@ -258,8 +269,8 @@ make enable-xdebug
 
 3. If you're having issues connecting the debugger yo can restart nginx and php containers to reload the xdebug extension.
 
-```
-docker-compose restart php nginx
+```sh
+docker compose restart php nginx
 ```
 
 Running migrations

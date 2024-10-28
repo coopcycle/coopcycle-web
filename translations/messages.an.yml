@@ -164,7 +164,6 @@ restaurant.form.loopeat_enabled.label: 'Habilite lo sistema de deposito y reembo
   de LoopEat'
 restaurant.form.loopeat_disconnect.label: 'Desconnectar LoopEat'
 restaurant.form.featured.label: 'Este restaurant amaneixe en a pachina d''inicio'
-restaurant.form.giropay_enabled.label: 'Habilitar Giropay'
 restaurant.form.fulfillment_methods.label: 'Metodos de complimiento'
 restaurant.form.section.general: 'Cheneral'
 restaurant.form.section.options: 'Opcions'
@@ -502,7 +501,7 @@ form.settings.stripe_secret_key.help: "Creya una cuenta Stripe pa obtener la tuy
   \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clau secreta</a>\n"
 form.settings.stripe_connect_client_id.label: 'Identificador de Stripe Connect'
 form.settings.stripe_connect_client_id.help: "Puetz trobar lo tuyo identificador en\
-  \ a <a href=\"https://dashboard.stripe.com/account/applications/settings\">pachina\
+  \ a <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">pachina\
   \ de parametros</a>\n"
 form.settings.latlng.label: 'Coordinadas cheograficas'
 form.settings.latlng.help: "Especifica la latitut y lonchitut per defecto d'o mapa.\

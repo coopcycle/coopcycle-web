@@ -5,8 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use Doctrine\ORM\EntityManagerInterface;
-use Kreait\Firebase\Factory as FirebaseFactory;
-use Kreait\Firebase\Exception\ServiceAccountDiscoveryFailed;
+use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
 use Kreait\Firebase\Messaging\MessageTarget;
 use Psr\Log\LoggerInterface;
@@ -18,7 +17,7 @@ class RemotePushNotificationManager
     private static $enabled = true;
 
     public function __construct(
-        private FirebaseFactory $firebaseFactory,
+        private Messaging $firebaseMessaging,
         private Pushok\Client $apnsClient,
         private EntityManagerInterface $entityManager,
         private TranslatorInterface $translator,
@@ -48,13 +47,6 @@ class RemotePushNotificationManager
     private function fcm($notification, array $tokens, $data)
     {
         if (count($tokens) === 0) {
-            return;
-        }
-
-        try {
-            $firebaseMessaging = $this->firebaseFactory->createMessaging();
-        } catch (ServiceAccountDiscoveryFailed $e) {
-            $this->pushNotificationLogger->error($e);
             return;
         }
 
@@ -106,8 +98,8 @@ class RemotePushNotificationManager
         // Make sure to have a zero-indexed array
         $deviceTokens = array_values($deviceTokens);
 
-        // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html?#send-messages-to-multiple-devices-multicast
-        $report = $firebaseMessaging->sendMulticast($message, $deviceTokens);
+        // @see https://firebase-php.readthedocs.io/en/stable/cloud-messaging.html#send-messages-in-batches
+        $report = $this->firebaseMessaging->sendMulticast($message, $deviceTokens);
 
         if ($report->hasFailures()) {
             foreach ($report->failures()->getItems() as $failure) {

@@ -66,6 +66,10 @@ describe('Selectors', () => {
             },
           },
         },
+        tours: {
+          ids: [],
+          entities: {}
+        }
       },
       ui: {
         taskListsLoading: false,
@@ -107,9 +111,20 @@ describe('Selectors', () => {
   describe('selectAssignedTasks', () => {
     it('should return assigned tasks', () => {
       expect(selectAssignedTasks(baseState)).toEqual([
-        '/api/tasks/1',
-        '/api/tasks/2',
-        '/api/tasks/3',
+        {
+          "@id": "/api/tasks/1",
+          "id": 1,
+          "next": "/api/tasks/2",
+        },
+          {
+          "@id": "/api/tasks/2",
+          "id": 2,
+          "previous": "/api/tasks/1",
+        },
+          {
+          "@id": "/api/tasks/3",
+          "id": 3,
+        },
       ])
     })
   })

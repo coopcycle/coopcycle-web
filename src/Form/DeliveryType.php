@@ -110,8 +110,10 @@ class DeliveryType extends AbstractType
             ]);
 
             $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
+            // customers/stores owners are not allowed to edit existing deliveries
+            $isEditEnabled = $this->authorizationChecker->isGranted('ROLE_DISPATCHER') || is_null($delivery->getId());
 
-            if ($isMultiDropEnabled) {
+            if ($isMultiDropEnabled && $isEditEnabled) {
                 $form->add('addTask', ButtonType::class, [
                     'label' => 'basics.add',
                     'attr' => [

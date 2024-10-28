@@ -3,9 +3,6 @@ context('Checkout', () => {
 
       cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
-      cy.window().then((win) => {
-        win.sessionStorage.clear()
-      })
     })
 
     it('homepage search with imprecise address', () => {

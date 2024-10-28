@@ -243,18 +243,4 @@ trait StripeTrait
 
         return [];
     }
-
-    public function isGiropay(): bool
-    {
-        /** @deprecated */
-        if ($this->hasSource() && 'giropay' === $this->getSourceType()) {
-            return true;
-        }
-
-        if (in_array('giropay', $this->getPaymentMethodTypes())) {
-            return true;
-        }
-
-        return false;
-    }
 }

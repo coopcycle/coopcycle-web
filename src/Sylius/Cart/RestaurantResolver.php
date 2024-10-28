@@ -10,7 +10,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Webmozart\Assert\Assert;
 
 class RestaurantResolver
 {
@@ -70,7 +69,7 @@ class RestaurantResolver
      */
     public function accept(OrderInterface $cart): bool
     {
-        $restaurant  = $this->resolve();
+        $restaurant = $this->resolve();
         $restaurants = $cart->getRestaurants();
 
         if (count($restaurants) === 0) {
@@ -83,17 +82,20 @@ class RestaurantResolver
             return true;
         }
 
-        if (null !== $cart->getBusinessAccount()) {
-            return $cart->getBusinessAccount()->getBusinessRestaurantGroup()->getRestaurants()->contains($restaurant);
-        }
-
         $hub = $restaurants->first()->getHub();
 
         if (null === $hub) {
-
-            return $restaurants->first() === $restaurant;
+            $this->logger->debug('Cart does not contain a restaurant, not accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+            return false;
         }
 
-        return $hub === $restaurant->getHub();
+        $isSameHub = $hub === $restaurant->getHub();
+        if ($isSameHub) {
+            $this->logger->debug('Cart contains a restaurant from the same hub, accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+        } else {
+            $this->logger->debug('Cart contains a restaurant from another hub, not accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+        }
+
+        return $isSameHub;
     }
 }

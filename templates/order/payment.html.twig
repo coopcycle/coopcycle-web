@@ -105,7 +105,6 @@
   {{ encore_entry_script_tags('order-payment') }}
   {% include 'payment/scripts.html.twig' with {
     order: order,
-    payment: payment,
     payment_form_selector: 'form[name="checkout_payment"]',
     token_element_selector: '#checkout_payment_stripePayment_stripeToken',
     order_access_token: order_access_token,

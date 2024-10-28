@@ -54,20 +54,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
               </div>
             )
 
-          case 'giropay':
-
-            return (
-              <div style={ methodStyles }key={ m.type }>
-                <label>{ t('PM_GIROPAY') }</label>
-                <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'giropay' }) }
-                        onClick={ () => setMethod('giropay') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
-            )
-
           case 'edenred':
-          case 'edenred+card':
 
             return (
               <div style={ methodStyles }key={ m.type }>
@@ -90,7 +77,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'cash_on_delivery':
 
             return (
-              <div style={ methodStyles }key={ m.type }>
+              <div style={ methodStyles }key={ m.type } data-testid="pm.cash">
                 <label>{ t('PM_CASH') }</label>
                 <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => setMethod('cash_on_delivery') }>

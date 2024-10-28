@@ -122,7 +122,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -149,7 +150,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -227,7 +229,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -254,7 +257,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -335,7 +339,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -348,7 +353,8 @@ Feature: Deliveries
               "type": "XL",
               "name": "XL",
               "quantity": 2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -369,7 +375,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -382,7 +389,8 @@ Feature: Deliveries
               "type": "XL",
               "name": "XL",
               "quantity": 2,
-              "volume_per_package": 3
+              "volume_per_package": 3,
+              "short_code": "AB"
             }
           ],
           "createdAt":"@string@.isDateTime()"
@@ -453,7 +461,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -480,7 +489,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime().startsWith(\"2022-03-25T12:30:00\")",
@@ -541,7 +551,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -568,7 +579,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -625,7 +637,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -652,7 +665,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -713,7 +727,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -740,7 +755,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": "John Doe"
+            "contactName": "John Doe",
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -803,7 +819,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -830,7 +847,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": "John Doe"
+            "contactName": "John Doe",
+            "description": "Code A1B2"
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -891,7 +909,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -918,7 +937,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -980,7 +1000,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -1007,7 +1028,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"2020-04-02T12:00:00+02:00",
           "after":"2020-04-02T12:00:00+02:00",
@@ -1079,7 +1101,8 @@ Feature: Deliveries
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -1222,6 +1245,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has order creation enabled
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -1262,7 +1286,8 @@ Feature: Deliveries
                 },
                 "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
                 "telephone": null,
-                "name": null
+                "name": null,
+                "description": null
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
@@ -1289,7 +1314,8 @@ Feature: Deliveries
                 },
                 "streetAddress": @string@,
                 "telephone": null,
-                "name": null
+                "name": null,
+                "description": null                
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
@@ -1363,7 +1389,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -1390,7 +1417,8 @@ Feature: Deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime().startsWith(\"2022-05-06T11:50:00\")",

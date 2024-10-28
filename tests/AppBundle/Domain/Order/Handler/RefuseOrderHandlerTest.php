@@ -71,28 +71,4 @@ class RefuseOrderHandlerTest extends TestCase
 
         call_user_func_array($this->handler, [ $command ]);
     }
-
-    public function testRefuseOrderWithGiropayRefundsCustomer()
-    {
-        $payment = new Payment();
-        $payment->setAmount(3000);
-        $payment->setState(PaymentInterface::STATE_COMPLETED);
-        $payment->setCurrencyCode('EUR');
-        $payment->setPaymentMethodTypes(['giropay']);
-
-        $order = new Order();
-        $order->addPayment($payment);
-
-        $this->stripeManager
-            ->refund($payment)
-            ->shouldBeCalled();
-
-        $this->eventRecorder
-            ->record(Argument::type(OrderRefused::class))
-            ->shouldBeCalled();
-
-        $command = new RefuseOrder($order, 'Out of stock');
-
-        call_user_func_array($this->handler, [ $command ]);
-    }
 }

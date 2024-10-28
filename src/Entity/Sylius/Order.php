@@ -16,6 +16,7 @@ use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
 use AppBundle\Action\Order\FinishPreparing as OrderFinishPreparing;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
+use AppBundle\Action\Order\ConfigurePayment as ConfigurePaymentController;
 use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
 use AppBundle\Action\Order\CreateSetupIntentOrAttachPM;
 use AppBundle\Action\Order\Delay as OrderDelay;
@@ -33,16 +34,20 @@ use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\Dto\ConfigurePaymentInput;
+use AppBundle\Api\Dto\ConfigurePaymentOutput;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
+use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
+use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Filter\OrderDateFilter;
@@ -125,6 +130,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
+ *       "normalization_context"={"api_sub_level"=true, "groups"={"payment_details"}},
  *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
@@ -424,6 +430,32 @@ use Webmozart\Assert\Assert as WMAssert;
  *         "summary"="Update Loopeat returns for an order"
  *       }
  *     },
+ *     "update_edenred_credentials"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/edenred_credentials",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=EdenredCredentialsInput::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "denormalization_context"={"groups"={"update_edenred_credentials"}},
+ *       "openapi_context"={
+ *         "summary"="Update Edenred credentials for an order"
+ *       }
+ *     },
+ *     "configure_payment"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/payment",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=ConfigurePaymentInput::class,
+ *       "controller"=ConfigurePaymentController::class,
+ *       "output"=ConfigurePaymentOutput::class,
+ *       "validate"=false,
+ *       "denormalization_context"={"groups"={"order_configure_payment"}},
+ *       "normalization_context"={"api_sub_level"=true, "groups"={"order_configure_payment"}},
+ *       "openapi_context"={
+ *         "summary"="Configure payment for a Order resource."
+ *       }
+ *     },
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"order_create"}},
@@ -440,6 +472,13 @@ use Webmozart\Assert\Assert as WMAssert;
 class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;
+
+    const STORE_TYPE_FOODTECH = 'FOODTECH';
+    const STORE_TYPE_LASTMILE = 'LASTMILE';
+    const STORE_TYPE = [
+        self::STORE_TYPE_FOODTECH,
+        self::STORE_TYPE_LASTMILE
+    ];
 
     protected $customer;
 
@@ -705,6 +744,23 @@ class Order extends BaseOrder implements OrderInterface
     public function hasVendor(): bool
     {
         return count($this->getVendors()) > 0;
+    }
+
+    public function getStoreType(): ?string
+    {
+        if ($this->isMultiVendor()) {
+            return null;
+        }
+
+        if (!is_null($this->getRestaurant())) {
+            return self::STORE_TYPE_FOODTECH;
+        }
+
+        if (!is_null($this->getDelivery()?->getStore())) {
+            return self::STORE_TYPE_LASTMILE;
+        }
+
+        throw new \LogicException('Cannot get store type for order without delivery or restaurant');
     }
 
     /**
@@ -1443,16 +1499,6 @@ class Order extends BaseOrder implements OrderInterface
         return $recipients;
     }
 
-    public function supportsGiropay(): bool
-    {
-        if ($this->isMultiVendor() || !$this->hasVendor()) {
-
-            return false;
-        }
-
-        return $this->getRestaurant()->isStripePaymentMethodEnabled('giropay');
-    }
-
     public function supportsEdenred(): bool
     {
         if ($this->isMultiVendor() || !$this->hasVendor()) {
@@ -1819,5 +1865,78 @@ class Order extends BaseOrder implements OrderInterface
     public function setSubscription(?RecurrenceRule $subscription): void
     {
         $this->subscription = $subscription;
+
+    }
+
+    /**
+     * @SerializedName("hasEdenredCredentials")
+     * @Groups({"order", "order_update", "cart"})
+     */
+    public function hasEdenredCredentials(): bool
+    {
+        /** @var \AppBundle\Sylius\Customer\CustomerInterface|null */
+        $customer = $this->getCustomer();
+
+        if (null === $customer) {
+            return false;
+        }
+
+        return $customer->hasEdenredCredentials();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastPaymentByMethod(string $method, ?string $state = null): ?PaymentInterface
+    {
+        if ($this->payments->isEmpty()) {
+            return null;
+        }
+
+        $iterator = $this->payments->getIterator();
+        $iterator->uasort(function ($a, $b) {
+            return ($a->getCreatedAt() < $b->getCreatedAt()) ? -1 : 1;
+        });
+        $payments = new ArrayCollection(iterator_to_array($iterator));
+
+        $payment = $payments->filter(function (PaymentInterface $payment) use ($method, $state): bool {
+            return (null === $state || $payment->getState() === $state) && $payment->getMethod()->getCode() === $method;
+        })->last();
+
+        return $payment !== false ? $payment : null;
+    }
+
+    public function isZeroWaste(): bool
+    {
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                if ($product->hasReusablePackagings()) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function getLoopeatFormatById(int $formatId): ?array
+    {
+        $reusablePackagings = $this->getRestaurant()->getReusablePackagings();
+
+        foreach ($reusablePackagings as $reusablePackaging) {
+            if (ReusablePackaging::TYPE_LOOPEAT === $reusablePackaging->getType()) {
+                $data = $reusablePackaging->getData();
+                if ($data['id'] === $formatId) {
+                    return $data;
+                }
+            }
+        }
+
+        return null;
     }
 }

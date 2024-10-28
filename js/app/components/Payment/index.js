@@ -61,6 +61,7 @@ export default function(formSelector, options) {
   disableBtn(submitButton)
 
   let cc
+  let payments = []
 
   if (containsMethod(methods, 'card')) {
 
@@ -127,25 +128,23 @@ export default function(formSelector, options) {
       handleCardPayment(savedPaymentMethod)
     } else {
 
+      const hasCard = !!_.find(payments, p => p.method.code === 'CARD')
+
       const selectedMethod =
         form.querySelector('input[name="checkout_payment[method]"]:checked').value
 
       switch (selectedMethod) {
-        case 'giropay':
-          cc.confirmGiropayPayment()
-            .catch(e => {
-              setLoading(false)
-              document.getElementById('card-errors').textContent = e.message
-            })
-          break
         case 'edenred':
           // It means the whole amount can be paid with Edenred (ex. click & collect)
-          form.submit()
+          if (!hasCard) {
+            form.submit()
+          } else {
+            handleCardPayment(savedPaymentMethod)
+          }
           break
         case 'cash_on_delivery':
           form.submit()
           break
-        case 'edenred+card':
         case 'card':
           handleCardPayment(savedPaymentMethod)
           break
@@ -217,30 +216,38 @@ export default function(formSelector, options) {
     axios
       .post(options.selectPaymentMethodURL, { method: value })
       .then(response => {
+
+        // This will be used later in handlePayment function
+        payments = response.data.payments
+
         switch (value) {
           case 'card':
-          case 'giropay':
-          case 'edenred+card':
+          case 'edenred':
+
             const cashDisclaimer = document.getElementById('cash_on_delivery_disclaimer')
             if (cashDisclaimer) {
               // remove disclaimer for cash method if it was previously selected
               cashDisclaimer.remove()
             }
 
-            cc.mount(document.getElementById('card-element'), value, response.data, options)
-              .then(() => {
-                document.getElementById('card-element').scrollIntoView()
-                enableBtn(submitButton)
-              })
-              .catch(e => {
-                document.getElementById('card-errors').textContent = e.message
-              })
-            break
-          case 'edenred':
-            // TODO
-            // Here no need to enter credit card details or what
-            // Maybe, add a confirmation step?
-            enableBtn(submitButton)
+            const hasCard = !!_.find(response.data.payments, p => p.method.code === 'CARD')
+
+            if (hasCard) {
+              cc.mount(document.getElementById('card-element'), value, response.data, options)
+                .then(() => {
+                  document.getElementById('card-element').scrollIntoView()
+                  enableBtn(submitButton)
+                })
+                .catch(e => {
+                  document.getElementById('card-errors').textContent = e.message
+                })
+            } else {
+              // TODO
+              // Here no need to enter credit card details or what
+              // Maybe, add a confirmation step?
+              enableBtn(submitButton)
+            }
+
             break
           case 'cash_on_delivery':
             if (document.getElementById('card-element').children.length) {
@@ -275,7 +282,16 @@ export default function(formSelector, options) {
     .forEach(el => el.classList.add('d-none'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
-    cc.mount(document.getElementById('card-element'), null, null, options).then(() => enableBtn(submitButton))
+    axios
+      .post(options.selectPaymentMethodURL, { method: 'CARD' })
+      .then(response => {
+
+        // This will be used later in handlePayment function
+        payments = response.data.payments
+
+        cc.mount(document.getElementById('card-element'), null, response.data, options).then(() => enableBtn(submitButton))
+
+      })
   } else {
 
     const el = document.createElement('div')

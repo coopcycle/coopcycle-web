@@ -6,18 +6,20 @@ use AppBundle\DataType\TsRange;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Utils\OrdersRateLimit;
 use AppBundle\Utils\OrderTimelineCalculator;
 use AppBundle\Utils\ShippingDateFilter;
 use Doctrine\Common\Collections\ArrayCollection;
-use PHPUnit\Framework\TestCase;
-use Prophecy\Argument;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Redis;
 
-class ShippingDateFilterTest extends TestCase
+class ShippingDateFilterTest extends KernelTestCase
 {
     use ProphecyTrait;
 
@@ -27,13 +29,21 @@ class ShippingDateFilterTest extends TestCase
 
     public function setUp(): void
     {
+        parent::setUp();
+
+        self::bootKernel();
+
         $this->restaurant = $this->prophesize(LocalBusiness::class);
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
         $this->rateLimiter = $this->prophesize(OrdersRateLimit::class);
+        $this->redis = self::$container->get(Redis::class);
+        $this->resolver = $this->prophesize(FulfillmentMethodResolver::class);
 
         $this->filter = new ShippingDateFilter(
+            $this->redis,
             $this->orderTimelineCalculator->reveal(),
             $this->rateLimiter->reveal(),
+            $this->resolver->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
         );
@@ -183,6 +193,14 @@ class ShippingDateFilterTest extends TestCase
         $order
             ->getFulfillmentMethod()
             ->willReturn('delivery');
+        $order
+            ->getRestaurants()
+            ->willReturn(new ArrayCollection());
+
+        $fullfilmentMethod = new FulfillmentMethod();
+        $fullfilmentMethod->setOrderingDelayMinutes(0);
+
+        $this->resolver->resolveForOrder($order)->willReturn($fullfilmentMethod);
 
         $timeline = new OrderTimeline();
         $timeline->setPreparationTime($preparationTime);

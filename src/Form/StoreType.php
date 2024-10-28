@@ -6,26 +6,23 @@ use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\TimeSlot;
+use AppBundle\Entity\User;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
-use Sonata\Form\Type\BooleanType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Validator\Constraints;
+
 
 class StoreType extends LocalBusinessType
 {
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -81,7 +78,10 @@ class StoreType extends LocalBusinessType
                     ],
                     'help_html' => true,
 
-                ));
+                ))
+                ->add('checkExpression', HiddenType::class, [
+                    'label' => 'form.store.check_expression'
+                ]);
 
             if ($this->transportersEnabled) {
                 $transporterConfig = $this->transportersConfig;
@@ -115,6 +115,19 @@ class StoreType extends LocalBusinessType
                     ]);
                 }
             }
+
+            $data = $this->userManager->findUsersByRole('ROLE_COURIER');
+
+            $form->add('defaultCourier', EntityType::class, [
+                'class' => User::class,
+                'choices' => $data,
+                'label' => 'form.store_type.defaultCourier.label',
+                'choice_label' => 'username',
+                'choice_value' => 'username',
+                'placeholder' => 'form.store_type.defaultCourier.placeholder',
+                'help' => 'form.store_type.defaultCourier.help',
+                'required' => false,
+            ]);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
