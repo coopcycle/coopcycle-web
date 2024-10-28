@@ -697,7 +697,7 @@ trait StoreTrait
         ]);
     }
 
-    public function storeDeliveriesBookmarksAction($id, Request $request,
+    public function storeSavedOrdersAction($id, Request $request,
         EntityManagerInterface $entityManager,
         OrderRepository $orderRepository)
     {
@@ -715,13 +715,14 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('store/deliveries_bookmarks.html.twig', [
+        return $this->render('store/orders_saved.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'bookmarks' => $orderRepository->findBookmarked($store, $this->getUser()),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'store_addresses_route' => $routes['store_addresses'],
         ]);
     }
 

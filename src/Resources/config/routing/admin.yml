@@ -575,14 +575,15 @@ admin_store_deliveries:
             import_success: admin_deliveries
     methods:  [ GET, POST ]
 
-admin_store_deliveries_bookmarks:
-  path: /admin/stores/{id}/deliveries/bookmarks
+admin_store_orders_saved:
+  path: /admin/stores/{id}/orders/saved
   defaults:
-    _controller: AppBundle\Controller\AdminController::storeDeliveriesBookmarksAction
+    _controller: AppBundle\Controller\AdminController::storeSavedOrdersAction
     layout: 'admin.html.twig'
     routes:
       stores: admin_stores
       store: admin_store
+      store_addresses: admin_store_addresses
   methods:  [ GET ]
 
 admin_store_delivery_new:
