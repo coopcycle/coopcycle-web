@@ -69,6 +69,8 @@ class ExportOrdersCommand extends BaseExportCommand
             'platform_fee' => $__m($row[21]),
             'refunds' => $__m($row[22]),
             'net_revenue' => $__m($row[23]),
+            'incident_adjustments' => $__m($row[24]),
+            'incidents' => $__s($row[25]),
             'billing_method' => $__s($row[26]),
             'applied_billing' => $__s($row[27]),
         ];
