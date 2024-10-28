@@ -2,14 +2,11 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\Entity\TaskCollection;
-use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskList;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\TaskListRepository;
 use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
@@ -27,25 +24,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskListSubscriber implements EventSubscriber
 {
-    private $eventBus;
-    private $messageBus;
-    private $translator;
-    private $routing;
-    private $logger;
     private $taskLists = [];
 
     public function __construct(
-        MessageBus $eventBus,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
-        RoutingInterface $routing,
-        LoggerInterface $logger)
+        private readonly MessageBus $eventBus,
+        private readonly MessageBusInterface $messageBus,
+        private readonly TranslatorInterface $translator,
+        private readonly RoutingInterface $routing,
+        private readonly TaskListRepository $taskListRepository,
+        private readonly LoggerInterface $logger
+    )
     {
-        $this->eventBus = $eventBus;
-        $this->messageBus = $messageBus;
-        $this->translator = $translator;
-        $this->routing = $routing;
-        $this->logger = $logger;
     }
 
     public function getSubscribedEvents()
@@ -151,7 +140,8 @@ class TaskListSubscriber implements EventSubscriber
 
             // legacy event and new version of event
             // see https://github.com/coopcycle/coopcycle-app/issues/1803
-            $this->eventBus->handle(new TaskListUpdated($taskList));
+            $myTaskListDto = $this->taskListRepository->findMyTaskListAsDto($taskList->getCourier(), $taskList->getDate());
+            $this->eventBus->handle(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
             $this->eventBus->handle(new TaskListUpdatedv2($taskList));
 
             $date = $taskList->getDate();
