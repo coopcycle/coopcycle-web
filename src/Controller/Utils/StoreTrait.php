@@ -409,7 +409,7 @@ trait StoreTrait
         return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
-    public function subscriptionAction($storeId, $recurrenceRuleId,
+    public function recurrenceRuleAction($storeId, $recurrenceRuleId,
         Request $request,
         PricingManager $pricingManager,
         EntityManagerInterface $entityManager,
