@@ -595,7 +595,7 @@ admin_store_recurrence_rules:
       stores: admin_stores
       store: admin_store
       store_addresses: admin_store_addresses
-      store_recurrence_rule: admin_store_subscriptions
+      store_recurrence_rule: admin_store_recurrence_rule
   methods:  [ GET ]
 
 admin_store_delivery_new:
@@ -616,8 +616,8 @@ admin_store_delivery_download_images:
         _controller: AppBundle\Controller\AdminController::downloadDeliveryImagesAction
     methods:  [ GET ]
 
-admin_store_subscriptions:
-  path: /admin/stores/{storeId}/subscriptions/{subscriptionId}
+admin_store_recurrence_rule:
+  path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}
   defaults:
     _controller: AppBundle\Controller\AdminController::subscriptionAction
     layout: 'admin.html.twig'

@@ -684,7 +684,6 @@ adminDashboard.tags.confirm_delete: "¿Estás seguro de eliminar esta etiqueta? 
 adminDashboard.time_slots.title: Franja horaria
 delivery.tracking_link: Enlace de seguimiento
 delivery.with_id: 'Entrega #%id%'
-subscriptions.title: Abonnements
 subscription.title: 'Abonnement #%id%'
 subscription.generated_order: Cette commande a été générée par un abonnement
 subscription.view: Voir l'abonnement

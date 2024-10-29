@@ -15,7 +15,7 @@
             {% set templateOrder = item.templateOrder %}
 
             <tr data-testid="delivery__list_item">
-                <td width="40%">
+                <td>
                     <ul class="list-unstyled">
                         {% for task in templateDelivery.getTasks() %}
                             <li>
@@ -42,7 +42,7 @@
                     <small>{{ details|join(' - ') }}</small>
                 </td>
 
-                <td width="12%">
+                <td width="15%">
                     {% if templateOrder is not null %}
                         <span class="d-flex justify-content-between align-items-center">
                             <span class="text-muted">{% trans %}order.total_excluding_tax{% endtrans %}</span>
@@ -55,23 +55,22 @@
                     {% endif %}
                 </td>
 
-                <td class="text-center" width="10%">
+                <td width="15%">
                     {{ recurrenceRule.getRule()|recurr_rule }}
-{#                    <small class="text-muted">{{ recurrenceRule.createdAt|time_diff }}</small>#}
                 </td>
 
-                <td class="text-center" width="10%">
+                <td class="text-center" width="15%">
                     {% if item.generateOrders %}
                     ✅
                     {% endif %}
                 </td>
 
-                <td class="text-center" width="10%">
+                <td width="8%">
                     <small class="text-muted">{{ recurrenceRule.createdAt|time_diff }}</small>
                 </td>
 
-                <td class="text-right">
-                    <a href="{{ path(routes.view, { storeId: store.id, subscriptionId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
+                <td class="text-right" width="8%">
+                    <a href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
                 </td>
             </tr>
         {% endfor %}

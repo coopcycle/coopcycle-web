@@ -88,7 +88,6 @@ adminDashboard.pledges.title: Suggestions
 delivery.createNew: Créer une livraison
 delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
-subscriptions.title: Abonnements
 subscription.title: 'Abonnement #%id%'
 subscription.generated_order: Cette commande a été générée par un abonnement
 subscription.view: Voir l'abonnement
