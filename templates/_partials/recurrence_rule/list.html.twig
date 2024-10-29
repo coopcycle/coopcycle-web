@@ -11,13 +11,14 @@
     <tbody>
     {% for item in items %}
       {% set recurrenceRule = item.recurrenceRule %}
+      {% set templateTasks = item.templateTasks %}
       {% set templateDelivery = item.templateDelivery %}
       {% set templateOrder = item.templateOrder %}
 
       <tr data-testid="delivery__list_item">
         <td>
           <ul class="list-unstyled">
-            {% for task in templateDelivery.getTasks() %}
+            {% for task in templateTasks %}
               <li>
                 <small>
                   <span
@@ -30,16 +31,18 @@
               </li>
             {% endfor %}
           </ul>
-          {% set details = [ templateDelivery.distance|meters_to_kilometers ] %}
-          {% if templateDelivery.weight is not empty %}
-            {% set details = details|merge([ templateDelivery.weight|grams_to_kilos ]) %}
+          {% if templateDelivery is not null %}
+            {% set details = [ templateDelivery.distance|meters_to_kilometers ] %}
+            {% if templateDelivery.weight is not empty %}
+              {% set details = details|merge([ templateDelivery.weight|grams_to_kilos ]) %}
+            {% endif %}
+            {% if templateDelivery.hasPackages() %}
+              {% for package_quantity in templateDelivery.packages %}
+                {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
+              {% endfor %}
+            {% endif %}
+            <small>{{ details|join(' - ') }}</small>
           {% endif %}
-          {% if templateDelivery.hasPackages() %}
-            {% for package_quantity in templateDelivery.packages %}
-              {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
-            {% endfor %}
-          {% endif %}
-          <small>{{ details|join(' - ') }}</small>
         </td>
 
         <td width="15%">
@@ -74,8 +77,13 @@
         </td>
 
         <td class="text-right" width="8%">
-          <a
-            href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
+          {% if item.isLegacy %}
+            <span
+              class="text-muted">{% trans %}recurrence_rule.legacy{% endtrans %}</span>
+          {% else %}
+            <a
+              href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
+          {% endif %}
         </td>
       </tr>
     {% endfor %}

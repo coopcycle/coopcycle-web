@@ -49,7 +49,7 @@ class GenerateOrders
         $orders = [];
 
         foreach ($subscriptions as $subscription) {
-            $order = $this->pricingManager->createOrderFromSubscription($subscription, $date);
+            $order = $this->pricingManager->createOrderFromRecurrenceRule($subscription, $date);
             if (null !== $order) {
                 $orders[] = $order;
             }

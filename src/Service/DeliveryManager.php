@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
@@ -11,40 +10,29 @@ use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
-use AppBundle\Utils\PickupTimeResolver;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DeliveryManager
 {
-    private $expressionLanguage;
-    private $routing;
-    private $orderTimeHelper;
-    private $storeExtractor;
-    private $orderTimelineCalculator;
-    private $logger;
-
     public function __construct(
-        ExpressionLanguage $expressionLanguage,
-        RoutingInterface $routing,
-        OrderTimeHelper $orderTimeHelper,
-        OrderTimelineCalculator $orderTimelineCalculator,
-        TokenStoreExtractor $storeExtractor,
-        LoggerInterface $logger = null)
-    {
-        $this->expressionLanguage = $expressionLanguage;
-        $this->routing = $routing;
-        $this->orderTimeHelper = $orderTimeHelper;
-        $this->orderTimelineCalculator = $orderTimelineCalculator;
-        $this->storeExtractor = $storeExtractor;
-        $this->logger = $logger ?? new NullLogger();
-    }
+        private readonly DenormalizerInterface $denormalizer,
+        private readonly ExpressionLanguage $expressionLanguage,
+        private readonly RoutingInterface $routing,
+        private readonly OrderTimeHelper $orderTimeHelper,
+        private readonly OrderTimelineCalculator $orderTimelineCalculator,
+        private readonly TokenStoreExtractor $storeExtractor,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $logger = new NullLogger()
+    )
+    {}
 
     public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
     {
@@ -146,6 +134,63 @@ class DeliveryManager
         $distance = $this->routing->getDistance(...$coords);
 
         $delivery->setDistance(ceil($distance));
+    }
+
+    public function createTasksFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): array
+    {
+        $store = $recurrenceRule->getStore();
+
+        $template = $recurrenceRule->getTemplate();
+        $tasksTemplates = $template['@type'] === 'hydra:Collection' ?
+            $template['hydra:member'] : [ $template ];
+
+        $tasksTemplates = array_map(function ($taskTemplate) use ($startDate) {
+
+            $taskTemplate['after'] = (new \DateTime($startDate . ' ' . $taskTemplate['after']))->format(\DateTime::ATOM);
+            $taskTemplate['before'] = (new \DateTime($startDate . ' ' . $taskTemplate['before']))->format(\DateTime::ATOM);
+
+            return $taskTemplate;
+        }, $tasksTemplates);
+
+
+        $tasks = [];
+        foreach ($tasksTemplates as $payload) {
+
+            $task = $this->denormalizer->denormalize($payload, Task::class, 'jsonld', [
+                'groups' => ['task_create']
+            ]);
+
+            $task->setOrganization($store->getOrganization());
+            $task->setRecurrenceRule($recurrenceRule);
+
+            if ($persist) {
+                $this->entityManager->persist($task);
+            }
+
+            $tasks[] = $task;
+        }
+
+        return $tasks;
+    }
+
+    public function createDeliveryFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): ?Delivery
+    {
+        $store = $recurrenceRule->getStore();
+        $tasks = $this->createTasksFromRecurrenceRule($recurrenceRule, $startDate, $persist);
+
+        $delivery = null;
+        if (count($tasks) > 1 && $tasks[0]->isPickup()) {
+            $delivery = Delivery::createWithTasks(...$tasks);
+            $store->addDelivery($delivery);
+
+            $this->calculateRoute($delivery);
+
+            if ($persist) {
+                $this->entityManager->persist($delivery);
+            }
+        }
+
+        return $delivery;
     }
 
     public function calculateRoute(TaskCollectionInterface $taskCollection): void

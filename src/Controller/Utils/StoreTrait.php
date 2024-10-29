@@ -411,6 +411,7 @@ trait StoreTrait
 
     public function recurrenceRuleAction($storeId, $recurrenceRuleId,
         Request $request,
+        DeliveryManager $deliveryManager,
         PricingManager $pricingManager,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
@@ -427,7 +428,7 @@ trait StoreTrait
         // if we decide to open the route to store owners
         $this->denyAccessUnlessGranted('view', $store);
 
-        $tempDelivery = $pricingManager->createDeliveryFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
+        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($subscription, Carbon::now()->format('Y-m-d'), false);
 
         $routes = $request->attributes->get('routes');
 
@@ -728,7 +729,9 @@ trait StoreTrait
 
     public function storeRecurrenceRulesAction($id, Request $request,
         EntityManagerInterface $entityManager,
-        PricingManager $pricingManager)
+        DeliveryManager $deliveryManager,
+        PricingManager $pricingManager
+    )
     {
         $store = $entityManager
             ->getRepository(Store::class)
@@ -746,13 +749,15 @@ trait StoreTrait
         );
 
         foreach ($recurrenceRules as $rule) {
-            $templateDelivery = $pricingManager->createDeliveryFromSubscription($rule, Carbon::now()->format('Y-m-d'), false);
-            $templateOrder = $pricingManager->createOrderFromSubscription($rule, Carbon::now()->format('Y-m-d'), false);
+            $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, Carbon::now()->format('Y-m-d'), false);
+            $templateDelivery = $templateOrder ? $templateOrder->getDelivery() : $deliveryManager->createDeliveryFromRecurrenceRule($rule, Carbon::now()->format('Y-m-d'), false);
+            $templateTasks = $templateDelivery ? $templateDelivery->getTasks() : $deliveryManager->createTasksFromRecurrenceRule($rule, Carbon::now()->format('Y-m-d'), false);
 
             $isLegacy = (null === $templateDelivery); // consider rules created from Dispatch dashboard that cannot be used to create a valid delivery as legacy
 
             $data[] = [
                 'recurrenceRule' => $rule,
+                'templateTasks' => $templateTasks,
                 'templateDelivery' => $templateDelivery, // might be null if we cannot create a valid delivery (could be the case for some recurrence rules created from Dispatch dashboard)
                 'templateOrder' => $templateOrder, // might be null if we cannot calculate the price
                 'generateOrders' => !$isLegacy && $rule->isGenerateOrders(), //in the future that will be configurable

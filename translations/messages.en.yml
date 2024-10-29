@@ -872,6 +872,7 @@ stores.recurrence_rules.empty_message: When a recurring order is created, the re
 recurrence_rules.table.repeat: Repeat
 recurrence_rules.table.generate_orders: Generate tasks
 recurrence_rules.table.created_at: Rule created
+recurrence_rule.legacy: Use dispatch dashboard to remove this rule
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
