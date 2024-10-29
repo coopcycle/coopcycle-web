@@ -56,7 +56,7 @@
                 </td>
 
                 <td class="text-center" width="10%">
-                    {{ recurrenceRule.getRule().getString() }}
+                    {{ recurrenceRule.getRule()|recurr_rule }}
 {#                    <small class="text-muted">{{ recurrenceRule.createdAt|time_diff }}</small>#}
                 </td>
 
