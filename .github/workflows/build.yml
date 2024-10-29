@@ -35,6 +35,8 @@ jobs:
         run: |
           NODE_ENV=production node_modules/.bin/encore production
           cp web/js/coopcycle.js web/build
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Upload assets to storage
         run: |
           mkdir $GITHUB_SHA

@@ -46,6 +46,7 @@
     "@reduxjs/toolkit": "^1.8.6",
     "@release-notes/changelog-parser": "^0.1.2",
     "@sentry/browser": "^8.35.0",
+    "@sentry/webpack-plugin": "^2.22.6",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",
     "@storybook/blocks": "^7.5.3",

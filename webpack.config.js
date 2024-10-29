@@ -2,6 +2,7 @@ var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
 var path = require('path')
 var ESLintPlugin = require('eslint-webpack-plugin')
+const { sentryWebpackPlugin } = require("@sentry/webpack-plugin");
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
     Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
@@ -159,6 +160,17 @@ Encore.configureDevServerOptions(options => {
     overlay: false
   }
 })
+
+if (Encore.isProduction()) {
+  // https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/webpack/
+  Encore
+    .enableSourceMaps()
+    .addPlugin(sentryWebpackPlugin({
+      org: 'coopcycle',
+      project: 'platform',
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+    }))
+}
 
 let webpackConfig = Encore.getWebpackConfig()
 
