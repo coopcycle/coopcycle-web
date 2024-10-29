@@ -86,14 +86,8 @@
       {% endif %}
     {% endblock %}
     {% if app.environment == "prod" %}
-      <script
-        src="https://browser.sentry-cdn.com/6.2.4/bundle.min.js"
-        integrity="sha384-b3mYy/x0ZxlqU5OjYvVD7RczftJVOXmpHSmrcqpL4c+kBSXWEnRL2Puv9eMjYmDq"
-        crossorigin="anonymous"
-      ></script>
-      <script>
-        Sentry.init({ dsn: '{{ sentry_public_dsn }}' });
-      </script>
+    <div id="sentry" data-dsn="{{ sentry_public_dsn }}"></div>
+    {{ encore_entry_script_tags('sentry') }}
     {% endif %}
 
     <div id="cpccl_settings"
