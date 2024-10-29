@@ -23,12 +23,11 @@ import './dashboard.scss'
 
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
-import axios from 'axios'
+import { createClient } from './utils/client'
 
 const dashboardEl = document.getElementById('dashboard')
 const date = moment(dashboardEl.dataset.date)
 const jwtToken = dashboardEl.dataset.jwt
-const baseUrl = location.protocol + '//' + location.host
 
 
 async function start(tasksRequest, tasksListsRequest, toursRequest) {
@@ -39,7 +38,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   await Promise.all([tasksRequest, tasksListsRequest, toursRequest]).then((values) => {
     const [taskRes, taskListRes, toursRes] = values
-    allTasks = taskRes.data['hydra:member']
+    allTasks = taskRes // paginatedRequest returns data directly 
     taskLists = taskListRes.data['hydra:member']
     tours = toursRes.data['hydra:member']
   })
@@ -204,9 +203,25 @@ loadingAnim.addEventListener('DOMLoaded', function() {
     'Content-Type': 'application/ld+json'
   }
 
-  const tasksRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}`, { headers: headers})
-  const tasksListsRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
-  const toursRequest = axios.create({ baseURL: baseUrl }).get(`${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`, {headers: headers})
+  const client = createClient(() => {}) // do-nothing dispatch function, as we have a fresh token from the initial load + no initialized store yet
+  
+  const tasksRequest = client.paginatedRequest({
+    method: 'GET',
+    url: `${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=50`,
+    headers: headers
+  })
+
+  const tasksListsRequest = client.request({
+    method: 'GET',
+    url: `${ window.Routing.generate('api_task_lists_v2_collection') }?date=${date.format('YYYY-MM-DD')}`,
+    headers: headers
+  })
+
+  const toursRequest = client.request({
+    method: 'GET',
+    url: `${ window.Routing.generate('api_tours_get_collection') }?date=${date.format('YYYY-MM-DD')}`,
+    headers: headers
+  })
 
   // the delay is here to avoid a glitch in the animation when there is no tasks to load
   // fire the initial loading requests then wait
