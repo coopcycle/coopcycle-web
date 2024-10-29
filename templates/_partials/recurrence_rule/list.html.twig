@@ -22,7 +22,9 @@
                 <small>
                   <span
                     class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
-                  <span><b>{{ task.address.name }}</b></span>
+                  {% if task.address.name is not empty %}
+                    <span><b>{{ task.address.name }}, </b></span>
+                  {% endif %}
                   <span>{{ task.address.streetAddress }}</span>
                 </small>
               </li>
