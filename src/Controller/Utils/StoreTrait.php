@@ -740,7 +740,10 @@ trait StoreTrait
 
         $data = [];
         $this->entityManager->getFilters()->enable('soft_deleteable');
-        $recurrenceRules = $this->entityManager->getRepository(RecurrenceRule::class)->findByStore($store);
+        $recurrenceRules = $this->entityManager->getRepository(RecurrenceRule::class)->findBy(
+            array('store' => $store),
+            array('createdAt' => 'DESC')
+        );
 
         foreach ($recurrenceRules as $rule) {
             $templateDelivery = $pricingManager->createDeliveryFromSubscription($rule, Carbon::now()->format('Y-m-d'), false);

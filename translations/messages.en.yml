@@ -871,6 +871,7 @@ stores.recurrence_rules: Recurrence rules
 stores.recurrence_rules.empty_message: When a recurring order is created, the recurrence rules will appear here
 recurrence_rules.table.repeat: Repeat
 recurrence_rules.table.generate_orders: Generate tasks
+recurrence_rules.table.created_at: Rule created
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"

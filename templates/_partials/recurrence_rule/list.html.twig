@@ -1,83 +1,86 @@
 {% if items|length > 0 %}
-    <table class="table table-condensed">
-        <thead>
-        <th>{{ 'delivery.table.heading.summary'|trans }}</th>
-        <th>{% trans %}basics.price{% endtrans %}</th>
-        <th>{{ 'recurrence_rules.table.repeat'|trans }}</th>
-        <th>{{ 'recurrence_rules.table.generate_orders'|trans }}</th>
-        <th>{{ 'basics.created_at.label'|trans }}</th>
-        <th></th>
-        </thead>
-        <tbody>
-        {% for item in items %}
-            {% set recurrenceRule = item.recurrenceRule %}
-            {% set templateDelivery = item.templateDelivery %}
-            {% set templateOrder = item.templateOrder %}
+  <table class="table table-condensed">
+    <thead>
+    <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+    <th>{% trans %}basics.price{% endtrans %}</th>
+    <th>{{ 'recurrence_rules.table.repeat'|trans }}</th>
+    <th>{{ 'recurrence_rules.table.generate_orders'|trans }}</th>
+    <th>{{ 'recurrence_rules.table.created_at'|trans }}</th>
+    <th></th>
+    </thead>
+    <tbody>
+    {% for item in items %}
+      {% set recurrenceRule = item.recurrenceRule %}
+      {% set templateDelivery = item.templateDelivery %}
+      {% set templateOrder = item.templateOrder %}
 
-            <tr data-testid="delivery__list_item">
-                <td>
-                    <ul class="list-unstyled">
-                        {% for task in templateDelivery.getTasks() %}
-                            <li>
-                                <small>
-                                    <span class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
-                                    <span>
-                                        {% if task.isCancelled() %}<del>{% endif %}
-                                            {{ task.address.streetAddress }}
-                                            {% if task.isCancelled() %}</del>{% endif %}
-                                    </span>
-                                </small>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                    {% set details = [ templateDelivery.distance|meters_to_kilometers ] %}
-                    {% if templateDelivery.weight is not empty %}
-                        {% set details = details|merge([ templateDelivery.weight|grams_to_kilos ]) %}
-                    {% endif %}
-                    {% if templateDelivery.hasPackages() %}
-                        {% for package_quantity in templateDelivery.packages %}
-                            {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
-                        {% endfor %}
-                    {% endif %}
-                    <small>{{ details|join(' - ') }}</small>
-                </td>
+      <tr data-testid="delivery__list_item">
+        <td>
+          <ul class="list-unstyled">
+            {% for task in templateDelivery.getTasks() %}
+              <li>
+                <small>
+                  <span
+                    class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
+                  <span><b>{{ task.address.name }}</b></span>
+                  <span>{{ task.address.streetAddress }}</span>
+                </small>
+              </li>
+            {% endfor %}
+          </ul>
+          {% set details = [ templateDelivery.distance|meters_to_kilometers ] %}
+          {% if templateDelivery.weight is not empty %}
+            {% set details = details|merge([ templateDelivery.weight|grams_to_kilos ]) %}
+          {% endif %}
+          {% if templateDelivery.hasPackages() %}
+            {% for package_quantity in templateDelivery.packages %}
+              {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
+            {% endfor %}
+          {% endif %}
+          <small>{{ details|join(' - ') }}</small>
+        </td>
 
-                <td width="15%">
-                    {% if templateOrder is not null %}
-                        <span class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted">{% trans %}order.total_excluding_tax{% endtrans %}</span>
-                            <span class="text-monospace">{{ (templateOrder.itemsTotal - templateOrder.itemsTaxTotal)|price_format }}</span>
-                        </span>
-                        <span class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted">{% trans %}order.total_including_tax{% endtrans %}</span>
-                            <span class="text-monospace">{{ templateOrder.total|price_format }}</span>
-                        </span>
-                    {% endif %}
-                </td>
+        <td width="15%">
+          {% if templateOrder is not null %}
+            <span class="d-flex justify-content-between align-items-center">
+              <span
+                class="text-muted">{% trans %}order.total_excluding_tax{% endtrans %}</span>
+              <span
+                class="text-monospace">{{ (templateOrder.itemsTotal - templateOrder.itemsTaxTotal)|price_format }}</span>
+            </span>
+            <span class="d-flex justify-content-between align-items-center">
+              <span
+                class="text-muted">{% trans %}order.total_including_tax{% endtrans %}</span>
+              <span
+                class="text-monospace">{{ templateOrder.total|price_format }}</span>
+            </span>
+          {% endif %}
+        </td>
 
-                <td width="15%">
-                    {{ recurrenceRule.getRule()|recurr_rule }}
-                </td>
+        <td width="15%">
+          {{ recurrenceRule.getRule()|recurr_rule }}
+        </td>
 
-                <td class="text-center" width="15%">
-                    {% if item.generateOrders %}
-                    ✅
-                    {% endif %}
-                </td>
+        <td class="text-center" width="15%">
+          {% if item.generateOrders %}
+            ✅
+          {% endif %}
+        </td>
 
-                <td width="8%">
-                    <small class="text-muted">{{ recurrenceRule.createdAt|time_diff }}</small>
-                </td>
+        <td width="8%">
+          <small class="text-muted">{{ recurrenceRule.createdAt|time_diff }}</small>
+        </td>
 
-                <td class="text-right" width="8%">
-                    <a href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <td class="text-right" width="8%">
+          <a
+            href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
 {% else %}
-    <p class="text-muted">
-        {{ empty_message|default('basics.no_entries')|trans }}
-    </p>
+  <p class="text-muted">
+    {{ empty_message|default('basics.no_entries')|trans }}
+  </p>
 {% endif %}
