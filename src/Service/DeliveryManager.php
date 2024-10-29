@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Pricing\PriceCalculationVisitor;
@@ -145,5 +146,23 @@ class DeliveryManager
         $distance = $this->routing->getDistance(...$coords);
 
         $delivery->setDistance(ceil($distance));
+    }
+
+    public function calculateRoute(TaskCollectionInterface $taskCollection): void
+    {
+        $coordinates = [];
+        foreach ($taskCollection->getTasks() as $task) {
+            $coordinates[] = $task->getAddress()->getGeo();
+        }
+
+        if (count($coordinates) <= 1) {
+            $taskCollection->setDistance(0);
+            $taskCollection->setDuration(0);
+            $taskCollection->setPolyline('');
+        } else {
+            $taskCollection->setDistance($this->routing->getDistance(...$coordinates));
+            $taskCollection->setDuration($this->routing->getDuration(...$coordinates));
+            $taskCollection->setPolyline($this->routing->getPolyline(...$coordinates));
+        }
     }
 }

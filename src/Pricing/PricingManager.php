@@ -308,6 +308,8 @@ class PricingManager
             $delivery = Delivery::createWithTasks(...$tasks);
             $store->addDelivery($delivery);
 
+            $this->deliveryManager->calculateRoute($delivery);
+
             if ($persist) {
                 $this->entityManager->persist($delivery);
             }
