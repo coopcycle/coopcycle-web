@@ -150,7 +150,12 @@ class AddressBookType extends AbstractType
                     $form->add('existingAddress', get_class($config->getType()->getInnerType()), $options);
                 }
 
-                $form->get('existingAddress')->setData($address);
+                if (null !== $address->getId()) {
+                    $form->get('existingAddress')->setData($address);
+                } else {
+                    $form->get('newAddress')->setData($address);
+                    $form->get('isNewAddress')->setData(true);
+                }
             } else {
                 $form->get('isNewAddress')->setData(true);
             }
