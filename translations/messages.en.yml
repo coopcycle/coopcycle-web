@@ -868,6 +868,10 @@ stores.deliveries.task_unassigned: Unassigned
 stores.deliveries.bookmarks: Saved orders
 stores.deliveries.bookmarks.empty_message: Bookmark orders on the Delivery page to find them easily later
 stores.addresses: Addresses
+stores.recurrence_rules: Recurrence rules
+stores.recurrence_rules.empty_message: When a recurring order is created, the recurrence rules will appear here
+recurrence_rules.table.repeat: Repeat
+recurrence_rules.table.generate_orders: Automatically generate tasks
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
@@ -931,6 +935,7 @@ basics.today: Today
 basics.are_you_sure: Are you sure?
 basics.no_entries: No element yet
 basics.created_at: Created at %date%
+basics.created_at.label: Created
 basics.updated_at: Updated at %date%
 basics.date_range: From %start% to %end%
 basics.total_including_tax: Total including all taxes

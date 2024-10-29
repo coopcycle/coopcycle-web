@@ -56,6 +56,11 @@
             {{ 'stores.deliveries.bookmarks'|trans }}
           </a>
         </li>
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_recurrence_rules' %}class="active"{% endif %}>
+          <a data-testid="recurrence-rules" href="{{ path('admin_store_recurrence_rules', { id: store.id }) }}">
+            {{ 'stores.recurrence_rules'|trans }}
+          </a>
+        </li>
         {% endif %}
         {% endif %}
       </ul>

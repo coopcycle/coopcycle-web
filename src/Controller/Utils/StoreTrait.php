@@ -726,6 +726,51 @@ trait StoreTrait
         ]);
     }
 
+    public function storeRecurrenceRulesAction($id, Request $request,
+        EntityManagerInterface $entityManager,
+        PricingManager $pricingManager)
+    {
+        $store = $entityManager
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store, 'view');
+
+        $routes = $request->attributes->get('routes');
+
+        $data = [];
+        $this->entityManager->getFilters()->enable('soft_deleteable');
+        $recurrenceRules = $this->entityManager->getRepository(RecurrenceRule::class)->findByStore($store);
+
+        foreach ($recurrenceRules as $rule) {
+            $templateDelivery = $pricingManager->createDeliveryFromSubscription($rule, Carbon::now()->format('Y-m-d'), false);
+            $templateOrder = $pricingManager->createOrderFromSubscription($rule, Carbon::now()->format('Y-m-d'), false);
+
+            $isLegacy = (null === $templateDelivery); // consider rules created from Dispatch dashboard that cannot be used to create a valid delivery as legacy
+
+            $data[] = [
+                'recurrenceRule' => $rule,
+                'templateDelivery' => $templateDelivery, // might be null if we cannot create a valid delivery (could be the case for some recurrence rules created from Dispatch dashboard)
+                'templateOrder' => $templateOrder, // might be null if we cannot calculate the price
+                'generateOrders' => !$isLegacy && $rule->isGenerateOrders(), //in the future that will be configurable
+                'isLegacy' => $isLegacy,
+            ];
+        }
+        $this->entityManager->getFilters()->disable('soft_deleteable');
+
+        return $this->render('store/recurrence_rules.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'recurrence_rules' => $data,
+            'routes' => [
+                'view' => $routes['store_recurrence_rule'],
+            ],
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'store_addresses_route' => $routes['store_addresses'],
+        ]);
+    }
+
     public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->getDoctrine()

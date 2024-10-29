@@ -35,7 +35,7 @@ class GenerateOrders
         }
 
         $this->entityManager->getFilters()->enable('soft_deleteable');
-        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findAllSubscriptions();
+        $allSubscriptions = $this->entityManager->getRepository(Task\RecurrenceRule::class)->findByGenerateOrders(true);
         $this->entityManager->getFilters()->disable('soft_deleteable');
 
         $subscriptions = array_filter($allSubscriptions, function ($subscription) use ($date) {
