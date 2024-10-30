@@ -622,7 +622,7 @@ admin_store_recurrence_rule:
     _controller: AppBundle\Controller\AdminController::recurrenceRuleAction
     layout: 'admin.html.twig'
     routes:
-      success: admin_deliveries
+      redirect_default: admin_store_recurrence_rules
   methods:  [ GET, POST ]
 
 admin_store_users:

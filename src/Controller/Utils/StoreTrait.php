@@ -458,7 +458,8 @@ trait StoreTrait
                 $pricingManager->cancelSubscription($recurrenceRule, $tempDelivery);
             }
 
-            return $this->redirectToRoute($routes['success']);
+            $redirectUri = $form->has('__redirect_to') ? $form->get('__redirect_to')->getData() : null;
+            return $redirectUri ? $this->redirect($redirectUri) : $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
         }
 
         return $this->render('store/subscriptions/item.html.twig', [
