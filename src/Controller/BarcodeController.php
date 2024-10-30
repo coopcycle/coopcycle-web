@@ -113,7 +113,10 @@ class BarcodeController extends AbstractController
         }
 
 
-        $phone = $phoneUtil->format($ressource->getAddress()->getTelephone(), PhoneNumberFormat::INTERNATIONAL);
+        $phone = null;
+        if (!is_null($ressource->getAddress()->getTelephone())) {
+            $phone = $phoneUtil->format($ressource->getAddress()->getTelephone(), PhoneNumberFormat::INTERNATIONAL);
+        }
 
         $from = $ressource->getDelivery()?->getPickup()?->getAddress();
 
