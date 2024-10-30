@@ -208,6 +208,7 @@
         "ADMIN_VEHICLE_NO_WAREHOUSE": "Please create a warehouse before adding vehicles: each vehicle sits in a warehouse!",
         "ADMIN_VEHICLE_NO_VEHICLE": "Please create a vehicle before adding trailers: each trailer is compatible to given vehicles!",
         "ADMIN_VEHICLE_TO_WAREHOUSE_PAGE": "To warehouses admin page",
+        "ADMIN_VEHICLE_EMISSIONS_LABEL": "CO2 emissions (g/km)",
         "ADMIN_DASHBOARD_OPTIMIZATION_UNASSIGNED_TASKS": "{{ count }} item(s) were unassigned because it did not fit in the constraints.",
         "ADMIN_DASHBOARD_OPTIMIZATION_DONE": "The assignements were optimized. Previous distance was {{ previousDistance }}, previous duration {{ previousDuration }}.",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
