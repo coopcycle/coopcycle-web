@@ -1433,7 +1433,7 @@ Feature: Deliveries
       }
       """
 
-  Scenario: Create delivery with dates in UTC
+  Scenario: Send delivery CSV to async import endpoint
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | stores.yml          |
@@ -1451,11 +1451,11 @@ Feature: Deliveries
       """
     Then the response status code should be 201
     And the response should be in JSON
-    And the JSON should match
+    And the JSON should match:
       """
       {
         "@context": "/api/contexts/DeliveryImportQueue",
-        "@id": "@string@.startsWith('/api/delivery_import_queues/')"
+        "@id": "@string@.startsWith('/api/delivery_import_queues/')",
         "@type": "DeliveryImportQueue"
       }
       """ 
