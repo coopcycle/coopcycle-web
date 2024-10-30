@@ -4,14 +4,14 @@ namespace AppBundle\Action\Store;
 
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Message\ImportDeliveries;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
-use Symfony\Component\Serializer\Encoder\ChainDecoder;
-use Symfony\Component\Serializer\Encoder\CsvEncoder;
+
 
 class BulkAsync
 {
@@ -34,7 +34,10 @@ class BulkAsync
 
         $csv = $this->requestStack->getCurrentRequest()->getContent();
 
-        $filename = sprintf('%s.%s', $this->hashids8->encode($queue->getId()), '.csv');
+        $now = new DateTime();
+        $nowFormatted = $now->format('Y-m-d_G:i:s');
+
+        $filename = sprintf('%s_%s_%s.%s', 'API_import', $nowFormatted, $this->hashids8->encode($queue->getId()), 'csv');
 
         $this->deliveryImportsFilesystem->write($filename, $csv);
 
