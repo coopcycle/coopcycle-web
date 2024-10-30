@@ -332,7 +332,7 @@ trait StoreTrait
 
                 $order = $delivery->getOrder();
                 $this->handleBookmark($orderManager, $form, $order);
-                $this->handleNewSubscription($pricingManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
+                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
 
                 $entityManager->flush();
 
@@ -355,7 +355,7 @@ trait StoreTrait
                     // because an auto increment is needed to generate a number
                     $orderManager->onDemand($order);
 
-                    $this->handleNewSubscription($pricingManager, $logger, $store, $form, $delivery, $order);
+                    $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order);
 
                     $entityManager->flush();
 
@@ -409,7 +409,8 @@ trait StoreTrait
         return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
-    public function recurrenceRuleAction($storeId, $recurrenceRuleId,
+    public function recurrenceRuleAction($storeId,
+        $recurrenceRuleId,
         Request $request,
         DeliveryManager $deliveryManager,
         PricingManager $pricingManager,
@@ -417,23 +418,23 @@ trait StoreTrait
         LoggerInterface $logger,
     )
     {
-        $subscription = $entityManager
+        $recurrenceRule = $entityManager
             ->getRepository(RecurrenceRule::class)
             ->find($recurrenceRuleId);
 
-        $store = $subscription->getStore();
+        $store = $recurrenceRule->getStore();
 
         // Currently the route is only accessible by ROLE_DISPATCHER,
         // so this check is not doing much, but it would be useful
         // if we decide to open the route to store owners
         $this->denyAccessUnlessGranted('view', $store);
 
-        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($subscription, Carbon::now()->format('Y-m-d'), false);
+        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, Carbon::now()->format('Y-m-d'), false);
 
         $routes = $request->attributes->get('routes');
 
         $arbitraryPrice = null;
-        if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
+        if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
             $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
         }
 
@@ -450,11 +451,11 @@ trait StoreTrait
             $rule = $this->getRecurrenceRule($form, $logger);
 
             if (null !== $rule) {
-                $pricingManager->updateSubscription($subscription, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+                $pricingManager->updateSubscription($recurrenceRule, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
                 $this->handleRememberAddress($store, $form);
                 $entityManager->flush();
             } else {
-                $pricingManager->cancelSubscription($subscription, $tempDelivery);
+                $pricingManager->cancelSubscription($recurrenceRule, $tempDelivery);
             }
 
             return $this->redirectToRoute($routes['success']);
@@ -462,7 +463,7 @@ trait StoreTrait
 
         return $this->render('store/subscriptions/item.html.twig', [
             'layout' => $request->attributes->get('layout'),
-            'subscription' => $subscription,
+            'subscription' => $recurrenceRule,
             'delivery' => $tempDelivery,
             'form' => $form->createView(),
         ]);
@@ -497,7 +498,7 @@ trait StoreTrait
         $orderManager->setBookmark($order, $isBookmarked);
     }
 
-    private function handleNewSubscription(
+    private function handleNewRecurrenceRule(
         PricingManager $pricingManager,
         LoggerInterface $logger,
         Store $store,
