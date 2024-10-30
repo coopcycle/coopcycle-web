@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
@@ -57,32 +56,52 @@ class BarcodeController extends AbstractController
             return $this->json(['error' => 'No data found.'], 404);
         }
 
-        $client_action = null;
-        if ($task->isAssignedTo($this->getUser())) {
-            $client_action = 'ask_unassign';
-        } elseif ($task->isAssigned()) {
-            $client_action = 'ask_assign';
-        }
-
-        if (!$task->isAssignedTo($this->getUser())) {
-            if (is_null($task->getDelivery())) {
-                $task->assignTo($this->getUser());
-            } else {
-                $task->getDelivery()->assignTo($this->getUser());
-            }
-        }
+        $clientAction = $this->determineClientAction($task);
+        $this->handleTaskAssignment($task);
 
         $this->taskManager->scan($task);
         $this->doctrine->getManager()->flush();
 
         return $this->json([
             "ressource" => $iriConverter->getIriFromItem($task),
-            "client_action" => $client_action,
+            "client_action" => $clientAction,
             "entity" => $normalizer->normalize($task, null, [
                 'groups' => ['task', 'delivery', 'package', 'address', 'barcode']
             ])
         ]);
     }
+
+    /**
+     * Determine the client action based on the current state of the task
+     * Possible actions: ask_to_assign, ask_to_unassign
+     * ask_to_assign: Will prompt the user to self-assign
+     * ask_to_unassign: Will prompt the user to self-unassign
+     * @return string|null
+     */
+    private function determineClientAction(Task $task): ?string
+    {
+        if ($task->isAssignedTo($this->getUser())) {
+            return 'ask_to_unassign';
+        }
+
+        return $task->isAssigned() ? 'ask_to_assign' : null;
+    }
+
+    /**
+     * Assign the task to the current user
+     * FIXME: Need to handle a case where the task/delivery is
+     * already assigned to another user
+     */
+    private function handleTaskAssignment(Task $task): void
+    {
+        if ($task->isAssignedTo($this->getUser())) {
+            return;
+        }
+
+        $assignable = $task->getDelivery() ?? $task;
+        $assignable->assignTo($this->getUser());
+    }
+
 
     /**
      * @Route("/tasks/label", name="task_label_pdf")
