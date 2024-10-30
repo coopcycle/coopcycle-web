@@ -765,6 +765,7 @@ fos_js_routing:
         - admin_task_receipt
         - admin_users_search
         - admin_user_edit
+        - admin_vehicles
         - order_continue
         - profile_jwt
         - profile_notifications

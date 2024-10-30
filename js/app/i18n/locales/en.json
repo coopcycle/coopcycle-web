@@ -466,6 +466,7 @@
         "PM_CASH": "Cash",
         "PM_EDENRED": "Edenred",
         "ADMIN_DASHBOARD_SETTINGS_TOURS_ENABLED": "Show tours panel",
+        "ADMIN_DASHBOARD_PLEASE_ADD_VEHICLE": "Please add a vehicle first",
         "SEE_ALL": "See all",
         "ORDER_DELAYED_NOTIFICATION": "Order {{orderNumber}} was delayed. New shipping time range: {{shippingTimeRange}}",
         "DELETE_ALL": "Delete all",
