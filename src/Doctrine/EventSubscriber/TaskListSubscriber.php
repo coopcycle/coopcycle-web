@@ -49,8 +49,19 @@ class TaskListSubscriber implements EventSubscriber
     private function calculate(TaskList $taskList)
     {
         $coordinates = [];
+        $vehicle = $taskList->getVehicle(); 
+        
+        if (!is_null($vehicle)) {
+            $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
+        }
+
         foreach ($taskList->getTasks() as $task) {
             $coordinates[] = $task->getAddress()->getGeo();
+        }
+
+        // going back to the warehouse
+        if (!is_null($vehicle)) {
+            $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
         }
 
         if (count($coordinates) <= 1) {
@@ -78,7 +89,7 @@ class TaskListSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $this->taskLists = [];
+        $this->taskLists = []; // reset properly the taskLists at each call, the listener may keep the array content between requests
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -111,6 +122,22 @@ class TaskListSubscriber implements EventSubscriber
             $oid = spl_object_hash($taskList);
             if (!isset($taskLists[$oid])) {
                 $taskLists[$oid] = $taskList;
+            }
+        }
+
+        $taskListsInChangeSet = array_filter($entities, function ($entity) {
+            return $entity instanceof TaskList;
+        });
+
+        foreach ($taskListsInChangeSet as $taskList) {
+            $entityChangeSet = $uow->getEntityChangeSet($taskList);
+            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recompute distance when start vehicle/warehouse has changed 
+
+            if ($oldValue !== $newValue) {
+                $oid = spl_object_hash($taskList);
+                if (!isset($taskLists[$oid])) {
+                    $taskLists[$oid] = $taskList;
+                }
             }
         }
 
