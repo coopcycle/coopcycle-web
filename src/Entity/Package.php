@@ -8,6 +8,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -16,7 +17,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *   },
  * )
  */
-class Package
+class Package implements TaggableInterface
 {
     use Timestampable;
     use SoftDeleteable;
