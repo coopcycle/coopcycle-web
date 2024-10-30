@@ -4,8 +4,6 @@ namespace AppBundle\Utils\Barcode;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Package;
-use Doctrine\ORM\Mapping\Entity;
-use Picqer\Barcode\BarcodeGeneratorSVG;
 
 class BarcodeUtils {
 
@@ -58,17 +56,23 @@ class BarcodeUtils {
     /**
      * @return Barcode[]
      */
-    public static function getBarcodeFromPackage(Package $package, int $start = 0): array {
-        $codebars = [];
-        for ($q = 0; $q < $package->getQuantity(); $q++) {
-            $codebars[] = sprintf(
+    public static function getBarcodeFromPackage(Package $package, int $start = 0): array
+    {
+        $quantity = $package->getQuantity();
+        $taskId = $package->getTask()->getId();
+        $packageId = $package->getId();
+
+        return array_map(
+            fn(int $index) => self::parse(sprintf(
                 self::WITH_PACKAGE,
-                1, //TODO: Dynamicly get instance
-                Barcode::TYPE_TASK, $package->getTask()->getId(),
-                $package->getId(), $q + $start + 1
-            );
-        }
-        return array_map(fn(string $code) => self::parse($code), $codebars);
+                1, // TODO: Dynamic instance
+                Barcode::TYPE_TASK,
+                $taskId,
+                $packageId,
+                $index + $start + 1
+            )),
+            range(0, $quantity - 1)
+        );
     }
 
 }
