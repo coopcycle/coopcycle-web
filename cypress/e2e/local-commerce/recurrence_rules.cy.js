@@ -81,6 +81,30 @@ context('Managing recurrence rules (role: admin)', () => {
     cy.get('#delivery-submit').click()
   })
 
+  it('list recurrence rules', function () {
+    // List of deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/stores\/[0-9]+\/deliveries$/,
+    )
+    cy.get('[data-testid="store"]').click();
+
+    // Store page
+    cy.get('[data-testid="recurrence-rules"]').click();
+
+    // Recurrence rules page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/stores\/[0-9]+\/recurrence-rules$/,
+    )
+    cy.get('[data-testid=recurrence_rule__list_item]')
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=recurrence_rule__list_item]')
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+  })
+
   it('modify recurrence rule', function () {
     // List of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
