@@ -25,11 +25,13 @@ use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DeliveryManagerTest extends KernelTestCase
 {
@@ -45,10 +47,12 @@ class DeliveryManagerTest extends KernelTestCase
 
         $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
 
+        $this->denormalizer = $this->prophesize(DenormalizerInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
         $this->storeExtractor = $this->prophesize(TokenStoreExtractor::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
     }
 
     public function tearDown(): void
@@ -78,11 +82,13 @@ class DeliveryManagerTest extends KernelTestCase
         ]));
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = new Delivery();
@@ -114,11 +120,13 @@ class DeliveryManagerTest extends KernelTestCase
         ]));
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = new Delivery();
@@ -172,11 +180,13 @@ class DeliveryManagerTest extends KernelTestCase
             ->willReturn($timeline);
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -212,11 +222,13 @@ class DeliveryManagerTest extends KernelTestCase
         // $order->setShippingAddress(null);
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -288,11 +300,13 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $deliveryManager = new DeliveryManager(
-            $expressionLanguage,
+            $this->denormalizer->reveal(),
+            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $pickup = new Task();
@@ -335,11 +349,13 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $deliveryManager = new DeliveryManager(
-            $expressionLanguage,
+            $this->denormalizer->reveal(),
+            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $pickup = new Task();
@@ -378,11 +394,13 @@ class DeliveryManagerTest extends KernelTestCase
         $expressionLanguage = new ExpressionLanguage();
 
         $deliveryManager = new DeliveryManager(
-            $expressionLanguage,
+            $this->denormalizer->reveal(),
+            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $pickup = new Task();
@@ -422,11 +440,13 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $deliveryManager = new DeliveryManager(
-            $expressionLanguage,
+            $this->denormalizer->reveal(),
+            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $package = new Package();
@@ -473,11 +493,13 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $deliveryManager = new DeliveryManager(
-            $expressionLanguage,
+            $this->denormalizer->reveal(),
+            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $pickup = new Task();
