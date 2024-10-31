@@ -50,12 +50,8 @@ class Collection extends Base
             from task t_outer
             where t_outer.id IN (:taskIds);
         ";
-
-        if (!is_array($data)) { // when pagination is enabled, $data is a Traversable
-            $data = iterator_to_array($data);
-        }
-
-        $params = ['taskIds' => array_map(function ($task) { return $task->getId(); }, $data)];
+        
+        $params = ['taskIds' => array_map(function ($task) { return $task->getId(); }, iterator_to_array($data))];
         $query = $entityManager->getConnection()->executeQuery(
             $sql,
             $params,
