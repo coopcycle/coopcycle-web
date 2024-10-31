@@ -301,7 +301,7 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
+            $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
@@ -350,7 +350,7 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
+            $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
@@ -395,7 +395,7 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
+            $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
@@ -441,7 +441,7 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
+            $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
@@ -494,7 +494,7 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
+            $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
