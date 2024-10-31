@@ -88,9 +88,9 @@ adminDashboard.pledges.title: Suggestions
 delivery.createNew: Créer une livraison
 delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
-subscription.title: 'Abonnement #%id%'
-subscription.generated_order: Cette commande a été générée par un abonnement
-subscription.view: Voir l'abonnement
+subscription.title: 'Règle de récurrence #%id%'
+subscription.generated_order: 'Cette commande a été générée par une règle de récurrence'
+subscription.view: 'Voir la règle de récurrence'
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
@@ -699,6 +699,12 @@ stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
 stores.deliveries.bookmarks: Commandes enregistrées
 stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
+stores.recurrence_rules: Règles de récurrence
+stores.recurrence_rules.empty_message: Lorsqu\'une commande récurrente est créée, les règles de récurrence apparaîtront ici
+recurrence_rules.table.repeat: Répéter
+recurrence_rules.table.generate_orders: Générer des tâches
+recurrence_rules.table.created_at: Règle créée
+recurrence_rule.legacy: Utilisez le tableau de bord de répartition pour supprimer cette règle
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
