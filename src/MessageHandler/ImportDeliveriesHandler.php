@@ -70,12 +70,11 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
             // Validate data
             $violations = $this->validator->validate($delivery);
             if (count($violations) > 0) {
-
                 foreach ($violations as $violation) {
                     if ($violation->getInvalidValue() instanceof \Stringable) {
-                        $errorMessage = sprintf('%s: %s', $violation->getMessage(), (string) $violation->getInvalidValue());
+                        $errorMessage = sprintf('%s %s: %s', $violation->getPropertyPath(), $violation->getMessage(), (string) $violation->getInvalidValue());
                     } else {
-                        $errorMessage = $violation->getMessage();
+                        $errorMessage = sprintf('%s %s', $violation->getPropertyPath(), $violation->getMessage());
                     }
                     $result->addErrorToRow($rowNumber, $errorMessage);
                 }
