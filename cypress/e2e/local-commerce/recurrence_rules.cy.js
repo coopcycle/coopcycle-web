@@ -174,7 +174,7 @@ context('Managing recurrence rules (role: admin)', () => {
       .click()
 
     // Recurrence rule page
-    cy.get('#delivery_form__recurrence__container').contains('Abonnement annulé')
+    cy.get('#delivery_form__recurrence__container').contains('Règle de récurrence annulée')
 
   })
 })
