@@ -2,6 +2,8 @@
 
 namespace AppBundle\Spreadsheet;
 
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -23,6 +25,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     private $entityManager;
     private $slugify;
     private $translator;
+    private $defaultCoordinates;
 
     public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
         EntityManagerInterface $entityManager, SlugifyInterface $slugify, TranslatorInterface $translator)
@@ -33,6 +36,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         $this->entityManager = $entityManager;
         $this->slugify = $slugify;
         $this->translator = $translator;
+        $this->defaultCoordinates = new GeoCoordinates(0,0);
     }
 
     /**
@@ -46,21 +50,35 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             $rowNumber = $index + 1;
 
             if (!$pickupAddress = $this->geocoder->geocode($record['pickup.address'])) {
-                $translatedError = $this->translator->trans('import.address.geocode.error', [
-                    '%failed_address%' => $record['pickup.address']
-                ]);
-                $parseResult->addErrorToRow($rowNumber,
-                    sprintf('pickup.address: %s', $translatedError)
-                );
+                if ($options['create_task_if_address_not_geocoded']) {
+                    $address = new Address();
+                    $address->setGeo($this->defaultCoordinates);
+                    $address->setStreetAddress('INVALID ADDRESS');
+                    $pickupAddress = $address;
+                } else {
+                    $translatedError = $this->translator->trans('import.address.geocode.error', [
+                        '%failed_address%' => $record['pickup.address']
+                    ]);
+                    $parseResult->addErrorToRow($rowNumber,
+                        sprintf('pickup.address: %s', $translatedError)
+                    );
+                }
             }
 
             if (!$dropoffAddress = $this->geocoder->geocode($record['dropoff.address'])) {
-                $translatedError = $this->translator->trans('import.address.geocode.error', [
-                    '%failed_address%' => $record['dropoff.address']
-                ]);
-                $parseResult->addErrorToRow($rowNumber,
-                    sprintf('dropoff.address: %s', $translatedError)
-                );
+                if ($options['create_task_if_address_not_geocoded']) {
+                    $address = new Address();
+                    $address->setGeo($this->defaultCoordinates);
+                    $address->setStreetAddress('INVALID ADDRESS');
+                    $dropoffAddress = $address;
+                } else {
+                    $translatedError = $this->translator->trans('import.address.geocode.error', [
+                        '%failed_address%' => $record['dropoff.address']
+                    ]);
+                    $parseResult->addErrorToRow($rowNumber,
+                        sprintf('dropoff.address: %s', $translatedError)
+                    );
+                }
             }
 
             $delivery = new Delivery();
@@ -100,8 +118,18 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->applyTags($delivery->getPickup(), $record['pickup.tags']);
             }
 
+            if ($delivery->getPickup()->getAddress()->getGeo()->isEqualTo($this->defaultCoordinates)) {
+                $delivery->getPickup()->addTags('review-needed');
+                //TODO: Trigger a incident.
+            }
+
             if (isset($record['dropoff.tags']) && !empty($record['dropoff.tags'])) {
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
+            }
+
+            if ($delivery->getDropoff()->getAddress()->getGeo()->isEqualTo($this->defaultCoordinates)) {
+                $delivery->getDropoff()->addTags('review-needed');
+                //TODO: Trigger a incident.
             }
 
             if (!$parseResult->rowHasErrors($rowNumber)) {

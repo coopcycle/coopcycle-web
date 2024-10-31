@@ -45,7 +45,7 @@ class BulkAsync
         $this->entityManager->flush();
 
         $this->messageBus->dispatch(
-            new ImportDeliveries($filename),
+            new ImportDeliveries($filename, ['create_task_if_address_not_geocoded' => true]),
             [ new DelayStamp(5000) ]
         );
 

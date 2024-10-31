@@ -63,7 +63,7 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
         $this->updateQueueStatus($queue, DeliveryImportQueue::STATUS_STARTED);
 
-        $result = $this->spreadsheetParser->parse($tempnam);
+        $result = $this->spreadsheetParser->parse($tempnam, $message->getOptions());
 
         foreach ($result->getData() as $rowNumber => $delivery) {
 
