@@ -451,7 +451,7 @@ trait StoreTrait
             $rule = $this->getRecurrenceRule($form, $logger);
 
             if (null !== $rule) {
-                $pricingManager->updateSubscription($recurrenceRule, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
                 $this->handleRememberAddress($store, $form);
                 $entityManager->flush();
             } else {
@@ -518,7 +518,7 @@ trait StoreTrait
             return;
         }
 
-        $subscription = $pricingManager->createSubscription($store, $delivery, $recurrenceRule, $pricingStrategy);
+        $subscription = $pricingManager->createRecurrenceRule($store, $delivery, $recurrenceRule, $pricingStrategy);
 
         if (null !== $subscription) {
             $order->setSubscription($subscription);

@@ -155,31 +155,31 @@ class PricingManager
         ];
     }
 
-    public function createSubscription(Store $store, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
+    public function createRecurrenceRule(Store $store, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
     {
-        $subscription = new RecurrenceRule();
-        $subscription->setStore($store);
+        $recurrenceRule = new RecurrenceRule();
+        $recurrenceRule->setStore($store);
 
-        $this->setData($subscription, $delivery, $rule, $pricingStrategy);
+        $this->setData($recurrenceRule, $delivery, $rule, $pricingStrategy);
 
-        $this->entityManager->persist($subscription);
+        $this->entityManager->persist($recurrenceRule);
         $this->entityManager->flush();
 
-        return $subscription;
+        return $recurrenceRule;
     }
 
-    public function updateSubscription(RecurrenceRule $subscription, Delivery $tempDelivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
+    public function updateRecurrenceRule(RecurrenceRule $recurrenceRule, Delivery $tempDelivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule
     {
         //FIXME; we have to temporary persist the delivery and tasks, because `TaskNormalizer` depends on database ids;
         // we should properly model subscription template to avoid the need for normalization
         $this->persistTempDelivery($tempDelivery);
 
-        $this->setData($subscription, $tempDelivery, $rule, $pricingStrategy);
+        $this->setData($recurrenceRule, $tempDelivery, $rule, $pricingStrategy);
         $this->entityManager->flush();
 
         $this->cleanupTempDelivery($tempDelivery);
 
-        return $subscription;
+        return $recurrenceRule;
     }
 
     public function cancelSubscription(RecurrenceRule $subscription, Delivery $tempDelivery): void
@@ -212,9 +212,10 @@ class PricingManager
         $this->entityManager->flush();
     }
 
-    private function setData(RecurrenceRule $subscription, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): void
+    private function setData(RecurrenceRule $recurrenceRule, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): void
     {
-        $subscription->setRule($rule);
+        $recurrenceRule->setRule($rule);
+        $recurrenceRule->setGenerateOrders(true); // make configurable in #4716
 
         $tasks = $this->normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['task_create']]);
         $tasks = array_map(function($task) {
@@ -260,12 +261,12 @@ class PricingManager
                 'variantName' => $arbitraryPrice->getVariantName(),
                 'variantPrice' => $arbitraryPrice->getValue(),
             ];
-            $subscription->setArbitraryPriceTemplate($arbitraryPriceTemplate);
+            $recurrenceRule->setArbitraryPriceTemplate($arbitraryPriceTemplate);
         } else {
-            $subscription->setArbitraryPriceTemplate(null);
+            $recurrenceRule->setArbitraryPriceTemplate(null);
         }
 
-        $subscription->setTemplate($template);
+        $recurrenceRule->setTemplate($template);
     }
 
     public function createOrderFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): ?OrderInterface
