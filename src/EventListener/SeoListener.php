@@ -3,7 +3,6 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Store;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
@@ -19,21 +18,43 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class SeoListener
 {
+    private $translator;
+    private $settingsManager;
+    private $seoPage;
+    private $entityManager;
+
+    /**
+     * @var FilterService
+     */
+    private FilterService $imagineFilter;
+
+    /**
+     * @var UploaderHelper
+     */
+    private UploaderHelper $uploaderHelper;
+
     private static $excluded = [
         'search_geocode',
     ];
 
     public function __construct(
-        private readonly TranslatorInterface $translator,
-        private readonly SettingsManager $settingsManager,
-        private readonly SeoPageInterface $seoPage,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly FilterService $imagineFilter,
-        private readonly UploaderHelper $uploaderHelper,
-        private readonly Packages $packages,
-        private readonly UrlHelper $urlHelper
-    )
+        TranslatorInterface $translator,
+        SettingsManager $settingsManager,
+        SeoPageInterface $seoPage,
+        EntityManagerInterface $entityManager,
+        FilterService $imagineFilter,
+        UploaderHelper $uploaderHelper,
+        Packages $packages,
+        UrlHelper $urlHelper)
     {
+        $this->translator = $translator;
+        $this->settingsManager = $settingsManager;
+        $this->seoPage = $seoPage;
+        $this->entityManager = $entityManager;
+        $this->imagineFilter = $imagineFilter;
+        $this->uploaderHelper = $uploaderHelper;
+        $this->packages = $packages;
+        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -81,37 +102,9 @@ class SeoListener
             ->addMeta('property', 'og:locale', $locale)
             ->addMeta('property', 'og:site_name', 'CoopCycle');
 
-        $route = $request->attributes->get('_route');
-        switch ($route) {
+        switch ($request->attributes->get('_route')) {
             case 'restaurant':
                 $this->seoPageForRestaurant($request);
-                break;
-            case 'admin_dashboard':
-            case 'admin_dashboard_fullscreen':
-                $this->addTitlePrefix('adminDashboard.title');
-                break;
-            case 'admin_orders':
-                $this->addTitlePrefix('adminDashboard.orders.title');
-                break;
-            case 'admin_deliveries':
-                $this->addTitlePrefix('adminDashboard.deliveries.title');
-                break;
-            case 'admin_restaurants':
-                $this->addTitlePrefix('adminDashboard.shops.title');
-                break;
-            case 'admin_stores':
-                $this->addTitlePrefix('adminDashboard.stores.title');
-                break;
-            case 'admin_store':
-            case 'admin_store_addresses':
-            case 'admin_store_users':
-            case 'admin_store_deliveries':
-            case 'admin_store_orders_saved':
-            case 'admin_store_recurrence_rules':
-                $this->seoPageForStore($request);
-                break;
-            case 'admin_store_recurrence_rule':
-                $this->seoPageForRecurrenceRule($request);
                 break;
         }
     }
@@ -164,36 +157,5 @@ class SeoListener
                     $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
             } catch (NotLoadableException $e) {}
         }
-    }
-
-    private function addTitlePrefix(string $id)
-    {
-        $this->seoPage
-            ->addTitlePrefix($this->translator->trans($id));
-    }
-
-    private function seoPageForStore(Request $request)
-    {
-        $id = $request->attributes->get('id');
-
-        $store = $this->entityManager->getRepository(Store::class)->find($id);
-
-        if (!$store) {
-            return;
-        }
-
-        $name = $store->getName();
-        $this->seoPage->addTitlePrefix($name);
-    }
-
-    private function seoPageForRecurrenceRule(Request $request)
-    {
-        $id = $request->attributes->get('recurrenceRuleId');
-
-        if (!$id) {
-            return;
-        }
-
-        $this->seoPage->addTitlePrefix($this->translator->trans('subscription.title', ['%id%' => $id]));
     }
 }
