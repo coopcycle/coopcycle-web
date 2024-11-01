@@ -7,7 +7,7 @@ use Recurr\Transformer\TextTransformer;
 use Recurr\Transformer\Translator;
 use Twig\Extension\RuntimeExtensionInterface;
 
-class RecurrenceRuleFormatResolver implements RuntimeExtensionInterface
+class RecurrRuleFormatResolver implements RuntimeExtensionInterface
 {
     public function format($context, Rule $rule)
     {
