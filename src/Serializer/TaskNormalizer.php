@@ -124,15 +124,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->getResult();
         }
 
-        if (array_key_exists('metadata', $data) && is_array($data['metadata'])) {
-            if ($order = $object->getDelivery()?->getOrder()) {
-                $data['metadata'] = array_merge($data['metadata'], ['zero_waste' => $order->isZeroWaste()]);
-                if ($object->isDropoff()) {
-                    $data['metadata'] = array_merge($data['metadata'], ['has_loopeat_returns' => $order->hasLoopeatReturns()]);
-                }
-            }
-        }
-
         return $data;
     }
 

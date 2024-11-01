@@ -2,11 +2,12 @@
 
 namespace AppBundle\Action\Task;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use Doctrine\ORM\EntityManagerInterface;
 
 class Collection extends Base
 {
-    public function __invoke($data, EntityManagerInterface $entityManager)
+    public function __invoke(Paginator|array $data, EntityManagerInterface $entityManager)
     {
         // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
         $sql = "
@@ -49,8 +50,8 @@ class Collection extends Base
             from task t_outer
             where t_outer.id IN (:taskIds);
         ";
-
-        $params = ['taskIds' => array_map(function ($task) { return $task->getId(); }, $data)];
+        
+        $params = ['taskIds' => array_map(function ($task) { return $task->getId(); }, iterator_to_array($data))];
         $query = $entityManager->getConnection()->executeQuery(
             $sql,
             $params,

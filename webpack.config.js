@@ -61,6 +61,7 @@ Encore
   .addEntry('restaurant-dashboard', './js/app/dashboard/@restaurant/dashboard.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('search-user', './js/app/search/user.js')
+  .addEntry('sentry', './js/app/sentry.js')
   .addEntry('store-form', './js/app/admin/store/form.js')
   .addEntry('stores-list', './js/app/admin/store/list.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')

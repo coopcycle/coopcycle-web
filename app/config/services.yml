@@ -626,6 +626,8 @@ services:
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
+  AppBundle\Entity\TaskListRepository: ~
+
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
 
   AppBundle\Service\Routing\Osrm: ~
