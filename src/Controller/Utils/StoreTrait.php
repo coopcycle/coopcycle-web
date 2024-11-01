@@ -448,10 +448,10 @@ trait StoreTrait
             $tempDelivery = $form->getData();
 
             $arbitraryPrice = $this->getArbitraryPrice($form);
-            $rule = $this->getRecurrenceRule($form, $logger);
+            $recurrRule = $this->getRecurrRule($form, $logger);
 
-            if (null !== $rule) {
-                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+            if (null !== $recurrRule) {
+                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $recurrRule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
                 $this->handleRememberAddress($store, $form);
                 $entityManager->flush();
             } else {
@@ -464,7 +464,7 @@ trait StoreTrait
 
         return $this->render('store/subscriptions/item.html.twig', [
             'layout' => $request->attributes->get('layout'),
-            'subscription' => $recurrenceRule,
+            'recurrenceRule' => $recurrenceRule,
             'delivery' => $tempDelivery,
             'form' => $form->createView(),
         ]);
@@ -512,19 +512,19 @@ trait StoreTrait
             return;
         }
 
-        $recurrenceRule = $this->getRecurrenceRule($form, $logger);
+        $recurrRule = $this->getRecurrRule($form, $logger);
 
-        if (null === $recurrenceRule) {
+        if (null === $recurrRule) {
             return;
         }
 
-        $subscription = $pricingManager->createRecurrenceRule($store, $delivery, $recurrenceRule, $pricingStrategy);
+        $recurrenceRule = $pricingManager->createRecurrenceRule($store, $delivery, $recurrRule, $pricingStrategy);
 
-        if (null !== $subscription) {
-            $order->setSubscription($subscription);
+        if (null !== $recurrenceRule) {
+            $order->setSubscription($recurrenceRule);
 
             foreach ($delivery->getTasks() as $task) {
-                $task->setRecurrenceRule($subscription);
+                $task->setRecurrenceRule($recurrenceRule);
             }
         }
     }
@@ -550,7 +550,7 @@ trait StoreTrait
     }
 
 
-    private function getRecurrenceRule(FormInterface $form, LoggerInterface $logger): ?Rule
+    private function getRecurrRule(FormInterface $form, LoggerInterface $logger): ?Rule
     {
         if (!$form->has('recurrence')) {
             return null;
