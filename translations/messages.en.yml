@@ -922,6 +922,7 @@ basics.continue: Continue
 basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
 basics.add: Add
 basics.edit: Edit
+basics.editing: Editing
 basics.delete: Delete
 basics.cancel: Cancel
 basics.open: Open

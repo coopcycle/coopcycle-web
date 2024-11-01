@@ -1,5 +1,14 @@
 {% extends 'delivery/form.html.twig' %}
 
+{% block prepare_title %}
+  {% set order = delivery.order %}
+  {% if order is not null %}
+    {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
+  {% else %}
+    {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
+  {% endif %}
+{% endblock %}
+
 {% block breadcrumb %}
 
   {% if is_granted('ROLE_DISPATCHER') %}

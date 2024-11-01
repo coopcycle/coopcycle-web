@@ -1,5 +1,9 @@
 {% extends 'delivery/form.html.twig' %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'subscription.title'|trans({ '%id%': recurrenceRule.id })) }}
+{% endblock %}
+
 {% block breadcrumb %}
 
   {% if is_granted('ROLE_DISPATCHER') %}

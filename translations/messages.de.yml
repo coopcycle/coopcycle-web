@@ -110,6 +110,7 @@ form.settings.phone_number.label: Telefonnummer
 form.delivery_embed.telephone.label: Telefonnummer
 form.menu_editor.products_panel.title: Produkten
 basics.edit: Bearbeiten
+basics.editing: Bearbeitung
 basics.created_at: Erstellt am
 base.footer.legal: Impressum
 base.footer.terms: Allgemeine Geschäftsbedingungen

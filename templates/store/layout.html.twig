@@ -1,5 +1,9 @@
 {% extends layout %}
 
+{% block prepare_title %}
+  {{ add_title_prefix(store.name) }}
+{% endblock %}
+
 {% block content %}
 
 {% set is_main_screen = form is defined and form.vars.id == 'store' %}
