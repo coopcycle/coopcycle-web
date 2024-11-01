@@ -1,11 +1,20 @@
 {% extends 'delivery/form.html.twig' %}
 
 {% block prepare_title %}
-  {% set order = delivery.order %}
-  {% if order is not null %}
-    {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
+    {% else %}
+      {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
+    {% endif %}
   {% else %}
-    {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      {{ add_title_prefix('stores.deliveries.heading2'|trans({ '%delivery_id%': order.number })) }}
+    {% else %}
+      {{ add_title_prefix('stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.id })) }}
+    {% endif %}
   {% endif %}
 {% endblock %}
 
@@ -33,7 +42,7 @@
 
 {% endblock %}
 
-{% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty %}
+{% if delivery.order is not empty %}
   {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.order.number }) %}
 {% else %}
   {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.id }) %}
