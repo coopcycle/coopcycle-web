@@ -455,7 +455,7 @@ trait StoreTrait
                 $this->handleRememberAddress($store, $form);
                 $entityManager->flush();
             } else {
-                $pricingManager->cancelSubscription($recurrenceRule, $tempDelivery);
+                $pricingManager->cancelRecurrenceRule($recurrenceRule, $tempDelivery);
             }
 
             $redirectUri = $form->has('__redirect_to') ? $form->get('__redirect_to')->getData() : null;

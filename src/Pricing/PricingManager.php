@@ -182,11 +182,11 @@ class PricingManager
         return $recurrenceRule;
     }
 
-    public function cancelSubscription(RecurrenceRule $subscription, Delivery $tempDelivery): void
+    public function cancelRecurrenceRule(RecurrenceRule $recurrenceRule, Delivery $tempDelivery): void
     {
         $this->persistTempDelivery($tempDelivery);
 
-        $this->entityManager->remove($subscription);
+        $this->entityManager->remove($recurrenceRule);
         $this->entityManager->flush();
 
         $this->cleanupTempDelivery($tempDelivery);
