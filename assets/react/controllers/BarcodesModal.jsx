@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Modal, Card, Tag, Descriptions, Col, Row, Tooltip } from 'antd'
+import { Modal, Card, Descriptions, Col, Row, Tooltip, Badge } from 'antd'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 
@@ -29,12 +29,12 @@ function GenericBarcode({ barcode }) {
   )
 }
 
-function PackageBarcode({ barcode, label, index }) {
+function PackageBarcode({ barcode, extra, index }) {
   return (
     <Card
       title={`Package #${index}`}
       size="small"
-      extra={<Tag>{label}</Tag>}
+      extra={extra}
       actions={[
         <a href={_generateLabelURL(barcode)} target="_blank">
           View
@@ -47,7 +47,7 @@ function PackageBarcode({ barcode, label, index }) {
 
 function TaskBarcode({ index, task }) {
   const packages = _(task.barcodes.packages).reduce((acc, p) => {
-    acc = acc.concat(p.barcodes.map(b => [p.name, b]))
+    acc = acc.concat(p.barcodes.map(b => [p, b]))
     return acc
   }, [])
   return (
@@ -69,9 +69,13 @@ function TaskBarcode({ index, task }) {
         <Col span={8}>
           <GenericBarcode barcode={task.barcodes.task} />
         </Col>
-        {packages.map(([name, barcode], index) => (
+        {packages.map(([{ name, color, short_code }, barcode], index) => (
           <Col span={8}>
-            <PackageBarcode label={name} barcode={barcode} index={index + 1} />
+            <PackageBarcode
+              extra={<Badge color={color} text={`[${short_code}] ${name}`} />}
+              barcode={barcode}
+              index={index + 1}
+            />
           </Col>
         ))}
       </Row>
