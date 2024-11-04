@@ -127,7 +127,7 @@ adminDashboard.dashboard.displayByGroups: Anzeigen nach Gruppen
 adminDashboard.dashboard.displayAll: Alle anzeigen
 adminDashboard.deliveries.type: Art
 adminDashboard.deliveries.dueDate: Fälligkeitsdatum
-adminDashboard.embed.title: Externe Anzeige
+adminDashboard.embed.title: Formulare
 embed.delivery.title: Formular für Auftragserstellung
 embed.delivery.configure_pricing_rule_set: Sie müssen zuerst eine Preisregel konfigurieren,
   um sie anzuwenden
@@ -194,7 +194,7 @@ restaurant.disabledWarning: "Dieses Restaurant ist nicht aktiv, sodass Besucher 
 restaurant.closedWarningWithDelay: Bestellen Sie jetzt für später. Bestellen Sie mindestens
   %delay% im Voraus.
 restaurant.temporaryClosedWarning: Dieses Restaurant ist bis zum <strong>%date%</strong>
-  geschlossen. Sie können jedoch für später bestellen!
+  geschlossen.
 restaurant.noMenuWarning: "Dieses Restaurant hat zur Zeit kein Menü\n"
 restaurant.form.enabled.tooltip: "Wenn deaktiviert, ist eine Restaurant nicht auf\
   \ der Website sichtbar. Es kann nicht in den Suchergebnissen gelistet werden und\
@@ -210,7 +210,13 @@ restaurant.deliveryPerimeterExpression.title: Lieferradius
 restaurant.deliveryPerimeterExpression.help: Definieren Sie den maximalen Lieferradius.
   Sie können diesen in Kilometern oder als Zone festlegen
 restaurant.ordersRateLimiter.title: Verwaltung der Bestellgrenzen
-restaurant.ordersRateLimiter.help: Die Funktion zur Bestellbegrenzung ermöglicht es Ihnen, die Anzahl der Bestellungen zu steuern, die Sie in einem bestimmten Zeitraum annehmen können. Durch Festlegen einer Begrenzung vermeiden Sie, mehr Bestellungen zu erhalten, als Sie bewältigen können. Sie müssen lediglich die maximale Anzahl von Bestellungen und die Dauer des Zeitraums angeben. Zusätzliche Bestellungen werden automatisch auf den nächsten Zeitraum verschoben. Diese Funktion hilft Ihnen, Ihre Produktionskapazität besser zu verwalten und Verzögerungen und Fehler zu vermeiden.
+restaurant.ordersRateLimiter.help: Die Funktion zur Bestellbegrenzung ermöglicht es
+  Ihnen, die Anzahl der Bestellungen zu steuern, die Sie in einem bestimmten Zeitraum
+  annehmen können. Durch Festlegen einer Begrenzung vermeiden Sie, mehr Bestellungen
+  zu erhalten, als Sie bewältigen können. Sie müssen lediglich die maximale Anzahl
+  von Bestellungen und die Dauer des Zeitraums angeben. Zusätzliche Bestellungen werden
+  automatisch auf den nächsten Zeitraum verschoben. Diese Funktion hilft Ihnen, Ihre
+  Produktionskapazität besser zu verwalten und Verzögerungen und Fehler zu vermeiden.
 restaurant.contract.minimumCartAmount.label: Mindestbestellwert
 restaurant.contract.flatDeliveryPrice.label: Liefergebühr Kunde + Liefergebühr Resto
 restaurant.contract.flatDeliveryPrice.help: Der Betrag wird nicht im Warenkorb angezeigt
@@ -369,7 +375,8 @@ form.store_type.time_slot.label: Zeitraum
 form.store_type.package_set.label: Paketset
 form.store_type.defaultCourier.label: Standardkurier
 form.store_type.defaultCourier.placeholder: Keiner
-form.store_type.defaultCourier.help: Bestellungen für diesen Laden werden automatisch diesem Kurier zugewiesen
+form.store_type.defaultCourier.help: Bestellungen für diesen Laden werden automatisch
+  diesem Kurier zugewiesen
 form.delivery.vehicle.placeholder: Wähle Fahrzeugtyp aus
 form.delivery.vehicle.label: Fahrzeug order Cargobike?
 form.delivery.distance.label: Entfernung
@@ -487,11 +494,12 @@ form.package.description.label: Beschreibung für den Kunden
 form.package.average_volume_units.label: Durchschnittliche Volumeneinheiten (VU)
 form.package.max_volume_units.label: Maximale Volumeneinheiten (VU)
 form.package.average_estimation: Geschätzt auf 75 % des Maximums, wenn nicht festgelegt
-form.package.max_volume_units: Dieser Wert wird verwendet, um die Preise basierend auf dem Volumen zu berechnen
+form.package.max_volume_units: Dieser Wert wird verwendet, um die Preise basierend
+  auf dem Volumen zu berechnen
 form.package.average_weight.label: Durchschnittsgewicht (kg)
 form.package.max_weight.label: Maximalgewicht (kg)
 form.package.shortCode.label: 2-Buchstaben-Code
-form.package.enter_details:  Details ein-/ausblenden
+form.package.enter_details: Details ein-/ausblenden
 form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name
 form.time_slot_choice.end_time.label: Endzeit
@@ -510,7 +518,8 @@ index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
 stores.deliveries.task_unassigned: Nicht zugeteilt
 stores.manage: Verwalten
 stores.deliveries.bookmarks: Gespeicherte Bestellungen
-stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite, um sie später leichter zu finden
+stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite,
+  um sie später leichter zu finden
 roles.ROLE_STORE.help: 'Laden-Besitzer*in: zugeordnete Läden verwalten, Sendungen
   verwalten, ...'
 roles.ROLE_RESTAURANT.help: 'Restaurant-Besitzer*in: zugeordnete Restaurants verwalten,
@@ -718,11 +727,13 @@ delivery.failure_reason:
   holiday_closure: "Ferienverlängerung"
   closed_store: "Geschäft geschlossen"
 adminDashboard.failureSet.title: "Fehlergründe"
-adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen fehlschlagen können."
+adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen\
+  \ fehlschlagen können."
 adminDashboard.failureSet.nofailureSet: "Keine Fehlergründe"
 adminDashboard.failureSet.createNew: "Neuen Grund erstellen"
 adminDashboard.failureSet.settings: "Einstellungen"
-adminDashboard.failureSet.cant_delete_failure_reason_used: "Dieser Grund kann nicht gelöscht werden, da er in Geschäften verwendet wird."
+adminDashboard.failureSet.cant_delete_failure_reason_used: "Dieser Grund kann nicht\
+  \ gelöscht werden, da er in Geschäften verwendet wird."
 form.failure_reason_set.name.label: Name
 form.failure_reason.code.label: Code
 form.failure_reason.description.label: Beschreibung
@@ -730,7 +741,8 @@ basics.manage: Verwalten
 basics.settings: Einstellungen
 form.store_type.failure_reason_set.label: "Fehlergründe"
 profile.delete_my_account: "Mein Konto löschen"
-profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung zu bestätigen"
+profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung\
+  \ zu bestätigen"
 delivery.state:
   pending: 'Ausstehend, Abholbereit'
   in_delivery: 'Abgeholt, in Lieferung'
@@ -740,3 +752,27 @@ delivery.state:
 basics.address: Adresse
 warehouses.breadcrumb: Lagerhäuser
 warehouses.breadcrumb.help: Lagerhäuser definieren
+base.footer.companyRegister: Partner werden
+base.footer.RegisterMyRestaurant: Registriere mein Restaurant
+button.suggest.submitted.label: Zur Startseite
+adminDashboard.users.export.optins.title: Wähle aus, was du exportieren möchtest
+admin.deliveries.to_be_confirmed.alert: Es müssen noch Lieferungen bestätigt werden.
+  Klick auf das "Lieferungen" Icon in der rechten Spalte.
+localBusiness.form.use_different_business_address.label: Nutze eine andere Geschäftsadresse
+adminDashboard.shops.title: Läden
+adminDashboard.users.confirmDeleteUser: Möchtest du den Benutzer %email% wirklich
+  löschen?
+adminDashboard.users.userHasBeenDeleted: Nutzer wurde gelöscht.
+adminDashboard.users.registered_at: Registriert
+adminDashboard.users.last_order: Letzte Bestellung
+adminDashboard.users.orders_count: Anzahl der Bestellungen
+base.footer.privacy: Datenschutz
+adminDashboard.orders.noOrders: Keine Bestellungen vorhanden
+adminDashboard.users.export.optins.newsletter: Nutzer mit Einwilligung für den Newsletter
+adminDashboard.users.export.optins.marketting: Nutzer mit Einwilligung für Werbung
+adminDashboard.pricing.duplicate: Duplikat
+adminDashboard.pricing.copyOf: Kopie von %rule_set_name%
+localBusiness.form.business_address.label: Geschäftsadresse
+restaurants.pre_order: Vorbestellung
+restaurant.closedOpensTodayLaterWarning: Dieses Restaurant ist derzeit geschlossen,
+  öffnet aber um <strong>%time%</strong>.
