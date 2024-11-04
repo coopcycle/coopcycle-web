@@ -1511,3 +1511,7 @@ services:
   AppBundle\Sylius\Payment\Context: ~
 
   AppBundle\Entity\Delivery\FailureReasonRegistry: ~
+
+  Picqer\Barcode\BarcodeGeneratorSVG: ~
+
+  AppBundle\Utils\Barcode\BarcodeUtils: ~

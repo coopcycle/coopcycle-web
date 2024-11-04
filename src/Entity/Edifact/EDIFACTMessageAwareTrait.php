@@ -15,6 +15,11 @@ trait EDIFACTMessageAwareTrait
         return $this->edifactMessages;
     }
 
+    public function hasEdifactMessages(): bool
+    {
+        return $this->getEdifactMessages()->count() > 0;
+    }
+
     public function getImportMessage(): ?EDIFACTMessage
     {
         return collect($this->edifactMessages)

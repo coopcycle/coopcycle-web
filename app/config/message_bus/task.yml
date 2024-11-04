@@ -97,6 +97,15 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Incident
 
+  coopcycle.domain.task.handler.scan:
+    class: AppBundle\Domain\Task\Handler\ScanBarcodeHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@event_recorder'
+      - '@logger'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\ScanBarcode
   #
   # Reactors
   #
