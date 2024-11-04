@@ -32,21 +32,21 @@ class PaymentDetails
             // We keep this for backward compatibility,
             // but this should not be at top level
             $output->stripeAccount = $cardPayment->getStripeUserId();
+
+            $gateway = $this->gatewayResolver->resolveForOrder($data);
+
+            if ('paygreen' === $gateway) {
+
+                $output->paygreenWebviewUrl = $this->urlGenerator->generate('paygreen_webview',
+                    ['hashId'=> $this->hashids8->encode($cardPayment->getId())],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
+
+                return $output;
+            }
         }
 
         $output->payments = $payments;
-
-        $gateway = $this->gatewayResolver->resolveForOrder($data);
-
-        if ('paygreen' === $gateway) {
-
-            $output->paygreenWebviewUrl = $this->urlGenerator->generate('paygreen_webview',
-                ['hashId'=> $this->hashids8->encode($payment->getId())],
-                UrlGeneratorInterface::ABSOLUTE_URL
-            );
-
-            return $output;
-        }
 
         return $output;
     }

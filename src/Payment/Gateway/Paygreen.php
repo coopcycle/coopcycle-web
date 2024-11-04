@@ -28,6 +28,10 @@ class Paygreen implements GatewayInterface
 
     public function refund(PaymentInterface $payment, $amount = null): Refund
     {
+        $refund = $payment->addRefund($amount);
+
         // TODO Implement refunds
+
+        return $refund;
     }
 }
