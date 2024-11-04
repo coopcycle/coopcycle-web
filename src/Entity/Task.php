@@ -660,7 +660,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this->updatedAt;
     }
     /**
-     * @return ArrayCollection<array-key,<missing>>
+     * @return ArrayCollection<TaskEvent>
      */
     public function getEvents()
     {
@@ -938,7 +938,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @deprecated
      * @param \DateTime|null $after
-     * @return $this
      */
     public function setDoneAfter(?\DateTime $after)
     {
@@ -957,7 +956,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @deprecated
      * @param \DateTime|null $before
-     * @return $this
      */
     public function setDoneBefore(?\DateTime $before)
     {
@@ -1048,7 +1046,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("images")
      * @Groups({"task"})
-     * @return ArrayCollection<Doctrine\Common\Collections\array-key,<missing>>|<missing>
      */
     public function getImagesWithCache()
     {

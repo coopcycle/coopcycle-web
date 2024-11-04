@@ -47,7 +47,7 @@ class BarcodeController extends AbstractController
 
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
-        /** @var Task $task */
+        /** @var ?Task $task */
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
             ->findByBarcode($barcode->getRawBarcode());
