@@ -22,7 +22,7 @@ use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
-use AppBundle\Action\Task\Note as TaskNote;
+use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -325,10 +325,10 @@ use stdClass;
  *       "controller"=TaskContext::class,
  *       "security"="is_granted('view', object)"
  *     },
- *     "put_task_note"={
+ *     "put_task_append_to_comment"={
  *       "method"="PUT",
- *       "path"="/tasks/{id}/note",
- *       "controller"=TaskNote::class,
+ *       "path"="/tasks/{id}/append_to_comment",
+ *       "controller"=TaskAppendToComment::class,
  *       "security"="is_granted('view', object)",
  *     }
  *   }
