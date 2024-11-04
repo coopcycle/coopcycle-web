@@ -1327,7 +1327,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         $barcodes['packages'] = array_map(
             function($package) use (&$packageCount) {
-                $barcodes = BarcodeUtils::getBarcodeFromPackage($package, $packageCount);
+                $barcodes = BarcodeUtils::getBarcodesFromPackage($package, $packageCount);
                 $packageCount += count($barcodes);
 
                 $pkg = $package->getPackage();

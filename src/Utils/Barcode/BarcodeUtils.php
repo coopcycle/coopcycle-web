@@ -37,7 +37,7 @@ class BarcodeUtils {
             case Task::class:
                 return self::getBarcodeFromTask($entity);
             case Package::class:
-                return self::getBarcodeFromPackage($entity);
+                return self::getBarcodesFromPackage($entity);
             default:
                 return null;
         }
@@ -56,7 +56,7 @@ class BarcodeUtils {
     /**
      * @return Barcode[]
      */
-    public static function getBarcodeFromPackage(Package $package, int $start = 0): array
+    public static function getBarcodesFromPackage(Package $package, int $start = 0): array
     {
         $quantity = $package->getQuantity();
         $taskId = $package->getTask()->getId();
