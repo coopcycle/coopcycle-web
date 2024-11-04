@@ -99,7 +99,15 @@ export default {
     }
 
   },
-  async mount() {
+  async mount(el, method, options, formOptions) {
+
+    console.log(options)
+
+    this.config.gatewayConfig = {
+      ...this.config.gatewayConfig,
+      ...options.paygreen
+    }
+
     return new Promise((resolve, reject) => {
       axios.post(this.config.gatewayConfig.createPaymentOrderURL)
         .then(response => {

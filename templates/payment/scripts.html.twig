@@ -39,8 +39,7 @@
 {% endif %}
 {% set gateway_configs = gateway_configs|merge({
   paygreen: {
-    publicKey: coopcycle_setting('paygreen_public_key'),
-    createPaymentOrderURL: path('paygreen_create_payment_order', { hashId: payment|hashid })
+    publicKey: coopcycle_setting('paygreen_public_key')
   }
 }) %}
 {% endif %}
