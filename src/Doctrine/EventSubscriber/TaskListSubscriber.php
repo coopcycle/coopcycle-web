@@ -106,11 +106,9 @@ class TaskListSubscriber implements EventSubscriber
         // Do not use in_array() or array_search()
         // It causes error "Nesting level too deep - recursive dependency?"
         $oid = spl_object_hash($taskList);
-        if (!isset($taskLists[$oid])) {
-            $taskLists[$oid] = $taskList;
+        if (!isset($this->taskLists[$oid])) {
+            $this->taskLists[$oid] = $taskList;
         }
-
-        $this->taskLists[] = $taskList;
     }
 
     /**
@@ -160,7 +158,7 @@ class TaskListSubscriber implements EventSubscriber
             }
         }
 
-        foreach ($this->taskLists as $taskList) {
+        foreach ($this->taskLists as $taskList) { // @phpstan-ignore-line
 
             $this->logger->debug('TaskList was modified, recalculating…');
             $this->calculate($taskList);
