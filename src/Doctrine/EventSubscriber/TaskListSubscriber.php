@@ -151,6 +151,11 @@ class TaskListSubscriber implements EventSubscriber
 
         foreach ($taskListsInChangeSet as $taskList) {
             $entityChangeSet = $uow->getEntityChangeSet($taskList);
+
+            if(!isset($entityChangeSet['vehicle'])) {
+                continue;
+            }
+
             [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed 
 
             if ($oldValue !== $newValue) {
