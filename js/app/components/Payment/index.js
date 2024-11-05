@@ -229,6 +229,41 @@ export default function(formSelector, options) {
         payments = response.data.payments
 
         switch (value) {
+
+          case 'restoflash':
+          case 'swile':
+          case 'conecs':
+
+            const paygreenStatus = window.paygreenjs.status();
+            const isPaygreenInitialized = null !== paygreenStatus.paymentOrder;
+
+            // try {
+            //   window.paygreenjs.unmount(true)
+            // } catch (e) {}
+
+            axios.post(response.data.paygreen.createPaymentOrderURL)
+              .then(createPaymentOrderResponse => {
+                if (!isPaygreenInitialized) {
+                  window.paygreenjs.attachEventListener(
+                    window.paygreenjs.Events.ON_OPEN_POPUP,
+                    (event) => console.log(event.detail.url)
+                  );
+                  window.paygreenjs.init({
+                    paymentOrderID: createPaymentOrderResponse.data.id,
+                    objectSecret: createPaymentOrderResponse.data.object_secret,
+                    publicKey: cc.config.gatewayConfig.publicKey,
+                    mode: 'payment',
+                    displayAuthentication: 'modal',
+                    paymentMethod: value
+                    // style,
+                  });
+                } else {
+                  window.paygreenjs.setPaymentMethod(value);
+                }
+              });
+
+            break
+
           case 'card':
           case 'edenred':
 
