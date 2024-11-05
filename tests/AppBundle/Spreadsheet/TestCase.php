@@ -11,6 +11,11 @@ abstract class TestCase extends BaseTestCase
     use ProphecyTrait;
 
     protected $parser;
+    protected $geocoder;
+    protected $packageRepository;
+    protected $entityManager;
+    protected $slugify;
+    protected $translator;
 
     public function setUp(): void
     {
