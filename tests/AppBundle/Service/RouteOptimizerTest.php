@@ -42,15 +42,15 @@ class RouteOptimizerTest extends KernelTestCase
 
         $this->settingsManager->get('latlng')->willReturn('48.856613,2.352222');
 
-        $this->client = self::$container->get('vroom.client');
+        $this->client = self::getContainer()->get('vroom.client');
 
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
-        $this->logger = self::$container->get(LoggerInterface::class);
+        $this->logger = self::getContainer()->get(LoggerInterface::class);
 
-        $this->iriConverter = self::$container->get(IriConverterInterface::class);
+        $this->iriConverter = self::getContainer()->get(IriConverterInterface::class);
 
-        $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
+        $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
     }
 
 

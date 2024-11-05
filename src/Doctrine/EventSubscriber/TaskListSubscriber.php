@@ -109,6 +109,8 @@ class TaskListSubscriber implements EventSubscriber
         if (!isset($taskLists[$oid])) {
             $taskLists[$oid] = $taskList;
         }
+
+        $this->taskLists[] = $taskList;
     }
 
     /**
@@ -131,7 +133,6 @@ class TaskListSubscriber implements EventSubscriber
             return $entity instanceof Item;
         });
 
-        $taskLists = [];
         foreach ($taskListItems as $taskListItem) {
 
             $taskList = $taskListItem->getParent();
@@ -159,7 +160,7 @@ class TaskListSubscriber implements EventSubscriber
             }
         }
 
-        foreach ($taskLists as $taskList) {
+        foreach ($this->taskLists as $taskList) {
 
             $this->logger->debug('TaskList was modified, recalculating…');
             $this->calculate($taskList);
@@ -167,8 +168,6 @@ class TaskListSubscriber implements EventSubscriber
             if ($uow->isInIdentityMap($taskList)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskList::class), $taskList);
             }
-
-            $this->taskLists[] = $taskList;
         }
     }
 
