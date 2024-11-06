@@ -89,7 +89,7 @@ class CheckoutPaymentType extends AbstractType
                 if (in_array('conecs', $paygreenPlatforms)) {
                     $choices['Conecs'] = 'conecs';
                 }
-                if (in_array('restoflash', $paygreenPlatforms)) {
+                if (in_array('swile', $paygreenPlatforms)) {
                     $choices['Swile'] = 'swile';
                 }
             }

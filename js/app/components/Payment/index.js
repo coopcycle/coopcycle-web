@@ -246,7 +246,9 @@ export default function(formSelector, options) {
                 if (!isPaygreenInitialized) {
                   window.paygreenjs.attachEventListener(
                     window.paygreenjs.Events.ON_OPEN_POPUP,
-                    (event) => console.log(event.detail.url)
+                    (event) => {
+                      window.location.href = event.detail.url;
+                    }
                   );
                   window.paygreenjs.init({
                     paymentOrderID: createPaymentOrderResponse.data.id,
