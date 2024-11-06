@@ -20,7 +20,7 @@ function GenericBarcode({ barcode }) {
         </Tooltip>
       }
       actions={[
-        <a href={_generateLabelURL(barcode)} target="_blank">
+        <a key="generic_barcode_view" href={_generateLabelURL(barcode)} target="_blank" rel="noreferrer">
           View
         </a>,
       ]}>
@@ -36,7 +36,7 @@ function PackageBarcode({ barcode, extra, index }) {
       size="small"
       extra={extra}
       actions={[
-        <a href={_generateLabelURL(barcode)} target="_blank">
+        <a key={ `package_barcode_${index}_view` } href={_generateLabelURL(barcode)} target="_blank" rel="noreferrer">
           View
         </a>,
       ]}>
@@ -70,7 +70,7 @@ function TaskBarcode({ index, task }) {
           <GenericBarcode barcode={task.barcodes.task} />
         </Col>
         {packages.map(([{ name, color, short_code }, barcode], index) => (
-          <Col span={8}>
+          <Col span={8} key={`package-${index}`}>
             <PackageBarcode
               extra={<Badge color={color} text={`[${short_code}] ${name}`} />}
               barcode={barcode}
