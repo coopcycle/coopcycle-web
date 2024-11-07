@@ -4,14 +4,16 @@ namespace AppBundle\Domain\Task\Handler;
 
 use AppBundle\Domain\Task\Command\ScanBarcode;
 use AppBundle\Domain\Task\Event;
+use Doctrine\ORM\EntityManager;
+use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 
 class ScanBarcodeHandler
 {
     public function __construct(
-        // private EntityManager $doctrine,
+        private EntityManager $doctrine, // @phpstan-ignore-line
         private RecordsMessages $eventRecorder,
-        // private LoggerInterface $logger
+        private LoggerInterface $logger // @phpstan-ignore-line
     )
     { }
 
