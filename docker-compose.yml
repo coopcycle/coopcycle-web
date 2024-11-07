@@ -4,7 +4,7 @@ services:
 
   postgres:
     restart: always
-    image: postgis/postgis:16-3.4-alpine
+    image: ${POSTGRES_IMAGE:-postgis/postgis:16-3.4-alpine}
     environment:
       - POSTGRES_DB=${COOPCYCLE_DB_NAME}
       - POSTGRES_USER=${COOPCYCLE_DB_USER}

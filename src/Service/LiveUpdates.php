@@ -183,7 +183,8 @@ class LiveUpdates
     {
         $channel = $this->getEventsChannelName($user);
 
-        $this->realTimeMessageLogger->info(sprintf("Publishing event '%s' on channel %s for user %s",
+        // This method is used only for 'notifications' and 'notifications:count' events at the moment
+        $this->realTimeMessageLogger->debug(sprintf("Publishing event '%s' on channel %s for user %s",
             $payload['name'],
             $channel,
             $user instanceof UserInterface ? $user->getUserIdentifier() : $user));

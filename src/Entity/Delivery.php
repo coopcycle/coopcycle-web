@@ -391,6 +391,16 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this->getPickup()->isAssigned() && $this->getDropoff()->isAssigned();
     }
 
+    public function assignTo(User $user): void
+    {
+        $tasks = $this->getTasks();
+        array_walk($tasks,
+            function (Task $task) use ($user) {
+                $task->assignTo($user);
+            }
+        );
+    }
+
     public function isCompleted()
     {
         foreach ($this->getTasks() as $task) {
