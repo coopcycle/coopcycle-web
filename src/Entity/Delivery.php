@@ -393,7 +393,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function assignTo(User $user): void
     {
-        array_walk($this->getTasks(),
+        $tasks = $this->getTasks();
+        array_walk($tasks,
             function (Task $task) use ($user) {
                 $task->assignTo($user);
             }
