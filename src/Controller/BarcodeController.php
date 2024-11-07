@@ -119,8 +119,12 @@ class BarcodeController extends AbstractController
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
         $phoneUtil = $phoneUtil::getInstance();
-        /** @var Task $ressource */
+        /** @var ?Task $ressource */
         $ressource = $this->getDoctrine()->getRepository(Task::class)->find($barcode->getEntityId());
+
+        if (is_null($ressource)) {
+            return $this->json(['error' => 'No data found.'], 404);
+        }
 
         $package = null;
         if ($barcode->isContainsPackages()) {
