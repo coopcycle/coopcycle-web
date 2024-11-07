@@ -108,7 +108,7 @@ class TaskGroup extends React.Component {
                 <a role="button" onClick={() => toggleTasksGroupPanelExpanded(group['@id'])} href={ `#task-group-panel-${this.state.group.id}` } className="ml-2 flex-grow-1 text-truncate">
                   { this.state.group.name } <span className="badge">{ tasks.length }</span>
                 </a>
-                <i className="fa fa-arrows cursor--grabbing mr-2"></i>
+                <i className="fa fa-arrows cursor-grabbing mr-2"></i>
                 { this.renderTags() }
                 <div className="d-flex flex-grow-0">
                   <a role="button" href="#" className="text-reset mr-2"
