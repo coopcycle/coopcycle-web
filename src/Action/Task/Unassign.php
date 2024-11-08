@@ -18,7 +18,11 @@ class Unassign extends Base
     {
         $task = $data;
 
-        $task->unassign();
+        if (!is_null($task->getDelivery())) {
+            $task->getDelivery()->unassign();
+        } else {
+            $task->unassign();
+        }
 
         return $task;
     }
