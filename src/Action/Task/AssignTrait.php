@@ -36,7 +36,11 @@ trait AssignTrait
             return $task; // Do nothing
         }
 
-        $task->assignTo($user);
+        if (!is_null($task->getDelivery())) {
+            $task->getDelivery()->assignTo($user);
+        } else {
+            $task->assignTo($user);
+        }
 
         return $task;
     }
