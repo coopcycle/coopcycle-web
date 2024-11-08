@@ -88,13 +88,12 @@ class BarcodeController extends AbstractController
     }
 
     /**
-     * Assign the task to the current user
-     * FIXME: Need to handle a case where the task/delivery is
-     * already assigned to another user
+     * Assign the task/delivery to the current user
+     * if the task is not assigned
      */
     private function handleTaskAssignment(Task $task): void
     {
-        if ($task->isAssignedTo($this->getUser())) {
+        if ($task->isAssigned()) {
             return;
         }
 
