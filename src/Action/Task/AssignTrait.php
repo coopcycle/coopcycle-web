@@ -25,7 +25,7 @@ trait AssignTrait
             }
         }
 
-        if (!$this->getUser()->hasRole('ROLE_ADMIN') && $task->isAssigned()) {
+        if (!$this->getUser()->hasRole('ROLE_DISPATCH') && $task->isAssigned()) {
 
             throw new BadRequestHttpException(sprintf('Task #%d is already assigned to "%s"',
                 $task->getId(), $task->getAssignedCourier()->getUsername()));
