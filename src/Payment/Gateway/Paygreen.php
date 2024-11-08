@@ -19,6 +19,10 @@ class Paygreen implements GatewayInterface
         if (!$this->paygreenManager->isPaymentOrderAuthorized($context['token'])) {
             throw new \Exception('Invalid Payment Order');
         }
+
+        // TODO Retrieve PaymentOrder, and update payments accordingly
+        // We need to check inside transactions.operations.instrument
+        // to find the amount & platform of each operation
     }
 
     public function capture(PaymentInterface $payment)

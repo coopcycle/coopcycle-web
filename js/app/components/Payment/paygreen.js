@@ -101,7 +101,7 @@ export default {
   },
   async mount(el, method, options, formOptions) {
 
-    console.log(options)
+    console.log(options, method)
 
     this.config.gatewayConfig = {
       ...this.config.gatewayConfig,
@@ -113,10 +113,10 @@ export default {
         .then(response => {
 
           // This will show/hide the button to go back to platform selection
-          window.paygreenjs.attachEventListener(
-            window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
-            this.toggleChangePaymentPlatform
-          );
+          // window.paygreenjs.attachEventListener(
+          //   window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
+          //   this.toggleChangePaymentPlatform
+          // );
 
           window.paygreenjs.attachEventListener(
             window.paygreenjs.Events.ERROR,
@@ -155,22 +155,33 @@ export default {
             paygreenjs.focus('cvv');
           });
 
-          window.paygreenjs.init({
+          let paygreenOptions = {
             paymentOrderID: response.data.id,
             objectSecret: response.data.object_secret,
             publicKey: this.config.gatewayConfig.publicKey,
             mode: 'payment',
             displayAuthentication: 'modal',
             style,
-          });
+            paymentMethod: method === 'card' ? 'bank_card' : method,
+          }
 
-          document.querySelector('#paygreen-back > a').addEventListener('click', onClickBack, false)
+          const paygreenStatus = window.paygreenjs.status();
+          const isPaygreenInitialized = null !== paygreenStatus.paymentOrder;
+
+          if (!isPaygreenInitialized) {
+            window.paygreenjs.init(paygreenOptions);
+          } else {
+            window.paygreenjs.setPaymentMethod(method === 'card' ? 'bank_card' : method);
+          }
+
+          // document.querySelector('#paygreen-back > a').addEventListener('click', onClickBack, false)
 
           // We do not resolve the promise here
           // It will be resolved in the PAYMENT_FLOW_ONCHANGE event listener
 
         })
         .catch(e => {
+          console.log(e)
           reject(new Error(e.response.data.error.message))
         })
     })

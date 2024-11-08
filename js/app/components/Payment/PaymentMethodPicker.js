@@ -15,7 +15,8 @@ const methodPickerStyles = {
 const methodPickerBtnClassNames = {
   'btn': true,
   'btn-default': true,
-  'p-2': true
+  'p-2': true,
+  'w-100': true,
 }
 
 const methodStyles = {

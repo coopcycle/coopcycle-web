@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
@@ -60,6 +61,14 @@ class PaygreenManager
 
         $order = $payment->getOrder();
 
+        $reference = sprintf('ord_%s', $this->hashids8->encode($order->getId()));
+        $shopId = $order->getRestaurant()->getPaygreenShopId();
+
+        // $response = $this->paygreenClient->listPaymentOrder($reference);
+        // echo '<pre>';
+        // print_r(json_decode($response->getBody()->getContents()));
+        // exit;
+
         if ($payment->hasPaygreenPaymentOrderId()) {
             $response = $this->paygreenClient->getPaymentOrder($payment->getPaygreenPaymentOrderId());
             if ($response->getStatusCode() === 200) {
@@ -111,14 +120,14 @@ class PaygreenManager
         $this->orderNumberAssigner->assignNumber($order);
 
         $paymentOrder = new PaygreenModel\PaymentOrder();
-        $paymentOrder->setReference(sprintf('ord_%s', $this->hashids8->encode($order->getId())));
+        $paymentOrder->setReference($reference);
         $paymentOrder->setBuyer($buyer);
         $paymentOrder->setAmount($order->getTotal());
         $paymentOrder->setAutoCapture(false);
         $paymentOrder->setCurrency($payment->getCurrencyCode());
         $paymentOrder->setShippingAddress($address);
         $paymentOrder->setDescription(sprintf('Order %s', $order->getNumber()));
-        $paymentOrder->setShopId($order->getRestaurant()->getPaygreenShopId());
+        $paymentOrder->setShopId($shopId);
 
         // platforms is required when fees is set
         // Impossible to process fees on Payment Orders setup with non-wallet platforms.
@@ -131,7 +140,7 @@ class PaygreenManager
         $data = json_decode($response->getBody()->getContents(), true);
 
         if ($response->getStatusCode() !== 200) {
-            throw new \Exception($data['detail']);
+            throw new \Exception($data['detail'] ?? $data['message']);
         }
 
         $payment->setPaygreenPaymentOrderId($data['data']['id']);
@@ -149,5 +158,45 @@ class PaygreenManager
         $enabled = array_filter($data['data'], fn ($c) => $c['status'] === 'payment_config.enabled');
 
         return array_map(fn ($c) => $c['platform'], $enabled);
+    }
+
+    public function getBuyerForOrder(OrderInterface $order): PaygreenModel\Buyer
+    {
+        $this->authenticate();
+
+        $customer = $order->getCustomer();
+
+        if (!$customer->hasPaygreenBuyerId()) {
+
+            $fullNameParts = explode(' ', $customer->getFullName(), 2);
+            $firstName = $fullNameParts[0] ?? '';
+            $lastName = $fullNameParts[1] ?? '';
+
+            $buyer = new PaygreenModel\Buyer();
+            $buyer->setReference(sprintf('cus_%s', $this->hashids8->encode($customer->getId())));
+            $buyer->setEmail($customer->getEmailCanonical());
+            $buyer->setFirstName(!empty($firstName) ? $firstName : 'N/A');
+            $buyer->setLastName(!empty($lastName) ? $lastName : 'N/A');
+            $buyer->setBillingAddress($address);
+
+            $response = $this->paygreenClient->createBuyer($buyer);
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            $customer->setPaygreenBuyerId($data['data']['id']);
+        }
+
+        $buyer = new PaygreenModel\Buyer();
+        $buyer->setId($customer->getPaygreenBuyerId());
+
+        return $buyer;
+    }
+
+    public function getPaymentOrder($id)
+    {
+        $this->authenticate();
+
+        $response = $this->paygreenClient->getPaymentOrder($id);
+
+        return json_decode($response->getBody()->getContents(), true);
     }
 }

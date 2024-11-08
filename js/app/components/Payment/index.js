@@ -142,6 +142,11 @@ export default function(formSelector, options) {
         form.querySelector('input[name="checkout_payment[method]"]:checked').value
 
       switch (selectedMethod) {
+        case 'restoflash':
+        case 'swile':
+        case 'conecs':
+          handleCardPayment()
+          break
         case 'edenred':
           // It means the whole amount can be paid with Edenred (ex. click & collect)
           if (!hasCard) {
@@ -234,22 +239,19 @@ export default function(formSelector, options) {
           case 'swile':
           case 'conecs':
 
+            /*
             const paygreenStatus = window.paygreenjs.status();
             const isPaygreenInitialized = null !== paygreenStatus.paymentOrder;
-
-            // try {
-            //   window.paygreenjs.unmount(true)
-            // } catch (e) {}
 
             axios.post(response.data.paygreen.createPaymentOrderURL)
               .then(createPaymentOrderResponse => {
                 if (!isPaygreenInitialized) {
-                  window.paygreenjs.attachEventListener(
-                    window.paygreenjs.Events.ON_OPEN_POPUP,
-                    (event) => {
-                      window.location.href = event.detail.url;
-                    }
-                  );
+                  // window.paygreenjs.attachEventListener(
+                  //   window.paygreenjs.Events.ON_OPEN_POPUP,
+                  //   (event) => {
+                  //     window.location.href = event.detail.url;
+                  //   }
+                  // );
                   window.paygreenjs.init({
                     paymentOrderID: createPaymentOrderResponse.data.id,
                     objectSecret: createPaymentOrderResponse.data.object_secret,
@@ -263,6 +265,16 @@ export default function(formSelector, options) {
                   window.paygreenjs.setPaymentMethod(value);
                 }
               });
+            */
+
+            cc.mount(document.getElementById('card-element'), value, response.data, options)
+              .then((shouldEnableBtn = true) => {
+                document.getElementById('card-onmount-focus').scrollIntoView()
+                shouldEnableBtn && enableBtn(submitButton)
+              })
+              .catch(e => {
+                document.getElementById('card-errors').textContent = e.message
+              })
 
             break
 
@@ -343,7 +355,7 @@ export default function(formSelector, options) {
     document.querySelector('#checkout_payment_method').appendChild(el)
 
     render(
-      <PaymentMethodPicker methods={ methods } onSelect={ onSelect } />,
+      <PaymentMethodPicker methods={ methods } onSelect={ onSelect } paygreenPublicKey={ cc.config.gatewayConfig.publicKey } />,
       el
     )
   }

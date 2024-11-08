@@ -835,6 +835,7 @@ fos_js_routing:
         - api_trailers_patch_item
         - api_trailers_set_vehicles_item
         - task_label_pdf
+        - paygreen_order_buyer
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

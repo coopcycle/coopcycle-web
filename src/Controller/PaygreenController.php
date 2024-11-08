@@ -8,6 +8,7 @@ use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,5 +88,39 @@ class PaygreenController extends AbstractController
             $payment->getPaygreenPaymentOrderId(),
             $payment->getPaygreenObjectSecret()
         ];
+    }
+
+    /**
+     * @Route("/paygreen/order/buyer", name="paygreen_order_buyer")
+     */
+    public function getPaygreenOrderBuyer(CartContextInterface $cartContext)
+    {
+        $order = $cartContext->getCart();
+
+        if (null === $order || !$order->hasVendor()) {
+
+            // TODO HTTP 400
+        }
+
+        if (null === $order->getCustomer()) {
+
+            // TODO HTTP 400
+        }
+
+        $buyer = $this->paygreenManager->getBuyerForOrder($order);
+
+        return new JsonResponse([
+            'buyer' => $buyer->getId(),
+        ]);
+    }
+
+    /**
+     * @Route("/paygreen/payment-orders/{id}", name="paygreen_payment_order")
+     */
+    public function getPaygreenPaymentOrder($id)
+    {
+        $po = $this->paygreenManager->getPaymentOrder($id);
+
+        dd($po);
     }
 }
