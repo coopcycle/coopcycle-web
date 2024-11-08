@@ -76,15 +76,36 @@ class BarcodeController extends AbstractController
      * Possible actions: ask_to_assign, ask_to_unassign
      * ask_to_assign: Will prompt the user to self-assign
      * ask_to_unassign: Will prompt the user to self-unassign
+     * ask_to_complete: Will redirect the user to the complete page
      * @return string|null
      */
     private function determineClientAction(Task $task): ?string
     {
+        // If the task is already done or failed, we should not prompt the user
+        if (in_array($task->getStatus(), [
+            Task::STATUS_DONE,
+            Task::STATUS_FAILED,
+            Task::STATUS_CANCELLED])
+        ) {
+            return null;
+        }
+
+        // If the task in scanned while doing, we should redirect to the complete page
+        if ($task->getStatus() === Task::STATUS_DOING) {
+            return 'ask_to_complete';
+        }
+
+        // If the task is assigned to the current user, we should prompt the user to self-unassign
         if ($task->isAssignedTo($this->getUser())) {
             return 'ask_to_unassign';
         }
 
-        return $task->isAssigned() ? 'ask_to_assign' : null;
+        // If the task is not assigned to the current user, we should prompt the user to self-assign
+        if ($task->isAssigned()) {
+            return 'ask_to_unassign';
+        }
+
+        return null;
     }
 
     /**
