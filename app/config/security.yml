@@ -195,7 +195,7 @@ security:
 
         api_cart_payment:
             pattern:   ^/api/orders/[0-9]+/payment$
-            methods: [ GET ]
+            methods: [ GET, PUT ]
             stateless: true
             bearer_token: true
 
@@ -232,6 +232,12 @@ security:
         api_cart_loopeat_returns:
             pattern:   ^/api/orders/[0-9]+/loopeat_returns$
             methods: [ POST ]
+            stateless: true
+            bearer_token: true
+
+        api_cart_edenred_credentials:
+            pattern:   ^/api/orders/[0-9]+/edenred_credentials$
+            methods: [ PUT ]
             stateless: true
             bearer_token: true
 

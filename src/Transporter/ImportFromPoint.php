@@ -57,6 +57,7 @@ class ImportFromPoint {
         $task->setAddress($address);
         $task->setComments($point->getComments());
         $task->setMetadata('imported_from', $imported_from);
+        $task->setMetadata('barcode', $point->getId());
         if (!is_null($edi)) {
             $task->addEdifactMessage($edi);
         }

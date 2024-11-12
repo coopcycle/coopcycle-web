@@ -548,7 +548,7 @@ stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de En
 stores.recurrence_rules: Reglas de recurrencia
 stores.recurrence_rules.empty_message: Cuando se cree un pedido recurrente, las reglas de recurrencia aparecerán aquí
 recurrence_rules.table.repeat: Repetir
-recurrence_rules.table.generate_orders: Generar tareas
+recurrence_rules.table.generate_orders: Generar tareas/pedidos
 recurrence_rules.table.created_at: Regla creada
 recurrence_rule.legacy: Utilice el panel de despacho para eliminar esta regla
 meta.title: Plataforma de logística para cooperativas

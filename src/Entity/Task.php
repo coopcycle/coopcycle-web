@@ -22,6 +22,7 @@ use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
+use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
@@ -47,8 +48,11 @@ use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingRuleMatcherInterface;
+use AppBundle\Utils\Barcode\Barcode;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use AppBundle\Validator\Constraints\Task as AssertTask;
 use AppBundle\Vroom\Job as VroomJob;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
@@ -57,6 +61,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
+use stdClass;
 
 /**
  * @ApiResource(
@@ -319,6 +324,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "path"="/tasks/{id}/context",
  *       "controller"=TaskContext::class,
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "put_task_append_to_comment"={
+ *       "method"="PUT",
+ *       "path"="/tasks/{id}/append_to_comment",
+ *       "controller"=TaskAppendToComment::class,
+ *       "security"="is_granted('view', object)",
  *     }
  *   }
  * )
@@ -504,7 +515,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->delivery;
     }
-
+    /**
+     * @return Task
+     */
     public function setDelivery($delivery)
     {
         $this->delivery = $delivery;
@@ -516,7 +529,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->type;
     }
-
+    /**
+     * @return Task
+     */
     public function setType($type)
     {
         $this->type = $type;
@@ -538,7 +553,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->status;
     }
-
+    /**
+     * @return Task
+     */
     public function setStatus($status)
     {
         $this->status = $status;
@@ -555,7 +572,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->status === self::STATUS_FAILED;
     }
-
+    /**
+     * @return bool
+     */
     public function isCompleted()
     {
         return $this->isDone() || $this->isFailed();
@@ -570,7 +589,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->address;
     }
-
+    /**
+     * @return Task
+     */
     public function setAddress($address)
     {
         $this->address = $address;
@@ -590,6 +611,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("after")
      * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     * @return Task
      */
     public function setAfter(?\DateTime $doneAfter)
     {
@@ -610,6 +632,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("before")
      * @Groups({"task", "task_edit", "delivery"})
+     * @return Task
      */
     public function setBefore(?\DateTime $doneBefore)
     {
@@ -622,7 +645,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->comments;
     }
-
+    /**
+     * @return Task
+     */
     public function setComments($comments)
     {
         $this->comments = $comments;
@@ -634,7 +659,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->updatedAt;
     }
-
+    /**
+     * @return ArrayCollection<TaskEvent>
+     */
     public function getEvents()
     {
         $iterator = $this->events->getIterator();
@@ -646,7 +673,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             iterator_to_array($iterator)
         );
     }
-
+    /**
+     * @return bool
+     */
     public function containsEventWithName($name)
     {
         foreach ($this->events as $e) {
@@ -657,7 +686,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return false;
     }
-
+    /**
+     * @return void
+     */
     public function addEvent(TaskEvent $event)
     {
         if ($event->getName() === 'task:created' && $this->containsEventWithName('task:created')) {
@@ -677,7 +708,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->previous;
     }
-
+    /**
+     * @return Task
+     */
     public function setPrevious(Task $previous = null)
     {
         $this->previous = $previous;
@@ -694,7 +727,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->next;
     }
-
+    /**
+     * @return Task
+     */
     public function setNext(Task $next = null)
     {
         $this->next = $next;
@@ -715,12 +750,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return null !== $this->assignedTo;
     }
-
+    /**
+     * @return bool
+     */
     public function isAssignedTo(User $courier)
     {
         return $this->isAssigned() && $this->assignedTo === $courier;
     }
-
+    /**
+     * @return ?DateTime
+     */
     public function getAssignedOn()
     {
         return $this->assignedOn;
@@ -734,6 +773,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @param User $courier
      * @param \DateTime|null $date
+     * @return void
      */
     public function assignTo(User $courier, \DateTime $date = null)
     {
@@ -744,13 +784,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->assignedTo = $courier;
         $this->assignedOn = $date;
     }
-
+    /**
+     * @return void
+     */
     public function unassign()
     {
         $this->assignedTo = null;
         $this->assignedOn = null;
     }
-
+    /**
+     * @return bool
+     */
     public function hasEvent($name)
     {
         foreach ($this->getEvents() as $event) {
@@ -777,19 +821,25 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         return $this->group;
     }
-
+    /**
+     * @return Task
+     */
     public function setGroup(TaskGroup $group = null)
     {
         $this->group = $group;
 
         return $this;
     }
-
+    /**
+     * @return Collection<int,TaskImage>
+     */
     public function getImages()
     {
         return $this->images;
     }
-
+    /**
+     * @return Task
+     */
     public function setImages($images)
     {
         foreach ($images as $image) {
@@ -801,7 +851,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return Task
+     */
     public function addImage($image)
     {
         $this->images->add($image);
@@ -809,7 +861,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return Task
+     */
     public function addImages($images)
     {
         foreach ($images as $image) {
@@ -821,7 +875,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return Task
+     */
     public function duplicate()
     {
         $task = new self();
@@ -882,7 +938,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @deprecated
      * @param \DateTime|null $after
-     * @return $this
      */
     public function setDoneAfter(?\DateTime $after)
     {
@@ -901,13 +956,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @deprecated
      * @param \DateTime|null $before
-     * @return $this
      */
     public function setDoneBefore(?\DateTime $before)
     {
         return $this->setBefore($before);
     }
-
+    /**
+     * @return Task
+     */
     public function setDoorstep($doorstep)
     {
         $this->doorstep = $doorstep;
@@ -923,6 +979,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @SerializedName("orgName")
      * @Groups({"task"})
+     * @return mixed|string
      */
     public function getOrganizationName()
     {
@@ -935,7 +992,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return '';
     }
-
+    /**
+     * @return Task
+     */
     public function setRef(string $ref)
     {
         $this->ref = $ref;
@@ -969,7 +1028,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $job;
     }
-
+    /**
+     * @return Task
+     */
     public function setRecurrenceRule(RecurrenceRule $recurrenceRule)
     {
         $this->recurrenceRule = $recurrenceRule;
@@ -994,7 +1055,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this->getImages();
     }
-
+    /**
+     * @return void
+     */
     public function setMetadata($key)
     {
         if (func_num_args() === 1 && is_array(func_get_arg(0))) {
@@ -1003,7 +1066,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->metadata[func_get_arg(0)] = func_get_arg(1);
         }
     }
-
+    /**
+     * @return array
+     */
     public function getMetadata()
     {
         return $this->metadata;
@@ -1040,7 +1105,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->packages->add($wrappedPackage);
         }
     }
-
+    /**
+     * @return void
+     */
     public function setQuantityForPackage(Package $package, $quantity = 1)
     {
         $wrappedPackage = $this->resolvePackage($package);
@@ -1058,7 +1125,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $this->packages->add($wrappedPackage);
         }
     }
-
+    /**
+     * @return void
+     */
     public function removePackage(Package $package)
     {
         $wrappedPackage = $this->resolvePackage($package);
@@ -1085,23 +1154,39 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $taskPackage;
     }
 
+    public function totalPackages(): int
+    {
+        return array_sum($this->getPackages()->map(function (TaskPackage $package) {
+            return $package->getQuantity();
+        })->toArray());
+    }
+
+    /**
+     * @return int
+     */
     public function getWeight()
     {
         return $this->weight;
     }
-
+    /**
+     * @return Task
+     */
     public function setWeight($weight)
     {
         $this->weight = $weight;
 
         return $this;
     }
-
+    /**
+     * @return void
+     */
     public function addToStore(Store $store)
     {
         $this->setOrganization($store->getOrganization());
     }
-
+    /**
+     * @return stdClass
+     */
     public function toExpressionLanguageObject()
     {
         $taskObject = new \stdClass();
@@ -1150,12 +1235,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $language->evaluate($expression, $this->toExpressionLanguageValues());
     }
-
+    /**
+     * @return void
+     */
     public function appendToComments($comments)
     {
-        $this->comments = ($this->comments ?? '') . "\n\n" . $comments;
+        $this->comments = implode("\n\n", array_filter([trim($this->getComments()), $comments]));
     }
-
+    /**
+     * @return mixed
+     */
     public function evaluatePrice(PricingRule $pricingRule, ExpressionLanguage $language = null)
     {
         if (null === $language) {
@@ -1204,7 +1293,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
-
+    /**
+     * @return void
+     */
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitTask($this);
@@ -1218,5 +1309,41 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $after->modify('-15 minutes');
             $task->setAfter($after);
         }
+    }
+
+
+    /**
+    * @Groups({"barcode"})
+    */
+    public function getBarcodes(): array
+    {
+        $barcodes = [
+            'task' => BarcodeUtils::getBarcodeFromTask($this)->getRawBarcode(),
+            'packages' => [],
+        ];
+
+        $packages = $this->getPackages();
+        $packageCount = 0;
+
+        $barcodes['packages'] = array_map(
+            function($package) use (&$packageCount) {
+                $barcodes = BarcodeUtils::getBarcodesFromPackage($package, $packageCount);
+                $packageCount += count($barcodes);
+
+                $pkg = $package->getPackage();
+                return [
+                    'name' => $pkg->getName(),
+                    'color' => $pkg->getColor(),
+                    'short_code' => $pkg->getShortCode(),
+                    'barcodes' => array_map(
+                        fn(Barcode $code) => $code->getRawBarcode(),
+                        $barcodes
+                    )
+                ];
+            },
+            iterator_to_array($packages)
+        );
+
+        return $barcodes;
     }
 }

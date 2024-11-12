@@ -91,6 +91,7 @@ use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use Carbon\Carbon;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -776,7 +777,8 @@ class AdminController extends AbstractController
         Hashids $hashids8,
         Filesystem $deliveryImportsFilesystem,
         MessageBusInterface $messageBus,
-        CentrifugoClient $centrifugoClient
+        CentrifugoClient $centrifugoClient,
+        SlugifyInterface $slugify
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -795,7 +797,8 @@ class AdminController extends AbstractController
                 entityManager: $this->entityManager,
                 filesystem: $deliveryImportsFilesystem,
                 hashids: $hashids8,
-                routeTo: 'admin_deliveries'
+                routeTo: 'admin_deliveries',
+                slugify: $slugify
             );
         }
 

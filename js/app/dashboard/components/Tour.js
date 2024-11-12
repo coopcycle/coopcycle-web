@@ -129,7 +129,7 @@ const Tour = ({ tourId, draggableIndex }) => {
                     <a role="button" className="ml-2 flex-grow-1 text-truncate">
                       { tour.name } <span className="badge" style={{backgroundColor: color}}>{ tour.items.length }</span>
                     </a>
-                    <i className="fa fa-arrows cursor--grabbing mr-2"></i>
+                    <i className="fa fa-arrows cursor-grabbing mr-2"></i>
                   </RenderEditNameForm>
               </h4>
               <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits}/>

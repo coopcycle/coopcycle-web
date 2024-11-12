@@ -32,6 +32,7 @@ use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -48,6 +49,7 @@ use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -602,7 +604,9 @@ trait StoreTrait
         MessageBusInterface $messageBus,
         EntityManagerInterface $entityManager,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem)
+        Filesystem $deliveryImportsFilesystem,
+        SlugifyInterface $slugify,
+    )
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -625,7 +629,8 @@ trait StoreTrait
                 messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids: $hashids8,
-                filesystem: $deliveryImportsFilesystem
+                filesystem: $deliveryImportsFilesystem,
+                slugify: $slugify
             );
         }
 
@@ -887,8 +892,11 @@ trait StoreTrait
         Hashids $hashids,
         Filesystem $filesystem,
         MessageBusInterface $messageBus,
+        SlugifyInterface $slugify,
         string $routeTo)
-    {
+    {   
+        
+        /** @var UploadedFile $uploadedFile */
         $uploadedFile = $form->get('file')->getData();
 
         $queue = new DeliveryImportQueue();
@@ -897,7 +905,17 @@ trait StoreTrait
         $entityManager->persist($queue);
         $entityManager->flush();
 
-        $filename = sprintf('%s.%s', $hashids->encode($queue->getId()), $uploadedFile->guessExtension());
+        // slugify to get a safe filename. it may return an empty string but we had a hash afterwards so it should be alright.
+        $filename = $slugify->slugify($uploadedFile->getClientOriginalName()); 
+        $filename = substr($filename, 0, -4); // remove .csv extension in filename
+        $filename = substr($filename, 0, 100); // limit the filename length
+
+        $filename = sprintf(
+            '%s_%s.%s',
+            $filename,
+            $hashids->encode($queue->getId()),
+            $uploadedFile->guessExtension()
+        );
 
         try {
 

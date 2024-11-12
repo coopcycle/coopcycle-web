@@ -870,7 +870,7 @@ stores.addresses: Addresses
 stores.recurrence_rules: Recurrence rules
 stores.recurrence_rules.empty_message: When a recurring order is created, the recurrence rules will appear here
 recurrence_rules.table.repeat: Repeat
-recurrence_rules.table.generate_orders: Generate tasks
+recurrence_rules.table.generate_orders: Generate tasks/orders
 recurrence_rules.table.created_at: Rule created
 recurrence_rule.legacy: Use dispatch dashboard to remove this rule
 meta.title: Delivery platform for worker-owned business
@@ -1632,3 +1632,4 @@ organizations.breadcrumb: Organizations
 organizations.new: New organization
 loopeat.incident.unexpected_returns: Unexpected number of zero waste returns
 form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
+form.store.urbantz_hub_id: Urbantz Hub Id

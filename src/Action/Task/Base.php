@@ -54,6 +54,21 @@ abstract class Base
         return null;
     }
 
+    protected function getNote(Request $request): ?string
+    {
+        $data = [];
+        $content = $request->getContent();
+        if (!empty($content)) {
+            $data = json_decode($content, true);
+        }
+
+        if (isset($data['note'])) {
+            return $data['note'];
+        }
+
+        return null;
+    }
+
     /**
      * @throws \Exception
      */

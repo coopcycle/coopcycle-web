@@ -474,7 +474,7 @@ stores.settings: Einstellungen
 stores.recurrence_rules: Wiederholungsregeln
 stores.recurrence_rules.empty_message: Wenn eine wiederkehrende Bestellung erstellt wird, erscheinen die Wiederholungsregeln hier
 recurrence_rules.table.repeat: Wiederholen
-recurrence_rules.table.generate_orders: Aufgaben generieren
+recurrence_rules.table.generate_orders: Aufgaben/Bestellungen generieren
 recurrence_rules.table.created_at: Regel erstellt
 recurrence_rule.legacy: Verwenden Sie das Dispositions-Dashboard, um diese Regel zu entfernen
 user.profile.givenName: Vorname
