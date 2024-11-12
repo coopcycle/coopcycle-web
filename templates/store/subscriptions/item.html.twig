@@ -7,12 +7,12 @@
 
     <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
     <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
-    <li>{% trans %}subscriptions.title{% endtrans %}</li>
-    <li>#{{ subscription.id }}</li>
+    <li><a href="{{ path('admin_store_recurrence_rules', { id: store.id }) }}">{% trans %}stores.recurrence_rules{% endtrans %}</a></li>
+    <li>#{{ recurrenceRule.id }}</li>
   {% endif %}
 
 {% endblock %}
 
 {% if is_granted('ROLE_DISPATCHER') %}
-  {% set title = 'subscription.title'|trans({ '%id%': subscription.id }) %}
+  {% set title = 'subscription.title'|trans({ '%id%': recurrenceRule.id }) %}
 {% endif %}

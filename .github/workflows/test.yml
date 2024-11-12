@@ -19,7 +19,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php_version }}
-          tools: composer:v2, phpstan
+          tools: composer:v2, phpstan:1
           extensions: redis
       - name: Install PHP dependencies
         run: |

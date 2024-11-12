@@ -68,6 +68,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
             new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
             new TwigFilter('placeholder_image', array(AssetsRuntime::class, 'placeholderImage')),
+            new TwigFilter('recurr_rule', array(RecurrRuleFormatResolver::class, 'format'), ['needs_context' => true]),
         );
     }
 

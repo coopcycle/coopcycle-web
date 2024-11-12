@@ -21,5 +21,6 @@
       <gedmo:timestampable on="update"/>
     </field>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
+    <field name="generateOrders" type="boolean" column="generate_orders"/>
   </entity>
 </doctrine-mapping>
