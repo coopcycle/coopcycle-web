@@ -1,4 +1,4 @@
-context('Managing subscriptions (role: admin)', () => {
+context('Managing recurrence rules (role: admin)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
@@ -14,7 +14,7 @@ context('Managing subscriptions (role: admin)', () => {
     cy.visit('/login')
     cy.login('admin', '12345678')
 
-    // Create a delivery order and a subscription
+    // Create a delivery order and a recurrence rule
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -81,7 +81,31 @@ context('Managing subscriptions (role: admin)', () => {
     cy.get('#delivery-submit').click()
   })
 
-  it('modify subscription', function () {
+  it('list recurrence rules', function () {
+    // List of deliveries page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/stores\/[0-9]+\/deliveries$/,
+    )
+    cy.get('[data-testid="store"]').click();
+
+    // Store page
+    cy.get('[data-testid="recurrence-rules"]').click();
+
+    // Recurrence rules page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/stores\/[0-9]+\/recurrence-rules$/,
+    )
+    cy.get('[data-testid=recurrence_rule__list_item]')
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=recurrence_rule__list_item]')
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+  })
+
+  it('modify recurrence rule', function () {
     // List of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
@@ -93,10 +117,10 @@ context('Managing subscriptions (role: admin)', () => {
       .click()
 
     // Delivery page
-    cy.get('a[href*="subscriptions"]')
+    cy.get('a[href*="recurrence-rules"]')
       .click()
 
-    // Subscription page
+    // Recurrence rule page
     cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
 
     cy.get('#delivery_form__recurrence__container').click();
@@ -105,22 +129,19 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
-    // (all) Deliveries page
+    // Delivery page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
-      /\/admin\/deliveries$/,
+      /\/admin\/deliveries\/[0-9]+$/,
     )
-    cy.get('[data-testid="delivery_id"]').click();
-
-    // Delivery page
-    cy.get('a[href*="subscriptions"]')
+    cy.get('a[href*="recurrence-rules"]')
       .click()
 
-    // Subscription page
+    // Recurrence rule page
     cy.get('#delivery_form__recurrence__container').contains('chaque semaine le lundi')
   })
 
-  it('cancel subscription', function () {
+  it('cancel recurrence rule', function () {
     // List of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
@@ -132,10 +153,10 @@ context('Managing subscriptions (role: admin)', () => {
       .click()
 
     // Delivery page
-    cy.get('a[href*="subscriptions"]')
+    cy.get('a[href*="recurrence-rules"]')
       .click()
 
-    // Subscription page
+    // Recurrence rule page
     cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
 
     cy.get('#delivery_form__recurrence__container').click();
@@ -144,19 +165,16 @@ context('Managing subscriptions (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
-    // (all) Deliveries page
+    // Delivery page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
-      /\/admin\/deliveries$/,
+      /\/admin\/deliveries\/[0-9]+$/,
     )
-    cy.get('[data-testid="delivery_id"]').click();
-
-    // Delivery page
-    cy.get('a[href*="subscriptions"]')
+    cy.get('a[href*="recurrence-rules"]')
       .click()
 
-    // Subscription page
-    cy.get('#delivery_form__recurrence__container').contains('Abonnement annulé')
+    // Recurrence rule page
+    cy.get('#delivery_form__recurrence__container').contains('Règle de récurrence annulée')
 
   })
 })

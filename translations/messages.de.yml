@@ -388,10 +388,9 @@ adminDashboard.pledges.title: Anregungen
 adminDashboard.time_slots.title: Zeitfenster
 delivery.tracking_link: Sendungsverfolgung
 delivery.with_id: 'Versand #%id%'
-subscriptions.title: Abonnements
-subscription.title: 'Abonnement #%id%'
-subscription.generated_order: Diese Bestellung wurde durch ein Abonnement generiert
-subscription.view: Abonnement anzeigen
+subscription.title: 'Wiederholungsregel #%id%'
+subscription.generated_order: 'Diese Bestellung wurde durch eine Wiederholungsregel erstellt'
+subscription.view: 'Wiederholungsregel anzeigen'
 profile.username: Benutzername
 form.order.refund_modal.title: Rückzahlung
 form.payment.refund_amount.help: Der von Dir angegebene Betrag wird dem Kunden zurückerstattet
@@ -471,6 +470,12 @@ stores.pricing_rule_set: Preisermittlung
 stores.users: Benutzer*in
 stores.createNewDelivery: Neue Lieferung anlegen
 stores.settings: Einstellungen
+stores.recurrence_rules: Wiederholungsregeln
+stores.recurrence_rules.empty_message: Wenn eine wiederkehrende Bestellung erstellt wird, erscheinen die Wiederholungsregeln hier
+recurrence_rules.table.repeat: Wiederholen
+recurrence_rules.table.generate_orders: Aufgaben/Bestellungen generieren
+recurrence_rules.table.created_at: Regel erstellt
+recurrence_rule.legacy: Verwenden Sie das Dispositions-Dashboard, um diese Regel zu entfernen
 user.profile.givenName: Vorname
 user.profile.familyName: Nachname
 roles.ROLE_USER: Benutzer*in

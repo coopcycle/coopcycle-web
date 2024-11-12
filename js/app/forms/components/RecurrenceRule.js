@@ -10,7 +10,7 @@ export default ({ rrule, onClick }) => {
   })
 
   return (
-    <span className="list-group-item text-info" onClick={onClick}>
+    <span className="list-group-item text-info cursor-pointer" onClick={onClick}>
       <i className="fa fa-clock-o mr-2"></i>
       <span>
         <span className="mr-1">

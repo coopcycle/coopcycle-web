@@ -217,7 +217,7 @@ context('Delivery (role: admin)', () => {
       .contains('€72.00')
   })
 
-  it('create delivery order and a subscription', function () {
+  it('create delivery order and a recurrence rule', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -301,12 +301,12 @@ context('Delivery (role: admin)', () => {
 
     // Delivery page
     cy.get('#delivery_form__recurrence__container').should('not.exist')
-    cy.get('a[href*="subscriptions"]').click()
+    cy.get('a[href*="recurrence-rules"]').click()
 
     // Subscription page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
-      /\/admin\/stores\/[0-9]+\/subscriptions\/[0-9]+$/,
+      /\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/,
     )
     cy.get('[data-tax="included"]').contains('4,99 €')
     cy.get('#delivery_form__recurrence__container').contains(

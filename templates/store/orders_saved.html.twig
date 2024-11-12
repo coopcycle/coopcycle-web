@@ -1,4 +1,4 @@
-{% extends layout %}
+{% extends 'store/layout.html.twig' %}
 
 {% block breadcrumb %}
   <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a>
@@ -7,7 +7,7 @@
   <li>{% trans %}stores.deliveries.bookmarks{% endtrans %}</li>
 {% endblock %}
 
-{% block content %}
+{% block store_content %}
 
   <h3>{{ 'stores.deliveries.bookmarks'|trans }}</h3>
 

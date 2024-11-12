@@ -51,9 +51,14 @@
             {{ 'stores.deliveries'|trans }}
           </a>
         </li>
-        <li role="presentation">
-          <a data-testid="bookmarks" href="{{ path('admin_store_deliveries_bookmarks', { id: store.id }) }}">
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_orders_saved' %}class="active"{% endif %}>
+          <a data-testid="bookmarks" href="{{ path('admin_store_orders_saved', { id: store.id }) }}">
             {{ 'stores.deliveries.bookmarks'|trans }}
+          </a>
+        </li>
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_recurrence_rules' %}class="active"{% endif %}>
+          <a data-testid="recurrence-rules" href="{{ path('admin_store_recurrence_rules', { id: store.id }) }}">
+            {{ 'stores.recurrence_rules'|trans }}
           </a>
         </li>
         {% endif %}
