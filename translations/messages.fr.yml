@@ -702,9 +702,9 @@ stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de 
 stores.recurrence_rules: Règles de récurrence
 stores.recurrence_rules.empty_message: Lorsqu\'une commande récurrente est créée, les règles de récurrence apparaîtront ici
 recurrence_rules.table.repeat: Répéter
-recurrence_rules.table.generate_orders: Générer des tâches
+recurrence_rules.table.generate_orders: Générer des tâches/commandes automatiquement
 recurrence_rules.table.created_at: Règle créée
-recurrence_rule.legacy: Utilisez le tableau de bord de répartition pour supprimer cette règle
+recurrence_rule.legacy: Supprimer cette règle dans le panneau de dispatch
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
