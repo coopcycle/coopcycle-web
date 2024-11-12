@@ -6,6 +6,7 @@ use AppBundle\Service\TaskManager;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class Assign extends Base
 {
@@ -14,11 +15,11 @@ class Assign extends Base
     public function __construct(
         TokenStorageInterface $tokenStorage,
         TaskManager $taskManager,
-        UserManagerInterface $userManager)
+        protected UserManagerInterface $userManager,
+        protected AuthorizationCheckerInterface $authorization
+    )
     {
         parent::__construct($tokenStorage, $taskManager);
-
-        $this->userManager = $userManager;
     }
 
     public function __invoke($data, Request $request)

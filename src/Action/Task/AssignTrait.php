@@ -4,13 +4,10 @@ namespace AppBundle\Action\Task;
 
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\User;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait AssignTrait
 {
-    protected $userManager;
-
     protected function assign(Task $task, $payload)
     {
         $user = $this->getUser();
@@ -24,8 +21,7 @@ trait AssignTrait
                     $payload['username']));
             }
         }
-
-        if (!$this->getUser()->hasRole('ROLE_DISPATCH') && $task->isAssigned()) {
+        if (!$this->authorization->isGranted('ROLE_DISPATCHER') && $task->isAssigned()) {
 
             throw new BadRequestHttpException(sprintf('Task #%d is already assigned to "%s"',
                 $task->getId(), $task->getAssignedCourier()->getUsername()));
