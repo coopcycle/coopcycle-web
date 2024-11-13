@@ -129,6 +129,9 @@
       </td>
       <td class="text-right">
         <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+        <div {{ react_component('BarcodesModal', {
+          items: delivery.items|serialize('json', {groups: ['task', 'task_collection', 'barcode', 'address']})
+          }) }}></div>
       </td>
     </tr>
   {% endfor %}

@@ -7,6 +7,21 @@ function _generateLabelURL(barcode) {
   return window.Routing.generate('task_label_pdf') + '?code=' + barcode
 }
 
+function _shouldOpenModal(items) {
+  if (!items || !Array.isArray(items)) {
+    return false
+  }
+
+  const totalItems = items.reduce((acc, item) => {
+    if (!item?.barcodes?.packages || !Array.isArray(item.barcodes.packages)) {
+      return acc
+    }
+    return acc + 1 + item.barcodes.packages.length
+  }, 0)
+
+  return totalItems !== 1
+}
+
 function GenericBarcode({ barcode }) {
   const { t } = useTranslation()
   return (
@@ -20,7 +35,11 @@ function GenericBarcode({ barcode }) {
         </Tooltip>
       }
       actions={[
-        <a key="generic_barcode_view" href={_generateLabelURL(barcode)} target="_blank" rel="noreferrer">
+        <a
+          key="generic_barcode_view"
+          href={_generateLabelURL(barcode)}
+          target="_blank"
+          rel="noreferrer">
           View
         </a>,
       ]}>
@@ -36,7 +55,11 @@ function PackageBarcode({ barcode, extra, index }) {
       size="small"
       extra={extra}
       actions={[
-        <a key={ `package_barcode_${index}_view` } href={_generateLabelURL(barcode)} target="_blank" rel="noreferrer">
+        <a
+          key={`package_barcode_${index}_view`}
+          href={_generateLabelURL(barcode)}
+          target="_blank"
+          rel="noreferrer">
           View
         </a>,
       ]}>
@@ -83,18 +106,49 @@ function TaskBarcode({ index, task }) {
   )
 }
 
-export default function ({ items }) {
+export default function (props) {
+  const { items, showLabel } = {
+    items: '[]',
+    showLabel: 'Show barcodes',
+    ...props,
+  }
   const _items = _(JSON.parse(items))
     .sortBy('position')
     .map(i => i.task)
     .filter(i => i.type !== 'PICKUP')
     .value()
+
+  const shouldOpenModal = _shouldOpenModal(_items)
   const [isOpen, setIsOpen] = useState(false)
+
+  const a5Width = Math.round((148 * 96) / 25.4)
+  const a5Height = Math.round((210 * 96) / 25.4)
+
+  const features = [
+    `width=${a5Width}`,
+    `height=${a5Height}`,
+    'resizable=yes',
+    'scrollbars=yes',
+    'status=yes',
+  ].join(',')
 
   return (
     <>
-      <a href="#" onClick={() => setIsOpen(true)}>
-        Show barcodes
+      <a
+        onClick={() => {
+          if (shouldOpenModal) {
+            setIsOpen(true)
+          } else {
+            window.open(
+              window.Routing.generate('task_label_pdf') +
+                '?code=' +
+                _items[0].barcodes.task,
+              '_blank',
+              features,
+            )
+          }
+        }}>
+        {showLabel}
       </a>
       <Modal
         title="Barcodes"
