@@ -132,6 +132,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -160,6 +161,7 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -471,6 +473,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -499,6 +502,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -561,6 +565,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -589,6 +594,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -647,6 +653,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -675,6 +682,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -919,6 +927,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -947,6 +956,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1010,6 +1020,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1038,6 +1049,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1083,6 +1095,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1111,6 +1124,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode": "@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1296,7 +1310,8 @@ Feature: Deliveries
             "before": "@string@.isDateTime()",
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
-            "packages": []
+            "packages": [],
+            "barcode": "@string@"
         },
         "dropoff": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -1315,7 +1330,7 @@ Feature: Deliveries
                 "streetAddress": @string@,
                 "telephone": null,
                 "name": null,
-                "description": null                
+                "description": null
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
@@ -1324,7 +1339,8 @@ Feature: Deliveries
             "before": "@string@.isDateTime()",
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
-            "packages": []
+            "packages": [],
+            "barcode": "@string@"
         },
         "trackingUrl": @string@
     }

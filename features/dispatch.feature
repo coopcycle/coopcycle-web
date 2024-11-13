@@ -168,7 +168,8 @@ Feature: Dispatch
         "before":"@string@.isDateTime()",
         "orgName": @string@,
         "images": @array@,
-        "hasIncidents": @boolean@
+        "hasIncidents": @boolean@,
+        "barcode": "@string@",
       }
       """
 
