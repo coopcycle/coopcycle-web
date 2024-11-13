@@ -92,8 +92,10 @@
           <li><strong>Parcel:</strong></li>
           {% if currentPackage is not null %}
             <li style="font-size: 1.4em">{{ currentPackage }} / {{ totalPackages }}</li>
-          {% else %}
+          {% elseif totalPackages > 0 %}
             <li style="font-size: 1.4em">{{ totalPackages }}</li>
+          {% else %}
+            <li>-</li>
           {% endif %}
         </ul>
       </div>
