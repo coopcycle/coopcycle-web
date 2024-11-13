@@ -294,6 +294,25 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return new self();
     }
 
+    public static function canCreateWithTasks(Task ...$tasks): bool
+    {
+        if (count($tasks) < 2) {
+            return false;
+        }
+
+        // the first task must be a pickup
+        if (!$tasks[0]->isPickup()) {
+            return false;
+        }
+
+        // the last task must be a dropoff
+        if (!$tasks[count($tasks) - 1]->isDropoff()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function createWithTasks(Task ...$tasks)
     {
         $delivery = self::create();
