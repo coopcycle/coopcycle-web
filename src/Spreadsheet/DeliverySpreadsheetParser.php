@@ -11,6 +11,7 @@ use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use JsonException;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -45,6 +46,11 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     public function parseData(array $data, array $options = []): SpreadsheetParseResult
     {
         $parseResult = new SpreadsheetParseResult();
+
+        $options = array_merge(
+            ['create_task_if_address_not_geocoded' => false],
+            $options
+        );
 
         foreach ($data as $index=>$record) {
             $rowNumber = $index + 1;
@@ -103,6 +109,13 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->enhanceTask($delivery->getPickup(), 'pickup', $record);
                 $this->enhanceTask($delivery->getDropoff(), 'dropoff', $record);
             } catch(NumberParseException $e) {
+                $parseResult->addErrorToRow($rowNumber, $e->getMessage());
+            }
+
+            try {
+                $this->applyMetadata($delivery->getPickup(), 'pickup', $record);
+                $this->applyMetadata($delivery->getDropoff(), 'dropoff', $record);
+            } catch(JsonException $e) {
                 $parseResult->addErrorToRow($rowNumber, $e->getMessage());
             }
 
@@ -200,6 +213,18 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
+    private function applyMetadata(Task $task, string $prefix, array $record)
+    {
+        $metadataColumn = $this->getColumn($prefix, 'metadata');
+
+        if (isset($record[$metadataColumn]) && !empty($record[$metadataColumn])) {
+            /* @throws JsonException */
+            $metadata = json_decode($record[$metadataColumn], JSON_THROW_ON_ERROR);
+            $task->setMetadata($metadata);
+        }
+
+    }
+
     public function getExampleData(): array
     {
         return [
@@ -211,6 +236,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'pickup.tags' => 'warn heavy',
+                'pickup.metadata' => '{"external_system_id": 10}',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
                 'dropoff.address.description' => 'Buzzer AB12',
@@ -219,6 +245,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn heavy',
+                'dropoff.metadata' => '{"external_system_id": 10}',
                 'weight' => '5.5'
             ],
             [

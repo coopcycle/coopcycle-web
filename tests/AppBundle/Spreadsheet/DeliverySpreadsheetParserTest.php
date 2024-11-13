@@ -75,7 +75,6 @@ class DeliverySpreadsheetParserTest extends TestCase
 
     public function testWithInvalidPickupAddress()
     {
-
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_invalid_address.csv');
         $parseResult = $this->parser->parse($filename, ['create_task_if_address_not_geocoded' => true]);
         $data = $parseResult->getData();
@@ -83,6 +82,19 @@ class DeliverySpreadsheetParserTest extends TestCase
         /** @var Delivery */
         $delivery = array_shift($data);
         $this->assertEquals($delivery->getPickup()->getAddress()->getStreetAddress(), 'INVALID ADDRESS');
+
+    }
+
+    public function testWithMetadata()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_metadata.csv');
+        $parseResult = $this->parser->parse($filename);
+        $data = $parseResult->getData();
+
+        /** @var Delivery */
+        $delivery = array_shift($data);
+        $this->assertEquals($delivery->getPickup()->getMetadata()['foo'], 'fly');
+        $this->assertEquals($delivery->getDropoff()->getMetadata()['foo'], 'bar');
 
     }
 }
