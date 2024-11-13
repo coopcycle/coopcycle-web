@@ -241,6 +241,7 @@ Feature: Deliveries
           "comments": "2.00 kg",
           "weight": 2000,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -269,6 +270,7 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight": 2000,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -359,6 +361,7 @@ Feature: Deliveries
               "short_code": "AB"
             }
           ],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -395,6 +398,7 @@ Feature: Deliveries
               "short_code": "AB"
             }
           ],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -745,6 +749,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -773,6 +778,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -837,6 +843,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -865,6 +872,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1415,6 +1423,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1443,6 +1452,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
+          "barcode":"@string@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
