@@ -277,6 +277,10 @@ class TaskModalContent extends React.Component {
 
   renderBarcode(task) {
 
+    if (task?.type !== 'DROPOFF') {
+      return null
+    }
+
     let anchorProps = {}
     if (this.props.events.length === 0) {
       anchorProps = {
@@ -299,7 +303,7 @@ class TaskModalContent extends React.Component {
           <a href={window.Routing.generate('task_label_pdf') + '?code=' + task.barcode } target="_blank" rel="noreferrer">
             <svg className="barcode img-thumbnail img-responsive center-block"
               data-format="code128"
-              data-height="40"
+              data-height="60"
               data-value={task.barcode}/>
           </a>
         </div>
