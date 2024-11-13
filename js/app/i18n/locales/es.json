@@ -438,6 +438,7 @@
         "CART_TIME_RANGE_CHANGED_MODAL_TITLE": "El intervalo de tiempo seleccionado ya no está disponible para hoy",
         "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "El horario de apertura no permite realizar el pedido hoy",
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Por favor, elige otro intervalo de tiempo",
-        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambiar hora de entrega"
+        "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambiar hora de entrega",
+        "GENERIC_BARCODE_HELP": "Este código de barras de tarea puede rastrear todos los paquetes vinculados como una sola unidad. Úselo para simplificar el seguimiento de toda la entrega. Para un seguimiento detallado paquete por paquete, utilice los códigos de barras individuales de los paquetes."
     }
 }
