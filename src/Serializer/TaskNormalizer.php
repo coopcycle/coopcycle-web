@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -70,6 +71,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             if ($object->hasNext()) {
                 $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
             }
+        }
+
+        if (!isset($object->getMetadata()['barcode'])) {
+            $data['barcode'] = BarcodeUtils::getRawBarcodeFromTask($object);
+        } else {
+            $data['barcode'] = $object->getMetadata()['barcode'];
         }
 
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {

@@ -43,13 +43,17 @@ class BarcodeUtils {
         }
     }
 
-    public static function getBarcodeFromTask(Task $task): Barcode {
-        $code = sprintf(
+    public static function getRawBarcodeFromTask(Task $task): string
+    {
+        return sprintf(
             self::WITHOUT_PACKAGE,
             1, //TODO: Dynamicly get instance
             Barcode::TYPE_TASK, $task->getId()
         );
+    }
 
+    public static function getBarcodeFromTask(Task $task): Barcode {
+        $code = self::getRawBarcodeFromTask($task);
         return self::parse($code);
     }
 
