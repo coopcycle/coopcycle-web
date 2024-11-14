@@ -1304,6 +1304,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
     /**
      * @return void
      */
@@ -1355,6 +1356,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         );
 
         return $barcodes;
+    }
+    
     /**
      * Get the value of co2Emissions
      */ 
