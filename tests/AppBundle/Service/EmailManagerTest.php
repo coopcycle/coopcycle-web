@@ -2,6 +2,8 @@
 
 namespace Tests\AppBundle\Service;
 
+use AppBundle\LoopEat\Context as LoopeatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
@@ -23,6 +25,8 @@ class EmailManagerTest extends TestCase
         $this->translator = $this->prophesize(TranslatorInterface::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
         $this->logger = $this->prophesize(\Psr\Log\LoggerInterface::class);
+        $this->loopeatContext = $this->prophesize(LoopeatContext::class);
+        $this->loopeatContextInitializer = $this->prophesize(LoopeatContextInitializer::class);
 
         $this->emailManager = new EmailManager(
             $this->mailer->reveal(),
@@ -30,6 +34,8 @@ class EmailManagerTest extends TestCase
             $this->mjml->reveal(),
             $this->translator->reveal(),
             $this->settingsManager->reveal(),
+            $this->loopeatContextInitializer->reveal(),
+            $this->loopeatContext->reveal(),
             $this->logger->reveal(),
             'transactional@coopcycle.org'
         );
