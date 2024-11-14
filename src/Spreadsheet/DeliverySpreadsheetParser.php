@@ -20,6 +20,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
     use ParsePackagesTrait;
+    use ParseMetadataTrait;
 
     private $geocoder;
     private $phoneNumberUtil;
@@ -103,11 +104,12 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $parseResult->addErrorToRow($rowNumber, $e->getMessage());
             }
 
-            try {
-                $this->applyMetadata($delivery->getPickup(), 'pickup', $record);
-                $this->applyMetadata($delivery->getDropoff(), 'dropoff', $record);
-            } catch(JsonException $e) {
-                $parseResult->addErrorToRow($rowNumber, $e->getMessage());
+            if (isset($record['pickup.metadata']) && !empty($record['pickup.metadata'])) {
+                $this->parseAndApplyMetadata($delivery->getPickup(), $record['pickup.metadata']);
+            }
+
+            if (isset($record['dropoff.metadata']) && !empty($record['dropoff.metadata'])) {
+                $this->parseAndApplyMetadata($delivery->getDropoff(), $record['dropoff.metadata']);
             }
 
             if (isset($record['weight']) && is_numeric($record['weight'])) {
@@ -211,18 +213,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
-    private function applyMetadata(Task $task, string $prefix, array $record)
-    {
-        $metadataColumn = $this->getColumn($prefix, 'metadata');
-
-        if (isset($record[$metadataColumn]) && !empty($record[$metadataColumn])) {
-            /* @throws JsonException */
-            $metadata = json_decode($record[$metadataColumn], JSON_THROW_ON_ERROR);
-            $task->setMetadata($metadata);
-        }
-
-    }
-
     public function getExampleData(): array
     {
         return [
@@ -234,7 +224,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'pickup.tags' => 'warn heavy',
-                'pickup.metadata' => '{"external_system_id": 10}',
+                'pickup.metadata' => 'external_system_id=10 my_meta=value',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
                 'dropoff.address.description' => 'Buzzer AB12',
@@ -243,7 +233,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn heavy',
-                'dropoff.metadata' => '{"external_system_id": 10}',
+                'dropoff.metadata' => 'external_system_id=10',
                 'weight' => '5.5'
             ],
             [

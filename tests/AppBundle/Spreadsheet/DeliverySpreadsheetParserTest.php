@@ -111,7 +111,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         /** @var Delivery */
         $delivery = array_shift($data);
         $this->assertEquals($delivery->getPickup()->getMetadata()['foo'], 'fly');
+        $this->assertEquals($delivery->getPickup()->getMetadata()['blu'], 'bla');
         $this->assertEquals($delivery->getDropoff()->getMetadata()['foo'], 'bar');
-
     }
 }
