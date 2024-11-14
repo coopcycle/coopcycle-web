@@ -15,6 +15,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Prophecy\Argument;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use TypeError;
 
 class DeliverySpreadsheetParserTest extends TestCase
 {
@@ -22,9 +23,8 @@ class DeliverySpreadsheetParserTest extends TestCase
     {
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->slugify = $this->prophesize(SlugifyInterface::class);
-        $this->translator = $this->prophesize(TranslatorInterface::class);
 
-        $this->slugify->slugify(Argument::type('string'))->willReturn('');
+        $this->slugify->slugify(Argument::type('string'))->will(function ($args){return $args[0];});
         
         $address = new Address();
         $address->setGeo(new GeoCoordinates(200, 200));
@@ -32,12 +32,15 @@ class DeliverySpreadsheetParserTest extends TestCase
 
         $geocoder = $this->prophesize(Geocoder::class);
         $geocoder->geocode(Argument::type('string'))->will(function ($args) use ($address) {
-            
             if ($args[0] === 'THIS ADDRESS IS INVALID') {
                 return null;
             } else {
                 return $address;
             }
+        });
+
+        $geocoder->geocode(Argument::type('null'))->will(function ($args) use ($address) {
+            throw new TypeError('Argument #1 ($text) must be of type string, null given');
         });
 
         $this->geocoder = $geocoder;
@@ -54,7 +57,7 @@ class DeliverySpreadsheetParserTest extends TestCase
             'fr',
             $this->entityManager->reveal(),
             $this->slugify->reveal(),
-            $this->translator->reveal()
+            $this->translator
         );
     }
 
@@ -73,7 +76,7 @@ class DeliverySpreadsheetParserTest extends TestCase
 
     }
 
-    public function testWithInvalidPickupAddress()
+    public function testWithInvalidPickupAddressWithCreateFlag()
     {
         $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_invalid_address.csv');
         $parseResult = $this->parser->parse($filename, ['create_task_if_address_not_geocoded' => true]);
@@ -82,7 +85,21 @@ class DeliverySpreadsheetParserTest extends TestCase
         /** @var Delivery */
         $delivery = array_shift($data);
         $this->assertEquals($delivery->getPickup()->getAddress()->getStreetAddress(), 'INVALID ADDRESS');
+        $this->assertContains('review-needed', $delivery->getPickup()->getTags());
+        $this->assertContains('my-task-tag', $delivery->getPickup()->getTags());
+        $this->assertContains('my-other-task-tag', $delivery->getPickup()->getTags());
+    }
 
+    public function testWithEmptyPickupAndDropoffAddresses()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/delivery_empty_dropoff_address.csv');
+        $parseResult = $this->parser->parse($filename);
+        $data = $parseResult->getErrors();
+
+        $error = array_shift($data);
+
+        $this->assertEquals($error[0], 'pickup.address: Impossible de géocoder l\'adresse pickup');
+        $this->assertEquals($error[1], 'dropoff.address: Impossible de géocoder l\'adresse dropoff');
     }
 
     public function testWithMetadata()

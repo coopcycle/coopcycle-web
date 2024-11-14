@@ -3,10 +3,12 @@
 namespace Tests\AppBundle\Spreadsheet;
 
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
-use PHPUnit\Framework\TestCase as BaseTestCase;
+use Cocur\Slugify\SlugifyInterface;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends KernelTestCase
 {
     use ProphecyTrait;
 
@@ -19,6 +21,8 @@ abstract class TestCase extends BaseTestCase
 
     public function setUp(): void
     {
+        self::bootKernel();
+        $this->translator = self::getContainer()->get(TranslatorInterface::class);
         $this->parser = $this->createParser();
     }
 
