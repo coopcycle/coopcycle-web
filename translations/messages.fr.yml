@@ -1594,3 +1594,4 @@ deliveries.import_upload_error: "Le fichier n'a pas pu être téléchargé. Veui
 form.task_export.colisactiv.label: Exporter au format ColivActiv
 form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées
 form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
+form.payment.edenred.refund_amount.help: Les remboursements partiels ne sont pas supportés par Edenred.
