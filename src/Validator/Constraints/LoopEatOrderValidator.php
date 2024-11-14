@@ -84,6 +84,7 @@ class LoopEatOrderValidator extends ConstraintValidator
         } catch (RequestException $e) {
 
             $this->context->buildViolation($constraint->requestFailed)
+                ->setParameter('%name%', $this->loopeatContext->name)
                 ->atPath('reusablePackagingEnabled')
                 ->addViolation();
 
