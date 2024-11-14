@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
@@ -64,7 +65,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             }
 
             if ($pickupAddress && $pickupAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
-                $delivery->getPickup()->addTags('review-needed');
+                $delivery->getPickup()->addTags(Tag::ADDRESS_NEED_REVIEW_TAG);
                 //TODO: Trigger a incident.
             }
             
@@ -77,7 +78,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             }
 
             if ($dropoffAddress && $dropoffAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
-                $delivery->getDropoff()->addTags('review-needed');
+                $delivery->getDropoff()->addTags(Tag::ADDRESS_NEED_REVIEW_TAG);
                 //TODO: Trigger a incident.
             }
 
