@@ -28,6 +28,8 @@ class ExportTasksHandler implements MessageHandlerInterface
         'beforeDay',
         'beforeTime',
         'status',
+        'co2_emissions',
+        'distance_from_previous',
         'comments',
         'event.DONE.notes',
         'event.FAILED.notes',
