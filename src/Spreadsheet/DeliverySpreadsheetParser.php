@@ -55,41 +55,31 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         foreach ($data as $index=>$record) {
             $rowNumber = $index + 1;
 
-            if (!$pickupAddress = $this->geocoder->geocode($record['pickup.address'])) {
-                if ($options['create_task_if_address_not_geocoded']) {
-                    $address = new Address();
-                    $address->setGeo($this->defaultCoordinates);
-                    $address->setStreetAddress('INVALID ADDRESS');
-                    $pickupAddress = $address;
-                } else {
-                    $translatedError = $this->translator->trans('import.address.geocode.error', [
-                        '%failed_address%' => $record['pickup.address']
-                    ]);
-                    $parseResult->addErrorToRow($rowNumber,
-                        sprintf('pickup.address: %s', $translatedError)
-                    );
-                }
-            }
-
-            if (!$dropoffAddress = $this->geocoder->geocode($record['dropoff.address'])) {
-                if ($options['create_task_if_address_not_geocoded']) {
-                    $address = new Address();
-                    $address->setGeo($this->defaultCoordinates);
-                    $address->setStreetAddress('INVALID ADDRESS');
-                    $dropoffAddress = $address;
-                } else {
-                    $translatedError = $this->translator->trans('import.address.geocode.error', [
-                        '%failed_address%' => $record['dropoff.address']
-                    ]);
-                    $parseResult->addErrorToRow($rowNumber,
-                        sprintf('dropoff.address: %s', $translatedError)
-                    );
-                }
-            }
-
             $delivery = new Delivery();
 
+            if (!$record['pickup.address']) {
+                $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', 'pickup', $options);
+            } else if (!$pickupAddress = $this->geocoder->geocode($record['pickup.address'])) {
+                $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', $record['pickup.address'], $options);
+            }
+
+            if ($pickupAddress && $pickupAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
+                $delivery->getPickup()->addTags('review-needed');
+                //TODO: Trigger a incident.
+            }
+            
             $delivery->getPickup()->setAddress($pickupAddress);
+
+            if (!$record['dropoff.address']) {
+                $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', 'dropoff', $options);
+            } else if (!$dropoffAddress = $this->geocoder->geocode($record['dropoff.address'])) {
+                $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', $record['dropoff.address'], $options);
+            }
+
+            if ($dropoffAddress && $dropoffAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
+                $delivery->getDropoff()->addTags('review-needed');
+                //TODO: Trigger a incident.
+            }
 
             $delivery->getDropoff()->setAddress($dropoffAddress);
 
@@ -131,18 +121,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->applyTags($delivery->getPickup(), $record['pickup.tags']);
             }
 
-            if ($delivery->getPickup()->getAddress()->getGeo()->isEqualTo($this->defaultCoordinates)) {
-                $delivery->getPickup()->addTags('review-needed');
-                //TODO: Trigger a incident.
-            }
-
             if (isset($record['dropoff.tags']) && !empty($record['dropoff.tags'])) {
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
-            }
-
-            if ($delivery->getDropoff()->getAddress()->getGeo()->isEqualTo($this->defaultCoordinates)) {
-                $delivery->getDropoff()->addTags('review-needed');
-                //TODO: Trigger a incident.
             }
 
             if (!$parseResult->rowHasErrors($rowNumber)) {
@@ -151,6 +131,23 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
         }
         return $parseResult;
+    }
+
+    private function handleFaultyAddress(SpreadsheetParseResult $parseResult, int $rowNumber, string $recordKey, string $erroredRecordString, array $options) {
+        if ($options['create_task_if_address_not_geocoded']) {
+            $address = new Address();
+            $address->setGeo($this->defaultCoordinates);
+            $address->setStreetAddress('INVALID ADDRESS');
+            return $address;
+        } else {
+            $translatedError = $this->translator->trans('import.address.geocode.error', [
+                '%failed_address%' => $erroredRecordString
+            ]);
+            $parseResult->addErrorToRow($rowNumber,
+                sprintf('%s: %s', $recordKey, $translatedError)
+            );
+            return null;
+        }
     }
 
     private function parseTimeRange($data, $key)
@@ -209,7 +206,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         if (!empty($tagsAsString)) {
             $slugs = explode(' ', $tagsAsString);
             $tags = array_map([$this->slugify, 'slugify'], $slugs);
-            $task->setTags($tags);
+            $task->addTags($tags);
         }
     }
 
