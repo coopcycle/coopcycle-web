@@ -824,6 +824,7 @@ services:
     public: true
     arguments:
       $edifactFs: '@edi_messages_filesystem'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
 
   AppBundle\Action\Register:
     public: true
