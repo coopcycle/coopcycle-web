@@ -154,6 +154,7 @@ export default function (props) {
         title="Barcodes"
         open={isOpen}
         onCancel={() => setIsOpen(false)}
+        footer={null}
         width="980px">
         {_items.map((item, index) => (
           <TaskBarcode key={index} index={index + 1} task={item} />
