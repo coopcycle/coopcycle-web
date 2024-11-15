@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
@@ -23,9 +24,14 @@ class DeliverySpreadsheetParserTest extends TestCase
     {
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->slugify = $this->prophesize(SlugifyInterface::class);
+        $this->settingManager = $this->prophesize(SettingsManager::class);
+
+        $this->settingManager
+            ->get('latlng')
+            ->willReturn('48.8534,2.3488');
 
         $this->slugify->slugify(Argument::type('string'))->will(function ($args){return $args[0];});
-        
+
         $address = new Address();
         $address->setGeo(new GeoCoordinates(200, 200));
         $address->setStreetAddress('street address');
@@ -57,7 +63,8 @@ class DeliverySpreadsheetParserTest extends TestCase
             'fr',
             $this->entityManager->reveal(),
             $this->slugify->reveal(),
-            $this->translator
+            $this->translator,
+            $this->settingManager->reveal()
         );
     }
 

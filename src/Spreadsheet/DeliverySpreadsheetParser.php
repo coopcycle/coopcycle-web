@@ -12,6 +12,7 @@ use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -27,6 +28,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneNumberUtil,
         private string $countryCode,
+        private EntityManagerInterface $entityManager,
         private SlugifyInterface $slugify,
         private TranslatorInterface $translator,
         private SettingsManager $settingsManager
