@@ -23,6 +23,7 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Command\Command;
@@ -59,9 +60,11 @@ class SyncTransportersCommand extends Command {
     private OutputInterface $output;
 
     public function __construct(
+        private string $appName,
         private EntityManagerInterface $entityManager,
         private ParameterBagInterface $params,
         private SettingsManager $settingsManager,
+        private LoggerInterface $transporterLogger,
         private ImportFromPoint $importFromPoint,
         private ReportFromCC $reportFromCC,
         private Filesystem $edifactFs
@@ -104,7 +107,6 @@ class SyncTransportersCommand extends Command {
         /** @var ?Store $store */
         $store = $repo->findOneBy(['transporter' => $this->transporter]);
         if (is_null($store)) {
-            //TODO: Do not throw to avoid log pollution
             throw new Exception(sprintf(
                 'No store with transporter "%s" connected',
                 $this->transporter
@@ -130,21 +132,34 @@ class SyncTransportersCommand extends Command {
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
-        if (!$this->lock()) {
-            $output->writeln('The command is already running in another process.');
-
-            return Command::SUCCESS;
-        }
-
         $transporterName = TransporterName::from($input->getArgument('transporter'));
         $this->transporter = $transporterName->value;
-        $this->setup($transporterName);
+
+        if (!$this->lock(sprintf(
+            '%s_%s_%s.lock',
+            $this->appName,
+            $this->getName(),
+            $this->transporter
+        ))) {
+            $output->writeln('The command is already running in another process.');
+            $this->transporterLogger->warning('The command is already running in another process.');
+            return Command::FAILURE;
+        }
+
+
+        try {
+            $this->setup($transporterName);
+        } catch (Exception $e) {
+            $this->transporterLogger->critical(sprintf('Failed to setup transporter %s: %s', $this->transporter, $e->getMessage()));
+            throw $e;
+        }
+
         $this->dryRun = $input->getOption('dry-run');
         $this->output = $output;
 
         $config = $this->params->get('transporters_config');
         if (!($config[$this->transporter]['enabled'] ?? false)) {
+            $this->transporterLogger->critical(sprintf('%s is not configured or enabled', $this->transporter));
             throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
         }
         $config = $config[$this->transporter];
@@ -156,7 +171,8 @@ class SyncTransportersCommand extends Command {
             $inFs = $this->initTransporterSyncOptions($config['sync']['in']);
             $outFs = $this->initTransporterSyncOptions($config['sync']['out']);
         } else {
-            throw new Exception('Sync not configured');
+            $this->transporterLogger->critical('Sync not configured');
+            return Command::FAILURE;
         }
 
         $opts = new TransporterOptions(
@@ -172,10 +188,32 @@ class SyncTransportersCommand extends Command {
         if ($this->dryRun) {
             $output->writeln("Dry run mode, nothing will be imported");
         }
-        $output->writeln("Start syncing...");
 
-        $this->importAllTasks($sync);
-        $this->sendReports($sync, $opts);
+        $this->transporterLogger->info(sprintf(
+            'Syncing %s with %s',
+            $this->appName,
+            $this->transporter
+        ));
+
+        try {
+            $this->importAllTasks($sync);
+        } catch (Exception $e) {
+            $this->transporterLogger->critical(sprintf(
+                'Failed to import tasks: %s',
+                $e->getMessage()
+            ));
+            throw $e;
+        }
+
+        try {
+            $this->sendReports($sync, $opts);
+        } catch (Exception $e) {
+            $this->transporterLogger->critical(sprintf(
+                'Failed to send reports: %s',
+                $e->getMessage()
+            ));
+            throw $e;
+        }
 
         $this->release();
 
@@ -193,6 +231,7 @@ class SyncTransportersCommand extends Command {
         $unsynced = $repo->getUnsynced($this->transporter);
         if (count($unsynced) === 0) {
             $this->output->writeln("No messages to send");
+            $this->transporterLogger->info("No messages to send");
             return;
         }
 
@@ -249,8 +288,10 @@ class SyncTransportersCommand extends Command {
             }
         }
         $this->output->writeln("Remove files to acknowledge import");
+        $this->transporterLogger->info("Remove files to acknowledge import");
         $sync->flush($this->dryRun);
         $this->output->writeln("Done syncing, imported $count tasks");
+        $this->transporterLogger->info("Done syncing, imported $count tasks");
     }
 
     private function importTask(Point $point, EDIFACTMessage $edi): void {
@@ -352,6 +393,7 @@ class SyncTransportersCommand extends Command {
                 $adapter = new InMemoryFilesystemAdapter();
                 break;
             default:
+                $this->logger->critical('Unknown scheme: '.$auth_details['scheme']);
                 throw new Exception(sprintf('Unknown scheme %s', $auth_details['scheme']));
         }
 
