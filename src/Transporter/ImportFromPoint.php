@@ -106,7 +106,12 @@ class ImportFromPoint {
         NameAndAddress $nad
     ): Address
     {
-        $address = $this->geocoder->geocode($nad->getAddress());
+        $address = null;
+        try {
+            $address = $this->geocoder->geocode($nad->getAddress());
+        } catch (\Exception $e) {
+            //TODO: Log
+        }
 
         if (
             is_null($address) ||
