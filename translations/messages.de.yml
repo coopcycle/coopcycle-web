@@ -776,3 +776,7 @@ localBusiness.form.business_address.label: Geschäftsadresse
 restaurants.pre_order: Vorbestellung
 restaurant.closedOpensTodayLaterWarning: Dieses Restaurant ist derzeit geschlossen,
   öffnet aber um <strong>%time%</strong>.
+homepage.form.title: Brauchen Sie etwas geliefert?
+form.vehicle.volume_units.label: Volumen Einheiten
+form.time_slot.preview_title: Vorschau Zeitslot
+adminDashboard.pricing.help: Legen Sie Regeln fest um die Lieferpreise zu kalkulieren
