@@ -10,9 +10,8 @@ use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\SettingsManager;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use JsonException;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,31 +21,24 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
     use ParsePackagesTrait;
     use ParseMetadataTrait;
 
-    private $geocoder;
-    private $phoneNumberUtil;
-    private $countryCode;
-    private $entityManager;
-    private $slugify;
-    private $translator;
     private $defaultCoordinates;
 
-    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
-        EntityManagerInterface $entityManager, SlugifyInterface $slugify, TranslatorInterface $translator)
-    {
-        $this->geocoder = $geocoder;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->countryCode = $countryCode;
-        $this->entityManager = $entityManager;
-        $this->slugify = $slugify;
-        $this->translator = $translator;
-        $this->defaultCoordinates = new GeoCoordinates(0,0);
-    }
+    public function __construct(
+        private Geocoder $geocoder,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private string $countryCode,
+        private SlugifyInterface $slugify,
+        private TranslatorInterface $translator,
+        private SettingsManager $settingsManager
+    )
+    {  }
 
     /**
      * @inheritdoc
      */
     public function parseData(array $data, array $options = []): SpreadsheetParseResult
     {
+        $this->setup();
         $parseResult = new SpreadsheetParseResult();
 
         $options = array_merge(
@@ -69,7 +61,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $delivery->getPickup()->addTags(Tag::ADDRESS_NEED_REVIEW_TAG);
                 //TODO: Trigger a incident.
             }
-            
+
             $delivery->getPickup()->setAddress($pickupAddress);
 
             if (!$record['dropoff.address']) {
@@ -134,6 +126,15 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
         }
         return $parseResult;
+    }
+
+    private function setup(): void
+    {
+      $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
+        if (count($pos) !== 2) {
+            $pos = [0, 0];
+        }
+        $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
     }
 
     private function handleFaultyAddress(SpreadsheetParseResult $parseResult, int $rowNumber, string $recordKey, string $erroredRecordString, array $options) {
