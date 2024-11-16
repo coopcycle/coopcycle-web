@@ -1,5 +1,9 @@
 {% extends layout %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('order.summary.heading'|trans({ '%number%': order.number })) }}
+{% endblock %}
+
 {% if email_form is defined %}
   {% form_theme email_form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% endif %}

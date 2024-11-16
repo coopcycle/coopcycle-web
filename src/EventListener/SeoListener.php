@@ -12,49 +12,26 @@ use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class SeoListener
 {
-    private $translator;
-    private $settingsManager;
-    private $seoPage;
-    private $entityManager;
-
-    /**
-     * @var FilterService
-     */
-    private FilterService $imagineFilter;
-
-    /**
-     * @var UploaderHelper
-     */
-    private UploaderHelper $uploaderHelper;
-
     private static $excluded = [
         'search_geocode',
     ];
 
     public function __construct(
-        TranslatorInterface $translator,
-        SettingsManager $settingsManager,
-        SeoPageInterface $seoPage,
-        EntityManagerInterface $entityManager,
-        FilterService $imagineFilter,
-        UploaderHelper $uploaderHelper,
-        Packages $packages,
-        UrlHelper $urlHelper)
+        private readonly TranslatorInterface $translator,
+        private readonly SettingsManager $settingsManager,
+        private readonly SeoPageInterface $seoPage,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FilterService $imagineFilter,
+        private readonly UploaderHelper $uploaderHelper,
+        private readonly Packages $packages,
+        private readonly UrlHelper $urlHelper
+    )
     {
-        $this->translator = $translator;
-        $this->settingsManager = $settingsManager;
-        $this->seoPage = $seoPage;
-        $this->entityManager = $entityManager;
-        $this->imagineFilter = $imagineFilter;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->packages = $packages;
-        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -102,7 +79,8 @@ class SeoListener
             ->addMeta('property', 'og:locale', $locale)
             ->addMeta('property', 'og:site_name', 'CoopCycle');
 
-        switch ($request->attributes->get('_route')) {
+        $route = $request->attributes->get('_route');
+        switch ($route) {
             case 'restaurant':
                 $this->seoPageForRestaurant($request);
                 break;

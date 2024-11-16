@@ -581,6 +581,7 @@ pagination.next: Siguiente
 basics.save: Guardar
 basics.add: Añadir
 basics.edit: Modificar
+basics.editing: Editando
 basics.delete: Eliminar
 basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
 basics.cancel: Cancelar

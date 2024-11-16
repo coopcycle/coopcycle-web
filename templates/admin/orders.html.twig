@@ -1,5 +1,9 @@
 {% extends "admin.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.orders.title'|trans) }}
+{% endblock %}
+
 {% if is_granted('ROLE_ADMIN') %}
 {% form_theme order_export_form 'form/order_export.html.twig' %}
 {% endif %}
@@ -31,7 +35,7 @@
     </button>
     {% endif %}
     <a class="btn btn-default" href="{{ path('admin_foodtech_dashboard', { date: 'now'|date('Y-m-d') }) }}">
-      <i class="fa fa-th-large"></i> Dashboard
+      <i class="fa fa-th-large"></i> {{ 'foodtech.dashboard.title'|trans }}
     </a>
   </div>
 </div>

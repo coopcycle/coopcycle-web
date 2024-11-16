@@ -106,6 +106,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('restaurant_menu', array(LocalBusinessRuntime::class, 'resolveMenu')),
             new TwigFunction('order_phone_number', array(LocalBusinessRuntime::class, 'resolvePhoneNumber')),
             new TwigFunction('restaurant_opening_hours', array(LocalBusinessRuntime::class, 'openingHours')),
+            new TwigFunction('add_title_prefix', array(PageTitlePrefixResolver::class, 'addTitlePrefix')),
         );
     }
 
