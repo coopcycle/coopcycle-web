@@ -6,6 +6,22 @@ import { useTranslation } from 'react-i18next'
 import { stopAskingToEnableReusablePackaging, toggleReusablePackaging } from '../redux/actions'
 import LoopeatContext from '../loopeat'
 
+const PopupText = () => {
+
+  const { t } = useTranslation()
+
+  if (LoopeatContext.processingFee > 0 && LoopeatContext.processingFeeBehavior === 'on_returns') {
+    return (
+      <span>{ t('CART_ZERO_WASTE_POPUP_TEXT_WITH_FEE', {
+        name: LoopeatContext.name,
+        amount: (LoopeatContext.processingFee / 100).formatMoney() }) }
+      </span>
+    )
+  }
+
+  return <span>{ t('CART_ZERO_WASTE_POPUP_TEXT', { name: LoopeatContext.name }) }</span>
+}
+
 const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
 
   const { t } = useTranslation()
@@ -21,7 +37,7 @@ const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
       bodyOpenClassName="ReactModal__Body--open">
       <div>
         <p className="mb-4">
-        { t('CART_ZERO_WASTE_POPUP_TEXT', { name: LoopeatContext.name }) }
+        <PopupText />
         </p>
         <div className="d-flex align-items-center justify-content-between">
           <a href={ LoopeatContext.customerAppUrl } target="_blank" rel="noreferrer">{ t('LEARN_MORE') }</a>

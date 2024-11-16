@@ -179,7 +179,7 @@ class DeliveryManager
         $tasks = $this->createTasksFromRecurrenceRule($recurrenceRule, $startDate, $persist);
 
         $delivery = null;
-        if (count($tasks) > 1 && $tasks[0]->isPickup()) {
+        if (Delivery::canCreateWithTasks(...$tasks)) {
             $delivery = Delivery::createWithTasks(...$tasks);
             $store->addDelivery($delivery);
 

@@ -405,6 +405,7 @@
         "SUBSCRIPTION_CANCELLED": "Règle de récurrence annulée",
         "CART_ENABLE_ZERO_WASTE": "Activer l'option zéro déchet",
         "CART_ZERO_WASTE_POPUP_TEXT": "Bravo, votre panier contient un plat éligible à la livraison zéro-déchet avec notre partenaire « {{name}} ». Faites-vous livrer en boîtes consignées et retournez vos boîtes partout dans le réseau « {{name}} » ou à votre coursier à la prochaine commande. Vous pouvez désactiver cette option à tout moment.",
+        "CART_ZERO_WASTE_POPUP_TEXT_WITH_FEE": "Bravo, votre panier contient un plat éligible à la livraison zéro-déchet avec notre partenaire « {{name}} ». Faites-vous livrer en boîtes consignées et retournez vos boîtes gratuitement partout dans le réseau « {{name}} » ou à votre coursier à la prochaine commande (frais {{amount}}). Vous pouvez désactiver cette option à tout moment.",
         "LEARN_MORE": "En savoir plus",
         "I_UNDERSTAND": "Jʼai compris",
         "CART_LOOPEAT_MODAL_TOTAL_DEPOSIT": "Total consigne de la commande",

@@ -11,14 +11,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContextInitializer
 {
-    private $client;
-    private $logger;
-
     public function __construct(
-        Client $client,
+        private Client $client,
+        private int $processingFee,
+        private string $processingFeeBehavior,
         LoggerInterface $logger = null)
     {
-        $this->client = $client;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -35,6 +33,8 @@ class ContextInitializer
         $context->logoUrl = $initiative['logo_url'];
         $context->name = $initiative['name'];
         $context->customerAppUrl = $initiative['customer_app_url'];
+        $context->processingFee = $this->processingFee;
+        $context->processingFeeBehavior = $this->processingFeeBehavior;
         $context->formats = $this->client->getFormats($order->getRestaurant());
         $context->returns = $order->getLoopeatReturns();
         $context->returnsTotalAmount = $order->getReturnsAmountForLoopeat();

@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use Psr\Log\LoggerInterface;
 use Transporter\DTO\CommunicationMean;
 use Transporter\DTO\Mesurement;
 use Transporter\DTO\NameAndAddress;
@@ -22,7 +23,8 @@ class ImportFromPoint {
 
     public function __construct(
         private Geocoder $geocoder,
-        private PhoneNumberUtil $phoneUtil
+        private PhoneNumberUtil $phoneUtil,
+        private LoggerInterface $transporterLogger
     ) {
         $this->defaultCoordinates = new GeoCoordinates(0,0);
     }
@@ -35,10 +37,12 @@ class ImportFromPoint {
     {
         $nad = $point->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
         if (count($nad) !== 1) {
-            throw new TransporterException(sprintf(
+            $message = sprintf(
                 "Cannot handle multiple recipients: %d",
                 count($nad)
-            ));
+            );
+            $this->transporterLogger->critical($message);
+            throw new TransporterException($message);
         }
         $nad = array_shift($nad);
         $address = $this->addressFromNAD($nad);
@@ -106,12 +110,25 @@ class ImportFromPoint {
         NameAndAddress $nad
     ): Address
     {
-        $address = $this->geocoder->geocode($nad->getAddress());
+        $address = null;
+        try {
+            $address = $this->geocoder->geocode($nad->getAddress());
+        } catch (\Exception $e) {
+            $this->transporterLogger->warning(sprintf(
+                'Failed to geocode address %s: %s',
+                $nad->getAddress(),
+                $e->getMessage()
+            ));
+        }
 
         if (
             is_null($address) ||
             !$this->isInRange($this->defaultCoordinates, $address->getGeo())
         ) {
+            $this->transporterLogger->warning(sprintf(
+                'Address %s is not in default range or geocoding failed. Fallback to default coordinates',
+                $nad->getAddress()
+            ));
             $address = new Address();
             $address->setGeo($this->defaultCoordinates);
             $address->setStreetAddress('INVALID ADDRESS');

@@ -318,15 +318,38 @@ class RestaurantStats implements \Countable
             ->andWhere(
                 $qb->expr()->in('o.id', ':ids')
             )
+            ->andWhere(
+                $qb->expr()->in('p.state', ':payment_states')
+            )
             ->setParameter('ids', $this->ids)
+            ->setParameter('payment_states', [ PaymentInterface::STATE_COMPLETED, PaymentInterface::STATE_REFUNDED])
             ;
 
         $paymentMethods = $qb->getQuery()->getArrayResult();
-        $paymentMethods = array_column($paymentMethods, 'code', 'order_id');
+        $paymentMethods = array_reduce($paymentMethods, function ($carry, $item) {
+            if (!isset($carry[$item['order_id']])) {
+                $carry[$item['order_id']] = [];
+            }
+            $carry[$item['order_id']][] = $item['code'];
+
+            return $carry;
+        }, []);
 
         $this->result = array_map(function ($order) use ($paymentMethods) {
 
-            $order->paymentMethod = $paymentMethods[$order->id] ?? null;
+            $codes = $paymentMethods[$order->id] ?? [];
+
+            // Even if the order was partially paid with Edenred,
+            // we only show one payment method.
+            $code = array_reduce($codes, function ($carry, $item) {
+                if ('EDENRED' === $carry || 'EDENRED' === $item) {
+                    return 'EDENRED';
+                }
+
+                return $item;
+            }, null);
+
+            $order->paymentMethod = $code;
 
             return $order;
 

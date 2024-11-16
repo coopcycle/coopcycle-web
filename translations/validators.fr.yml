@@ -40,6 +40,8 @@ product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle 
 product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
 
 loopeat.insufficient_balance: Votre cagnotte %name% est insuffisante pour bénéficier de la consigne, il manque %amount% pour finaliser votre commande. Veuillez rendre des boîtes ou recréditer votre cagnotte.
+loopeat.request_failed: Erreur de connection avec %name%
+loopeat.insufficient_stock: Quantité d'emballages zéro déchet insuffisante pour « %name% »
 
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification
@@ -55,8 +57,6 @@ order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
 
 googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide. %error%
-
-loopeat.insufficient_stock: Quantité d'emballages zéro déchet insuffisante pour « %name% »
 
 spreadsheet.missing_column: Vous devez définir une colonne « %column% »
 spreadsheet.missing_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% »

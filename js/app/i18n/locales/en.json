@@ -473,6 +473,7 @@
         "RULE_PICKER_LINE_TASK_TYPE": "Type of task",
         "CART_ENABLE_ZERO_WASTE": "Enable zero-waste option",
         "CART_ZERO_WASTE_POPUP_TEXT": "Congratulations, your cart contains a dish eligible for zero-waste delivery with our partner « {{name}} ». Have it delivered in returnable boxes and return them anywhere in the « {{name}} » network or to your courier with your next order. You can disable this option at any time.",
+        "CART_ZERO_WASTE_POPUP_TEXT_WITH_FEE": "Congratulations, your cart contains a dish eligible for zero-waste delivery with our partner « {{name}} ». Have it delivered in returnable boxes and return them anywhere for free in the « {{name}} » network or to your courier with your next order (fee {{amount}}). You can disable this option at any time.",
         "CART_LOOPEAT_RETURNS_VALIDATE": "Validate and return to cart",
         "CART_LOOPEAT_RETURNS_SUMMARY": "Your order includes the following consigned boxes",
         "CART_LOOPEAT_RETURNS_TURN_OFF": "Cancel",

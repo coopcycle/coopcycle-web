@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Constraint;
 class LoopEatOrder extends Constraint
 {
     public $insufficientQuantity = 'loopeat.insufficient_quantity';
-    public $disabled = 'loopeat.disabled';
     public $insufficientBalance = 'loopeat.insufficient_balance';
     public $requestFailed = 'loopeat.request_failed';
 

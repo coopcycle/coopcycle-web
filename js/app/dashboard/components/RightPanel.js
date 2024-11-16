@@ -20,6 +20,8 @@ import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 import VehicleSelectMenu from './context-menus/VehicleSelectMenu'
+import { useRecurrenceRulesGenerateOrdersMutation } from '../../api/slice'
+import { selectSelectedDate } from '../../../shared/src/logistics/redux'
 
 
 const DashboardApp = ({ loadingAnim }) => {
@@ -29,6 +31,9 @@ const DashboardApp = ({ loadingAnim }) => {
   const toursEnabled = useSelector(selectAreToursEnabled)
   const couriersList = useSelector(selectCouriers)
   const splitDirection = useSelector(selectSplitDirection)
+  const date = useSelector(selectSelectedDate)
+
+  const [generateOrders, { isUninitialized, isLoading: isGeneratingOrdersForRecurrenceRules }] = useRecurrenceRulesGenerateOrdersMutation()
 
   const splitRef = useRef(),
     splitCollapseAction = () => {
@@ -42,7 +47,7 @@ const DashboardApp = ({ loadingAnim }) => {
     }
 
   const children = [
-    <UnassignedTasks key="split_unassigned" />,
+    <UnassignedTasks key="split_unassigned" isGeneratingOrdersForRecurrenceRules={ isGeneratingOrdersForRecurrenceRules } />,
     <UnassignedTours key="split_unassigned_tours" splitCollapseAction={ splitCollapseAction } />,
     <TaskLists key="split_task_lists" couriersList={ couriersList } />
   ]
@@ -62,6 +67,18 @@ const DashboardApp = ({ loadingAnim }) => {
       document.querySelector('.dashboard__loader').remove()
     }
   }, [])
+
+  useEffect(() => {
+    if (!isUninitialized) {
+      return
+    }
+
+    if (date.isBefore(new Date(), 'day')) {
+      return
+    }
+
+    generateOrders(date)
+  }, [date]);
 
   return (
     <div className="dashboard__aside-container">

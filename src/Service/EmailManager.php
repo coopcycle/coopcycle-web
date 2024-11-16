@@ -8,6 +8,8 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Task;
+use AppBundle\LoopEat\Context as LoopeatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -32,6 +34,8 @@ class EmailManager
         RendererInterface $mjml,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
+        private LoopeatContextInitializer $loopeatContextInitializer,
+        private LoopeatContext $loopeatContext,
         private LoggerInterface $logger,
         $transactionalAddress)
     {
@@ -169,6 +173,10 @@ class EmailManager
 
     public function createOrderAcceptedMessage(OrderInterface $order)
     {
+        if ($order->isLoopeat()) {
+            $this->loopeatContextInitializer->initialize($order, $this->loopeatContext);
+        }
+
         $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
         $body = $this->mjml->render($this->templating->render('emails/order/accepted.mjml.twig', [
             'order' => $order,

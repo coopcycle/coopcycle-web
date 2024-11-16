@@ -148,6 +148,9 @@ services:
   AppBundle\LoopEat\Context: ~
 
   AppBundle\LoopEat\ContextInitializer:
+    arguments:
+      $processingFee: "%env(int:LOOPEAT_PROCESSING_FEE)%"
+      $processingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -821,6 +824,7 @@ services:
     public: true
     arguments:
       $edifactFs: '@edi_messages_filesystem'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
 
   AppBundle\Action\Register:
     public: true
