@@ -25,15 +25,10 @@ use Symfony\Component\Form\AbstractType;
 
 class CheckoutCustomerType extends AbstractType
 {
-    private $canonicalizer;
-    private $customerRepository;
-
     public function __construct(
-        Canonicalizer $canonicalizer,
-        RepositoryInterface $customerRepository)
+        private readonly Canonicalizer $canonicalizer,
+        private readonly RepositoryInterface $customerRepository)
     {
-        $this->canonicalizer = $canonicalizer;
-        $this->customerRepository = $customerRepository;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
