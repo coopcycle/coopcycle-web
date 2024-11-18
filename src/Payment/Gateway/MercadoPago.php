@@ -8,7 +8,7 @@ use AppBundle\Service\MercadopagoManager;
 use Omnipay\Common\Message\ResponseInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
-class MercadoPago
+class MercadoPago implements GatewayInterface
 {
     public function __construct(private MercadopagoManager $mercadopagoManager)
     {}
