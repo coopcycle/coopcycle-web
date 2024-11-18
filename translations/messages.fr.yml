@@ -972,6 +972,8 @@ order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
 order.export.heading.refund_total: Remboursements
 order.export.heading.nonprofit: Association
+order.export.heading.incident_adjustments: Ajustements des incidents
+order.export.heading.incidents: Incidents
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher

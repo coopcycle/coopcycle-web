@@ -100,7 +100,10 @@ abstract class BaseExportCommand extends Command {
                         $input->getOption('s3-access-key'),
                         $input->getOption('s3-secret-key')
                     );
+                    break;
 
+                case 'file':
+                    file_put_contents($options['path'], $export);
                     break;
             }
         }
@@ -134,6 +137,10 @@ abstract class BaseExportCommand extends Command {
                         'bucket' => $parsed['bucket'],
                         'key' => $parsed['path']
                     ]
+                ];
+            case 'file':
+                return [
+                    'file', [ 'path' => $parsed['path'] ]
                 ];
             default:
                 throw new \Exception('Unsupported scheme');
