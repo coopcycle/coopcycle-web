@@ -13,6 +13,7 @@ use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -55,8 +56,16 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
             if (!$record['pickup.address']) {
                 $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', 'pickup', $options);
-            } else if (!$pickupAddress = $this->geocoder->geocode($record['pickup.address'])) {
-                $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', $record['pickup.address'], $options);
+            } else {
+                try {
+                    $pickupAddress = $this->geocoder->geocode($record['pickup.address']);
+                } catch (Exception $e) {
+                    $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', $record['pickup.address'], $options);
+                }
+
+                if (!$pickupAddress) {
+                    $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', $record['pickup.address'], $options);
+                }
             }
 
             if ($pickupAddress && $pickupAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
@@ -68,8 +77,16 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
             if (!$record['dropoff.address']) {
                 $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', 'dropoff', $options);
-            } else if (!$dropoffAddress = $this->geocoder->geocode($record['dropoff.address'])) {
-                $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', $record['dropoff.address'], $options);
+            } else {
+                try {
+                    $dropoffAddress = $this->geocoder->geocode($record['dropoff.address']);
+                } catch (Exception $e) {
+                    $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', $record['dropoff.address'], $options);
+                }
+
+                if (!$dropoffAddress) {
+                    $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', $record['dropoff.address'], $options);
+                }
             }
 
             if ($dropoffAddress && $dropoffAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {

@@ -13,6 +13,7 @@ use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
+use Exception;
 use Prophecy\Argument;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -40,6 +41,8 @@ class DeliverySpreadsheetParserTest extends TestCase
         $geocoder->geocode(Argument::type('string'))->will(function ($args) use ($address) {
             if ($args[0] === 'THIS ADDRESS IS INVALID') {
                 return null;
+            } else if ($args[0] === 'THIS ADDRESS WILL THROW') {
+                throw new Exception();    
             } else {
                 return $address;
             }
@@ -92,9 +95,43 @@ class DeliverySpreadsheetParserTest extends TestCase
         /** @var Delivery */
         $delivery = array_shift($data);
         $this->assertEquals($delivery->getPickup()->getAddress()->getStreetAddress(), 'INVALID ADDRESS');
+        $this->assertEquals($delivery->getPickup()->getAddress()->getGeo()->getLatitude(), 48.8534);
+        $this->assertEquals($delivery->getPickup()->getAddress()->getGeo()->getLongitude(), 2.3488);
         $this->assertContains('review-needed', $delivery->getPickup()->getTags());
         $this->assertContains('my-task-tag', $delivery->getPickup()->getTags());
         $this->assertContains('my-other-task-tag', $delivery->getPickup()->getTags());
+
+
+        $this->assertEquals($delivery->getDropoff()->getAddress()->getStreetAddress(), 'street address');
+    }
+
+    public function testWithAddressThatThrows()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_address_that_throws.csv');
+        $parseResult = $this->parser->parse($filename);
+        $data = $parseResult->getErrors();
+
+        $error = array_shift($data);
+
+        $this->assertEquals($error[0], 'dropoff.address: Impossible de géocoder l\'adresse THIS ADDRESS WILL THROW');
+    }
+
+    public function testWithAddressThatThrowsAndCreateDeliveryAnyway()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_address_that_throws.csv');
+        $parseResult = $this->parser->parse($filename, ['create_task_if_address_not_geocoded' => true]);
+                
+        $data = $parseResult->getData();
+
+        /** @var Delivery */
+        $delivery = array_shift($data);
+        
+        $this->assertEquals($delivery->getDropoff()->getAddress()->getGeo()->getLatitude(), 48.8534);
+        $this->assertEquals($delivery->getDropoff()->getAddress()->getGeo()->getLongitude(), 2.3488);
+        
+        $this->assertEquals($delivery->getPickup()->getAddress()->getGeo()->getLatitude(), 200);
+        $this->assertEquals($delivery->getPickup()->getAddress()->getGeo()->getLongitude(), 200);
+    
     }
 
     public function testWithEmptyPickupAndDropoffAddresses()
