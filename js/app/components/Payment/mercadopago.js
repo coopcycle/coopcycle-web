@@ -1,5 +1,7 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
+
+const BrickContainer = ({ callback }) => <div ref={ callback } id="cardPaymentBrick_container"></div>
 
 /**
  * see https://www.mercadopago.com.ar/developers/en/docs/checkout-bricks/card-payment-brick/introduction
@@ -16,10 +18,10 @@ export default {
   },
   async mount(el) {
     return new Promise((resolve) => {
-      render(<div id="cardPaymentBrick_container"></div>, el, async () => {
+      createRoot(el).render(<BrickContainer callback={ async () => {
         await this.createBrickContainer()
         resolve()
-      })
+      }} />)
     })
   },
   async createBrickContainer() {
