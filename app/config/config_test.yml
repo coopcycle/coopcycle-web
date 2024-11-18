@@ -66,6 +66,9 @@ oneup_flysystem:
         product_imports:
             local:
                 location: '/tmp'
+        delivery_imports:
+            local:
+                location: '/tmp'
 
 liip_imagine:
     resolvers:

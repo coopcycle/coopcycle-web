@@ -5,6 +5,7 @@ namespace AppBundle\Transporter;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use Psr\Log\LoggerInterface;
@@ -67,7 +68,7 @@ class ImportFromPoint {
         }
 
         if ($address->getGeo()->isEqualTo($this->defaultCoordinates)) {
-            $task->setTags('review-needed');
+            $task->setTags(Tag::ADDRESS_NEED_REVIEW_TAG);
             //TODO: Trigger a incident.
         }
 
