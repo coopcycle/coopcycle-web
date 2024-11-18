@@ -22,9 +22,9 @@ final class Version20241118103628 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         // create a tag for to flag tasks created with invalid addresses
         // soon to be replaced by an incident
-        $this->addSql("INSERT INTO tag ('name', slug, color, created_at, updated_at)
+        $this->addSql("INSERT INTO tag (name, slug, color, created_at, updated_at)
             SELECT 'review-needed', 'review-needed', '#e42b2b', NOW(), NOW()
-            WHERE NOT EXISTS (SELECT 'sluc' FROM tag WHERE 'sluc' = 'review-needed'
+            WHERE NOT EXISTS (SELECT slug FROM tag WHERE slug = 'review-needed')
         ");
 
     }
