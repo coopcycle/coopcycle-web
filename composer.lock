@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c5280cae3c97a1d7b1622cf4d056fd68",
+    "content-hash": "90a6e7f37ac4064a872c1b9f2df594d0",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -9976,42 +9976,30 @@
         },
         {
             "name": "mercadopago/dx-php",
-            "version": "2.6.0",
+            "version": "3.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mercadopago/sdk-php.git",
-                "reference": "be9cf1cb29f1a78f9dc15f5548f47af6a9a897e4"
+                "reference": "b03c3c789c7d4fedfcf7d54cf57993e77c95aabb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/be9cf1cb29f1a78f9dc15f5548f47af6a9a897e4",
-                "reference": "be9cf1cb29f1a78f9dc15f5548f47af6a9a897e4",
+                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/b03c3c789c7d4fedfcf7d54cf57993e77c95aabb",
+                "reference": "b03c3c789c7d4fedfcf7d54cf57993e77c95aabb",
                 "shasum": ""
             },
             "require": {
-                "doctrine/annotations": "^1.8",
-                "doctrine/common": "^2.6 || ^3.0",
-                "php": ">=7.1.0"
+                "php": ">=8.2"
             },
             "require-dev": {
-                "doctrine/orm": "^2.3",
-                "phpmd/phpmd": "@stable",
-                "phpunit/phpunit": "^7",
-                "sebastian/phpcpd": "*",
-                "squizlabs/php_codesniffer": "2.8.1",
-                "symfony/yaml": "~2.5",
-                "vlucas/phpdotenv": "^2.5"
+                "friendsofphp/php-cs-fixer": "^3.22",
+                "phpunit/phpunit": "^10.2",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "MercadoPago\\": [
-                        "src/MercadoPago/",
-                        "tests/",
-                        "src/MercadoPago/Generic/",
-                        "src/MercadoPago/Entities/",
-                        "src/MercadoPago/Entities/Shared/"
-                    ]
+                    "MercadoPago\\": "src/MercadoPago"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -10021,9 +10009,9 @@
             "description": "Mercado Pago PHP SDK",
             "homepage": "https://github.com/mercadopago/sdk-php",
             "support": {
-                "source": "https://github.com/mercadopago/sdk-php/tree/2.6.0"
+                "source": "https://github.com/mercadopago/sdk-php/tree/3.0.8"
             },
-            "time": "2023-08-03T17:33:17+00:00"
+            "time": "2024-09-03T12:26:16+00:00"
         },
         {
             "name": "moneyphp/money",
@@ -24518,18 +24506,18 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "behatch/contexts": 20,
-        "coopcycle/transporter": 20,
-        "drupal/core-vendor-hardening": 20,
         "league/geotools": 0,
+        "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
-        "shahonseven/php-color-hash": 20
+        "shahonseven/php-color-hash": 20,
+        "coopcycle/transporter": 20,
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

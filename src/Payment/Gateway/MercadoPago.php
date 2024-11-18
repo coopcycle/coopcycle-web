@@ -17,7 +17,8 @@ class MercadoPago implements GatewayInterface
     {
         $payment->setStripeToken($context['token']);
         $p = $this->mercadopagoManager->authorize($payment);
-        $payment->setCharge($p->id);
+
+        $payment->setMercadopagoPaymentId($p->id);
     }
 
     public function capture(PaymentInterface $payment)

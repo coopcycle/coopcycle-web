@@ -63,4 +63,34 @@ trait MercadopagoTrait
             return $this->details['mercadopago_payment_status'];
         }
     }
+
+    public function setMercadopagoIssuer($issuer)
+    {
+        $this->details = array_merge($this->details, [
+            'mercadopago_issuer' => $issuer
+        ]);
+    }
+
+    public function getMercadopagoIssuer()
+    {
+        if (isset($this->details['mercadopago_issuer'])) {
+
+            return $this->details['mercadopago_issuer'];
+        }
+    }
+
+    public function setMercadopagoPayerEmail($payerEmail)
+    {
+        $this->details = array_merge($this->details, [
+            'mercadopago_payer_email' => $payerEmail
+        ]);
+    }
+
+    public function getMercadopagoPayerEmail()
+    {
+        if (isset($this->details['mercadopago_payer_email'])) {
+
+            return $this->details['mercadopago_payer_email'];
+        }
+    }
 }
