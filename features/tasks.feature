@@ -52,7 +52,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages": [],
-            "barcode": "@string@",
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -84,7 +84,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "barcode": "@string@",
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -111,7 +111,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
-            "barcode": "@string@",
+            "barcode": "@array@",
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
@@ -143,7 +143,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
-            "barcode": "@string@",
+            "barcode": "@array@",
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
@@ -646,7 +646,7 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode":"@string@",
+        "barcode": "@array@",
         "createdAt":"@string@.isDateTime()"
       }
       """
@@ -1119,7 +1119,7 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode":"@string@",
+        "barcode": "@array@",
         "createdAt":"@string@.isDateTime()"
       }
       """
@@ -1202,7 +1202,7 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode":"@string@",
+        "barcode": "@array@",
         "createdAt":"@string@.isDateTime()"
       }
       """
@@ -1335,7 +1335,7 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
-            "barcode":"@string@",
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -1367,7 +1367,7 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
-            "barcode":"@string@",
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           }
         ],

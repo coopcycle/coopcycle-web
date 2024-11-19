@@ -62,7 +62,7 @@ Feature: Multi-step deliveries
           "comments": "1.50 kg",
           "weight":1500,
           "packages": [],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -91,7 +91,7 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": [],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -180,7 +180,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -217,7 +217,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -302,7 +302,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -339,7 +339,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -422,7 +422,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -459,7 +459,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@string@",
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
