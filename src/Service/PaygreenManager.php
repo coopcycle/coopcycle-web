@@ -8,7 +8,9 @@ use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
+use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 
 class PaygreenManager
 {
@@ -16,6 +18,8 @@ class PaygreenManager
         private PaygreenClient $paygreenClient,
         private OrderNumberAssignerInterface $orderNumberAssigner,
         private Hashids $hashids8,
+        private PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private PaymentFactoryInterface $paymentFactory,
         private string $country)
     {}
 
@@ -25,20 +29,6 @@ class PaygreenManager
         $response = $this->paygreenClient->authenticate();
         $data = json_decode($response->getBody()->getContents())->data;
         $this->paygreenClient->setBearer($data->token);
-    }
-
-    public function isPaymentOrderAuthorized(string $paymentOrderId): bool
-    {
-        $this->authenticate();
-
-        $response = $this->paygreenClient->getPaymentOrder($paymentOrderId);
-        if ($response->getStatusCode() === 200) {
-            $data = json_decode($response->getBody()->getContents(), true);
-
-            return $data['data']['status'] === 'payment_order.authorized';
-        }
-
-        return false;
     }
 
     public function capture(PaymentInterface $payment)
@@ -177,7 +167,7 @@ class PaygreenManager
             $buyer->setEmail($customer->getEmailCanonical());
             $buyer->setFirstName(!empty($firstName) ? $firstName : 'N/A');
             $buyer->setLastName(!empty($lastName) ? $lastName : 'N/A');
-            $buyer->setBillingAddress($address);
+            // $buyer->setBillingAddress($address);
 
             $response = $this->paygreenClient->createBuyer($buyer);
             $data = json_decode($response->getBody()->getContents(), true);
@@ -191,12 +181,59 @@ class PaygreenManager
         return $buyer;
     }
 
+    /**
+     * @return array|null
+     */
     public function getPaymentOrder($id)
     {
         $this->authenticate();
 
         $response = $this->paygreenClient->getPaymentOrder($id);
 
-        return json_decode($response->getBody()->getContents(), true);
+        if ($response->getStatusCode() === 200) {
+            $payload = json_decode($response->getBody()->getContents(), true);
+
+            return $payload['data'];
+        }
+
+        return null;
+    }
+
+    public function getPaymentsFromPaymentOrder($id)
+    {
+        $po = $this->getPaymentOrder($id);
+
+        $payments = [];
+        foreach ($po['transactions'] as $transaction) {
+            if ('transaction.authorized' === $transaction['status']) {
+                foreach ($transaction['operations'] as $operation) {
+                    if ('operation.authorized' === $operation['status']) {
+
+                        $paymentMethodCode = $operation['instrument']['platform'];
+                        if ('bank_card' === $paymentMethodCode) {
+                            $paymentMethodCode = 'card';
+                        }
+
+                        $method = $this->paymentMethodRepository->findOneByCode(strtoupper($paymentMethodCode));
+
+                        $payment = $this->paymentFactory->createWithAmountAndCurrencyCode(
+                            $operation['amount'],
+                            strtoupper($po['currency'])
+                        );
+                        $payment->setMethod($method);
+                        $payment->setState(PaymentInterface::STATE_AUTHORIZED);
+
+                        $payment->setDetails([
+                            'paygreen_payment_order_id' => $id,
+                            'paygreen_operation_id' => $operation['id'],
+                        ]);
+
+                        $payments[] = $payment;
+                    }
+                }
+            }
+        }
+
+        return $payments;
     }
 }

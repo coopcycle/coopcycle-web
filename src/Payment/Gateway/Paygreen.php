@@ -14,15 +14,28 @@ class Paygreen implements GatewayInterface
 
     public function authorize(PaymentInterface $payment, array $context = [])
     {
-        // With Paygreen, the payment has already been authorized
+        // With Paygreen, the payment has already been authorized client-side
         // We double-check the status of the payment
-        if (!$this->paygreenManager->isPaymentOrderAuthorized($context['token'])) {
-            throw new \Exception('Invalid Payment Order');
+        if (!$po = $this->paygreenManager->getPaymentOrder($context['token'])) {
+            throw new \Exception(sprintf('Payment Order "%s" not found', $context['token']));
         }
 
-        // TODO Retrieve PaymentOrder, and update payments accordingly
-        // We need to check inside transactions.operations.instrument
-        // to find the amount & platform of each operation
+        if ($po['status'] !== 'payment_order.authorized') {
+            throw new \Exception(sprintf('Payment Order "%s" is not authorized', $context['token']));
+        }
+
+        // There may have been multiple Paygreen operations
+        // We convert them to Payment objects
+        $payments = $this->paygreenManager->getPaymentsFromPaymentOrder($context['token']);
+
+        $order = $payment->getOrder();
+        foreach ($order->getPayments() as $p) {
+            $order->removePayment($p);
+        }
+
+        foreach ($payments as $p) {
+            $order->addPayment($p);
+        }
     }
 
     public function capture(PaymentInterface $payment)
