@@ -44,8 +44,8 @@ class ExportOrdersCommand extends BaseExportCommand
      */
     private function formatRow(array $row): array {
 
-        if (count($row) !== 26) {
-            throw new \Exception('Invalid row, expected 26 columns');
+        if (count($row) !== 28) {
+            throw new \Exception('Invalid row, expected 28 columns');
         }
 
         $__s = fn (string $s): ?string => trim($s) ?: null;
@@ -69,8 +69,10 @@ class ExportOrdersCommand extends BaseExportCommand
             'platform_fee' => $__m($row[21]),
             'refunds' => $__m($row[22]),
             'net_revenue' => $__m($row[23]),
-            'billing_method' => $__s($row[24]),
-            'applied_billing' => $__s($row[25]),
+            'incident_adjustments' => $__m($row[24]),
+            'incidents' => $__s($row[25]),
+            'billing_method' => $__s($row[26]),
+            'applied_billing' => $__s($row[27]),
         ];
     }
 

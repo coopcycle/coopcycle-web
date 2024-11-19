@@ -132,6 +132,7 @@
         "ADMIN_VEHICLE_WAREHOUSE_LABEL": "Almacén",
         "ADMIN_VEHICLE_NO_WAREHOUSE": "Por favor, cree un almacén antes de agregar vehículos: ¡cada vehículo se encuentra en un almacén!",
         "ADMIN_VEHICLE_NO_VEHICLE": "Por favor, cree un vehículo antes de agregar remolques: ¡cada remolque es compatible con vehículos específicos!",
+        "ADMIN_VEHICLE_EMISSIONS_LABEL": "Emisiones de CO2 (g/km)",
         "USER_EDIT_ENABLED_LABEL": "Activado",
         "USER_EDIT_DISABLED_LABEL": "Desactivado",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Pedido creado",

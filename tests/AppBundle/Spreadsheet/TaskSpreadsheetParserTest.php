@@ -19,7 +19,6 @@ use Prophecy\Argument;
 
 class TaskSpreadsheetParserTest extends TestCase
 {
-    private $geocoder;
 
     protected function createParser(): AbstractSpreadsheetParser
     {

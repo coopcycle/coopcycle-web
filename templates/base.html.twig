@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
   <head>
+    {# SEO attributes are configured via SeoListener service #}
+    {% block prepare_title %}
+      {# Use this block to customise base page title set by SeoListener service #}
+    {% endblock %}
     {{ sonata_seo_title() }}
     {{ sonata_seo_link_canonical() }}
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">

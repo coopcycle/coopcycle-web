@@ -1,5 +1,9 @@
 {% extends "base.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.title'|trans) }}
+{% endblock %}
+
 {% block banner %}{% endblock %}
 
 {% block menu %}

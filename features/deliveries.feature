@@ -1458,3 +1458,31 @@ Feature: Deliveries
         "trackingUrl": @string@
       }
       """
+
+  Scenario: Send delivery CSV to async import endpoint
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "text/csv"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/stores/1/deliveries/import_async" with body:
+      """
+        "pickup.address","pickup.timeslot","dropoff.address","dropoff.address.name","dropoff.address.telephone","dropoff.comments","dropoff.timeslot"
+        "Eulogio Serdan Kalea, 22, 01012 Vitoria-Gasteiz, Espagne","2024-10-31 17:00 - 2024-10-31 20:00","Aldabe 5, 3 ezk Vitoria-Gasteiz","Amaia Marañon","652709377","","2024-10-31 17:00 - 2024-10-31 20:00"
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/DeliveryImportQueue",
+        "@id": "@string@.startsWith('/api/delivery_import_queues/')",
+        "@type": "DeliveryImportQueue"
+      }
+      """ 
+    

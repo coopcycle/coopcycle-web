@@ -282,7 +282,7 @@ describe('Failed checkout; restaurant is closed', () => {
 
             cy.get('form[name="checkout_payment"]').submit()
 
-            cy.wait('@createStripePaymentIntent')
+            cy.wait('@createStripePaymentIntent', {timeout: 5000})
 
             cy.get('#order-timeline')
               .contains('Commande en attente de validation')

@@ -2,13 +2,18 @@
 
 namespace AppBundle\Spreadsheet;
 
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\SettingsManager;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -16,56 +21,78 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 {
     use ParsePackagesTrait;
+    use ParseMetadataTrait;
 
-    private $geocoder;
-    private $phoneNumberUtil;
-    private $countryCode;
-    private $entityManager;
-    private $slugify;
-    private $translator;
+    private $defaultCoordinates;
 
-    public function __construct(Geocoder $geocoder, PhoneNumberUtil $phoneNumberUtil, string $countryCode,
-        EntityManagerInterface $entityManager, SlugifyInterface $slugify, TranslatorInterface $translator)
-    {
-        $this->geocoder = $geocoder;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->countryCode = $countryCode;
-        $this->entityManager = $entityManager;
-        $this->slugify = $slugify;
-        $this->translator = $translator;
-    }
+    public function __construct(
+        private Geocoder $geocoder,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private string $countryCode,
+        private EntityManagerInterface $entityManager,
+        private SlugifyInterface $slugify,
+        private TranslatorInterface $translator,
+        private SettingsManager $settingsManager
+    )
+    {  }
 
     /**
      * @inheritdoc
      */
     public function parseData(array $data, array $options = []): SpreadsheetParseResult
     {
+        $this->setup();
         $parseResult = new SpreadsheetParseResult();
+
+        $options = array_merge(
+            ['create_task_if_address_not_geocoded' => false],
+            $options
+        );
 
         foreach ($data as $index=>$record) {
             $rowNumber = $index + 1;
 
-            if (!$pickupAddress = $this->geocoder->geocode($record['pickup.address'])) {
-                $translatedError = $this->translator->trans('import.address.geocode.error', [
-                    '%failed_address%' => $record['pickup.address']
-                ]);
-                $parseResult->addErrorToRow($rowNumber,
-                    sprintf('pickup.address: %s', $translatedError)
-                );
-            }
-
-            if (!$dropoffAddress = $this->geocoder->geocode($record['dropoff.address'])) {
-                $translatedError = $this->translator->trans('import.address.geocode.error', [
-                    '%failed_address%' => $record['dropoff.address']
-                ]);
-                $parseResult->addErrorToRow($rowNumber,
-                    sprintf('dropoff.address: %s', $translatedError)
-                );
-            }
-
             $delivery = new Delivery();
 
+            if (!$record['pickup.address']) {
+                $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', 'pickup', $options);
+            } else {
+                try {
+                    $pickupAddress = $this->geocoder->geocode($record['pickup.address']);
+                } catch (Exception $e) {
+                    $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', $record['pickup.address'], $options);
+                }
+
+                if (!$pickupAddress) {
+                    $pickupAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'pickup.address', $record['pickup.address'], $options);
+                }
+            }
+
+            if ($pickupAddress && $pickupAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
+                $delivery->getPickup()->addTags(Tag::ADDRESS_NEED_REVIEW_TAG);
+                //TODO: Trigger a incident.
+            }
+
             $delivery->getPickup()->setAddress($pickupAddress);
+
+            if (!$record['dropoff.address']) {
+                $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', 'dropoff', $options);
+            } else {
+                try {
+                    $dropoffAddress = $this->geocoder->geocode($record['dropoff.address']);
+                } catch (Exception $e) {
+                    $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', $record['dropoff.address'], $options);
+                }
+
+                if (!$dropoffAddress) {
+                    $dropoffAddress = $this->handleFaultyAddress($parseResult, $rowNumber, 'dropoff.address', $record['dropoff.address'], $options);
+                }
+            }
+
+            if ($dropoffAddress && $dropoffAddress->getGeo()->isEqualTo($this->defaultCoordinates)) {
+                $delivery->getDropoff()->addTags(Tag::ADDRESS_NEED_REVIEW_TAG);
+                //TODO: Trigger a incident.
+            }
 
             $delivery->getDropoff()->setAddress($dropoffAddress);
 
@@ -86,6 +113,14 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->enhanceTask($delivery->getDropoff(), 'dropoff', $record);
             } catch(NumberParseException $e) {
                 $parseResult->addErrorToRow($rowNumber, $e->getMessage());
+            }
+
+            if (isset($record['pickup.metadata']) && !empty($record['pickup.metadata'])) {
+                $this->parseAndApplyMetadata($delivery->getPickup(), $record['pickup.metadata']);
+            }
+
+            if (isset($record['dropoff.metadata']) && !empty($record['dropoff.metadata'])) {
+                $this->parseAndApplyMetadata($delivery->getDropoff(), $record['dropoff.metadata']);
             }
 
             if (isset($record['weight']) && is_numeric($record['weight'])) {
@@ -110,6 +145,32 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
         }
         return $parseResult;
+    }
+
+    private function setup(): void
+    {
+      $pos = explode(',', $this->settingsManager->get('latlng') ?? '');
+        if (count($pos) !== 2) {
+            $pos = [0, 0];
+        }
+        $this->defaultCoordinates = new GeoCoordinates($pos[0], $pos[1]);
+    }
+
+    private function handleFaultyAddress(SpreadsheetParseResult $parseResult, int $rowNumber, string $recordKey, string $erroredRecordString, array $options) {
+        if ($options['create_task_if_address_not_geocoded']) {
+            $address = new Address();
+            $address->setGeo($this->defaultCoordinates);
+            $address->setStreetAddress('INVALID ADDRESS');
+            return $address;
+        } else {
+            $translatedError = $this->translator->trans('import.address.geocode.error', [
+                '%failed_address%' => $erroredRecordString
+            ]);
+            $parseResult->addErrorToRow($rowNumber,
+                sprintf('%s: %s', $recordKey, $translatedError)
+            );
+            return null;
+        }
     }
 
     private function parseTimeRange($data, $key)
@@ -168,7 +229,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         if (!empty($tagsAsString)) {
             $slugs = explode(' ', $tagsAsString);
             $tags = array_map([$this->slugify, 'slugify'], $slugs);
-            $task->setTags($tags);
+            $task->addTags($tags);
         }
     }
 
@@ -183,6 +244,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'pickup.comments' => 'Fragile',
                 'pickup.timeslot' => '2019-12-12 10:00 - 2019-12-12 11:00',
                 'pickup.tags' => 'warn heavy',
+                'pickup.metadata' => 'external_system_id=10 my_meta=value',
                 'dropoff.address' => '58 av parmentier paris',
                 'dropoff.address.name' => 'Awesome business',
                 'dropoff.address.description' => 'Buzzer AB12',
@@ -191,6 +253,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn heavy',
+                'dropoff.metadata' => 'external_system_id=10',
                 'weight' => '5.5'
             ],
             [
