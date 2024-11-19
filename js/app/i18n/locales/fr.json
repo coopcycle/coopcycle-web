@@ -280,6 +280,7 @@
         "ADMIN_VEHICLE_WAREHOUSE_LABEL": "Entrepôt",
         "ADMIN_VEHICLE_NO_WAREHOUSE": "Veuillez créer un entrepôt avant d'ajouter des véhicules : chaque véhicule se trouve dans un entrepôt !",
         "ADMIN_VEHICLE_NO_VEHICLE": "Veuillez créer un véhicule avant d'ajouter des remorques : chaque remorque est compatible avec des véhicules donnés !",
+        "ADMIN_VEHICLE_EMISSIONS_LABEL": "Émissions de CO2 (g/km)",
         "ALLERGEN": {
           "CEREALS_CONTAINING_GLUTEN": "Céréales contenant du gluten",
           "CRUSTACEANS": "Crustacés",

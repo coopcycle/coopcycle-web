@@ -85,6 +85,7 @@
         "ADMIN_DASHBOARD_INCLUDE_TASKS_FROM_ORDER": "Includi tutte le attività dall'ordini",
         "ADMIN_DASHBOARD_TOOLTIP_TOTAL": "Totale",
         "ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP": "Nascondi/mostra sulla mappa",
+        "ADMIN_VEHICLE_EMISSIONS_LABEL": "Emissioni di CO2 (g/km)",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Ordine creato",
         "ORDER_TIMELINE_ACCEPTED_TITLE": "{{date}} Ordine confermato",
         "ORDER_TIMELINE_PICKED_TITLE": "{{date}} Ordine ritirato",

@@ -5,6 +5,7 @@ namespace AppBundle\Doctrine\EventSubscriber;
 use AppBundle\Entity\TaskList;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Message\PushNotification;
@@ -12,6 +13,7 @@ use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -32,6 +34,7 @@ class TaskListSubscriber implements EventSubscriber
         private readonly TranslatorInterface $translator,
         private readonly RoutingInterface $routing,
         private readonly TaskListRepository $taskListRepository,
+        private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger
     )
     {
@@ -49,8 +52,21 @@ class TaskListSubscriber implements EventSubscriber
     private function calculate(TaskList $taskList)
     {
         $coordinates = [];
+        $tasks = [];
+        $vehicle = $taskList->getVehicle(); 
+        
+        if (!is_null($vehicle)) {
+            $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
+        }
+
         foreach ($taskList->getTasks() as $task) {
+            $tasks[] = $task;
             $coordinates[] = $task->getAddress()->getGeo();
+        }
+
+        // going back to the warehouse
+        if (!is_null($vehicle)) {
+            $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
         }
 
         if (count($coordinates) <= 1) {
@@ -61,6 +77,18 @@ class TaskListSubscriber implements EventSubscriber
             $taskList->setDistance($this->routing->getDistance(...$coordinates));
             $taskList->setDuration($this->routing->getDuration(...$coordinates));
             $taskList->setPolyline($this->routing->getPolyline(...$coordinates));
+
+            if (!is_null($vehicle)) {
+                $route = $this->routing->route(...$coordinates)['routes'][0];
+                $legs = array_slice($route["legs"], 0, -1);
+                foreach ($legs as $index => $leg) {
+                    $task = $taskList->getTasks()[$index];
+                    $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
+                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
+                    $task->setCo2Emissions($emissions);
+                    $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
+                }
+            }
         }
     }
 
@@ -73,12 +101,22 @@ class TaskListSubscriber implements EventSubscriber
         }
     }
 
+    public function addTaskList(TaskList $taskList) {
+        // WARNING
+        // Do not use in_array() or array_search()
+        // It causes error "Nesting level too deep - recursive dependency?"
+        $oid = spl_object_hash($taskList);
+        if (!isset($this->taskLists[$oid])) {
+            $this->taskLists[$oid] = $taskList;
+        }
+    }
+
     /**
      * Performs TaskCollection calculations when items have been modified.
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $this->taskLists = [];
+        $this->taskLists = []; // reset properly the taskLists at each call, the listener may keep the array content between requests
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -93,7 +131,6 @@ class TaskListSubscriber implements EventSubscriber
             return $entity instanceof Item;
         });
 
-        $taskLists = [];
         foreach ($taskListItems as $taskListItem) {
 
             $taskList = $taskListItem->getParent();
@@ -105,16 +142,28 @@ class TaskListSubscriber implements EventSubscriber
                 $taskList = $oldValue;
             }
 
-            // WARNING
-            // Do not use in_array() or array_search()
-            // It causes error "Nesting level too deep - recursive dependency?"
-            $oid = spl_object_hash($taskList);
-            if (!isset($taskLists[$oid])) {
-                $taskLists[$oid] = $taskList;
+            $this->addTaskList($taskList);
+        }
+
+        $taskListsInChangeSet = array_filter($entities, function ($entity) {
+            return $entity instanceof TaskList;
+        });
+
+        foreach ($taskListsInChangeSet as $taskList) {
+            $entityChangeSet = $uow->getEntityChangeSet($taskList);
+
+            if(!isset($entityChangeSet['vehicle'])) {
+                continue;
+            }
+
+            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed 
+
+            if ($oldValue !== $newValue) {
+                $this->addTaskList($taskList);
             }
         }
 
-        foreach ($taskLists as $taskList) {
+        foreach ($this->taskLists as $taskList) { // @phpstan-ignore-line
 
             $this->logger->debug('TaskList was modified, recalculating…');
             $this->calculate($taskList);
@@ -122,8 +171,6 @@ class TaskListSubscriber implements EventSubscriber
             if ($uow->isInIdentityMap($taskList)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskList::class), $taskList);
             }
-
-            $this->taskLists[] = $taskList;
         }
     }
 

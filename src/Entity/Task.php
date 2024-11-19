@@ -489,6 +489,17 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     */
     private $incidents;
 
+    /**
+    * CO2 emissions from the previous task/warehouse to accomplish this task, in g
+    */
+    private $co2Emissions = 0;
+
+    /**
+    * Distance from previous task, in meter
+    */
+    private $distanceFromPrevious = 0;
+
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
@@ -1293,6 +1304,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
     /**
      * @return void
      */
@@ -1310,7 +1322,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
             $task->setAfter($after);
         }
     }
-
 
     /**
     * @Groups({"barcode"})
@@ -1345,5 +1356,45 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         );
 
         return $barcodes;
+    }
+    
+    /**
+     * Get the value of co2Emissions
+     */ 
+    public function getCo2Emissions()
+    {
+        return $this->co2Emissions;
+    }
+
+    /**
+     * Set the value of co2Emissions
+     *
+     * @return  self
+     */ 
+    public function setCo2Emissions($co2Emissions)
+    {
+        $this->co2Emissions = $co2Emissions;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of distanceFromPrevious
+     */ 
+    public function getDistanceFromPrevious()
+    {
+        return $this->distanceFromPrevious;
+    }
+
+    /**
+     * Set the value of distanceFromPrevious
+     *
+     * @return  self
+     */ 
+    public function setDistanceFromPrevious($distanceFromPrevious)
+    {
+        $this->distanceFromPrevious = $distanceFromPrevious;
+
+        return $this;
     }
 }

@@ -8,6 +8,7 @@
     <field name="maxVolumeUnits" type="integer" column="max_volume_units"/>
     <field name="maxWeight" type="integer" column="max_weight"/>
     <field name="color" length="7" type="string" column="color"/>
+    <field name="co2emissions" type="integer" column="co2_emissions" default="0"/>
     <field name="isElectric" type="boolean" column="is_electric"/>
     <field name="electricRange" type="integer" column="electric_range" nullable="true"/>
     <many-to-one field="warehouse" target-entity="AppBundle\Entity\Warehouse" inversed-by="vehicles"></many-to-one>
