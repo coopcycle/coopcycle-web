@@ -81,7 +81,7 @@ use AppBundle\Action\Store\BulkAsync as DeliveryBulkAsync;
  *       "deserialize"=false,
  *       "input_formats"={"csv"={"text/csv"}},
  *       "controller"= DeliveryBulkAsync::class,
- *       "security"="is_granted('ROLE_OAUTH2_TASKS') or is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES') or is_granted('ROLE_ADMIN')"
  *     },
  *   },
  *   subresourceOperations={
