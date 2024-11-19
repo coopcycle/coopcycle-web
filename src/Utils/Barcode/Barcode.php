@@ -9,6 +9,7 @@ final class Barcode {
 
     public function __construct(
         private readonly string $raw_barcode,
+        private readonly string $hash,
         private readonly ?int   $entity_type = null,
         private readonly ?int   $entity_id = null,
         private readonly ?int   $package_task_id = null,
@@ -49,6 +50,11 @@ final class Barcode {
     public function getRawBarcode(): string
     {
         return $this->raw_barcode;
+    }
+
+    public function getHash(): string
+    {
+        return $this->hash;
     }
 
     public function __toString(): string

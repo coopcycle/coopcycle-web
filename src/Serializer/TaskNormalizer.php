@@ -73,11 +73,8 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
-        if (!isset($object->getMetadata()['barcode'])) {
-            $data['barcode'] = BarcodeUtils::getRawBarcodeFromTask($object);
-        } else {
-            $data['barcode'] = $object->getMetadata()['barcode'];
-        }
+        $barcode = BarcodeUtils::getRawBarcodeFromTask($object);
+        $data['barcode'] = [$barcode, BarcodeUtils::getHash($barcode)];
 
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
             $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];

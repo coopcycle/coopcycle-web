@@ -1328,8 +1328,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     */
     public function getBarcodes(): array
     {
+        $task_code = BarcodeUtils::getBarcodeFromTask($this);
         $barcodes = [
-            'task' => BarcodeUtils::getBarcodeFromTask($this)->getRawBarcode(),
+            'task' => [$task_code->getRawBarcode(), $task_code->getHash()],
             'packages' => [],
         ];
 
@@ -1347,7 +1348,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
                     'color' => $pkg->getColor(),
                     'short_code' => $pkg->getShortCode(),
                     'barcodes' => array_map(
-                        fn(Barcode $code) => $code->getRawBarcode(),
+                        fn(Barcode $code) => [$code->getRawBarcode(), $code->getHash()],
                         $barcodes
                     )
                 ];
@@ -1357,10 +1358,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $barcodes;
     }
-    
+
     /**
      * Get the value of co2Emissions
-     */ 
+     */
     public function getCo2Emissions()
     {
         return $this->co2Emissions;
@@ -1370,7 +1371,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * Set the value of co2Emissions
      *
      * @return  self
-     */ 
+     */
     public function setCo2Emissions($co2Emissions)
     {
         $this->co2Emissions = $co2Emissions;
@@ -1380,7 +1381,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * Get the value of distanceFromPrevious
-     */ 
+     */
     public function getDistanceFromPrevious()
     {
         return $this->distanceFromPrevious;
@@ -1390,7 +1391,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * Set the value of distanceFromPrevious
      *
      * @return  self
-     */ 
+     */
     public function setDistanceFromPrevious($distanceFromPrevious)
     {
         $this->distanceFromPrevious = $distanceFromPrevious;

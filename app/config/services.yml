@@ -1519,3 +1519,11 @@ services:
   Picqer\Barcode\BarcodeGeneratorSVG: ~
 
   AppBundle\Utils\Barcode\BarcodeUtils: ~
+
+  AppBundle\EventSubscriber\BarcodeUtilsSubscriber:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+      $salt: '%env(APP_SECRET)%'
+    tags:
+      - { name: kernel.event_subscriber }
+

@@ -10,17 +10,27 @@ class BarcodeUtils {
     const WITHOUT_PACKAGE = '6767%03d%d%d8076';
     const WITH_PACKAGE =    '6767%03d%d%dP%dU%d8076';
 
+    private static string $appName = "";
+    private static string $salt = "";
+
+    public static function init(string $appName, string $salt): void {
+        self::$appName = $appName;
+        self::$salt = $salt;
+    }
+
     public static function parse(string $barcode): Barcode {
         $matches = [];
+        $hash = self::getHash($barcode);
         if (!preg_match(
             '/6767(?<instance>[0-9]{3})(?<entity>[1-2])(?<id>[0-9]+)(P(?<package>[0-9]+))?(U(?<unit>[0-9]+))?8076/',
             $barcode,
             $matches,
             PREG_OFFSET_CAPTURE
-        )) { return new Barcode($barcode); }
+        )) { return new Barcode($barcode, $hash); }
 
         return new Barcode(
             $barcode,
+            $hash,
             $matches['entity'][0],
             $matches['id'][0],
             $matches['package'][0] ?? null,
@@ -79,4 +89,8 @@ class BarcodeUtils {
         );
     }
 
+    public static function getHash(string $barcode): string
+    {
+        return hash('xxh3', sprintf("%s%s%s", self::$appName, self::$salt, $barcode));
+    }
 }
