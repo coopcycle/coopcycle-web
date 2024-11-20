@@ -68,6 +68,12 @@ security:
             methods: [ GET, POST, PUT, DELETE ]
             stateless: true
             bearer_token: true
+        
+        api_deliveries_import_async:
+            pattern:   ^api/deliveries/import_async$
+            methods: [ POST ]
+            stateless: true
+            bearer_token: true
 
         api_tasks_import:
             pattern:   ^/api/tasks/import

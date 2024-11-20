@@ -1,9 +1,10 @@
 <?php
 
-namespace AppBundle\Action\Store;
+namespace AppBundle\Action\Delivery;
 
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Security\TokenStoreExtractor;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -20,14 +21,18 @@ class BulkAsync
         protected MessageBusInterface $messageBus,
         protected RequestStack $requestStack,
         protected Hashids $hashids8,
-        protected Filesystem $deliveryImportsFilesystem
+        protected Filesystem $deliveryImportsFilesystem,
+        protected TokenStoreExtractor $storeExtractor,
         )
     {}
 
-    public function __invoke($data)
+    public function __invoke()
     {
         $queue = new DeliveryImportQueue();
-        $queue->setStore($data);
+
+        $store = $this->storeExtractor->extractStore();
+
+        $queue->setStore($store);
 
         $this->entityManager->persist($queue);
         $this->entityManager->flush();
