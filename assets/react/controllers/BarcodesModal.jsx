@@ -3,8 +3,8 @@ import { Modal, Card, Descriptions, Col, Row, Tooltip, Badge } from 'antd'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 
-function _generateLabelURL(barcode, hash) {
-  return window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&hash=' + hash
+function _generateLabelURL(barcode, token) {
+  return window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&token=' + token
 }
 
 function _shouldOpenModal(items) {
@@ -22,7 +22,7 @@ function _shouldOpenModal(items) {
   return totalItems !== 1
 }
 
-function GenericBarcode({ barcode: [barcode, hash] }) {
+function GenericBarcode({ barcode: [barcode, token] }) {
   const { t } = useTranslation()
   return (
     <Card
@@ -37,7 +37,7 @@ function GenericBarcode({ barcode: [barcode, hash] }) {
       actions={[
         <a
           key="generic_barcode_view"
-          href={_generateLabelURL(barcode, hash)}
+          href={_generateLabelURL(barcode, token)}
           target="_blank"
           rel="noreferrer">
           View
@@ -48,7 +48,7 @@ function GenericBarcode({ barcode: [barcode, hash] }) {
   )
 }
 
-function PackageBarcode({ barcode: [barcode, hash], extra, index }) {
+function PackageBarcode({ barcode: [barcode, token], extra, index }) {
   return (
     <Card
       title={`Package #${index}`}
@@ -57,7 +57,7 @@ function PackageBarcode({ barcode: [barcode, hash], extra, index }) {
       actions={[
         <a
           key={`package_barcode_${index}_view`}
-          href={_generateLabelURL(barcode, hash)}
+          href={_generateLabelURL(barcode, token)}
           target="_blank"
           rel="noreferrer">
           View

@@ -292,7 +292,7 @@ class TaskModalContent extends React.Component {
       }
     }
 
-    const [barcode, hash] = task.barcode
+    const {barcode, label:{token}} = task.barcode
 
     return (
       <div>
@@ -302,7 +302,7 @@ class TaskModalContent extends React.Component {
           </a>
         </div>
         <div className="collapse" id="task_barcode" aria-expanded="false">
-          <a href={window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&hash=' + hash } target="_blank" rel="noreferrer">
+          <a href={window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&token=' + token } target="_blank" rel="noreferrer">
             <svg className="barcode img-thumbnail img-responsive center-block"
               data-format="code128"
               data-height="60"

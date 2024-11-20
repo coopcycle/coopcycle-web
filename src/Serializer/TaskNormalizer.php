@@ -13,6 +13,7 @@ use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -24,7 +25,9 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         private TagManager $tagManager,
         private UserManagerInterface $userManager,
         private Geocoder $geocoder,
-        private EntityManagerInterface $entityManager)
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator
+    )
     {}
 
     public function normalize($object, $format = null, array $context = array())
@@ -74,7 +77,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $barcode = BarcodeUtils::getRawBarcodeFromTask($object);
-        $data['barcode'] = [$barcode, BarcodeUtils::getHash($barcode)];
+        $barcode_token = BarcodeUtils::getToken($barcode);
+        $data['barcode'] = [
+            'barcode' => $barcode,
+            'label' => [
+                'token' => $barcode_token,
+                'url' => $this->urlGenerator->generate(
+                    'task_label_pdf',
+                    ['code' => $barcode, 'token' => $barcode_token],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                )
+            ]
+        ];
 
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
             $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];

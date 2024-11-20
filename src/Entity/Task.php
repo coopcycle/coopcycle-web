@@ -1328,9 +1328,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     */
     public function getBarcodes(): array
     {
-        $task_code = BarcodeUtils::getBarcodeFromTask($this);
+        $task_code = BarcodeUtils::getRawBarcodeFromTask($this);
         $barcodes = [
-            'task' => [$task_code->getRawBarcode(), $task_code->getHash()],
+            'task' => [$task_code, BarcodeUtils::getToken($task_code)],
             'packages' => [],
         ];
 
@@ -1348,7 +1348,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
                     'color' => $pkg->getColor(),
                     'short_code' => $pkg->getShortCode(),
                     'barcodes' => array_map(
-                        fn(Barcode $code) => [$code->getRawBarcode(), $code->getHash()],
+                        fn(Barcode $code) => [
+                            $code->getRawBarcode(),
+                            BarcodeUtils::getToken($code)
+                        ],
                         $barcodes
                     )
                 ];

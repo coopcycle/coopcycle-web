@@ -138,13 +138,15 @@ class BarcodeController extends AbstractController
 
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
-        if ($request->get('hash') !== $barcode->getHash()) {
+        if ($request->get('token') !== BarcodeUtils::getToken($barcode)) {
             return $this->json(['error' => 'Invalid hash.'], 400);
         }
 
         $phoneUtil = $phoneUtil::getInstance();
         /** @var ?Task $ressource */
-        $ressource = $this->getDoctrine()->getRepository(Task::class)->find($barcode->getEntityId());
+        $ressource = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->find($barcode->getEntityId());
 
         if (is_null($ressource)) {
             return $this->json(['error' => 'No data found.'], 404);
