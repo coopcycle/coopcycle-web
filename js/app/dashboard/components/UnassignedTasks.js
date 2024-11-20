@@ -18,7 +18,7 @@ import Alert from '../../components/core/Alert'
 
 const StandaloneTasks =  ({tasks, offset}) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
-  // takes into account manual sorting of issues
+  // handle manual sorting of tasks into the unassigned column
   // return _.map(unassignedTasksIdsOrder, (taskId, index) => {
   //   const task = tasks.find(t => t['@id'] === taskId)
   //   if (task) {
@@ -91,6 +91,8 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules }) => {
   const unassignedTasksIdsOrder = useSelector(selectOrderOfUnassignedTasks)
   const unassignedTasksLoading = useSelector(selectUnassignedTasksLoading)
 
+  // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back to life
+  // handle manual sorting of tasks into the unassigned column
   useEffect(() => {
     const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
     const tasksToAppendIds = tasksToAppend.map(t => t['@id'])

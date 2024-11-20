@@ -40,7 +40,10 @@ const selectTasksId = (state, tasksId) => tasksId
 export const selectTasksById = createSelector(
   selectAllTasks,
   selectTasksId,
-  (allTasks, tasksId) => tasksId.map(taskId => allTasks.find(t => t['@id'] === taskId))
+  (allTasks, tasksId) => {
+    console.log(allTasks)
+    return tasksId.map(taskId => allTasks.find(t => t['@id'] === taskId))
+  }
 )
 
 export const selectVehicleIdToTaskListIdMap = createSelector(
