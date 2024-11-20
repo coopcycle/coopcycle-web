@@ -41,6 +41,9 @@ class BarcodeController extends AbstractController
     ): Response
     {
 
+        //NOTE: Maybe some coops may want to restrict this to ROLE_DISPATCHER ?
+        $this->denyAccessUnlessGranted('ROLE_COURIER');
+
         if (!$request->get('code', null)) {
            return $this->json(['error' => 'No code provided.'], 400);
         }
