@@ -179,12 +179,31 @@ class BarcodeController extends AbstractController
             height: 55
         );
 
+
+        $barcodes = [[
+            'code' => $barcode->getRawBarcode(),
+            'svg' => $barcodeSVG
+        ]];
+
+        if (isset($ressource->getMetadata()['barcode'])) {
+            $barcode_alt = $ressource->getMetadata()['barcode'];
+
+            $barcodes[] = [
+                'code' => $barcode_alt,
+                'svg' => $generator->getBarcode(
+                    barcode: $barcode_alt,
+                    type: $generator::TYPE_CODE_128,
+                    widthFactor: 1.4,
+                    height: 55
+                )
+            ];
+        }
+
         $html = $this->twig->render('task/label.pdf.twig', [
             'from' => $from,
             'task' => $ressource,
             'phone' => $phone,
-            'barcode' => $barcodeSVG,
-            'barcode_raw' => $barcode->getRawBarcode(),
+            'barcodes' => $barcodes,
             'package' => $package,
             'currentPackage' => $barcode->getPackageTaskIndex(),
             'totalPackages' => $ressource->totalPackages()

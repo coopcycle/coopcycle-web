@@ -70,7 +70,7 @@
       <div style="flex: 1">
         <ul>
           <li><strong>Ref:</strong></li>
-          <li>{{ barcode_raw }}</li>
+          <li>{{ barcodes|first['code'] }}</li>
           {% if package is not null %}
             <li><strong>Package:</strong></li>
             <li>{{ package }}</li>
@@ -101,9 +101,11 @@
       </div>
     </div>
     <hr />
-    <div style="text-align: center">
-      {{ barcode|raw }}
-      <div>{{ barcode_raw }}</div>
-    </div>
+    {% for barcode in barcodes %}
+      <div style="text-align: center">
+        {{ barcode['svg']|raw }}
+        <div>{{ barcode['code'] }}</div>
+      </div>
+    {% endfor %}
   </body>
 </html>
