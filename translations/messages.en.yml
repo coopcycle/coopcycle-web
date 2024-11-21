@@ -651,7 +651,7 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Switch to « tes
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: You are in « live
   » mode.<br>If you switch to « test » mode, maintenance will be enabled automatically.
 form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to use <a
-  href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">test
+  href="%url%">test
   credit cards</a> numbers to pay on the platform. <strong>No money will be exchanged.</strong> '
 form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need
   to configure « live » keys first.

@@ -1080,7 +1080,7 @@ form.settings.mercadopago.publishable_key.help: Ottieni la <a href="https://www.
 form.settings.mercadopago.publishable_key.label: Chiave di pubblicazione
 form.settings.mercadopago_enable_livemode.help: Per attivare la modalità « live »,
   è necessario configurare prima le chiavi « live ».
-form.settings.mercadopago_testmode.help: 'Nella modalità « test », usare<a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">numeri
+form.settings.mercadopago_testmode.help: 'Nella modalità « test », usare <a href="%url%">numeri
   delle carte di credito di prova</a> per pagare. <strong>Non ci sarà scambio di denaro.</strong> '
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: Sei in modalità «
   live ».<br>Se vuoi passare alla modalità « test », la manutenzione sarà attivata
