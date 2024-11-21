@@ -26,7 +26,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
 use AppBundle\Action\Store\Packages as Packages;
-use AppBundle\Action\Store\BulkAsync as DeliveryBulkAsync;
 
 /**
  * A retail good store.
@@ -74,14 +73,6 @@ use AppBundle\Action\Store\BulkAsync as DeliveryBulkAsync;
  *       "controller"=Packages::class,
  *       "normalization_context"={"groups"={"store_packages"}},
  *       "security"="is_granted('edit', object)"
- *     },
- *   "deliveries_import_async"={
- *       "method"="POST",
- *       "path"="/stores/{id}/deliveries/import_async",
- *       "deserialize"=false,
- *       "input_formats"={"csv"={"text/csv"}},
- *       "controller"= DeliveryBulkAsync::class,
- *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES') or is_granted('ROLE_ADMIN')"
  *     },
  *   },
  *   subresourceOperations={

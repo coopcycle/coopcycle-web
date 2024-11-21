@@ -9,6 +9,7 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
@@ -77,6 +78,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         "summary"="Suggests optimizations for a delivery",
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       }
+ *     },
+ *     "deliveries_import_async"={
+ *       "method"="POST",
+ *       "path"="/deliveries/import_async",
+ *       "deserialize"=false,
+ *       "input_formats"={"csv"={"text/csv"}},
+ *       "controller"= BulkAsyncDelivery::class,
+ *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')"
  *     },
  *   },
  *   itemOperations={
