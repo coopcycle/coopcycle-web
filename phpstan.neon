@@ -34,8 +34,6 @@ parameters:
         - '#Call to an undefined method League\\Geotools\\Distance\\DistanceInterface::flat\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionSubjectInterface::getRestaurant\(\)#'
         - '#Call to an undefined method Sylius\\Component\\(.*)RepositoryInterface::findOneBy[a-zA-Z]+\(\)#'
-        - '#Property MercadoPago\\Payment::\$payer \(object\) does not accept array<string, mixed>#'
-        - '#Access to protected property MercadoPago\\Payment::\$[a-zA-Z_]#'
         - '#Method AppBundle\\Entity\\Sylius\\(Product|Taxon)::compareTo\(\) should return int but returns bool#'
         - '#Method [a-zA-Z\\:\(\)]+ should return Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+> but returns Doctrine\\Common\\Collections\\ArrayCollection<\(int\|string\), [a-zA-Z\\\|]+>#'
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'

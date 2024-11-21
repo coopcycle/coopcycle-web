@@ -427,7 +427,7 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilizar el modo
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estás utilizando el
   modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará
   automáticamente.
-form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">números
+form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="%url%">números
   de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
 form.settings.mercadopago_enable_livemode.help: Para activar el modo « live », primero
   necesita configurar las credenciales « live ».

@@ -42,6 +42,12 @@ class CheckoutPaymentType extends AbstractType
                 ])
                 ->add('installments', HiddenType::class, [
                     'mapped' => false,
+                ])
+                ->add('issuer', HiddenType::class, [
+                    'mapped' => false,
+                ])
+                ->add('payerEmail', HiddenType::class, [
+                    'mapped' => false,
                 ]);
         }
 

@@ -384,11 +384,11 @@ class OrderController extends AbstractController
                 'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
             ];
 
-            if ($form->has('paymentMethod')) {
-                $data['mercadopagoPaymentMethod'] = $form->get('paymentMethod')->getData();
-            }
-            if ($form->has('installments')) {
-                $data['mercadopagoInstallments'] = $form->get('installments')->getData();
+            // Used by Mercado Pago
+            foreach (['paymentMethod', 'installments', 'issuer', 'payerEmail'] as $key) {
+                if ($form->has($key)) {
+                    $data[sprintf('mercadopago%s', ucfirst($key))] = $form->get($key)->getData();
+                }
             }
 
             $orderManager->checkout($order, $data);
