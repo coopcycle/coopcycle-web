@@ -761,7 +761,7 @@ product_option.strategy.option_value: Vlastní cena
 product_option.strategy.free: Zdarma
 promotion_coupon.used.label: Počet uživatelů
 form.customize.about_us.label: Obsah strany O nás
-form.new_order.variant_price.label: Cena
+form.new_order.variant_price.label: Cena včetně DPH
 form.new_order.variant_name.help: Název, který se objeví v přehledu objednávek a na
   faktuře
 form.new_order.variant_name.label: Název produktu
@@ -770,7 +770,7 @@ form.deposit_refund_settings.deposit_refund_optin.help: Pokud je systém vrácen
   budou automaticky přidány do celkového počtu objednávek.
 form.deposit_refund_settings.deposit_refund_optin.label: Systém vrácení peněz je volitelný
 form.reusable_packaging.on_hand.label: Sklad
-form.reusable_packaging.price.label: Cena
+form.reusable_packaging.price.label: Cena včetně DPH
 form.reusable_packaging.is_tracked.label: Sledování přepravy povoleno
 form.reusable_packaging.name.label: Název
 form.package.volume_units.label: Objemové jednotky

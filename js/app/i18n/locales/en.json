@@ -368,9 +368,9 @@
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "for every",
             "ABOVE": "above",
-            "TYPE_FIXED": "Fixed price",
-            "TYPE_RANGE": "Price by ranges",
-            "TYPE_PER_PACKAGE": "Price per package",
+            "TYPE_FIXED": "Fixed price incl. VAT",
+            "TYPE_RANGE": "Price incl. VAT by ranges",
+            "TYPE_PER_PACKAGE": "Price incl. VAT per package",
             "PER_PACKAGE": "per package",
             "PER_PACKAGE_STARTING": "starting from",
             "PER_PACKAGE_ADD_DISCOUNT": "Add discount",

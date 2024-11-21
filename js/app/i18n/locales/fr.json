@@ -328,9 +328,9 @@
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
             "ABOVE": "à partir de",
-            "TYPE_FIXED": "Prix fixe",
-            "TYPE_RANGE": "Prix par tranches",
-            "TYPE_PER_PACKAGE": "Prix par paquet",
+            "TYPE_FIXED": "Prix TTC fixe",
+            "TYPE_RANGE": "Prix TTC par tranches",
+            "TYPE_PER_PACKAGE": "Prix TTC par paquet",
             "PER_PACKAGE": "par paquet",
             "PER_PACKAGE_STARTING": "à partir de",
             "PER_PACKAGE_ADD_DISCOUNT": "Ajouter une réduction",

@@ -263,9 +263,9 @@
             "PER_PACKAGE_ADD_DISCOUNT": "Aggiungere sconto",
             "PER_PACKAGE_STARTING": "A partire da",
             "PER_PACKAGE": "Per pacchetto",
-            "TYPE_PER_PACKAGE": "Prezzo per pacchetto",
-            "TYPE_RANGE": "Prezzo per fasce",
-            "TYPE_FIXED": "Prezzo fisso",
+            "TYPE_PER_PACKAGE": "Prezzo incl. IVA per pacchetto",
+            "TYPE_RANGE": "Prezzo incl. IVA per fasce",
+            "TYPE_FIXED": "Prezzo incl. IVA fisso",
             "ABOVE": "A partire da",
             "FOR_EVERY": "Per ogni"
         },

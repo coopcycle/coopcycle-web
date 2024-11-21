@@ -206,9 +206,9 @@
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "mindegyikre",
             "ABOVE": "-tól/-től",
-            "TYPE_FIXED": "Fix ár",
-            "TYPE_RANGE": "Ár tartományok szerint",
-            "TYPE_PER_PACKAGE": "Ár csomagonként",
+            "TYPE_FIXED": "Fix ár áfával együtt",
+            "TYPE_RANGE": "Ár áfával együtt tartományok szerint",
+            "TYPE_PER_PACKAGE": "Ár áfával együtt csomagonként",
             "PER_PACKAGE": "per csomag",
             "PER_PACKAGE_STARTING": "kezdődik",
             "PER_PACKAGE_ADD_DISCOUNT": "Kedvezmény hozzáadása",

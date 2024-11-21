@@ -973,7 +973,7 @@ form.reusable_packaging.on_hand.label: Cantidad
 form.deposit_refund_settings.deposit_refund_optin.label: El sistema de reembolso es
   opcional
 form.new_order.variant_name.label: Nombre del producto
-form.new_order.variant_price.label: Precio
+form.new_order.variant_price.label: Precio incl. IVA
 index.our_shops: Tiendas locales
 index.view_all_shops: Ver todas las tiendas
 activity.task.started: "@%owner% comenzó tarea #task/%aggregate_id%\n"
