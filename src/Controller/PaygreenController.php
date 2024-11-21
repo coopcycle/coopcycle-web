@@ -30,10 +30,13 @@ class PaygreenController extends AbstractController
     /**
      * @Route("/paygreen/create-payment-order/{hashId}", name="paygreen_create_payment_order")
      */
-    public function createPaymentOrderAction($hashId)
+    public function createPaymentOrderAction($hashId, Request $request)
     {
         try {
-            [ $paymentOrderId, $objectSecret ] = $this->getViewData($hashId);
+
+            $instrument = $request->get('instrument');
+
+            [ $paymentOrderId, $objectSecret ] = $this->getViewData($hashId, $instrument);
 
             return new JsonResponse([
                 'id' => $paymentOrderId,
@@ -59,7 +62,7 @@ class PaygreenController extends AbstractController
         ]);
     }
 
-    private function getViewData($hashId): array
+    private function getViewData($hashId, $instrument = null): array
     {
         $decoded = $this->hashids8->decode($hashId);
         if (count($decoded) !== 1) {
@@ -79,8 +82,9 @@ class PaygreenController extends AbstractController
 
             throw new \Exception(sprintf('Payment with id "%d" does not exist', $paymentId));
         }
+        // var_dump($instrument);
 
-        $this->paygreenManager->createPaymentOrder($payment);
+        $this->paygreenManager->createPaymentOrder($payment, $instrument);
 
         $this->entityManager->flush();
 
@@ -121,6 +125,13 @@ class PaygreenController extends AbstractController
     {
         $po = $this->paygreenManager->getPaymentOrder($id);
 
+        // Conecs ins_8c677353439b474fb250851c361cf65e
+        // Swile  ins_fa6054594cab453a963c56cb2561dcd8
+        // $ins = $this->paygreenManager->getInstrument('ins_fa6054594cab453a963c56cb2561dcd8');
+
+        // dd($ins);
         dd($po);
+
+
     }
 }

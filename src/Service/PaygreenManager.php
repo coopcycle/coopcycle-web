@@ -45,7 +45,7 @@ class PaygreenManager
         // TODO Store the transaction ID
     }
 
-    public function createPaymentOrder(PaymentInterface $payment)
+    public function createPaymentOrder(PaymentInterface $payment, ?string $instrument = null)
     {
         $this->authenticate();
 
@@ -53,6 +53,35 @@ class PaygreenManager
 
         $reference = sprintf('ord_%s', $this->hashids8->encode($order->getId()));
         $shopId = $order->getRestaurant()->getPaygreenShopId();
+
+        if (null !== $instrument && !empty($instrument)) {
+
+            $address = $this->getAddress($order);
+
+            $paymentOrder = new PaygreenModel\PaymentOrder();
+            $paymentOrder->setReference($reference);
+            $paymentOrder->setInstrument($instrument);
+            $paymentOrder->setAmount($order->getTotal());
+            $paymentOrder->setShopId($shopId);
+            // $paymentOrder->setFees(10); // set the fees value
+            $paymentOrder->setAutoCapture(false);
+            $paymentOrder->setCurrency($payment->getCurrencyCode());
+            $paymentOrder->setShippingAddress($address);
+            $paymentOrder->setDescription(sprintf('Order %s', $order->getNumber()));
+
+            $response = $this->paygreenClient->createPaymentOrder($paymentOrder);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new \Exception($data['detail'] ?? $data['message']);
+            }
+
+            $payment->setPaygreenPaymentOrderId($data['data']['id']);
+            $payment->setPaygreenObjectSecret($data['data']['object_secret']);
+
+            return;
+        }
 
         // $response = $this->paygreenClient->listPaymentOrder($reference);
         // echo '<pre>';
@@ -162,12 +191,20 @@ class PaygreenManager
             $firstName = $fullNameParts[0] ?? '';
             $lastName = $fullNameParts[1] ?? '';
 
+            $shippingAddress = $order->getShippingAddress();
+
+            $address = new PaygreenModel\Address();
+            $address->setStreetLineOne($shippingAddress->getStreetAddress());
+            $address->setCity($shippingAddress->getAddressLocality());
+            $address->setCountryCode(strtoupper($this->country));
+            $address->setPostalCode($shippingAddress->getPostalCode());
+
             $buyer = new PaygreenModel\Buyer();
             $buyer->setReference(sprintf('cus_%s', $this->hashids8->encode($customer->getId())));
             $buyer->setEmail($customer->getEmailCanonical());
             $buyer->setFirstName(!empty($firstName) ? $firstName : 'N/A');
             $buyer->setLastName(!empty($lastName) ? $lastName : 'N/A');
-            // $buyer->setBillingAddress($address);
+            $buyer->setBillingAddress($address);
 
             $response = $this->paygreenClient->createBuyer($buyer);
             $data = json_decode($response->getBody()->getContents(), true);
@@ -235,5 +272,36 @@ class PaygreenManager
         }
 
         return $payments;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getInstrument($id)
+    {
+        $this->authenticate();
+
+        $response = $this->paygreenClient->getInstrument($id);
+
+        if ($response->getStatusCode() === 200) {
+            $payload = json_decode($response->getBody()->getContents(), true);
+
+            return $payload['data'];
+        }
+
+        return null;
+    }
+
+    private function getAddress(OrderInterface $order): PaygreenModel\Address
+    {
+        $shippingAddress = $order->getShippingAddress();
+
+        $address = new PaygreenModel\Address();
+        $address->setStreetLineOne($shippingAddress->getStreetAddress());
+        $address->setCity($shippingAddress->getAddressLocality());
+        $address->setCountryCode(strtoupper($this->country));
+        $address->setPostalCode($shippingAddress->getPostalCode());
+
+        return $address;
     }
 }

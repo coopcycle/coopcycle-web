@@ -78,7 +78,8 @@ trait SelectPaymentMethodTrait
                 'createSetupIntentOrAttachPMURL' => $this->generateUrl('stripe_create_setup_intent_or_attach_pm', ['hashId' => $hashId]),
             ];
             $paygreen = [
-                'createPaymentOrderURL' => $this->generateUrl('paygreen_create_payment_order', ['hashId' => $hashId])
+                'createPaymentOrderURL' => $this->generateUrl('paygreen_create_payment_order', ['hashId' => $hashId]),
+                'getBuyerURL' => $this->generateUrl('paygreen_order_buyer'),
             ];
         }
 

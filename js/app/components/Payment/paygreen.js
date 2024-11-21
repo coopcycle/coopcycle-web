@@ -109,6 +109,48 @@ export default {
     }
 
     return new Promise((resolve, reject) => {
+
+      axios.get(this.config.gatewayConfig.getBuyerURL)
+        .then(response => {
+
+          const paygreenStatus = window.paygreenjs.status();
+
+          if (paygreenStatus.flows.length > 0) {
+            window.paygreenjs.unmount(true);
+          }
+
+          // This will enable the submit button once the card is 100% valid
+          window.paygreenjs.attachEventListener(
+            window.paygreenjs.Events.CARD_ONCHANGE,
+            (event) => {
+              this.config.onChange({ complete: event.detail.valid })
+            }
+          );
+
+          window.paygreenjs.attachEventListener(
+            window.paygreenjs.Events.INSTRUMENT_READY,
+            (event) => {
+              axios.post(this.config.gatewayConfig.createPaymentOrderURL, {
+                instrument: event.detail.instrument.id
+              }).then(response => {
+                console.log(response.data)
+              })
+            }
+          );
+
+          window.paygreenjs.init({
+            publicKey: this.config.gatewayConfig.publicKey,
+            mode: 'instrument',
+            modeOptions: {
+              authorizedInstrument: method !== 'conecs',
+            },
+            buyer: response.data.buyer,
+            paymentMethod: method === 'card' ? 'bank_card' : method,
+          });
+
+        })
+
+      /*
       axios.post(this.config.gatewayConfig.createPaymentOrderURL)
         .then(response => {
 
@@ -184,6 +226,7 @@ export default {
           console.log(e)
           reject(new Error(e.response.data.error.message))
         })
+      */
     })
   },
   unmount() {
