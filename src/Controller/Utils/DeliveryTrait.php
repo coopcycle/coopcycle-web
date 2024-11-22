@@ -8,7 +8,7 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\DeliveryType;
-use AppBundle\Form\Order\OneOffOrderType;
+use AppBundle\Form\Order\ExistingOrderType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -60,7 +60,7 @@ trait DeliveryTrait
 
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createForm(OneOffOrderType::class, $delivery, [
+        $form = $this->createForm(ExistingOrderType::class, $delivery, [
             'with_arbitrary_price' => null === $delivery->getOrder(),
         ]);
 

@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class OneOffOrderType extends DeliveryType
+class ExistingOrderType extends DeliveryType
 {
     public function __construct(
         RoutingInterface $routing,
