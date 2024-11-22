@@ -426,7 +426,9 @@ class OrderController extends AbstractController
         NormalizerInterface $normalizer,
         PaymentContext $paymentContext,
         OrderProcessorInterface $orderPaymentProcessor,
-        Hashids $hashids8)
+        bool $cashEnabled,
+        Hashids $hashids8
+    )
     {
         $order = $cartContext->getCart();
 
@@ -448,6 +450,7 @@ class OrderController extends AbstractController
             $normalizer,
             $paymentContext,
             $orderPaymentProcessor,
+            $cashEnabled,
             $hashids8
         );
     }
@@ -462,9 +465,11 @@ class OrderController extends AbstractController
         NormalizerInterface $normalizer,
         PaymentContext $paymentContext,
         OrderProcessorInterface $orderPaymentProcessor,
+        bool $cashEnabled,
         Hashids $hashids16,
         Hashids $hashids8,
-        StateMachineFactoryInterface $stateMachineFactory)
+        StateMachineFactoryInterface $stateMachineFactory
+    )
     {
         $decoded = $hashids16->decode($hashid);
 
@@ -493,6 +498,7 @@ class OrderController extends AbstractController
             $normalizer,
             $paymentContext,
             $orderPaymentProcessor,
+            $cashEnabled,
             $hashids8
         );
     }
