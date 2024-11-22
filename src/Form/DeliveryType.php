@@ -61,7 +61,7 @@ class DeliveryType extends AbstractType
 
             // When this is a new delivery,
             // set defaults for pickup/dropoff date
-            if (null === $delivery->getId()) {
+            if (null === $delivery->getId() && true === $options['asap_timing']) {
 
                 $now = Carbon::now();
 
@@ -302,6 +302,7 @@ class DeliveryType extends AbstractType
             'arbitrary_price' => null,
             'with_bookmark' => false,
             'with_recurrence' => false,
+            'asap_timing' => false, // When true, the tasks after/before dates are automatically updated (only relevant when placing a new order)
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);
