@@ -45,15 +45,11 @@ class EmbedController extends AbstractController
     use DeliveryTrait;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        RepositoryInterface $customerRepository,
-        FactoryInterface $customerFactory,
-        TranslatorInterface $translator)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly RepositoryInterface $customerRepository,
+        private readonly FactoryInterface $customerFactory,
+        private readonly TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
-        $this->customerRepository = $customerRepository;
-        $this->customerFactory = $customerFactory;
-        $this->translator = $translator;
     }
 
     protected function getDeliveryRoutes()
