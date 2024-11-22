@@ -40,7 +40,8 @@
   {{ form_row(form.transporter) }}
   <hr>
 {% endif %}
-{% if form.vars.data.id is not null and (form.timeSlot is defined or form.timeSlots is defined) %}
+
+{% if form.vars.data.id is not null %}
   <div {{ react_component('Store/TimeSlot', {
     store: form.vars.data|serialize,
   }) }}>
