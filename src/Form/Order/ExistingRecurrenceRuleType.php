@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class SubscriptionType extends DeliveryType
+class ExistingRecurrenceRuleType extends DeliveryType
 {
     public function __construct(
         RoutingInterface $routing,

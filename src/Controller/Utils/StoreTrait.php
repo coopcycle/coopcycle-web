@@ -19,7 +19,7 @@ use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\Order\NewOrderType;
-use AppBundle\Form\Order\SubscriptionType;
+use AppBundle\Form\Order\ExistingRecurrenceRuleType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
@@ -444,7 +444,7 @@ trait StoreTrait
             $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
         }
 
-        $form = $this->createForm(SubscriptionType::class, $tempDelivery, [
+        $form = $this->createForm(ExistingRecurrenceRuleType::class, $tempDelivery, [
             'arbitrary_price' => $arbitraryPrice,
         ]);
 
