@@ -227,8 +227,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slot']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slot']) {
             return $options['with_time_slot'];
         }
 
@@ -253,8 +256,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slots']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slots']) {
             return $options['with_time_slots'];
         }
 
@@ -293,6 +299,7 @@ class DeliveryType extends AbstractType
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_doorstep' => false,
+            'use_time_slots' => true,
             'with_time_slot' => null,
             'with_time_slots' => null,
             'with_package_set' => null,
