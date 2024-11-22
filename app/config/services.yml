@@ -17,8 +17,6 @@ services:
     autowire: true
     autoconfigure: true
     public: false
-    bind:
-      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
 
   AppBundle\Action\:
     resource: '../../src/Action/*'

@@ -23,9 +23,7 @@ trait SelectPaymentMethodTrait
         NormalizerInterface $normalizer,
         PaymentContext $paymentContext,
         OrderProcessorInterface $orderPaymentProcessor,
-        bool $cashEnabled,
-        Hashids $hashids8
-    ): JsonResponse
+        Hashids $hashids8): JsonResponse
     {
         $data = $request->toArray();
 
@@ -44,8 +42,8 @@ trait SelectPaymentMethodTrait
         }
 
         // The "CASH_ON_DELIVERY" payment method may not be enabled,
-        // however if it's enabled globally ($cashEnabled) OR at shop/restaurant level, it is allowed
-        $bypass = $code === 'CASH_ON_DELIVERY' && ($cashEnabled || $order->supportsCashOnDelivery());
+        // however if it's enabled at shop level, it is allowed
+        $bypass = $code === 'CASH_ON_DELIVERY' && $order->supportsCashOnDelivery();
 
         if (!$paymentMethod->isEnabled() && !$bypass) {
 
