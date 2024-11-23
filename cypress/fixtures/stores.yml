@@ -47,6 +47,12 @@ AppBundle\Entity\Store:
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
     createOrders: true
+  store_without_time_slots:
+    name: 'Store without time slots'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    createOrders: true
   store_do_not_create_orders:
     name: 'Store with createOrders disabled'
     address: "@address_1"
