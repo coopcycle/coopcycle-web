@@ -1,4 +1,4 @@
-context('Delivery via form (payment: Stripe only)', () => {
+context('Delivery via form (payment options: Stripe only)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 

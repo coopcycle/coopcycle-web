@@ -7,7 +7,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryFormSubmission;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Checkout\CheckoutPayment;
@@ -29,11 +28,8 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -45,15 +41,11 @@ class EmbedController extends AbstractController
     use DeliveryTrait;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        RepositoryInterface $customerRepository,
-        FactoryInterface $customerFactory,
-        TranslatorInterface $translator)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly RepositoryInterface $customerRepository,
+        private readonly FactoryInterface $customerFactory,
+        private readonly TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
-        $this->customerRepository = $customerRepository;
-        $this->customerFactory = $customerFactory;
-        $this->translator = $translator;
     }
 
     protected function getDeliveryRoutes()
@@ -154,7 +146,6 @@ class EmbedController extends AbstractController
      */
     public function deliveryStartAction($hashid, Request $request,
         DeliveryManager $deliveryManager,
-        CanonicalizerInterface $canonicalizer,
         EntityManagerInterface $entityManager)
     {
         if ($this->container->has('profiler')) {
@@ -209,7 +200,6 @@ class EmbedController extends AbstractController
      * @Route("/forms/{hashid}/summary", name="embed_delivery_summary")
      */
     public function deliverySummaryAction($hashid, Request $request,
-        DeliveryManager $deliveryManager,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
         OrderFactory $orderFactory,
