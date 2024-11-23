@@ -101,7 +101,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_form__recurrence__container').should('not.exist')
       cy.get('a[href*="recurrence-rules"]').click()
 
-      // Subscription page
+      // Recurrence rule page
       cy.location('pathname', { timeout: 10000 }).should(
         'match',
         /\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/,
@@ -144,6 +144,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_tasks_0_address_contactName__display').clear()
       cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
 
+      // set pickup time range to XX:12 - XX:27
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input').click();
+      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(13) > .ant-picker-time-panel-cell-inner').click();
+      cy.get('.ant-picker-ok:visible > .ant-btn').click();
+      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(28) > .ant-picker-time-panel-cell-inner').click();
+      cy.get('.ant-picker-ok:visible > .ant-btn').click();
+
       cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
       // Dropoff
@@ -166,6 +173,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_tasks_1_address_contactName__display').type(
         'Jane smith',
       )
+
+      // set dropoff time range to XX:24 - XX:58
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input').click();
+      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(25) > .ant-picker-time-panel-cell-inner').click();
+      cy.get('.ant-picker-ok:visible > .ant-btn').click();
+      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(59) > .ant-picker-time-panel-cell-inner').click();
+      cy.get('.ant-picker-ok:visible > .ant-btn').click();
 
       cy.get('#delivery_tasks_1_weight').clear()
       cy.get('#delivery_tasks_1_weight').type(2.5)
@@ -200,12 +214,34 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_form__recurrence__container').should('not.exist')
       cy.get('a[href*="recurrence-rules"]').click()
 
-      // Subscription page
+      // Recurrence rule page
       cy.location('pathname', { timeout: 10000 }).should(
         'match',
         /\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/,
       )
+
+      //pickup time range:
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input').should(($input) => {
+        const val = $input.val()
+        expect(val).to.include(':12')
+      })
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input').should(($input) => {
+        const val = $input.val()
+        expect(val).to.include(':27')
+      })
+
+      //dropoff time range:
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input').should(($input) => {
+        const val = $input.val()
+        expect(val).to.include(':24')
+      })
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input').should(($input) => {
+        const val = $input.val()
+        expect(val).to.include(':58')
+      })
+
       cy.get('[data-tax="included"]').contains('4,99 €')
+
       cy.get('#delivery_form__recurrence__container').contains(
         'chaque semaine le vendredi, samedi',
       )
