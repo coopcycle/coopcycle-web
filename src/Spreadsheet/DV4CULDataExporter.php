@@ -170,7 +170,7 @@ final class DV4CULDataExporter implements DataExporterInterface
         foreach ($vehicles as $vehicle) {
             $IN3_TranspTypes->setCellValueByColumnAndRow(1, $rowIndex, $vehicle->getId());
             $IN3_TranspTypes->setCellValueByColumnAndRow(2, $rowIndex, $vehicle->getName());
-            $IN3_TranspTypes->setCellValueByColumnAndRow(3, $rowIndex, $vehicle->getVolumeUnits());
+            $IN3_TranspTypes->setCellValueByColumnAndRow(3, $rowIndex, $vehicle->getMaxVolumeUnits());
             $IN3_TranspTypes->setCellValueByColumnAndRow(4, $rowIndex, $vehicle->getMaxWeight());
             $IN3_TranspTypes->setCellValueByColumnAndRow(5, $rowIndex, '0');
             $IN3_TranspTypes->setCellValueByColumnAndRow(6, $rowIndex, '0');
