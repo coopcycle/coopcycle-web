@@ -154,6 +154,7 @@ monolog:
               "!php",
               "!cache",
               "!security",
+              "!messenger",
               "!request"
             ]
             min_level: info
@@ -165,6 +166,7 @@ monolog:
               php,
               cache,
               security,
+              messenger
               request
             ]
             min_level: warning
