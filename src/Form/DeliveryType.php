@@ -61,7 +61,7 @@ class DeliveryType extends AbstractType
 
             // When this is a new delivery,
             // set defaults for pickup/dropoff date
-            if (null === $delivery->getId()) {
+            if (null === $delivery->getId() && true === $options['asap_timing']) {
 
                 $now = Carbon::now();
 
@@ -227,8 +227,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slot']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slot']) {
             return $options['with_time_slot'];
         }
 
@@ -253,8 +256,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slots']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slots']) {
             return $options['with_time_slots'];
         }
 
@@ -293,6 +299,7 @@ class DeliveryType extends AbstractType
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_doorstep' => false,
+            'use_time_slots' => true,
             'with_time_slot' => null,
             'with_time_slots' => null,
             'with_package_set' => null,
@@ -302,6 +309,7 @@ class DeliveryType extends AbstractType
             'arbitrary_price' => null,
             'with_bookmark' => false,
             'with_recurrence' => false,
+            'asap_timing' => false, // When true, the tasks after/before dates are automatically updated (only relevant when placing a new order)
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

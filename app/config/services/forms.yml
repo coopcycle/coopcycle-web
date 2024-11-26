@@ -64,11 +64,11 @@ services:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
-  AppBundle\Form\Order\OneOffOrderType:
+  AppBundle\Form\Order\ExistingOrderType:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
-  AppBundle\Form\Order\SubscriptionType:
+  AppBundle\Form\Order\ExistingRecurrenceRuleType:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
