@@ -23,9 +23,9 @@ if (datadogEnabled) {
     // Specify a version number to identify the deployed version of your application in Datadog
     // version: '1.0.0',
     // 'Browser RUM' session sample rate
-    sessionSampleRate: 10,
+    sessionSampleRate: 1,
     // 'Browser RUM & Session Replay' sample rate (% from sessions tracked by RUM/sessionSampleRate)
-    sessionReplaySampleRate: 20,
+    sessionReplaySampleRate: 10,
     telemetrySampleRate: 0,
     trackUserInteractions: true,
     trackResources: true,
