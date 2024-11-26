@@ -1164,7 +1164,7 @@ form.local_business.stripe_account.need_stripe_account: "Ez duzu oraindik jatetx
   \ transferentziak modu seguruan kudeatzen ahalbidetzen digun ordainketa plataforma\
   \ segurua da.<br>\nJatetxe honetarako Stripe kontu bat sortzeko <a href=\"%stripeAuthorizeURL%\"\
   >egin klik hemen</a>.\n"
-form.settings.mercadopago_testmode.help: '« test » moduan, <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">proba
+form.settings.mercadopago_testmode.help: '« test » moduan, <a href="%url%">proba
   kreditu-txartel zenbakiak</a> erabili beharko dituzu plataforman ordantzeko. <strong>Ez
   da dirurik trukatuko.</strong> '
 form.product.confirm.help: "Produktuaren izena aldatu duzu. <strong>Aldaketa txiki</strong>\

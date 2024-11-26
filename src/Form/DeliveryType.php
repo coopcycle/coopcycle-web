@@ -288,6 +288,7 @@ class DeliveryType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
+            'redirect_to_enabled' => true,
             'with_vehicle' => false,
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),

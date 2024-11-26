@@ -45,10 +45,17 @@ class PaymentType extends AbstractType
 
                     if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
 
+                        // If the payment was made with Edenred,
+                        // we can only refund the whole amount
+                        // https://github.com/coopcycle/coopcycle-web/issues/4615
+
+                        $isEdenred = 'EDENRED' === $payment->getMethod()->getCode();
+
                         $form->add('amount', MoneyType::class, [
                             'label' => 'form.payment.refund_amount.label',
-                            'help' => 'form.payment.refund_amount.help',
+                            'help' => $isEdenred ? 'form.payment.edenred.refund_amount.help' : 'form.payment.refund_amount.help',
                             'data' => $payment->getRefundAmount(),
+                            'disabled' => $isEdenred,
                             'mapped' => false,
                         ]);
                         $form->add('liable', ChoiceType::class, [
@@ -71,9 +78,13 @@ class PaymentType extends AbstractType
                             'required' => false,
                         ]);
 
-                        $form->add('refund', SubmitType::class, [
-                            'label' => 'form.order.payment_refund.label'
-                        ]);
+                        // If the payment was 100% refunded,
+                        // we do not show the button
+                        if ($payment->getRefundAmount() > 0) {
+                            $form->add('refund', SubmitType::class, [
+                                'label' => 'form.order.payment_refund.label'
+                            ]);
+                        }
                     }
                 }
             }

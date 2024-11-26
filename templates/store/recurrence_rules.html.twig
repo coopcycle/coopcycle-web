@@ -1,0 +1,16 @@
+{% extends 'store/layout.html.twig' %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a>
+  </li>
+  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+  <li>{% trans %}stores.recurrence_rules{% endtrans %}</li>
+{% endblock %}
+
+{% block store_content %}
+
+  <h3>{{ 'stores.recurrence_rules'|trans }}</h3>
+
+  {% include '_partials/recurrence_rule/list.html.twig' with { items: recurrence_rules, empty_message: 'stores.recurrence_rules.empty_message' } %}
+
+{% endblock %}

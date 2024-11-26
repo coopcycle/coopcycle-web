@@ -16,6 +16,7 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -56,6 +57,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
     protected EntityManagerInterface $entityManager;
     protected TaskManager $taskManager;
+    protected LoggerInterface $logger;
     protected LoaderInterface $fixturesLoader;
     protected Filesystem $syncDBSchenkerFs;
     protected Filesystem $syncInBMVFs;
@@ -77,6 +79,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
+        $this->logger = self::$container->get(LoggerInterface::class);
         $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncOutBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -141,9 +144,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
     protected function initCommand(): Command
     {
         return new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $this->params->reveal(),
             $this->settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -179,9 +184,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -220,9 +227,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -261,9 +270,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -302,9 +313,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -339,9 +352,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs

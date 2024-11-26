@@ -163,6 +163,10 @@ services:
     tags:
       - { name: form.type_extension, extended_type: Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType }
 
+  AppBundle\Form\Extension\RedirectToRefererType:
+    tags:
+      - { name: 'form.type_extension', extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
+
   sylius.form.type.promotion_rule.premium_customer_configuration:
     class: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
     tags:

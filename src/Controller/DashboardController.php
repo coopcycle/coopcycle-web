@@ -120,7 +120,8 @@ class DashboardController extends AbstractController
                 entityManager: $entityManager,
                 hashids8: $hashids8,
                 deliveryImportsFilesystem: $deliveryImportsFilesystem,
-                messageBus: $messageBus
+                messageBus: $messageBus,
+                slugify: $slugify
             );
         }
 

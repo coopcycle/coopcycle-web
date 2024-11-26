@@ -1039,7 +1039,7 @@ restaurant.form.section.embed: Odebírané
 authentication.register_benefits: Zaregistrujte se a získejte možnost rychlejšího
   placení. Budete také moci najít historii vašich předchozích objednávek.
 deliveries.section.past: Minulé
-form.settings.mercadopago_testmode.help: 'V režimu «test» budete muset použít <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">
+form.settings.mercadopago_testmode.help: 'V režimu «test» budete muset použít <a href="%url%">
   testovací čísla kreditní karty </a> platící na platformě. <strong> Žádné peníze
   nebudou utraceny. </strong> '
 homepage.form.content: <strong>% brand_name%</strong> provozuje místní a neznečišťující

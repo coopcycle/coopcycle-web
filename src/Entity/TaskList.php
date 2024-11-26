@@ -295,7 +295,7 @@ class TaskList implements TaskCollectionInterface
     /**
      * Get the value of vehicle
      *
-     * @return  Vehicle
+     * @return Vehicle|void
      */
     public function getVehicle()
     {

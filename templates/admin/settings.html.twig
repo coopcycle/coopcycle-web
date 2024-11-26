@@ -1,5 +1,9 @@
 {% extends "admin.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.settings.title'|trans) }}
+{% endblock %}
+
 {% form_theme form 'form/settings.html.twig' %}
 {% form_theme maintenance_form 'bootstrap_3_layout.html.twig' %}
 {% form_theme banner_form 'bootstrap_3_layout.html.twig' %}

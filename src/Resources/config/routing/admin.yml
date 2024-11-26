@@ -575,14 +575,27 @@ admin_store_deliveries:
             import_success: admin_deliveries
     methods:  [ GET, POST ]
 
-admin_store_deliveries_bookmarks:
-  path: /admin/stores/{id}/deliveries/bookmarks
+admin_store_orders_saved:
+  path: /admin/stores/{id}/orders/saved
   defaults:
-    _controller: AppBundle\Controller\AdminController::storeDeliveriesBookmarksAction
+    _controller: AppBundle\Controller\AdminController::storeSavedOrdersAction
     layout: 'admin.html.twig'
     routes:
       stores: admin_stores
       store: admin_store
+      store_addresses: admin_store_addresses
+  methods:  [ GET ]
+
+admin_store_recurrence_rules:
+  path: /admin/stores/{id}/recurrence-rules
+  defaults:
+    _controller: AppBundle\Controller\AdminController::storeRecurrenceRulesAction
+    layout: 'admin.html.twig'
+    routes:
+      stores: admin_stores
+      store: admin_store
+      store_addresses: admin_store_addresses
+      store_recurrence_rule: admin_store_recurrence_rule
   methods:  [ GET ]
 
 admin_store_delivery_new:
@@ -603,13 +616,13 @@ admin_store_delivery_download_images:
         _controller: AppBundle\Controller\AdminController::downloadDeliveryImagesAction
     methods:  [ GET ]
 
-admin_store_subscriptions:
-  path: /admin/stores/{storeId}/subscriptions/{subscriptionId}
+admin_store_recurrence_rule:
+  path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}
   defaults:
-    _controller: AppBundle\Controller\AdminController::subscriptionAction
+    _controller: AppBundle\Controller\AdminController::recurrenceRuleAction
     layout: 'admin.html.twig'
     routes:
-      success: admin_deliveries
+      redirect_default: admin_store_recurrence_rules
   methods:  [ GET, POST ]
 
 admin_store_users:

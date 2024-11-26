@@ -23,6 +23,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
 
   initialValues = {
     ...initialValues,
+    co2emissions: initialValues.co2emissions || 0,
     maxWeight: initialValues.maxWeight ? initialValues.maxWeight / 1000 : null,
     warehouse: initialValues.warehouse ? initialValues.warehouse['@id'] : warehouses[0]['@id']
   }
@@ -181,6 +182,25 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
                     </div>
                     : null
                   }
+                </div>
+              </div>
+              <div className="row form-group">
+                <div className="col-md-4">
+                  <div className={ `${errors.co2emissions ? 'has-error': ''}` }>
+                    <label className="control-label" htmlFor="co2emissions">{ t('ADMIN_VEHICLE_EMISSIONS_LABEL') }</label>
+                    <Field
+                      className="form-control"
+                      type="number"
+                      value={ values.co2emissions }
+                      name="co2emissions"
+                      required
+                    />
+                    { errors.co2emissions && touched.co2emissions && (
+                      <div className="has-error px-4">
+                        <small className="help-block">{ errors.co2emissions }</small>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="row form-group">

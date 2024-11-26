@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.21.0] - 2024-11-19
+
+### Added
+
+* Add incidents amounts in orders export (`incident_adjustments` field)
+* Add a page to display and edit orders recurrence rule for a store (link on the store left navbar)
+* Show human-readable filename in "Deliveries > Import" list
+* Add the ability to download barcodes per task or per package on delivery page (app barcode scanning coming next)
+* Add the ability to configure the Urbantz Hub ID tied to a store
+* Add an API endpoint to programatically send order/deliveries CSV file to import for a store
+* Add the ability to set metadata in order/deliveries CSV file import
+* Add more titles on platform pages to show different titles on browser tabs 
+
+### Fixed
+
+* Fix for "automatic recurrent rules may create orders twice"
+* Disable partial refunds for Edenred payment (not supported by Edenred)
+* Properly show Edenred as payment method in payment exports
+* Fix for transporter import when adresses are badly formatted
+
 ## [3.16.0] - 2024-10-09
 
 ### Fixed

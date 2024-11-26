@@ -42,7 +42,9 @@ product.reusablePackagingUnit.mustBeGreaterThanZero: You must specify a quantity
 
 order.state.notModifiable: Order can't be modified anymore
 
-loopeat.insufficient_balance: Your LoopEat balance (X) is not sufficient to wrap the whole order
+loopeat.insufficient_balance: Your %name% balance is insufficient to use zero waste, %amount% is missing to complete your order. Please return boxes or add funds to your wallet.
+loopeat.request_failed: Connexion error with %name%
+loopeat.insufficient_stock: Insufficient reusable packaging quantity for « %name% »
 
 restaurant.contract.variableCustomerAmount.pickOne: Please pick at least one pricing
 restaurant.contract.variableDeliveryPrice.pickOne: Please pick at least one pricing
@@ -64,8 +66,6 @@ order.adjustments.unexpectedCount: Unexpected number of "%type%" adjustments
 dabba.insufficient_wallet: Your Dabba wallet is missing %amount%
 
 googlemaps.api_key.invalid: The Google Maps API Key is not valid. %error%
-
-loopeat.insufficient_stock: Insufficient reusable packaging quantity for « %name% »
 
 spreadsheet.missing_column: You must provide a « %column% » column
 spreadsheet.missing_columns: You must provide a « %column% » or a « %other_column% » column

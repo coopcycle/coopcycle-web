@@ -73,7 +73,7 @@ use AppBundle\Action\Store\Packages as Packages;
  *       "controller"=Packages::class,
  *       "normalization_context"={"groups"={"store_packages"}},
  *       "security"="is_granted('edit', object)"
- *     }
+ *     },
  *   },
  *   subresourceOperations={
  *     "deliveries_get_subresource"={

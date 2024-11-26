@@ -1,5 +1,7 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
+
+const BrickContainer = ({ callback }) => <div ref={ callback } id="cardPaymentBrick_container"></div>
 
 /**
  * see https://www.mercadopago.com.ar/developers/en/docs/checkout-bricks/card-payment-brick/introduction
@@ -16,10 +18,10 @@ export default {
   },
   async mount(el) {
     return new Promise((resolve) => {
-      render(<div id="cardPaymentBrick_container"></div>, el, async () => {
+      createRoot(el).render(<BrickContainer callback={ async () => {
         await this.createBrickContainer()
         resolve()
-      })
+      }} />)
     })
   },
   async createBrickContainer() {
@@ -38,7 +40,6 @@ export default {
       callbacks: {
         onReady: () => document.getElementById('cardPaymentBrick_container').scrollIntoView(),
         onError: (error) => {
-          console.error(JSON.stringify(error))
           document.getElementById('card-errors').textContent = error.message
         },
       },
@@ -57,23 +58,10 @@ export default {
     }
 
     document.getElementById('checkout_payment_paymentMethod').value = data.payment_method_id
-    document.getElementById('checkout_payment_installments').value = data.installments ? data.installments : 1
+    document.getElementById('checkout_payment_installments').value  = data.installments ? data.installments : 1
+    document.getElementById('checkout_payment_issuer').value        = data.issuer_id
+    document.getElementById('checkout_payment_payerEmail').value    = data.payer.email
 
-    const cardTokenData = {
-      cardholderName: document.getElementById('cardPaymentBrick_container').querySelector('input[name="HOLDER_NAME"]').value,
-      identificationType: data.payer.identification.type,
-      identificationNumber: data.payer.identification.number,
-    }
-
-    try {
-      const token = await this.mpInstance.fields.createCardToken(cardTokenData);
-      return token.id
-    } catch(err) {
-      if (err.message) {
-        throw new Error(err.message)
-      } else {
-        throw new Error('An unexpected error occurred, please try again later')
-      }
-    }
+    return data.token
   }
 }

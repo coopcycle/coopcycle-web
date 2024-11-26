@@ -1,5 +1,9 @@
 {% extends "deliveries.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.deliveries.title'|trans) }}
+{% endblock %}
+
 {% form_theme delivery_import_form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% if is_granted('ROLE_ADMIN') %}
 {% form_theme delivery_export_form 'form/deliveries_export.html.twig' %}

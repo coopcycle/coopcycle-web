@@ -43,7 +43,7 @@
 
 {% if not mercadopago_livemode %}
 <p class="help-block">
-  <i class="fa fa-info-circle"></i> {{ 'form.settings.mercadopago_testmode.help'|trans|raw }}
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.mercadopago_testmode.help'|trans({ '%url%': 'https://www.mercadopago.com/developers/es/docs/checkout-bricks/integration-test/test-cards' })|raw }}
 </p>
 {% endif %}
 

@@ -26,9 +26,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class PublicController extends AbstractController
 {
-    public function __construct(OrderRepositoryInterface $orderRepository)
+    public function __construct(
+        private readonly OrderRepositoryInterface $orderRepository
+    )
     {
-        $this->orderRepository = $orderRepository;
     }
 
     /**

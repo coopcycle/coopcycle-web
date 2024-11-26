@@ -427,7 +427,7 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilizar el modo
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estás utilizando el
   modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará
   automáticamente.
-form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">números
+form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="%url%">números
   de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
 form.settings.mercadopago_enable_livemode.help: Para activar el modo « live », primero
   necesita configurar las credenciales « live ».
@@ -545,6 +545,12 @@ stores.deliveries.task_unassigned: No asignada
 stores.addresses: Direcciones
 stores.deliveries.bookmarks: Pedidos guardados
 stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega para encontrarlos fácilmente más tarde
+stores.recurrence_rules: Reglas de recurrencia
+stores.recurrence_rules.empty_message: Cuando se cree un pedido recurrente, las reglas de recurrencia aparecerán aquí
+recurrence_rules.table.repeat: Repetir
+recurrence_rules.table.generate_orders: Generar tareas/pedidos
+recurrence_rules.table.created_at: Regla creada
+recurrence_rule.legacy: Utilice el panel de despacho para eliminar esta regla
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han sido\
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\
@@ -575,6 +581,7 @@ pagination.next: Siguiente
 basics.save: Guardar
 basics.add: Añadir
 basics.edit: Modificar
+basics.editing: Editando
 basics.delete: Eliminar
 basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
 basics.cancel: Cancelar
@@ -684,10 +691,9 @@ adminDashboard.tags.confirm_delete: "¿Estás seguro de eliminar esta etiqueta? 
 adminDashboard.time_slots.title: Franja horaria
 delivery.tracking_link: Enlace de seguimiento
 delivery.with_id: 'Entrega #%id%'
-subscriptions.title: Abonnements
-subscription.title: 'Abonnement #%id%'
-subscription.generated_order: Cette commande a été générée par un abonnement
-subscription.view: Voir l'abonnement
+subscription.title: 'Regla de recurrencia #%id%'
+subscription.generated_order: 'Este pedido fue generado por una regla de recurrencia'
+subscription.view: 'Ver regla de recurrencia'
 help.title: Ayuda
 help.home: Casa
 restaurant.stats.order_number: Número de pedido

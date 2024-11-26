@@ -40,15 +40,17 @@
   {{ form_row(form.transporter) }}
   <hr>
 {% endif %}
-{% if form.timeSlot is defined or form.timeSlots is defined or form.packageSet is defined %}
+
+{% if form.vars.data.id is not null %}
   <div {{ react_component('Store/TimeSlot', {
     store: form.vars.data|serialize,
   }) }}>
   </div>
   <hr>
-  {% if form.packageSet is defined %}
-    {{ form_row(form.packageSet) }}
-  {% endif %}
+{% endif %}
+
+{% if form.packageSet is defined %}
+  {{ form_row(form.packageSet) }}
   <hr>
 {% endif %}
 
@@ -68,4 +70,9 @@
 {% if form.defaultCourier is defined %}
   <hr>
   {{ form_row(form.defaultCourier) }}
+{% endif %}
+
+{% if form.urbantzHubId is defined %}
+  <hr>
+  {{ form_row(form.urbantzHubId) }}
 {% endif %}

@@ -3,7 +3,13 @@
 namespace AppBundle\Service;
 
 use Psr\Log\LoggerInterface;
-use MercadoPago;
+use MercadoPago\Client\Payment\PaymentClient;
+use MercadoPago\Client\PaymentMethod\PaymentMethodClient;
+use MercadoPago\Client\Common\RequestOptions;
+use MercadoPago\MercadoPagoConfig;
+use MercadoPago\Resources\PaymentMethod\PaymentMethodListResult;
+use MercadoPago\Resources\Payment;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -25,18 +31,17 @@ class MercadopagoManager
 
     public function configure()
     {
-        MercadoPago\SDK::setAccessToken($this->settingsManager->get('mercadopago_access_token'));
+        MercadoPagoConfig::setAccessToken($this->settingsManager->get('mercadopago_access_token'));
     }
 
     /**
-     * @return MercadoPago\Payment
+     * @see https://mercadopago.com/developers/en/docs/checkout-bricks/card-payment-brick/payment-submission
+     * @return Payment
      */
-    public function authorize(PaymentInterface $payment)
+    public function authorize(PaymentInterface $payment): Payment
     {
         $order = $payment->getOrder();
         $restaurant = $order->getRestaurant();
-
-        $options = [];
 
         $applicationFee = 0;
         $accessToken = null;
@@ -49,54 +54,55 @@ class MercadopagoManager
         }
 
         if (null !== $accessToken) {
-            MercadoPago\SDK::setAccessToken($accessToken);
+            MercadoPagoConfig::setAccessToken($accessToken);
         } else {
             $this->configure();
         }
 
         $order = $payment->getOrder();
 
-        $p = new MercadoPago\Payment();
+        $client = new PaymentClient();
 
-        $p->transaction_amount = ($payment->getAmount() / 100);
-        $p->token = $payment->getStripeToken();
-        $p->description = sprintf('Order %s', $order->getNumber());
-        $p->installments = $payment->getMercadopagoInstallments() ?? 1;
-        $p->payment_method_id = $payment->getMercadopagoPaymentMethod();
-
-        $p->payer = array(
-            'email' => $order->getCustomer()->getEmail() // this email must be the same as the one entered in the payment form
-        );
+        $requestOptions = new RequestOptions();
+        $requestOptions->setCustomHeaders([
+            sprintf('X-Idempotency-Key: %s', Uuid::uuid4()->toString())
+        ]);
 
         $mpPaymentMethod = $this->getPaymentMethod($payment);
 
-        if (null !== $mpPaymentMethod && $mpPaymentMethod->deferred_capture === "supported") {
-            $p->capture = false;
-        } else {
-            $p->capture = true;
-        }
+        $payload = [
+            'transaction_amount' => ($payment->getAmount() / 100),
+            'token' => $payment->getStripeToken(),
+            'description' => sprintf('Order %s', $order->getNumber()),
+            'installments' => (int) ($payment->getMercadopagoInstallments() ?? 1),
+            'payment_method_id' => $payment->getMercadopagoPaymentMethod(),
+            'capture' => null !== $mpPaymentMethod && $mpPaymentMethod->deferred_capture === 'supported',
+            'issuer_id' => $payment->getMercadopagoIssuer(),
+            'payer' => [
+                'email' => $payment->getMercadopagoPayerEmail(),
+                // 'identification' => [
+                //     'type' => $_POST['<IDENTIFICATION_TYPE'],
+                //     'number' => $_POST['<NUMBER>']
+                // ]
+            ]
+        ];
 
         if ($applicationFee > 0) {
-            $p->application_fee = ($applicationFee / 100);
+            $payload['application_fee'] = ($applicationFee / 100);
         }
 
-        if (!$p->save($options)) {
-            throw new \Exception((string) $p->error);
-        }
-
-        return $p;
+        return $client->create($payload, $requestOptions);
     }
 
     /**
-     * @return MercadoPago\Payment
+     * @see https://www.mercadopago.com/developers/en/docs/checkout-api/payment-management/capture-authorized-payment
+     * @return Payment
      */
-    public function capture(PaymentInterface $payment)
+    public function capture(PaymentInterface $payment): Payment
     {
         // FIXME: should be refactored
 
         $order = $payment->getOrder();
-
-        $options = [];
 
         $accessToken = null;
         if (null !== $order->getRestaurant()) {
@@ -107,62 +113,68 @@ class MercadopagoManager
         }
 
         if (null !== $accessToken) {
-            MercadoPago\SDK::setAccessToken($accessToken);
+            MercadoPagoConfig::setAccessToken($accessToken);
         } else {
             $this->configure();
         }
 
-        $payment = MercadoPago\Payment::read(["id" => $payment->getCharge()]);
+        $client = new PaymentClient();
 
-        if (!$payment->capture) {
-            $payment->capture = true;
+        $requestOptions = new RequestOptions();
+        $requestOptions->setCustomHeaders([
+            sprintf('X-Idempotency-Key: %s', Uuid::uuid4()->toString())
+        ]);
 
-            if (!$payment->update()) {
-                throw new \Exception((string) $payment->error);
-            }
-        }
-
-        return $payment;
+        return $client->capture($payment->getMercadopagoPaymentId(), ($payment->getAmount() / 100), $requestOptions);
     }
 
     /**
-     * @return MercadoPago\Payment
+     * @return Payment
      */
-    public function getPayment(PaymentInterface $payment)
+    public function getPayment(PaymentInterface $payment): Payment
     {
-        if ($this->settingsManager->isMercadopagoLivemode()) {
-            $this->configure();
-        } else {
-            MercadoPago\SDK::setAccessToken($this->settingsManager->get('mercadopago_access_token_for_test'));
-        }
-
         $order = $payment->getOrder();
 
-        $options = [];
-
+        $accessToken = null;
         if (null !== $order->getRestaurant()) {
             $account = $order->getRestaurant()->getMercadopagoAccount();
             if ($account) {
-                // @see MercadoPago\Manager::processOptions()
-                $options['custom_access_token'] = $account->getAccessToken();
+                $accessToken = $account->getAccessToken();
             }
         }
 
-        return MercadoPago\Payment::read(["id" => $payment->getMercadopagoPaymentId()], ["custom_access_token" => $options['custom_access_token']]);
+        if (null !== $accessToken) {
+            MercadoPagoConfig::setAccessToken($accessToken);
+        } else {
+            $this->configure();
+        }
+
+        $client = new PaymentClient();
+
+        return $client->get($payment->getMercadopagoPaymentId());
     }
 
-    public function getPaymentMethod(PaymentInterface $payment)
+    /**
+     * @return PaymentMethodListResult|null
+     */
+    public function getPaymentMethod(PaymentInterface $payment): ?PaymentMethodListResult
     {
         try {
-            $paymentMethods = MercadoPago\PaymentMethod::all();
-            foreach($paymentMethods as $paymentMethod) {
+
+            $this->configure();
+
+            $client = new PaymentMethodClient();
+
+            $result = $client->list();
+
+            foreach ($result->data as $paymentMethod) {
                 if ($paymentMethod->id === $payment->getMercadopagoPaymentMethod()) {
                     return $paymentMethod;
                 }
             }
         } catch(\Exception $e) {
             $this->logger->error(
-                sprintf('Mercadopago - Error %s while tryinh to read payment method with id %s', $e->getMessage(), $payment->getMercadopagoPaymentMethod())
+                sprintf('Mercadopago - Error %s while trying to read payment method with id %s', $e->getMessage(), $payment->getMercadopagoPaymentMethod())
             );
             return null;
         }
