@@ -19,7 +19,7 @@ use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\Order\NewOrderType;
-use AppBundle\Form\Order\SubscriptionType;
+use AppBundle\Form\Order\ExistingRecurrenceRuleType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
@@ -431,8 +431,12 @@ trait StoreTrait
         // if we decide to open the route to store owners
         $this->denyAccessUnlessGranted('view', $store);
 
-        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, Carbon::now()->format('Y-m-d'), false);
-
+        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
+        // but as we have to provide it, we set it to tomorrow
+        // to make sure that tasks' after/before dates are in the future
+        $startDate = Carbon::now()->addDay()->format('Y-m-d');
+        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
+        
         $routes = $request->attributes->get('routes');
 
         $arbitraryPrice = null;
@@ -440,7 +444,7 @@ trait StoreTrait
             $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
         }
 
-        $form = $this->createForm(SubscriptionType::class, $tempDelivery, [
+        $form = $this->createForm(ExistingRecurrenceRuleType::class, $tempDelivery, [
             'arbitrary_price' => $arbitraryPrice,
         ]);
 
@@ -755,10 +759,15 @@ trait StoreTrait
             array('createdAt' => 'DESC')
         );
 
+        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
+        // but as we have to provide it, we set it to tomorrow
+        // to make sure that tasks' after/before dates are in the future
+        $startDate = Carbon::now()->addDay()->format('Y-m-d');
+
         foreach ($recurrenceRules as $rule) {
-            $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, Carbon::now()->format('Y-m-d'), false);
-            $templateDelivery = $templateOrder ? $templateOrder->getDelivery() : $deliveryManager->createDeliveryFromRecurrenceRule($rule, Carbon::now()->format('Y-m-d'), false);
-            $templateTasks = $templateDelivery ? $templateDelivery->getTasks() : $deliveryManager->createTasksFromRecurrenceRule($rule, Carbon::now()->format('Y-m-d'), false);
+            $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false);
+            $templateDelivery = $templateOrder ? $templateOrder->getDelivery() : $deliveryManager->createDeliveryFromRecurrenceRule($rule, $startDate, false);
+            $templateTasks = $templateDelivery ? $templateDelivery->getTasks() : $deliveryManager->createTasksFromRecurrenceRule($rule, $startDate, false);
 
             $isLegacy = (null === $templateDelivery); // consider rules created from Dispatch dashboard that cannot be used to create a valid delivery as legacy
 

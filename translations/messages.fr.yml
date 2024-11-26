@@ -662,7 +662,7 @@ form.deposit_refund_settings.deposit_refund_optin.help: Lorsque le système de c
 form.new_order.variant_name.label: Nom du produit
 form.new_order.variant_name.help: Le nom qui apparaîtra dans le résumé de la commande
   et la facture
-form.new_order.variant_price.label: Prix
+form.new_order.variant_price.label: Prix TTC
 form.customize.about_us.label: Contenu de la page « à propos »
 promotion_coupon.used.label: Nombre d'utilisations
 product_option.strategy.free: Gratuit

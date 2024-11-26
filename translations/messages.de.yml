@@ -482,7 +482,7 @@ user.profile.familyName: Nachname
 roles.ROLE_USER: Benutzer*in
 product_option.strategy.free: Frei
 promotion_coupon.used.label: Anzahl der Vewendungen
-form.new_order.variant_price.label: Preis
+form.new_order.variant_price.label: Preis inkl. MwSt.
 form.new_order.variant_name.label: Name des Produkts
 form.reusable_packaging.price.label: Preis
 form.reusable_packaging.is_tracked.label: Tracking aktiviert

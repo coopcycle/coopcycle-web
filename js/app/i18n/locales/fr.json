@@ -328,9 +328,9 @@
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "par tranche de",
             "ABOVE": "à partir de",
-            "TYPE_FIXED": "Prix fixe",
-            "TYPE_RANGE": "Prix par tranches",
-            "TYPE_PER_PACKAGE": "Prix par paquet",
+            "TYPE_FIXED": "Prix TTC fixe",
+            "TYPE_RANGE": "Prix TTC par tranches",
+            "TYPE_PER_PACKAGE": "Prix TTC par paquet",
             "PER_PACKAGE": "par paquet",
             "PER_PACKAGE_STARTING": "à partir de",
             "PER_PACKAGE_ADD_DISCOUNT": "Ajouter une réduction",
@@ -600,6 +600,7 @@
         "TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME": "Rechercher une adresse enregistrée",
         "TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER": "Nom de l'adresse...",
         "GROUP_ORDER_START": "Commencer une commande groupée",
-        "GROUP_ORDER_SHARE_LINK": "Partagez le lien avec d'autres pour participer à votre commande. Une fois qu'ils ont terminé, vous pouvez passer la commande."
+        "GROUP_ORDER_SHARE_LINK": "Partagez le lien avec d'autres pour participer à votre commande. Une fois qu'ils ont terminé, vous pouvez passer la commande.",
+        "GENERIC_BARCODE_HELP": "Ce code-barres de tâche peut suivre tous les colis liés comme une seule unité. Utilisez-le pour simplifier le suivi de l'ensemble de la livraison. Pour un suivi détaillé colis par colis, utilisez plutôt les codes-barres individuels des colis."
     }
 }

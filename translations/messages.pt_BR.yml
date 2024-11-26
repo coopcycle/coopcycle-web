@@ -234,7 +234,7 @@ restaurant.product_options.list.values: Valores
 restaurant.form.uploadImage: Enviar uma imagem
 restaurant.stats.order_number: Pedido número
 restaurant.stats.delivered_on: Entregue em
-restaurant.stats.total_products_including_all_taxes: Total de produtos incluindo todas
+restaurant.stats.total_products_including_all_taxes: Total de produtos incl. todas
   as taxas
 restaurant.stats.total_products_excluding_taxes: Total de produtos excluindo as taxas
 restaurant.stats.delivery: Entrega
@@ -641,7 +641,7 @@ form.deposit_refund_settings.deposit_refund_optin.help: Quando o sistema de reem
   as embalagens serão adicionadas ao total do pedido automaticamente.
 form.new_order.variant_name.label: Nome do produto
 form.new_order.variant_name.help: O nome que aparecerá no resumo do pedido e recibo
-form.new_order.variant_price.label: Valor
+form.new_order.variant_price.label: Valor incl. IVA
 form.customize.about_us.label: Conteúdo da página Sobre
 form.customize.motto.label: Lema
 form.customize.motto.help: Isso será exibido na página inicial
@@ -732,7 +732,7 @@ basics.no_entries: Nenhuma entrada ainda
 basics.created_at: Criado em %date%
 basics.updated_at: Atualizado em %date%
 basics.date_range: De %start% a %end%
-basics.total_including_tax: Total incluindo impostos
+basics.total_including_tax: Total incl. impostos
 basics.stripe_fees: Taxas da Stripe
 basics.platform_fees: Taxas da Plataforma
 basics.net_income: Rendimento líquida

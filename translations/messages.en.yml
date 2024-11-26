@@ -819,7 +819,7 @@ form.deposit_refund_settings.deposit_refund_optin.help: When the deposit-refund 
 form.new_order.variant_name.label: Product name
 form.new_order.variant_name.help: The name that will appear in the order summary and
   invoice
-form.new_order.variant_price.label: Price
+form.new_order.variant_price.label: Price including VAT
 form.customize.about_us_enabled.label: Enable about us page
 form.customize.about_us.label: About us page content
 form.customize.motto.label: Motto

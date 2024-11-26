@@ -38,7 +38,8 @@ class NewOrderType extends DeliveryType
             'with_address_props' => true,
             'with_arbitrary_price' => true,
             'with_bookmark' => true,
-            'with_recurrence' => true
+            'with_recurrence' => true,
+            'asap_timing' => true,
         ]);
     }
 }

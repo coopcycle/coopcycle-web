@@ -224,9 +224,9 @@
             "PER_PACKAGE_ADD_DISCOUNT": "Adicionar desconto",
             "PER_PACKAGE_STARTING": "começando a partir de",
             "PER_PACKAGE": "por pacote",
-            "TYPE_PER_PACKAGE": "Preço por pacote",
-            "TYPE_RANGE": "Preço por faixas",
-            "TYPE_FIXED": "Preço fixo",
+            "TYPE_PER_PACKAGE": "Preço incl. IVA por pacote",
+            "TYPE_RANGE": "Preço incl. IVA por faixas",
+            "TYPE_FIXED": "Preço incl. IVA fixo",
             "ABOVE": "a partir de",
             "FOR_EVERY": "por cada"
         },

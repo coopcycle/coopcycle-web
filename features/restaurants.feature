@@ -952,6 +952,7 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
               "packages": [],
+              "barcode": "@array@",
               "createdAt":"@string@.isDateTime()"
             },
             "dropoff":{
@@ -980,6 +981,7 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
               "packages": [],
+              "barcode": "@array@",
               "createdAt":"@string@.isDateTime()"
             },
             "trackingUrl": @string@

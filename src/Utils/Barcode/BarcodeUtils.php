@@ -10,6 +10,14 @@ class BarcodeUtils {
     const WITHOUT_PACKAGE = '6767%03d%d%d8076';
     const WITH_PACKAGE =    '6767%03d%d%dP%dU%d8076';
 
+    private static string $appName = "";
+    private static string $salt = "";
+
+    public static function init(string $appName, string $salt): void {
+        self::$appName = $appName;
+        self::$salt = $salt;
+    }
+
     public static function parse(string $barcode): Barcode {
         $matches = [];
         if (!preg_match(
@@ -43,13 +51,17 @@ class BarcodeUtils {
         }
     }
 
-    public static function getBarcodeFromTask(Task $task): Barcode {
-        $code = sprintf(
+    public static function getRawBarcodeFromTask(Task $task): string
+    {
+        return sprintf(
             self::WITHOUT_PACKAGE,
             1, //TODO: Dynamicly get instance
             Barcode::TYPE_TASK, $task->getId()
         );
+    }
 
+    public static function getBarcodeFromTask(Task $task): Barcode {
+        $code = self::getRawBarcodeFromTask($task);
         return self::parse($code);
     }
 
@@ -75,4 +87,17 @@ class BarcodeUtils {
         );
     }
 
+
+    /**
+    * @param string|Barcode $barcode
+    * @return string
+    */
+    public static function getToken($barcode): string
+    {
+        if ($barcode instanceof Barcode) {
+            $barcode = $barcode->getRawBarcode();
+        }
+
+        return hash('xxh3', sprintf("%s%s%s", self::$appName, self::$salt, $barcode));
+    }
 }

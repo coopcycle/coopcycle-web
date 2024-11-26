@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.23.0] - 2024-11-26
+
+### Added
+* New API endpoint to import delivery asynchronously
+  `POST /api/deliveries/import_async`
+
+
+### Fixed
+* Fix mercadopago payment
+* Fix date picker in store config page not displaying correctly
+
 ## [3.21.0] - 2024-11-19
 
 ### Added
@@ -16,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Add the ability to configure the Urbantz Hub ID tied to a store
 * Add an API endpoint to programatically send order/deliveries CSV file to import for a store
 * Add the ability to set metadata in order/deliveries CSV file import
-* Add more titles on platform pages to show different titles on browser tabs 
+* Add more titles on platform pages to show different titles on browser tabs
 
 ### Fixed
 
