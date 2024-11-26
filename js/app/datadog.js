@@ -1,7 +1,7 @@
 import { datadogLogs } from '@datadog/browser-logs'
 import { datadogRum } from '@datadog/browser-rum'
 
-const el = document.getElementById('datadog');
+const el = document.getElementById('datadog')
 const datadogEnabled = Boolean(el)
 
 if (datadogEnabled) {
@@ -31,8 +31,7 @@ if (datadogEnabled) {
     trackResources: true,
     trackLongTasks: true,
     defaultPrivacyLevel: 'mask-user-input',
-  });
-
+  })
 }
 
 const DatadogLogger = {
