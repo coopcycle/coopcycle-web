@@ -166,7 +166,7 @@ monolog:
               php,
               cache,
               security,
-              messenger
+              messenger,
               request
             ]
             min_level: warning
