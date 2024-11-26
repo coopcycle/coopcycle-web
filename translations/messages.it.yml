@@ -681,7 +681,7 @@ form.reusable_packaging.is_tracked.label: Abilità tracciamento
 form.reusable_packaging.price.label: Prezzo
 form.reusable_packaging.on_hand.label: Riserva
 form.new_order.variant_name.label: Nome prodotto
-form.new_order.variant_price.label: Prezzo
+form.new_order.variant_price.label: Prezzo incl. IVA
 form.customize.about_us.label: Chi siamo contenuto della pagina
 product_option.strategy.free: Gratis
 product_option.strategy.option_value: Prezzo personalizzato

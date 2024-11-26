@@ -638,7 +638,7 @@ form.reusable_packaging.on_hand.label: 'Kantitatea'
 form.deposit_refund_settings.deposit_refund_optin.label: 'Itzulpen-sistema aukerakoa
   da'
 form.new_order.variant_name.label: 'Produktuaren izena'
-form.new_order.variant_price.label: 'Prezioa'
+form.new_order.variant_price.label: 'Prezioa BEZa barne'
 form.customize.about_us_enabled.label: 'Gaitu ''guri buruz'' orria'
 form.customize.about_us.label: '''Guri buruz'' orriaren edukia'
 form.customize.motto.label: 'Lema'

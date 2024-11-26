@@ -268,9 +268,9 @@
         "PRICE_RANGE_EDITOR": {
             "FOR_EVERY": "bakoitzeko",
             "ABOVE": "honen gainetik",
-            "TYPE_FIXED": "Prezio fijoa",
-            "TYPE_RANGE": "Prezioa barrutiko",
-            "TYPE_PER_PACKAGE": "Prezioa paketeko",
+            "TYPE_FIXED": "Prezio BEZa barne fijoa",
+            "TYPE_RANGE": "Prezioa BEZa barne barrutiko",
+            "TYPE_PER_PACKAGE": "Prezioa BEZa barne paketeko",
             "PER_PACKAGE": "Paketeko",
             "PER_PACKAGE_STARTING": "Hemendik hasten",
             "PER_PACKAGE_ADD_DISCOUNT": "Gehitu beherapena",

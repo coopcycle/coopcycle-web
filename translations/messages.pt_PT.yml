@@ -247,7 +247,7 @@ profile.addresses.empty: Nenhum endereço salvo ainda!
 profile.addresses.breadcrumb: Endereço
 restaurant.stats.delivery: Entrega
 restaurant.stats.total_products_excluding_taxes: Total de produtos sem impostos
-restaurant.stats.total_products_including_all_taxes: Total de produtos incluindo todos
+restaurant.stats.total_products_including_all_taxes: Total de produtos incl. todos
   os impostos
 restaurant.stats.delivered_on: Entregue em
 restaurant.stats.order_number: Número do pedido
@@ -418,7 +418,7 @@ form.customize.custom_privacy_enabled.label: Habilitar política de privacidade 
 form.customize.custom_legal.label: Personalizar a página de informação legal
 form.customize.custom_legal_enabled.label: Habilitar nota legal personalizada
 form.customize.motto.help: Isto não será mostrado na página do início
-form.new_order.variant_price.label: Preço
+form.new_order.variant_price.label: Preço incl. IVA
 form.new_order.variant_name.help: O nome que aparecerá no resumo do pedido e na fatura
 form.new_order.variant_name.label: Nome do produto
 form.deposit_refund_settings.deposit_refund_optin.label: Sistema de reembolso é opcional

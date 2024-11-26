@@ -838,14 +838,14 @@ roles.ROLE_ADMIN: Administrator
 product_option.strategy.option_value: Każda opcja ma inną cenę
 product_option.strategy.free: Darmowy
 promotion_coupon.used.label: Liczba zastosowań
-form.new_order.variant_price.label: Cena
+form.new_order.variant_price.label: Cena z VAT
 form.new_order.variant_name.help: Nazwa, która pojawi się w podsumowaniu zamówienia
   i na fakturze
 form.new_order.variant_name.label: Nazwa produktu
 form.deposit_refund_settings.deposit_refund_optin.label: System zwrotu kaucji jest
   opcjonalny
 form.reusable_packaging.on_hand.label: Asortyment
-form.reusable_packaging.price.label: Cena
+form.reusable_packaging.price.label: Cena z VAT
 form.reusable_packaging.is_tracked.label: Śledzenie aktywowane
 form.reusable_packaging.name.label: Nazwa
 form.package.volume_units.label: Jednostki objętości

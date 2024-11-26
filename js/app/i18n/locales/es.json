@@ -327,9 +327,9 @@
             "FOR_EVERY": "Por cada",
             "PER_PACKAGE_STARTING": "Comenzado a partir de",
             "PER_PACKAGE": "Por paquete",
-            "TYPE_PER_PACKAGE": "Precio por paquete",
-            "TYPE_RANGE": "Precio por rango",
-            "TYPE_FIXED": "Precio Fijo",
+            "TYPE_PER_PACKAGE": "Precio incl. IVA por paquete",
+            "TYPE_RANGE": "Precio incl. IVA por rango",
+            "TYPE_FIXED": "Precio incl. IVA Fijo",
             "PER_PACKAGE_DEL_DISCOUNT": "Quitar descuento",
             "PER_PACKAGE_ADD_DISCOUNT": "Agregar descuento"
         },
