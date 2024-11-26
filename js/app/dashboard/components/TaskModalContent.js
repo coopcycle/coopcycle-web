@@ -6,6 +6,7 @@ import {withTranslation} from 'react-i18next'
 import {DatePicker, Radio, Timeline} from 'antd';
 import {Formik} from 'formik'
 import {isValidPhoneNumber} from 'react-phone-number-input'
+import JsBarcode from 'jsbarcode'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
@@ -274,6 +275,44 @@ class TaskModalContent extends React.Component {
     )
   }
 
+  renderBarcode(task) {
+
+    if (task?.type !== 'DROPOFF') {
+      return null
+    }
+
+    let anchorProps = {}
+    if (this.props.events.length === 0) {
+      anchorProps = {
+        ...anchorProps,
+        onClick: e => {
+          e.preventDefault()
+          JsBarcode('.barcode').init();
+        }
+      }
+    }
+
+    const {barcode, label:{token}} = task.barcode
+
+    return (
+      <div>
+        <div className="text-center">
+          <a className="help-block" role="button" data-toggle="collapse" href="#task_barcode" aria-expanded="false" { ...anchorProps }>
+            <small>{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_SHOW_BARCODE') }</small>
+          </a>
+        </div>
+        <div className="collapse" id="task_barcode" aria-expanded="false">
+          <a href={window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&token=' + token } target="_blank" rel="noreferrer">
+            <svg className="barcode img-thumbnail img-responsive center-block"
+              data-format="code128"
+              data-height="60"
+              data-value={barcode}/>
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   renderForm() {
     let initialValues = {
       type: 'DROPOFF',
@@ -328,6 +367,7 @@ class TaskModalContent extends React.Component {
                 </Radio.Group>
               </div>
               { Object.prototype.hasOwnProperty.call(values, '@id') && this.renderTimeline(values) }
+              { Object.prototype.hasOwnProperty.call(values, '@id') && this.renderBarcode(values) }
               <div className={ errors.address && touched.address && errors.address.streetAddress && touched.address.streetAddress ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                 <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL') }</label>
                 <AddressAutosuggest

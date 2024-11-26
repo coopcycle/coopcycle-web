@@ -361,6 +361,7 @@
         "ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE": "Modificare solo questa volta",
         "ADMIN_DASHBOARD_CREATE_GROUP": "Crea gruppo",
         "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Nome del gruppo",
-        "RULE_PICKER_LINE_VOLUME_UNITS": "Unità di volume"
+        "RULE_PICKER_LINE_VOLUME_UNITS": "Unità di volume",
+        "GENERIC_BARCODE_HELP": "Questo codice a barre dell'attività può tracciare tutti i pacchi collegati come un'unica unità. Utilizzalo per semplificare il monitoraggio dell'intera consegna. Per un monitoraggio dettagliato pacco per pacco, utilizza invece i codici a barre dei singoli pacchi."
     }
 }

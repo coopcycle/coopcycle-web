@@ -135,6 +135,7 @@
         "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_LABEL": "Comments",
         "ADMIN_DASHBOARD_COMPLETE_FORM_COMMENTS_PLACEHOLDER": "Ex: address not found, no problem…",
         "ADMIN_DASHBOARD_TASK_FORM_SHOW_HISTORY": "Show history",
+        "ADMIN_DASHBOARD_TASK_FORM_SHOW_BARCODE": "Show barcode",
         "ADMIN_DASHBOARD_COURIER_SELECT_PLACEHOLDER": "Select a courier…",
         "ADMIN_DASHBOARD_COURIERS_SELECT_PLACEHOLDER": "Select couriers…",
         "ADMIN_DASHBOARD_SEARCH": "Search",
@@ -602,6 +603,7 @@
           "on": "on",
           "weekday": "weekday",
           "day": "day"
-        }
+        },
+      "GENERIC_BARCODE_HELP": "This task barcode can track all linked packages as a single unit. Use it for simplified tracking of the entire delivery. For detailed package-by-package tracking, use individual package barcodes instead."
     }
 }

@@ -52,6 +52,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages": [],
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -83,6 +84,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -109,6 +111,7 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
+            "barcode": "@array@",
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
@@ -140,12 +143,12 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
+            "barcode": "@array@",
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
-            "packages":[],
             "createdAt":"@string@.isDateTime()"
           }
         ],
@@ -643,6 +646,7 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
+        "barcode": "@array@",
         "createdAt":"@string@.isDateTime()"
       }
       """
@@ -1115,6 +1119,7 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
+        "barcode": "@array@",
         "createdAt":"@string@.isDateTime()"
       }
       """
@@ -1197,6 +1202,7 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
+        "barcode": "@array@",
         "createdAt":"@string@.isDateTime()"
       }
       """
@@ -1329,6 +1335,7 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -1360,6 +1367,7 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
+            "barcode": "@array@",
             "createdAt":"@string@.isDateTime()"
           }
         ],

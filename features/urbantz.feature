@@ -598,6 +598,7 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages":[],
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -626,6 +627,7 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages": [],
+          "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@

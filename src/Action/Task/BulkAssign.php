@@ -8,26 +8,22 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class BulkAssign extends Base
 {
     use AssignTrait;
 
-    private $iriConverter;
-    private $entityManager;
-
     public function __construct(
         TokenStorageInterface $tokenStorage,
         TaskManager $taskManager,
-        UserManagerInterface $userManager,
-        IriConverterInterface $iriConverter,
-        EntityManagerInterface $entityManager)
+        protected UserManagerInterface $userManager,
+        protected IriConverterInterface $iriConverter,
+        protected EntityManagerInterface $entityManager,
+        protected AuthorizationCheckerInterface $authorization
+    )
     {
         parent::__construct($tokenStorage, $taskManager);
-
-        $this->userManager = $userManager;
-        $this->iriConverter = $iriConverter;
-        $this->entityManager = $entityManager;
     }
 
     public function __invoke(Request $request)
