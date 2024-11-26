@@ -10,7 +10,7 @@ if (datadogEnabled) {
     site: 'datadoghq.com',
     service: el.dataset.service,
     forwardErrorsToLogs: true,
-    // Only tracked sessions send logs.
+    // Only tracked sessions send logs; from 0 to 100
     sessionSampleRate: 100,
     telemetrySampleRate: 0,
   })
@@ -22,9 +22,9 @@ if (datadogEnabled) {
     service: el.dataset.service,
     // Specify a version number to identify the deployed version of your application in Datadog
     // version: '1.0.0',
-    // 'Browser RUM' session sample rate
+    // 'Browser RUM' session sample rate; from 0 to 100
     sessionSampleRate: 1,
-    // 'Browser RUM & Session Replay' sample rate (% from sessions tracked by RUM/sessionSampleRate)
+    // 'Browser RUM & Session Replay' sample rate (% from sessions tracked by RUM/sessionSampleRate); from 0 to 100
     sessionReplaySampleRate: 10,
     telemetrySampleRate: 0,
     trackUserInteractions: true,
