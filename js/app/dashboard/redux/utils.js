@@ -114,11 +114,7 @@ export const isTaskVisible = (task, filters, date) => {
   const isFinished = _.includes(['DONE', 'FAILED'], task.status)
   const isCancelled = 'CANCELLED' === task.status
   const isIncidentReported = task.hasIncidents
-  /**
-   * Action to move task to top or bottom of tasklist
-   * @param {Object} task - Task
-   * @param {string[]} tags - List of tag slugs
-   */
+
   const isTaskInTags = (task, tags) => {
     if (task.tags.length === 0) {
       return false
@@ -130,11 +126,7 @@ export const isTaskVisible = (task, filters, date) => {
 
     return true
   }
-  /**
-   * Action to move task to top or bottom of tasklist
-   * @param {Object} task - Task
-   * @param {string[]} orgNames - Names of the orgs
-   */
+
   const isTaskInOrgs = (task, orgNames) => {
     return orgNames.includes(task.orgName)
   }
@@ -205,12 +197,7 @@ export const isTaskVisible = (task, filters, date) => {
   }
 
   if (hiddenCouriers.length > 0) {
-
-    if (!task.isAssigned) {
-      return true
-    }
-
-    if (_.includes(hiddenCouriers, task.assignedTo)) {
+    if (task.isAssigned && _.includes(hiddenCouriers, task.assignedTo)) {
       return false
     }
   }
