@@ -82,18 +82,22 @@ import { antdLocale } from '../i18n'
 // }
 
 const DateRangePicker = ({ defaultValue, onChange, format, showTime }) => {
+
+  console.error("valeurs", defaultValue);
+  
+
   
   const [value, setValue] = useState(() => defaultValue ? [moment(defaultValue.after), moment(defaultValue.before)] : [])
 
   const handleDateChange = (newValue) => {
     if (!newValue) return; 
 
-    setValue(newValue); 
-
     onChange({
       after: newValue[0],
       before: newValue[1]
     })
+
+    setValue(newValue); 
   }
 
   let props = {}
@@ -106,9 +110,9 @@ const DateRangePicker = ({ defaultValue, onChange, format, showTime }) => {
   return (
     <DatePicker.RangePicker
       style={{ width: '100%' }}
-      // format={format}
+      format={format}
       defaultValue={value}
-      onChange={(value) => this.onChange(value)}
+      onChange={handleDateChange}
       {...props}
     />
     )

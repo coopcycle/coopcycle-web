@@ -12,9 +12,9 @@ import { I18nextProvider } from 'react-i18next'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
-import DateRangePicker from '../widgets/DateRangePicker'
+// import DateRangePicker from '../widgets/DateRangePicker'
 
-// import DateTimeRangePicker from '../widgets/DateTimeRangePicker'
+import DateTimeRangePicker from '../widgets/DateTimeRangePicker'
 
 import { validateForm } from '../utils/address'
 import i18n from '../i18n'
@@ -196,9 +196,10 @@ function createDateRangePickerWidget(el) {
     before: beforeDefaultValue,
   }
 
-  DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
+  console.log("valeurs", defaultValue);
+
+  DateTimeRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
-    showTime: true,
     onChange: function({after, before}) {
       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
@@ -217,6 +218,28 @@ function createDateRangePickerWidget(el) {
     }
   })
 }
+
+//   DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
+//     defaultValue,
+//     showTime: true,
+//     onChange: function({after, before}) {
+//       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
+//       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
+
+//       reduxStore.dispatch({
+//         type: 'SET_BEFORE',
+//         taskIndex: domIndex(el),
+//         value: before.format()
+//       })
+
+//       reduxStore.dispatch({
+//         type: 'SET_AFTER',
+//         taskIndex: domIndex(el),
+//         value: after.format()
+//       })
+//     }
+//   })
+// }
 
 function createDatePickerWidget(el, isAdmin = false) {
 
