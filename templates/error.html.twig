@@ -14,6 +14,7 @@
       <p>{{ ('error.' ~ exception.statusCode)|trans }}</p>
       <a href="{{ path('homepage') }}">{{ 'error.return_to_homepage'|trans }}</a>
     </div>
+    {% include '_partials/monitoring.html.twig' %}
     {% include "_partials/analytics.html.twig" %}
   </body>
 </html>
