@@ -1,74 +1,140 @@
-import React from 'react'
+import  React, {useState } from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
+import { ConfigProvider, DatePicker, Select } from 'antd';
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
-import { DateTimeRangePicker } from '@mui/x-date-pickers-pro/DateTimeRangePicker';
-import { SingleInputDateTimeRangeField } from '@mui/x-date-pickers-pro/SingleInputDateTimeRangeField';
+import { timePickerProps } from '../utils/antd'
 
+import 'antd/es/input/style/index.css'
 
-class DateRangePicker extends React.Component {
+import { antdLocale } from '../i18n'
 
-  constructor(props) {
-    super(props)
+const {Option} = Select
 
-    let value = []
-    if (this.props.defaultValue) {
-      value = [moment(this.props.defaultValue.after), moment(this.props.defaultValue.before)]
+// pas de show Time ici parce qu'on veut juste la date 
+
+// il faut que le onChange soit au courant des changements 
+const DateTimeRangePicker = ({ defaultValue, onChange, format}) => {
+  
+  const [value, setValue] = useState(() => defaultValue ? [moment(defaultValue.after), moment(defaultValue.before)] : [])
+
+  const [date, setDate] = useState(() => defaultValue ? moment(defaultValue.after) : null)
+  const [doneAfterHour, setDoneAfterHour] = useState(() => defaultValue ? moment(defaultValue.after).format("HH:mm:ss") : "")
+  const [doneBeforeHour, setDoneBeforeHour] = useState(() => defaultValue ? moment(defaultValue.before).format("HH:mm:ss") : "")
+
+  // Initialiser les states avec les options à partir des doneAfterHour et doneBeforeHour 
+
+    // la fonction pour générer des intervales à partir de l'heure actuelle 
+
+  function calculate(endTime, minutes) {
+    const timeStops = [];
+    const startTime = moment().add('m', minutes - moment().minute() % 15);
+
+    while (startTime < endTime) {
+        timeStops.push(new moment(startTime).format('HH:mm'));
+        startTime.add('m', 15);
     }
-    
-    
-    this.state = {
-     value
-   }
-    // si on passe par la classe, on doit bind le onChange à l'instance
-    this.onChange = this.onChange.bind(this)
+
+    return timeStops;
+}
+
+  const [firstSelectOption, setFirstSelectOption] = useState(calculate(moment().add('h', 24), 15));
+  const [secondSelectOption, setSecondSelectOption] = useState((calculate(moment().add('h', 24), 30)));
+
+
+  const result = calculate(moment().add('h', 24));  
+
+
+
+
+// La logique pour faire un seul handleChange qui va gérer les changements de valeur des trois composants : 
+
+// dans le return de chaque composant, on va faire un onChange qui va appeler notre handleChange du type : 
+// onChange:{(newDate) => {setDate(newDate) handleChange(newDate, afterhour, beforehour)}}
+
+// et le handleChange, va gérer le fait de vérifier si on a bien une before > after et de générer les deux valeurs de date pour
+// coller à la logique de l'autre composant. 
+
+  // const handleChange = (newValue) => {
+  //   if (!newValue) return;
+
+  //   setValue(newValue);
+
+  //   onChange({
+  //     after: newValue[0],
+  //     before: newValue[1]
+  //   })
+  // }
+  
+  const handleChange = (date, doneAfterHour, doneBeforeHour) => {
+    if (!date || !doneAfterHour || !doneBeforeHour) return // à voir comment on vérifie
+
+    // 
   }
 
-  onChange(value) {
-    // When the input has been cleared
-    if (!value) {
-      return
-    }
 
-    const values = {
-      after: value[0],
-      before: value[1],
-    }
+  return (
 
-    this.setState(value)
+    // ici on aura le datepicker et deux selects dans lesquels on fait passer des intervales. 
 
-    this.props.onChange(values)
-  }
+    <>
+    <DatePicker
+      style={{ width: '50%' }}
+      format="LL"
+      defaultValue={date} 
+      onChange={(newDate) => {
+        setDate(newDate)
+        handleChange(newDate, doneAfterHour, doneBeforeHour)
+      }}
+      
+    />
+    <Select
+      style={{ width: '25%' }}
+      format={format}
+      defaultValue={doneAfterHour} 
+      onChange={(newDoneAfterHour) => {
+        setDoneAfterHour(newDoneAfterHour)
+        handleChange(date, newDoneAfterHour, doneBeforeHour)
+      }}
+      >
+      {/* on va générer les options via la fonction pour les intervales */}
+    </Select>
+    <Select
+      style={{ width: '25%' }}
+      format={format}
+      defaultValue={doneBeforeHour} 
+      onChange={(newDoneBeforeHour) => {
+        setDoneBeforeHour(newDoneBeforeHour)
+        handleChange(date, doneAfterHour, newDoneBeforeHour)
+      }}
+      >
+      </Select>
+      </>
 
-  render() {
-
-    return (
-      <div>
-        <DateTimeRangePicker 
-          // slots={{ field: SingleInputDateTimeRangeField }}
-          defaultValue={this.state.value}
-          onChange={(value) => this.onChange(value)}
-          format={this.props.format}
-           />
-      </div>    
     )
   }
 
-}
 export default function(el, options) {
-  const defaultProps = {
-    onChange: () => {},
-    format: 'LLL',
-  };
 
-  const props = { ...defaultProps, ...options };
+  const defaultProps = {
+    getDatePickerContainer: null,
+    getTimePickerContainer: null,
+    onChange: () => {},
+    format: 'LLL', // verifier ce qu'on met là 
+  }
+
+  const props = { ...defaultProps, ...options }
 
   render(
-    <LocalizationProvider dateAdapter={AdapterMoment}>
-      <DateRangePicker {...props} />
-    </LocalizationProvider>,
-    el
-  );
+    <ConfigProvider locale={ antdLocale }>
+      <DateTimeRangePicker { ...props } />
+    </ConfigProvider>, el)
 }
+
+// La logique pour faire un seul handleChange qui va gérer les changements de valeur des trois composants : 
+
+// dans le return de chaque composant, on va faire un onChange qui va appeler notre handleChange du type : 
+// onChange:{(newDate) => {setDate(newDate) handleChange(newDate, afterhour, beforehour)}}
+
+// et le handleChange, va gérer le fait de vérifier si on a bien une before > after et de générer les deux valeurs de date pour
+// coller à la logique de l'autre composant. 
