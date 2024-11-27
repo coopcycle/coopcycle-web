@@ -116,11 +116,19 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             }
 
             if (isset($record['pickup.metadata']) && !empty($record['pickup.metadata'])) {
-                $this->parseAndApplyMetadata($delivery->getPickup(), $record['pickup.metadata']);
+                try {
+                    $this->parseAndApplyMetadata($delivery->getPickup(), $record['pickup.metadata']);
+                } catch (Exception $e) {
+                    $parseResult->addErrorToRow($rowNumber, 'Unable to parse pickup metadata');
+                }
             }
 
             if (isset($record['dropoff.metadata']) && !empty($record['dropoff.metadata'])) {
-                $this->parseAndApplyMetadata($delivery->getDropoff(), $record['dropoff.metadata']);
+                try {
+                    $this->parseAndApplyMetadata($delivery->getDropoff(), $record['dropoff.metadata']);
+                } catch (Exception $e) {
+                    $parseResult->addErrorToRow($rowNumber, 'Unable to parse dropoff metadata');
+                }
             }
 
             if (isset($record['weight']) && is_numeric($record['weight'])) {

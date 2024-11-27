@@ -11,6 +11,6 @@ trait ParseMetadataTrait
         array_map(function ($metaString) use ($task) {
             [$metaKey, $metaValue] = explode("=", $metaString);
             $task->setMetadata($metaKey, $metaValue);
-        }, explode(" ", $metadataRecord));
+        }, explode(" ", trim($metadataRecord)));
     }
 }
