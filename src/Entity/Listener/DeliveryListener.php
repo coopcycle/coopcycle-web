@@ -2,14 +2,19 @@
 
 namespace AppBundle\Entity\Listener;
 
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskList\Item;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
 class DeliveryListener
 {
-    public function __construct(protected EntityManagerInterface $entityManager)
+    public function __construct(
+        protected EntityManagerInterface $entityManager,
+        protected TaskListProvider $taskListProvider
+    )
     {
         
     }
@@ -65,10 +70,11 @@ class DeliveryListener
             $courier = $delivery->getStore()->getDefaultCourier();
             
             foreach ($delivery->getTasks() as $task) {
-                $task->assignTo($courier, $task->getBefore());
-                $this->entityManager->persist($task);
+                $taskList = $this->taskListProvider->getTaskList($task, $courier);
+                $taskList->appendTask($task);
+                $this->entityManager->persist($taskList);
             }
-
+            
             $this->entityManager->flush();
         }
     }

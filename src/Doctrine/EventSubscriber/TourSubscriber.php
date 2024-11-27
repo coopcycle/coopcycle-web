@@ -29,7 +29,8 @@ class TourSubscriber implements EventSubscriber
     }
 
     /**
-     * Trickles down the assignment information from tour to tasks
+     * Trickles down the assignment information from tour to tasks.
+     * The tour is linked to the TaskList as an item, now we want to fill task.assignedTo
      */
     public function onFlush(OnFlushEventArgs $args)
     {

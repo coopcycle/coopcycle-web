@@ -261,6 +261,17 @@ class TaskList implements TaskCollectionInterface
         $item->setParent($this);
     }
 
+    public function appendTask(Task $task) {
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition($this->getItems()->count());
+        $this->addItem($item);
+
+        $task->assignTo($this->getCourier(), $this->getDate());
+
+        return $this;
+    }
+
      /**
      * Clear the assigned items
      */
