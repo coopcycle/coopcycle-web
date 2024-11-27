@@ -88,7 +88,7 @@ function SpreadsheetViewer({ data, errors }) {
       className="ReactModal__Content--delivery-import-spreadsheet"
       shouldCloseOnOverlayClick={ true }
     >
-      <header className="text-right mb-4"><a href="#" onClick={ closeModal }><i className="fa fa-close" /></a></header>
+      <header className="text-right mb-4"><a href="#" onClick={ closeModal }><i className="fa fa-close fa-2x text-muted" /></a></header>
       <Spreadsheet
       data={ data }
       // https://github.com/iddan/react-spreadsheet/blob/5751105cd84db1bb745fa37d399ebedcb48220df/src/RowIndicator.tsx
@@ -97,15 +97,11 @@ function SpreadsheetViewer({ data, errors }) {
         const hasErrors = rowsWithErrors.includes('' + row)
 
         const style = hasErrors ? {
-          top: -5,
+          top: 5,
           position: "absolute",
-          right: 1,
+          right: 15,
           width: 0,
           height: 0,
-          borderTop: "8px solid transparent",
-          borderBottom: "8px solid transparent",
-          borderLeft: "8px solid red",
-          transform: "rotate(-45deg)",
         } : {}
 
         return (
@@ -118,7 +114,7 @@ function SpreadsheetViewer({ data, errors }) {
             <span style={{ display: 'inline-block', width: '100%', position: 'relative' }}>
               { hasErrors &&
               <Tooltip title={ errorsByRow[row].errors.join('\n') } color="red">
-                <span style={ style } />
+                <a className="text-danger fa fa-exclamation-triangle" style={ style } />
               </Tooltip>
               }
               <span>{ row + 1 }</span>
@@ -135,7 +131,7 @@ const importStatusIcon = {
   'pending': 'clock-o',
   'started': 'play',
   'completed': 'check',
-  'failed': 'exclamation-circle'
+  'failed': 'exclamation-triangle'
 }
 
 function addSpreadsheetView(viewIcon) {

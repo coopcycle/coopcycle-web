@@ -1567,6 +1567,8 @@ error.return_to_homepage: Return to homepage
 deliveries.imports: Imported files
 deliveries.importing: The file %filename% is being imported.
 deliveries.imports.created_at: Created at
+deliveries.imports.see_file: See file
+deliveries.imports.see_errored_file: To errors details
 business.account.settings.link: Link with my account
 form.business_restaurant_group.restaurants_with_menu: Restaurants with menu
 form.business_restaurant_group.restaurant: Restaurant
