@@ -3,21 +3,16 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Sylius\Customer;
-use AppBundle\Form\AddressType;
 use AppBundle\Form\Type\LegalType;
 use AppBundle\Form\Type\PhoneNumberType;
-use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use Nucleos\UserBundle\Util\Canonicalizer;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
@@ -90,6 +85,7 @@ class CheckoutCustomerType extends AbstractType
 
             $form = $event->getForm();
 
+            // guest checkout
             if ($form->has('email') && $form->get('email')->isValid()) {
 
                 $email = $form->get('email')->getData();
@@ -100,8 +96,13 @@ class CheckoutCustomerType extends AbstractType
                         'emailCanonical' => $emailCanonical,
                     ]);
 
+                // returning customer (without an account)
                 if (null !== $customer) {
+                    $phoneNumber = $form->get('phoneNumber')->getData();
+                    $customer->setTelephone($phoneNumber);
+
                     $event->setData($customer);
+                // new customer
                 } else {
                     $event->getData()->setEmailCanonical($emailCanonical);
                 }
