@@ -1,6 +1,7 @@
 import React from 'react'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
+// import _, { values } from 'lodash'
 import _ from 'lodash'
 import axios from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
@@ -12,6 +13,9 @@ import { I18nextProvider } from 'react-i18next'
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import DateRangePicker from '../widgets/DateRangePicker'
+
+// import DateTimeRangePicker from '../widgets/DateTimeRangePicker'
+
 import { validateForm } from '../utils/address'
 import i18n from '../i18n'
 import { RecurrenceRules } from './components/RecurrenceRules'
@@ -192,7 +196,7 @@ function createDateRangePickerWidget(el) {
     before: beforeDefaultValue,
   }
 
-  new DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
+  DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
     showTime: true,
     onChange: function({after, before}) {
