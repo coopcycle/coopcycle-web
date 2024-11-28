@@ -22,8 +22,8 @@ class TaskListProvider
         $taskListRepository = $this->objectManager->getRepository(TaskList::class);
 
         // FIXME
-        // Using $task->getDoneBefore() causes problems with tasks spanning over several days
-        // Here it would assign the task to 2 distinct task lists
+        // 1. if task->assignedOn is set, we have explictly set the assignment date -> good, we get the proper TaskList
+        // 2. if not use the doneBefore date as default, but in this case their might be problems with tasks spanning on multiple days
         // @see https://github.com/coopcycle/coopcycle-web/issues/874
         $date = null !== $task->getAssignedOn() ? $task->getAssignedOn() : $task->getDoneBefore();
 
