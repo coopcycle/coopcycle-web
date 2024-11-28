@@ -11,103 +11,119 @@ import { antdLocale } from '../i18n'
 
 const {Option} = Select
 
-// pas de show Time ici parce qu'on veut juste la date 
 
-// il faut que le onChange soit au courant des changements 
 const DateTimeRangePicker = ({ defaultValue, onChange, format}) => {
   
   const [value, setValue] = useState(() => defaultValue ? [moment(defaultValue.after), moment(defaultValue.before)] : [])
 
-  const [date, setDate] = useState(() => defaultValue ? moment(defaultValue.after) : null)
-  const [doneAfterHour, setDoneAfterHour] = useState(() => defaultValue ? moment(defaultValue.after).format("HH:mm:ss") : "")
-  const [doneBeforeHour, setDoneBeforeHour] = useState(() => defaultValue ? moment(defaultValue.before).format("HH:mm:ss") : "")
-
-  // Initialiser les states avec les options à partir des doneAfterHour et doneBeforeHour 
-
-    // la fonction pour générer des intervales à partir de l'heure actuelle 
-
   function calculate(endTime, minutes) {
     const timeStops = [];
-    const startTime = moment().add('m', minutes - moment().minute() % 15);
+    const startTime = moment().add('m', (minutes - moment().minute() % 15) + 15);
 
     while (startTime < endTime) {
-        timeStops.push(new moment(startTime).format('HH:mm'));
-        startTime.add('m', 15);
+      timeStops.push(new moment(startTime).format('HH:mm'));
+      startTime.add('m', 15);
     }
 
     return timeStops;
 }
 
-  const [firstSelectOption, setFirstSelectOption] = useState(calculate(moment().add('h', 24), 15));
-  const [secondSelectOption, setSecondSelectOption] = useState((calculate(moment().add('h', 24), 30)));
+  const firstSelectOptions = calculate(moment(value[0]).add('h', 24), 15);
+  const secondSelectOptions = calculate(moment(value[1]).add('h', 24), 30);
 
 
-  const result = calculate(moment().add('h', 24));  
-
-
-
-
-// La logique pour faire un seul handleChange qui va gérer les changements de valeur des trois composants : 
-
-// dans le return de chaque composant, on va faire un onChange qui va appeler notre handleChange du type : 
-// onChange:{(newDate) => {setDate(newDate) handleChange(newDate, afterhour, beforehour)}}
-
-// et le handleChange, va gérer le fait de vérifier si on a bien une before > after et de générer les deux valeurs de date pour
-// coller à la logique de l'autre composant. 
-
-  // const handleChange = (newValue) => {
-  //   if (!newValue) return;
-
-  //   setValue(newValue);
-
-  //   onChange({
-  //     after: newValue[0],
-  //     before: newValue[1]
-  //   })
-  // }
   
-  const handleChange = (date, doneAfterHour, doneBeforeHour) => {
-    if (!date || !doneAfterHour || !doneBeforeHour) return // à voir comment on vérifie
+  const handleChange = ({type, newValue}) => {
 
-    // 
+    if (!newValue) return // est ce que c'est pas redondant avec le return du switch ? 
+
+    let afterValue = value[0]
+    let beforeValue = value[1]
+
+    switch (type) {
+      case "date":
+        const afterHour = afterValue.format("HH:mm:ss")
+        const beforeHour = beforeValue.format("HH:mm:ss")
+
+        const newDate = newValue.format("YYYY-MM-DD")
+        
+        afterValue = moment(`${newDate} ${afterHour}`)
+        beforeValue = moment(`${newDate} ${beforeHour}`)
+        setValue([afterValue, beforeValue])
+        break
+      case "afterHour": 
+        const date = afterValue.format("YYYY-MM-DD")    
+        afterValue = moment(`${date} ${newValue}:00`)
+        beforeValue = beforeValue
+        setValue([afterValue, beforeValue])
+        break
+      case "beforeHour":   
+        // pourquoi je peux pas redéclarer date alors que c'est pourtant hors portée ?
+        const oldDate = afterValue.format("YYYY-MM-DD")
+        beforeValue = moment(`${oldDate} ${newValue}:00`)
+        afterValue = afterValue
+        setValue([afterValue, beforeValue])
+        break
+      default:
+        return
+    }
+
+    // on verifie que newValueBefore > newValueAfter. Si non : message d'erreur ? Ou valeur dans le select ou classe d'erreur ? Mais comment
+    // ne pas ajouter un state ?
+
+    const isBefore = moment(afterValue).isBefore(beforeValue)
+
+    if (!isBefore) {
+      console.log("la première heure est après la seconde")
+      console.log(isBefore)
+    } else {
+      onChange({
+        after: afterValue,
+        before: beforeValue
+      })
+    }
   }
 
-
   return (
-
-    // ici on aura le datepicker et deux selects dans lesquels on fait passer des intervales. 
 
     <>
     <DatePicker
       style={{ width: '50%' }}
       format="LL"
-      defaultValue={date} 
+      defaultValue={value[0]} 
       onChange={(newDate) => {
-        setDate(newDate)
-        handleChange(newDate, doneAfterHour, doneBeforeHour)
+        handleChange({ type: "date", newValue: newDate })
       }}
       
     />
     <Select
       style={{ width: '25%' }}
       format={format}
-      defaultValue={doneAfterHour} 
-      onChange={(newDoneAfterHour) => {
-        setDoneAfterHour(newDoneAfterHour)
-        handleChange(date, newDoneAfterHour, doneBeforeHour)
+      defaultValue={value[0].format('HH:mm')} 
+      onChange={(newAfterHour) => {
+        handleChange({ type: "afterHour", newValue: newAfterHour })
       }}
       >
-      {/* on va générer les options via la fonction pour les intervales */}
+     {firstSelectOptions.map((option) => (
+        <Option key={option} value={option}>
+          {option}
+        </Option>
+      ))}
+
     </Select>
     <Select
       style={{ width: '25%' }}
       format={format}
-      defaultValue={doneBeforeHour} 
-      onChange={(newDoneBeforeHour) => {
-        setDoneBeforeHour(newDoneBeforeHour)
-        handleChange(date, doneAfterHour, newDoneBeforeHour)
+      defaultValue={value[1].format('HH:mm')} 
+      onChange={(newBeforeHour) => {
+        handleChange({ type: "beforeHour", newValue: newBeforeHour })
       }}
       >
+        {secondSelectOptions.map((option) => (
+        <Option key={option} value={option}>
+          {option}
+        </Option>
+      ))}
       </Select>
       </>
 
@@ -130,11 +146,3 @@ export default function(el, options) {
       <DateTimeRangePicker { ...props } />
     </ConfigProvider>, el)
 }
-
-// La logique pour faire un seul handleChange qui va gérer les changements de valeur des trois composants : 
-
-// dans le return de chaque composant, on va faire un onChange qui va appeler notre handleChange du type : 
-// onChange:{(newDate) => {setDate(newDate) handleChange(newDate, afterhour, beforehour)}}
-
-// et le handleChange, va gérer le fait de vérifier si on a bien une before > after et de générer les deux valeurs de date pour
-// coller à la logique de l'autre composant. 
