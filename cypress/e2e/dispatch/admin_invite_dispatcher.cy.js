@@ -16,6 +16,12 @@ describe('Dispatch; admin; invite dispatcher', () => {
     cy.get('#invite_user_roles_2').check()
     cy.get('.btn').click()
 
+    // users page
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/users$/,
+    )
+
     cy.get('.alert-success').should(
       'contain',
       'Votre invitation a bien été envoyée ! Vous pouvez à présent éditer les paramètres du nouvel utilisateur.',
