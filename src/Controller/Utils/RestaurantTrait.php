@@ -1635,15 +1635,15 @@ trait RestaurantTrait
             ];
 
             $records = [];
-            foreach ($hash[$exported] as $payment) {
+            foreach ($hash[$exported] as $order) {
 
-                $order = $payment->getOrder();
+                $edenredPayment = $order->getLastPaymentByMethod('EDENRED', PaymentInterface::STATE_COMPLETED);
 
                 $records[] = [
                     $order->getNumber(),
                     $order->getShippingTimeRange()->getLower()->format('Y-m-d'),
                     $numberFormatter->format($order->getTotal() / 100),
-                    $numberFormatter->format($payment->getAmountForMethod('EDENRED') / 100),
+                    $numberFormatter->format($edenredPayment->getAmount() / 100),
                     $numberFormatter->format($order->getFeeTotal() / 100),
                 ];
             }
