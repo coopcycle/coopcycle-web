@@ -69,6 +69,20 @@ class BarcodeController extends AbstractController
         return $this->json([
             "ressource" => $iri,
             "client_action" => $clientAction,
+
+            /**
+             * The action_token enables temporary elevated permissions for couriers.
+             * It allows specific actions (like self-assignment) on the scanned task only.
+             *
+             * Generation:
+             * - Uses BarcodeUtils::getToken/1 to get the label's token
+             * - Hashes it with xxh3 algorithm for additional security
+             * - Uses runtime secret key to prevent token guessing
+             *
+             * Security:
+             * - Scoped to single task (token invalid for other tasks)
+             * - Cannot be forged without access to runtime secret
+             */
             "token_action" => hash('xxh3', BarcodeUtils::getToken($iri)),
             "entity" => $normalizer->normalize($task, null, [
                 'groups' => ['task', 'delivery', 'package', 'address', 'barcode']
