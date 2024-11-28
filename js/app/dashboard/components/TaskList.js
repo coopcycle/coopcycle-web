@@ -33,10 +33,10 @@ const showVehicleMenu = useContextMenu({
   id: 'vehicle-selectmenu'
 }).show
 
-const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
+const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
 
   if (item.startsWith('/api/tours')) {
-    return (<Tour tourId={ item } draggableIndex={ draggableIndex } />)
+    return (<Tour tourId={ item } draggableIndex={ draggableIndex } vehicleMaxWeight={ vehicleMaxWeight } vehicleMaxVolumeUnits={ vehicleMaxVolumeUnits } />)
   } else {
     return (<Task taskId={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
   }
@@ -62,6 +62,8 @@ class InnerList extends React.Component {
         item={ item }
         draggableIndex={ index }
         unassignTasksFromTaskList={ this.props.unassignTasksFromTaskList }
+        vehicleMaxWeight={this.props.vehicleMaxWeight}
+        vehicleMaxVolumeUnits={this.props.vehicleMaxVolumeUnits}
       />)
   }
 }
@@ -288,7 +290,10 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
               <InnerList
                 items={ items }
                 unassignTasksFromTaskList={ unassignTasksFromTaskList }
-                username={ username } />
+                username={ username }
+                vehicleMaxWeight={vehicle?.maxWeight + trailer?.maxWeight}
+                vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits + trailer?.maxVolumeUnits}
+              />
               { provided.placeholder }
             </div>
           )}
