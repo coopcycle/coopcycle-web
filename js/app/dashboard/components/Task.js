@@ -195,16 +195,19 @@ class Task extends React.Component {
           } else {
             const standaloneTaskIds = this.props.standaloneTasks.map(t => t['@id'])
             const taskPosition = standaloneTaskIds.findIndex(id => id === this.props.task['@id'])
+
             const latestSelectedTaskId = this.props.selectedTasks.slice(-1).at(0)
             const latestSelectedTaskPosition = standaloneTaskIds.findIndex(id => id === latestSelectedTaskId)
   
             const startIndex = taskPosition > latestSelectedTaskPosition ? latestSelectedTaskPosition : taskPosition 
             const endIndex =  taskPosition > latestSelectedTaskPosition ? taskPosition + 1 : latestSelectedTaskPosition + 1
+
+            const toSelect = taskPosition > latestSelectedTaskPosition ? [...this.props.selectedTasks, ...standaloneTaskIds.slice(startIndex, endIndex)] : standaloneTaskIds.slice(startIndex, endIndex)
   
             this.props.selectTasksByIds(
               _.intersection(
-                this.props.visibleTaskIds,
-                standaloneTaskIds.slice(startIndex, endIndex)
+                this.props.visibleTaskIds, // user wants only to select tasks visible to theirs ^^
+                toSelect
               )
             )
           }
