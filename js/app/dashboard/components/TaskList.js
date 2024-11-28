@@ -16,7 +16,7 @@ import { selectExpandedTaskListPanelsIds, selectLastOptimResult, selectOptimLoad
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight, selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight, selectTrailerById, selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
 import PolylineIcon from './icons/PolylineIcon'
 import {default as VehicleIcon} from './icons/Vehicle'
 import {default as TrailerIcon} from './icons/Trailer'
@@ -155,6 +155,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
   const vehicle = useSelector(state => selectVehicleById(state, taskList.vehicle))
+  const trailer = useSelector(state => selectTrailerById(state, taskList.trailer))
   const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
   const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
 
@@ -199,8 +200,8 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
           distance={distance}
           weight={weight}
           volumeUnits={volumeUnits}
-          vehicleMaxWeight={vehicle?.maxWeight}
-          vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits}
+          vehicleMaxWeight={vehicle?.maxWeight + trailer?.maxWeight}
+          vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits + trailer?.maxVolumeUnits}
         />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
