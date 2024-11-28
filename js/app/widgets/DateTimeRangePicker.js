@@ -3,8 +3,6 @@ import { render } from 'react-dom'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Select } from 'antd';
 
-import { timePickerProps } from '../utils/antd'
-
 import 'antd/es/input/style/index.css'
 
 import { antdLocale } from '../i18n'
