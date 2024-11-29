@@ -11,20 +11,19 @@ use AppBundle\Service\TaskManager;
 use Carbon\Carbon;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
+use Psr\Log\LoggerInterface;
 
 class ReceiveWebhook
 {
+    private static $onTaskChangedEvents = ['DISCARDED'];
+
     public function __construct(
-        DeliveryRepository $deliveryRepository,
-        TaskManager $taskManager,
-        PhoneNumberUtil $phoneNumberUtil,
-        string $country)
-    {
-        $this->deliveryRepository = $deliveryRepository;
-        $this->taskManager = $taskManager;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->country = $country;
-    }
+        private DeliveryRepository $deliveryRepository,
+        private TaskManager $taskManager,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private LoggerInterface $logger,
+        private string $country)
+    {}
 
     public function __invoke(UrbantzWebhook $data)
     {
@@ -151,12 +150,22 @@ class ReceiveWebhook
 
     private function onTaskChanged(array $task): ?Delivery
     {
+        // Bail early
+        if (!in_array($task['progress'], self::$onTaskChangedEvents)) {
+            return null;
+        }
+
+        if (!isset($task['extTrackId'])) {
+            $this->logger->error('Task "%s" has no "extTrackId" property', $task['_id']);
+            return null;
+        }
+
         $extTrackId = $task['extTrackId'];
 
         $delivery = $this->deliveryRepository->findOneByHashId($extTrackId);
 
         if (!$delivery) {
-
+            $this->logger->error('Could not find delivery corresponding to hash "%s"', $extTrackId);
             return null;
         }
 

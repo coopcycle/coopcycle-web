@@ -882,6 +882,8 @@ services:
     public: true
     arguments:
       $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Action\GoogleSignIn:
     public: true
