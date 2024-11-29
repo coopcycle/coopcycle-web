@@ -506,6 +506,7 @@ form.address.company.function.label: Contact person position
 form.address.company.collaborator_number.label: Number of employees
 form.address.company.meal_estimate.label: Estimated number of meals (per day)
 form.company.make_the_request.label: Send request
+pricing_rule_set.new: New pricing
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.strategy.label: Method of calculation

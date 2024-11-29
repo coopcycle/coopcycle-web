@@ -1,5 +1,14 @@
 {% extends "deliveries.html.twig" %}
 
+{% block prepare_title %}
+  {% set pricing_rule_set = form.vars.value %}
+  {% if pricing_rule_set.id %}
+    {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ pricing_rule_set.name) }}
+  {% else %}
+    {{ add_title_prefix('pricing_rule_set.new'|trans) }}
+  {% endif %}
+{% endblock %}
+
 {% form_theme form 'form/pricing_rule_set.html.twig' %}
 
 {% block breadcrumb %}
