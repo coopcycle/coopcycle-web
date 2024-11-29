@@ -156,7 +156,7 @@ class ReceiveWebhook
         }
 
         if (!isset($task['extTrackId'])) {
-            $this->logger->error('Task "%s" has no "extTrackId" property', $task['_id']);
+            $this->logger->error(sprintf('Task "%s" has no "extTrackId" property', $task['_id']));
             return null;
         }
 
@@ -165,7 +165,7 @@ class ReceiveWebhook
         $delivery = $this->deliveryRepository->findOneByHashId($extTrackId);
 
         if (!$delivery) {
-            $this->logger->error('Could not find delivery corresponding to hash "%s"', $extTrackId);
+            $this->logger->error(sprintf('Could not find delivery corresponding to hash "%s"', $extTrackId));
             return null;
         }
 
