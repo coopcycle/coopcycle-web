@@ -36,6 +36,7 @@ class StoreType extends LocalBusinessType
                     'class' => PricingRuleSet::class,
                     'choice_label' => 'name',
                     'query_builder' => new OrderByNameQueryBuilder(),
+                    'required' => false,
                 ))
                 ->add('packageSet', EntityType::class, array(
                     'label' => 'form.store_type.package_set.label',

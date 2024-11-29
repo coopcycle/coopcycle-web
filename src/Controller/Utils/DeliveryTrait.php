@@ -33,7 +33,7 @@ trait DeliveryTrait
         return $factory->createForDelivery($delivery, $price, $customer, $attach);
     }
 
-    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
+    protected function getDeliveryPrice(Delivery $delivery, ?PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
     {
         $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
 
