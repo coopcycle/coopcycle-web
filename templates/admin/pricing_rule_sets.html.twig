@@ -1,5 +1,9 @@
 {% extends "deliveries.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.pricing.title'|trans) }}
+{% endblock %}
+
 {% block breadcrumb %}
 {{ parent() }}
 <li>{% trans %}adminDashboard.pricing.title{% endtrans %}</li>

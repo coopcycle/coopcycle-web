@@ -1,5 +1,9 @@
 {% extends "deliveries.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('vehicles.breadcrumb'|trans) }}
+{% endblock %}
+
 {% block breadcrumb %}
 <li><a href="{{ path('admin_vehicles') }}">{{ 'vehicles.breadcrumb'|trans }}</a></li>
 {% endblock %}
