@@ -182,6 +182,13 @@ function createDateRangePickerWidget(el) {
   const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
   const afterDefaultValue = doneAfterPickerEl.value || moment().set({ hour: 0, minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss')
 
+  console.log(doneAfterPickerEl.value)
+  console.log(
+    moment()
+      .set({ hour: 0, minute: 0, second: 0 })
+      .format('YYYY-MM-DD HH:mm:ss'),
+  )
+
   // When adding a new task, initialize hidden input value
   if (!doneBeforePickerEl.value) {
     doneBeforePickerEl.value = moment(beforeDefaultValue).format('YYYY-MM-DD HH:mm:ss')
