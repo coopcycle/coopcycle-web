@@ -1,5 +1,9 @@
 {% extends "deliveries.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('integrations.breadcrumb'|trans) }}
+{% endblock %}
+
 {% block breadcrumb %}
 <li><a href="{{ path('admin_integrations') }}">{{ 'integrations.breadcrumb'|trans }}</a></li>
 {% endblock %}

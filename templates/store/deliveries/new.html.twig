@@ -1,5 +1,9 @@
 {% extends 'delivery/form.html.twig' %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('orders.new'|trans) }}
+{% endblock %}
+
 {% block breadcrumb %}
 
   <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>

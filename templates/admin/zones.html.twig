@@ -1,6 +1,11 @@
 {% extends "deliveries.html.twig" %}
+
 {% form_theme upload_form 'bootstrap_3_layout.html.twig' %}
 {% form_theme zone_collection_form 'form/zone_collection.html.twig' %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.zones.title'|trans) }}
+{% endblock %}
 
 {% block breadcrumb %}
 <li>{% trans %}adminDashboard.zones.title{% endtrans %}</li>
