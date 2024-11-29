@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Select } from 'antd'
@@ -43,69 +43,6 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       : {},
   )
 
-  // useEffect(() => {
-  //   const after = moment(timeValues.after, 'HH:mm')
-
-  //   const before = after.clone().add(15, 'minutes')
-  //   setTimeValues(prevState => ({
-  //     ...prevState,
-  //     before: before.format('HH:mm'),
-  //   }))
-
-  //   const updatedSecondOptions = secondSelectOptions.map(option => {
-  //     const isBefore = after.isBefore(option.time)
-  //     return {
-  //       ...option,
-  //       disabled: !isBefore,
-  //     }
-  //   })
-
-  //   setSecondSelectOptions(updatedSecondOptions)
-  // }, [timeValues.after])
-
-  // const handleChange = ({ type, newValue }) => {
-  //   if (!newValue || !type) return // utile ?
-
-  //   let afterValue = values[0]
-  //   let beforeValue = values[1]
-
-  //   switch (type) {
-  //     case 'date':
-  //       const afterHour = afterValue.format('HH:mm:ss')
-  //       const beforeHour = beforeValue.format('HH:mm:ss')
-
-  //       const newDate = newValue.format('YYYY-MM-DD')
-
-  //       afterValue = moment(`${newDate} ${afterHour}`)
-  //       beforeValue = moment(`${newDate} ${beforeHour}`)
-
-  //       setValues([afterValue, beforeValue])
-
-  //       break
-
-  //     case 'afterHour':
-  //       const date = afterValue.format('YYYY-MM-DD')
-  //       afterValue = moment(`${date} ${newValue}:00`)
-  //       setValues([afterValue, beforeValue])
-  //       break
-
-  //     case 'beforeHour': {
-  //       const date = afterValue.format('YYYY-MM-DD')
-  //       beforeValue = moment(`${date} ${newValue}:00`)
-  //       setValues([afterValue, beforeValue])
-  //       break
-  //     }
-
-  //     default:
-  //       return
-  //   }
-
-  //   onChange({
-  //     after: afterValue,
-  //     before: beforeValue,
-  //   })
-  // }
-  // le useEffect est trigger quand values est maj
   const handleDateChange = newValue => {
     if (!newValue) return
 
@@ -125,7 +62,7 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       ...prevState,
       after: newValue,
     }))
-    // validation
+
     const after = moment(timeValues.after, 'HH:mm')
 
     const before = after.clone().add(15, 'minutes')
@@ -167,14 +104,16 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
     })
   }
 
+  const isFirstRender = useRef(true)
+
   useEffect(() => {
-    const newValues = {
-      after: values[0],
-      before: values[1],
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
     }
 
-    onChange(newValues)
-  }, [values])
+    onChange(values)
+  }, [values, onChange])
 
   return (
     <>
