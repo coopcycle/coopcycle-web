@@ -33,6 +33,8 @@ class Client
     const JWT_CLAIM_FAILURE_REDIRECT = 'https://coopcycle.org/loopeat_failure_redirect';
 
     private $client;
+    private $loopEatClientId;
+    private $loopEatClientSecret;
 
     public function __construct(
         private EntityManagerInterface $objectManager,

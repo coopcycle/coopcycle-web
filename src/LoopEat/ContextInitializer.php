@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ContextInitializer
 {
+    private $logger;
+
     public function __construct(
         private Client $client,
         private int $processingFee,
