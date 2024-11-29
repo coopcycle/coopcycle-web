@@ -9,6 +9,7 @@ use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Service\TaskManager;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use libphonenumber\PhoneNumberUtil;
 
 class ReceiveWebhookTest extends TestCase
@@ -24,6 +25,7 @@ class ReceiveWebhookTest extends TestCase
             $this->deliveryRepository->reveal(),
             $this->taskManager->reveal(),
             PhoneNumberUtil::getInstance(),
+            new NullLogger(),
             'fr'
         );
     }
