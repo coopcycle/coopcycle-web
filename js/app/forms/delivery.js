@@ -179,23 +179,25 @@ function createDateRangePickerWidget(el) {
   const doneBeforePickerEl = document.querySelector(`#${el.id}_doneBefore`)
   const doneAfterPickerEl = document.querySelector(`#${el.id}_doneAfter`)
 
-  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
-  const afterDefaultValue = doneAfterPickerEl.value || moment().set({ hour: 0, minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss')
-
-  console.log(doneAfterPickerEl.value)
-  console.log(
+  const beforeDefaultValue =
+    doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
+  const afterDefaultValue =
+    doneAfterPickerEl.value ||
     moment()
       .set({ hour: 0, minute: 0, second: 0 })
-      .format('YYYY-MM-DD HH:mm:ss'),
-  )
+      .format('YYYY-MM-DD HH:mm:ss')
 
   // When adding a new task, initialize hidden input value
   if (!doneBeforePickerEl.value) {
-    doneBeforePickerEl.value = moment(beforeDefaultValue).format('YYYY-MM-DD HH:mm:ss')
+    doneBeforePickerEl.value = moment(beforeDefaultValue).format(
+      'YYYY-MM-DD HH:mm:ss',
+    )
   }
 
   if (!doneAfterPickerEl.value) {
-    doneAfterPickerEl.value = moment(afterDefaultValue).format('YYYY-MM-DD HH:mm:ss')
+    doneAfterPickerEl.value = moment(afterDefaultValue).format(
+      'YYYY-MM-DD HH:mm:ss',
+    )
   }
 
   const defaultValue = {
@@ -203,26 +205,26 @@ function createDateRangePickerWidget(el) {
     before: beforeDefaultValue,
   }
 
-  console.log("valeurs", defaultValue);
-
   DateTimeRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
-    onChange: function({after, before}) {
+    onChange: function ({ after, before }) {
       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
+
+      console.log(after, before)
 
       reduxStore.dispatch({
         type: 'SET_BEFORE',
         taskIndex: domIndex(el),
-        value: before.format()
+        value: before.format(),
       })
 
       reduxStore.dispatch({
         type: 'SET_AFTER',
         taskIndex: domIndex(el),
-        value: after.format()
+        value: after.format(),
       })
-    }
+    },
   })
 }
 

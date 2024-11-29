@@ -11,22 +11,13 @@ const { Option } = Select
 
 function generateTimeSlots(disabled = false) {
   const items = []
+  const minutes = [0, 15, 30, 45]
   new Array(24).fill().forEach((_, index) => {
-    items.push({
-      time: moment({ hour: index }),
-      disabled,
-    })
-    items.push({
-      time: moment({ hour: index, minute: 15 }),
-      disabled,
-    })
-    items.push({
-      time: moment({ hour: index, minute: 30 }),
-      disabled,
-    })
-    items.push({
-      time: moment({ hour: index, minute: 45 }),
-      disabled,
+    minutes.forEach(minute => {
+      items.push({
+        time: moment({ hour: index, minute: minute }),
+        disabled,
+      })
     })
   })
   return items
@@ -52,9 +43,89 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       : {},
   )
 
-  useEffect(() => {
-    console.log('timeValues.after dans useEffect :', timeValues.after)
+  // useEffect(() => {
+  //   const after = moment(timeValues.after, 'HH:mm')
 
+  //   const before = after.clone().add(15, 'minutes')
+  //   setTimeValues(prevState => ({
+  //     ...prevState,
+  //     before: before.format('HH:mm'),
+  //   }))
+
+  //   const updatedSecondOptions = secondSelectOptions.map(option => {
+  //     const isBefore = after.isBefore(option.time)
+  //     return {
+  //       ...option,
+  //       disabled: !isBefore,
+  //     }
+  //   })
+
+  //   setSecondSelectOptions(updatedSecondOptions)
+  // }, [timeValues.after])
+
+  // const handleChange = ({ type, newValue }) => {
+  //   if (!newValue || !type) return // utile ?
+
+  //   let afterValue = values[0]
+  //   let beforeValue = values[1]
+
+  //   switch (type) {
+  //     case 'date':
+  //       const afterHour = afterValue.format('HH:mm:ss')
+  //       const beforeHour = beforeValue.format('HH:mm:ss')
+
+  //       const newDate = newValue.format('YYYY-MM-DD')
+
+  //       afterValue = moment(`${newDate} ${afterHour}`)
+  //       beforeValue = moment(`${newDate} ${beforeHour}`)
+
+  //       setValues([afterValue, beforeValue])
+
+  //       break
+
+  //     case 'afterHour':
+  //       const date = afterValue.format('YYYY-MM-DD')
+  //       afterValue = moment(`${date} ${newValue}:00`)
+  //       setValues([afterValue, beforeValue])
+  //       break
+
+  //     case 'beforeHour': {
+  //       const date = afterValue.format('YYYY-MM-DD')
+  //       beforeValue = moment(`${date} ${newValue}:00`)
+  //       setValues([afterValue, beforeValue])
+  //       break
+  //     }
+
+  //     default:
+  //       return
+  //   }
+
+  //   onChange({
+  //     after: afterValue,
+  //     before: beforeValue,
+  //   })
+  // }
+  // le useEffect est trigger quand values est maj
+  const handleDateChange = newValue => {
+    if (!newValue) return
+
+    const afterHour = values[0].format('HH:mm:ss')
+    const beforeHour = values[1].format('HH:mm:ss')
+
+    const newDate = newValue.format('YYYY-MM-DD')
+
+    setValues([
+      moment(`${newDate} ${afterHour}`),
+      moment(`${newDate} ${beforeHour}`),
+    ])
+  }
+
+  const handleAfterHourChange = newValue => {
+    setTimeValues(prevState => ({
+      ...prevState,
+      after: newValue,
+    }))
+    // validation
     const after = moment(timeValues.after, 'HH:mm')
 
     const before = after.clone().add(15, 'minutes')
@@ -62,7 +133,6 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       ...prevState,
       before: before.format('HH:mm'),
     }))
-    console.log('before', before)
 
     const updatedSecondOptions = secondSelectOptions.map(option => {
       const isBefore = after.isBefore(option.time)
@@ -71,52 +141,40 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
         disabled: !isBefore,
       }
     })
-
     setSecondSelectOptions(updatedSecondOptions)
-  }, [timeValues.after])
 
-  const handleChange = ({ type, newValue }) => {
-    if (!newValue || !type) return // utile ?
+    const date = values[0].format('YYYY-MM-DD')
+    const afterValue = moment(`${date} ${newValue}:00`)
 
-    let afterValue = values[0]
-    let beforeValue = values[1]
-
-    switch (type) {
-      case 'date':
-        const afterHour = afterValue.format('HH:mm:ss')
-        const beforeHour = beforeValue.format('HH:mm:ss')
-
-        const newDate = newValue.format('YYYY-MM-DD')
-
-        afterValue = moment(`${newDate} ${afterHour}`)
-        beforeValue = moment(`${newDate} ${beforeHour}`)
-
-        setValues([afterValue, beforeValue])
-
-        break
-
-      case 'afterHour':
-        const date = afterValue.format('YYYY-MM-DD')
-        afterValue = moment(`${date} ${newValue}:00`)
-        setValues([afterValue, beforeValue])
-        break
-
-      case 'beforeHour': {
-        const date = afterValue.format('YYYY-MM-DD')
-        beforeValue = moment(`${date} ${newValue}:00`)
-        setValues([afterValue, beforeValue])
-        break
-      }
-
-      default:
-        return
-    }
-
-    onChange({
-      after: afterValue,
-      before: beforeValue,
+    setValues(prevArray => {
+      const newValues = [...prevArray]
+      newValues[0] = afterValue
+      return newValues
     })
   }
+
+  const handleBeforeHourChange = newValue => {
+    setTimeValues(prevState => ({
+      ...prevState,
+      before: newValue,
+    }))
+    const date = values[0].format('YYYY-MM-DD')
+    const beforeValue = moment(`${date} ${newValue}:00`)
+    setValues(prevArray => {
+      const newValues = [...prevArray]
+      newValues[1] = beforeValue
+      return newValues
+    })
+  }
+
+  useEffect(() => {
+    const newValues = {
+      after: values[0],
+      before: values[1],
+    }
+
+    onChange(newValues)
+  }, [values])
 
   return (
     <>
@@ -125,19 +183,16 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
         format="LL"
         defaultValue={values[0]}
         onChange={newDate => {
-          handleChange({ type: 'date', newValue: newDate })
+          handleDateChange(newDate)
         }}
       />
+
       <Select
         style={{ width: '25%' }}
         format={format}
         value={timeValues.after}
         onChange={newAfterHour => {
-          handleChange({ type: 'afterHour', newValue: newAfterHour })
-          setTimeValues(prevState => ({
-            ...prevState,
-            after: newAfterHour,
-          }))
+          handleAfterHourChange(newAfterHour)
         }}>
         {firstSelectOptions.map(option => (
           <Option
@@ -148,16 +203,13 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
           </Option>
         ))}
       </Select>
+
       <Select
         style={{ width: '25%' }}
         format={format}
         value={timeValues.before}
         onChange={newBeforeHour => {
-          handleChange({ type: 'beforeHour', newValue: newBeforeHour })
-          setTimeValues(prevState => ({
-            ...prevState,
-            before: newBeforeHour,
-          }))
+          handleBeforeHourChange(newBeforeHour)
         }}>
         {secondSelectOptions.map(option => (
           <Option
