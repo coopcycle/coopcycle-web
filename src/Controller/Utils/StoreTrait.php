@@ -328,12 +328,14 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
+            $priceForOrder = null;
+            $priceForRecurrenceRule = null;
+
             if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
                 $priceForOrder = $arbitraryPrice;
                 $priceForRecurrenceRule = new UseArbitraryPrice($arbitraryPrice);
 
             } else {
-
                 try {
                     $priceValue = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
                     $priceForOrder = new PricingRulesBasedPrice($priceValue);
@@ -341,8 +343,6 @@ trait StoreTrait
                 } catch (NoRuleMatchedException $e) {
                     $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                     $form->addError(new FormError($message));
-
-                    $priceForOrder = null;
                 }
             }
 
@@ -429,7 +429,7 @@ trait StoreTrait
         // to make sure that tasks' after/before dates are in the future
         $startDate = Carbon::now()->addDay()->format('Y-m-d');
         $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
-        
+
         $routes = $request->attributes->get('routes');
 
         $arbitraryPrice = null;
@@ -896,8 +896,8 @@ trait StoreTrait
         MessageBusInterface $messageBus,
         SlugifyInterface $slugify,
         string $routeTo)
-    {   
-        
+    {
+
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $form->get('file')->getData();
 
