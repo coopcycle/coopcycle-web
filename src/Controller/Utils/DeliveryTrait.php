@@ -61,7 +61,7 @@ trait DeliveryTrait
         $routes = $request->attributes->get('routes');
 
         $form = $this->createForm(ExistingOrderType::class, $delivery, [
-            'with_arbitrary_price' => null === $delivery->getOrder(),
+            'with_arbitrary_price' => $this->isGranted('ROLE_ADMIN'),
         ]);
 
         $form->handleRequest($request);
