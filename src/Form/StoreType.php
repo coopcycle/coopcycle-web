@@ -49,10 +49,6 @@ class StoreType extends LocalBusinessType
                     'label' => 'form.store_type.prefill_pickup_address.label',
                     'required' => false,
                 ])
-                ->add('createOrders', CheckboxType::class, [
-                    'label' => 'form.store_type.create_orders.label',
-                    'required' => false,
-                ])
                 ->add('weightRequired', CheckboxType::class, [
                     'label' => 'form.store_type.weight_required.label',
                     'required' => false,

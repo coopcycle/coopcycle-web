@@ -149,7 +149,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            $isDeliveryOrder = null !== $store && $store->getCreateOrders();
+            $isDeliveryOrder = null !== $store;
             
             if ($options['with_bookmark'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('bookmark', CheckboxType::class, [

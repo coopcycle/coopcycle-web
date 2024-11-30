@@ -12,6 +12,9 @@ AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
     name: Default
     rules: [ '@pricing_rule_1' ]
+  pricing_rule_set_impossible:
+    name: Default
+    rules: [ '@pricing_rule_impossible' ]
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
@@ -19,6 +22,11 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 499
     position: 1
     ruleSet: '@pricing_rule_set_1'
+  pricing_rule_impossible:
+    expression: 'distance \> 100000'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_impossible'
 
 AppBundle\Entity\Address:
   address_1:
@@ -46,32 +54,54 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
-    createOrders: true
   store_without_time_slots:
     name: 'Store without time slots'
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
-    createOrders: true
-  store_do_not_create_orders:
-    name: 'Store with createOrders disabled'
+  store_no_pricing:
+    name: 'Store without pricing'
     address: "@address_1"
     enabled: true
-    pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
-    createOrders: false
+  store_invalid_pricing:
+    name: 'Store with invalid pricing'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_impossible'
+    timeSlot: '@time_slot_1'
 
 AppBundle\Entity\User:
-  storeOwner:
+  store1Owner:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'store_1'
         - 'store_1'
-        - 'dev@coopcycle.org'
+        - 'store1@coopcycle.org'
         - true
         - false
     roles: [ 'ROLE_USER', 'ROLE_STORE' ]
     stores: [ '@store_1' ]
+  store2Owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_no_pricing'
+        - 'password'
+        - 'store_no_pricing@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_no_pricing' ]
+  store3Owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_invalid_pricing'
+        - 'password'
+        - 'store_invalid_pricing@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_invalid_pricing' ]
   admin:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':

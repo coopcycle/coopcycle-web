@@ -62,51 +62,50 @@ class PricingManager
 
         $store = $delivery->getStore();
 
-        if (null !== $store && $store->getCreateOrders()) {
-
-            $order = null;
-
-            if ($pricingStrategy instanceof UsePricingRules) {
-                $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
-
-                if (null === $price) {
-
-                    if ($throwException) {
-                        throw new NoRuleMatchedException();
-                    }
-
-                    $this->logger->error('Price could not be calculated');
-
-                    return null;
-                }
-
-                $price = (int) $price;
-                $order = $this->orderFactory->createForDelivery($delivery, new PricingRulesBasedPrice($price));
-
-            } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
-                $order = $this->orderFactory->createForDelivery($delivery, $pricingStrategy->getArbitraryPrice());
-
-            } else {
-                if ($throwException) {
-                    throw new \InvalidArgumentException('Unsupported pricing config');
-                }
-            }
-
-            if ($persist) {
-                // We need to persist the order first,
-                // because an auto increment is needed to generate a number
-                $this->entityManager->persist($order);
-                $this->entityManager->flush();
-
-                $this->orderManager->onDemand($order);
-
-                $this->entityManager->flush();
-            }
-
-            return $order;
+        if (null === $store) {
+            return null;
         }
 
-        return null;
+        $order = null;
+
+        if ($pricingStrategy instanceof UsePricingRules) {
+            $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+
+            if (null === $price) {
+
+                if ($throwException) {
+                    throw new NoRuleMatchedException();
+                }
+
+                $this->logger->error('Price could not be calculated');
+
+                return null;
+            }
+
+            $price = (int) $price;
+            $order = $this->orderFactory->createForDelivery($delivery, new PricingRulesBasedPrice($price));
+
+        } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
+            $order = $this->orderFactory->createForDelivery($delivery, $pricingStrategy->getArbitraryPrice());
+
+        } else {
+            if ($throwException) {
+                throw new \InvalidArgumentException('Unsupported pricing config');
+            }
+        }
+
+        if ($persist) {
+            // We need to persist the order first,
+            // because an auto increment is needed to generate a number
+            $this->entityManager->persist($order);
+            $this->entityManager->flush();
+
+            $this->orderManager->onDemand($order);
+
+            $this->entityManager->flush();
+        }
+
+        return $order;
     }
 
     public function duplicateOrder($store, $orderId): array | null

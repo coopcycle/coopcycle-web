@@ -431,6 +431,10 @@ checkout.breadcrumb.payment: Payment
 checkout.breadcrumb.confirm: Confirmation
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
+form.store_type.pricing_rule_set.warning: Without pricing,
+  the delivery cost cannot be calculated and tracked for invoicing.
+  Also, contribution based on the order amount will not be available.
+form.store_type.pricing_rule_set.warning.list: Pricing is not configured
 form.store_type.prefill_pickup_address.label: Pre-fill automatically pickup address
 form.store_type.create_orders.label: Create orders
 form.delivery.vehicle.VEHICLE_BIKE: Bike

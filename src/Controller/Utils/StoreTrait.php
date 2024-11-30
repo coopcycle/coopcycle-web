@@ -329,50 +329,43 @@ trait StoreTrait
             $delivery = $form->getData();
 
             if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
-                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                    $entityManager, $orderNumberAssigner);
-
-                $order = $delivery->getOrder();
-                $this->handleBookmark($orderManager, $form, $order);
-                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
-
-                $entityManager->flush();
-
-                return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-            } elseif ($store->getCreateOrders()) {
-
-                try {
-
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $this->getUser()->getCustomer());
-                    $entityManager->persist($order);
-
-                    $this->handleRememberAddress($store, $form);
-                    $this->handleBookmark($orderManager, $form, $order);
-
-                    $entityManager->flush();
-
-                    // We need to persist the order before calling onDemand,
-                    // because an auto increment is needed to generate a number
-                    $orderManager->onDemand($order);
-
-                    $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order);
-
-                    $entityManager->flush();
-
-                    return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-                } catch (NoRuleMatchedException $e) {
-                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                    $form->addError(new FormError($message));
-                }
+                $priceForOrder = $arbitraryPrice;
+                $priceForRecurrenceRule = new UseArbitraryPrice($arbitraryPrice);
 
             } else {
 
-                $this->handleRememberAddress($store, $form);
+                try {
+                    $priceValue = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
+                    $priceForOrder = new PricingRulesBasedPrice($priceValue);
+                    $priceForRecurrenceRule = new UsePricingRules();
+                } catch (NoRuleMatchedException $e) {
+                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                    $form->addError(new FormError($message));
 
-                $entityManager->persist($delivery);
+                    $priceForOrder = null;
+                }
+            }
+
+            if (null !== $priceForOrder) {
+                $order = $this->createOrderForDelivery($orderFactory, $delivery, $priceForOrder, $this->getUser()->getCustomer());
+
+                $entityManager->persist($order);
+
+                $this->handleRememberAddress($store, $form);
+                $this->handleBookmark($orderManager, $form, $order);
+
+                $entityManager->flush();
+
+                // We need to persist the order before calling onDemand,
+                // because an auto increment is needed to generate a number
+                $orderManager->onDemand($order);
+
+                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForRecurrenceRule);
+
+                if ($this->isGranted('ROLE_ADMIN')) {
+                    $order->setState(OrderInterface::STATE_ACCEPTED);
+                }
+
                 $entityManager->flush();
 
                 // TODO Add flash message
