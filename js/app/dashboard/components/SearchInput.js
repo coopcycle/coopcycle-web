@@ -46,7 +46,7 @@ class SearchInput extends React.Component {
         q: '',
         results: [],
       })
-      this.searchRef.blur()
+      this.searchRef.blur && this.searchRef.blur()
     }
   }
 
