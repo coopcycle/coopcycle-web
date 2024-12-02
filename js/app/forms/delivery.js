@@ -1,7 +1,6 @@
 import React from 'react'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
-// import _, { values } from 'lodash'
 import _ from 'lodash'
 import axios from 'axios'
 import { configureStore } from '@reduxjs/toolkit'
@@ -12,7 +11,6 @@ import { I18nextProvider } from 'react-i18next'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
-// import DateRangePicker from '../widgets/DateRangePicker'
 
 import DateTimeRangePicker from '../widgets/DateTimeRangePicker'
 
@@ -20,27 +18,26 @@ import { validateForm } from '../utils/address'
 import i18n from '../i18n'
 import { RecurrenceRules } from './components/RecurrenceRules'
 import tasksSlice from './redux/tasksSlice'
-import {
-  recurrenceSlice,
-  selectRecurrenceRule,
-} from './redux/recurrenceSlice'
+import { recurrenceSlice, selectRecurrenceRule } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
-import { suggestionsSlice, showSuggestions, acceptSuggestions, rejectSuggestions } from './redux/suggestionsSlice'
+import {
+  suggestionsSlice,
+  showSuggestions,
+  acceptSuggestions,
+  rejectSuggestions,
+} from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 
 const selectTasks = state => state.tasks
 
-const selectLastDropoff = createSelector(
-  selectTasks,
-  (tasks) => {
-    return _.findLast(tasks, t => t.type === 'DROPOFF')
-  }
-)
+const selectLastDropoff = createSelector(selectTasks, tasks => {
+  return _.findLast(tasks, t => t.type === 'DROPOFF')
+})
 
 const collectionHolder = document.querySelector('#delivery_tasks')
 
-const domIndex = (el) => Array.prototype.indexOf.call(el.parentNode.children, el)
+const domIndex = el => Array.prototype.indexOf.call(el.parentNode.children, el)
 
 let reduxStore
 
@@ -60,17 +57,18 @@ class DeliveryForm {
 }
 
 function reorder(suggestedOrder) {
-
   // To reorder, we use the removeChild() function,
   // which removes an element and returns it but preserves event listeners.
   // Then, we re-add the elements in the expected order.
 
   const taskEls = []
   while (collectionHolder.firstElementChild) {
-    taskEls.push(collectionHolder.removeChild(collectionHolder.firstElementChild));
+    taskEls.push(
+      collectionHolder.removeChild(collectionHolder.firstElementChild),
+    )
   }
 
-  suggestedOrder.forEach((oldIndex) => {
+  suggestedOrder.forEach(oldIndex => {
     collectionHolder.appendChild(taskEls[oldIndex])
   })
 
@@ -81,38 +79,51 @@ function reorder(suggestedOrder) {
 
 function toPackages(el) {
   const packages = []
-  $(`#${el.id}_packages_list`).children().each(function() {
-    packages.push({
-      type: $(this).find('select').val(),
-      quantity: $(this).find('input[type="number"]').val()
+  $(`#${el.id}_packages_list`)
+    .children()
+    .each(function () {
+      packages.push({
+        type: $(this).find('select').val(),
+        quantity: $(this).find('input[type="number"]').val(),
+      })
     })
-  })
 
   return packages
 }
 
 function hideRememberAddress(el) {
-  const rememberAddr = document.querySelector(`#${el.id}_address_rememberAddress`)
+  const rememberAddr = document.querySelector(
+    `#${el.id}_address_rememberAddress`,
+  )
   if (rememberAddr) {
     rememberAddr.closest('.checkbox').classList.add('hidden')
   }
 }
 
 function showRememberAddress(el) {
-  const rememberAddr = document.querySelector(`#${el.id}_address_rememberAddress`)
+  const rememberAddr = document.querySelector(
+    `#${el.id}_address_rememberAddress`,
+  )
   if (rememberAddr) {
     rememberAddr.closest('.checkbox').classList.remove('hidden')
   }
 }
 
 function createAddressWidget(el, cb) {
-
   new AddressBook(document.querySelector(`#${el.id}_address`), {
     allowSearchSavedAddresses: true,
-    existingAddressControl: document.querySelector(`#${el.id}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${el.id}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${el.id}_address_isNewAddress`),
-    duplicateAddressControl: document.querySelector(`#${el.id}_address_duplicateAddress`),
+    existingAddressControl: document.querySelector(
+      `#${el.id}_address_existingAddress`,
+    ),
+    newAddressControl: document.querySelector(
+      `#${el.id}_address_newAddress_streetAddress`,
+    ),
+    isNewAddressControl: document.querySelector(
+      `#${el.id}_address_isNewAddress`,
+    ),
+    duplicateAddressControl: document.querySelector(
+      `#${el.id}_address_duplicateAddress`,
+    ),
     // Fields containing address details
     nameControl: document.querySelector(`#${el.id}_address_name`),
     telephoneControl: document.querySelector(`#${el.id}_address_telephone`),
@@ -124,7 +135,6 @@ function createAddressWidget(el, cb) {
       }
     },
     onChange: address => {
-
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         hideRememberAddress(el)
       } else {
@@ -134,7 +144,7 @@ function createAddressWidget(el, cb) {
       reduxStore.dispatch({
         type: 'SET_ADDRESS',
         taskIndex: domIndex(el),
-        value: address
+        value: address,
       })
     },
     onClear: () => {
@@ -143,20 +153,21 @@ function createAddressWidget(el, cb) {
         type: 'CLEAR_ADDRESS',
         taskIndex: domIndex(el),
       })
-    }
+    },
   })
 }
 
 function getTimeWindowProps(el) {
-
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
   if (timeSlotEl) {
     return {
-      timeSlot: $(timeSlotEl).val()
+      timeSlot: $(timeSlotEl).val(),
     }
   }
 
-  const before = $(`#${el.id}_doneBefore`).val() || selectLastDropoff(reduxStore.getState()).before
+  const before =
+    $(`#${el.id}_doneBefore`).val() ||
+    selectLastDropoff(reduxStore.getState()).before
 
   const after = $(`#${el.id}_doneAfter`).val()
   if (!after) {
@@ -226,27 +237,6 @@ function createDateRangePickerWidget(el) {
   })
 }
 
-//   DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
-//     defaultValue,
-//     showTime: true,
-//     onChange: function({after, before}) {
-//       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
-//       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
-
-//       reduxStore.dispatch({
-//         type: 'SET_BEFORE',
-//         taskIndex: domIndex(el),
-//         value: before.format()
-//       })
-
-//       reduxStore.dispatch({
-//         type: 'SET_AFTER',
-//         taskIndex: domIndex(el),
-//         value: after.format()
-//       })
-//     }
-//   })
-// }
 
 function createDatePickerWidget(el, isAdmin = false) {
 
