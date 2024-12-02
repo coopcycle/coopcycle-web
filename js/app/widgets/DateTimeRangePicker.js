@@ -9,30 +9,37 @@ import { antdLocale } from '../i18n'
 
 const { Option } = Select
 
-function generateTimeSlots(disabled = false) {
+function generateTimeSlots(afterHour = null) {
   const items = []
   const minutes = [0, 15, 30, 45]
+
   new Array(24).fill().forEach((_, index) => {
     minutes.forEach(minute => {
       items.push({
         time: moment({ hour: index, minute: minute }),
-        disabled,
+        disabled: false,
       })
     })
   })
-  return items
-}
 
+  if (!afterHour) return items
+
+  const secondSelectOptions = items.map(option => {
+    const isBefore = afterHour.isBefore(option.time)
+    return {
+      ...option,
+      disabled: !isBefore,
+    }
+  })
+
+  return secondSelectOptions
+}
 const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
-  const [values, setValues] = useState(() =>
+  const [values, setValues] = useState(
     defaultValue
       ? [moment(defaultValue.after), moment(defaultValue.before)]
       : [],
   )
-
-  const firstSelectOptions = generateTimeSlots()
-  const [secondSelectOptions, setSecondSelectOptions] =
-    useState(generateTimeSlots())
 
   const [timeValues, setTimeValues] = useState(
     defaultValue
@@ -41,6 +48,11 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
           before: moment(defaultValue.before).format('HH:mm'),
         }
       : {},
+  )
+
+  const firstSelectOptions = generateTimeSlots()
+  const [secondSelectOptions, setSecondSelectOptions] = useState(
+    generateTimeSlots(values[0]),
   )
 
   const handleDateChange = newValue => {
@@ -58,39 +70,36 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
   }
 
   const handleAfterHourChange = newValue => {
-    setTimeValues(prevState => ({
-      ...prevState,
-      after: newValue,
-    }))
-
-    const after = moment(timeValues.after, 'HH:mm')
-
-    const before = after.clone().add(15, 'minutes')
-    setTimeValues(prevState => ({
-      ...prevState,
-      before: before.format('HH:mm'),
-    }))
-
-    const updatedSecondOptions = secondSelectOptions.map(option => {
-      const isBefore = after.isBefore(option.time)
-      return {
-        ...option,
-        disabled: !isBefore,
-      }
-    })
-    setSecondSelectOptions(updatedSecondOptions)
+    if (!newValue) return
 
     const date = values[0].format('YYYY-MM-DD')
     const afterValue = moment(`${date} ${newValue}:00`)
+    const beforeValue = afterValue.clone().add(15, 'minutes')
+
+    setTimeValues({
+      after: afterValue.format('HH:mm'),
+      before: beforeValue.format('HH:mm'),
+    })
+
+    const afterHour = moment({
+      h: afterValue.hours(),
+      m: afterValue.minutes(),
+    })
+
+    const updatedSecondOptions = generateTimeSlots(afterHour)
+    setSecondSelectOptions(updatedSecondOptions)
 
     setValues(prevArray => {
       const newValues = [...prevArray]
       newValues[0] = afterValue
+      newValues[1] = beforeValue
       return newValues
     })
   }
 
   const handleBeforeHourChange = newValue => {
+    if (!newValue) return
+
     setTimeValues(prevState => ({
       ...prevState,
       before: newValue,
@@ -112,7 +121,7 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       return
     }
 
-    onChange(values)
+    onChange({ after: values[0], before: values[1] })
   }, [values, onChange])
 
   return (
@@ -168,7 +177,7 @@ export default function (el, options) {
     getDatePickerContainer: null,
     getTimePickerContainer: null,
     onChange: () => {},
-    format: 'LLL', // verifier ce qu'on met là
+    format: 'LLL',
   }
 
   const props = { ...defaultProps, ...options }

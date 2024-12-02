@@ -211,8 +211,6 @@ function createDateRangePickerWidget(el) {
       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
 
-      console.log(after, before)
-
       reduxStore.dispatch({
         type: 'SET_BEFORE',
         taskIndex: domIndex(el),
