@@ -149,7 +149,7 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format, showTime }) => {
   return isComplexPicker ? (
     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
       <DatePicker.RangePicker
-        style={{ width: '96%' }}
+        style={{ width: '95%' }}
         format={format}
         defaultValue={values}
         onChange={handleComplexPickerDateChange}
