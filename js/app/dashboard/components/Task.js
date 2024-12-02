@@ -7,14 +7,16 @@ import _ from 'lodash'
 import { Draggable } from "@hello-pangea/dnd"
 
 
-import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectSettings, selectVisibleTaskIds } from '../redux/selectors'
+import { setCurrentTask, toggleTask, selectTask, selectTasksByIds } from '../redux/actions'
+import { selectSettings, selectStandaloneTasks, selectVisibleTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
 import { getTaskPackages, getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 import { formatVolumeUnits, formatWeight } from '../redux/utils'
+import { toast } from 'react-toastify'
+import i18next from 'i18next'
 
 moment.locale($('html').attr('lang'))
 
@@ -187,8 +189,33 @@ class Task extends React.Component {
     const multiple = (e.ctrlKey || e.metaKey)
     this.timer = setTimeout(() => {
       if (!this.prevent) {
-        const { toggleTask, task } = this.props
-        toggleTask(task, multiple)
+        if (e.shiftKey && this.props.selectedTasks.length > 0) {
+          if (this.props.task.isAssigned) {
+            toast.warn(i18next.t("ADMIN_DASHBOARD_ONLY_UNASSIGNED_WITH_SHIFT"))
+          } else {
+            const standaloneTaskIds = this.props.standaloneTasks.map(t => t['@id'])
+            const taskPosition = standaloneTaskIds.findIndex(id => id === this.props.task['@id'])
+
+            const latestSelectedTaskId = this.props.selectedTasks.slice(-1).at(0)
+            const latestSelectedTaskPosition = standaloneTaskIds.findIndex(id => id === latestSelectedTaskId)
+  
+            const startIndex = taskPosition > latestSelectedTaskPosition ? latestSelectedTaskPosition : taskPosition 
+            const endIndex =  taskPosition > latestSelectedTaskPosition ? taskPosition + 1 : latestSelectedTaskPosition + 1
+
+            const toSelect = taskPosition > latestSelectedTaskPosition ? [...this.props.selectedTasks, ...standaloneTaskIds.slice(startIndex, endIndex)] : standaloneTaskIds.slice(startIndex, endIndex)
+  
+            this.props.selectTasksByIds(
+              _.intersection(
+                this.props.visibleTaskIds, // user wants only to select tasks visible to theirs ^^
+                toSelect
+              )
+            )
+          }
+          e.preventDefault()
+        } else {
+          const { toggleTask, task } = this.props
+          toggleTask(task, multiple)
+        }
       }
       this.prevent = false
     }, 250)
@@ -213,6 +240,7 @@ class Task extends React.Component {
     const { color, task, selected, isVisible, date, showWeightAndVolumeUnit } = this.props
 
     const classNames = [
+      'no-select',
       'list-group-item',
       'list-group-item--' + task.type.toLowerCase(),
       'list-group-item--' + task.status.toLowerCase(),
@@ -335,9 +363,11 @@ function mapStateToProps(state, ownProps) {
     task: task,
     selectedTasks: selectedTasks,
     selected: -1 !== selectedTasks.indexOf(task['@id']),
+    standaloneTasks: selectStandaloneTasks(state),
     color,
     date: selectSelectedDate(state),
     isVisible: _.includes(visibleTaskIds, task['@id']),
+    visibleTaskIds: visibleTaskIds,
     showWeightAndVolumeUnit: showWeightAndVolumeUnit
   }
 }
@@ -347,6 +377,7 @@ function mapDispatchToProps (dispatch) {
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
     toggleTask: (task, multiple) => dispatch(toggleTask(task, multiple)),
     selectTask: (task) => dispatch(selectTask(task)),
+    selectTasksByIds: (taskIds) => dispatch(selectTasksByIds(taskIds)),
   }
 }
 

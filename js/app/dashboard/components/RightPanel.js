@@ -10,7 +10,8 @@ import {
   loadOrganizations,
   loadVehicles,
   loadTrailers,
-  loadWarehouses
+  loadWarehouses,
+  selectTasksByIds
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -80,8 +81,12 @@ const DashboardApp = ({ loadingAnim }) => {
     generateOrders(date)
   }, [date]);
 
+  const unselectAll = () => {
+    dispatch(selectTasksByIds([]))
+  }
+
   return (
-    <div className="dashboard__aside-container">
+    <div className="dashboard__aside-container" onKeyDown={ (e) => e.keyCode === 27 && unselectAll() }>
       <DragDropContext
         // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md
         onDragStart={ (result) => dispatch(handleDragStart(result)) }
