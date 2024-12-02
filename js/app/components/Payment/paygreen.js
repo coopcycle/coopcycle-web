@@ -130,10 +130,28 @@ export default {
           window.paygreenjs.attachEventListener(
             window.paygreenjs.Events.INSTRUMENT_READY,
             (event) => {
+              console.log('INSTRUMENT', event.detail.instrument.id);
               axios.post(this.config.gatewayConfig.createPaymentOrderURL, {
                 instrument: event.detail.instrument.id
               }).then(response => {
-                console.log(response.data)
+                window.paygreenjs.unmount(true);
+                window.paygreenjs.attachEventListener(
+                  window.paygreenjs.Events.FULL_PAYMENT_DONE,
+                  (event) => {
+                    console.log(event)
+                    this.submitPaymentListener(event)
+                  }
+                );
+                window.paygreenjs.init({
+                  paymentOrderID: response.data.id,
+                  objectSecret: response.data.object_secret,
+                  publicKey: this.config.gatewayConfig.publicKey,
+                  instrument: event.detail.instrument.id,
+                  mode: 'payment',
+                  displayAuthentication: 'modal',
+                  style,
+                  paymentMethod: method === 'card' ? 'bank_card' : method,
+                });
               })
             }
           );

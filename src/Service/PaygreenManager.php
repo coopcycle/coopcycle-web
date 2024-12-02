@@ -51,7 +51,10 @@ class PaygreenManager
 
         $order = $payment->getOrder();
 
-        $reference = sprintf('ord_%s', $this->hashids8->encode($order->getId()));
+        // TODO Remove this
+        $rand = bin2hex(random_bytes(5));
+
+        $reference = sprintf('ord_%s_%s', $this->hashids8->encode($order->getId()), $rand);
         $shopId = $order->getRestaurant()->getPaygreenShopId();
 
         if (null !== $instrument && !empty($instrument)) {
