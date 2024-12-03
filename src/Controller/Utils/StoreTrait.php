@@ -744,7 +744,13 @@ trait StoreTrait
         $startDate = Carbon::now()->addDay()->format('Y-m-d');
 
         foreach ($recurrenceRules as $rule) {
-            $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false);
+            $templateOrder = null;
+            $isInvalidPricing = false;
+            try {
+                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false);
+            } catch (NoRuleMatchedException $e) {
+                $isInvalidPricing = true;
+            }
             $templateDelivery = $templateOrder ? $templateOrder->getDelivery() : $deliveryManager->createDeliveryFromRecurrenceRule($rule, $startDate, false);
             $templateTasks = $templateDelivery ? $templateDelivery->getTasks() : $deliveryManager->createTasksFromRecurrenceRule($rule, $startDate, false);
 
@@ -755,6 +761,7 @@ trait StoreTrait
                 'templateTasks' => $templateTasks,
                 'templateDelivery' => $templateDelivery, // might be null if we cannot create a valid delivery (could be the case for some recurrence rules created from Dispatch dashboard)
                 'templateOrder' => $templateOrder, // might be null if we cannot calculate the price
+                'isInvalidPricing' => $isInvalidPricing,
                 'generateOrders' => !$isLegacy && $rule->isGenerateOrders(), //in the future that will be configurable
                 'isLegacy' => $isLegacy,
             ];

@@ -95,11 +95,15 @@ class PricingManager
         $defaults = [
             'pricingStrategy' => new UsePricingRules(),
             'persist' => true,
+            // Force an admin to fix the pricing rules
+            // maybe it would be a better UX to create an incident instead
+            'throwException' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
         ];
         $optionalArgs+= $defaults;
 
         $pricingStrategy = $optionalArgs['pricingStrategy'];
         $persist = $optionalArgs['persist'];
+        $throwException = $optionalArgs['throwException'];
 
         if (null === $pricingStrategy) {
             $pricingStrategy = new UsePricingRules();
@@ -109,13 +113,11 @@ class PricingManager
         $incident = null;
 
         if (null === $price) {
-            // Force an admin to fix the pricing rules
-            // maybe it would be a better UX to create an incident instead
-            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($throwException) {
                 throw new NoRuleMatchedException();
             }
 
-            // For non-admin; set price to 0 and create an incident
+            // otherwise; set price to 0 and create an incident
             $price = new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0);
             $incident = new Incident();
         }
@@ -316,17 +318,20 @@ class PricingManager
             return null;
         }
 
-        $order = null;
+        $pricingStrategy = null;
         if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
-            $order = $this->createOrder($delivery, [
-                'pricingStrategy' => new UseArbitraryPrice(new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice'])),
-                'persist' => $persist,
-            ]);
+            $pricingStrategy = new UseArbitraryPrice(new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']));
         } else {
-            $order = $this->createOrder($delivery, [
-                'persist' => $persist,
-            ]);
+            $pricingStrategy = new UsePricingRules();
         }
+
+        $order = $this->createOrder($delivery, [
+            'pricingStrategy' => $pricingStrategy,
+            'persist' => $persist,
+            // Display an error when viewing the list of recurrence rules so an admin knows which rules need to be fixed
+            // When auto-generating orders, create an incident instead
+            'throwException' => $this->authorizationChecker->isGranted('ROLE_ADMIN') && !$persist,
+        ]);
 
         if (null !== $order) {
             $order->setSubscription($recurrenceRule);
