@@ -71,9 +71,18 @@ context('store with invalid pricing (role: store)', () => {
 
     cy.get('#delivery-submit').click()
 
-    cy.get('.alert-danger', { timeout: 10000 }).should(
-      'contain',
-      "Le prix de la course n'a pas pu être calculé.",
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/dashboard\/stores\/[0-9]+\/deliveries$/,
     )
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€0.00/)
+      .should('exist')
   })
 })
