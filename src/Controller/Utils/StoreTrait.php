@@ -347,7 +347,7 @@ trait StoreTrait
             }
 
             if (null !== $priceForOrder) {
-                $order = $this->createOrderForDelivery($orderFactory, $delivery, $priceForOrder, $this->getUser()->getCustomer());
+                $order = $orderFactory->createForDeliveryAndPrice($delivery, $priceForOrder, $this->getUser()->getCustomer());
 
                 $entityManager->persist($order);
 

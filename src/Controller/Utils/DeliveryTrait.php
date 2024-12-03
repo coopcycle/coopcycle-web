@@ -28,11 +28,6 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, bool $attach = true): OrderInterface
-    {
-        return $factory->createForDelivery($delivery, $price, $customer, $attach);
-    }
-
     protected function getDeliveryPrice(Delivery $delivery, ?PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
     {
         $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
@@ -114,7 +109,7 @@ trait DeliveryTrait
         $variantPrice = $form->get('variantPrice')->getData();
         $variantName = $form->get('variantName')->getData();
 
-        $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
+        $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
 
         $order->setState(OrderInterface::STATE_ACCEPTED);
 

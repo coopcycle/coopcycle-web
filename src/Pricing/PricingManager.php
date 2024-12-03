@@ -83,10 +83,10 @@ class PricingManager
             }
 
             $price = (int) $price;
-            $order = $this->orderFactory->createForDelivery($delivery, new PricingRulesBasedPrice($price));
+            $order = $this->orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price));
 
         } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
-            $order = $this->orderFactory->createForDelivery($delivery, $pricingStrategy->getArbitraryPrice());
+            $order = $this->orderFactory->createForDeliveryAndPrice($delivery, $pricingStrategy->getArbitraryPrice());
 
         } else {
             if ($throwException) {
