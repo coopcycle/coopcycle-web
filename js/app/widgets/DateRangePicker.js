@@ -10,9 +10,8 @@ import 'antd/es/input/style/index.css'
 import { antdLocale } from '../i18n'
 
 const DateRangePicker = ({ defaultValue, onChange, format, showTime }) => {
-  console.error('valeurs', defaultValue)
 
-  const [value, setValue] = useState(() =>
+  const [values, setValues] = useState(() =>
     defaultValue
       ? [moment(defaultValue.after), moment(defaultValue.before)]
       : [],
@@ -26,7 +25,7 @@ const DateRangePicker = ({ defaultValue, onChange, format, showTime }) => {
       before: newValue[1],
     })
 
-    setValue(newValue)
+    setValues(newValue)
   }
 
   let props = {}
@@ -42,7 +41,7 @@ const DateRangePicker = ({ defaultValue, onChange, format, showTime }) => {
     <DatePicker.RangePicker
       style={{ width: '100%' }}
       format={format}
-      defaultValue={value}
+      defaultValue={values}
       onChange={handleDateChange}
       {...props}
     />

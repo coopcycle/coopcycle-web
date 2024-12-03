@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { render } from 'react-dom'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Select } from 'antd'
+import { timePickerProps } from '../utils/antd'
 
 import 'antd/es/input/style/index.css'
 
@@ -34,7 +36,12 @@ function generateTimeSlots(afterHour = null) {
 
   return secondSelectOptions
 }
-const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
+
+const DateTimeRangePicker = ({ defaultValue, onChange, format, showTime }) => {
+  const { t } = useTranslation()
+
+  const [isComplexPicker, setIsComplexPicker] = useState(false)
+
   const [values, setValues] = useState(
     defaultValue
       ? [moment(defaultValue.after), moment(defaultValue.before)]
@@ -113,6 +120,21 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
     })
   }
 
+  const handleComplexPickerDateChange = newValue => {
+    if (!newValue) return
+    setValues(newValue)
+  }
+
+  let props = {}
+  if (showTime) {
+    props = {
+      showTime: {
+        ...timePickerProps,
+        hideDisabledOptions: true,
+      },
+    }
+  }
+
   const isFirstRender = useRef(true)
 
   useEffect(() => {
@@ -124,7 +146,24 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
     onChange({ after: values[0], before: values[1] })
   }, [values, onChange])
 
-  return (
+  return isComplexPicker ? (
+    <>
+      <DatePicker.RangePicker
+        style={{ width: '96%' }}
+        format={format}
+        defaultValue={values}
+        onChange={handleComplexPickerDateChange}
+        {...props}
+      />
+      <a title={t('SWITCH_COMPLEX_DATEPICKER')}>
+        <i
+          className="fa fa-calendar pr-1"
+          style={{ marginLeft: '0.1em' }}
+          onClick={() => setIsComplexPicker(!isComplexPicker)}
+        />
+      </a>
+    </>
+  ) : (
     <>
       <DatePicker
         style={{ width: '50%' }}
@@ -136,7 +175,7 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       />
 
       <Select
-        style={{ width: '25%' }}
+        style={{ width: '20%' }}
         format={format}
         value={timeValues.after}
         onChange={newAfterHour => {
@@ -153,7 +192,7 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
       </Select>
 
       <Select
-        style={{ width: '25%' }}
+        style={{ width: '20%' }}
         format={format}
         value={timeValues.before}
         onChange={newBeforeHour => {
@@ -168,6 +207,13 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
           </Option>
         ))}
       </Select>
+      <a title="Sélectionner une date sur plusieurs jours">
+        <i
+          className="fa fa-calendar pr-1"
+          style={{ marginLeft: '0.5em' }}
+          onClick={() => setIsComplexPicker(!isComplexPicker)}
+        />
+      </a>
     </>
   )
 }
