@@ -28,6 +28,7 @@ import {
 } from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
+import TimeSlotSelect from '../widgets/TimeSlotSelect'
 
 const selectTasks = state => state.tasks
 
@@ -237,22 +238,12 @@ function createDateRangePickerWidget(el) {
   })
 }
 
-
+/*
+  Create the date picker widget when there is no time slot choice.
+*/
 function createDatePickerWidget(el, isAdmin = false) {
 
   const datePickerEl = document.querySelector(`#${el.id}_doneBefore`)
-  const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
-
-  if (timeSlotEl) {
-    timeSlotEl.addEventListener('change', e => {
-      reduxStore.dispatch({
-        type: 'SET_TIME_SLOT',
-        taskIndex: domIndex(el),
-        value: e.target.value
-      })
-    })
-    return
-  }
 
   if (isAdmin) {
     createDateRangePickerWidget(el)
@@ -296,11 +287,15 @@ function createTagsWidget(el, tags) {
   )
 }
 
-function createSwitchTimeSlotWidget(el) {
-  const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
+function createTimeSlotWidget(el) {
+  
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
+  const timeSlotElWidget = document.querySelector(`#${el.id}_timeSlot_widget`)
 
-  if (switchTimeSlotEl && timeSlotEl) {
+  TimeSlotSelect(timeSlotElWidget)
+
+  const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
+  if (switchTimeSlotEl) {
     switchTimeSlotEl.querySelectorAll('input[type="radio"]').forEach(rad => {
       rad.addEventListener('change', function(e) {
 
@@ -449,7 +444,13 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     }
   })
 
-  createDatePickerWidget(taskEl, userAdmin)
+  const timeSlotEl = document.querySelector(`#${taskEl.id}_timeSlot`)
+
+  if (timeSlotEl) {
+    createTimeSlotWidget(taskEl)
+  } else {
+    createDatePickerWidget(taskEl, userAdmin)
+  }
 
   const tagsEl = document.querySelector(`#${taskEl.id}_tagsAsString`)
   if (tagsEl) {
@@ -458,7 +459,6 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     })
   }
 
-  createSwitchTimeSlotWidget(taskEl)
 
   const deleteBtn = taskEl.querySelector('[data-delete="task"]')
 
