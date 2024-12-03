@@ -292,11 +292,26 @@ function createTimeSlotWidget(el) {
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
   const timeSlotElWidget = document.querySelector(`#${el.id}_timeSlot_widget`)
 
+  const initialChoices = JSON.parse(timeSlotEl.dataset.choices)
+  timeSlotEl.value = initialChoices[0].value
 
-  console.log(JSON.parse(timeSlotEl.dataset.choices))
+  const onChange = (newValue) => {
+    timeSlotEl.value = newValue
 
+    reduxStore.dispatch({
+      type: 'SET_TIME_SLOT',
+      taskIndex: domIndex(el),
+      value: newValue
+    })
+  }
 
-  TimeSlotSelect(timeSlotElWidget)
+  const reactRoot = createRoot(timeSlotElWidget)
+  reactRoot.render(
+      <TimeSlotSelect 
+        initialChoices={initialChoices}
+        onChange={onChange}
+      />
+  )
 
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
   if (switchTimeSlotEl) {
@@ -305,18 +320,14 @@ function createTimeSlotWidget(el) {
 
         const choices = JSON.parse(e.target.dataset.choices)
 
-        timeSlotEl.innerHTML = ''
-        choices.forEach(choice => {
-          const opt = document.createElement('option')
-          opt.value = choice.value
-          opt.innerHTML = choice.label
-          timeSlotEl.appendChild(opt)
-        })
-
+        reactRoot.render(
+          <TimeSlotSelect initialChoices={choices} />
+        )
+      
         reduxStore.dispatch({
           type: 'SET_TIME_SLOT',
           taskIndex: domIndex(el),
-          value: timeSlotEl.value
+          value: choices[0].value
         })
       })
     })
