@@ -48,7 +48,7 @@ class CreateIncident
 
     public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
     {
-        $title = trim($data->getTitle() || '');
+        $title = trim($data->getTitle() ?? '');
 
         if (empty($title)) {
             $data->setTitle($this->findDescriptionByCode($data->getFailureReasonCode()));
@@ -60,7 +60,7 @@ class CreateIncident
 
         $this->taskManager->incident(
             $data->getTask(),
-            $data->getFailureReasonCode() || '',
+            $data->getFailureReasonCode() ?? '',
             $data->getTitle(),
             [
                 'incident_id' => $data->getId()
