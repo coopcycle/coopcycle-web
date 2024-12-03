@@ -292,6 +292,10 @@ function createTimeSlotWidget(el) {
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
   const timeSlotElWidget = document.querySelector(`#${el.id}_timeSlot_widget`)
 
+
+  console.log(JSON.parse(timeSlotEl.dataset.choices))
+
+
   TimeSlotSelect(timeSlotElWidget)
 
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
