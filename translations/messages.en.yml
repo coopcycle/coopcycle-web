@@ -465,6 +465,8 @@ form.delivery.duration.label: Duration
 form.delivery.store.label: Store
 form.delivery.store.placeholder: Search a store…
 form.delivery.price.label: Price
+form.delivery.price.missing: Contact us for more details
+form.delivery.price.missing.incident: Price review needed for order #%number%
 form.delivery.to_be_confirmed.warning: You must confirm the order
 form.delivery.has_order.info: This delivery is linked to an order
 form.delivery.package.label: Package

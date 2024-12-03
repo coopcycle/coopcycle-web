@@ -334,7 +334,6 @@ trait StoreTrait
             try {
                 $order = $pricingManager->createOrder($delivery, [
                     'pricingStrategy' => $priceForOrder,
-                    'throwException' => true,
                 ]);
 
             } catch (NoRuleMatchedException $e) {

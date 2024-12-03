@@ -2,7 +2,10 @@
 
 namespace AppBundle\Pricing;
 
+use AppBundle\Action\Incident\CreateIncident;
+use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
@@ -22,22 +25,35 @@ use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Rule;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * FIXME: Should we merge this class into the OrderManager class?
  */
 class PricingManager
 {
+    use TokenStorageTrait;
+
     public function __construct(
+        TokenStorageInterface $tokenStorage,
         private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly OrderFactory $orderFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly RequestStack $requestStack,
+        private readonly CreateIncident $createIncident,
+        private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger
     )
-    {}
+    {
+        $this->tokenStorage = $tokenStorage;
+    }
 
     private function getDeliveryPrice(Delivery $delivery, PricingStrategy $pricingStrategy): ?PriceInterface
     {
@@ -78,13 +94,11 @@ class PricingManager
         // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
         $defaults = [
             'pricingStrategy' => new UsePricingRules(),
-            'throwException' => false,
             'persist' => true,
         ];
         $optionalArgs+= $defaults;
 
         $pricingStrategy = $optionalArgs['pricingStrategy'];
-        $throwException = $optionalArgs['throwException'];
         $persist = $optionalArgs['persist'];
 
         if (null === $pricingStrategy) {
@@ -92,12 +106,18 @@ class PricingManager
         }
 
         $price = $this->getDeliveryPrice($delivery, $pricingStrategy);
+        $incident = null;
 
         if (null === $price) {
-            if ($throwException) {
+            // Force an admin to fix the pricing rules
+            // maybe it would be a better UX to create an incident instead
+            if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 throw new NoRuleMatchedException();
             }
-            return null;
+
+            // For non-admin; set price to 0 and create an incident
+            $price = new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0);
+            $incident = new Incident();
         }
 
         $order = $this->orderFactory->createForDeliveryAndPrice($delivery, $price);
@@ -111,6 +131,16 @@ class PricingManager
             $this->orderManager->onDemand($order);
 
             $this->entityManager->flush();
+
+            if (null !== $incident) {
+                $incident->setTitle($this->translator->trans('form.delivery.price.missing.incident', [
+                    '%number%' => $order->getNumber(),
+                ]));
+                $incident->setFailureReasonCode('PRICE_REVIEW_NEEDED');
+                $incident->setTask($delivery->getPickup());
+
+                $this->createIncident->__invoke($incident, $this->getUser(), $this->requestStack->getCurrentRequest());
+            }
         }
 
         return $order;
