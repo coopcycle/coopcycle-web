@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
@@ -38,8 +39,38 @@ class PricingManager
     )
     {}
 
+    private function getDeliveryPrice(Delivery $delivery, PricingStrategy $pricingStrategy): ?PriceInterface
+    {
+        $store = $delivery->getStore();
+
+        if (null === $store) {
+            $this->logger->warning('Delivery has no store');
+            return null;
+        }
+
+        if ($pricingStrategy instanceof UsePricingRules) {
+            $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+
+            if (null === $price) {
+                $this->logger->warning('Price could not be calculated');
+                return null;
+            }
+
+            $price = (int) $price;
+            return new PricingRulesBasedPrice($price);
+
+        } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
+            return $pricingStrategy->getArbitraryPrice();
+
+        } else {
+            $this->logger->warning('Unsupported pricing config');
+            return null;
+        }
+    }
+
     /**
      * @return OrderInterface|null
+     * @throws NoRuleMatchedException
      */
     public function createOrder(Delivery $delivery, array $optionalArgs = []): ?OrderInterface
     {
@@ -60,39 +91,16 @@ class PricingManager
             $pricingStrategy = new UsePricingRules();
         }
 
-        $store = $delivery->getStore();
+        $price = $this->getDeliveryPrice($delivery, $pricingStrategy);
 
-        if (null === $store) {
+        if (null === $price) {
+            if ($throwException) {
+                throw new NoRuleMatchedException();
+            }
             return null;
         }
 
-        $order = null;
-
-        if ($pricingStrategy instanceof UsePricingRules) {
-            $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
-
-            if (null === $price) {
-
-                if ($throwException) {
-                    throw new NoRuleMatchedException();
-                }
-
-                $this->logger->error('Price could not be calculated');
-
-                return null;
-            }
-
-            $price = (int) $price;
-            $order = $this->orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price));
-
-        } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
-            $order = $this->orderFactory->createForDeliveryAndPrice($delivery, $pricingStrategy->getArbitraryPrice());
-
-        } else {
-            if ($throwException) {
-                throw new \InvalidArgumentException('Unsupported pricing config');
-            }
-        }
+        $order = $this->orderFactory->createForDeliveryAndPrice($delivery, $price);
 
         if ($persist) {
             // We need to persist the order first,

@@ -11,7 +11,6 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
@@ -29,7 +28,6 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
@@ -45,7 +43,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -284,11 +281,8 @@ trait StoreTrait
     }
 
     public function newStoreDeliveryAction($id, Request $request,
-        DeliveryManager $deliveryManager,
         PricingManager $pricingManager,
         OrderManager $orderManager,
-        OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
         LoggerInterface $logger)
@@ -329,38 +323,31 @@ trait StoreTrait
             $delivery = $form->getData();
 
             $priceForOrder = null;
-            $priceForRecurrenceRule = null;
 
             if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
-                $priceForOrder = $arbitraryPrice;
-                $priceForRecurrenceRule = new UseArbitraryPrice($arbitraryPrice);
-
+                $priceForOrder = new UseArbitraryPrice($arbitraryPrice);
             } else {
-                try {
-                    $priceValue = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $priceForOrder = new PricingRulesBasedPrice($priceValue);
-                    $priceForRecurrenceRule = new UsePricingRules();
-                } catch (NoRuleMatchedException $e) {
-                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                    $form->addError(new FormError($message));
-                }
+                $priceForOrder = new UsePricingRules();
             }
 
-            if (null !== $priceForOrder) {
-                $order = $orderFactory->createForDeliveryAndPrice($delivery, $priceForOrder, $this->getUser()->getCustomer());
+            $order = null;
+            try {
+                $order = $pricingManager->createOrder($delivery, [
+                    'pricingStrategy' => $priceForOrder,
+                    'throwException' => true,
+                ]);
 
-                $entityManager->persist($order);
+            } catch (NoRuleMatchedException $e) {
+                $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+            }
+
+            if (null !== $order) {
 
                 $this->handleRememberAddress($store, $form);
                 $this->handleBookmark($orderManager, $form, $order);
 
-                $entityManager->flush();
-
-                // We need to persist the order before calling onDemand,
-                // because an auto increment is needed to generate a number
-                $orderManager->onDemand($order);
-
-                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForRecurrenceRule);
+                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
 
                 if ($this->isGranted('ROLE_ADMIN')) {
                     $order->setState(OrderInterface::STATE_ACCEPTED);
