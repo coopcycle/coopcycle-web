@@ -12,6 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class CreateIncident
 {
+    private const DEFAULT_TITLE = 'N/A';
 
     public function __construct(
         private EntityManagerInterface $em,
@@ -20,8 +21,12 @@ class CreateIncident
     )
     { }
 
-    public function findDescriptionByCode(string $code): ?string
+    public function findDescriptionByCode(string $code = null): ?string
     {
+        if (null === $code) {
+            return self::DEFAULT_TITLE;
+        }
+
         $defaults = $this->failureReasonRegistry->getFailureReasons();
         $defaults = array_reduce($defaults, function($carry, $failure_reason) {
             $carry[$failure_reason['code']] = $failure_reason;
@@ -38,13 +43,14 @@ class CreateIncident
         }
 
         // FIXME The title field is actually NOT NULL in database
-        return 'N/A';
+        return self::DEFAULT_TITLE;
     }
 
     public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
     {
+        $title = trim($data->getTitle() || '');
 
-        if (is_null($data->getTitle())) {
+        if (empty($title)) {
             $data->setTitle($this->findDescriptionByCode($data->getFailureReasonCode()));
         }
 
@@ -54,8 +60,8 @@ class CreateIncident
 
         $this->taskManager->incident(
             $data->getTask(),
-            $data->getFailureReasonCode(),
-            $data->getDescription(),
+            $data->getFailureReasonCode() || '',
+            $data->getTitle(),
             [
                 'incident_id' => $data->getId()
             ],
