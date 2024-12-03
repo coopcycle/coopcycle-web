@@ -602,6 +602,8 @@
         "TASK_FORM_SEARCH_ADDRESS_NAME_PLACEHOLDER": "Nom de l'adresse...",
         "GROUP_ORDER_START": "Commencer une commande groupée",
         "GROUP_ORDER_SHARE_LINK": "Partagez le lien avec d'autres pour participer à votre commande. Une fois qu'ils ont terminé, vous pouvez passer la commande.",
-        "GENERIC_BARCODE_HELP": "Ce code-barres de tâche peut suivre tous les colis liés comme une seule unité. Utilisez-le pour simplifier le suivi de l'ensemble de la livraison. Pour un suivi détaillé colis par colis, utilisez plutôt les codes-barres individuels des colis."
+        "GENERIC_BARCODE_HELP": "Ce code-barres de tâche peut suivre tous les colis liés comme une seule unité. Utilisez-le pour simplifier le suivi de l'ensemble de la livraison. Pour un suivi détaillé colis par colis, utilisez plutôt les codes-barres individuels des colis.",
+        "SWITCH_COMPLEX_DATEPICKER": "Sélectionner une date sur plusieurs jours"
+
     }
 }
