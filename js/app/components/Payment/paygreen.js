@@ -142,6 +142,18 @@ export default {
                     this.submitPaymentListener(event)
                   }
                 );
+                window.paygreenjs.attachEventListener(
+                  window.paygreenjs.Events.PAYMENT_FAIL,
+                  (event) => console.log(event)
+                );
+                window.paygreenjs.attachEventListener(
+                  window.paygreenjs.Events.ERROR,
+                  (event) => console.log(event)
+                );
+                window.paygreenjs.attachEventListener(
+                  window.paygreenjs.Events.ACTUAL_FLOW_PAYMENT_DONE,
+                  (event) => console.log(event)
+                );
                 window.paygreenjs.init({
                   paymentOrderID: response.data.id,
                   objectSecret: response.data.object_secret,
