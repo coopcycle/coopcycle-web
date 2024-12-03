@@ -6,15 +6,14 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
 use AppBundle\Action\Incident\IncidentFastList;
 use AppBundle\Action\Incident\CreateIncident;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
-
 
 /**
  * @ApiResource(
@@ -111,7 +110,7 @@ class Incident implements TaggableInterface {
     /**
      * @Groups({"incident"})
      */
-    protected ?User $createdBy = null;
+    protected ?UserInterface $createdBy = null;
 
     /**
      * @Groups({"incident"})
@@ -218,11 +217,11 @@ class Incident implements TaggableInterface {
         return $this;
     }
 
-    public function getCreatedBy(): ?User {
+    public function getCreatedBy(): ?UserInterface {
         return $this->createdBy;
     }
 
-    public function setCreatedBy(?User $created_by): self {
+    public function setCreatedBy(?UserInterface $created_by): self {
         $this->createdBy = $created_by;
         return $this;
     }
@@ -245,7 +244,7 @@ class Incident implements TaggableInterface {
         return $this->updatedAt;
     }
 
-    public function getCustomerUserInfo(): ?User {
+    public function getCustomerUserInfo(): ?UserInterface {
         return $this->getTask()->getDelivery()?->getOrder()?->getCustomer()?->getUser();
     }
 
