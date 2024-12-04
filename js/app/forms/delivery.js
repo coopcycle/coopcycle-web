@@ -29,6 +29,7 @@ import {
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 import TimeSlotSelect from '../widgets/TimeSlotSelect'
+import { formatDateRange } from 'little-date'
 
 const selectTasks = state => state.tasks
 
@@ -242,7 +243,6 @@ function createDateRangePickerWidget(el) {
   Create the date picker widget when there is no time slot choice.
 */
 function createDatePickerWidget(el, isAdmin = false) {
-
   const datePickerEl = document.querySelector(`#${el.id}_doneBefore`)
 
   if (isAdmin) {
@@ -250,7 +250,8 @@ function createDatePickerWidget(el, isAdmin = false) {
     return
   }
 
-  const defaultValue = datePickerEl.value || selectLastDropoff(reduxStore.getState()).before
+  const defaultValue =
+    datePickerEl.value || selectLastDropoff(reduxStore.getState()).before
 
   // When adding a new task, initialize hidden input value
   if (!datePickerEl.value) {
@@ -259,21 +260,23 @@ function createDatePickerWidget(el, isAdmin = false) {
 
   new DateTimePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
-    onChange: function(date) {
+    onChange: function (date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
       reduxStore.dispatch({
         type: 'SET_BEFORE',
         taskIndex: domIndex(el),
-        value: date.format()
+        value: date.format(),
       })
-    }
+    },
   })
 }
 
 function createTagsWidget(el, tags) {
   const initialValue = document.querySelector(`#${el.id}_tagsAsString`).value
 
-  const root = createRoot(document.querySelector(`#${el.id}_tagsAsString_widget`))
+  const root = createRoot(
+    document.querySelector(`#${el.id}_tagsAsString_widget`),
+  )
   root.render(
     <TagsSelect
       defaultValue={initialValue ?? ''}
@@ -286,48 +289,61 @@ function createTagsWidget(el, tags) {
     />,
   )
 }
-
+// if admin -> overide timeslots/ show DateTimeRangePicker
 function createTimeSlotWidget(el) {
-  
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
+
   const timeSlotElWidget = document.querySelector(`#${el.id}_timeSlot_widget`)
+
+  const reactRoot = createRoot(timeSlotElWidget)
+
+  if (timeSlotEl.disabled) {
+    const date = timeSlotEl.value
+    const [day, hours] = date.split(' ')
+    const [first, second] = hours.split('-')
+
+    const firstDate = new Date(`${day} ${first}`)
+    const secondDate = new Date(`${day} ${second}`)
+    const timeSlot = formatDateRange(firstDate, secondDate)
+
+    reactRoot.render(
+      <div
+        title={`${firstDate.toLocaleString()} - ${secondDate.toLocaleString()}`}>
+        {timeSlot}
+      </div>,
+    )
+    return
+  }
 
   const initialChoices = JSON.parse(timeSlotEl.dataset.choices)
   timeSlotEl.value = initialChoices[0].value
 
-  const onChange = (newValue) => {
+  const onChange = newValue => {
     timeSlotEl.value = newValue
 
     reduxStore.dispatch({
       type: 'SET_TIME_SLOT',
       taskIndex: domIndex(el),
-      value: newValue
+      value: newValue,
     })
   }
 
-  const reactRoot = createRoot(timeSlotElWidget)
   reactRoot.render(
-      <TimeSlotSelect 
-        initialChoices={initialChoices}
-        onChange={onChange}
-      />
+    <TimeSlotSelect initialChoices={initialChoices} onChange={onChange} />,
   )
 
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
   if (switchTimeSlotEl) {
     switchTimeSlotEl.querySelectorAll('input[type="radio"]').forEach(rad => {
-      rad.addEventListener('change', function(e) {
-
+      rad.addEventListener('change', function (e) {
         const choices = JSON.parse(e.target.dataset.choices)
 
-        reactRoot.render(
-          <TimeSlotSelect initialChoices={choices} />
-        )
-      
+        reactRoot.render(<TimeSlotSelect initialChoices={choices} />)
+
         reduxStore.dispatch({
           type: 'SET_TIME_SLOT',
           taskIndex: domIndex(el),
-          value: choices[0].value
+          value: choices[0].value,
         })
       })
     })
@@ -335,7 +351,6 @@ function createTimeSlotWidget(el) {
 }
 
 function createPackageForm(el, $list, cb) {
-
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
 
@@ -355,30 +370,24 @@ function createPackageForm(el, $list, cb) {
 }
 
 export function createPackagesWidget(el, packagesRequired, cb) {
-
-  const isNew = document.querySelectorAll(`#${el.id}_packages .delivery__form__packages__list-item`).length === 0
+  const isNew =
+    document.querySelectorAll(
+      `#${el.id}_packages .delivery__form__packages__list-item`,
+    ).length === 0
 
   if (isNew && packagesRequired) {
-    createPackageForm(
-      el,
-      $(`#${el.id}_packages_list`),
-      cb
-    )
+    createPackageForm(el, $(`#${el.id}_packages_list`), cb)
   }
 
-  $(`#${el.id}_packages_add`).click(function() {
+  $(`#${el.id}_packages_add`).click(function () {
     const selector = $(this).attr('data-target')
-    createPackageForm(
-      el,
-      $(selector),
-      cb
-    )
+    createPackageForm(el, $(selector), cb)
     if (cb && typeof cb === 'function') {
       cb(toPackages(el))
     }
   })
 
-  $(`#${el.id}_packages`).on('click', '[data-delete]', function() {
+  $(`#${el.id}_packages`).on('click', '[data-delete]', function () {
     const $target = $($(this).attr('data-target'))
 
     if ($target.length === 0) {
@@ -397,7 +406,7 @@ export function createPackagesWidget(el, packagesRequired, cb) {
     }
   })
 
-  $(`#${el.id}_packages`).on('change', 'select', function() {
+  $(`#${el.id}_packages`).on('change', 'select', function () {
     if (cb && typeof cb === 'function') {
       cb(toPackages(el))
     }
@@ -405,35 +414,31 @@ export function createPackagesWidget(el, packagesRequired, cb) {
 }
 
 function parseWeight(value) {
-
-  const floatValue = parseFloat((value || '0.0'))
+  const floatValue = parseFloat(value || '0.0')
   if (isNaN(floatValue)) {
     return 0
   }
 
-  return parseInt((floatValue * 1000), 10)
+  return parseInt(floatValue * 1000, 10)
 }
 
 const loadTags = _.once(() => {
-
   return axios({
     method: 'get',
     url: window.Routing.generate('admin_tags', { format: 'json' }),
-  })
-  .then(response => response.data)
+  }).then(response => response.data)
 })
 
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 function createElementFromHTML(htmlString) {
-  var div = document.createElement('div');
-  div.innerHTML = htmlString.trim();
+  var div = document.createElement('div')
+  div.innerHTML = htmlString.trim()
 
   // Change this to div.childNodes to support multiple top-level nodes
-  return div.firstChild;
+  return div.firstChild
 }
 
 function initSubForm(name, taskEl, preloadedState, userAdmin) {
-
   const task = {
     type: getTaskType(taskEl),
     address: null,
@@ -446,7 +451,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     reduxStore.dispatch({
       type: 'ADD_DROPOFF',
       taskIndex: domIndex(taskEl),
-      value: task
+      value: task,
     })
   }
 
@@ -467,6 +472,8 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     createDatePickerWidget(taskEl, userAdmin)
   }
 
+  // createDatePickerWidget(taskEl)
+
   const tagsEl = document.querySelector(`#${taskEl.id}_tagsAsString`)
   if (tagsEl) {
     loadTags().then(tags => {
@@ -474,17 +481,17 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     })
   }
 
-
   const deleteBtn = taskEl.querySelector('[data-delete="task"]')
 
   if (deleteBtn) {
-
     // We want at least one dropoff
     if (collectionHolder.children.length === 2) {
-      document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+      document
+        .querySelectorAll('[data-delete="task"]')
+        .forEach(el => el.classList.add('d-none'))
     }
 
-    deleteBtn.addEventListener('click', (e) => {
+    deleteBtn.addEventListener('click', e => {
       e.preventDefault()
       reduxStore.dispatch({
         type: 'REMOVE_DROPOFF',
@@ -493,11 +500,13 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
       taskEl.remove()
       // We want at least one dropoff
       if (collectionHolder.children.length === 2) {
-        document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+        document
+          .querySelectorAll('[data-delete="task"]')
+          .forEach(el => el.classList.add('d-none'))
       }
-      const indexes = Array
-        .from(collectionHolder.children)
-        .map(el => parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10))
+      const indexes = Array.from(collectionHolder.children).map(el =>
+        parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10),
+      )
       collectionHolder.dataset.index = Math.max(...indexes) + 1
     })
   }
@@ -505,7 +514,13 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const packages = document.querySelector(`#${taskEl.id}_packages`)
   if (packages) {
     const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-    createPackagesWidget(taskEl, packagesRequired, packages => reduxStore.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex: domIndex(taskEl), packages }))
+    createPackagesWidget(taskEl, packagesRequired, packages =>
+      reduxStore.dispatch({
+        type: 'SET_TASK_PACKAGES',
+        taskIndex: domIndex(taskEl),
+        packages,
+      }),
+    )
   }
 
   const weightEl = document.querySelector(`#${taskEl.id}_weight`)
@@ -513,18 +528,23 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   if (preloadedState) {
     const index = preloadedState.tasks.indexOf(task)
     if (-1 !== index) {
-      preloadedState.tasks[index].weight = weightEl ? parseWeight(weightEl.value) : 0
+      preloadedState.tasks[index].weight = weightEl
+        ? parseWeight(weightEl.value)
+        : 0
     }
   }
 
   if (weightEl) {
-    weightEl.addEventListener('input', _.debounce(e => {
-      reduxStore.dispatch({
-        type: 'SET_WEIGHT',
-        value: parseWeight(e.target.value),
-        taskIndex: domIndex(taskEl),
-      })
-    }, 350))
+    weightEl.addEventListener(
+      'input',
+      _.debounce(e => {
+        reduxStore.dispatch({
+          type: 'SET_WEIGHT',
+          value: parseWeight(e.target.value),
+          taskIndex: domIndex(taskEl),
+        })
+      }, 350),
+    )
   }
 }
 
