@@ -1,38 +1,62 @@
 import React, { useState } from "react"
+import { ConfigProvider, DatePicker, Select } from 'antd'
+import { antdLocale } from '../i18n'
+import moment from 'moment'
+
+import 'antd/es/input/style/index.css'
 
 export default ({ initialChoices, onChange }) => {
-  // récupérer les dates dans les initalChoices
-  // les heures sont fonctions des dates. Donc créer un objet avec comme clés les dates et en valeur, un array avec les horaires possibles ou alors
-  // venir uniquement créer les heures en fonction de l'heure sélectionnée. On a un state vide et un useEffect pour le gérer
+  const [date, setDate] = useState()
+  const [options, setOptions] = useState([])
 
-  // on a besoin d'un calendrier et on vient désactiver ce qui n'est pas une date dans le state
-  // un select avec les heures qui s'affichent en fonction de la date sélectionnée // il va falloir un state avec la date sélectionnée
-
-  const [value, setValue] = useState(initialChoices[0].value)
-
-  const dates = {}
+  const datesWithTimeslots = {}
 
   initialChoices.forEach(choice => {
     const [date, hour] = choice.value.split(' ')
-    if (Object.prototype.hasOwnProperty.call(dates, date)) {
-      dates[date].push(hour)
+    if (Object.prototype.hasOwnProperty.call(datesWithTimeslots, date)) {
+      datesWithTimeslots[date].push(hour)
     } else {
-      dates[date] = [hour]
+      datesWithTimeslots[date] = [hour]
     }
   })
 
+  const dates = []
+
+  for (const date in datesWithTimeslots) {
+    dates.push(moment(date))
+  }
+
+  function disabledDate(current) {
+    return !dates.some(date => date.isSame(current, 'day'))
+  }
+
+  const handleSlotChange = newTimeSlot => {
+    const formatedDate = date.format('YYYY-MM-DD')
+    onChange(`${formatedDate} ${newTimeSlot}`)
+  }
+
   return (
-    <select
-      onChange={e => {
-        setValue(e.target.value)
-        onChange(e.target.value)
-      }}
-      value={value}>
-      {initialChoices.map(choice => (
-        <option key={choice.value} value={choice.value}>
-          {choice.value}
-        </option>
-      ))}
-    </select>
+    <ConfigProvider locale={antdLocale}>
+      <div style={{ marginTop: '0.5em' }}>
+        <DatePicker
+          style={{ width: '60%' }}
+          disabledDate={disabledDate}
+          onChange={date => {
+            setDate(date)
+            setOptions(datesWithTimeslots[date.format('YYYY-MM-DD')])
+          }}
+        />
+        <Select
+          style={{ width: '35%' }}
+          onChange={timeslot => handleSlotChange(timeslot)}>
+          {options.length > 1 &&
+            options.map(option => (
+              <Option key={option} value={option}>
+                {option}
+              </Option>
+            ))}
+        </Select>
+      </div>
+    </ConfigProvider>
   )
 }
