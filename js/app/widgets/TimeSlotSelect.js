@@ -51,9 +51,9 @@ export default ({ initialChoices, onChange }) => {
           onChange={timeslot => handleSlotChange(timeslot)}>
           {options.length > 1 &&
             options.map(option => (
-              <Option key={option} value={option}>
+              <Select.Option key={option} value={option}>
                 {option}
-              </Option>
+              </Select.Option>
             ))}
         </Select>
       </div>
