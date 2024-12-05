@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { StrictMode } from 'react'
 import { render } from 'react-dom'
 import { createRoot } from 'react-dom/client'
@@ -6,6 +8,7 @@ import axios from 'axios'
 
 import stripe from './stripe'
 import mercadopago from './mercadopago'
+import paygreen from './paygreen'
 import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
@@ -17,6 +20,8 @@ import {
 import { selectPersistedTimeRange } from '../order/timeRange/reduxSlice'
 import { checkTimeRange } from '../../utils/order/helpers'
 import { apiSlice } from '../../api/slice'
+
+import './paygreen.scss'
 
 class CreditCard {
   constructor(config) {
@@ -71,6 +76,9 @@ export default function(formSelector, options) {
     switch (gatewayForCard) {
       case 'mercadopago':
         Object.assign(CreditCard.prototype, mercadopago)
+        break
+      case 'paygreen':
+        Object.assign(CreditCard.prototype, paygreen)
         break
       case 'stripe':
       default:
@@ -134,6 +142,11 @@ export default function(formSelector, options) {
         form.querySelector('input[name="checkout_payment[method]"]:checked').value
 
       switch (selectedMethod) {
+        case 'restoflash':
+        case 'swile':
+        case 'conecs':
+          handleCardPayment()
+          break
         case 'edenred':
           // It means the whole amount can be paid with Edenred (ex. click & collect)
           if (!hasCard) {
@@ -221,6 +234,50 @@ export default function(formSelector, options) {
         payments = response.data.payments
 
         switch (value) {
+
+          case 'restoflash':
+          case 'swile':
+          case 'conecs':
+
+            /*
+            const paygreenStatus = window.paygreenjs.status();
+            const isPaygreenInitialized = null !== paygreenStatus.paymentOrder;
+
+            axios.post(response.data.paygreen.createPaymentOrderURL)
+              .then(createPaymentOrderResponse => {
+                if (!isPaygreenInitialized) {
+                  // window.paygreenjs.attachEventListener(
+                  //   window.paygreenjs.Events.ON_OPEN_POPUP,
+                  //   (event) => {
+                  //     window.location.href = event.detail.url;
+                  //   }
+                  // );
+                  window.paygreenjs.init({
+                    paymentOrderID: createPaymentOrderResponse.data.id,
+                    objectSecret: createPaymentOrderResponse.data.object_secret,
+                    publicKey: cc.config.gatewayConfig.publicKey,
+                    mode: 'payment',
+                    displayAuthentication: 'modal',
+                    paymentMethod: value
+                    // style,
+                  });
+                } else {
+                  window.paygreenjs.setPaymentMethod(value);
+                }
+              });
+            */
+
+            cc.mount(document.getElementById('card-element'), value, response.data, options)
+              .then((shouldEnableBtn = true) => {
+                document.getElementById('card-onmount-focus').scrollIntoView()
+                shouldEnableBtn && enableBtn(submitButton)
+              })
+              .catch(e => {
+                document.getElementById('card-errors').textContent = e.message
+              })
+
+            break
+
           case 'card':
           case 'edenred':
 
@@ -234,9 +291,9 @@ export default function(formSelector, options) {
 
             if (hasCard) {
               cc.mount(document.getElementById('card-element'), value, response.data, options)
-                .then(() => {
-                  document.getElementById('card-element').scrollIntoView()
-                  enableBtn(submitButton)
+                .then((shouldEnableBtn = true) => {
+                  document.getElementById('card-onmount-focus').scrollIntoView()
+                  shouldEnableBtn && enableBtn(submitButton)
                 })
                 .catch(e => {
                   document.getElementById('card-errors').textContent = e.message
@@ -250,10 +307,10 @@ export default function(formSelector, options) {
 
             break
           case 'cash_on_delivery':
-            if (document.getElementById('card-element').children.length) {
+            // if (document.getElementById('card-element').children.length) {
               // remove cc form if it was previously mounted
               cc && cc.unmount()
-            }
+            // }
 
             enableBtn(submitButton)
 
@@ -298,7 +355,7 @@ export default function(formSelector, options) {
     document.querySelector('#checkout_payment_method').appendChild(el)
 
     render(
-      <PaymentMethodPicker methods={ methods } onSelect={ onSelect } />,
+      <PaymentMethodPicker methods={ methods } onSelect={ onSelect } paygreenPublicKey={ cc.config.gatewayConfig.publicKey } />,
       el
     )
   }
