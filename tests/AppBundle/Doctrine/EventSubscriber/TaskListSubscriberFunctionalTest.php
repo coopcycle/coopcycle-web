@@ -97,4 +97,21 @@ class TaskListSubscriberFunctionalTest extends KernelTestCase
         $this->assertEquals($task->getCo2emissions(), 41);
         $this->assertEquals($task->getDistanceFromPrevious(), 4175);
     }
+
+    public function testDistanceCalculationWithoutVehicle() {
+        $this->fixturesLoader->load([
+            __DIR__.'/../../../../features/fixtures/ORM/task_list.yml'
+        ]);
+
+        $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
+
+        $tasks = $taskList->getTasks();
+
+        $this->assertEquals($tasks[0]->getCo2emissions(), 0);
+        $this->assertEquals($tasks[0]->getDistanceFromPrevious(), 0);
+
+        $this->assertEquals($tasks[1]->getCo2emissions(), 0);
+        $this->assertEquals($tasks[1]->getDistanceFromPrevious(), 895);
+
+    }
 }
