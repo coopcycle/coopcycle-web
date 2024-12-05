@@ -308,6 +308,7 @@ function createTimeSlotWidget(el) {
 
     reactRoot.render(
       <div
+        style={{ marginTop: '0.5em' }}
         title={`${firstDate.toLocaleString()} - ${secondDate.toLocaleString()}`}>
         {timeSlot}
       </div>,
@@ -471,8 +472,6 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   } else {
     createDatePickerWidget(taskEl, userAdmin)
   }
-
-  // createDatePickerWidget(taskEl)
 
   const tagsEl = document.querySelector(`#${taskEl.id}_tagsAsString`)
   if (tagsEl) {
