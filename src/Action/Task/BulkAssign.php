@@ -41,7 +41,7 @@ class BulkAssign extends Base
 
         foreach($tasks as $task) {
             $taskObj = $this->iriConverter->getItemFromIri($task);
-            $tasksResults[] = $this->assign($taskObj, $payload);
+            $tasksResults[] = $this->assign($taskObj, $payload, $request);
         }
 
         $this->entityManager->flush();

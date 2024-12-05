@@ -33,6 +33,6 @@ class Assign extends Base
             $payload = json_decode($content, true);
         }
 
-        return $this->assign($task, $payload);
+        return $this->assign($task, $payload, $request);
     }
 }

@@ -65,9 +65,25 @@ class BarcodeController extends AbstractController
         $this->taskManager->scan($task);
         $this->doctrine->getManager()->flush();
 
+        $iri = $iriConverter->getIriFromItem($task);
         return $this->json([
-            "ressource" => $iriConverter->getIriFromItem($task),
+            "ressource" => $iri,
             "client_action" => $clientAction,
+
+            /**
+             * The action_token enables temporary elevated permissions for couriers.
+             * It allows specific actions (like self-assignment) on the scanned task only.
+             *
+             * Generation:
+             * - Uses BarcodeUtils::getToken/1 to get the label's token
+             * - Hashes it with xxh3 algorithm for additional security
+             * - Uses runtime secret key to prevent token guessing
+             *
+             * Security:
+             * - Scoped to single task (token invalid for other tasks)
+             * - Cannot be forged without access to runtime secret
+             */
+            "token_action" => hash('xxh3', BarcodeUtils::getToken($iri)),
             "entity" => $normalizer->normalize($task, null, [
                 'groups' => ['task', 'delivery', 'package', 'address', 'barcode']
             ])
@@ -105,7 +121,7 @@ class BarcodeController extends AbstractController
 
         // If the task is not assigned to the current user, we should prompt the user to self-assign
         if ($task->isAssigned()) {
-            return 'ask_to_unassign';
+            return 'ask_to_assign';
         }
 
         return null;
