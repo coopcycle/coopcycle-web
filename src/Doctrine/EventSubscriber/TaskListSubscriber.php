@@ -80,25 +80,12 @@ class TaskListSubscriber implements EventSubscriber
 
             if (!is_null($vehicle)) {
                 $route = $this->routing->route(...$coordinates)['routes'][0];
-                $legs = array_slice($route["legs"], 0, -1); // removing going back to the warehouse as there is no corresponding task
+                $legs = array_slice($route["legs"], 0, -1);
                 foreach ($legs as $index => $leg) {
                     $task = $taskList->getTasks()[$index];
                     $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
                     $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
                     $task->setCo2Emissions($emissions);
-                    $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
-                }
-            } else {
-                $route = $this->routing->route(...$coordinates)['routes'][0];
-
-                $task = $taskList->getTasks()[0]; // as no warehouse is set, we assume the rider starts from the first task
-                $task->setDistanceFromPrevious(0); // in meter
-                $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
-
-                $legs = $route["legs"];
-                foreach ($legs as $index => $leg) {
-                    $task = $taskList->getTasks()[$index + 1];
-                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
                     $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
                 }
             }
