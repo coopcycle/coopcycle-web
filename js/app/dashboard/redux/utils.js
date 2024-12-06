@@ -196,12 +196,6 @@ export const isTaskVisible = (task, filters, date) => {
     return false
   }
 
-  if (hiddenCouriers.length > 0) {
-    if (task.isAssigned && _.includes(hiddenCouriers, task.assignedTo)) {
-      return false
-    }
-  }
-
   if (!_.isEqual(timeRange, [0, 24])) {
 
     const [ start, end ] = timeRange
@@ -221,6 +215,17 @@ export const isTaskVisible = (task, filters, date) => {
     )
 
     if (!range.overlaps(dateAsRange)) {
+      return false
+    }
+  }
+
+  if (hiddenCouriers.length > 0) {
+
+    if (!task.isAssigned) {
+      return false
+    }
+
+    if (task.isAssigned && _.includes(hiddenCouriers, task.assignedTo)) {
       return false
     }
   }
