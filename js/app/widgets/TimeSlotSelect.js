@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ConfigProvider, DatePicker, Select } from 'antd'
 import { antdLocale } from '../i18n'
 import moment from 'moment'
@@ -17,20 +17,27 @@ export default ({ initialChoices, onChange }) => {
     }
   })
 
+  console.log(datesWithTimeslots)
+
   const dates = []
 
   for (const date in datesWithTimeslots) {
     dates.push(moment(date))
   }
 
-  const [values, setValues] = useState({
-    date: dates[0],
-    option: datesWithTimeslots[dates[0].format('YYYY-MM-DD')][0],
-  })
+  const [values, setValues] = useState({})
 
-  const [options, setOptions] = useState(
-    datesWithTimeslots[dates[0].format('YYYY-MM-DD')],
-  )
+  const [options, setOptions] = useState([])
+
+  useEffect(() => {
+    setOptions(datesWithTimeslots[dates[0].format('YYYY-MM-DD')])
+    setValues({
+      date: dates[0],
+      option: datesWithTimeslots[dates[0].format('YYYY-MM-DD')][0],
+    })
+  }, [initialChoices])
+
+  console.log(options)
 
   function disabledDate(current) {
     return !dates.some(date => date.isSame(current, 'day'))
