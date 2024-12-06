@@ -37,7 +37,10 @@ export default ({ initialChoices, onChange }) => {
   }
 
   const handleDateChange = newDate => {
-    setValues(prevState => ({ ...prevState, date: newDate }))
+    setValues({
+      date: newDate,
+      option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
+    })
     setOptions(datesWithTimeslots[newDate.format('YYYY-MM-DD')])
     const formatedDate = newDate.format('YYYY-MM-DD')
     onChange(`${formatedDate} ${values.option}`)
