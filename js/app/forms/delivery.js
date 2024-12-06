@@ -304,7 +304,9 @@ function createTimeSlotWidget(el) {
 
     const firstDate = new Date(`${day} ${first}`)
     const secondDate = new Date(`${day} ${second}`)
-    const timeSlot = formatDateRange(firstDate, secondDate)
+
+    console.log(firstDate, secondDate)
+    const timeSlot = `${moment(day).format('Do MMM YYYY')} ${hours}`
 
     reactRoot.render(
       <div
@@ -343,8 +345,6 @@ function createTimeSlotWidget(el) {
         rad.title = 'No date available for this option'
       }
       rad.addEventListener('change', function () {
-        console.log(choices)
-
         reactRoot.render(
           <TimeSlotSelect initialChoices={choices} onChange={onChange} />,
         )
