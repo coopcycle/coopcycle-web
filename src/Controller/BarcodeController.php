@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
@@ -26,6 +27,7 @@ class BarcodeController extends AbstractController
         private ManagerRegistry $doctrine,
         private TaskManager $taskManager,
         private BarcodeUtils $barcodeUtils,
+        private TaskListProvider $taskListProvider
     )
     { }
 
@@ -137,8 +139,12 @@ class BarcodeController extends AbstractController
             return;
         }
 
-        $assignable = $task->getDelivery() ?? $task;
-        $assignable->assignTo($this->getUser());
+        $assignable = $task->getDelivery()->getTasks() ?? [$task];
+        array_walk($assignable, function (Task $task) {
+            $tasklist = $this->taskListProvider->getTaskList($task, $this->getUser());
+            $tasklist->appendTask($task);
+            $this->doctrine->getManager()->persist($tasklist);
+        });
     }
 
 
