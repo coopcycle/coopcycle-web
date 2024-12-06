@@ -605,6 +605,9 @@
           "weekday": "weekday",
           "day": "day"
         },
-      "GENERIC_BARCODE_HELP": "This task barcode can track all linked packages as a single unit. Use it for simplified tracking of the entire delivery. For detailed package-by-package tracking, use individual package barcodes instead."
+      "GENERIC_BARCODE_HELP": "This task barcode can track all linked packages as a single unit. Use it for simplified tracking of the entire delivery. For detailed package-by-package tracking, use individual package barcodes instead.",
+    "MODAL_PREREQUISITE_TASK_REQUIRED": "Prerequisite Task Required",
+    "MODAL_PREREQUISITE_TASK_REQUIRED_DESC": "A previous task needs to be completed first",
+    "MODAL_PREREQUISITE_TASK_REQUIRED_MESSAGE": "Task #{{task}} must be completed before proceeding. Would you like to complete it now?"
     }
 }

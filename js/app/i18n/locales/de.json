@@ -172,6 +172,10 @@
         "CART_TIME_RANGE_CHANGED_MODAL_MESSAGE": "Die Öffnungszeiten erlauben es nicht, die Bestellung heute aufzugeben",
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Bitte wählen Sie einen anderen Zeitraum",
         "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Lieferzeit ändern",
-        "GENERIC_BARCODE_HELP": "Dieser Aufgaben-Barcode kann alle verknüpften Pakete als eine Einheit verfolgen. Verwenden Sie ihn für eine vereinfachte Verfolgung der gesamten Lieferung. Für eine detaillierte Verfolgung der einzelnen Pakete verwenden Sie stattdessen die individuellen Paket-Barcodes."
+        "GENERIC_BARCODE_HELP": "Dieser Aufgaben-Barcode kann alle verknüpften Pakete als eine Einheit verfolgen. Verwenden Sie ihn für eine vereinfachte Verfolgung der gesamten Lieferung. Für eine detaillierte Verfolgung der einzelnen Pakete verwenden Sie stattdessen die individuellen Paket-Barcodes.",
+    "MODAL_PREREQUISITE_TASK_REQUIRED": "Voraussetzung erforderlich",
+    "MODAL_PREREQUISITE_TASK_REQUIRED_DESC": "Eine vorherige Aufgabe muss zuerst abgeschlossen werden",
+    "MODAL_PREREQUISITE_TASK_REQUIRED_MESSAGE": "Aufgabe #{{task}} muss vor dem Fortfahren abgeschlossen werden. Möchten Sie sie jetzt abschließen?"
+
     }
 }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Formik } from 'formik'
 
 import TaskModalHeader from './TaskModalHeader'
+import TaskConfirmationDialog from './TaskConfirmationDialog'
 
 const TaskCompleteForm = ({ loading, completeTaskErrorMessage, onSubmit, onCloseClick }) => {
 
@@ -13,7 +14,7 @@ const TaskCompleteForm = ({ loading, completeTaskErrorMessage, onSubmit, onClose
     success: true,
   }
 
-  return (
+  return <>
     <Formik
       initialValues={ initialValues }
       onSubmit={ onSubmit }
@@ -77,7 +78,8 @@ const TaskCompleteForm = ({ loading, completeTaskErrorMessage, onSubmit, onClose
         </form>
       )}
     </Formik>
-  )
+    <TaskConfirmationDialog />
+  </>
 }
 
 export default TaskCompleteForm
