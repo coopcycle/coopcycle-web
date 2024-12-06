@@ -17,12 +17,14 @@ export default ({ initialChoices, onChange }) => {
     }
   })
 
-  console.log(datesWithTimeslots)
-
   const dates = []
 
   for (const date in datesWithTimeslots) {
     dates.push(moment(date))
+  }
+
+  function disabledDate(current) {
+    return !dates.some(date => date.isSame(current, 'day'))
   }
 
   const [values, setValues] = useState({})
@@ -36,12 +38,6 @@ export default ({ initialChoices, onChange }) => {
       option: datesWithTimeslots[dates[0].format('YYYY-MM-DD')][0],
     })
   }, [initialChoices])
-
-  console.log(options)
-
-  function disabledDate(current) {
-    return !dates.some(date => date.isSame(current, 'day'))
-  }
 
   const handleDateChange = newDate => {
     setValues({
@@ -67,7 +63,6 @@ export default ({ initialChoices, onChange }) => {
           style={{ width: '60%' }}
           className="mr-2"
           disabledDate={disabledDate}
-          // put the right value if disabled
           disabled={dates.length > 1 ? false : true}
           value={values.date}
           onChange={date => {
