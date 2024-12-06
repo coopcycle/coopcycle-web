@@ -11,7 +11,6 @@ use AppBundle\Entity\Task;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
-use ApiPlatform\Core\Api\IriConverterInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -19,17 +18,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 class DeliveryInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        RoutingInterface $routing,
-        IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine,
-        DeliveryManager $deliveryManager,
-        AuthorizationCheckerInterface $authorizationChecker)
+        private readonly RoutingInterface $routing,
+        private readonly ManagerRegistry $doctrine,
+        private readonly DeliveryManager $deliveryManager,
+        private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->routing = $routing;
-        $this->iriConverter = $iriConverter;
-        $this->doctrine = $doctrine;
-        $this->deliveryManager = $deliveryManager;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**

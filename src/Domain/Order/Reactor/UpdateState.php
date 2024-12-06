@@ -19,22 +19,14 @@ use Sylius\Component\Payment\Model\PaymentInterface;
  */
 class UpdateState
 {
-    private $stateMachineFactory;
-    private $orderProcessor;
-    private $eventBus;
-
     private $eventNameToTransition = [];
 
     public function __construct(
-        StateMachineFactoryInterface $stateMachineFactory,
-        OrderProcessorInterface $orderProcessor,
-        MessageBus $eventBus,
-        OrderTimeHelper $orderTimeHelper)
+        private readonly StateMachineFactoryInterface $stateMachineFactory,
+        private readonly OrderProcessorInterface $orderProcessor,
+        private readonly MessageBus $eventBus,
+        private readonly OrderTimeHelper $orderTimeHelper)
     {
-        $this->stateMachineFactory = $stateMachineFactory;
-        $this->orderProcessor = $orderProcessor;
-        $this->eventBus = $eventBus;
-        $this->orderTimeHelper = $orderTimeHelper;
 
         $this->eventNameToTransition = [
             Event\OrderCreated::messageName()   => OrderTransitions::TRANSITION_CREATE,

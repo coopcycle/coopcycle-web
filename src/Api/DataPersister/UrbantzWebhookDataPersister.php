@@ -8,9 +8,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 final class UrbantzWebhookDataPersister implements ContextAwareDataPersisterInterface
 {
-    public function __construct(EntityManagerInterface $entityManager)
+    public function __construct(private readonly EntityManagerInterface $entityManager)
     {
-        $this->entityManager = $entityManager;
     }
 
     public function supports($data, array $context = []): bool
