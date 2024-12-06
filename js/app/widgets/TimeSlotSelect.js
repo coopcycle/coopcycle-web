@@ -52,18 +52,20 @@ export default ({ initialChoices, onChange }) => {
     onChange(`${formatedDate} ${newTimeslot}`)
   }
 
-  console.log(values)
   return (
     <ConfigProvider locale={antdLocale}>
-      <div style={{ marginTop: '0.5em' }}>
+      <div style={{ display: 'flex', marginTop: '0.5em' }}>
         <DatePicker
-          style={{ width: '60%' }}
+          style={{ width: '50%' }}
+          className="mr-2"
           disabledDate={disabledDate}
+          disabled={dates.length > 1 ? false : true}
           value={values.date}
           onChange={date => {
             handleDateChange(date)
           }}
         />
+
         <Select
           style={{ width: '35%' }}
           onChange={option => {
