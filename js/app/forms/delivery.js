@@ -336,15 +336,23 @@ function createTimeSlotWidget(el) {
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
   if (switchTimeSlotEl) {
     switchTimeSlotEl.querySelectorAll('input[type="radio"]').forEach(rad => {
-      rad.addEventListener('change', function (e) {
-        const choices = JSON.parse(e.target.dataset.choices)
+      const choices = JSON.parse(rad.dataset.choices)
 
-        reactRoot.render(<TimeSlotSelect initialChoices={choices} />)
+      if (choices.length === 0) {
+        rad.disabled = true
+        rad.title = 'No date available for this option'
+      }
+      rad.addEventListener('change', function () {
+        console.log(choices)
+
+        reactRoot.render(
+          <TimeSlotSelect initialChoices={choices} onChange={onChange} />,
+        )
 
         reduxStore.dispatch({
           type: 'SET_TIME_SLOT',
           taskIndex: domIndex(el),
-          value: choices[0].value,
+          value: choices[0].value || '',
         })
       })
     })
