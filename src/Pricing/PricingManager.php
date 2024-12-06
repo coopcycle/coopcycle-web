@@ -16,6 +16,7 @@ use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
+use AppBundle\Entity\User;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -134,14 +135,21 @@ class PricingManager
 
             $this->entityManager->flush();
 
-            if (null !== $incident) {
+            $user = $this->getUser();
+
+            //FIXME: create an incident for orders added by ApiApp
+            // ApiKey: see BearerTokenAuthenticator
+            // OAuth client: League\Bundle\OAuth2ServerBundle\Security\User\NullUser
+            $isUserWithAccount = $user instanceof User && null !== $user->getId();
+
+            if (null !== $incident && $isUserWithAccount) {
                 $incident->setTitle($this->translator->trans('form.delivery.price.missing.incident', [
                     '%number%' => $order->getNumber(),
                 ]));
                 $incident->setFailureReasonCode('PRICE_REVIEW_NEEDED');
                 $incident->setTask($delivery->getPickup());
 
-                $this->createIncident->__invoke($incident, $this->getUser(), $this->requestStack->getCurrentRequest());
+                $this->createIncident->__invoke($incident, $user, $this->requestStack->getCurrentRequest());
             }
         }
 
