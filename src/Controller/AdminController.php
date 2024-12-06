@@ -75,6 +75,7 @@ use AppBundle\Form\StripeLivemodeType;
 use AppBundle\Form\Type\TimeSlotChoiceType;
 use AppBundle\Form\Sylius\Promotion\CreditNoteType;
 use AppBundle\Form\TimeSlotType;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
@@ -2297,15 +2298,15 @@ class AdminController extends AbstractController
 
             $timeSlot = $form->getData();
 
-            $form = $this->createFormBuilder()
-                ->add('example', TimeSlotChoiceType::class, [
-                    'time_slot' => $timeSlot,
-                ])
-                ->getForm();
+            $loader = new TimeSlotChoiceLoader($timeSlot, 'fr');
+            $choices = $loader->loadChoiceList()->getChoices();
+            $choicesList = [];
 
-            return $this->render('admin/time_slot_preview.html.twig', [
-                'form' => $form->createView(),
-            ]);
+            foreach ($choices as $choice) {
+                $choicesList[] = (string) $choice;
+            }
+
+            return new JsonResponse(['available_slots' => $choicesList]);
         }
 
         return new Response('', 200);

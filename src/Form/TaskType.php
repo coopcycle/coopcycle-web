@@ -31,16 +31,19 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class TaskType extends AbstractType
 {
     protected $datePeriodFormatter;
     protected $locale;
+    protected bool $show_timeslots;
 
-    public function __construct(DatePeriodFormatter $datePeriodFormatter, string $locale)
+    public function __construct(DatePeriodFormatter $datePeriodFormatter, string $locale, AuthorizationCheckerInterface $authorizationChecker)
     {
         $this->datePeriodFormatter = $datePeriodFormatter;
         $this->locale = $locale;
+        $this->show_timeslots = !$authorizationChecker->isGranted('ROLE_ADMIN');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -72,7 +75,7 @@ class TaskType extends AbstractType
 
         if (null !== $options['with_time_slot']
         && null !== $options['with_time_slots']
-        && count($options['with_time_slots']) > 1) {
+        && count($options['with_time_slots']) > 1 && $this->show_timeslots) {
 
             $builder
                 ->add('switchTimeSlot', EntityType::class, [
@@ -136,7 +139,7 @@ class TaskType extends AbstractType
                 $form->remove('switchTimeSlot');
             }
 
-            if (null !== $options['with_time_slot']) {
+            if (null !== $options['with_time_slot'] && $this->show_timeslots) {
 
                 $timeSlotOptions = [
                     'time_slot' => $options['with_time_slot'],

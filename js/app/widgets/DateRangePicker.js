@@ -1,4 +1,4 @@
-import React from 'react'
+import  React, {useState } from 'react'
 import { render } from 'react-dom'
 import moment from 'moment'
 import { ConfigProvider, DatePicker } from 'antd';
@@ -9,59 +9,43 @@ import 'antd/es/input/style/index.css'
 
 import { antdLocale } from '../i18n'
 
-class DateRangePicker extends React.Component {
+const DateRangePicker = ({ defaultValue, onChange, format, showTime }) => {
 
-  constructor(props) {
-    super(props)
+  const [values, setValues] = useState(() =>
+    defaultValue
+      ? [moment(defaultValue.after), moment(defaultValue.before)]
+      : [],
+  )
 
-    let value = []
-    if (this.props.defaultValue) {
-      value = [moment(this.props.defaultValue.after), moment(this.props.defaultValue.before)]
-    }
+  const handleDateChange = newValue => {
+    if (!newValue) return
 
-    this.state = {
-      value
-    }
+    onChange({
+      after: newValue[0],
+      before: newValue[1],
+    })
 
-    this.onChange = this.onChange.bind(this)
+    setValues(newValue)
   }
 
-  onChange(value) {
-    // When the input has been cleared
-    if (!value) {
-      return
+  let props = {}
+  if (showTime) {
+    props = {
+      showTime: {
+        ...timePickerProps,
+        hideDisabledOptions: true,
+      },
     }
-
-    const values = {
-      after: value[0],
-      before: value[1],
-    }
-
-    this.setState(value)
-
-    this.props.onChange(values)
   }
-
-  render() {
-
-    let props = {}
-    if (this.props.showTime) {
-      props = {showTime: {
-      ...timePickerProps,
-          hideDisabledOptions: true,
-      }}
-    }
-
-    return (
-      <DatePicker.RangePicker
-        style={{ width: '100%' }}
-        format={this.props.format}
-        defaultValue={this.state.value}
-        onChange={(value) => this.onChange(value)}
-        {...props}
+  return (
+    <DatePicker.RangePicker
+      style={{ width: '100%' }}
+      format={format}
+      defaultValue={values}
+      onChange={handleDateChange}
+      {...props}
     />
-    )
-  }
+  )
 }
 
 export default function(el, options) {

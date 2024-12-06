@@ -605,6 +605,7 @@
           "weekday": "weekday",
           "day": "day"
         },
-      "GENERIC_BARCODE_HELP": "This task barcode can track all linked packages as a single unit. Use it for simplified tracking of the entire delivery. For detailed package-by-package tracking, use individual package barcodes instead."
+      "GENERIC_BARCODE_HELP": "This task barcode can track all linked packages as a single unit. Use it for simplified tracking of the entire delivery. For detailed package-by-package tracking, use individual package barcodes instead.",
+      "SWITCH_COMPLEX_DATEPICKER": "Select a date over multiple days"
     }
 }
