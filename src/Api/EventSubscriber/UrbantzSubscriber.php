@@ -22,27 +22,16 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class UrbantzSubscriber implements EventSubscriberInterface
 {
-    private $urbantzClient;
-    private $entityManager;
-    private $logger;
-    private $secret;
 
     public function __construct(
-        HttpClientInterface $urbantzClient,
-        EntityManagerInterface $entityManager,
-        TokenStoreExtractor $storeExtractor,
-        DeliveryManager $deliveryManager,
-        PricingManager $pricingManager,
-        LoggerInterface $logger,
-        string $secret)
+        private readonly HttpClientInterface $urbantzClient,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TokenStoreExtractor $storeExtractor,
+        private readonly DeliveryManager $deliveryManager,
+        private readonly PricingManager $pricingManager,
+        private readonly LoggerInterface $logger,
+        private readonly string $secret)
     {
-        $this->urbantzClient = $urbantzClient;
-        $this->entityManager = $entityManager;
-        $this->storeExtractor = $storeExtractor;
-        $this->deliveryManager = $deliveryManager;
-        $this->pricingManager = $pricingManager;
-        $this->logger = $logger;
-        $this->secret = $secret;
     }
 
     /**
