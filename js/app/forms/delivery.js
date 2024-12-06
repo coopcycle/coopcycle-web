@@ -29,7 +29,6 @@ import {
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 import TimeSlotSelect from '../widgets/TimeSlotSelect'
-import { formatDateRange } from 'little-date'
 
 const selectTasks = state => state.tasks
 
