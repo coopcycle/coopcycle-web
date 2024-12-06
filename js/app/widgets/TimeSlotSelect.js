@@ -56,9 +56,11 @@ export default ({ initialChoices, onChange }) => {
     <ConfigProvider locale={antdLocale}>
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
         <DatePicker
-          style={{ width: '50%' }}
+          format="LL"
+          style={{ width: '60%' }}
           className="mr-2"
           disabledDate={disabledDate}
+          // put the right value if disabled
           disabled={dates.length > 1 ? false : true}
           value={values.date}
           onChange={date => {
