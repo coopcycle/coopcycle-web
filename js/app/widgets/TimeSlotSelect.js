@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState } from 'react'
 import { ConfigProvider, DatePicker, Select } from 'antd'
 import { antdLocale } from '../i18n'
 import moment from 'moment'
@@ -6,9 +6,6 @@ import moment from 'moment'
 import 'antd/es/input/style/index.css'
 
 export default ({ initialChoices, onChange }) => {
-  const [date, setDate] = useState()
-  const [options, setOptions] = useState([])
-
   const datesWithTimeslots = {}
 
   initialChoices.forEach(choice => {
@@ -26,30 +23,51 @@ export default ({ initialChoices, onChange }) => {
     dates.push(moment(date))
   }
 
+  const [values, setValues] = useState({
+    date: dates[0],
+    option: datesWithTimeslots[dates[0].format('YYYY-MM-DD')][0],
+  })
+
+  const [options, setOptions] = useState(
+    datesWithTimeslots[dates[0].format('YYYY-MM-DD')],
+  )
+
   function disabledDate(current) {
     return !dates.some(date => date.isSame(current, 'day'))
   }
 
-  const handleSlotChange = newTimeSlot => {
-    const formatedDate = date.format('YYYY-MM-DD')
-    onChange(`${formatedDate} ${newTimeSlot}`)
+  const handleDateChange = newDate => {
+    setValues(prevState => ({ ...prevState, date: newDate }))
+    setOptions(datesWithTimeslots[newDate.format('YYYY-MM-DD')])
+    const formatedDate = newDate.format('YYYY-MM-DD')
+    onChange(`${formatedDate} ${values.option}`)
   }
 
+  const handleTimeSlotChange = newTimeslot => {
+    setValues(prevState => ({ ...prevState, option: newTimeslot }))
+    const formatedDate = values.date.format('YYYY-MM-DD')
+    onChange(`${formatedDate} ${newTimeslot}`)
+  }
+
+  console.log(values)
   return (
     <ConfigProvider locale={antdLocale}>
       <div style={{ marginTop: '0.5em' }}>
         <DatePicker
           style={{ width: '60%' }}
           disabledDate={disabledDate}
+          value={values.date}
           onChange={date => {
-            setDate(date)
-            setOptions(datesWithTimeslots[date.format('YYYY-MM-DD')])
+            handleDateChange(date)
           }}
         />
         <Select
           style={{ width: '35%' }}
-          onChange={timeslot => handleSlotChange(timeslot)}>
-          {options.length > 1 &&
+          onChange={option => {
+            handleTimeSlotChange(option)
+          }}
+          value={values.option}>
+          {options.length >= 1 &&
             options.map(option => (
               <Select.Option key={option} value={option}>
                 {option}
