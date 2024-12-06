@@ -240,7 +240,11 @@ export const completeTaskErrorMessage = (state = null, action) => {
     return null
   case COMPLETE_TASK_FAILURE:
 
+
     const { error } = action
+    if (typeof error == 'string') {
+      return error
+    }
 
     if (error.response) {
       // The request was made and the server responded with a status code

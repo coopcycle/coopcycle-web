@@ -680,7 +680,69 @@ export function startTask(task) {
   }
 }
 
-export function completeTask(task, notes = '', success = true) {
+/**
+ * Recursively completes tasks and their dependencies
+ * @param {Function} dispatch - Redux dispatch function
+ * @param {Object} httpClient - HTTP client for API requests
+ * @param {Array} queue - Queue of tasks to complete
+ * @param {string} jwt - JWT token for authentication
+ */
+function completeTaskRecursive(dispatch, httpClient, queue = [], jwt) {
+  if (queue.length === 0) {
+    dispatch(createTaskSuccess())
+    dispatch(closeNewTaskModal())
+    return
+  }
+
+  const [currentTask, ...remainingTasks] = queue
+
+  httpClient.request({
+    method: 'put',
+    url: `${currentTask['@id']}/done`,
+    data: {},
+    headers: {
+      'Accept': 'application/ld+json',
+      'Content-Type': 'application/ld+json',
+      'Authorization': `Bearer ${jwt}`
+    }
+  }).then(({data}) => {
+      if (data?.required_action === 'validate_previous_task') {
+        if (confirm(`The previous task (#${data.previous_task}) is not complete. Do you want to validate it?`)) {
+          completeTaskRecursive(dispatch, httpClient, [
+            { '@id': `/api/tasks/${data.previous_task}` },
+            currentTask,
+            ...remainingTasks
+          ], jwt)
+        } else {
+          throw new Error(data.error)
+        }
+      } else {
+        completeTaskRecursive(dispatch, httpClient, remainingTasks, jwt)
+      }
+    }).catch(error => {
+      dispatch(completeTaskFailure(error.message))
+    })
+}
+
+/**
+ * Action creator for task completion
+ */
+export function completeTask(task, notes = '') {
+  return function(dispatch, getState) {
+    const { jwt } = getState()
+    const client = createClient(dispatch)
+
+    dispatch(createTaskRequest())
+
+    try {
+      completeTaskRecursive(dispatch, client, [task], jwt)
+    } catch (error) {
+      dispatch(completeTaskFailure(error))
+    }
+  }
+}
+
+export function _completeTask(task, notes = '', success = true) {
 
   return function(dispatch, getState) {
 
