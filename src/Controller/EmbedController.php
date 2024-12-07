@@ -332,7 +332,7 @@ class EmbedController extends AbstractController
             $telephone = $form->get('telephone')->getData();
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $customer, $attach = false);
+            $order    = $orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price), $customer, false);
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [

@@ -161,8 +161,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $prefillPickupAddress = false;
 
-    private $createOrders = false;
-
     /**
      * @ApiSubresource
      */
@@ -392,20 +390,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setPrefillPickupAddress($prefillPickupAddress)
     {
         $this->prefillPickupAddress = $prefillPickupAddress;
-
-        return $this;
-    }
-
-    public function getCreateOrders()
-    {
-        return $this->createOrders;
-    }
-    /**
-     * @param mixed $createOrders
-     */
-    public function setCreateOrders($createOrders)
-    {
-        $this->createOrders = $createOrders;
 
         return $this;
     }

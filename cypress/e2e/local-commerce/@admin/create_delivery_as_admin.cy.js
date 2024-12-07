@@ -33,18 +33,15 @@ context('Delivery (role: admin)', () => {
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_0_address_name__display')
-      .clear()
-    cy.get('#delivery_tasks_0_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_0_address_telephone__display').clear()
-    cy.get('#delivery_tasks_0_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_0_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
-   
+
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
@@ -55,14 +52,11 @@ context('Delivery (role: admin)', () => {
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_1_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_1_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_1_address_telephone__display').clear()
-    cy.get('#delivery_tasks_1_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_1_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
@@ -86,6 +80,9 @@ context('Delivery (role: admin)', () => {
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€4.99/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -132,14 +129,11 @@ context('Delivery (role: admin)', () => {
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_0_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_0_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_0_address_telephone__display').clear()
-    cy.get('#delivery_tasks_0_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_0_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
@@ -154,14 +148,11 @@ context('Delivery (role: admin)', () => {
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_1_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_1_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_1_address_telephone__display').clear()
-    cy.get('#delivery_tasks_1_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_1_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
@@ -189,6 +180,9 @@ context('Delivery (role: admin)', () => {
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€72.00/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -236,14 +230,11 @@ context('Delivery (role: admin)', () => {
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_0_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_0_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_0_address_telephone__display').clear()
-    cy.get('#delivery_tasks_0_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_0_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
@@ -258,14 +249,11 @@ context('Delivery (role: admin)', () => {
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_1_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_1_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_1_address_telephone__display').clear()
-    cy.get('#delivery_tasks_1_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_1_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
@@ -309,14 +297,14 @@ context('Delivery (role: admin)', () => {
       .should('exist')
   })
 
-  it('create delivery for store with createOrders disabled', function () {
+  it('create delivery for store without pricing', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Store_with_createOrders_disabled__list_item]')
+    cy.get('[data-testid=store_Store_without_pricing__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Store_with_createOrders_disabled__list_item]')
+    cy.get('[data-testid=store_Store_without_pricing__list_item]')
       .contains('Créer une livraison')
       .click()
 
@@ -328,14 +316,11 @@ context('Delivery (role: admin)', () => {
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_0_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_0_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_0_address_telephone__display').clear()
-    cy.get('#delivery_tasks_0_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_0_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
@@ -350,14 +335,11 @@ context('Delivery (role: admin)', () => {
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_1_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_1_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_1_address_telephone__display').clear()
-    cy.get('#delivery_tasks_1_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_1_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
@@ -379,5 +361,68 @@ context('Delivery (role: admin)', () => {
     cy.get('[data-testid=delivery__list_item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€0.00/)
+      .should('exist')
+  })
+
+  it('create delivery for store with invalid pricing', function () {
+    cy.visit('/admin/stores')
+
+    cy.get('[data-testid=store_Store_with_invalid_pricing__list_item]')
+      .find('.dropdown-toggle')
+      .click()
+
+    cy.get('[data-testid=store_Store_with_invalid_pricing__list_item]')
+      .contains('Créer une livraison')
+      .click()
+
+    // Pickup
+
+    cy.searchAddress(
+      '[data-form="task"]:nth-of-type(1)',
+      '23 Avenue Claude Vellefaux, 75010 Paris, France',
+      /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
+    )
+
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type('Office')
+
+    cy.get('#delivery_tasks_0_address_telephone__display').clear()
+    cy.get('#delivery_tasks_0_address_telephone__display').type('+33112121212')
+
+    cy.get('#delivery_tasks_0_address_contactName__display').clear()
+    cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
+
+    cy.get('#delivery_tasks_0_comments').type('Pickup comments')
+
+    // Dropoff
+
+    cy.searchAddress(
+      '[data-form="task"]:nth-of-type(2)',
+      '72 Rue Saint-Maur, 75011 Paris, France',
+      /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
+    )
+
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type('Office')
+
+    cy.get('#delivery_tasks_1_address_telephone__display').clear()
+    cy.get('#delivery_tasks_1_address_telephone__display').type('+33112121212')
+
+    cy.get('#delivery_tasks_1_address_contactName__display').clear()
+    cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
+
+    cy.get('#delivery_tasks_1_weight').clear()
+    cy.get('#delivery_tasks_1_weight').type(2.5)
+
+    cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+
+    cy.get('#delivery-submit').click()
+
+    cy.get('.alert-danger', { timeout: 10000 }).should(
+      'contain',
+      "Le prix de la course n'a pas pu être calculé.",
+    )
   })
 })

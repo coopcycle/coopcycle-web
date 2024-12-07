@@ -19,6 +19,9 @@ AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_4:
     name: Default
     rules: [ '@pricing_rule_4' ]
+  pricing_rule_set_impossible:
+    name: Default
+    rules: [ '@pricing_rule_impossible' ]
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
@@ -41,6 +44,11 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 499
     position: 1
     ruleSet: '@pricing_rule_set_4'
+  pricing_rule_impossible:
+    expression: 'distance \> 100000'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_impossible'
 
 AppBundle\Entity\Address:
   address_1:
@@ -165,3 +173,23 @@ AppBundle\Entity\Store:
     timeSlot: '@time_slot_1'
     __calls:
       - addAddress: [ "@address_2" ]
+  store_8:
+    name: 'Acme no pricing'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: null
+    packageSet: '@package_set_1'
+    timeSlot: '@time_slot_1'
+    timeSlots: [ "@time_slot_1", "@time_slot_2" ]
+    __calls:
+      - addAddress: [ "@address_1" ]
+  store_9:
+    name: 'Acme invalid pricing'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_impossible'
+    packageSet: '@package_set_1'
+    timeSlot: '@time_slot_1'
+    timeSlots: [ "@time_slot_1", "@time_slot_2" ]
+    __calls:
+      - addAddress: [ "@address_1" ]

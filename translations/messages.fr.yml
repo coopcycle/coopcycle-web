@@ -428,6 +428,7 @@ form.address.company.function.label: Poste
 form.address.company.collaborator_number.label: Nombre de collaborateur-ices
 form.address.company.meal_estimate.label: Estimation du nombre de repas (par jour)
 form.company.make_the_request.label: Faire la demande
+pricing_rule_set.new: Nouvelle tarification
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
