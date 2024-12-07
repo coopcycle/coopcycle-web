@@ -1975,7 +1975,6 @@ Feature: Deliveries
     }
   """
 
-
   Scenario: Cancel delivery
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -2105,4 +2104,3 @@ Feature: Deliveries
         "@type": "DeliveryImportQueue"
       }
       """
-
