@@ -334,6 +334,9 @@ trait StoreTrait
             try {
                 $order = $pricingManager->createOrder($delivery, [
                     'pricingStrategy' => $priceForOrder,
+                    // Force an admin to fix the pricing rules
+                    // maybe it would be a better UX to create an incident instead
+                    'throwException' => $this->isGranted('ROLE_ADMIN')
                 ]);
 
             } catch (NoRuleMatchedException $e) {
@@ -747,7 +750,7 @@ trait StoreTrait
             $templateOrder = null;
             $isInvalidPricing = false;
             try {
-                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false);
+                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
             } catch (NoRuleMatchedException $e) {
                 $isInvalidPricing = true;
             }

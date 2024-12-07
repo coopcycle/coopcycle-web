@@ -28,7 +28,6 @@ use Psr\Log\LoggerInterface;
 use Recurr\Rule;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -46,7 +45,6 @@ class PricingManager
         private readonly OrderFactory $orderFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
-        private readonly AuthorizationCheckerInterface $authorizationChecker,
         private readonly RequestStack $requestStack,
         private readonly CreateIncident $createIncident,
         private readonly TranslatorInterface $translator,
@@ -96,9 +94,9 @@ class PricingManager
         $defaults = [
             'pricingStrategy' => new UsePricingRules(),
             'persist' => true,
-            // Force an admin to fix the pricing rules
-            // maybe it would be a better UX to create an incident instead
-            'throwException' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            // If set to true, an exception will be thrown when a price cannot be calculated
+            // If set to false, a price of 0 will be set and an incident will be created
+            'throwException' => false,
         ];
         $optionalArgs+= $defaults;
 
@@ -316,7 +314,7 @@ class PricingManager
         $recurrenceRule->setTemplate($template);
     }
 
-    public function createOrderFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): ?OrderInterface
+    public function createOrderFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true, bool $throwException = false): ?OrderInterface
     {
         $store = $recurrenceRule->getStore();
 
@@ -338,7 +336,7 @@ class PricingManager
             'persist' => $persist,
             // Display an error when viewing the list of recurrence rules so an admin knows which rules need to be fixed
             // When auto-generating orders, create an incident instead
-            'throwException' => $this->authorizationChecker->isGranted('ROLE_ADMIN') && !$persist,
+            'throwException' => $throwException,
         ]);
 
         if (null !== $order) {

@@ -26,9 +26,7 @@ class Create
             throw new ValidationException($errors);
         }
 
-        $this->pricingManager->createOrder($data, [
-            'throwException' => false,
-        ]);
+        $this->pricingManager->createOrder($data);
 
         return $data;
     }

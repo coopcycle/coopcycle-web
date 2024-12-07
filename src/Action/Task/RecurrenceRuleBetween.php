@@ -86,9 +86,7 @@ class RecurrenceRuleBetween
             $delivery = Delivery::createWithTasks(...$tasks);
             $data->getStore()->addDelivery($delivery);
             $this->entityManager->persist($delivery);
-            $this->pricingManager->createOrder($delivery, [
-                'throwException' => false,
-            ]);
+            $this->pricingManager->createOrder($delivery);
         }
 
         $this->entityManager->flush();

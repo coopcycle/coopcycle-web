@@ -211,6 +211,6 @@ class RecurrenceRuleBetweenTest extends TestCase
         $this->assertContains($dropoffTask, $response);
         $this->assertSame($organization, $dropoffTask->getOrganization());
 
-        $this->pricingManager->createOrder(Argument::type(Delivery::class), Argument::type('array'))->shouldHaveBeenCalled();
+        $this->pricingManager->createOrder(Argument::type(Delivery::class))->shouldHaveBeenCalled();
     }
 }
