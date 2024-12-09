@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { ConfigProvider, DatePicker, Select } from 'antd'
+import { ConfigProvider, DatePicker, Select, Radio } from 'antd'
 import { antdLocale } from '../i18n'
 import moment from 'moment'
 
 import 'antd/es/input/style/index.css'
 
-export default ({ initialChoices, onChange }) => {
+export default ({ choices, initialChoices, onChange }) => {
+  const timeSlotsLabel = []
+  for (const timeSlot in choices) {
+    timeSlotsLabel.push(timeSlot)
+  }
+
+  const [timeSlotChoices, setTimeSlotChoices] = useState(initialChoices)
+
   const datesWithTimeslots = {}
 
-  initialChoices.forEach(choice => {
+  timeSlotChoices.forEach(choice => {
     const [date, hour] = choice.value.split(' ')
     if (Object.prototype.hasOwnProperty.call(datesWithTimeslots, date)) {
       datesWithTimeslots[date].push(hour)
@@ -37,7 +44,11 @@ export default ({ initialChoices, onChange }) => {
       date: dates[0],
       option: datesWithTimeslots[dates[0].format('YYYY-MM-DD')][0],
     })
-  }, [initialChoices])
+  }, [timeSlotChoices])
+
+  const handleInitialChoicesChange = timeSlot => {
+    setTimeSlotChoices(choices[timeSlot.target.value])
+  }
 
   const handleDateChange = newDate => {
     setValues({
@@ -57,6 +68,22 @@ export default ({ initialChoices, onChange }) => {
 
   return (
     <ConfigProvider locale={antdLocale}>
+      <Radio.Group
+        defaultValue="a"
+        buttonStyle="solid"
+        style={{ display: 'flex' }}>
+        {timeSlotsLabel.map(label => (
+          <Radio.Button
+            key={label}
+            value={label}
+            onChange={timeSlot => {
+              handleInitialChoicesChange(timeSlot)
+            }}>
+            {label}
+          </Radio.Button>
+        ))}
+      </Radio.Group>
+
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
         <DatePicker
           format="LL"

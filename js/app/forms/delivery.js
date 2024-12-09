@@ -304,7 +304,6 @@ function createTimeSlotWidget(el) {
     const firstDate = new Date(`${day} ${first}`)
     const secondDate = new Date(`${day} ${second}`)
 
-    console.log(firstDate, secondDate)
     const timeSlot = `${moment(day).format('Do MMM YYYY')} ${hours}`
 
     reactRoot.render(
@@ -318,6 +317,7 @@ function createTimeSlotWidget(el) {
   }
 
   const initialChoices = JSON.parse(timeSlotEl.dataset.choices)
+
   timeSlotEl.value = initialChoices[0].value
 
   const onChange = newValue => {
@@ -336,6 +336,23 @@ function createTimeSlotWidget(el) {
 
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
   if (switchTimeSlotEl) {
+    const choices = {}
+    Array.from(switchTimeSlotEl.querySelectorAll('input[type="radio"]')).map(
+      el => {
+        choices[el.closest('label').textContent] = JSON.parse(
+          el.dataset.choices,
+        )
+      },
+    )
+
+    reactRoot.render(
+      <TimeSlotSelect
+        choices={choices}
+        initialChoices={initialChoices}
+        onChange={onChange}
+      />,
+    )
+
     switchTimeSlotEl.querySelectorAll('input[type="radio"]').forEach(rad => {
       const choices = JSON.parse(rad.dataset.choices)
 
