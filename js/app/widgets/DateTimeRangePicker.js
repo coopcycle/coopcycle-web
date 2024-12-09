@@ -147,74 +147,80 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format, showTime }) => {
   }, [values, onChange])
 
   return isComplexPicker ? (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <DatePicker.RangePicker
-        style={{ width: '95%' }}
-        format={format}
-        defaultValue={values}
-        onChange={handleComplexPickerDateChange}
-        {...props}
-      />
-      <a title={t('SWITCH_COMPLEX_DATEPICKER')}>
-        <i
-          className="fa fa-calendar pr-1"
-          onClick={() => setIsComplexPicker(!isComplexPicker)}
-        />
-      </a>
-    </div>
-  ) : (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-      <div style={{ width: '95%' }}>
-        <DatePicker
-          style={{ width: '50%' }}
-          format="LL"
-          defaultValue={values[0]}
-          onChange={newDate => {
-            handleDateChange(newDate)
-          }}
-        />
-
-        <Select
-          style={{ width: '25%' }}
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <DatePicker.RangePicker
+          style={{ width: '95%' }}
           format={format}
-          value={timeValues.after}
-          onChange={newAfterHour => {
-            handleAfterHourChange(newAfterHour)
-          }}>
-          {firstSelectOptions.map(option => (
-            <Option
-              key={option.time.format('HH:mm')}
-              value={option.time.format('HH:mm')}
-              disabled={option.disabled}>
-              {option.time.format('HH:mm')}
-            </Option>
-          ))}
-        </Select>
-
-        <Select
-          style={{ width: '25%' }}
-          format={format}
-          value={timeValues.before}
-          onChange={newBeforeHour => {
-            handleBeforeHourChange(newBeforeHour)
-          }}>
-          {secondSelectOptions.map(option => (
-            <Option
-              key={option.time.format('HH:mm')}
-              value={option.time.format('HH:mm')}
-              disabled={option.disabled}>
-              {option.time.format('HH:mm')}
-            </Option>
-          ))}
-        </Select>
+          defaultValue={values}
+          onChange={handleComplexPickerDateChange}
+          {...props}
+        />
       </div>
-      <a title="Sélectionner une date sur plusieurs jours">
-        <i
-          className="fa fa-calendar pr-1"
-          onClick={() => setIsComplexPicker(!isComplexPicker)}
-        />
-      </a>
-    </div>
+      <small id="switchText" className="form-text text-muted">
+        <a
+          title={t('SWITCH_COMPLEX_DATEPICKER')}
+          onClick={() => setIsComplexPicker(!isComplexPicker)}>
+          {t('SWITCH_COMPLEX_DATEPICKER')}
+        </a>
+      </small>
+    </>
+  ) : (
+    <>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div style={{ width: '95%' }}>
+          <DatePicker
+            style={{ width: '50%' }}
+            format="LL"
+            defaultValue={values[0]}
+            onChange={newDate => {
+              handleDateChange(newDate)
+            }}
+          />
+
+          <Select
+            style={{ width: '25%' }}
+            format={format}
+            value={timeValues.after}
+            onChange={newAfterHour => {
+              handleAfterHourChange(newAfterHour)
+            }}>
+            {firstSelectOptions.map(option => (
+              <Option
+                key={option.time.format('HH:mm')}
+                value={option.time.format('HH:mm')}
+                disabled={option.disabled}>
+                {option.time.format('HH:mm')}
+              </Option>
+            ))}
+          </Select>
+
+          <Select
+            style={{ width: '25%' }}
+            format={format}
+            value={timeValues.before}
+            onChange={newBeforeHour => {
+              handleBeforeHourChange(newBeforeHour)
+            }}>
+            {secondSelectOptions.map(option => (
+              <Option
+                key={option.time.format('HH:mm')}
+                value={option.time.format('HH:mm')}
+                disabled={option.disabled}>
+                {option.time.format('HH:mm')}
+              </Option>
+            ))}
+          </Select>
+        </div>
+      </div>
+      <small id="switchText" className="form-text text-muted">
+        <a
+          title={t('SWITCH_COMPLEX_DATEPICKER')}
+          onClick={() => setIsComplexPicker(!isComplexPicker)}>
+          {t('SWITCH_COMPLEX_DATEPICKER')}
+        </a>
+      </small>
+    </>
   )
 }
 
