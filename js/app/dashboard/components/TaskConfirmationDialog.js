@@ -28,7 +28,7 @@ function TaskConfirmationDialog() {
       open={true}
       onOk={handleOk}
       onCancel={handleCancel}>
-      <p>{t('MODAL_PREREQUISITE_TASK_REQUIRED_DESC')}</p>
+      <p className="text-muted">{t('MODAL_PREREQUISITE_TASK_REQUIRED_DESC')}</p>
       <p>{t(taskConfirmation.message, { task: taskConfirmation.taskId })}</p>
     </Modal>
   )
