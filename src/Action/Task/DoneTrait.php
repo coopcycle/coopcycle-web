@@ -23,7 +23,6 @@ trait DoneTrait
                 'required_action' => 'validate_previous_task',
                 'previous_task' => $task->getPrevious()->getId(),
             ], Response::HTTP_CONFLICT);
-            throw new BadRequestHttpException($e->getMessage());
         } catch (TaskAlreadyCompletedException $e) {
             throw new BadRequestHttpException($e->getMessage());
         } catch (TaskCancelledException $e) {
