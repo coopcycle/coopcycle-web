@@ -56,7 +56,7 @@ class BulkMarkAsDone extends Base
         foreach($tasks as $task) {
             $taskObj = $this->iriConverter->getItemFromIri($task);
             try {
-                $tasksResults[] = $this->done($taskObj, $request);
+                $tasksResults[] = $this->done($taskObj, $request, should_throw: true);
             } catch(BadRequestHttpException $e) {
                 $tasksFailed[$task] = $e->getMessage();
             }
