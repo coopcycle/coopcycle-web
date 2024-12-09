@@ -917,16 +917,14 @@ Feature: Tasks
       """
       {}
       """
-    Then the response status code should be 400
+    Then the response status code should be 409
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Error",
-        "@type":"hydra:Error",
-        "hydra:title":"An error occurred",
-        "hydra:description":@string@,
-        "trace":@array@
+        "error":@string@,
+        "required_action":"validate_previous_task",
+        "previous_task":4
       }
       """
 
