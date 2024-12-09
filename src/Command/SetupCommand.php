@@ -64,6 +64,7 @@ class SetupCommand extends Command
         'HUF',
         'COP',
         'GHS',
+        'CHF',
     ];
 
     private array $locales;
