@@ -61,6 +61,8 @@ import {
   openCreateTourModal,
   closeCreateTourModal,
   MODIFY_TOUR_REQUEST_SUCCESS,
+  TASK_CONFIRMATION_REQUIRED,
+  TASK_CONFIRMATION_RESOLVED
 } from './actions'
 
 import {
@@ -78,6 +80,7 @@ const initialState = {
   taskModalIsOpen: false,
   isTaskModalLoading: false,
   completeTaskErrorMessage: null,
+  taskConfirmation: null,
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,
   isLoadingTaskEvents: false,
@@ -240,7 +243,11 @@ export const completeTaskErrorMessage = (state = null, action) => {
     return null
   case COMPLETE_TASK_FAILURE:
 
+
     const { error } = action
+    if (typeof error == 'string') {
+      return error
+    }
 
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -262,6 +269,23 @@ export const completeTaskErrorMessage = (state = null, action) => {
   }
 
   return state
+}
+
+export const taskConfirmation = (state = null, action) => {
+  switch (action.type) {
+    case TASK_CONFIRMATION_REQUIRED:
+      return {
+        ...state,
+        taskConfirmation: action.payload
+      };
+    case TASK_CONFIRMATION_RESOLVED:
+      return {
+        ...state,
+        taskConfirmation: null
+      };
+    default:
+      return state
+  }
 }
 
 export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, action) => {
