@@ -288,6 +288,30 @@ services:
       - '.:/srv/coopcycle'
       - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
+  odoo-web:
+    image: odoo:17.0
+    depends_on:
+      - odoo-db
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=odoo-db
+      - PORT=5433
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+
+  odoo-db:
+    image: postgres:15
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGPORT=5433
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+
 volumes:
   node_modules_webpack:
   pg_data:
@@ -297,3 +321,5 @@ volumes:
   webpack_php_cache:
   php_logs:
   php_public_images:
+  odoo-web-data:
+  odoo-db-data:
