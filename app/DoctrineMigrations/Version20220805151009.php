@@ -9,6 +9,7 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\String\Slugger\AsciiSlugger;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
@@ -26,22 +27,18 @@ final class Version20220805151009 extends AbstractMigration implements Container
     {
         $this->addSql('ALTER TABLE package ADD slug VARCHAR(255)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_DE686795989D9B62 ON package (slug)');
-    }
 
-    public function postUp(Schema $schema): void
-    {
-        $em = $this->container->get('doctrine.orm.entity_manager');
+        $slugger = new AsciiSlugger();
 
-        $packages = $this->container->get('doctrine')
-            ->getRepository(Package::class)
-            ->findAll();
+        $stmt = $this->connection->prepare('SELECT id, name FROM package');
+        $result = $stmt->execute();
 
-        foreach ($packages as $package) {
-            $package->setSlug($package->getName());
-            $em->persist($package);
+        while ($package = $result->fetchAssociative()) {
+            $this->addSql('UPDATE package SET slug = :slug WHERE id = :id', [
+                'slug' => strtolower((string) $slugger->slug($package['name'])),
+                'id' => $package['id'],
+            ]);
         }
-
-        $em->flush();
     }
 
     public function down(Schema $schema): void
