@@ -5,18 +5,13 @@ namespace AppBundle\Controller\Utils;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
-use AppBundle\Form\DeliveryType;
 use AppBundle\Form\Order\ExistingOrderType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,12 +23,7 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, bool $attach = true): OrderInterface
-    {
-        return $factory->createForDelivery($delivery, $price, $customer, $attach);
-    }
-
-    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
+    protected function getDeliveryPrice(Delivery $delivery, ?PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
     {
         $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
 
@@ -61,7 +51,7 @@ trait DeliveryTrait
         $routes = $request->attributes->get('routes');
 
         $form = $this->createForm(ExistingOrderType::class, $delivery, [
-            'with_arbitrary_price' => null === $delivery->getOrder(),
+            'with_arbitrary_price' => $this->isGranted('ROLE_ADMIN'),
         ]);
 
         $form->handleRequest($request);
@@ -114,7 +104,7 @@ trait DeliveryTrait
         $variantPrice = $form->get('variantPrice')->getData();
         $variantName = $form->get('variantName')->getData();
 
-        $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
+        $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
 
         $order->setState(OrderInterface::STATE_ACCEPTED);
 

@@ -89,7 +89,7 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
             try {
                 $this->pricingManager->createOrder($delivery, [
-                    'throwException' => true,
+                    'throwException' => true
                 ]);
             } catch (NoRuleMatchedException $e) {
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
