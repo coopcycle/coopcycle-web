@@ -50,10 +50,4 @@
 {% endif %}
 
 {% block alerts %}
-  {% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty %}
-    {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}
-  {% endif %}
-  {% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty and delivery.order.subscription is not empty %}
-    {% include '_partials/delivery/subscription_alert.html.twig' with { subscription: delivery.order.subscription } %}
-  {% endif %}
 {% endblock %}
