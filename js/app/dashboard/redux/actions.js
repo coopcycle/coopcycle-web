@@ -115,6 +115,9 @@ export const INSERT_IN_UNASSIGNED_TOURS = 'INSERT_IN_UNASSIGNED_TOURS'
 
 export const SET_TOURS_ENABLED = 'SET_TOURS_ENABLED'
 
+export const TASK_CONFIRMATION_REQUIRED = 'TASK_CONFIRMATION_REQUIRED';
+export const TASK_CONFIRMATION_RESOLVED = 'TASK_CONFIRMATION_RESOLVED';
+
 export const setUnassignedTasksLoading = createAction('SET_UNASSIGNEDTASKS_LOADING')
 export const appendToUnassignedTasks = createAction('APPEND_TO_UNASSIGNED_TASKS')
 export const insertInUnassignedTasks = createAction('INSERT_IN_UNASSIGNED_TASKS')
@@ -680,7 +683,135 @@ export function startTask(task) {
   }
 }
 
-export function completeTask(task, notes = '', success = true) {
+/**
+ * Creates a task queue processor with the given context
+ * @returns {Function} - Configured task queue processor
+ */
+function createTaskProcessor(context) {
+  const { dispatch, httpClient, jwt, onRequireConfirmation } = context;
+
+  /**
+   * Processes a queue of tasks recursively using Promises
+   * @returns {Promise} - Resolves when all tasks are completed
+   */
+  async function processTaskQueue(queue = []) {
+    if (queue.length === 0) {
+      dispatch(createTaskSuccess());
+      dispatch(closeNewTaskModal());
+      return Promise.resolve();
+    }
+
+    const [current, ...remainingTasks] = queue;
+    const { task: currentTask, data: requestData = {} } = current;
+
+    try {
+      const resolvedTask = await (currentTask instanceof Promise
+        ? currentTask
+        : Promise.resolve(currentTask));
+
+      const response = await httpClient.request({
+        method: 'put',
+        url: `${resolvedTask['@id']}/done`,
+        data: requestData,
+        headers: {
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json',
+          'Authorization': `Bearer ${jwt}`
+        },
+        validateStatus: () => true
+      });
+
+      if (response.status === 409) {
+        const { data } = response;
+
+        if (data?.required_action === 'validate_previous_task') {
+          // Instead of confirm(), use the provided callback
+          const shouldValidate = await onRequireConfirmation({
+            type: 'validate_previous_task',
+            taskId: data.previous_task,
+            message: 'MODAL_PREREQUISITE_TASK_REQUIRED_MESSAGE'
+          });
+
+          if (!shouldValidate) {
+            throw new Error(data.error);
+          }
+
+          return processTaskQueue([
+            {
+              task: { '@id': `/api/tasks/${data.previous_task}` },
+            },
+            {
+              task: resolvedTask,
+              data: requestData
+            },
+            ...remainingTasks
+          ]);
+        }
+
+        throw new Error(data.error || 'Conflict error occurred');
+      }
+
+      if (response.status >= 400) {
+        throw new Error(response.data?.error || `Request failed with status ${response.status}`);
+      }
+
+      return processTaskQueue(remainingTasks);
+
+    } catch (error) {
+      dispatch(completeTaskFailure(error.message));
+      return Promise.reject(error);
+    }
+  }
+
+  return processTaskQueue;
+}
+
+export function completeTask(task, notes = '') {
+  return async function(dispatch, getState) {
+    const { jwt } = getState();
+    const httpClient = createClient(dispatch);
+
+    dispatch(createTaskRequest());
+
+    const processTaskQueue = createTaskProcessor({
+      dispatch,
+      httpClient,
+      jwt,
+      onRequireConfirmation: async (confirmationData) => {
+        // Return a Promise that will be resolved when user makes a choice
+        return new Promise((resolve) => {
+          dispatch({
+            type: TASK_CONFIRMATION_REQUIRED,
+            payload: {
+              ...confirmationData,
+              onResolve: resolve
+            }
+          });
+        });
+      }
+    });
+
+    try {
+      await processTaskQueue([
+        {
+          task: { "@id": task['@id'] },
+          data: { notes }
+        }
+      ]);
+    } catch (error) {
+      dispatch(completeTaskFailure(error));
+    }
+  };
+}
+
+export function resolveTaskConfirmation(confirmed) {
+  return {
+    type: TASK_CONFIRMATION_RESOLVED,
+    payload: confirmed
+  };
+}
+
+export function _completeTask(task, notes = '', success = true) {
 
   return function(dispatch, getState) {
 
