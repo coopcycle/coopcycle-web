@@ -388,7 +388,7 @@ class AdminController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/service.html.twig', [
+        return $this->render('order/item.html.twig', [
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,

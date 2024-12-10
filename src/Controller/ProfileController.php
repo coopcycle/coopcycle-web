@@ -231,7 +231,7 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/service.html.twig', [
+        return $this->render('order/item.html.twig', [
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
