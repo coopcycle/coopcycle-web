@@ -187,6 +187,9 @@ const updateData = (form, delivery) => {
 }
 
 const checkSuggestionsOnSubmit = async (form, formHTMLEl, delivery) => {
+
+  console.log(delivery)
+
   form.disable()
 
   if (!delivery.tasks.length > 2) {

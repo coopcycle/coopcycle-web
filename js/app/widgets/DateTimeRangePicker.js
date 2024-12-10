@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { render } from 'react-dom'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Select } from 'antd'
-import { timePickerProps } from '../utils/antd'
 
 import 'antd/es/input/style/index.css'
 
@@ -37,7 +35,7 @@ function generateTimeSlots(afterHour = null) {
   return secondSelectOptions
 }
 
-const DateTimeRangePicker = ({ defaultValue, onChange, format, showTime }) => {
+const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
   const { t } = useTranslation()
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
@@ -125,16 +123,6 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format, showTime }) => {
     setValues(newValue)
   }
 
-  let props = {}
-  if (showTime) {
-    props = {
-      showTime: {
-        ...timePickerProps,
-        hideDisabledOptions: true,
-      },
-    }
-  }
-
   const isFirstRender = useRef(true)
 
   useEffect(() => {
@@ -148,96 +136,98 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format, showTime }) => {
 
   return isComplexPicker ? (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <DatePicker.RangePicker
-          style={{ width: '95%' }}
-          format={format}
-          defaultValue={values}
-          onChange={handleComplexPickerDateChange}
-          {...props}
-        />
-      </div>
-      <small id="switchText" className="form-text text-muted">
+      <ConfigProvider locale={antdLocale}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <DatePicker.RangePicker
+            style={{ width: '95%' }}
+            format={format}
+            defaultValue={values}
+            onChange={handleComplexPickerDateChange}
+          />
+        </div>
+
         <a
+          className="text-secondary"
           title={t('SWITCH_COMPLEX_DATEPICKER')}
           onClick={() => setIsComplexPicker(!isComplexPicker)}>
           {t('SWITCH_COMPLEX_DATEPICKER')}
         </a>
-      </small>
+      </ConfigProvider>
     </>
   ) : (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ width: '95%' }}>
-          <DatePicker
-            style={{ width: '50%' }}
-            format="LL"
-            defaultValue={values[0]}
-            onChange={newDate => {
-              handleDateChange(newDate)
-            }}
-          />
+      <ConfigProvider locale={antdLocale}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ width: '95%' }}>
+            <DatePicker
+              style={{ width: '50%' }}
+              format="LL"
+              defaultValue={values[0]}
+              onChange={newDate => {
+                handleDateChange(newDate)
+              }}
+            />
 
-          <Select
-            style={{ width: '25%' }}
-            format={format}
-            value={timeValues.after}
-            onChange={newAfterHour => {
-              handleAfterHourChange(newAfterHour)
-            }}>
-            {firstSelectOptions.map(option => (
-              <Option
-                key={option.time.format('HH:mm')}
-                value={option.time.format('HH:mm')}
-                disabled={option.disabled}>
-                {option.time.format('HH:mm')}
-              </Option>
-            ))}
-          </Select>
+            <Select
+              style={{ width: '25%' }}
+              format={format}
+              value={timeValues.after}
+              onChange={newAfterHour => {
+                handleAfterHourChange(newAfterHour)
+              }}>
+              {firstSelectOptions.map(option => (
+                <Option
+                  key={option.time.format('HH:mm')}
+                  value={option.time.format('HH:mm')}
+                  disabled={option.disabled}>
+                  {option.time.format('HH:mm')}
+                </Option>
+              ))}
+            </Select>
 
-          <Select
-            style={{ width: '25%' }}
-            format={format}
-            value={timeValues.before}
-            onChange={newBeforeHour => {
-              handleBeforeHourChange(newBeforeHour)
-            }}>
-            {secondSelectOptions.map(option => (
-              <Option
-                key={option.time.format('HH:mm')}
-                value={option.time.format('HH:mm')}
-                disabled={option.disabled}>
-                {option.time.format('HH:mm')}
-              </Option>
-            ))}
-          </Select>
+            <Select
+              style={{ width: '25%' }}
+              format={format}
+              value={timeValues.before}
+              onChange={newBeforeHour => {
+                handleBeforeHourChange(newBeforeHour)
+              }}>
+              {secondSelectOptions.map(option => (
+                <Option
+                  key={option.time.format('HH:mm')}
+                  value={option.time.format('HH:mm')}
+                  disabled={option.disabled}>
+                  {option.time.format('HH:mm')}
+                </Option>
+              ))}
+            </Select>
+          </div>
         </div>
-      </div>
-      <small id="switchText" className="form-text text-muted">
         <a
+          className="text-secondary"
           title={t('SWITCH_COMPLEX_DATEPICKER')}
           onClick={() => setIsComplexPicker(!isComplexPicker)}>
           {t('SWITCH_COMPLEX_DATEPICKER')}
         </a>
-      </small>
+      </ConfigProvider>
     </>
   )
 }
 
-export default function (el, options) {
-  const defaultProps = {
-    getDatePickerContainer: null,
-    getTimePickerContainer: null,
-    onChange: () => {},
-    format: 'LLL',
-  }
+export default DateTimeRangePicker
 
-  const props = { ...defaultProps, ...options }
+// export default function (el, options) {
+//   const defaultProps = {
+//     onChange: () => {},
+//     format: 'LLL',
+//   }
 
-  render(
-    <ConfigProvider locale={antdLocale}>
-      <DateTimeRangePicker {...props} />
-    </ConfigProvider>,
-    el,
-  )
-}
+//   const props = { ...defaultProps, ...options }
+
+//   render(
+//     <ConfigProvider locale={antdLocale}>
+//       <DateTimeRangePicker {...props} />
+//     </ConfigProvider>,
+//     el,
+//   )
+// }
