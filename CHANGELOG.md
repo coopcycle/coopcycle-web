@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.24.2] - 2024-12-09
+
+### Added
+* Local Commerce and Last Mile: Barcodes Added to the Following Screens:
+  Dispatch Task Modal;
+  Dispatch & Local Commerce Deliveries Lists;
+  Dispatch & Local Commerce Delivery Details Screen
+* Local Commerce and Last Mile: Show bike+trailer capacity on assigned tour
+* Admin: Show to (admin) user that the prices set are VAT included
+* Dispatch: allow to select tasks with SHIFT/MAJ key in unassigned tasks column
+* Dispatch: allow to unselect all with ESC
+
+### Fixed
+* Food Tech: Use the most recent phone number for a returning customer during a guest checkout
+* Food Tech: Error 500 when exporting edenred/payment data
+* Local Commerce and Last Mile: Hide some store admin settings that were visible to the store owner
+* Local Commerce and Last Mile: The recurrence rule is displayed with the wrong date/time (but the newly created order is correct)
+* Local Commerce and Last Mile: When using “automatically assign to this rider” option in a store, the pickup and the dropoff may be assigned in the wrong order
+* Local Commerce and Last Mile: Set correctly rider capacity when adding a trailer to the rider
+* Dispatch: apply correctly the timerange filter when a rider filter is active
+
 ## [3.23.0] - 2024-11-26
 
 ### Added
