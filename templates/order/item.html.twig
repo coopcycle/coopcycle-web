@@ -9,8 +9,21 @@
 {% endif %}
 
 {% block breadcrumb %}
-<li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
-<li>{{ order.number }}</li>
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% if delivery is not empty %}
+      {% set store = delivery.store %}
+      {% if store is not null %}
+        <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+        <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+      {% endif %}
+    {% endif %}
+    {# TODO: display properly the restaurant(s) for foodtech orders #}
+
+    <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+    <li>{{ order.number }}</li>
+  {% endif %}
+
 {% endblock %}
 
 {% block content %}

@@ -34,6 +34,7 @@
     {% if order is not null %}
       <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
       <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
+      <li>{% trans %}basics.editing{% endtrans %}</li>
     {% else %}
       <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
       <li>#{{ delivery.id }}</li>
@@ -49,10 +50,4 @@
 {% endif %}
 
 {% block alerts %}
-  {% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty %}
-    {% include '_partials/delivery/order_alert.html.twig' with { order: delivery.order } %}
-  {% endif %}
-  {% if is_granted('ROLE_DISPATCHER') and delivery.order is not empty and delivery.order.subscription is not empty %}
-    {% include '_partials/delivery/subscription_alert.html.twig' with { subscription: delivery.order.subscription } %}
-  {% endif %}
 {% endblock %}
