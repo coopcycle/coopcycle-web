@@ -175,6 +175,7 @@
         "GENERIC_BARCODE_HELP": "Dieser Aufgaben-Barcode kann alle verknüpften Pakete als eine Einheit verfolgen. Verwenden Sie ihn für eine vereinfachte Verfolgung der gesamten Lieferung. Für eine detaillierte Verfolgung der einzelnen Pakete verwenden Sie stattdessen die individuellen Paket-Barcodes.",
         "SWITCH_COMPLEX_DATEPICKER": "Wählen Sie ein Datum über mehrere Tage",
         "SWITCH_TIMESLOTPICKER": "Wählen Sie einen benutzerdefinierten Zeitabschnitt",
-        "SWITCH_DATEPICKER": "Zurück zu den vordefinierten Zeitabschnitten"
+        "SWITCH_DATEPICKER": "Zurück zu den vordefinierten Zeitabschnitten",
+        "DEFAULT_TIMESLOT": "Standard-Zeitabschnitt"
     }
 }

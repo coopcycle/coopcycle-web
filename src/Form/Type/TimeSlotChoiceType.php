@@ -71,8 +71,6 @@ class TimeSlotChoiceType extends AbstractType
                 return [
                     'data-choices' => json_encode($choices),
                 ];
-
-                return ['data-choices' => 'test'];
             }
         ]);
         $resolver->setAllowedTypes('time_slot', ['null', TimeSlot::class]);

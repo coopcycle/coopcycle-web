@@ -365,6 +365,7 @@
         "GENERIC_BARCODE_HELP": "Questo codice a barre dell'attività può tracciare tutti i pacchi collegati come un'unica unità. Utilizzalo per semplificare il monitoraggio dell'intera consegna. Per un monitoraggio dettagliato pacco per pacco, utilizza invece i codici a barre dei singoli pacchi.",
         "SWITCH_COMPLEX_DATEPICKER": "Seleziona una data su più giorni",
         "SWITCH_TIMESLOTPICKER": "Selezionare una fascia oraria personalizzata",
-        "SWITCH_DATEPICKER": "Torna alle fasce orarie predefinite"
+        "SWITCH_DATEPICKER": "Torna alle fasce orarie predefinite",
+        "DEFAULT_TIMESLOT": "Fascia oraria predefinita"
     }
 }

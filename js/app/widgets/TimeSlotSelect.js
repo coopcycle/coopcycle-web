@@ -68,21 +68,23 @@ export default ({ choices, initialChoices, onChange }) => {
 
   return (
     <ConfigProvider locale={antdLocale}>
-      <Radio.Group
-        defaultValue="a"
-        buttonStyle="solid"
-        style={{ display: 'flex' }}>
-        {timeSlotsLabel.map(label => (
-          <Radio.Button
-            key={label}
-            value={label}
-            onChange={timeSlot => {
-              handleInitialChoicesChange(timeSlot)
-            }}>
-            {label}
-          </Radio.Button>
-        ))}
-      </Radio.Group>
+      {Object.keys(choices).length > 1 ? (
+        <Radio.Group
+          defaultValue={timeSlotsLabel[0]}
+          buttonStyle="solid"
+          style={{ display: 'flex' }}>
+          {timeSlotsLabel.map(label => (
+            <Radio.Button
+              key={label}
+              value={label}
+              onChange={timeSlot => {
+                handleInitialChoicesChange(timeSlot)
+              }}>
+              {label}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+      ) : null}
 
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
         <DatePicker

@@ -2,38 +2,13 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Select } from 'antd'
+import { timePickerProps } from '../utils/antd'
 
 import 'antd/es/input/style/index.css'
 
 import { antdLocale } from '../i18n'
 
 const { Option } = Select
-
-// function generateTimeSlots(afterHour = null) {
-//   const items = []
-//   const minutes = [0, 15, 30, 45]
-
-//   new Array(24).fill().forEach((_, index) => {
-//     minutes.forEach(minute => {
-//       items.push({
-//         time: moment({ hour: index, minute: minute }),
-//         disabled: false,
-//       })
-//     })
-//   })
-
-//   if (!afterHour) return items
-
-//   const secondSelectOptions = items.map(option => {
-//     const isBefore = afterHour.isBefore(option.time)
-//     return {
-//       ...option,
-//       disabled: !isBefore,
-//     }
-//   })
-
-//   return secondSelectOptions
-// }
 
 function generateTimeSlots(afterHour = null) {
   const items = []
@@ -175,6 +150,10 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
             format={format}
             defaultValue={values}
             onChange={handleComplexPickerDateChange}
+            showTime={{
+              ...timePickerProps,
+              hideDisabledOptions: true,
+            }}
           />
         </div>
 

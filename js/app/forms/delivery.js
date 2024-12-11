@@ -342,7 +342,7 @@ function SwitchTimeSlotToDateTimePicker({
         <div
           style={{
             display: 'flex',
-            alignItems: 'baseline',
+            alignItems: 'flex-end',
           }}>
           <div style={{ width: '95%' }}>
             <TimeSlotSelect
@@ -355,7 +355,12 @@ function SwitchTimeSlotToDateTimePicker({
             className="fa fa-calendar"
             aria-hidden="true"
             onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
-            style={{ cursor: 'pointer', color: '#24537D', width: '5%' }}
+            style={{
+              cursor: 'pointer',
+              color: '#24537D',
+              width: '5%',
+              lineHeight: '32px',
+            }}
             title={t('SWITCH_TIMESLOTPICKER')}></i>
         </div>
       ) : (
@@ -441,8 +446,8 @@ function createTimeSlotWidget(el, userAdmin) {
       value: after.format(),
     })
   }
-
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
+
   if (switchTimeSlotEl) {
     const choices = {}
     Array.from(switchTimeSlotEl.querySelectorAll('input[type="radio"]')).map(
@@ -452,6 +457,30 @@ function createTimeSlotWidget(el, userAdmin) {
         )
       },
     )
+    if (userAdmin) {
+      reactRoot.render(
+        <SwitchTimeSlotToDateTimePicker
+          timeSlotDefaultValue={timeSlotEl.value}
+          pickerDefaultValue={defaultValue}
+          initialChoices={initialChoices}
+          choices={choices}
+          onChange={onChange}
+          onChangeFreePicker={onChangeFreePicker}
+          taskIndex={domIndex(el)}
+        />,
+      )
+    } else {
+      reactRoot.render(
+        <TimeSlotSelect
+          choices={choices}
+          initialChoices={initialChoices}
+          onChange={onChange}
+        />,
+      )
+    }
+  } else {
+    const choices = {}
+    choices['Default'] = initialChoices
     if (userAdmin) {
       reactRoot.render(
         <SwitchTimeSlotToDateTimePicker

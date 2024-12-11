@@ -443,6 +443,7 @@
         "GENERIC_BARCODE_HELP": "Este código de barras de tarea puede rastrear todos los paquetes vinculados como una sola unidad. Úselo para simplificar el seguimiento de toda la entrega. Para un seguimiento detallado paquete por paquete, utilice los códigos de barras individuales de los paquetes.",
         "SWITCH_COMPLEX_DATEPICKER": "Seleccionar una fecha en varios días",
         "SWITCH_TIMESLOTPICKER": "Seleccionar un intervalo de tiempo personalizado",
-        "SWITCH_DATEPICKER": "Volver a los intervalos de tiempo predefinidos"
+        "SWITCH_DATEPICKER": "Volver a los intervalos de tiempo predefinidos",
+        "DEFAULT_TIMESLOT": "Intervalo de tiempo predeterminado"
     }
 }
