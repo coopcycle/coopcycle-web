@@ -52,6 +52,7 @@
           }) }}></div>
         </div>
         {% endif %}
+
         <div class="embed-responsive embed-responsive-16by9">
           <div class="embed-responsive-item" id="map"></div>
           <div class="map-distance-overlay">
@@ -63,6 +64,59 @@
             </span>
           </div>
         </div>
+
+        {% if form.pricePreview is defined %}
+        <hr>
+        <div id="delivery-price" class="mb-4 mb-md-0">
+
+          <div class="delivery-price">
+            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+            <span class="delivery-price-value" id="delivery_price">
+            <span>
+              <span data-tax="included">{{ 0|price_format }}</span>
+              <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
+            </span>
+            <span class="text-muted">
+              <span data-tax="excluded">{{ 0|price_format }}</span>
+              <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
+            </span>
+          </span>
+          </div>
+
+          <div class="text-center text-danger">
+            <small id="delivery_price_error" class="delivery-price-error"></small>
+          </div>
+
+          {% if debug_pricing is defined and debug_pricing %}
+            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
+            <ul class="list-group" id="pricing-rules-debug">
+              {% for pricing_rule in pricing_rules %}
+                <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
+                  <span>{{ pricing_rule.expression }}</span>
+                  <span class="pull-right">
+                <i class="fa fa-spinner fa-spin hidden"></i>
+              </span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
+        {% endif %}
+
+        {% if form.pricingRulesBasedPrice is defined %}
+        <hr>
+        <div class="delivery-price">
+          <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+          <span class="delivery-price-value">
+          <span>
+            <span data-tax="included">{{ form.pricingRulesBasedPrice.vars.data|price_format }}</span>
+            <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
+          </span>
+          </span>
+        </div>
+        {% endif %}
+
         {% if form.arbitraryPrice is defined %}
           <hr>
           {{ form_row(form.arbitraryPrice) }}
@@ -91,43 +145,6 @@
 
   <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
-      {% if delivery.id is empty and delivery.store is not empty %}
-        <div id="delivery-price" class="mb-4 mb-md-0">
-
-          <div class="delivery-price">
-            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
-            <span class="delivery-price-value" id="delivery_price">
-              <span>
-                <span data-tax="included">{{ 0|price_format }}</span>
-                <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
-              </span>
-              <span class="text-muted">
-                <span data-tax="excluded">{{ 0|price_format }}</span>
-                <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
-              </span>
-            </span>
-          </div>
-
-          <div class="text-center text-danger">
-            <small id="delivery_price_error" class="delivery-price-error"></small>
-          </div>
-
-          {% if debug_pricing is defined and debug_pricing %}
-            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
-            <ul class="list-group" id="pricing-rules-debug">
-            {% for pricing_rule in pricing_rules %}
-              <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
-                <span>{{ pricing_rule.expression }}</span>
-                <span class="pull-right">
-                  <i class="fa fa-spinner fa-spin hidden"></i>
-                </span>
-              </li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-
-        </div>
-      {% endif %}
     </div>
     <div class="col-md-5 delivery__form__buttons">
       {% if is_new or is_granted('ROLE_DISPATCHER')  %}

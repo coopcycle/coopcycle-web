@@ -11,12 +11,14 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
+use AppBundle\Form\Order\ExistingOrderType;
 use AppBundle\Form\Order\NewOrderType;
 use AppBundle\Form\Order\ExistingRecurrenceRuleType;
 use AppBundle\Form\StoreAddressesType;
@@ -28,6 +30,7 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
@@ -372,6 +375,68 @@ trait StoreTrait
             'store_route' => $routes['store'],
             'back_route' => $routes['back'],
             'show_left_menu' => $request->attributes->get('show_left_menu', true),
+        ]);
+    }
+
+    public function deliveryAction($id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderManager $orderManager
+    )
+    {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery, 'view');
+
+        $routes = $request->attributes->get('routes');
+
+        $order = $delivery->getOrder();
+        $price = $order?->getDeliveryPrice();
+
+        $form = $this->createForm(ExistingOrderType::class, $delivery, [
+            'pricing_rules_based_price' => $price instanceof PricingRulesBasedPrice ? $price : null,
+            'arbitrary_price' => $price instanceof ArbitraryPrice ? $price : null
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $delivery = $form->getData();
+
+            $useArbitraryPrice = $this->isGranted('ROLE_ADMIN') &&
+                $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
+
+            if ($useArbitraryPrice) {
+                $arbitraryPrice = $this->getArbitraryPrice($form);
+                $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+            }
+
+            $entityManager->persist($delivery);
+            $entityManager->flush();
+
+            if ($form->has('bookmark')) {
+                $isBookmarked = true === $form->get('bookmark')->getData();
+
+                $order = $delivery->getOrder();
+
+                if (null !== $order) {
+                    $orderManager->setBookmark($order, $isBookmarked);
+                    $entityManager->flush();
+                }
+            }
+
+            return $this->redirectToRoute($routes['success']);
+        }
+
+        return $this->render('delivery/item.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'delivery' => $delivery,
+            'form' => $form->createView(),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
+            'back_route' => $routes['back'],
         ]);
     }
 

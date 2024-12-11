@@ -122,9 +122,25 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
+            if ($options['with_price_preview']) {
+                $form->add('pricePreview', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ]);
+            }
+
             // Allow admins to define an arbitrary price
             if (true === $options['with_arbitrary_price'] &&
                 $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+
+                // If the current price was calculated using pricing rules, display it as a hint
+                if (null !== $options['pricing_rules_based_price']) {
+                    $form->add('pricingRulesBasedPrice', HiddenType::class, [
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $options['pricing_rules_based_price']->getValue(),
+                    ]);
+                }
 
                 $arbitraryPrice = $options['arbitrary_price'];
 
@@ -150,7 +166,7 @@ class DeliveryType extends AbstractType
             }
 
             $isDeliveryOrder = null !== $store;
-            
+
             if ($options['with_bookmark'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('bookmark', CheckboxType::class, [
                     'label' => 'form.delivery.bookmark.label',
@@ -305,6 +321,8 @@ class DeliveryType extends AbstractType
             'with_package_set' => null,
             'with_remember_address' => false,
             'with_address_props' => false,
+            'with_price_preview' => false,
+            'pricing_rules_based_price' => null,
             'with_arbitrary_price' => false,
             'arbitrary_price' => null,
             'with_bookmark' => false,
