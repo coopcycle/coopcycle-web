@@ -55,11 +55,13 @@ trait CreateDeliveryTrait
         $task->setType($type);
         $task->setAddress($address);
 
+        $tz = date_default_timezone_get();
+
         $task->setAfter(
-            Carbon::parse($data['interval'][0]['start'])->toDateTime()
+            Carbon::parse($data['interval'][0]['start'])->tz($tz)->toDateTime()
         );
         $task->setBefore(
-            Carbon::parse($data['interval'][0]['end'])->toDateTime()
+            Carbon::parse($data['interval'][0]['end'])->tz($tz)->toDateTime()
         );
 
         return $task;
