@@ -75,7 +75,7 @@ trait CreateDeliveryTrait
                 "reasons" => [
                     "REFUSED_AREA"
                 ],
-                "comments" => "The collection address is in an area that is not covered by our teams"
+                "comment" => "The collection address is in an area that is not covered by our teams"
             ], 202);
         }
 
@@ -100,7 +100,7 @@ trait CreateDeliveryTrait
                             "reasons" => [
                                 "REFUSED_TOO_LARGE"
                             ],
-                            "comments" => sprintf('The size of one or more packages exceeds our acceptance limit of %.2f cm', $integration->getMaxWidth())
+                            "comment" => sprintf('The size of one or more packages exceeds our acceptance limit of %.2f cm', $integration->getMaxWidth())
                         ], 202);
                     }
                 }
@@ -111,7 +111,7 @@ trait CreateDeliveryTrait
                             "reasons" => [
                                 "REFUSED_TOO_LARGE"
                             ],
-                            "comments" => sprintf('The size of one or more packages exceeds our acceptance limit of %.2f cm', $integration->getMaxHeight())
+                            "comment" => sprintf('The size of one or more packages exceeds our acceptance limit of %.2f cm', $integration->getMaxHeight())
                         ], 202);
                     }
                 }
@@ -122,7 +122,7 @@ trait CreateDeliveryTrait
                             "reasons" => [
                                 "REFUSED_TOO_LARGE"
                             ],
-                            "comments" => sprintf('The size of one or more packages exceeds our acceptance limit of %.2f cm', $integration->getMaxLength())
+                            "comment" => sprintf('The size of one or more packages exceeds our acceptance limit of %.2f cm', $integration->getMaxLength())
                         ], 202);
                     }
                 }
@@ -134,7 +134,7 @@ trait CreateDeliveryTrait
                                 "reasons" => [
                                     "REFUSED_EXCEPTION"
                                 ],
-                                "comments" => sprintf('No availability of product type %s', $product['type'])
+                                "comment" => sprintf('No availability of product type %s', $product['type'])
                             ], 202);
                         }
                     }
