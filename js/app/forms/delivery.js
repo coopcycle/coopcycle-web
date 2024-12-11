@@ -339,7 +339,11 @@ function SwitchTimeSlotToDateTimePicker({
   return (
     <>
       {isTimeSlotSelect ? (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'baseline',
+          }}>
           <div style={{ width: '95%' }}>
             <TimeSlotSelect
               choices={choices}
@@ -356,7 +360,7 @@ function SwitchTimeSlotToDateTimePicker({
             title={t('SWITCH_TIMESLOTPICKER')}></i>
         </div>
       ) : (
-        <div style={{ display: 'flex' }}>
+        <div style={{ display: 'flex', alignItems: 'baseline' }}>
           <div style={{ width: '95%' }}>
             <DateTimeRangePicker
               defaultValue={pickerDefaultValue}

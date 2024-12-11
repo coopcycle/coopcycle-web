@@ -6,7 +6,6 @@ import moment from 'moment'
 import 'antd/es/input/style/index.css'
 
 export default ({ choices, initialChoices, defaultValue, onChange }) => {
-  const [defaultDate, defaultHour] = defaultValue
   const timeSlotsLabel = []
   for (const timeSlot in choices) {
     timeSlotsLabel.push(timeSlot)
@@ -36,6 +35,8 @@ export default ({ choices, initialChoices, defaultValue, onChange }) => {
   }
 
   const [values, setValues] = useState({})
+
+  console.log(values)
 
   const [options, setOptions] = useState([])
 
@@ -92,7 +93,6 @@ export default ({ choices, initialChoices, defaultValue, onChange }) => {
           className="mr-2"
           disabledDate={disabledDate}
           disabled={dates.length > 1 ? false : true}
-          defaultValue={moment(defaultDate)}
           value={values.date}
           onChange={date => {
             handleDateChange(date)
@@ -104,7 +104,6 @@ export default ({ choices, initialChoices, defaultValue, onChange }) => {
           onChange={option => {
             handleTimeSlotChange(option)
           }}
-          defaultValue={defaultHour}
           value={values.option}>
           {options.length >= 1 &&
             options.map(option => (
