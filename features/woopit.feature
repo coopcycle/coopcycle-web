@@ -276,7 +276,21 @@ Feature: Woopit
     And the JSON should match:
       """
       {
-        "deliveryId":"yXJPEP30xgja"
+        "deliveryId":"yXJPEP30xgja",
+        "labels": [
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          }
+        ]
       }
       """
 
@@ -610,7 +624,21 @@ Feature: Woopit
     And the JSON should match:
       """
       {
-        "deliveryId":"yXJPEP30xgja"
+        "deliveryId":"yXJPEP30xgja",
+        "labels": [
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          }
+        ]
       }
       """
     When I add "Content-Type" header equal to "application/json"
@@ -840,7 +868,21 @@ Feature: Woopit
     And the JSON should match:
       """
       {
-        "deliveryId":"yXJPEP30xgja"
+        "deliveryId":"yXJPEP30xgja",
+        "labels": [
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          }
+        ]
       }
       """
     When I add "Content-Type" header equal to "application/json"

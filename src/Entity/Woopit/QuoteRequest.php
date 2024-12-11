@@ -143,6 +143,11 @@ class QuoteRequest
     public $deliveryId;
 
     /**
+     * @Groups({"woopit_delivery_output"})
+     */
+    public $labels = [];
+
+    /**
      * @Groups({"woopit_quote_input", "woopit_delivery_input"})
      */
     public $retailer;

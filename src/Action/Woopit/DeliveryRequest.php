@@ -8,10 +8,12 @@ use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DeliveryRequest
@@ -27,7 +29,8 @@ class DeliveryRequest
         Hashids $hashids12,
         EntityManagerInterface $entityManager,
         PhoneNumberUtil $phoneNumberUtil,
-        ValidatorInterface $checkDeliveryValidator)
+        ValidatorInterface $checkDeliveryValidator,
+        private UrlGeneratorInterface $urlGenerator)
     {
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
@@ -93,6 +96,19 @@ class DeliveryRequest
 
         $data->deliveryObject = $delivery;
         $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
+
+        foreach ($delivery->getTasks() as $task) {
+
+            $barcode = BarcodeUtils::getRawBarcodeFromTask($task);
+            $barcodeToken = BarcodeUtils::getToken($barcode);
+
+            $data->labels[] = [
+                'id' => sprintf('lbl_%s', $this->hashids12->encode($task->getId())),
+                'type' => 'url',
+                'mode' => 'pdf',
+                'value' => $this->urlGenerator->generate('task_label_pdf', ['code' => $barcode, 'token' => $barcodeToken], UrlGeneratorInterface::ABSOLUTE_URL)
+            ];
+        }
 
         return $data;
     }
