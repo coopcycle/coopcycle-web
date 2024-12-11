@@ -60,6 +60,12 @@
                 class="text-monospace">{{ templateOrder.total|price_format }}</span>
             </span>
           {% endif %}
+          {% if item.isInvalidPricing %}
+            <div class="d-flex justify-content-between align-items-center">
+              <div
+                class="alert alert-warning">{% trans %}recurrence_rule.price.missing{% endtrans %}</div>
+            </div>
+          {% endif %}
         </td>
 
         <td width="15%">

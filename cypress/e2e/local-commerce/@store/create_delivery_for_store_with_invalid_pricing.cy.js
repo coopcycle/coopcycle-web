@@ -1,4 +1,4 @@
-context('Delivery (role: store)', () => {
+context('store with invalid pricing (role: store)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
@@ -11,12 +11,12 @@ context('Delivery (role: store)', () => {
     cy.exec(cmd)
   })
 
-  it('create delivery', () => {
+  it('create delivery for store with invalid pricing', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
     cy.visit('/login')
 
-    cy.login('store_1', 'store_1')
+    cy.login('store_invalid_pricing', 'password')
 
     cy.location('pathname').should('eq', '/dashboard')
 
@@ -30,19 +30,15 @@ context('Delivery (role: store)', () => {
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_0_address_name__display')
-      .clear()
-    cy.get('#delivery_tasks_0_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_0_address_telephone__display').clear()
-    cy.get('#delivery_tasks_0_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_0_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
-   
-    
+
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
@@ -53,14 +49,11 @@ context('Delivery (role: store)', () => {
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
     )
 
-    cy.get('#delivery_tasks_1_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_1_address_name__display')
-      .type('Office')
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type('Office')
 
     cy.get('#delivery_tasks_1_address_telephone__display').clear()
-    cy.get('#delivery_tasks_1_address_telephone__display')
-      .type('+33112121212')
+    cy.get('#delivery_tasks_1_address_telephone__display').type('+33112121212')
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
@@ -87,6 +80,9 @@ context('Delivery (role: store)', () => {
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€0.00/)
       .should('exist')
   })
 })
