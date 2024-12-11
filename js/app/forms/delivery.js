@@ -376,9 +376,6 @@ function SwitchTimeSlotToDateTimePicker({
   )
 }
 
-// state is complex ? qui est trigger par l'icon
-// et rendu différent
-
 function createTimeSlotWidget(el, userAdmin) {
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
 
@@ -414,8 +411,8 @@ function createTimeSlotWidget(el, userAdmin) {
   const [first, second] = hours.split('-')
 
   const defaultValue = {
-    before: `${date} ${first}:00`,
-    after: `${date} ${second}:00`,
+    after: `${date} ${first}:00`,
+    before: `${date} ${second}:00`,
   }
 
   const onChange = newValue => {
@@ -441,10 +438,6 @@ function createTimeSlotWidget(el, userAdmin) {
       value: after.format(),
     })
   }
-
-  // lui passer format aussi
-
-  // si userAdmin alors on rend un composant qui a un switch entre les deux
 
   const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
   if (switchTimeSlotEl) {

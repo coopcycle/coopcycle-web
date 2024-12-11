@@ -9,6 +9,32 @@ import { antdLocale } from '../i18n'
 
 const { Option } = Select
 
+// function generateTimeSlots(afterHour = null) {
+//   const items = []
+//   const minutes = [0, 15, 30, 45]
+
+//   new Array(24).fill().forEach((_, index) => {
+//     minutes.forEach(minute => {
+//       items.push({
+//         time: moment({ hour: index, minute: minute }),
+//         disabled: false,
+//       })
+//     })
+//   })
+
+//   if (!afterHour) return items
+
+//   const secondSelectOptions = items.map(option => {
+//     const isBefore = afterHour.isBefore(option.time)
+//     return {
+//       ...option,
+//       disabled: !isBefore,
+//     }
+//   })
+
+//   return secondSelectOptions
+// }
+
 function generateTimeSlots(afterHour = null) {
   const items = []
   const minutes = [0, 15, 30, 45]
@@ -24,15 +50,16 @@ function generateTimeSlots(afterHour = null) {
 
   if (!afterHour) return items
 
-  const secondSelectOptions = items.map(option => {
-    const isBefore = afterHour.isBefore(option.time)
+  return items.map(option => {
+    const isBefore =
+      option.time.hour() > afterHour.hour() ||
+      (option.time.hour() === afterHour.hour() &&
+        option.time.minute() > afterHour.minute())
     return {
       ...option,
       disabled: !isBefore,
     }
   })
-
-  return secondSelectOptions
 }
 
 const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
@@ -40,10 +67,10 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
 
-  const [values, setValues] = useState(
+  const [values, setValues] = useState(() =>
     defaultValue
       ? [moment(defaultValue.after), moment(defaultValue.before)]
-      : [],
+      : [moment(), moment().add(15, 'minutes')],
   )
 
   const [timeValues, setTimeValues] = useState(
@@ -56,9 +83,14 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
   )
 
   const firstSelectOptions = generateTimeSlots()
-  const [secondSelectOptions, setSecondSelectOptions] = useState(
-    generateTimeSlots(values[0]),
-  )
+  const [secondSelectOptions, setSecondSelectOptions] = useState([])
+
+  useEffect(() => {
+    if (values[0]) {
+      const updatedSecondOptions = generateTimeSlots(values[0])
+      setSecondSelectOptions(updatedSecondOptions)
+    }
+  }, [values[0]])
 
   const handleDateChange = newValue => {
     if (!newValue) return
@@ -216,18 +248,4 @@ const DateTimeRangePicker = ({ defaultValue, onChange, format }) => {
 
 export default DateTimeRangePicker
 
-// export default function (el, options) {
-//   const defaultProps = {
-//     onChange: () => {},
-//     format: 'LLL',
-//   }
 
-//   const props = { ...defaultProps, ...options }
-
-//   render(
-//     <ConfigProvider locale={antdLocale}>
-//       <DateTimeRangePicker {...props} />
-//     </ConfigProvider>,
-//     el,
-//   )
-// }
