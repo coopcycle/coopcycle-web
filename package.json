@@ -20,6 +20,8 @@
   "dependencies": {
     "@cypress/react18": "^2.0.1",
     "@cypress/webpack-preprocessor": "^6.0.2",
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@geoman-io/leaflet-geoman-free": "^2.17.0",
     "@hello-pangea/dnd": "^16.5.0",
     "cypress": "^13.15.0",
