@@ -130,7 +130,6 @@ Feature: Woopit
         ]
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -139,9 +138,9 @@ Feature: Woopit
         {
           "quoteId":"yXJPEP30xgja",
           "price":{
-            "taxExcludedAmount":416,
-            "taxIncludedAmount":499,
-            "taxAmount":83,
+            "taxExcludedAmount":4.16,
+            "taxIncludedAmount":4.99,
+            "taxAmount":0.83,
             "currency":"EUR"
           },
           "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -272,7 +271,6 @@ Feature: Woopit
         ]
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -380,7 +378,6 @@ Feature: Woopit
         ]
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -389,9 +386,9 @@ Feature: Woopit
         {
           "quoteId":"yXJPEP30xgja",
           "price":{
-            "taxExcludedAmount":416,
-            "taxIncludedAmount":499,
-            "taxAmount":83,
+            "taxExcludedAmount":4.16,
+            "taxIncludedAmount":4.99,
+            "taxAmount":0.83,
             "currency":"EUR"
           },
           "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -503,15 +500,14 @@ Feature: Woopit
       """
     Then the response status code should be 201
     And the response should be in JSON
-    And print last response
     And the JSON should match:
       """
       [{
         "quoteId":"yXJPEP30xgja",
         "price":{
-          "taxExcludedAmount":416,
-          "taxIncludedAmount":499,
-          "taxAmount":83,
+          "taxExcludedAmount":4.16,
+          "taxIncludedAmount":4.99,
+          "taxAmount":0.83,
           "currency":"EUR"
         },
         "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -620,7 +616,6 @@ Feature: Woopit
     When I add "Content-Type" header equal to "application/json"
     And I add "Accept" header equal to "application/json"
     And the store with name "Acme2" sends a "DELETE" request to "/api/woopit/deliveries/yXJPEP30xgja"
-    Then print last response
     Then the response status code should be 204
 
   Scenario: Receive, confirm quote & update delivery
@@ -729,9 +724,9 @@ Feature: Woopit
         {
           "quoteId":"yXJPEP30xgja",
           "price":{
-            "taxExcludedAmount":416,
-            "taxIncludedAmount":499,
-            "taxAmount":83,
+            "taxExcludedAmount":4.16,
+            "taxIncludedAmount":4.99,
+            "taxAmount":0.83,
             "currency":"EUR"
           },
           "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -1128,7 +1123,6 @@ Feature: Woopit
       """
     Then the response status code should be 202
     And the response should be in JSON
-    And print last response
     And the JSON should match:
       """
       {
