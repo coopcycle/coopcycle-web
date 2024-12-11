@@ -347,7 +347,6 @@ function SwitchTimeSlotToDateTimePicker({
           <div style={{ width: '95%' }}>
             <TimeSlotSelect
               choices={choices}
-              defaultValue={timeSlotDefaultValue}
               initialChoices={initialChoices}
               onChange={onChange}
             />
@@ -469,21 +468,11 @@ function createTimeSlotWidget(el, userAdmin) {
       reactRoot.render(
         <TimeSlotSelect
           choices={choices}
-          defaultValue={timeSlotEl.value}
           initialChoices={initialChoices}
           onChange={onChange}
         />,
       )
     }
-
-    // reactRoot.render(
-    //   <TimeSlotSelect
-    //     choices={choices}
-    //     defaultValue={timeSlotEl.value}
-    //     initialChoices={initialChoices}
-    //     onChange={onChange}
-    //   />,
-    // )
   }
 }
 

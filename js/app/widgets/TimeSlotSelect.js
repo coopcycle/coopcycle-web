@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import 'antd/es/input/style/index.css'
 
-export default ({ choices, initialChoices, defaultValue, onChange }) => {
+export default ({ choices, initialChoices, onChange }) => {
   const timeSlotsLabel = []
   for (const timeSlot in choices) {
     timeSlotsLabel.push(timeSlot)
@@ -35,8 +35,6 @@ export default ({ choices, initialChoices, defaultValue, onChange }) => {
   }
 
   const [values, setValues] = useState({})
-
-  console.log(values)
 
   const [options, setOptions] = useState([])
 
