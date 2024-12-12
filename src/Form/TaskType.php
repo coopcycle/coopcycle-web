@@ -72,8 +72,7 @@ class TaskType extends AbstractType
             ])
         ->add('imported_from');
 
-        if (null !== $options['with_time_slot']
-        && null !== $options['with_time_slots']
+        if (null !== $options['with_time_slots']
         && count($options['with_time_slots']) > 1) {
 
             $builder
@@ -107,6 +106,7 @@ class TaskType extends AbstractType
                     'expanded' => true,
                     'multiple' => false,
                     'data' => $options['with_time_slot'],
+                    'attr' => [ 'class' => 'd-none' ]
                 ]);
 
             // https://symfony.com/doc/5.4/form/dynamic_form_modification.html#form-events-submitted-data
