@@ -44,8 +44,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -63,8 +63,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -130,7 +130,6 @@ Feature: Woopit
         ]
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -139,9 +138,9 @@ Feature: Woopit
         {
           "quoteId":"yXJPEP30xgja",
           "price":{
-            "taxExcludedAmount":416,
-            "taxIncludedAmount":499,
-            "taxAmount":83,
+            "taxExcludedAmount":4.16,
+            "taxIncludedAmount":4.99,
+            "taxAmount":0.83,
             "currency":"EUR"
           },
           "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -186,8 +185,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -205,8 +204,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -272,13 +271,26 @@ Feature: Woopit
         ]
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "deliveryId":"yXJPEP30xgja"
+        "deliveryId":"yXJPEP30xgja",
+        "labels": [
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          }
+        ]
       }
       """
 
@@ -322,8 +334,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -339,8 +351,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -380,7 +392,6 @@ Feature: Woopit
         ]
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -389,9 +400,9 @@ Feature: Woopit
         {
           "quoteId":"yXJPEP30xgja",
           "price":{
-            "taxExcludedAmount":416,
-            "taxIncludedAmount":499,
-            "taxAmount":83,
+            "taxExcludedAmount":4.16,
+            "taxIncludedAmount":4.99,
+            "taxAmount":0.83,
             "currency":"EUR"
           },
           "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -443,8 +454,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -460,8 +471,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -503,15 +514,14 @@ Feature: Woopit
       """
     Then the response status code should be 201
     And the response should be in JSON
-    And print last response
     And the JSON should match:
       """
       [{
         "quoteId":"yXJPEP30xgja",
         "price":{
-          "taxExcludedAmount":416,
-          "taxIncludedAmount":499,
-          "taxAmount":83,
+          "taxExcludedAmount":4.16,
+          "taxIncludedAmount":4.99,
+          "taxAmount":0.83,
           "currency":"EUR"
         },
         "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -551,8 +561,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -568,8 +578,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -614,13 +624,26 @@ Feature: Woopit
     And the JSON should match:
       """
       {
-        "deliveryId":"yXJPEP30xgja"
+        "deliveryId":"yXJPEP30xgja",
+        "labels": [
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          }
+        ]
       }
       """
     When I add "Content-Type" header equal to "application/json"
     And I add "Accept" header equal to "application/json"
     And the store with name "Acme2" sends a "DELETE" request to "/api/woopit/deliveries/yXJPEP30xgja"
-    Then print last response
     Then the response status code should be 204
 
   Scenario: Receive, confirm quote & update delivery
@@ -663,8 +686,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -680,8 +703,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -729,9 +752,9 @@ Feature: Woopit
         {
           "quoteId":"yXJPEP30xgja",
           "price":{
-            "taxExcludedAmount":416,
-            "taxIncludedAmount":499,
-            "taxAmount":83,
+            "taxExcludedAmount":4.16,
+            "taxIncludedAmount":4.99,
+            "taxAmount":0.83,
             "currency":"EUR"
           },
           "vehicleType":"VEHICLE_TYPE_BIKE"
@@ -772,8 +795,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ],
           "contact": {
@@ -794,8 +817,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ],
           "contact": {
@@ -845,7 +868,21 @@ Feature: Woopit
     And the JSON should match:
       """
       {
-        "deliveryId":"yXJPEP30xgja"
+        "deliveryId":"yXJPEP30xgja",
+        "labels": [
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@"
+          }
+        ]
       }
       """
     When I add "Content-Type" header equal to "application/json"
@@ -869,8 +906,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T13:00:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T13:00:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ],
           "contact": {
@@ -892,8 +929,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T14:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T14:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ],
           "contact": {
@@ -1010,8 +1047,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1029,8 +1066,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1047,7 +1084,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_EXCEPTION"
         ],
-        "comments": "The store with ID store456 does not exist"
+        "comment": "The store with ID store456 does not exist"
       }
       """
 
@@ -1097,8 +1134,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1116,8 +1153,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1128,14 +1165,13 @@ Feature: Woopit
       """
     Then the response status code should be 202
     And the response should be in JSON
-    And print last response
     And the JSON should match:
       """
       {
         "reasons": [
           "REFUSED_AREA"
         ],
-        "comments": "The collection address is in an area that is not covered by our teams"
+        "comment": "The collection address is in an area that is not covered by our teams"
       }
       """
 
@@ -1183,8 +1219,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1202,8 +1238,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1298,8 +1334,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1317,8 +1353,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1366,7 +1402,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_TOO_LARGE"
         ],
-        "comments": "The size of one or more packages exceeds our acceptance limit of 60.00 cm"
+        "comment": "The size of one or more packages exceeds our acceptance limit of 60.00 cm"
       }
       """
 
@@ -1414,8 +1450,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1433,8 +1469,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1482,7 +1518,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_TOO_LARGE"
         ],
-        "comments": "The size of one or more packages exceeds our acceptance limit of 70.00 cm"
+        "comment": "The size of one or more packages exceeds our acceptance limit of 70.00 cm"
       }
       """
 
@@ -1530,8 +1566,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1549,8 +1585,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1598,7 +1634,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_TOO_LARGE"
         ],
-        "comments": "The size of one or more packages exceeds our acceptance limit of 160.00 cm"
+        "comment": "The size of one or more packages exceeds our acceptance limit of 160.00 cm"
       }
       """
 
@@ -1646,8 +1682,8 @@ Feature: Woopit
           "infos": "Travaux sur le boulevard.",
           "interval": [
             {
-              "start": "2019-12-04T12:30:00+0000",
-              "end": "2019-12-04T13:30:00+0000"
+              "start": "2019-12-04T12:30:00.000Z",
+              "end": "2019-12-04T13:30:00.000Z"
             }
           ]
         },
@@ -1665,8 +1701,8 @@ Feature: Woopit
           },
           "interval": [
             {
-              "start": "2019-12-06T13:00:00+0000",
-              "end": "2019-12-06T15:00:00+0000"
+              "start": "2019-12-06T13:00:00.000Z",
+              "end": "2019-12-06T15:00:00.000Z"
             }
           ]
         },
@@ -1714,6 +1750,6 @@ Feature: Woopit
         "reasons": [
           "REFUSED_EXCEPTION"
         ],
-        "comments": "No availability of product type TYPOLOGY_FROZEN"
+        "comment": "No availability of product type TYPOLOGY_FROZEN"
       }
       """
