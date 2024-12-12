@@ -893,6 +893,7 @@ form.package.volume_units.label: Unité de volume
 form.package.name.label: Nom
 form.package_set.packages.label: Emballages
 form.package_set.name.label: Nom
+form.package_set.duplicatePackageNames: Les noms de paquets doivent être uniques
 form.package.description.label: Description pour le client
 form.package.enter_details: Masquer/afficher les détails
 form.package.average_volume_units.label: Unités de volume moyen (VU)
