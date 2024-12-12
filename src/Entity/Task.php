@@ -1401,4 +1401,13 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
+    public function getStore(): Store|null
+    {
+        if(!is_null($this->getDelivery())) {
+            return $this->getDelivery()->getStore();
+        }
+
+        return null;
+    }
 }

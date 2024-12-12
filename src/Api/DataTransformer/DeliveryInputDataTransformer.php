@@ -62,8 +62,9 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
 
         if ($data->packages && is_array($data->packages)) {
             $packageRepository = $this->doctrine->getRepository(Package::class);
+
             foreach ($data->packages as $p) {
-                $package = $packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByNameAndStore($p['type'], $delivery->getStore());
                 if ($package) {
                     $delivery->addPackageWithQuantity($package, $p['quantity']);
                 }
