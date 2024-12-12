@@ -52,9 +52,9 @@ class TimeSlotChoiceType extends AbstractType
             },
             'attr' => function (Options $options) {
 
-                if (isset($options['disabled']) && isset($options['data']) && true === $options['disabled']) {
-                    return [];
-                }
+                /*if (isset($options['disabled']) && isset($options['data']) && true === $options['disabled']) {*/
+                /*    return [];*/
+                /*}*/
 
                 $choiceLoader = new TimeSlotChoiceLoader($options['time_slot'], $this->country);
 
