@@ -1084,7 +1084,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_EXCEPTION"
         ],
-        "comment"": "The store with ID store456 does not exist"
+        "comment": "The store with ID store456 does not exist"
       }
       """
 
@@ -1171,7 +1171,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_AREA"
         ],
-        "comment"": "The collection address is in an area that is not covered by our teams"
+        "comment": "The collection address is in an area that is not covered by our teams"
       }
       """
 
@@ -1402,7 +1402,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_TOO_LARGE"
         ],
-        "comment"": "The size of one or more packages exceeds our acceptance limit of 60.00 cm"
+        "comment": "The size of one or more packages exceeds our acceptance limit of 60.00 cm"
       }
       """
 
@@ -1518,7 +1518,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_TOO_LARGE"
         ],
-        "comment"": "The size of one or more packages exceeds our acceptance limit of 70.00 cm"
+        "comment": "The size of one or more packages exceeds our acceptance limit of 70.00 cm"
       }
       """
 
@@ -1634,7 +1634,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_TOO_LARGE"
         ],
-        "comment"": "The size of one or more packages exceeds our acceptance limit of 160.00 cm"
+        "comment": "The size of one or more packages exceeds our acceptance limit of 160.00 cm"
       }
       """
 
@@ -1750,6 +1750,6 @@ Feature: Woopit
         "reasons": [
           "REFUSED_EXCEPTION"
         ],
-        "comment"": "No availability of product type TYPOLOGY_FROZEN"
+        "comment": "No availability of product type TYPOLOGY_FROZEN"
       }
       """
