@@ -71,3 +71,5 @@ order.collection.not_available: La méthode de réalisation "collection" n'est p
 task_group.ref.duplicate: La référence "%ref%" apparaît plusieurs fois
 pricing_rule.expression.syntax_error: Erreur de syntaxe dans l'expression "%expression%"
 order.adjustments.unexpectedCount: Nombre inattendu d'ajustements "%type%"
+
+form.package_set.duplicatePackageNames: Les noms de paquet doivent être uniques

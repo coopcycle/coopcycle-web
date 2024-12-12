@@ -7,6 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\PackageSet\Applications;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 /**
@@ -40,6 +41,13 @@ class PackageSet
 
     protected $id;
     protected $name;
+
+    /**
+     * @Assert\Unique(
+     *  normalizer="AppBundle\Entity\Package::getPackageName",
+     *  message="form.package_set.duplicatePackageNames"
+     * )
+     */
     protected $packages;
 
     public function __construct()
