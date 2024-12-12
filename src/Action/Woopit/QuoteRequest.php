@@ -45,7 +45,7 @@ class QuoteRequest
                 "reasons" => [
                     "REFUSED_EXCEPTION"
                 ],
-                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+                "comment" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
             ], 202);
         }
 
