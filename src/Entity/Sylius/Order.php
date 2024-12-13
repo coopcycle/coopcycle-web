@@ -1960,7 +1960,7 @@ class Order extends BaseOrder implements OrderInterface
             throw new \LogicException('Order has no delivery price');
         }
 
-        $productVariant = $deliveryItem->getVariant(); // @phpstan-ignore method.nonObject
+        $productVariant = $deliveryItem->getVariant();
 
         if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
             // price based on the PricingRuleSet
