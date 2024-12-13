@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
@@ -92,14 +93,32 @@ class BarcodeController extends AbstractController
 
     /**
      * Determine the client action based on the current state of the task
-     * Possible actions: ask_to_assign, ask_to_unassign
+     * Possible actions:
      * ask_to_assign: Will prompt the user to self-assign
      * ask_to_unassign: Will prompt the user to self-unassign
      * ask_to_complete: Will redirect the user to the complete page
-     * @return string|null
+     * ask_to_start_pickup: Will prompt the user to start the pickup
+     * ask_to_complete_pickup: Will prompt the user to complete the pickup
+     * @return array|null
      */
-    private function determineClientAction(Task $task): ?string
+    private function determineClientAction(Task $task): ?array
     {
+
+        // If the task is a delivery, we should prompt the user to start the pickup
+        if (!is_null($task->getDelivery())) {
+            /** @var Delivery $delivery */
+            $delivery = $task->getDelivery();
+            $pickup_status = $delivery->getPickup()?->getStatus();
+
+            switch ($pickup_status) {
+                case Task::STATUS_TODO:
+                    return [ 'action' => 'ask_to_start_pickup', 'payload' => ['task_id' => $delivery->getPickup()->getId()] ];
+                case Task::STATUS_DOING:
+                    return [ 'action' => 'ask_to_complete_pickup', 'payload' => ['task_id' => $delivery->getPickup()->getId()] ];
+            }
+
+        }
+
         // If the task is already done or failed, we should not prompt the user
         if (in_array($task->getStatus(), [
             Task::STATUS_DONE,
@@ -111,17 +130,17 @@ class BarcodeController extends AbstractController
 
         // If the task in scanned while doing, we should redirect to the complete page
         if ($task->getStatus() === Task::STATUS_DOING) {
-            return 'ask_to_complete';
+            return [ 'action' => 'ask_to_complete', 'payload' => ['task_id' => $task->getId()] ];
         }
 
         // If the task is assigned to the current user, we should prompt the user to self-unassign
         if ($task->isAssignedTo($this->getUser())) {
-            return 'ask_to_unassign';
+            return [ 'action' => 'ask_to_unassign', 'payload' => ['task_id' => $task->getId()] ];
         }
 
         // If the task is not assigned to the current user, we should prompt the user to self-assign
         if ($task->isAssigned()) {
-            return 'ask_to_assign';
+            return [ 'action' => 'ask_to_assign', 'payload' => ['task_id' => $task->getId()] ];
         }
 
         return null;
