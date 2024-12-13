@@ -13,7 +13,6 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Webmozart\Assert\Assert;
@@ -24,7 +23,7 @@ class OrderFactory implements FactoryInterface
         private readonly FactoryInterface $factory,
         private readonly ChannelContextInterface $channelContext,
         private readonly FactoryInterface $orderItemFactory,
-        private readonly ProductVariantFactoryInterface $productVariantFactory,
+        private readonly ProductVariantFactory $productVariantFactory,
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private readonly OrderModifierInterface $orderModifier,
         private readonly LoggerInterface $logger
@@ -116,7 +115,7 @@ class OrderFactory implements FactoryInterface
 
         $deliveryItem = $order->getItems()->first();
 
-        if (null === $deliveryItem) {
+        if (false === $deliveryItem) {
             $this->logger->info('No delivery item found in order');
         }
 

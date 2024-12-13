@@ -1956,7 +1956,7 @@ class Order extends BaseOrder implements OrderInterface
 
         $deliveryItem = $this->getItems()->first();
 
-        if (null === $deliveryItem) {
+        if (false === $deliveryItem) {
             throw new \LogicException('Order has no delivery price');
         }
 
