@@ -182,21 +182,11 @@ class PricingManager
         $delivery = Delivery::createWithTasks(...$newTasks);
         $delivery->setStore($store);
 
-        $orderItem = $previousOrder->getItems()->first();
-        $productVariant = $orderItem->getVariant(); // @phpstan-ignore method.nonObject
-
-        $previousArbitraryPrice = null;
-
-        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
-            // price based on the PricingRuleSet; will be recalculated based on the latest rules
-        } else {
-            // arbitrary price
-            $previousArbitraryPrice = new ArbitraryPrice($productVariant->getName(), $orderItem->getUnitPrice());
-        }
+        $previousDeliveryPrice = $previousOrder->getDeliveryPrice();
 
         return [
             'delivery' => $delivery,
-            'previousArbitraryPrice' => $previousArbitraryPrice,
+            'previousArbitraryPrice' => $previousDeliveryPrice instanceof ArbitraryPrice ? $previousDeliveryPrice : null,
         ];
     }
 
