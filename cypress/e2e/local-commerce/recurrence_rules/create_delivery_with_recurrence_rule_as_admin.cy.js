@@ -5,7 +5,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     let cmd =
       'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
     if (prefix) {
-      cmd = `${prefix} ${cmd}`
+      cmd = `${ prefix } ${ cmd }`
     }
 
     cy.exec(cmd)
@@ -76,7 +76,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('[data-tax="included"]').contains('4,99 €')
 
       cy.get('#delivery_form__recurrence__container').find('a').click()
-      cy.chooseDaysOfTheWeek([5, 6])
+      cy.chooseDaysOfTheWeek([ 5, 6 ])
       cy.get('[data-testid=save]').click()
 
       cy.get('#delivery-submit').click()
@@ -99,6 +99,11 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Delivery page
       cy.get('#delivery_form__recurrence__container').should('not.exist')
+      cy.get('[data-testid="breadcrumb"]')
+        .find('[data-testid="order_id"]')
+        .click()
+
+      // Order page
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
@@ -145,11 +150,17 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
 
       // set pickup time range to XX:12 - XX:27
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input').click();
-      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(13) > .ant-picker-time-panel-cell-inner').click();
-      cy.get('.ant-picker-ok:visible > .ant-btn').click();
-      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(28) > .ant-picker-time-panel-cell-inner').click();
-      cy.get('.ant-picker-ok:visible > .ant-btn').click();
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
+        .click()
+      cy.get(
+        '.ant-picker-content:visible > :nth-child(2) > :nth-child(13) > .ant-picker-time-panel-cell-inner')
+        .click()
+      cy.get('.ant-picker-ok:visible > .ant-btn').click()
+      cy.get(
+        '.ant-picker-content:visible > :nth-child(2) > :nth-child(28) > .ant-picker-time-panel-cell-inner')
+        .click()
+      cy.get('.ant-picker-ok:visible > .ant-btn').click()
 
       cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
@@ -175,11 +186,17 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       )
 
       // set dropoff time range to XX:24 - XX:58
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input').click();
-      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(25) > .ant-picker-time-panel-cell-inner').click();
-      cy.get('.ant-picker-ok:visible > .ant-btn').click();
-      cy.get('.ant-picker-content:visible > :nth-child(2) > :nth-child(59) > .ant-picker-time-panel-cell-inner').click();
-      cy.get('.ant-picker-ok:visible > .ant-btn').click();
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
+        .click()
+      cy.get(
+        '.ant-picker-content:visible > :nth-child(2) > :nth-child(25) > .ant-picker-time-panel-cell-inner')
+        .click()
+      cy.get('.ant-picker-ok:visible > .ant-btn').click()
+      cy.get(
+        '.ant-picker-content:visible > :nth-child(2) > :nth-child(59) > .ant-picker-time-panel-cell-inner')
+        .click()
+      cy.get('.ant-picker-ok:visible > .ant-btn').click()
 
       cy.get('#delivery_tasks_1_weight').clear()
       cy.get('#delivery_tasks_1_weight').type(2.5)
@@ -189,7 +206,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('[data-tax="included"]').contains('4,99 €')
 
       cy.get('#delivery_form__recurrence__container').find('a').click()
-      cy.chooseDaysOfTheWeek([5, 6])
+      cy.chooseDaysOfTheWeek([ 5, 6 ])
       cy.get('[data-testid=save]').click()
 
       cy.get('#delivery-submit').click()
@@ -212,6 +229,11 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Delivery page
       cy.get('#delivery_form__recurrence__container').should('not.exist')
+      cy.get('[data-testid="breadcrumb"]')
+        .find('[data-testid="order_id"]')
+        .click()
+
+      // Order page
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
@@ -221,24 +243,32 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       )
 
       //pickup time range:
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input').should(($input) => {
-        const val = $input.val()
-        expect(val).to.include(':12')
-      })
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input').should(($input) => {
-        const val = $input.val()
-        expect(val).to.include(':27')
-      })
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input')
+        .should(($input) => {
+          const val = $input.val()
+          expect(val).to.include(':12')
+        })
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input')
+        .should(($input) => {
+          const val = $input.val()
+          expect(val).to.include(':27')
+        })
 
       //dropoff time range:
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input').should(($input) => {
-        const val = $input.val()
-        expect(val).to.include(':24')
-      })
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input').should(($input) => {
-        const val = $input.val()
-        expect(val).to.include(':58')
-      })
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input')
+        .should(($input) => {
+          const val = $input.val()
+          expect(val).to.include(':24')
+        })
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input')
+        .should(($input) => {
+          const val = $input.val()
+          expect(val).to.include(':58')
+        })
 
       cy.get('[data-tax="included"]').contains('4,99 €')
 
