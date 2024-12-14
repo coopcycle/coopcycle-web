@@ -120,7 +120,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -2992,21 +2991,5 @@ class AdminController extends AbstractController
         return $this->render('admin/cube.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
         ]);
-    }
-
-    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
-    {
-        if (!$form->has('arbitraryPrice')) {
-            return null;
-        }
-
-        if (true !== $form->get('arbitraryPrice')->getData()) {
-            return null;
-        }
-
-        $variantPrice = $form->get('variantPrice')->getData();
-        $variantName = $form->get('variantName')->getData();
-
-        return new ArbitraryPrice($variantName, $variantPrice);
     }
 }

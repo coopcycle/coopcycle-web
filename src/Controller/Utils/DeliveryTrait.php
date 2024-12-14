@@ -12,6 +12,7 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 trait DeliveryTrait
@@ -94,4 +95,23 @@ trait DeliveryTrait
         ]);
     }
 
+    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        if (!$form->has('arbitraryPrice')) {
+            return null;
+        }
+
+        if (true !== $form->get('arbitraryPrice')->getData()) {
+            return null;
+        }
+
+        $variantPrice = $form->get('variantPrice')->getData();
+        $variantName = $form->get('variantName')->getData();
+
+        return new ArbitraryPrice($variantName, $variantPrice);
+    }
 }
