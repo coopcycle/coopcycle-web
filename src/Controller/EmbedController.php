@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -38,6 +39,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class EmbedController extends AbstractController
 {
+    use AccessControlTrait;
     use DeliveryTrait;
 
     public function __construct(
