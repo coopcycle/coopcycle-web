@@ -137,12 +137,6 @@ Cypress.Commands.add('newDropoff1Address',
       addressMatch,
     )
 
-    cy.searchAddress(
-      addressSelector,
-      addressSearch,
-      addressMatch,
-    )
-
     cy.get('#delivery_tasks_1_address_name__display').clear()
     cy.get('#delivery_tasks_1_address_name__display').type(businessName)
 
