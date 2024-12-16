@@ -28,45 +28,27 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Pickup
 
-      cy.searchAddress(
-        '[data-form="task"]:nth-of-type(1)',
-        '23 Avenue Claude Vellefaux, 75010 Paris, France',
-        /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
-      )
-
-      cy.get('#delivery_tasks_0_address_name__display').clear()
-      cy.get('#delivery_tasks_0_address_name__display').type('Office')
-
-      cy.get('#delivery_tasks_0_address_telephone__display').clear()
-      cy.get('#delivery_tasks_0_address_telephone__display').type(
-        '+33112121212',
-      )
-
-      cy.get('#delivery_tasks_0_address_contactName__display').clear()
-      cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
+    cy.newPickupAddress(
+      '[data-form="task"]:nth-of-type(1)',
+      '23 Avenue Claude Vellefaux, 75010 Paris, France',
+      /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
+      'Office',
+      '+33112121212',
+      'John Doe',
+    )
 
       cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
       // Dropoff
 
-      cy.searchAddress(
-        '[data-form="task"]:nth-of-type(2)',
-        '72 Rue Saint-Maur, 75011 Paris, France',
-        /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
-      )
-
-      cy.get('#delivery_tasks_1_address_name__display').clear()
-      cy.get('#delivery_tasks_1_address_name__display').type('Office')
-
-      cy.get('#delivery_tasks_1_address_telephone__display').clear()
-      cy.get('#delivery_tasks_1_address_telephone__display').type(
-        '+33112121212',
-      )
-
-      cy.get('#delivery_tasks_1_address_contactName__display').clear()
-      cy.get('#delivery_tasks_1_address_contactName__display').type(
-        'Jane smith',
-      )
+    cy.newDropoff1Address(
+      '[data-form="task"]:nth-of-type(2)',
+      '72 Rue Saint-Maur, 75011 Paris, France',
+      /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
+      'Office',
+      '+33112121212',
+      'Jane smith',
+    )
 
       cy.get('#delivery_tasks_1_weight').clear()
       cy.get('#delivery_tasks_1_weight').type(2.5)
@@ -132,22 +114,14 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Pickup
 
-      cy.searchAddress(
-        '[data-form="task"]:nth-of-type(1)',
-        '23 Avenue Claude Vellefaux, 75010 Paris, France',
-        /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
-      )
-
-      cy.get('#delivery_tasks_0_address_name__display').clear()
-      cy.get('#delivery_tasks_0_address_name__display').type('Office')
-
-      cy.get('#delivery_tasks_0_address_telephone__display').clear()
-      cy.get('#delivery_tasks_0_address_telephone__display').type(
-        '+33112121212',
-      )
-
-      cy.get('#delivery_tasks_0_address_contactName__display').clear()
-      cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
+    cy.newPickupAddress(
+      '[data-form="task"]:nth-of-type(1)',
+      '23 Avenue Claude Vellefaux, 75010 Paris, France',
+      /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
+      'Office',
+      '+33112121212',
+      'John Doe',
+    )
 
       // set pickup time range to XX:12 - XX:27
       cy.get(
@@ -166,24 +140,14 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Dropoff
 
-      cy.searchAddress(
-        '[data-form="task"]:nth-of-type(2)',
-        '72 Rue Saint-Maur, 75011 Paris, France',
-        /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
-      )
-
-      cy.get('#delivery_tasks_1_address_name__display').clear()
-      cy.get('#delivery_tasks_1_address_name__display').type('Office')
-
-      cy.get('#delivery_tasks_1_address_telephone__display').clear()
-      cy.get('#delivery_tasks_1_address_telephone__display').type(
-        '+33112121212',
-      )
-
-      cy.get('#delivery_tasks_1_address_contactName__display').clear()
-      cy.get('#delivery_tasks_1_address_contactName__display').type(
-        'Jane smith',
-      )
+    cy.newDropoff1Address(
+      '[data-form="task"]:nth-of-type(2)',
+      '72 Rue Saint-Maur, 75011 Paris, France',
+      /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
+      'Office',
+      '+33112121212',
+      'Jane smith',
+    )
 
       // set dropoff time range to XX:24 - XX:58
       cy.get(

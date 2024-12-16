@@ -107,10 +107,10 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
     .click()
 })
 
-Cypress.Commands.add('enterPickup',
+Cypress.Commands.add('newPickupAddress',
   (
     addressSelector, addressSearch, addressMatch, businessName, telephone,
-    contactName, comments = '') => {
+    contactName) => {
     cy.searchAddress(
       addressSelector,
       addressSearch,
@@ -125,16 +125,18 @@ Cypress.Commands.add('enterPickup',
 
     cy.get('#delivery_tasks_0_address_contactName__display').clear()
     cy.get('#delivery_tasks_0_address_contactName__display').type(contactName)
-
-    if (comments) {
-      cy.get('#delivery_tasks_0_comments').type(comments)
-    }
   })
 
-Cypress.Commands.add('enterDropoff1',
+Cypress.Commands.add('newDropoff1Address',
   (
     addressSelector, addressSearch, addressMatch, businessName, telephone,
-    contactName, weight = 0, comments = '') => {
+    contactName) => {
+    cy.searchAddress(
+      addressSelector,
+      addressSearch,
+      addressMatch,
+    )
+
     cy.searchAddress(
       addressSelector,
       addressSearch,
@@ -149,15 +151,6 @@ Cypress.Commands.add('enterDropoff1',
 
     cy.get('#delivery_tasks_1_address_contactName__display').clear()
     cy.get('#delivery_tasks_1_address_contactName__display').type(contactName)
-
-    if (weight > 0) {
-      cy.get('#delivery_tasks_1_weight').clear()
-      cy.get('#delivery_tasks_1_weight').type(weight)
-    }
-
-    if (comments) {
-      cy.get('#delivery_tasks_1_comments').type(comments)
-    }
   })
 
 Cypress.Commands.add('enterCreditCard', () => {
