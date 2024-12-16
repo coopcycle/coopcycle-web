@@ -28,24 +28,30 @@ AppBundle\Entity\Delivery\PricingRule:
     position: 1
     ruleSet: '@pricing_rule_set_impossible'
 
-AppBundle\Entity\Address:
-  address_1:
-    addressLocality: 'Paris'
-    postalCode: '75001'
-    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
-    geo: "@geo_1"
-  address_2:
-    addressLocality: 'Paris'
-    postalCode: '75012'
-    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
-    geo: "@geo_1"
-
 AppBundle\Entity\TimeSlot:
   time_slot_1:
     name: 'Acme time slot'
     openingHours:
       - 'Mo-Su 00:00-11:59'
       - 'Mo-Su 12:00-23:59'
+
+AppBundle\Entity\Address:
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  client_1:
+    name: 'Office'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_3"
 
 AppBundle\Entity\Store:
   store_1:
@@ -54,22 +60,37 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
   store_without_time_slots:
     name: 'Store without time slots'
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
   store_no_pricing:
     name: 'Store without pricing'
     address: "@address_1"
     enabled: true
     timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
   store_invalid_pricing:
     name: 'Store with invalid pricing'
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_impossible'
     timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
 
 AppBundle\Entity\User:
   store1Owner:
