@@ -6,8 +6,10 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Order\ExistingOrderType;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
@@ -37,7 +39,8 @@ trait DeliveryTrait
         Request $request,
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
-        OrderManager $orderManager
+        OrderManager $orderManager,
+        PricingManager $pricingManager,
     )
     {
         $delivery = $entityManager
@@ -66,7 +69,15 @@ trait DeliveryTrait
 
             if ($useArbitraryPrice) {
                 $arbitraryPrice = $this->getArbitraryPrice($form);
-                $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                if (null === $order) {
+                    // Should not happen normally, but just in case
+                    // there is still some delivery created without an order
+                    $order = $pricingManager->createOrder($delivery, [
+                        'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
+                    ]);
+                } else {
+                    $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                }
             }
 
             $entityManager->persist($delivery);
