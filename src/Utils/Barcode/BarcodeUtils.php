@@ -66,6 +66,8 @@ class BarcodeUtils {
     }
 
     /**
+     * Returns a list of barcodes for a package.
+     * May return multiple barcodes for the same package when quantity is > 1.
      * @return Barcode[]
      */
     public static function getBarcodesFromPackage(Package $package, int $start = 0): array
