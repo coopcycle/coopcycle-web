@@ -86,9 +86,18 @@ class TaskListSubscriber implements EventSubscriber
                     $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
                     $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
                     $task->setCo2Emissions($emissions);
-                    $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
+                }
+            } else {
+                $route = $this->routing->route(...$coordinates)['routes'][0];
+                $legs = $route["legs"];
+                foreach ($legs as $index => $leg) {
+                    $task = $taskList->getTasks()[$index + 1]; // we assume we start at the first task, as there is no warehouse
+                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
+                    $task->setCo2Emissions(0); // reset
                 }
             }
+
+            $this->em->getUnitOfWork()->computeChangeSets();
         }
     }
 
