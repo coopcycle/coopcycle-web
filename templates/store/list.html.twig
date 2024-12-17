@@ -18,20 +18,17 @@
             <a href="{{ path('admin_deliveries_pricing_ruleset', { id: store.pricingRuleSet.id }) }}">
               {{ store.pricingRuleSet.name }}
             </a><br>
+          {% else %}
+            <small class="text-danger">{{ 'form.store_type.pricing_rule_set.warning.list'|trans }}</small>
           {% endif %}
           {% if store.packageSet is not empty %}
             <a href="{{ path('admin_packages', { id: store.packageSet.id }) }}">{{ 'form.store_type.package_set.label'|trans }} {{ store.packageSet.name }}</a>
           {% endif %}
-          {% if store.prefillPickupAddress or store.createOrders or store.timeSlot is not empty or store.packageSet is not empty %}
+          {% if store.prefillPickupAddress or store.timeSlot is not empty %}
             <ul class="list-unstyled nomargin">
               {% if store.prefillPickupAddress %}
                 <li>
                   <small class="text-muted">{{ 'form.store_type.prefill_pickup_address.label'|trans }}</small>
-                </li>
-              {% endif %}
-              {% if store.createOrders %}
-                <li>
-                  <small class="text-muted">{{ 'form.store_type.create_orders.label'|trans }}</small>
                 </li>
               {% endif %}
               {% if store.timeSlot is not empty %}
