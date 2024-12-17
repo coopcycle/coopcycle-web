@@ -18,6 +18,11 @@ export const apiSlice = createApi({
         body: {},
       }),
     }),
+    getOrders: builder.query({
+      query: nodeId => `api/orders`,
+      transformResponse: (response, meta, arg) =>
+        response['hydra:member'],
+    }),
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
     }),
@@ -37,6 +42,7 @@ export const apiSlice = createApi({
 // Export the auto-generated hook for the query endpoints
 export const {
   useRecurrenceRulesGenerateOrdersMutation,
+  useGetOrdersQuery,
   useGetOrderTimingQuery,
   useUpdateOrderMutation,
 } = apiSlice
