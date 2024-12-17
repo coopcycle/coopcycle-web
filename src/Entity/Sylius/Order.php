@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
@@ -463,6 +464,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *   }
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
  *
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})
