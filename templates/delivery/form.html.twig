@@ -18,7 +18,7 @@
   {% set is_new = delivery.id is null %}
 
 
-  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new }) }}></div>
+  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id }) }}></div>
 
 
   {% block alerts %}
