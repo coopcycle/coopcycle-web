@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { Formik, Form } from 'formik'
-import PickUp from './PickUp'
+// import PickUp from './PickUp'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
@@ -11,12 +11,21 @@ import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 export default function ({ isNew, storeId }) {
 
   const [addresses, setAddresses] = useState([])
-
+  /**
+   * deliveryAddress contains :
+   * the address information as an object, 
+   * if it needs to be saved (in case it's new),
+   * if it needs to be modified (in case it's already saved)
+   */
   const [deliveryAddress, setDeliveryAddress] = useState({
-    streetAddress: "",
-    name: "", 
-    contactName: "", 
-    telephone: ""
+    address: {
+      streetAddress: "",
+      name: "", 
+      contactName: "", 
+      telephone: ""
+      }, 
+    toBeRemembered: false, 
+    toBeModified: false,
   })
 
   console.log("deliveryAddress", deliveryAddress)
@@ -75,7 +84,7 @@ export default function ({ isNew, storeId }) {
               deliveryAddress={deliveryAddress}
               setDeliveryAddress={setDeliveryAddress}
             />
-            <PickUp initialValues={initialValues} />
+            {/* <PickUp initialValues={initialValues} /> */}
             
           <button type="submit" disabled={isSubmitting}>
             Soumettre
