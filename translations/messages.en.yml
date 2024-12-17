@@ -1506,6 +1506,8 @@ form.store_type.failure_reason_set.help: 'Select a list of <a href="%failure_rea
 adminDashboard.incidents.title: Incidents
 adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.createNew: Create a new incident
+adminDashboard.invoicing.title: Invoicing
+adminDashboard.invoicing.help: "Prepare invoices"
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options

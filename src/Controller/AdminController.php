@@ -2992,4 +2992,14 @@ class AdminController extends AbstractController
             'cube_token' => $tokenFactory->createToken(),
         ]);
     }
+
+    /**
+     * @Route("/admin/invoicing", name="admin_invoicing")
+     */
+    public function invoicingAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
 }
