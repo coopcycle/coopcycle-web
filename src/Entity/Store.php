@@ -2,12 +2,14 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use AppBundle\Action\Store\AddAddress;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Store\AddAddress;
+use AppBundle\Filter\OrderDateFilter;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
@@ -15,8 +17,9 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
-use AppBundle\Entity\Package;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\Package;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -165,6 +168,18 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      * @ApiSubresource
      */
     private $deliveries;
+
+    /**
+     * Can not be used as a property of a class,
+     * it's only used to define a subresource endpoint
+     * output is retrieved by StoreOrdersSubresourceDataProvider
+     *
+     * @var Collection<int, Order>
+     * @ApiSubresource
+     * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
+     * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
+     */
+    private $orders;
 
     private $rrules;
 
