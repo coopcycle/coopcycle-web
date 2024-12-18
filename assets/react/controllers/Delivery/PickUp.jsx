@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { Formik, Form } from 'formik'
-// import { Select, Input } from 'antd';
+import { Formik, Form, Field } from 'formik'
 import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
+import {Input} from 'antd'
 
 export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus }) => {
   const initialValues = {
@@ -16,7 +16,9 @@ export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus
   const handleSubmit = (values, { setSubmitting }) => {
     console.log(values)
     setSubmitting(false)
-  };
+  }
+
+  const { TextArea } = Input
 
   return (
     <div>
@@ -34,6 +36,20 @@ export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus
                 deliveryAddress={deliveryAddress}
                 setDeliveryAddress={setDeliveryAddress}
               />
+                <label htmlFor="commentary" style={{ display: 'block', marginBottom: '0.5rem' }}>
+                  Commentaire
+                </label>
+              <Field name="commentary">
+                {({ field, form }) => (
+               
+                  <TextArea
+                    rows={6}
+                    style={{resize: "none"}}
+                    autoSize={false}
+                      onChange={value => form.setFieldValue(field.name, value)} />
+                    
+                  )}
+              </Field>
             </Form>
           )
         }}
