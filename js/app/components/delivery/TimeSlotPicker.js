@@ -35,38 +35,33 @@ export default ({ choices, initialChoices, defaultTimeSlotName }) => {
 
   useEffect(() => {
     const formatTimeSlots = () => {
-      if (!timeSlotChoices === null) {
+      if (Array.isArray(timeSlotChoices)) {
         timeSlotChoices.forEach(choice => {
-          let [first, second] = choice.value.split('/')
+          let [first, second] = choice.split('/')
           first = moment(first)
           second = moment(second)
-          test.push(first, second)
-          console.log('heures', first, second)
+          const date = moment(first).format('YYYY-MM-DD')
+          const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
+          if (Object.prototype.hasOwnProperty.call(datesWithTimeslots, date)) {
+            datesWithTimeslots[date].push(hour)
+          } else {
+            datesWithTimeslots[date] = [hour]
+          }
         })
       }
     }
     formatTimeSlots()
   }, [timeSlotChoices])
 
-  // timeSlotChoices.forEach(choice => {
-  //   const [first, second] = choice.value.split('/')
-  //   const
-  //   if (Object.prototype.hasOwnProperty.call(datesWithTimeslots, date)) {
-  //     datesWithTimeslots[date].push(hour)
-  //   } else {
-  //     datesWithTimeslots[date] = [hour]
-  //   }
-  // })
+  const dates = []
 
-  // const dates = []
+  for (const date in datesWithTimeslots) {
+    dates.push(moment(date))
+  }
 
-  // for (const date in datesWithTimeslots) {
-  //   dates.push(moment(date))
-  // }
-
-  // function disabledDate(current) {
-  //   return !dates.some(date => date.isSame(current, 'day'))
-  // }
+  function disabledDate(current) {
+    return !dates.some(date => date.isSame(current, 'day'))
+  }
 
   // const [values, setValues] = useState({})
 
