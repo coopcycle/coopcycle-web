@@ -8,7 +8,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\MyStores;
-use AppBundle\Filter\OrderDateFilter;
+use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;

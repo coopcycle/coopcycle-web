@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Filter;
+namespace AppBundle\Api\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\DateFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
