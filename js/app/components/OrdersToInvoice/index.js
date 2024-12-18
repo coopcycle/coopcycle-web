@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { InputNumber, DatePicker, Table } from 'antd'
 import { useLazyGetOrdersQuery } from '../../api/slice'
 import Button from '../core/Button'
+import { money } from '../../utils/format'
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
@@ -31,9 +32,9 @@ export default () => {
         number: order.number,
         shippedAt: order.shippedAt,
         description: order.description,
-        subTotal: order.total - order.taxTotal,
-        taxTotal: order.taxTotal,
-        total: order.total,
+        subTotal: money(order.total - order.taxTotal),
+        taxTotal: money(order.taxTotal),
+        total: money(order.total),
       })),
       total: data['hydra:totalItems'],
     }
