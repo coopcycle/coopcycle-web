@@ -6,6 +6,7 @@ import { InputNumber, DatePicker, Table } from 'antd'
 import { useLazyGetOrdersQuery } from '../../api/slice'
 import Button from '../core/Button'
 import { money } from '../../utils/format'
+import { moment } from '../../../shared'
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
@@ -30,7 +31,9 @@ export default () => {
         ...order,
         key: order['@id'],
         number: order.number,
-        shippedAt: order.shippedAt,
+        date: order.shippingTimeRange
+          ? moment(order.shippingTimeRange[1]).format('l')
+          : '?',
         description: order.description,
         subTotal: money(order.total - order.taxTotal),
         taxTotal: money(order.taxTotal),
@@ -48,8 +51,8 @@ export default () => {
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_DATE_LABEL'),
-      dataIndex: 'shippedAt',
-      key: 'shippedAt',
+      dataIndex: 'date',
+      key: 'date',
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_DESCRIPTION_LABEL'),
