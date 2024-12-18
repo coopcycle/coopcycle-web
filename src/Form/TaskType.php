@@ -31,13 +31,15 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class TaskType extends AbstractType
 {
-    protected $datePeriodFormatter;
-    protected $locale;
 
-    public function __construct(DatePeriodFormatter $datePeriodFormatter, string $locale)
+    public function __construct(
+        protected DatePeriodFormatter $datePeriodFormatter,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected string $locale)
     {
         $this->datePeriodFormatter = $datePeriodFormatter;
         $this->locale = $locale;
@@ -70,8 +72,7 @@ class TaskType extends AbstractType
             ])
         ->add('imported_from');
 
-        if (null !== $options['with_time_slot']
-        && null !== $options['with_time_slots']
+        if (null !== $options['with_time_slots']
         && count($options['with_time_slots']) > 1) {
 
             $builder
@@ -105,6 +106,7 @@ class TaskType extends AbstractType
                     'expanded' => true,
                     'multiple' => false,
                     'data' => $options['with_time_slot'],
+                    'attr' => [ 'class' => 'd-none' ]
                 ]);
 
             // https://symfony.com/doc/5.4/form/dynamic_form_modification.html#form-events-submitted-data
@@ -132,7 +134,7 @@ class TaskType extends AbstractType
             $form = $event->getForm();
             $task = $event->getData();
 
-            if ($form->has('switchTimeSlot') && null !== $task && null !== $task->getId()) {
+            if ($form->has('switchTimeSlot') && null !== $task && null !== $task->getId() && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->remove('switchTimeSlot');
             }
 
@@ -144,7 +146,7 @@ class TaskType extends AbstractType
                     'mapped' => false
                 ];
 
-                if (null !== $task && null !== $task->getId()) {
+                if (null !== $task && null !== $task->getId() && !$this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                     $timeSlotOptions['disabled'] = true;
                     $timeSlotOptions['data'] = TimeSlotChoice::fromTask($task);
                 }

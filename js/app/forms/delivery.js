@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
 import _ from 'lodash'
@@ -8,35 +8,38 @@ import { createSelector } from 'reselect'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
-import DateRangePicker from '../widgets/DateRangePicker'
+
+import DateTimeRangePicker from '../widgets/DateTimeRangePicker'
+
 import { validateForm } from '../utils/address'
 import i18n from '../i18n'
 import { RecurrenceRules } from './components/RecurrenceRules'
 import tasksSlice from './redux/tasksSlice'
-import {
-  recurrenceSlice,
-  selectRecurrenceRule,
-} from './redux/recurrenceSlice'
+import { recurrenceSlice, selectRecurrenceRule } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
-import { suggestionsSlice, showSuggestions, acceptSuggestions, rejectSuggestions } from './redux/suggestionsSlice'
+import {
+  suggestionsSlice,
+  showSuggestions,
+  acceptSuggestions,
+  rejectSuggestions,
+} from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
+import TimeSlotSelect from '../widgets/TimeSlotSelect'
 
 const selectTasks = state => state.tasks
 
-const selectLastDropoff = createSelector(
-  selectTasks,
-  (tasks) => {
-    return _.findLast(tasks, t => t.type === 'DROPOFF')
-  }
-)
+const selectLastDropoff = createSelector(selectTasks, tasks => {
+  return _.findLast(tasks, t => t.type === 'DROPOFF')
+})
 
 const collectionHolder = document.querySelector('#delivery_tasks')
 
-const domIndex = (el) => Array.prototype.indexOf.call(el.parentNode.children, el)
+const domIndex = el => Array.prototype.indexOf.call(el.parentNode.children, el)
 
 let reduxStore
 
@@ -56,17 +59,18 @@ class DeliveryForm {
 }
 
 function reorder(suggestedOrder) {
-
   // To reorder, we use the removeChild() function,
   // which removes an element and returns it but preserves event listeners.
   // Then, we re-add the elements in the expected order.
 
   const taskEls = []
   while (collectionHolder.firstElementChild) {
-    taskEls.push(collectionHolder.removeChild(collectionHolder.firstElementChild));
+    taskEls.push(
+      collectionHolder.removeChild(collectionHolder.firstElementChild),
+    )
   }
 
-  suggestedOrder.forEach((oldIndex) => {
+  suggestedOrder.forEach(oldIndex => {
     collectionHolder.appendChild(taskEls[oldIndex])
   })
 
@@ -77,38 +81,51 @@ function reorder(suggestedOrder) {
 
 function toPackages(el) {
   const packages = []
-  $(`#${el.id}_packages_list`).children().each(function() {
-    packages.push({
-      type: $(this).find('select').val(),
-      quantity: $(this).find('input[type="number"]').val()
+  $(`#${el.id}_packages_list`)
+    .children()
+    .each(function () {
+      packages.push({
+        type: $(this).find('select').val(),
+        quantity: $(this).find('input[type="number"]').val(),
+      })
     })
-  })
 
   return packages
 }
 
 function hideRememberAddress(el) {
-  const rememberAddr = document.querySelector(`#${el.id}_address_rememberAddress`)
+  const rememberAddr = document.querySelector(
+    `#${el.id}_address_rememberAddress`,
+  )
   if (rememberAddr) {
     rememberAddr.closest('.checkbox').classList.add('hidden')
   }
 }
 
 function showRememberAddress(el) {
-  const rememberAddr = document.querySelector(`#${el.id}_address_rememberAddress`)
+  const rememberAddr = document.querySelector(
+    `#${el.id}_address_rememberAddress`,
+  )
   if (rememberAddr) {
     rememberAddr.closest('.checkbox').classList.remove('hidden')
   }
 }
 
 function createAddressWidget(el, cb) {
-
   new AddressBook(document.querySelector(`#${el.id}_address`), {
     allowSearchSavedAddresses: true,
-    existingAddressControl: document.querySelector(`#${el.id}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${el.id}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${el.id}_address_isNewAddress`),
-    duplicateAddressControl: document.querySelector(`#${el.id}_address_duplicateAddress`),
+    existingAddressControl: document.querySelector(
+      `#${el.id}_address_existingAddress`,
+    ),
+    newAddressControl: document.querySelector(
+      `#${el.id}_address_newAddress_streetAddress`,
+    ),
+    isNewAddressControl: document.querySelector(
+      `#${el.id}_address_isNewAddress`,
+    ),
+    duplicateAddressControl: document.querySelector(
+      `#${el.id}_address_duplicateAddress`,
+    ),
     // Fields containing address details
     nameControl: document.querySelector(`#${el.id}_address_name`),
     telephoneControl: document.querySelector(`#${el.id}_address_telephone`),
@@ -120,7 +137,6 @@ function createAddressWidget(el, cb) {
       }
     },
     onChange: address => {
-
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         hideRememberAddress(el)
       } else {
@@ -130,7 +146,7 @@ function createAddressWidget(el, cb) {
       reduxStore.dispatch({
         type: 'SET_ADDRESS',
         taskIndex: domIndex(el),
-        value: address
+        value: address,
       })
     },
     onClear: () => {
@@ -139,20 +155,21 @@ function createAddressWidget(el, cb) {
         type: 'CLEAR_ADDRESS',
         taskIndex: domIndex(el),
       })
-    }
+    },
   })
 }
 
 function getTimeWindowProps(el) {
-
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
   if (timeSlotEl) {
     return {
-      timeSlot: $(timeSlotEl).val()
+      timeSlot: $(timeSlotEl).val(),
     }
   }
 
-  const before = $(`#${el.id}_doneBefore`).val() || selectLastDropoff(reduxStore.getState()).before
+  const before =
+    $(`#${el.id}_doneBefore`).val() ||
+    selectLastDropoff(reduxStore.getState()).before
 
   const after = $(`#${el.id}_doneAfter`).val()
   if (!after) {
@@ -175,16 +192,25 @@ function createDateRangePickerWidget(el) {
   const doneBeforePickerEl = document.querySelector(`#${el.id}_doneBefore`)
   const doneAfterPickerEl = document.querySelector(`#${el.id}_doneAfter`)
 
-  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
-  const afterDefaultValue = doneAfterPickerEl.value || moment().set({ hour: 0, minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss')
+  const beforeDefaultValue =
+    doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
+  const afterDefaultValue =
+    doneAfterPickerEl.value ||
+    moment()
+      .set({ hour: 0, minute: 0, second: 0 })
+      .format('YYYY-MM-DD HH:mm:ss')
 
   // When adding a new task, initialize hidden input value
   if (!doneBeforePickerEl.value) {
-    doneBeforePickerEl.value = moment(beforeDefaultValue).format('YYYY-MM-DD HH:mm:ss')
+    doneBeforePickerEl.value = moment(beforeDefaultValue).format(
+      'YYYY-MM-DD HH:mm:ss',
+    )
   }
 
   if (!doneAfterPickerEl.value) {
-    doneAfterPickerEl.value = moment(afterDefaultValue).format('YYYY-MM-DD HH:mm:ss')
+    doneAfterPickerEl.value = moment(afterDefaultValue).format(
+      'YYYY-MM-DD HH:mm:ss',
+    )
   }
 
   const defaultValue = {
@@ -192,50 +218,49 @@ function createDateRangePickerWidget(el) {
     before: beforeDefaultValue,
   }
 
-  new DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
-    defaultValue,
-    showTime: true,
-    onChange: function({after, before}) {
-      doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
-      doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
+  const onChange = ({ after, before }) => {
+    doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
+    doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
 
-      reduxStore.dispatch({
-        type: 'SET_BEFORE',
-        taskIndex: domIndex(el),
-        value: before.format()
-      })
+    reduxStore.dispatch({
+      type: 'SET_BEFORE',
+      taskIndex: domIndex(el),
+      value: before.format(),
+    })
 
-      reduxStore.dispatch({
-        type: 'SET_AFTER',
-        taskIndex: domIndex(el),
-        value: after.format()
-      })
-    }
-  })
+    reduxStore.dispatch({
+      type: 'SET_AFTER',
+      taskIndex: domIndex(el),
+      value: after.format(),
+    })
+  }
+
+  const reactRoot = createRoot(
+    document.querySelector(`#${el.id}_doneBefore_widget`),
+  )
+
+  reactRoot.render(
+    <DateTimeRangePicker
+      defaultValue={defaultValue}
+      format="LLL"
+      onChange={onChange}
+    />,
+  )
 }
 
+/*
+  Create the date picker widget when there is no time slot choice.
+*/
 function createDatePickerWidget(el, isAdmin = false) {
-
   const datePickerEl = document.querySelector(`#${el.id}_doneBefore`)
-  const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
-
-  if (timeSlotEl) {
-    timeSlotEl.addEventListener('change', e => {
-      reduxStore.dispatch({
-        type: 'SET_TIME_SLOT',
-        taskIndex: domIndex(el),
-        value: e.target.value
-      })
-    })
-    return
-  }
 
   if (isAdmin) {
     createDateRangePickerWidget(el)
     return
   }
 
-  const defaultValue = datePickerEl.value || selectLastDropoff(reduxStore.getState()).before
+  const defaultValue =
+    datePickerEl.value || selectLastDropoff(reduxStore.getState()).before
 
   // When adding a new task, initialize hidden input value
   if (!datePickerEl.value) {
@@ -244,21 +269,23 @@ function createDatePickerWidget(el, isAdmin = false) {
 
   new DateTimePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
-    onChange: function(date) {
+    onChange: function (date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
       reduxStore.dispatch({
         type: 'SET_BEFORE',
         taskIndex: domIndex(el),
-        value: date.format()
+        value: date.format(),
       })
-    }
+    },
   })
 }
 
 function createTagsWidget(el, tags) {
   const initialValue = document.querySelector(`#${el.id}_tagsAsString`).value
 
-  const root = createRoot(document.querySelector(`#${el.id}_tagsAsString_widget`))
+  const root = createRoot(
+    document.querySelector(`#${el.id}_tagsAsString_widget`),
+  )
   root.render(
     <TagsSelect
       defaultValue={initialValue ?? ''}
@@ -271,37 +298,214 @@ function createTagsWidget(el, tags) {
     />,
   )
 }
+// if admin -> overide timeslots/ show DateTimeRangePicker
 
-function createSwitchTimeSlotWidget(el) {
-  const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
+function SwitchTimeSlotToDateTimePicker({
+  timeSlotDefaultValue,
+  pickerDefaultValue,
+  initialChoices,
+  choices,
+  onChange,
+  onChangeFreePicker,
+  taskIndex,
+  format = 'LLL',
+}) {
+  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
+
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    if (isTimeSlotSelect) {
+      reduxStore.dispatch({
+        type: 'SET_TIME_SLOT',
+        taskIndex: taskIndex,
+        value: timeSlotDefaultValue,
+      })
+    } else {
+      reduxStore.dispatch({
+        type: 'SET_BEFORE',
+        taskIndex: taskIndex,
+        value: pickerDefaultValue.before,
+      })
+
+      reduxStore.dispatch({
+        type: 'SET_AFTER',
+        taskIndex: taskIndex,
+        value: pickerDefaultValue.after,
+      })
+    }
+  }, [isTimeSlotSelect])
+
+  return (
+    <>
+      {isTimeSlotSelect ? (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-end',
+          }}>
+          <div style={{ width: '95%' }}>
+            <TimeSlotSelect
+              choices={choices}
+              initialChoices={initialChoices}
+              onChange={onChange}
+            />
+          </div>
+          <i
+            className="fa fa-calendar"
+            aria-hidden="true"
+            onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
+            style={{
+              cursor: 'pointer',
+              color: '#24537D',
+              width: '5%',
+              lineHeight: '32px',
+            }}
+            title={t('SWITCH_TIMESLOTPICKER')}></i>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'baseline' }}>
+          <div style={{ width: '95%' }}>
+            <DateTimeRangePicker
+              defaultValue={pickerDefaultValue}
+              format={format}
+              onChange={onChangeFreePicker}
+            />
+          </div>
+          <i
+            className="fa fa-calendar"
+            aria-hidden="true"
+            onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
+            style={{ cursor: 'pointer', color: '#24537D', width: '5%' }}
+            title={t('SWITCH_DATEPICKER')}></i>
+        </div>
+      )}
+    </>
+  )
+}
+
+function createTimeSlotWidget(el, userAdmin) {
   const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
 
-  if (switchTimeSlotEl && timeSlotEl) {
-    switchTimeSlotEl.querySelectorAll('input[type="radio"]').forEach(rad => {
-      rad.addEventListener('change', function(e) {
+  const timeSlotElWidget = document.querySelector(`#${el.id}_timeSlot_widget`)
 
-        const choices = JSON.parse(e.target.dataset.choices)
+  const reactRoot = createRoot(timeSlotElWidget)
 
-        timeSlotEl.innerHTML = ''
-        choices.forEach(choice => {
-          const opt = document.createElement('option')
-          opt.value = choice.value
-          opt.innerHTML = choice.label
-          timeSlotEl.appendChild(opt)
-        })
+  if (timeSlotEl.disabled) {
+    const date = timeSlotEl.value
+    const [day, hours] = date.split(' ')
+    const [first, second] = hours.split('-')
 
-        reduxStore.dispatch({
-          type: 'SET_TIME_SLOT',
-          taskIndex: domIndex(el),
-          value: timeSlotEl.value
-        })
-      })
+    const firstDate = new Date(`${day} ${first}`)
+    const secondDate = new Date(`${day} ${second}`)
+
+    const timeSlot = `${moment(day).format('Do MMM YYYY')} ${hours}`
+
+    reactRoot.render(
+      <div
+        style={{ marginTop: '0.5em' }}
+        title={`${firstDate.toLocaleString()} - ${secondDate.toLocaleString()}`}>
+        {timeSlot}
+      </div>,
+    )
+    return
+  }
+
+  const initialChoices = JSON.parse(timeSlotEl.dataset.choices)
+
+  timeSlotEl.value = initialChoices[0].value
+
+  const [date, hours] = initialChoices[0].value.split(' ')
+  const [first, second] = hours.split('-')
+
+  const defaultValue = {
+    after: `${date} ${first}:00`,
+    before: `${date} ${second}:00`,
+  }
+
+  const onChange = newValue => {
+    timeSlotEl.value = newValue
+
+    reduxStore.dispatch({
+      type: 'SET_TIME_SLOT',
+      taskIndex: domIndex(el),
+      value: newValue,
     })
+  }
+
+  const onChangeFreePicker = ({ after, before }) => {
+    reduxStore.dispatch({
+      type: 'SET_BEFORE',
+      taskIndex: domIndex(el),
+      value: before.format(),
+    })
+
+    reduxStore.dispatch({
+      type: 'SET_AFTER',
+      taskIndex: domIndex(el),
+      value: after.format(),
+    })
+  }
+  const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
+
+  if (switchTimeSlotEl) {
+    const choices = {}
+    Array.from(switchTimeSlotEl.querySelectorAll('input[type="radio"]')).map(
+      el => {
+        choices[el.closest('label').textContent] = JSON.parse(
+          el.dataset.choices,
+        )
+      },
+    )
+    if (userAdmin) {
+      reactRoot.render(
+        <SwitchTimeSlotToDateTimePicker
+          timeSlotDefaultValue={timeSlotEl.value}
+          pickerDefaultValue={defaultValue}
+          initialChoices={initialChoices}
+          choices={choices}
+          onChange={onChange}
+          onChangeFreePicker={onChangeFreePicker}
+          taskIndex={domIndex(el)}
+        />,
+      )
+    } else {
+      reactRoot.render(
+        <TimeSlotSelect
+          choices={choices}
+          initialChoices={initialChoices}
+          onChange={onChange}
+        />,
+      )
+    }
+  } else {
+    const choices = {}
+    choices['Default'] = initialChoices
+    if (userAdmin) {
+      reactRoot.render(
+        <SwitchTimeSlotToDateTimePicker
+          timeSlotDefaultValue={timeSlotEl.value}
+          pickerDefaultValue={defaultValue}
+          initialChoices={initialChoices}
+          choices={choices}
+          onChange={onChange}
+          onChangeFreePicker={onChangeFreePicker}
+          taskIndex={domIndex(el)}
+        />,
+      )
+    } else {
+      reactRoot.render(
+        <TimeSlotSelect
+          choices={choices}
+          initialChoices={initialChoices}
+          onChange={onChange}
+        />,
+      )
+    }
   }
 }
 
 function createPackageForm(el, $list, cb) {
-
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
 
@@ -321,30 +525,24 @@ function createPackageForm(el, $list, cb) {
 }
 
 export function createPackagesWidget(el, packagesRequired, cb) {
-
-  const isNew = document.querySelectorAll(`#${el.id}_packages .delivery__form__packages__list-item`).length === 0
+  const isNew =
+    document.querySelectorAll(
+      `#${el.id}_packages .delivery__form__packages__list-item`,
+    ).length === 0
 
   if (isNew && packagesRequired) {
-    createPackageForm(
-      el,
-      $(`#${el.id}_packages_list`),
-      cb
-    )
+    createPackageForm(el, $(`#${el.id}_packages_list`), cb)
   }
 
-  $(`#${el.id}_packages_add`).click(function() {
+  $(`#${el.id}_packages_add`).click(function () {
     const selector = $(this).attr('data-target')
-    createPackageForm(
-      el,
-      $(selector),
-      cb
-    )
+    createPackageForm(el, $(selector), cb)
     if (cb && typeof cb === 'function') {
       cb(toPackages(el))
     }
   })
 
-  $(`#${el.id}_packages`).on('click', '[data-delete]', function() {
+  $(`#${el.id}_packages`).on('click', '[data-delete]', function () {
     const $target = $($(this).attr('data-target'))
 
     if ($target.length === 0) {
@@ -363,7 +561,7 @@ export function createPackagesWidget(el, packagesRequired, cb) {
     }
   })
 
-  $(`#${el.id}_packages`).on('change', 'select', function() {
+  $(`#${el.id}_packages`).on('change', 'select', function () {
     if (cb && typeof cb === 'function') {
       cb(toPackages(el))
     }
@@ -371,35 +569,31 @@ export function createPackagesWidget(el, packagesRequired, cb) {
 }
 
 function parseWeight(value) {
-
-  const floatValue = parseFloat((value || '0.0'))
+  const floatValue = parseFloat(value || '0.0')
   if (isNaN(floatValue)) {
     return 0
   }
 
-  return parseInt((floatValue * 1000), 10)
+  return parseInt(floatValue * 1000, 10)
 }
 
 const loadTags = _.once(() => {
-
   return axios({
     method: 'get',
     url: window.Routing.generate('admin_tags', { format: 'json' }),
-  })
-  .then(response => response.data)
+  }).then(response => response.data)
 })
 
 // https://stackoverflow.com/questions/494143/creating-a-new-dom-element-from-an-html-string-using-built-in-dom-methods-or-pro
 function createElementFromHTML(htmlString) {
-  var div = document.createElement('div');
-  div.innerHTML = htmlString.trim();
+  var div = document.createElement('div')
+  div.innerHTML = htmlString.trim()
 
   // Change this to div.childNodes to support multiple top-level nodes
-  return div.firstChild;
+  return div.firstChild
 }
 
 function initSubForm(name, taskEl, preloadedState, userAdmin) {
-
   const task = {
     type: getTaskType(taskEl),
     address: null,
@@ -412,7 +606,7 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     reduxStore.dispatch({
       type: 'ADD_DROPOFF',
       taskIndex: domIndex(taskEl),
-      value: task
+      value: task,
     })
   }
 
@@ -425,7 +619,13 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     }
   })
 
-  createDatePickerWidget(taskEl, userAdmin)
+  const timeSlotEl = document.querySelector(`#${taskEl.id}_timeSlot`)
+
+  if (timeSlotEl) {
+    createTimeSlotWidget(taskEl, userAdmin)
+  } else {
+    createDatePickerWidget(taskEl, userAdmin)
+  }
 
   const tagsEl = document.querySelector(`#${taskEl.id}_tagsAsString`)
   if (tagsEl) {
@@ -434,18 +634,17 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     })
   }
 
-  createSwitchTimeSlotWidget(taskEl)
-
   const deleteBtn = taskEl.querySelector('[data-delete="task"]')
 
   if (deleteBtn) {
-
     // We want at least one dropoff
     if (collectionHolder.children.length === 2) {
-      document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+      document
+        .querySelectorAll('[data-delete="task"]')
+        .forEach(el => el.classList.add('d-none'))
     }
 
-    deleteBtn.addEventListener('click', (e) => {
+    deleteBtn.addEventListener('click', e => {
       e.preventDefault()
       reduxStore.dispatch({
         type: 'REMOVE_DROPOFF',
@@ -454,11 +653,13 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
       taskEl.remove()
       // We want at least one dropoff
       if (collectionHolder.children.length === 2) {
-        document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+        document
+          .querySelectorAll('[data-delete="task"]')
+          .forEach(el => el.classList.add('d-none'))
       }
-      const indexes = Array
-        .from(collectionHolder.children)
-        .map(el => parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10))
+      const indexes = Array.from(collectionHolder.children).map(el =>
+        parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10),
+      )
       collectionHolder.dataset.index = Math.max(...indexes) + 1
     })
   }
@@ -466,7 +667,13 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   const packages = document.querySelector(`#${taskEl.id}_packages`)
   if (packages) {
     const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-    createPackagesWidget(taskEl, packagesRequired, packages => reduxStore.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex: domIndex(taskEl), packages }))
+    createPackagesWidget(taskEl, packagesRequired, packages =>
+      reduxStore.dispatch({
+        type: 'SET_TASK_PACKAGES',
+        taskIndex: domIndex(taskEl),
+        packages,
+      }),
+    )
   }
 
   const weightEl = document.querySelector(`#${taskEl.id}_weight`)
@@ -474,39 +681,43 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
   if (preloadedState) {
     const index = preloadedState.tasks.indexOf(task)
     if (-1 !== index) {
-      preloadedState.tasks[index].weight = weightEl ? parseWeight(weightEl.value) : 0
+      preloadedState.tasks[index].weight = weightEl
+        ? parseWeight(weightEl.value)
+        : 0
     }
   }
 
   if (weightEl) {
-    weightEl.addEventListener('input', _.debounce(e => {
-      reduxStore.dispatch({
-        type: 'SET_WEIGHT',
-        value: parseWeight(e.target.value),
-        taskIndex: domIndex(taskEl),
-      })
-    }, 350))
+    weightEl.addEventListener(
+      'input',
+      _.debounce(e => {
+        reduxStore.dispatch({
+          type: 'SET_WEIGHT',
+          value: parseWeight(e.target.value),
+          taskIndex: domIndex(taskEl),
+        })
+      }, 350),
+    )
   }
 }
 
 function createOnTasksChanged(onChange) {
+  return ({ getState }) =>
+    next =>
+    action => {
+      const prevState = getState()
+      const result = next(action)
+      const state = getState()
 
-  return ({ getState }) => (next) => (action) => {
+      if (prevState.tasks !== state.tasks) {
+        onChange(state)
+      }
 
-    const prevState = getState()
-    const result = next(action)
-    const state = getState()
-
-    if (prevState.tasks !== state.tasks) {
-      onChange(state)
+      return result
     }
-
-    return result
-  }
 }
 
-export default function(name, options) {
-
+export default function (name, options) {
   const el = document.querySelector(`form[name="${name}"]`)
 
   const form = new DeliveryForm()
@@ -515,12 +726,11 @@ export default function(name, options) {
   const onReady = options.onReady.bind(form)
   const onSubmit = options.onSubmit.bind(form)
 
-  const handleSuggestionsAfterSubmit = () => (next) => (action) => {
-
+  const handleSuggestionsAfterSubmit = () => next => action => {
     const result = next(action)
 
     if (acceptSuggestions.match(action) && action.payload.length > 0) {
-        // Reorder tasks in the DOM when suggestion is accepted
+      // Reorder tasks in the DOM when suggestion is accepted
       reorder(action.payload[0].order)
     }
 
@@ -532,7 +742,6 @@ export default function(name, options) {
   }
 
   if (el) {
-
     // Intialize Redux store
     let preloadedState = {
       tasks: [],
@@ -541,7 +750,7 @@ export default function(name, options) {
     if (el.dataset.store) {
       preloadedState = {
         ...preloadedState,
-        [storeSlice.name]: el.dataset.store
+        [storeSlice.name]: el.dataset.store,
       }
     }
 
@@ -554,90 +763,108 @@ export default function(name, options) {
           ...recurrenceSlice.getInitialState(),
           rule: subscription.rule,
           isCancelled: subscription.isCancelled,
-        }
+        },
       }
 
       if (subscription.isCancelled) {
-        $('button[type="submit"]').addClass('display-none');
+        $('button[type="submit"]').addClass('display-none')
       }
     }
 
     // tasks_0, tasks_1...
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
-    taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
+    taskForms.forEach(taskEl =>
+      initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin),
+    )
 
     reduxStore = configureStore({
       reducer: {
         [storeSlice.name]: storeSlice.reducer,
-        "tasks": tasksSlice.reducer,
+        tasks: tasksSlice.reducer,
         [recurrenceSlice.name]: recurrenceSlice.reducer,
         [suggestionsSlice.name]: suggestionsSlice.reducer,
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([createOnTasksChanged(onChange), handleSuggestionsAfterSubmit]),
+        getDefaultMiddleware().concat([
+          createOnTasksChanged(onChange),
+          handleSuggestionsAfterSubmit,
+        ]),
     })
 
     onReady(preloadedState)
 
     new ClipboardJS('#copy', {
-      text: function() {
+      text: function () {
         return document.getElementById('tracking_link').getAttribute('href')
-      }
+      },
     })
 
-    el.addEventListener('submit', (e) => {
+    el.addEventListener(
+      'submit',
+      e => {
+        e.preventDefault()
 
-      e.preventDefault()
+        const hasInvalidInput = _.find(taskForms, taskEl => {
+          const type = taskEl.getAttribute('id').replace(name + '_', '')
 
-      const hasInvalidInput = _.find(taskForms, taskEl => {
+          const isNewAddrInput = document.querySelector(
+            `#${name}_${type}_address_isNewAddress`,
+          )
+          if (!isNewAddrInput) {
+            return false
+          }
 
-        const type = taskEl.getAttribute('id').replace(name + '_', '')
+          const searchInput = document.querySelector(
+            `#${name}_${type}_address input[type="search"][data-is-address-picker="true"]`,
+          )
+          const latInput = document.querySelector(
+            `#${name}_${type}_address [data-address-prop="latitude"]`,
+          )
+          const lngInput = document.querySelector(
+            `#${name}_${type}_address [data-address-prop="longitude"]`,
+          )
+          const streetAddrInput = document.querySelector(
+            `#${name}_${type}_address_newAddress_streetAddress`,
+          )
 
-        const isNewAddrInput = document.querySelector(`#${name}_${type}_address_isNewAddress`)
-        if (!isNewAddrInput) {
-          return false
+          const isValid = validateForm(
+            e,
+            searchInput,
+            latInput,
+            lngInput,
+            streetAddrInput,
+          )
+
+          return !isValid
+        })
+
+        if (!hasInvalidInput) {
+          form.disable()
         }
 
-        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"][data-is-address-picker="true"]`);
-        const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
-        const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
-        const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
+        const recurrenceField = document.querySelector('#delivery_recurrence')
+        if (recurrenceField) {
+          const recurrenceRule = selectRecurrenceRule(reduxStore.getState())
+          recurrenceField.value = JSON.stringify({
+            rule: recurrenceRule,
+          })
+        }
 
-        const isValid = validateForm(e, searchInput, latInput, lngInput, streetAddrInput)
-
-        return !isValid
-      })
-
-      if (!hasInvalidInput) {
-        form.disable()
-      }
-
-      const recurrenceField = document.querySelector('#delivery_recurrence')
-      if (recurrenceField) {
-        const recurrenceRule = selectRecurrenceRule(reduxStore.getState())
-        recurrenceField.value = JSON.stringify({
-          rule: recurrenceRule
-        })
-      }
-
-      onSubmit(el, reduxStore.getState())
-      return false
-
-    }, false)
+        onSubmit(el, reduxStore.getState())
+        return false
+      },
+      false,
+    )
 
     // https://symfony.com/doc/current/form/form_collections.html#allowing-new-tags-with-the-prototype
     const addTaskButton = el.querySelector('[data-add="dropoff"]')
     if (addTaskButton) {
       addTaskButton.addEventListener('click', () => {
-
-        const newHtml = collectionHolder
-          .dataset
-          .prototype
-          .replace(
-            /__name__/g,
-            collectionHolder.dataset.index
-          );
+        const newHtml = collectionHolder.dataset.prototype.replace(
+          /__name__/g,
+          collectionHolder.dataset.index,
+        )
 
         const item = createElementFromHTML(newHtml)
 
@@ -648,28 +875,32 @@ export default function(name, options) {
         collectionHolder.dataset.index++
 
         if (collectionHolder.children.length > 2) {
-          document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.remove('d-none'))
+          document
+            .querySelectorAll('[data-delete="task"]')
+            .forEach(el => el.classList.remove('d-none'))
         }
       })
     }
 
     const reactRoot = createRoot(document.getElementById('delivery-form-modal'))
     reactRoot.render(
-      <Provider store={ reduxStore }>
+      <Provider store={reduxStore}>
         <SuggestionModal />
-      </Provider>
+      </Provider>,
     )
   }
 
-  const recurrenceRulesContainer = document.querySelector('#delivery_form__recurrence__container')
+  const recurrenceRulesContainer = document.querySelector(
+    '#delivery_form__recurrence__container',
+  )
   if (recurrenceRulesContainer) {
-    const root = createRoot(recurrenceRulesContainer);
+    const root = createRoot(recurrenceRulesContainer)
     root.render(
-      <Provider store={ reduxStore }>
-        <I18nextProvider i18n={ i18n }>
+      <Provider store={reduxStore}>
+        <I18nextProvider i18n={i18n}>
           <RecurrenceRules />
         </I18nextProvider>
-      </Provider>
+      </Provider>,
     )
   }
 

@@ -50,6 +50,28 @@ class TimeSlotChoiceType extends AbstractType
             'choice_value' => function (TimeSlotChoice $choice = null) {
                 return $choice ? (string) $choice : '';
             },
+            'attr' => function (Options $options) {
+
+                /*if (isset($options['disabled']) && isset($options['data']) && true === $options['disabled']) {*/
+                /*    return [];*/
+                /*}*/
+
+                $choiceLoader = new TimeSlotChoiceLoader($options['time_slot'], $this->country);
+
+                $choiceList = $choiceLoader->loadChoiceList();
+
+                $choices = [];
+                foreach ($choiceList->getChoices() as $choice) {
+                    $choices[] = [
+                        'label' => $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod()),
+                        'value' => (string) $choice,
+                    ];
+                }
+
+                return [
+                    'data-choices' => json_encode($choices),
+                ];
+            }
         ]);
         $resolver->setAllowedTypes('time_slot', ['null', TimeSlot::class]);
     }
