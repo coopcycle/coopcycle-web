@@ -639,7 +639,7 @@ services:
     public: true
     class: AppBundle\Service\Routing\OsrmWithFallback
 
-  AppBundle\Filter\OrderDateFilter:
+  AppBundle\Api\Filter\OrderDateFilter:
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\DateFilter:
