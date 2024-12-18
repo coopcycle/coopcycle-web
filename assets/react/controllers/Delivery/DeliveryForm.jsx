@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react'
-import { Formik, Form } from 'formik'
-// import PickUp from './PickUp'
+import PickUp from './PickUp'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
-import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
+// import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 
 
 
@@ -30,18 +29,11 @@ export default function ({ isNew, storeId }) {
 
   console.log("deliveryAddress", deliveryAddress)
   
-  const initialValues = {
-    name: '',
-    contactName: '',
-    streetAddress: '',
-    telephone: '',
-    timeSlot: '',
-    commentary: '',
-  }
 
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log(values)
-    setSubmitting(false)
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitStatus = (status) => {
+    setIsSubmitting(status);
   }
 
   const baseURL = location.protocol + '//' + location.host
@@ -72,26 +64,18 @@ export default function ({ isNew, storeId }) {
     
 
   console.log(isNew)
-  console.log(storeId)
+  
   return (
     <ConfigProvider locale={antdLocale}>
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {({ isSubmitting }) => (
-          <Form>
-            
-            <AddressBookNew
-              addresses={addresses}
-              deliveryAddress={deliveryAddress}
-              setDeliveryAddress={setDeliveryAddress}
-            />
-            {/* <PickUp initialValues={initialValues} /> */}
-            
-          <button type="submit" disabled={isSubmitting}>
-            Soumettre
-          </button>
-        </Form>
-      )}
-      </Formik>
+      <PickUp
+        addresses={addresses}
+        deliveryAddress={deliveryAddress}
+        setDeliveryAddress={setDeliveryAddress}
+        onSubmitStatus={handleSubmitStatus}
+      />
+        <button type="submit" disabled={isSubmitting}>
+          Soumettre
+        </button>
       </ConfigProvider>
   )
 }
