@@ -12,7 +12,7 @@ export default () => {
   const [ dateRange, setDateRange ] = useState(null)
 
   const [ currentPage, setCurrentPage ] = useState(1)
-  const [ pageSize, setPageSize ] = useState(30)
+  const [ pageSize, setPageSize ] = useState(10)
 
   const [ trigger, { isLoading, data } ] = useLazyGetOrdersQuery()
 
