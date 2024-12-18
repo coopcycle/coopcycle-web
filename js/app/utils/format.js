@@ -1,14 +1,14 @@
 export function money(amount) {
-  const { coutry, currencyCode } = document.body.dataset;
-  return new Intl.NumberFormat(coutry, {
+  const { country, currencyCode } = document.body.dataset;
+  return new Intl.NumberFormat(country, {
     style: "currency",
     currency: currencyCode,
   }).format(amount / 100);
 }
 
 export function weight(amount) {
-  const { coutry } = document.body.dataset;
-  return new Intl.NumberFormat(coutry, {
+  const { country } = document.body.dataset;
+  return new Intl.NumberFormat(country, {
     style: "unit",
     unit: "kilogram",
   }).format(amount / 1000);
