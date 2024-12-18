@@ -10,6 +10,9 @@ import axios from 'axios'
 export default function ({ isNew, storeId }) {
 
   const [addresses, setAddresses] = useState([])
+  const [timeSlotsLabel, setTimeSlotsLabel] = useState([])
+  const [timeSlotsOptions, setTimeSlotsOptions] = useState({})
+  const [defaultTimeSlotName, setDefaultTimeSlotName] = useState("")
   /**
    * deliveryAddress contains :
    * the address information as an object, 
@@ -27,7 +30,6 @@ export default function ({ isNew, storeId }) {
     toBeModified: false,
   })
 
-  console.log("deliveryAddress", deliveryAddress)
   
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,7 +63,85 @@ export default function ({ isNew, storeId }) {
     }
   }, [storeId])
 
+  useEffect(() => {
+    const getTimeSlotsOptions = async () => {
+     const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+    const jwt = jwtResp.jwt
+      const url = `${baseURL}/api/stores/${storeId}/time_slots`
+      
+      const response = await axios.get(
+      url,
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+      }
+      )
+      const timeSlotsLabel = await response.data["hydra:member"]   
+      setTimeSlotsLabel(timeSlotsLabel)
+    }
+     if (storeId) {
+        getTimeSlotsOptions()
+      }
+  }, [storeId])
+  
+  useEffect(() => {
+    // on vient récupérer 
+    const createTimeSlotsObjects = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+      const timeSlotChoices = {}
+      for (const label of timeSlotsLabel) {
+        const name = label.name
+        const id = label["@id"]
+        const url = `${baseURL}${id}/choices`
+        const response = await axios.get(
+          url, 
+        {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+        }
+        )
+        const choices = response.data.choices
+
+        const values = choices.map(choice => (choice.value))
+        timeSlotChoices[name]= values
+      }
+      setTimeSlotsOptions(timeSlotChoices)
+    }
     
+    createTimeSlotsObjects()
+    
+  }, [timeSlotsLabel])
+
+  useEffect(() => {
+    const generateDefaultTimeSlotOptions = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+
+      const url = `${baseURL}/api/stores/${storeId}`
+
+      const storeInfos = await axios.get(
+        url, 
+        {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        }
+        }
+      )
+      const defaultTimeSlot = storeInfos.data.timeSlot
+      const getDefaultTimeSlotName = () => {
+        const timeslot = timeSlotsLabel.find(label => label["@id"] = defaultTimeSlot)
+        
+        return timeslot.name
+      }
+
+      const defaultTimeSlotName = getDefaultTimeSlotName()
+      setDefaultTimeSlotName(defaultTimeSlotName)    
+    }
+    generateDefaultTimeSlotOptions()
+}, [timeSlotsOptions])
 
   console.log(isNew)
   
@@ -72,6 +152,8 @@ export default function ({ isNew, storeId }) {
         deliveryAddress={deliveryAddress}
         setDeliveryAddress={setDeliveryAddress}
         onSubmitStatus={handleSubmitStatus}
+        timeSlotsOptions={timeSlotsOptions}
+        defaultTimeSlotName={defaultTimeSlotName}
       />
         <button type="submit" disabled={isSubmitting}>
           Soumettre
