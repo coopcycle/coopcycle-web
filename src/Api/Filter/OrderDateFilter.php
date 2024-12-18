@@ -1,7 +1,8 @@
 <?php
 
-namespace AppBundle\Filter;
+namespace AppBundle\Api\Filter;
 
+use ApiPlatform\Core\Bridge\Doctrine\Common\Filter\DateFilterInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -16,13 +17,23 @@ final class OrderDateFilter extends AbstractContextAwareFilter
             return;
         }
 
-        $dateTime = new \DateTime($value);
+        $rangeStart = null;
+        $rangeEnd = null;
+
+        if (\is_array($value)) {
+            $rangeStart = new \DateTime($value[DateFilterInterface::PARAMETER_AFTER]);
+            $rangeEnd = new \DateTime($value[DateFilterInterface::PARAMETER_BEFORE]);
+        } else {
+            $dateTime = new \DateTime($value);
+            $rangeStart = $dateTime;
+            $rangeEnd = $dateTime;
+        }
 
         $queryBuilder
             ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
             // FIXME Move this to another filter?
             ->andWhere('o.state != :state_cart')
-            ->setParameter('range', sprintf('[%s, %s]', $dateTime->format('Y-m-d 00:00:00'), $dateTime->format('Y-m-d 23:59:59')))
+            ->setParameter('range', sprintf('[%s, %s]', $rangeStart->format('Y-m-d 00:00:00'), $rangeEnd->format('Y-m-d 23:59:59')))
             ->setParameter('state_cart', OrderInterface::STATE_CART);
     }
 

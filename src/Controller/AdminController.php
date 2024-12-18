@@ -397,6 +397,26 @@ class AdminController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/admin/orders/{id}/edit", name="admin_order_edit")
+     */
+    public function editOrderAction($id)
+    {
+        $order = $this->orderRepository->find($id);
+
+        if (!$order) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
+        }
+
+        $delivery = $order->getDelivery();
+
+        if (null === $delivery) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not have a delivery', $id));
+        }
+
+        return $this->redirectToRoute('admin_delivery', ['id' => $delivery->getId()]);
+    }
+
     public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
     {
         if ($request->query->has('order')) {
@@ -2446,7 +2466,7 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
+            $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 
@@ -2993,4 +3013,13 @@ class AdminController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/admin/invoicing", name="admin_invoicing")
+     */
+    public function invoicingAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
 }

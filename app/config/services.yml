@@ -639,7 +639,7 @@ services:
     public: true
     class: AppBundle\Service\Routing\OsrmWithFallback
 
-  AppBundle\Filter\OrderDateFilter:
+  AppBundle\Api\Filter\OrderDateFilter:
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\DateFilter:
@@ -946,6 +946,12 @@ services:
     tags:
       - { name: 'api_platform.subresource_data_provider', priority: 2 }
     autoconfigure: false
+
+  AppBundle\Api\DataProvider\StoreOrdersSubresourceDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.subresource_data_provider', priority: 2 }
 
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
