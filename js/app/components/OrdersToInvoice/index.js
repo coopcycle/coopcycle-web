@@ -65,7 +65,14 @@ export default () => {
       dataIndex: 'total',
       key: 'total',
     }, {
-      key: 'action', align: 'right', render: (record) => <div>EDIT TODO</div>,
+      key: 'action',
+      dataIndex: 'id',
+      align: 'right',
+      render: (id) => <a
+        href={ window.Routing.generate('admin_order_edit', { id }) } target="_blank"
+        rel="noopener noreferrer">
+        { t('EDIT') }
+      </a>,
     } ]
 
   const reloadData = (page, pageSize) => {

@@ -757,6 +757,7 @@ fos_js_routing:
         - admin_form
         - admin_metrics
         - admin_order
+        - admin_order_edit
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel
