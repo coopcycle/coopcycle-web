@@ -31,7 +31,7 @@ export default () => {
         number: order.number,
         shippedAt: order.shippedAt,
         description: order.description,
-        subTotal: order.subTotal,
+        subTotal: order.total - order.taxTotal,
         taxTotal: order.taxTotal,
         total: order.total,
       })),
