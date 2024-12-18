@@ -11,26 +11,32 @@ export default () => {
   const [ storeId, setStoreId ] = useState(null)
   const [ dateRange, setDateRange ] = useState(null)
 
+  const [ currentPage, setCurrentPage ] = useState(1)
+  const [ pageSize, setPageSize ] = useState(30)
+
   const [ trigger, { isLoading, data } ] = useLazyGetOrdersQuery()
 
   const { t } = useTranslation()
 
   const [ isModalOpen, setModalOpen ] = useState(false)
 
-  const dataSource = useMemo(() => {
+  const { dataSource, total } = useMemo(() => {
     if (!data) {
-      return undefined
+      return { datasource: undefined, total: 0 }
     }
 
-    return data.map((order) => {
-      return {
-        ...order, //todo: localise
-        description: `Order #${ order.number } - Pickup: A; Dropoff: B  - etc. - ${ order.notes }`,
-        subTotal: order.total - order.taxTotal,
-        shippedAt: order.shippedAt, // deprecated?
-        // shippedAt: order.shippingTimeRange[1],
-      }
-    })
+    return {
+      dataSource: data['hydra:member'].map((order) => ({
+        ...order,
+        key: order['@id'],
+        number: order.number,
+        shippedAt: order.shippedAt,
+        description: order.description,
+        subTotal: order.subTotal,
+        taxTotal: order.taxTotal,
+        total: order.total,
+      })), total: data['hydra:totalItems'],
+    }
   }, [ data ])
 
   const columns = [
@@ -62,6 +68,17 @@ export default () => {
       key: 'action', align: 'right', render: (record) => <div>EDIT TODO</div>,
     } ]
 
+  const reloadData = (page, pageSize) => {
+    trigger({
+      storeId,
+      dateRange: [
+        dateRange[0].format('YYYY-MM-DD'),
+        dateRange[1].format('YYYY-MM-DD') ],
+      page: page,
+      pageSize: pageSize,
+    })
+  }
+
   return (<div>
       <h3>{ t('ADMIN_ORDERS_TO_INVOICE_TITLE') }</h3>
       <div>
@@ -78,19 +95,9 @@ export default () => {
             return
           }
 
-          trigger({
-            storeId, dateRange: [
-              dateRange[0].format('YYYY-MM-DD'),
-              dateRange[1].format('YYYY-MM-DD') ],
-          })
+          reloadData(currentPage, pageSize)
+
         } }>{ t('ADMIN_ORDERS_TO_INVOICE_REFRESH') }</Button>
-      </div>
-      <div className="row pull-right mb-2">
-        <div className="col-md-12">
-          <a onClick={ () => setModalOpen(true) } className="btn btn-success">
-            <i className="fa fa-plus"></i> { t('ADD_BUTTON') }
-          </a>
-        </div>
       </div>
       <div className="row">
         <div className="col-md-12">
@@ -99,6 +106,15 @@ export default () => {
             loading={ isLoading }
             dataSource={ dataSource }
             rowKey="@id"
+            pagination={ {
+              pageSize, total,
+            } }
+            onChange={ (pagination) => {
+              reloadData(pagination.current, pagination.pageSize)
+
+              setCurrentPage(pagination.current)
+              setPageSize(pagination.pageSize)
+            } }
           />
         </div>
       </div>
