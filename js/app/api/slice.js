@@ -27,11 +27,11 @@ export const apiSlice = createApi({
             // 'state': 'fulfilled',
             'date[after]': args.dateRange[0],
             'date[before]': args.dateRange[1],
+            'page': args.page,
+            'itemsPerPage': args.pageSize,
           },
         })
       },
-      transformResponse: (response, meta, arg) =>
-        response['hydra:member'],
     }),
     getOrderTiming: builder.query({
       query: nodeId => `${ nodeId }/timing`,
