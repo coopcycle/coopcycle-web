@@ -68,6 +68,7 @@ trait SelectPaymentMethodTrait
         )->first();
 
         $stripe = [];
+        $paygreen = [];
         if ($cardPayment) {
             $hashId = $hashids8->encode($cardPayment->getId());
             $stripe = [
@@ -76,11 +77,15 @@ trait SelectPaymentMethodTrait
                 'clonePaymentMethodToConnectedAccountURL' => $this->generateUrl('stripe_clone_payment_method', ['hashId' => $hashId]),
                 'createSetupIntentOrAttachPMURL' => $this->generateUrl('stripe_create_setup_intent_or_attach_pm', ['hashId' => $hashId]),
             ];
+            $paygreen = [
+                'createPaymentOrderURL' => $this->generateUrl('paygreen_create_payment_order', ['hashId' => $hashId]),
+            ];
         }
 
         return new JsonResponse([
             'payments' => $normalizer->normalize($payments, 'json', ['groups' => ['payment']]),
             'stripe' => $stripe,
+            'paygreen' => $paygreen,
         ]);
     }
 }
