@@ -27,7 +27,8 @@
     "form-data": "^2.3.3",
     "lodash": "^4.17.21",
     "promise": "^8.3.0",
-    "whatwg-fetch": "^2.0.4"
+    "whatwg-fetch": "^2.0.4",
+    "yup": "^1.5.0"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -96,7 +97,7 @@
     "eslint-webpack-plugin": "^2.6.0",
     "font-awesome": "^4.7.0",
     "fontawesome-markers": "^4.6.1",
-    "formik": "^2.2.9",
+    "formik": "^2.4.6",
     "fuse.js": "^3.4.5",
     "gasparesganga-jquery-loading-overlay": "^2.1.7",
     "howler": "^2.2.3",
@@ -131,6 +132,7 @@
     "papaparse": "^5.4.1",
     "payment-icons": "^1.2.1",
     "postcss-loader": "^6.0.0",
+    "prettier": "^3.4.2",
     "prismjs": "^1.29.0",
     "prop-types": "^15.8.1",
     "qs": "^6.11.0",
