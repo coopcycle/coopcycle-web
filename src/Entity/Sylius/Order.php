@@ -1971,12 +1971,12 @@ class Order extends BaseOrder implements OrderInterface
 
         $productVariant = $deliveryItem->getVariant();
 
-        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
-            // price based on the PricingRuleSet
-            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
-        } else {
+        if (str_starts_with($productVariant->getCode(), 'RBTRR-PRC-')) {
             // custom price
             return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+        } else {
+            // price based on the PricingRuleSet
+            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
         }
     }
 }

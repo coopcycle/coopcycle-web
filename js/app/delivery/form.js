@@ -103,17 +103,14 @@ const arbitraryPriceEl = document.getElementById('delivery_arbitraryPrice')
 
 if (arbitraryPriceEl) {
   const containerEl = document.querySelector('[data-variant-details]')
-  const variantNameEl = document.getElementById('delivery_variantName')
   const variantPriceEl = document.getElementById('delivery_variantPrice')
 
   const setIsChecked = (isChecked) => {
     if (isChecked) {
       containerEl.classList.remove('d-none')
-      variantNameEl.setAttribute('required', 'required');
       variantPriceEl.setAttribute('required', 'required');
     } else {
       containerEl.classList.add('d-none')
-      variantNameEl.removeAttribute('required');
       variantPriceEl.removeAttribute('required');
     }
   }
