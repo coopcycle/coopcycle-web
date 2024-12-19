@@ -8,6 +8,19 @@ import Button from '../core/Button'
 import { money } from '../../utils/format'
 import { moment } from '../../../shared'
 
+function formatDescription(t, order) {
+  // Delivery orders have a single item that is "Delivery"
+  if (order.items.length !== 1) {
+    return ''
+  }
+
+  const deliveryItem = order.items[0]
+
+  return `${t('ORDER')} #${order.number} - ${deliveryItem.name} - ${
+    deliveryItem.variantName
+  }`
+}
+
 export default () => {
   const [storeId, setStoreId] = useState(null)
   const [dateRange, setDateRange] = useState(null)
@@ -34,7 +47,7 @@ export default () => {
         date: order.shippingTimeRange
           ? moment(order.shippingTimeRange[1]).format('l')
           : '?',
-        description: order.description,
+        description: formatDescription(t, order),
         subTotal: money(order.total - order.taxTotal),
         taxTotal: money(order.taxTotal),
         total: money(order.total),

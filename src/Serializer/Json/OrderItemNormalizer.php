@@ -59,6 +59,7 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
         $data['adjustments'] = $adjustmentsByType;
 
         $data['name'] = $object->getVariant()->getProduct()->getName();
+        $data['variantName'] = $object->getVariant()->getName();
 
         $restaurant = $object->getVariant()->getProduct()->getRestaurant();
 
