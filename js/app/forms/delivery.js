@@ -105,10 +105,18 @@ function createAddressWidget(el, cb) {
 
   new AddressBook(document.querySelector(`#${el.id}_address`), {
     allowSearchSavedAddresses: true,
-    existingAddressControl: document.querySelector(`#${el.id}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${el.id}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${el.id}_address_isNewAddress`),
-    duplicateAddressControl: document.querySelector(`#${el.id}_address_duplicateAddress`),
+    existingAddressControl: document.querySelector(
+      `#${el.id}_address_existingAddress`,
+    ), // sert à lui passer les adresses enregistées,
+    newAddressControl: document.querySelector(
+      `#${el.id}_address_newAddress_streetAddress`,
+    ), // champ pour saisir une adresse
+    isNewAddressControl: document.querySelector(
+      `#${el.id}_address_isNewAddress`, // sert à bind la nouvelle adresse entrée
+    ),
+    duplicateAddressControl: document.querySelector(
+      `#${el.id}_address_duplicateAddress`,
+    ),
     // Fields containing address details
     nameControl: document.querySelector(`#${el.id}_address_name`),
     telephoneControl: document.querySelector(`#${el.id}_address_telephone`),
@@ -120,7 +128,6 @@ function createAddressWidget(el, cb) {
       }
     },
     onChange: address => {
-
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         hideRememberAddress(el)
       } else {
@@ -130,7 +137,7 @@ function createAddressWidget(el, cb) {
       reduxStore.dispatch({
         type: 'SET_ADDRESS',
         taskIndex: domIndex(el),
-        value: address
+        value: address,
       })
     },
     onClear: () => {
@@ -139,7 +146,7 @@ function createAddressWidget(el, cb) {
         type: 'CLEAR_ADDRESS',
         taskIndex: domIndex(el),
       })
-    }
+    },
   })
 }
 
