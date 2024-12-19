@@ -7,30 +7,10 @@ import 'antd/es/input/style/index.css'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeId }) => {
-  const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+export default ({ storeId, storeDeliveryInfos }) => {
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
 
   console.log(storeDeliveryLabels)
-
-  useEffect(() => {
-    const fetchStoreInfos = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
-
-      const url = `${baseURL}/api/stores/${storeId}`
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      setStoreDeliveryInfos(response.data)
-    }
-    if (storeId) {
-      fetchStoreInfos()
-    }
-  }, [storeId])
 
   useEffect(() => {
     const getTimeSlotsLabels = async () => {
@@ -133,6 +113,8 @@ export default ({ storeId }) => {
   }, [timeSlotChoices])
 
   console.log('dateswithts', datesWithTimeslots)
+
+  /** disabled dates */
 
   const dates = Object.keys(datesWithTimeslots || {}).map(date => moment(date))
 

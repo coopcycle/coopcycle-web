@@ -31,12 +31,11 @@ export default function ({ isNew, storeId }) {
   
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
 
   const handleSubmitStatus = (status) => {
     setIsSubmitting(status);
   }
-
-
 
   useEffect(() => {
     
@@ -61,6 +60,25 @@ export default function ({ isNew, storeId }) {
     }
   }, [storeId])
 
+  useEffect(() => {
+    const fetchStoreInfos = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+
+      const url = `${baseURL}/api/stores/${storeId}`
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      setStoreDeliveryInfos(response.data)
+    }
+    if (storeId) {
+      fetchStoreInfos()
+    }
+  }, [storeId])
+
   console.log(isNew)
   
   return (
@@ -71,6 +89,7 @@ export default function ({ isNew, storeId }) {
         setDeliveryAddress={setDeliveryAddress}
         onSubmitStatus={handleSubmitStatus}
         storeId={storeId}
+        storeDeliveryInfos={storeDeliveryInfos}
       />
         <button type="submit" disabled={isSubmitting}>
           Soumettre
