@@ -7,7 +7,7 @@ import 'antd/es/input/style/index.css'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeId, storeDeliveryInfos }) => {
+export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
 
   console.log(storeDeliveryLabels)
@@ -55,6 +55,7 @@ export default ({ storeId, storeDeliveryInfos }) => {
   /** We initialize with the default timesSlots, then changed when user selects a different option */
 
   const [timeSlotChoices, setTimeSlotChoices] = useState([])
+  console.log('timeslotChoices', timeSlotChoices)
 
   const getTimeSlotOptions = async timeSlotUrl => {
     const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
@@ -111,6 +112,16 @@ export default ({ storeId, storeDeliveryInfos }) => {
     }
     formatTimeSlots()
   }, [timeSlotChoices])
+
+  useEffect(() => {
+    if (Object.keys(values).length !== 0) {
+      const date = values.date.format('YYYY-MM-DD')
+      const range = values.option
+      const [first, second] = range.split('-')
+      const timeSlot = `${date}T${first}:00Z/${date}T${second}:00Z`
+      setTimeSlotValue(timeSlot)
+    }
+  }, [values])
 
   console.log('dateswithts', datesWithTimeslots)
 

@@ -17,18 +17,6 @@ export default function ({ isNew, storeId }) {
    * if it needs to be saved (in case it's new),
    * if it needs to be modified (in case it's already saved)
    */
-  const [deliveryAddress, setDeliveryAddress] = useState({
-    address: {
-      streetAddress: "",
-      name: "", 
-      contactName: "", 
-      telephone: ""
-      }, 
-    toBeRemembered: false, 
-    toBeModified: false,
-  })
-
-  
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
@@ -85,8 +73,6 @@ export default function ({ isNew, storeId }) {
     <ConfigProvider locale={antdLocale}>
       <PickUp
         addresses={addresses}
-        deliveryAddress={deliveryAddress}
-        setDeliveryAddress={setDeliveryAddress}
         onSubmitStatus={handleSubmitStatus}
         storeId={storeId}
         storeDeliveryInfos={storeDeliveryInfos}
