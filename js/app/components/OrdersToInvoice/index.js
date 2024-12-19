@@ -96,6 +96,7 @@ export default () => {
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
+      state: ['new', 'accepted', 'fulfilled'],
       page: page,
       pageSize: pageSize,
     })

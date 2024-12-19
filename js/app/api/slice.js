@@ -20,24 +20,28 @@ export const apiSlice = createApi({
     }),
     getOrders: builder.query({
       query: args => {
-        return ({
-          url: `api/stores/${ args.storeId }/orders`,
+        let stateParam = ''
+        if (args.state && args.state.length > 0) {
+          stateParam =
+            '?' + args.state.map(state => `state[]=${state}`).join('&')
+        }
+
+        return {
+          url: `api/stores/${args.storeId}/orders${stateParam}`,
           params: {
-            //TODO: filter out cancelled orders
-            // 'state': 'fulfilled',
             'date[after]': args.dateRange[0],
             'date[before]': args.dateRange[1],
-            'page': args.page,
-            'itemsPerPage': args.pageSize,
+            page: args.page,
+            itemsPerPage: args.pageSize,
           },
-        })
+        }
       },
     }),
     getOrderTiming: builder.query({
-      query: nodeId => `${ nodeId }/timing`,
+      query: nodeId => `${nodeId}/timing`,
     }),
     getOrderValidate: builder.query({
-      query: nodeId => `${ nodeId }/validate`,
+      query: nodeId => `${nodeId}/validate`,
     }),
     updateOrder: builder.mutation({
       query: ({ nodeId, ...patch }) => ({
