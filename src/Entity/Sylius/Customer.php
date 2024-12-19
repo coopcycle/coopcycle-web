@@ -7,6 +7,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Dabba\CustomerCredentials as DabbaCustomerCredentials;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
 use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
+use AppBundle\Entity\Paygreen\CustomerDetails as PaygreenCustomerDetails;
 use AppBundle\Entity\User;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -61,6 +62,8 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
     protected ?EdenredCustomerCredentials $edenredCredentials = null;
 
     protected ?DabbaCustomerCredentials $dabbaCredentials = null;
+
+    protected ?PaygreenCustomerDetails $paygreenDetails = null;
 
     public function __construct()
     {
@@ -371,5 +374,31 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
         $this->dabbaCredentials->setCustomer(null);
         $this->dabbaCredentials = null;
+    }
+
+    public function setPaygreenBuyerId(string $buyerId)
+    {
+        if (null === $this->paygreenDetails) {
+
+            $this->paygreenDetails = new PaygreenCustomerDetails();
+            $this->paygreenDetails->setCustomer($this);
+        }
+
+        $this->paygreenDetails->setBuyerId($buyerId);
+    }
+
+    public function getPaygreenBuyerId(): ?string
+    {
+        if (null === $this->paygreenDetails) {
+
+            return null;
+        }
+
+        return $this->paygreenDetails->getBuyerId();
+    }
+
+    public function hasPaygreenBuyerId(): bool
+    {
+        return null !== $this->getPaygreenBuyerId();
     }
 }
