@@ -32,7 +32,7 @@ class ConfirmQuote
     {
         $delivery = $this->serializer->deserialize($data->getPayload(), Delivery::class, 'jsonld');
 
-        $order = $this->orderFactory->createForDelivery($delivery, new PricingRulesBasedPrice($data->getAmount()));
+        $order = $this->orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($data->getAmount()));
 
         $store = $data->getStore();
         $store->addDelivery($delivery);

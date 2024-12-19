@@ -2446,7 +2446,7 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
+            $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 
@@ -2992,5 +2992,4 @@ class AdminController extends AbstractController
             'cube_token' => $tokenFactory->createToken(),
         ]);
     }
-
 }
