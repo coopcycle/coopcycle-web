@@ -4,7 +4,7 @@ import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import {Input} from 'antd'
 
-export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus, timeSlotsOptions, defaultTimeSlotName }) => {
+export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus, timeSlotsOptions, defaultTimeSlotName, storeId }) => {
 
   const initialValues = {
     name: '',
@@ -41,6 +41,7 @@ export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus
               <SwitchTimeSlotFreePicker
                 timeSlotsOptions={timeSlotsOptions}
                 defaultTimeSlotName={defaultTimeSlotName}
+                storeId={storeId}
               />
                 <label htmlFor="commentary" style={{ display: 'block', marginBottom: '0.5rem' }}>
                   Commentaire

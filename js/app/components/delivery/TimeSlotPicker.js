@@ -1,28 +1,106 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
+import axios from 'axios'
 
 import 'antd/es/input/style/index.css'
 
-export default ({ choices, initialChoices, defaultTimeSlotName }) => {
-  const timeSlotsLabel = []
-  for (const timeSlot in choices) {
-    timeSlotsLabel.push(timeSlot)
-  }
+const baseURL = location.protocol + '//' + location.host
 
-  console.log('initialChoices', initialChoices)
+export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
+  const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+  const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
+
+  useEffect(() => {
+    const fetchStoreInfos = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+
+      const url = `${baseURL}/api/stores/${storeId}`
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      setStoreDeliveryInfos(response.data)
+    }
+    if (storeId) {
+      fetchStoreInfos()
+    }
+  }, [storeId])
+
+  useEffect(() => {
+    const getTimeSlotsLabels = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+      const url = `${baseURL}/api/stores/${storeId}/time_slots`
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      const timeSlotsLabel = await response.data['hydra:member']
+      setStoreDeliveryLabels(timeSlotsLabel)
+    }
+    if (storeId) {
+      getTimeSlotsLabels()
+    }
+  }, [storeId])
+
+  /** We get the labels available and the default label for the radio buttons */
+
+  const getLabels = useCallback(() => {
+    const timeSlotsLabels = []
+    for (const label of storeDeliveryLabels) {
+      timeSlotsLabels.push(label.name)
+    }
+
+    return timeSlotsLabels
+  }, [storeDeliveryLabels])
+
+  const timeSlotsLabels = getLabels()
+
+  const getDefaultLabels = useCallback(() => {
+    return storeDeliveryLabels.find(
+      label => label['@id'] === storeDeliveryInfos.timeSlot,
+    )
+  }, [storeDeliveryLabels, storeDeliveryInfos])
+
+  const defaultLabel = getDefaultLabels()
+
+  console.log('defaultLabel', defaultLabel)
 
   // choices : la liste des options avec leur timeslot
   // initialChoices : on initialise avec l'option par défaut et ses timeSlot
 
-  const [timeSlotChoices, setTimeSlotChoices] = useState(null)
+  const [timeSlotChoices, setTimeSlotChoices] = useState([])
 
-  useEffect(() => setTimeSlotChoices(initialChoices), [initialChoices])
+  // useEffect(() => setTimeSlotChoices(initialChoices), [initialChoices])
+
+  useEffect(() => {
+    const getTimeSlotOptions = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+      const timeSlotUrl = storeDeliveryInfos.timeSlot
+      const url = `${baseURL}${timeSlotUrl}/choices`
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      const choices = response.data['choices']
+      setTimeSlotChoices(choices)
+    }
+    getTimeSlotOptions()
+  }, [storeDeliveryInfos])
+
+  // ici on va venir requêter pour avoir grâce au label par défaut les timeslots associés
 
   console.log('timeSlotChoices', timeSlotChoices)
 
-  const datesWithTimeslots = {}
-
+  const [datesWithTimeslots, setDatesWithTimeslots] = useState({})
   /**
    * on vient looper sur timeSlotChoices
    * on sépare les deux valeurs first/second
@@ -35,33 +113,35 @@ export default ({ choices, initialChoices, defaultTimeSlotName }) => {
 
   useEffect(() => {
     const formatTimeSlots = () => {
-      if (Array.isArray(timeSlotChoices)) {
-        timeSlotChoices.forEach(choice => {
-          let [first, second] = choice.split('/')
-          first = moment(first)
-          second = moment(second)
-          const date = moment(first).format('YYYY-MM-DD')
-          const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
-          if (Object.prototype.hasOwnProperty.call(datesWithTimeslots, date)) {
-            datesWithTimeslots[date].push(hour)
-          } else {
-            datesWithTimeslots[date] = [hour]
-          }
-        })
-      }
+      const formattedSlots = {}
+      timeSlotChoices.forEach(choice => {
+        let [first, second] = choice.value.split('/')
+        first = moment(first)
+        second = moment(second)
+        const date = moment(first).format('YYYY-MM-DD')
+        const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
+        if (formattedSlots[date]) {
+          formattedSlots[date].push(hour)
+        } else {
+          formattedSlots[date] = [hour]
+        }
+      })
+      setDatesWithTimeslots(formattedSlots)
     }
     formatTimeSlots()
   }, [timeSlotChoices])
 
-  const dates = []
+  console.log('dateswithts', datesWithTimeslots)
 
-  for (const date in datesWithTimeslots) {
-    dates.push(moment(date))
-  }
+  // const dates = []
 
-  function disabledDate(current) {
-    return !dates.some(date => date.isSame(current, 'day'))
-  }
+  // for (const date in datesWithTimeslots) {
+  //   dates.push(moment(date))
+  // }
+
+  // function disabledDate(current) {
+  //   return !dates.some(date => date.isSame(current, 'day'))
+  // }
 
   // const [values, setValues] = useState({})
 
@@ -95,10 +175,10 @@ export default ({ choices, initialChoices, defaultTimeSlotName }) => {
     <>
       {Object.keys(choices).length > 1 ? (
         <Radio.Group
-          defaultValue={defaultTimeSlotName}
+          defaultValue={defaultLabel.name}
           buttonStyle="solid"
           style={{ display: 'flex' }}>
-          {timeSlotsLabel.map(label => (
+          {timeSlotsLabels.map(label => (
             <Radio.Button
               key={label}
               value={label}

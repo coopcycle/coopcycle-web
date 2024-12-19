@@ -5,7 +5,7 @@ import { ConfigProvider } from 'antd'
 import axios from 'axios'
 // import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 
-
+const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
 
@@ -38,7 +38,7 @@ export default function ({ isNew, storeId }) {
     setIsSubmitting(status);
   }
 
-  const baseURL = location.protocol + '//' + location.host
+
 
   useEffect(() => {
     
@@ -154,6 +154,7 @@ export default function ({ isNew, storeId }) {
         onSubmitStatus={handleSubmitStatus}
         timeSlotsOptions={timeSlotsOptions}
         defaultTimeSlotName={defaultTimeSlotName}
+        storeId={storeId}
       />
         <button type="submit" disabled={isSubmitting}>
           Soumettre

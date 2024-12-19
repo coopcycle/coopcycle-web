@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import TimeSlotPicker from '../../../../js/app/components/delivery/TimeSlotPicker'
 
-export default ({ timeSlotsOptions, defaultTimeSlotName }) => {
+export default ({ timeSlotsOptions, defaultTimeSlotName, storeId }) => {
   // const [values, setValues] = useState([])
   const [initialTimeSlotChoices, setInitialChoices] = useState({})
   useEffect(() => {
@@ -9,14 +9,14 @@ export default ({ timeSlotsOptions, defaultTimeSlotName }) => {
     setInitialChoices(initialChoices)
   }, [timeSlotsOptions, defaultTimeSlotName])
 
-  console.log("ici", timeSlotsOptions, defaultTimeSlotName, initialTimeSlotChoices)
   return (
     <>
     <div>Switch</div>
     <TimeSlotPicker 
         choices={timeSlotsOptions}
         initialChoices={initialTimeSlotChoices}
-        defaultTimeSlotName={defaultTimeSlotName} />
+        defaultTimeSlotName={defaultTimeSlotName}
+        storeId={storeId} />
       
       </>
   )
