@@ -1,5 +1,5 @@
 {% set country = country_iso %}
-{% set gateway = payment_gateway_resolver.resolve() %}
+{% set gateway = payment_gateway_resolver.resolveForOrder(order) %}
 
 {% set gateway_configs = {} %}
 
@@ -27,6 +27,19 @@
   mercadopago: {
     publishableKey: coopcycle_setting('mercadopago_publishable_key'),
     country: country
+  }
+}) %}
+{% endif %}
+
+{% if gateway == 'paygreen' %}
+{% if paygreen_environment == 'SANDBOX' %}
+<script defer type="text/javascript" src="https://sb-pgjs.paygreen.fr/latest/paygreen.min.js"></script>
+{% else %}
+<script defer type="text/javascript" src="https://pgjs.paygreen.fr/latest/paygreen.min.js"></script>
+{% endif %}
+{% set gateway_configs = gateway_configs|merge({
+  paygreen: {
+    publicKey: coopcycle_setting('paygreen_public_key')
   }
 }) %}
 {% endif %}

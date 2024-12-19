@@ -76,6 +76,7 @@ Encore
   .addEntry('zone-preview', './js/app/zone/preview.js')
   .addEntry('failure-form', './js/app/failure/form.js')
   .addEntry('incident-form', './js/app/incident/form.js')
+  .addEntry('paygreen-webview', './js/app/order/paygreen.js')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373
