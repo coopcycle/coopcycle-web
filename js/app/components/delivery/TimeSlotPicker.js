@@ -11,6 +11,8 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
 
+  console.log(storeDeliveryLabels)
+
   useEffect(() => {
     const fetchStoreInfos = async () => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
@@ -70,46 +72,31 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
 
   const defaultLabel = getDefaultLabels()
 
-  console.log('defaultLabel', defaultLabel)
-
-  // choices : la liste des options avec leur timeslot
-  // initialChoices : on initialise avec l'option par défaut et ses timeSlot
+  /** We initialize with the default timesSlots, then changed when user selects a different option */
 
   const [timeSlotChoices, setTimeSlotChoices] = useState([])
 
-  // useEffect(() => setTimeSlotChoices(initialChoices), [initialChoices])
+  const getTimeSlotOptions = async timeSlotUrl => {
+    const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+    const jwt = jwtResp.jwt
+    const url = `${baseURL}${timeSlotUrl}/choices`
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    })
+    const choices = response.data['choices']
+    setTimeSlotChoices(choices)
+  }
 
   useEffect(() => {
-    const getTimeSlotOptions = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
-      const timeSlotUrl = storeDeliveryInfos.timeSlot
-      const url = `${baseURL}${timeSlotUrl}/choices`
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      const choices = response.data['choices']
-      setTimeSlotChoices(choices)
-    }
-    getTimeSlotOptions()
+    const timeSlotUrl = storeDeliveryInfos.timeSlot
+    getTimeSlotOptions(timeSlotUrl)
   }, [storeDeliveryInfos])
 
-  // ici on va venir requêter pour avoir grâce au label par défaut les timeslots associés
-
-  console.log('timeSlotChoices', timeSlotChoices)
+  /** We format the data in order for them to fit in a datepicker and a select */
 
   const [datesWithTimeslots, setDatesWithTimeslots] = useState({})
-  /**
-   * on vient looper sur timeSlotChoices
-   * on sépare les deux valeurs first/second
-   * puis on sépare encore les dates des heures
-   * on vient prendre les deux heures pour créer une string avec heure1-heure2 (enlever le Z de fin et mettre que les 5 premiers caractères)
-   * et on reprend la logique : si la clé existe; on push notre time slot dans l'array
-   * sinon on crée cet array avec les heures
-   * Le format de chaque item de la liste :  "2024-12-23T02:00:00Z/2024-12-23T03:00:00Z"
-   */
 
   useEffect(() => {
     const formatTimeSlots = () => {
@@ -155,9 +142,13 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
   //   })
   // }, [timeSlotChoices])
 
-  // const handleInitialChoicesChange = timeSlot => {
-  //   setTimeSlotChoices(choices[timeSlot.target.value])
-  // }
+  const handleInitialChoicesChange = e => {
+    const label = storeDeliveryLabels.find(
+      label => label.name === e.target.value,
+    )
+    const timeSlotUrl = label['@id']
+    getTimeSlotOptions(timeSlotUrl)
+  }
 
   // const handleDateChange = newDate => {
   //   setValues({
@@ -182,10 +173,9 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
             <Radio.Button
               key={label}
               value={label}
-              // onChange={timeSlot => {
-              //   handleInitialChoicesChange(timeSlot)
-              // }}
-            >
+              onChange={timeSlot => {
+                handleInitialChoicesChange(timeSlot)
+              }}>
               {label}
             </Radio.Button>
           ))}
