@@ -6,6 +6,7 @@ use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Edenred\Client as EdenredPayment;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -24,6 +25,7 @@ class CheckoutPaymentType extends AbstractType
         private EdenredAuthentication $edenredAuthentication,
         private EdenredPayment $edenredPayment,
         private SettingsManager $settingsManager,
+        private PaygreenManager $paygreenManager,
         private bool $cashEnabled)
     { }
 
@@ -60,6 +62,7 @@ class CheckoutPaymentType extends AbstractType
             $choices = [];
 
             if ($this->settingsManager->supportsCardPayments()) {
+                // Card payment is supposedly always supported if gateway is configured, even for Paygreen
                 $choices['Credit card'] = 'card';
             }
 
@@ -75,6 +78,19 @@ class CheckoutPaymentType extends AbstractType
                     // The customer will be presented with the button
                     // to connect his/her Edenred account
                     $choices['Edenred'] = 'edenred';
+                }
+            }
+
+            if (!$order->isMultiVendor() && 'paygreen' === $this->resolver->resolveForOrder($order)) {
+                $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
+                if (in_array('restoflash', $paygreenPlatforms)) {
+                    $choices['Restoflash'] = 'restoflash';
+                }
+                if (in_array('conecs', $paygreenPlatforms)) {
+                    $choices['Conecs'] = 'conecs';
+                }
+                if (in_array('swile', $paygreenPlatforms)) {
+                    $choices['Swile'] = 'swile';
                 }
             }
 

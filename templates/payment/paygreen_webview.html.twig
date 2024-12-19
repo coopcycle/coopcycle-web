@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>CoopCycle</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    {% if paygreen_environment == 'SANDBOX' %}
+    <script defer type="text/javascript" src="https://sb-pgjs.paygreen.fr/latest/paygreen.min.js"></script>
+    <link href="https://sb-pgjs.paygreen.fr/latest/paygreen.min.css" type="text/css" rel="stylesheet" />
+    {% else %}
+    <script defer type="text/javascript" src="https://pgjs.paygreen.fr/latest/paygreen.min.js"></script>
+    <link href="https://pgjs.paygreen.fr/latest/paygreen.min.css" type="text/css" rel="stylesheet" />
+    {% endif %}
+    {{ encore_entry_link_tags('paygreen-webview') }}
+  </head>
+  <body>
+    <!--Paygreen-->
+    <div id="paygreen-container"></div>
+    <!--Paygreen-->
+    <div id="paygreen-methods-container"></div>
+    <div class="px-3 pt-3 mb-3">
+      <!--Paygreen-->
+      <div id="paygreen-pan-frame" class="mb-3"></div>
+      <div class="d-flex">
+        <div id="paygreen-exp-frame"></div>
+        <div id="paygreen-cvv-frame"></div>
+      </div>
+    </div>
+    <!--Paygreen-->
+    <div id="paygreen-reuse-checkbox-container"></div>
+    <div id="test"></div>
+    <script>
+    window.addEventListener('load', function() {
+
+      if (!window.ReactNativeWebView) {
+        window.ReactNativeWebView = {
+          postMessage: function(message) {
+            console.log('postMessage', message);
+          }
+        }
+      }
+
+      window.ReactNativeWebView.postMessage(JSON.stringify({
+        type: "SET_PAYMENT_ORDER_ID",
+        detail: "{{ payment_order_id }}"
+      }));
+
+      document.addEventListener('message', function(e) {
+
+        var event = JSON.parse(e.data)
+        document.getElementById('test').innerHTML += JSON.stringify(event);
+
+        if (event.type === 'SUBMIT') {
+          window.paygreenjs.submitPayment();
+        }
+
+      }, false);
+
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.FULL_PAYMENT_DONE,
+        function (event) {
+          document.getElementById('test').innerHTML += JSON.stringify({
+            type: "FULL_PAYMENT_DONE",
+            detail: event.detail
+          });
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: "FULL_PAYMENT_DONE",
+            detail: event.detail
+          }));
+        }
+      );
+
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
+        function (event) {
+          console.log(event)
+          console.log(window.paygreenjs.status().flows)
+          document.getElementById('test').innerHTML += JSON.stringify(event.detail);
+          // window.ReactNativeWebView.postMessage(JSON.stringify({type: "PAYMENT_FLOW_ONCHANGE", detail: event.detail}))
+        }
+      );
+
+      window.paygreenjs.init({
+        publicKey: '{{ coopcycle_setting('paygreen_public_key') }}',
+        paymentOrderID: '{{ payment_order_id }}',
+        objectSecret: '{{ object_secret }}',
+        mode: 'payment',
+        displayAuthentication: 'inline'
+      });
+    });
+    </script>
+  </body>
+</html>

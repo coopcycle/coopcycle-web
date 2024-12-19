@@ -36,8 +36,9 @@ class Gateway implements GatewayInterface
             return $this->gateways['edenred'];
         }
 
-        // FIXME Use resolveForOrder
-        switch ($this->resolver->resolve()) {
+        switch ($this->resolver->resolveForPayment($payment)) {
+            case 'paygreen':
+                return $this->gateways['paygreen'];
             case 'mercadopago':
                 return $this->gateways['mercadopago'];
             case 'stripe':

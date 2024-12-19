@@ -241,6 +241,21 @@ class SetupCommand extends Command
                 'name' => 'Cash on delivery',
                 'countries' => ['mx','ar'],
             ],
+            [
+                'code' => 'RESTOFLASH',
+                'name' => 'Restoflash',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'CONECS',
+                'name' => 'Conecs',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'SWILE',
+                'name' => 'Swile',
+                'countries' => ['fr'],
+            ],
         ];
 
         foreach ($methods as $method) {

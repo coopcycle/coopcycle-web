@@ -234,6 +234,8 @@ class SettingsManager
             return $supportsStripe;
         }
 
+        // TODO Add check for Paygreen
+
         return $supportsStripe || $supportsMercadopago;
     }
 
