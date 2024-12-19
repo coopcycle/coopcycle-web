@@ -7,7 +7,7 @@ import 'antd/es/input/style/index.css'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
+export default ({ storeId }) => {
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
 
@@ -94,9 +94,13 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
     getTimeSlotOptions(timeSlotUrl)
   }, [storeDeliveryInfos])
 
-  /** We format the data in order for them to fit in a datepicker and a select */
+  /** We format the data in order for them to fit in a datepicker and a select
+   * We initialize the datepicker's and the select's values
+   */
 
   const [datesWithTimeslots, setDatesWithTimeslots] = useState({})
+  const [values, setValues] = useState({})
+  const [options, setOptions] = useState([])
 
   useEffect(() => {
     const formatTimeSlots = () => {
@@ -114,34 +118,29 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
         }
       })
       setDatesWithTimeslots(formattedSlots)
+
+      const availableDates = Object.keys(formattedSlots)
+      if (availableDates.length > 0) {
+        const firstDate = moment(availableDates[0])
+        setOptions(formattedSlots[availableDates[0]])
+        setValues({
+          date: firstDate,
+          option: formattedSlots[availableDates[0]][0],
+        })
+      }
     }
     formatTimeSlots()
   }, [timeSlotChoices])
 
   console.log('dateswithts', datesWithTimeslots)
 
-  // const dates = []
+  const dates = Object.keys(datesWithTimeslots || {}).map(date => moment(date))
 
-  // for (const date in datesWithTimeslots) {
-  //   dates.push(moment(date))
-  // }
+  function disabledDate(current) {
+    return !dates.some(date => date.isSame(current, 'day'))
+  }
 
-  // function disabledDate(current) {
-  //   return !dates.some(date => date.isSame(current, 'day'))
-  // }
-
-  // const [values, setValues] = useState({})
-
-  // const [options, setOptions] = useState([])
-
-  // useEffect(() => {
-  //   setOptions(datesWithTimeslots[dates[0].format('YYYY-MM-DD')])
-  //   setValues({
-  //     date: dates[0],
-  //     option: datesWithTimeslots[dates[0].format('YYYY-MM-DD')][0],
-  //   })
-  // }, [timeSlotChoices])
-
+  console.log(values, options)
   const handleInitialChoicesChange = e => {
     const label = storeDeliveryLabels.find(
       label => label.name === e.target.value,
@@ -150,21 +149,21 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
     getTimeSlotOptions(timeSlotUrl)
   }
 
-  // const handleDateChange = newDate => {
-  //   setValues({
-  //     date: newDate,
-  //     option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
-  //   })
-  //   setOptions(datesWithTimeslots[newDate.format('YYYY-MM-DD')])
-  // }
+  const handleDateChange = newDate => {
+    setValues({
+      date: newDate,
+      option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
+    })
+    setOptions(datesWithTimeslots[newDate.format('YYYY-MM-DD')])
+  }
 
-  // const handleTimeSlotChange = newTimeslot => {
-  //   setValues(prevState => ({ ...prevState, option: newTimeslot }))
-  // }
+  const handleTimeSlotChange = newTimeslot => {
+    setValues(prevState => ({ ...prevState, option: newTimeslot }))
+  }
 
   return (
     <>
-      {Object.keys(choices).length > 1 ? (
+      {defaultLabel && timeSlotsLabels ? (
         <Radio.Group
           defaultValue={defaultLabel.name}
           buttonStyle="solid"
@@ -183,31 +182,35 @@ export default ({ choices, initialChoices, defaultTimeSlotName, storeId }) => {
       ) : null}
 
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
-        <DatePicker
-          format="LL"
-          style={{ width: '60%' }}
-          className="mr-2"
-          // disabledDate={disabledDate}
-          // disabled={dates.length > 1 ? false : true}
-          // value={values.date}
-          // onChange={date => {
-          //   handleDateChange(date)
-          // }}
-        />
+        {values.date ? (
+          <DatePicker
+            format="LL"
+            style={{ width: '60%' }}
+            className="mr-2"
+            disabledDate={disabledDate}
+            disabled={dates.length > 1 ? false : true}
+            value={values.date}
+            onChange={date => {
+              handleDateChange(date)
+            }}
+          />
+        ) : null}
 
-        {/* <Select
-          style={{ width: '35%' }}
-          onChange={option => {
-            handleTimeSlotChange(option)
-          }}
-          value={values.option}>
-          {options.length >= 1 &&
-            options.map(option => (
-              <Select.Option key={option} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-        </Select> */}
+        {values.option && options ? (
+          <Select
+            style={{ width: '35%' }}
+            onChange={option => {
+              handleTimeSlotChange(option)
+            }}
+            value={values.option}>
+            {options.length >= 1 &&
+              options.map(option => (
+                <Select.Option key={option} value={option}>
+                  {option}
+                </Select.Option>
+              ))}
+          </Select>
+        ) : null}
       </div>
     </>
   )
