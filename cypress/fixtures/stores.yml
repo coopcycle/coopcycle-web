@@ -3,15 +3,18 @@ include:
   - sylius_taxation.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
-  geo_1:
-    __construct: [ "48.864577", "2.333338" ]
-  geo_2:
-    __construct: [ "48.846656", "2.369052" ]
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+  geo_client_1:
+    __construct: [ "48.8638614", "2.3762269" ]
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
     name: Default
     rules: [ '@pricing_rule_1' ]
+  pricing_rule_set_impossible:
+    name: Default
+    rules: [ '@pricing_rule_impossible' ]
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
@@ -19,18 +22,11 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 499
     position: 1
     ruleSet: '@pricing_rule_set_1'
-
-AppBundle\Entity\Address:
-  address_1:
-    addressLocality: 'Paris'
-    postalCode: '75001'
-    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
-    geo: "@geo_1"
-  address_2:
-    addressLocality: 'Paris'
-    postalCode: '75012'
-    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
-    geo: "@geo_1"
+  pricing_rule_impossible:
+    expression: 'distance \> 100000'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_impossible'
 
 AppBundle\Entity\TimeSlot:
   time_slot_1:
@@ -39,6 +35,24 @@ AppBundle\Entity\TimeSlot:
       - 'Mo-Su 00:00-11:59'
       - 'Mo-Su 12:00-23:59'
 
+AppBundle\Entity\Address:
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"
+  client_1:
+    name: 'Office'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
+    geo: "@geo_client_1"
+
 AppBundle\Entity\Store:
   store_1:
     name: 'Acme'
@@ -46,32 +60,69 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
-    createOrders: true
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
   store_without_time_slots:
     name: 'Store without time slots'
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
-    createOrders: true
-  store_do_not_create_orders:
-    name: 'Store with createOrders disabled'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
+  store_no_pricing:
+    name: 'Store without pricing'
     address: "@address_1"
     enabled: true
-    pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
-    createOrders: false
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
+  store_invalid_pricing:
+    name: 'Store with invalid pricing'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_impossible'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
 
 AppBundle\Entity\User:
-  storeOwner:
+  store1Owner:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'store_1'
         - 'store_1'
-        - 'dev@coopcycle.org'
+        - 'store1@coopcycle.org'
         - true
         - false
     roles: [ 'ROLE_USER', 'ROLE_STORE' ]
     stores: [ '@store_1' ]
+  store2Owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_no_pricing'
+        - 'password'
+        - 'store_no_pricing@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_no_pricing' ]
+  store3Owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_invalid_pricing'
+        - 'password'
+        - 'store_invalid_pricing@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_invalid_pricing' ]
   admin:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':

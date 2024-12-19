@@ -34,6 +34,7 @@ class ExistingOrderType extends DeliveryType
 
         $resolver->setDefaults([
             'with_address_props' => true,
+            'with_arbitrary_price' => true,
             'with_bookmark' => true,
         ]);
     }

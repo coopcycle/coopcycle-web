@@ -18,6 +18,25 @@ export const apiSlice = createApi({
         body: {},
       }),
     }),
+    getOrders: builder.query({
+      query: args => {
+        let stateParam = ''
+        if (args.state && args.state.length > 0) {
+          stateParam =
+            '?' + args.state.map(state => `state[]=${state}`).join('&')
+        }
+
+        return {
+          url: `api/stores/${args.storeId}/orders${stateParam}`,
+          params: {
+            'date[after]': args.dateRange[0],
+            'date[before]': args.dateRange[1],
+            page: args.page,
+            itemsPerPage: args.pageSize,
+          },
+        }
+      },
+    }),
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
     }),
@@ -37,6 +56,7 @@ export const apiSlice = createApi({
 // Export the auto-generated hook for the query endpoints
 export const {
   useRecurrenceRulesGenerateOrdersMutation,
+  useLazyGetOrdersQuery,
   useGetOrderTimingQuery,
   useUpdateOrderMutation,
 } = apiSlice

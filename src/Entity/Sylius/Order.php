@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
@@ -41,6 +42,7 @@ use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
+use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -50,7 +52,6 @@ use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
-use AppBundle\Filter\OrderDateFilter;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -463,6 +464,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *   }
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
  *
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})
@@ -1938,5 +1940,36 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return null;
+    }
+
+    public function isFoodtech(): bool
+    {
+        //FIXME: combine with $this->getStoreType() implementation
+        return $this->hasVendor();
+    }
+
+
+    public function getDeliveryPrice(): PriceInterface
+    {
+        if ($this->isFoodtech()) {
+            //FIXME: get the delivery price for food tech orders from Adjustments
+            return new PricingRulesBasedPrice(0);
+        }
+
+        $deliveryItem = $this->getItems()->first();
+
+        if (false === $deliveryItem) {
+            throw new \LogicException('Order has no delivery price');
+        }
+
+        $productVariant = $deliveryItem->getVariant();
+
+        if (str_starts_with($productVariant->getCode(), 'RBTRR-PRC-')) {
+            // custom price
+            return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+        } else {
+            // price based on the PricingRuleSet
+            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
+        }
     }
 }

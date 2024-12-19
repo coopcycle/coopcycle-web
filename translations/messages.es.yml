@@ -299,6 +299,10 @@ form.store_type.create_orders.label: Crear pedidos
 form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
 form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
+form.store_type.pricing_rule_set.warning: Sin tarificación,
+  el precio de entrega no se puede calcular ni rastrear para la facturación.
+  Además, la contribución basada en el monto del pedido no estará disponible.
+form.store_type.pricing_rule_set.warning.list: La tarificación no está configurada
 form.store_type.setAsDefault.label: Establecer como dirección predeterminada
 form.store_type.defaultAddress.label: Dirección predeterminada
 form.delivery.vehicle.placeholder: Escoge un vehículo
@@ -314,6 +318,8 @@ form.delivery.duration.label: Duración
 form.delivery.store.label: Tienda
 form.delivery.store.placeholder: Busca una tienda…
 form.delivery.price.label: Precio
+form.delivery.price.missing: Contáctenos para más detalles
+form.delivery.price.missing.incident: "Pedido #%number%: No se pudo calcular el precio de entrega. Por favor, ingréselo manualmente y verifique la tarificación."
 form.order.accept.label: Aceptar
 form.order.accept.help: Una vez que haya aceptado el pedido, el cliente será notificado
   por correo electrónico.
@@ -334,6 +340,7 @@ form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
 form.address.description.label: Instrucciones para la entrega
 form.address.description.placeholder: 2ª puerta a la izquierda…
+pricing_rule_set.new: Nueva tarifa
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
@@ -551,6 +558,7 @@ recurrence_rules.table.repeat: Repetir
 recurrence_rules.table.generate_orders: Generar tareas/pedidos
 recurrence_rules.table.created_at: Regla creada
 recurrence_rule.legacy: Utilice el panel de despacho para eliminar esta regla
+recurrence_rule.price.missing: No se pudo calcular el precio de entrega. Por favor, verifique la tarificación.
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han sido\
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\

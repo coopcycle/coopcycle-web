@@ -79,6 +79,8 @@ Feature: Deliveries
   Scenario: Create delivery with implicit pickup address with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -187,6 +189,8 @@ Feature: Deliveries
   Scenario: Create delivery with weight in dropoff task
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -296,6 +300,8 @@ Feature: Deliveries
   Scenario: Create delivery with weight and packages
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -424,6 +430,8 @@ Feature: Deliveries
   Scenario: Create delivery with implicit pickup address with OAuth (with before & after)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -516,6 +524,8 @@ Feature: Deliveries
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -605,9 +615,608 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with pickup & dropoff as an admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "trackingUrl": @string@
+      }
+      """
+
+  Scenario: Create delivery with pickup & dropoff as an admin in a store without pricing
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/8",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "trackingUrl": @string@
+      }
+      """
+
+  Scenario: Create delivery with pickup & dropoff as an admin in a store with invalid pricing
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/9",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "trackingUrl": @string@
+      }
+      """
+
+  Scenario: Create delivery with pickup & dropoff as a store owner
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "trackingUrl": @string@
+      }
+      """
+
+  Scenario: Create delivery with pickup & dropoff as a store owner in a store without pricing
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme no pricing" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/8",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "trackingUrl": @string@
+      }
+      """
+
+  Scenario: Create delivery with pickup & dropoff as a store owner in a store with invalid pricing
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme invalid pricing" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/9",
+        "pickup": {
+          "address": "24, Rue de la Paix",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": "@array@",
+          "createdAt":"@string@.isDateTime()"
+        },
+        "trackingUrl": @string@
+      }
+      """
+
   Scenario: Create delivery with implicit pickup address & implicit time with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -696,6 +1305,8 @@ Feature: Deliveries
   Scenario: Create delivery with details with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -788,6 +1399,8 @@ Feature: Deliveries
   Scenario: Create delivery with latLng with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -882,6 +1495,8 @@ Feature: Deliveries
   Scenario: Create delivery with latLng & timeSlot with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -974,6 +1589,8 @@ Feature: Deliveries
   Scenario: Create delivery with latLng & timeSlot ISO 8601 with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     Given the current time is "2020-04-02 11:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -1067,6 +1684,8 @@ Feature: Deliveries
   Scenario: Create delivery with existing address & timeSlot with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1142,6 +1761,8 @@ Feature: Deliveries
   Scenario: Create delivery with address.telephone = false with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1354,7 +1975,6 @@ Feature: Deliveries
     }
   """
 
-
   Scenario: Cancel delivery
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1369,6 +1989,8 @@ Feature: Deliveries
   Scenario: Create delivery with dates in UTC
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | stores.yml          |
     Given the current time is "2022-05-05 12:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -1482,4 +2104,3 @@ Feature: Deliveries
         "@type": "DeliveryImportQueue"
       }
       """
-
