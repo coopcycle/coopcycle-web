@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import React, { StrictMode } from 'react'
 import { render } from 'react-dom'
 import { createRoot } from 'react-dom/client'
@@ -6,6 +8,7 @@ import axios from 'axios'
 
 import stripe from './stripe'
 import mercadopago from './mercadopago'
+import paygreen from './paygreen'
 import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
@@ -17,6 +20,8 @@ import {
 import { selectPersistedTimeRange } from '../order/timeRange/reduxSlice'
 import { checkTimeRange } from '../../utils/order/helpers'
 import { apiSlice } from '../../api/slice'
+
+import './paygreen.scss'
 
 class CreditCard {
   constructor(config) {
@@ -71,6 +76,9 @@ export default function(formSelector, options) {
     switch (gatewayForCard) {
       case 'mercadopago':
         Object.assign(CreditCard.prototype, mercadopago)
+        break
+      case 'paygreen':
+        Object.assign(CreditCard.prototype, paygreen)
         break
       case 'stripe':
       default:
@@ -221,6 +229,20 @@ export default function(formSelector, options) {
         payments = response.data.payments
 
         switch (value) {
+
+          case 'restoflash':
+          case 'swile':
+          case 'conecs':
+
+            // When using a meal voucher, we use Paygreen hosted page
+            // https://developers.paygreen.fr/docs/how-to-use-paygreen#hosted-page
+            axios.post(response.data.paygreen.createPaymentOrderURL)
+              .then(createPaymentOrderResponse => {
+                window.location.href = createPaymentOrderResponse.data.hosted_payment_url
+              })
+
+            break
+
           case 'card':
           case 'edenred':
 
@@ -234,9 +256,9 @@ export default function(formSelector, options) {
 
             if (hasCard) {
               cc.mount(document.getElementById('card-element'), value, response.data, options)
-                .then(() => {
-                  document.getElementById('card-element').scrollIntoView()
-                  enableBtn(submitButton)
+                .then((shouldEnableBtn = true) => {
+                  document.getElementById('card-onmount-focus').scrollIntoView()
+                  shouldEnableBtn && enableBtn(submitButton)
                 })
                 .catch(e => {
                   document.getElementById('card-errors').textContent = e.message
@@ -250,10 +272,10 @@ export default function(formSelector, options) {
 
             break
           case 'cash_on_delivery':
-            if (document.getElementById('card-element').children.length) {
+            // if (document.getElementById('card-element').children.length) {
               // remove cc form if it was previously mounted
               cc && cc.unmount()
-            }
+            // }
 
             enableBtn(submitButton)
 
