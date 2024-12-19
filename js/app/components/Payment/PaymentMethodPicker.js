@@ -15,7 +15,8 @@ const methodPickerStyles = {
 const methodPickerBtnClassNames = {
   'btn': true,
   'btn-default': true,
-  'p-2': true
+  'p-2': true,
+  'w-100': true,
 }
 
 const methodStyles = {
@@ -47,7 +48,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
             return (
               <div style={ methodStyles } key={ m.type }>
                 <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
-                <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
+                <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
                         onClick={ () => setMethod('card') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>
@@ -57,9 +58,9 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'edenred':
 
             return (
-              <div style={ methodStyles }key={ m.type }>
+              <div style={ methodStyles } key={ m.type }>
                 <label>{ t('PM_EDENRED') }</label>
-                <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => {
 
                           if (!m.data.edenredIsConnected) {
@@ -77,10 +78,49 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
           case 'cash_on_delivery':
 
             return (
-              <div style={ methodStyles }key={ m.type } data-testid="pm.cash">
+              <div style={ methodStyles } key={ m.type } data-testid="pm.cash">
                 <label>{ t('PM_CASH') }</label>
-                <button key={ m.type } type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => setMethod('cash_on_delivery') }>
+                  <PaymentMethodIcon code={ m.type } height="45" />
+                </button>
+              </div>
+            )
+
+          case 'restoflash':
+
+            return (
+              <div style={ methodStyles } key={ m.type } data-testid="pm.restoflash">
+                <label>{ t('PM_RESTOFLASH') }</label>
+                <button
+                  type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                  onClick={ () => setMethod('restoflash') }>
+                  <PaymentMethodIcon code={ m.type } height="45" />
+                </button>
+              </div>
+            )
+
+          case 'conecs':
+
+            return (
+              <div style={ methodStyles } key={ m.type } data-testid="pm.conecs">
+                <label>{ t('PM_CONECS') }</label>
+                <button
+                  type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                  onClick={ () => setMethod('conecs') }>
+                  <PaymentMethodIcon code={ m.type } height="45" />
+                </button>
+              </div>
+            )
+
+          case 'swile':
+
+            return (
+              <div style={ methodStyles } key={ m.type } data-testid="pm.swile">
+                <label>{ t('PM_SWILE') }</label>
+                <button
+                  type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                  onClick={ () => setMethod('swile') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>
               </div>
