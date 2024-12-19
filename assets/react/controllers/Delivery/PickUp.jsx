@@ -1,11 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import {Input} from 'antd'
 
-export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus, storeId, storeDeliveryInfos }) => {
+export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
 
+  const [deliveryAddress, setDeliveryAddress] = useState({
+    address: {
+      streetAddress: "",
+      name: "", 
+      contactName: "", 
+      telephone: ""
+      }, 
+    toBeRemembered: false, 
+    toBeModified: false,
+    })
+
+  // const [beforeValue, setBeforeValue] = useState(initialBeforeValue)
+  // const [afterValue, setAfterValue] = useState(initialAfterValue)
+  const [timeSlot, setTimeSlotValue] = useState(null)
+  
+  console.log("timeSlot", timeSlot)
+  
   const initialValues = {
     name: '',
     contactName: '',
@@ -41,6 +58,7 @@ export default ({ addresses, deliveryAddress, setDeliveryAddress, onSubmitStatus
               <SwitchTimeSlotFreePicker
                 storeId={storeId}
                 storeDeliveryInfos={storeDeliveryInfos}
+                setTimeSlotValue={setTimeSlotValue}
               />
                 <label htmlFor="commentary" style={{ display: 'block', marginBottom: '0.5rem' }}>
                   Commentaire
