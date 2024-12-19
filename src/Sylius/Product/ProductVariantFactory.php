@@ -3,7 +3,10 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Service\SettingsManager;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -61,20 +64,8 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $this->factory->createForProduct($product);
     }
 
-    /**
-     * @param Delivery $delivery
-     * @param int $price
-     */
-    public function createForDelivery(Delivery $delivery, int $price): ProductVariantInterface
+    public function createForDelivery(Delivery $delivery, PriceInterface $price): ProductVariantInterface
     {
-        $hash = sprintf('%s-%d-%d', $delivery->getVehicle(), $delivery->getDistance(), $price);
-        $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
-
-        if ($productVariant = $this->productVariantRepository->findOneByCode($code)) {
-
-            return $productVariant;
-        }
-
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
 
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
@@ -85,17 +76,37 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant = $this->createForProduct($product);
 
-        $name = sprintf('%s, %s km',
+        $nameParts = [];
+
+        foreach ($delivery->getTasks() as $task) {
+            $nameParts[] = sprintf('%s: %s',
+                $this->translator->trans(sprintf('task.type.%s', $task->getType())),
+                $task->getAddress()->getName());
+        }
+
+        $nameParts[] = sprintf('%s, %s km',
             $this->translator->trans(sprintf('vehicle.%s', $delivery->getVehicle())),
             (string) number_format($delivery->getDistance() / 1000, 2)
         );
 
-        $productVariant->setName($name);
-        $productVariant->setPosition(1);
+        //TODO: add weight and packages
 
-        $productVariant->setPrice($price);
+        $name = implode(' - ', $nameParts);
+
+        $productVariant->setName($name);
+
+        if ($price instanceof ArbitraryPrice) {
+            if ($price->getVariantName()) {
+                $productVariant->setName($price->getVariantName());
+            }
+            $productVariant->setCode('RBTRR-PRC-'.Uuid::uuid4()->toString());
+        } else {
+            $productVariant->setCode(Uuid::uuid4()->toString());
+        }
+
+        $productVariant->setPosition(1);
+        $productVariant->setPrice($price->getValue());
         $productVariant->setTaxCategory($taxCategory);
-        $productVariant->setCode($code);
 
         return $productVariant;
     }
