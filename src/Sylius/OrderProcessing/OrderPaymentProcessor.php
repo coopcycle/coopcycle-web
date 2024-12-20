@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\OrderProcessing;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
@@ -33,6 +34,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         private PaymentContext $paymentContext,
         private EdenredClient $edenredClient,
         private StripeManager $stripeManager,
+        private PaygreenManager $paygreenManager,
         private GatewayResolver $gatewayResolver,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
@@ -82,6 +84,16 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         $paymentsToKeep = new ArrayCollection();
 
         switch ($this->paymentContext->getMethod()) {
+            case 'CONECS':
+            case 'SWILE':
+            case 'RESTOFLASH':
+
+                $method = $this->paymentMethodRepository->findOneByCode($this->paymentContext->getMethod());
+                $payment = $this->upsertPayment($order, $payments, $method, $order->getTotal(), $targetState);
+
+                $this->paygreenManager->createPaymentOrder($payment);
+
+                break;
             case 'EDENRED':
 
                 $edenredAmount = $this->edenredClient->getMaxAmount($order);
@@ -142,7 +154,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             $payment->setCurrencyCode($this->currencyContext->getCurrencyCode());
             $payment->setAmount($amount);
 
-            $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | (updated) payment #%d: %d ',
+            $this->checkoutLogger->debug(sprintf('OrderPaymentProcessor | finished | (updated) payment #%d: %d ',
                 $payment->getId(),
                 $payment->getAmount()), ['order' => $this->loggingUtils->getOrderId($order)]);
 
@@ -158,7 +170,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
         $order->addPayment($payment);
 
-        $this->checkoutLogger->info(sprintf('OrderPaymentProcessor | finished | (new) payment: %d', $payment->getAmount()),
+        $this->checkoutLogger->debug(sprintf('OrderPaymentProcessor | finished | (new) payment: %d', $payment->getAmount()),
             ['order' => $this->loggingUtils->getOrderId($order)]);
 
         return $payment;

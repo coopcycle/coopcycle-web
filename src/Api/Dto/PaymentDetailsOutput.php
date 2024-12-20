@@ -22,7 +22,7 @@ final class PaymentDetailsOutput
 
     /**
      * @var string|null
-     * @Groups({"order"})
+     * @Groups({"payment_details", "order"})
      */
     public $paygreenWebviewUrl;
 }

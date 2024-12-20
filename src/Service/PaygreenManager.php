@@ -124,6 +124,7 @@ class PaygreenManager
 
         $payment->setPaygreenPaymentOrderId($data['data']['id']);
         $payment->setPaygreenObjectSecret($data['data']['object_secret']);
+        $payment->setPaygreenHostedPaymentUrl($data['data']['hosted_payment_url']);
 
         return $data['data'];
     }
