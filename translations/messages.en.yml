@@ -431,6 +431,10 @@ checkout.breadcrumb.payment: Payment
 checkout.breadcrumb.confirm: Confirmation
 form.geojson_upload.file: File
 form.store_type.pricing_rule_set.label: Pricing
+form.store_type.pricing_rule_set.warning: Without pricing,
+  the delivery price cannot be calculated and tracked for invoicing.
+  Also, contribution based on the order amount will not be available.
+form.store_type.pricing_rule_set.warning.list: Pricing is not configured
 form.store_type.prefill_pickup_address.label: Pre-fill automatically pickup address
 form.store_type.create_orders.label: Create orders
 form.delivery.vehicle.VEHICLE_BIKE: Bike
@@ -461,6 +465,8 @@ form.delivery.duration.label: Duration
 form.delivery.store.label: Store
 form.delivery.store.placeholder: Search a store…
 form.delivery.price.label: Price
+form.delivery.price.missing: Contact us for more details
+form.delivery.price.missing.incident: 'Order #%number%: The delivery price could not be calculated. Please enter it manually and check the pricing.'
 form.delivery.to_be_confirmed.warning: You must confirm the order
 form.delivery.has_order.info: This delivery is linked to an order
 form.delivery.package.label: Package
@@ -506,6 +512,7 @@ form.address.company.function.label: Contact person position
 form.address.company.collaborator_number.label: Number of employees
 form.address.company.meal_estimate.label: Estimated number of meals (per day)
 form.company.make_the_request.label: Send request
+pricing_rule_set.new: New pricing
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.strategy.label: Method of calculation
@@ -872,6 +879,7 @@ stores.recurrence_rules.empty_message: When a recurring order is created, the re
 recurrence_rules.table.repeat: Repeat
 recurrence_rules.table.generate_orders: Generate tasks/orders
 recurrence_rules.table.created_at: Rule created
+recurrence_rule.price.missing: The delivery price could not be calculated. Please check the pricing.
 recurrence_rule.legacy: Use dispatch dashboard to remove this rule
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\

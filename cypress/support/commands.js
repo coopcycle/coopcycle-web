@@ -107,6 +107,56 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
     .click()
 })
 
+Cypress.Commands.add('newPickupAddress',
+  (addressSelector, addressSearch, addressMatch,
+    businessName, telephone, contactName) => {
+    cy.searchAddress(
+      addressSelector,
+      addressSearch,
+      addressMatch,
+    )
+
+    cy.get('#delivery_tasks_0_address_name__display').clear()
+    cy.get('#delivery_tasks_0_address_name__display').type(businessName)
+
+    cy.get('#delivery_tasks_0_address_telephone__display').clear()
+    cy.get('#delivery_tasks_0_address_telephone__display').type(telephone)
+
+    cy.get('#delivery_tasks_0_address_contactName__display').clear()
+    cy.get('#delivery_tasks_0_address_contactName__display').type(contactName)
+  })
+
+Cypress.Commands.add('chooseSavedPickupAddress',
+  (index) => {
+    cy.get('#rc_select_0').click()
+    cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ index })`).click()
+  })
+
+Cypress.Commands.add('newDropoff1Address',
+  (addressSelector, addressSearch, addressMatch,
+    businessName, telephone, contactName) => {
+    cy.searchAddress(
+      addressSelector,
+      addressSearch,
+      addressMatch,
+    )
+
+    cy.get('#delivery_tasks_1_address_name__display').clear()
+    cy.get('#delivery_tasks_1_address_name__display').type(businessName)
+
+    cy.get('#delivery_tasks_1_address_telephone__display').clear()
+    cy.get('#delivery_tasks_1_address_telephone__display').type(telephone)
+
+    cy.get('#delivery_tasks_1_address_contactName__display').clear()
+    cy.get('#delivery_tasks_1_address_contactName__display').type(contactName)
+  })
+
+Cypress.Commands.add('chooseSavedDropoff1Address',
+  (index) => {
+    cy.get('#rc_select_1').click()
+    cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ index }):visible`).click()
+  })
+
 Cypress.Commands.add('enterCreditCard', () => {
   const date = new Date(),
     expDate = ('0' + (date.getMonth() + 1)).slice(-2) +
