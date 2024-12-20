@@ -1,6 +1,5 @@
 import './AddressBook.scss'
 import React, { useState } from 'react'
-import { Field } from 'formik'
 import { Input, Select, Checkbox, Button } from 'antd'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 import Modal from 'react-modal'
@@ -43,152 +42,120 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
     <>
       <div className="row">
         <div className="col-md-12 mb-3">
-          <Field name="addresses">
-            {({ field, form }) => (
-              <Select
-                style={{ width: '100%' }}
-                {...field}
-                showSearch
-                placeholder="Rechercher une adresse enregistrée"
-                value={deliveryAddress.address.streetAddress}
-                optionFilterProp="label"
-                onChange={value => {
-                  form.setFieldValue(field.name, value)
-                  onAddressSelected(value)
-                }}
-                filterOption={(input, option) =>
-                  option.label.toLowerCase().includes(input.toLowerCase())
-                }
-                options={addresses.map(address => ({
-                  value: address.streetAddress,
-                  label: address.streetAddress,
-                  key: address['@id'],
-                  id: address['@id'],
-                }))}
-              />
-            )}
-          </Field>
+          <Select
+            style={{ width: '100%' }}
+            showSearch
+            placeholder="Rechercher une adresse enregistrée"
+            value={deliveryAddress.address.streetAddress}
+            optionFilterProp="label"
+            onChange={value => {
+              onAddressSelected(value)
+            }}
+            filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase())
+            }
+            options={addresses.map(address => ({
+              value: address.streetAddress,
+              label: address.streetAddress,
+              key: address['@id'],
+              id: address['@id'],
+            }))}
+          />
         </div>
       </div>
       <div className="row mb-3">
         <div className="col-md-4">
-          <Field name="name">
-            {({ field, form }) => (
-              <Input
-                {...field}
-                onChange={e => {
-                  const newValue = e.target.value
+          <Input
+            onChange={e => {
+              const newValue = e.target.value
+              handleModifyAddress()
 
-                  form.setFieldValue(field.name, newValue)
-                  handleModifyAddress()
-
-                  setDeliveryAddress(prevState => {
-                    const newState = {
-                      ...prevState,
-                      address: {
-                        ...prevState.address,
-                        name: newValue,
-                      },
-                    }
-                    return newState
-                  })
-                }}
-                placeholder="Nom"
-                value={deliveryAddress.address.name}
-              />
-            )}
-          </Field>
+              setDeliveryAddress(prevState => {
+                const newState = {
+                  ...prevState,
+                  address: {
+                    ...prevState.address,
+                    name: newValue,
+                  },
+                }
+                return newState
+              })
+            }}
+            placeholder="Nom"
+            value={deliveryAddress.address.name}
+          />
         </div>
         <div className="col-md-4">
-          <Field name="telephone">
-            {({ field, form }) => (
-              <Input
-                {...field}
-                onChange={e => {
-                  const newValue = e.target.value
+          <Input
+            onChange={e => {
+              const newValue = e.target.value
 
-                  form.setFieldValue(field.name, newValue)
-                  handleModifyAddress()
+              handleModifyAddress()
 
-                  setDeliveryAddress(prevState => {
-                    const newState = {
-                      ...prevState,
-                      address: {
-                        ...prevState.address,
-                        telephone: newValue,
-                      },
-                    }
-                    return newState
-                  })
-                }}
-                placeholder="Téléphone"
-                value={deliveryAddress.address.telephone}
-              />
-            )}
-          </Field>
+              setDeliveryAddress(prevState => {
+                const newState = {
+                  ...prevState,
+                  address: {
+                    ...prevState.address,
+                    telephone: newValue,
+                  },
+                }
+                return newState
+              })
+            }}
+            placeholder="Téléphone"
+            value={deliveryAddress.address.telephone}
+          />
         </div>
         <div className="col-md-4">
-          <Field name="contactName">
-            {({ field, form }) => (
-              <Input
-                {...field}
-                onChange={e => {
-                  const newValue = e.target.value
+          <Input
+            onChange={e => {
+              const newValue = e.target.value
+              handleModifyAddress()
 
-                  form.setFieldValue(field.name, newValue)
-                  handleModifyAddress()
-
-                  setDeliveryAddress(prevState => {
-                    const newState = {
-                      ...prevState,
-                      address: {
-                        ...prevState.address,
-                        contactName: newValue,
-                      },
-                    }
-                    return newState
-                  })
-                }}
-                placeholder="Contact"
-                value={deliveryAddress.address.contactName}
-              />
-            )}
-          </Field>
+              setDeliveryAddress(prevState => {
+                const newState = {
+                  ...prevState,
+                  address: {
+                    ...prevState.address,
+                    contactName: newValue,
+                  },
+                }
+                return newState
+              })
+            }}
+            placeholder="Contact"
+            value={deliveryAddress.address.contactName}
+          />
         </div>
         <div className="col-md-12">
-          <Field name="streetAddress">
-            {({ field, form }) => (
-              <AddressAutosuggest
-                {...field}
-                address={deliveryAddress.address}
-                addresses={addresses}
-                required={true}
-                reportValidity={true}
-                preciseOnly={true}
-                onAddressSelected={(value, address) => {
-                  console.log(value, address)
-                  setDeliveryAddress(prevState => ({
-                    ...prevState,
-                    address,
-                  }))
+          <AddressAutosuggest
+            address={deliveryAddress.address}
+            addresses={addresses}
+            required={true}
+            reportValidity={true}
+            preciseOnly={true}
+            onAddressSelected={(value, address) => {
+              console.log(value, address)
+              setDeliveryAddress(prevState => ({
+                ...prevState,
+                address,
+              }))
+              console.log('value', value)
+            }}
+            onClear={() => {
+              setDeliveryAddress(prevState => ({
+                ...prevState,
+                selectedAddress: {
+                  streetAddress: '',
+                  name: '',
+                  contactName: '',
+                  telephone: '',
+                },
+              }))
+            }}
+          />
 
-                  form.setFieldValue(field.name, value)
-                  console.log('value', value)
-                }}
-                onClear={() => {
-                  setDeliveryAddress(prevState => ({
-                    ...prevState,
-                    selectedAddress: {
-                      streetAddress: '',
-                      name: '',
-                      contactName: '',
-                      telephone: '',
-                    },
-                  }))
-                }}
-              />
-            )}
-          </Field>
           <Checkbox
             onChange={e => {
               if (e.target.checked) {
