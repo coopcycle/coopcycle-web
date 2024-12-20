@@ -2,13 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\MyStores;
-use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
@@ -17,7 +14,6 @@ use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
