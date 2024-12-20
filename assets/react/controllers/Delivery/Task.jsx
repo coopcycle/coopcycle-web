@@ -1,11 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Formik, Form, Field } from 'formik'
 import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
-import {Input} from 'antd'
+import { Input } from 'antd'
+import moment from 'moment'
+import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
 
 export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
+    const initialValues = {
+    name: '',
+    contactName: '',
+    streetAddress: '',
+    telephone: '',
+    timeSlot: '',
+    commentary: '',
+    }
+    
+    const handleSubmit = (values, { setSubmitting }) => {
+    console.log(values)
+    setSubmitting(false)
+    }
+  
+  const [afterValue, setAfterValue] = useState(moment())
+  const [beforeValue, setBeforeValue] = useState(moment().add(15, 'minutes'))
+  const [timeSlot, setTimeSlotValue] = useState(null)
+  const format = 'LL'
 
+  console.log(timeSlot)
+  
   const [deliveryAddress, setDeliveryAddress] = useState({
     address: {
       streetAddress: "",
@@ -16,27 +38,11 @@ export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
     toBeRemembered: false, 
     toBeModified: false,
     })
-
-  // const [beforeValue, setBeforeValue] = useState(initialBeforeValue)
-  // const [afterValue, setAfterValue] = useState(initialAfterValue)
-  const [timeSlot, setTimeSlotValue] = useState(null)
   
-  console.log("timeSlot", timeSlot)
+  const areDefinedTimeSlots = useCallback(() => {
+  return storeDeliveryInfos && Array.isArray(storeDeliveryInfos.timeSlots) && storeDeliveryInfos.timeSlots.length > 0;
+  }, [storeDeliveryInfos])
   
-  const initialValues = {
-    name: '',
-    contactName: '',
-    streetAddress: '',
-    telephone: '',
-    timeSlot: '',
-    commentary: '',
-  }
-
-  const handleSubmit = (values, { setSubmitting }) => {
-    console.log(values)
-    setSubmitting(false)
-  }
-
   const { TextArea } = Input
 
   return (
@@ -55,11 +61,20 @@ export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
                 deliveryAddress={deliveryAddress}
                 setDeliveryAddress={setDeliveryAddress}
               />
-              <SwitchTimeSlotFreePicker
+              {areDefinedTimeSlots() ?
+                <SwitchTimeSlotFreePicker
                 storeId={storeId}
                 storeDeliveryInfos={storeDeliveryInfos}
                 setTimeSlotValue={setTimeSlotValue}
-              />
+                /> :
+                <DateRangePicker
+                  format={format}
+                  afterValue={afterValue}
+                  beforeValue={beforeValue}
+                  setAfterValue={setAfterValue}
+                  setBeforeValue={setBeforeValue}
+                />}
+
                 <label htmlFor="commentary" style={{ display: 'block', marginBottom: '0.5rem' }}>
                   Commentaire
                 </label>

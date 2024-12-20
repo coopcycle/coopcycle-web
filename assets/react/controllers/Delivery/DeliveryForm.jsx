@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import PickUp from './PickUp'
+import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
@@ -71,7 +71,7 @@ export default function ({ isNew, storeId }) {
   
   return (
     <ConfigProvider locale={antdLocale}>
-      <PickUp
+      <Task
         addresses={addresses}
         onSubmitStatus={handleSubmitStatus}
         storeId={storeId}
