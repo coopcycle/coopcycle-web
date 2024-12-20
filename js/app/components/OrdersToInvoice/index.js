@@ -3,23 +3,10 @@ import Modal from 'react-modal'
 
 import { useTranslation } from 'react-i18next'
 import { InputNumber, DatePicker, Table } from 'antd'
-import { useLazyGetOrdersQuery } from '../../api/slice'
+import { useLazyGetInvoiceLineItemsQuery } from '../../api/slice'
 import Button from '../core/Button'
 import { money } from '../../utils/format'
 import { moment } from '../../../shared'
-
-function formatDescription(t, order) {
-  // Delivery orders have a single item that is "Delivery"
-  if (order.items.length !== 1) {
-    return ''
-  }
-
-  const deliveryItem = order.items[0]
-
-  return `${t('ORDER')} #${order.number} - ${deliveryItem.name} - ${
-    deliveryItem.variantName
-  }`
-}
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
@@ -28,7 +15,7 @@ export default () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  const [trigger, { isLoading, data }] = useLazyGetOrdersQuery()
+  const [trigger, { isLoading, data }] = useLazyGetInvoiceLineItemsQuery()
 
   const { t } = useTranslation()
 
@@ -43,13 +30,13 @@ export default () => {
       dataSource: data['hydra:member'].map(order => ({
         ...order,
         key: order['@id'],
-        number: order.number,
-        date: order.shippingTimeRange
-          ? moment(order.shippingTimeRange[1]).format('l')
+        number: order.orderNumber,
+        date: order.date
+          ? moment(order.date).format('l')
           : '?',
-        description: formatDescription(t, order),
-        subTotal: money(order.total - order.taxTotal),
-        taxTotal: money(order.taxTotal),
+        description: order.description,
+        subTotal: money(order.subTotal),
+        tax: money(order.tax),
         total: money(order.total),
       })),
       total: data['hydra:totalItems'],
@@ -79,8 +66,8 @@ export default () => {
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_TAXES_LABEL'),
-      dataIndex: 'taxTotal',
-      key: 'taxTotal',
+      dataIndex: 'tax',
+      key: 'tax',
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_TOTAL_LABEL'),
@@ -89,11 +76,11 @@ export default () => {
     },
     {
       key: 'action',
-      dataIndex: 'id',
+      dataIndex: 'orderId',
       align: 'right',
-      render: id => (
+      render: orderId => (
         <a
-          href={window.Routing.generate('admin_order_edit', { id })}
+          href={window.Routing.generate('admin_order_edit', { id: orderId })}
           target="_blank"
           rel="noopener noreferrer">
           {t('EDIT')}

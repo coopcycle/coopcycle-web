@@ -18,7 +18,7 @@ export const apiSlice = createApi({
         body: {},
       }),
     }),
-    getOrders: builder.query({
+    getInvoiceLineItems: builder.query({
       query: args => {
         let params = args.store.map(storeId => `store[]=${storeId}`).join('&')
 
@@ -28,7 +28,7 @@ export const apiSlice = createApi({
         }
 
         return {
-          url: `api/orders?${params}`,
+          url: `api/invoice_line_items?${params}`,
           params: {
             'date[after]': args.dateRange[0],
             'date[before]': args.dateRange[1],
@@ -57,7 +57,7 @@ export const apiSlice = createApi({
 // Export the auto-generated hook for the query endpoints
 export const {
   useRecurrenceRulesGenerateOrdersMutation,
-  useLazyGetOrdersQuery,
+  useLazyGetInvoiceLineItemsQuery,
   useGetOrderTimingQuery,
   useUpdateOrderMutation,
 } = apiSlice

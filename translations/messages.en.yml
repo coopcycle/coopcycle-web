@@ -1508,6 +1508,7 @@ adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.createNew: Create a new incident
 adminDashboard.invoicing.title: Invoicing
 adminDashboard.invoicing.help: "Prepare invoices"
+adminDashboard.invoicing.line_item.order_number: "Order #%number%"
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options

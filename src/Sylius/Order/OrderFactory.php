@@ -108,9 +108,9 @@ class OrderFactory implements FactoryInterface
             return;
         }
 
-        $deliveryItem = $order->getItems()->first();
+        $deliveryItem = $order->getDeliveryItem();
 
-        if (false === $deliveryItem) {
+        if (null === $deliveryItem) {
             $this->logger->info('No delivery item found in order');
         }
 
