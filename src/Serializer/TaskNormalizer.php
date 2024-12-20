@@ -245,7 +245,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
             foreach ($data['packages'] as $p) {
-                $package = $packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByNameAndStore($p['type'], $task->getStore());
                 if ($package) {
                     $task->setQuantityForPackage($package, $p['quantity']);
                 }
