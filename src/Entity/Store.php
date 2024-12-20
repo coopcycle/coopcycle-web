@@ -159,18 +159,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $deliveries;
 
-    /**
-     * Can not be used as a property of a class,
-     * it's only used to define a subresource endpoint
-     * output is retrieved by StoreOrdersSubresourceDataProvider
-     *
-     * @var Collection<int, Order>
-     * @ApiSubresource
-     * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
-     * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
-     */
-    private $orders;
-
     private $rrules;
 
     private $owners;

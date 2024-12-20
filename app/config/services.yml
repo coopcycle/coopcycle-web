@@ -642,6 +642,9 @@ services:
   AppBundle\Api\Filter\OrderDateFilter:
     tags: [ 'api_platform.filter' ]
 
+  AppBundle\Api\Filter\OrderStoreFilter:
+    tags: [ 'api_platform.filter' ]
+
   AppBundle\Api\Filter\DateFilter:
     tags: [ 'api_platform.filter' ]
 
@@ -946,18 +949,6 @@ services:
     tags:
       - { name: 'api_platform.subresource_data_provider', priority: 2 }
     autoconfigure: false
-
-  AppBundle\Api\DataProvider\StoreOrdersSubresourceDataProvider:
-    arguments:
-      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.subresource_data_provider', priority: 2 }
-
-  AppBundle\Api\DataProvider\InvoiceLineItemCollectionDataProvider:
-    arguments:
-      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
 
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
