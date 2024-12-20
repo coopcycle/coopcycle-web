@@ -28,6 +28,7 @@ class TokenStoreExtractor
 
     public function extractStore()
     {
+
         if (null === ($token = $this->tokenStorage->getToken())) {
             return;
         }
