@@ -8,7 +8,6 @@ use AppBundle\Service\OrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;
-use Psr\Log\LoggerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,8 +26,7 @@ class PaygreenController extends AbstractController
     public function __construct(
         private Hashids $hashids8,
         private EntityManagerInterface $entityManager,
-        private PaygreenManager $paygreenManager,
-        private LoggerInterface $logger)
+        private PaygreenManager $paygreenManager)
     {}
 
     /**
@@ -70,8 +68,6 @@ class PaygreenController extends AbstractController
     {
         $decoded = $this->hashids8->decode($hashId);
         if (count($decoded) !== 1) {
-            $this->logger->warning(sprintf('Payment with hash "%s" does not exist', $hashId));
-
             throw new \Exception(sprintf('Payment with hash "%s" does not exist', $hashId));
         }
 
@@ -82,8 +78,6 @@ class PaygreenController extends AbstractController
             ->find($paymentId);
 
         if (null === $payment) {
-            $this->logger->error(sprintf('Payment with id "%d" does not exist', $paymentId), ['hash' => $hashId]);
-
             throw new \Exception(sprintf('Payment with id "%d" does not exist', $paymentId));
         }
 

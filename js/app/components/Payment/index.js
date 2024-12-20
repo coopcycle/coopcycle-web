@@ -236,10 +236,7 @@ export default function(formSelector, options) {
 
             // When using a meal voucher, we use Paygreen hosted page
             // https://developers.paygreen.fr/docs/how-to-use-paygreen#hosted-page
-            axios.post(response.data.paygreen.createPaymentOrderURL)
-              .then(createPaymentOrderResponse => {
-                window.location.href = createPaymentOrderResponse.data.hosted_payment_url
-              })
+            window.location.href = response.data.paygreen.paygreen_hosted_payment_url;
 
             break
 

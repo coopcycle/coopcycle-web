@@ -93,6 +93,8 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
 
                 $this->paygreenManager->createPaymentOrder($payment);
 
+                $paymentsToKeep->add($payment);
+
                 break;
             case 'EDENRED':
 
@@ -129,10 +131,15 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                 // Do not hardcode this here
                 $card = $this->paymentMethodRepository->findOneByCode('CARD');
                 $cardPayment = $this->upsertPayment($order, $payments, $card, $order->getTotal(), $targetState);
-                if ('stripe' === $this->gatewayResolver->resolve()) {
-                    // Make sure to call StripeManager::configurePayment()
-                    // It will resolve the Stripe account that will be used
-                    $this->stripeManager->configurePayment($cardPayment);
+                switch ($this->gatewayResolver->resolveForOrder($order)) {
+                    case 'stripe':
+                        // Make sure to call StripeManager::configurePayment()
+                        // It will resolve the Stripe account that will be used
+                        $this->stripeManager->configurePayment($cardPayment);
+                        break;
+                    case 'paygreen':
+                        $this->paygreenManager->createPaymentOrder($cardPayment);
+                        break;
                 }
                 $paymentsToKeep->add($cardPayment);
         }

@@ -93,75 +93,68 @@ export default {
       ...options.paygreen
     }
 
+    console.log(options);
+
     return new Promise((resolve, reject) => {
 
-      axios.post(this.config.gatewayConfig.createPaymentOrderURL)
-        .then(response => {
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.ERROR,
+        (event) => this.submitPaymentListener(event)
+      );
 
-          window.paygreenjs.attachEventListener(
-            window.paygreenjs.Events.ERROR,
-            (event) => this.submitPaymentListener(event)
-          );
+      // This will enable the submit button once the card is 100% valid
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.CARD_ONCHANGE,
+        (event) => {
+          this.config.onChange({ complete: event.detail.valid })
+        }
+      );
 
-          // This will enable the submit button once the card is 100% valid
-          window.paygreenjs.attachEventListener(
-            window.paygreenjs.Events.CARD_ONCHANGE,
-            (event) => {
-              this.config.onChange({ complete: event.detail.valid })
-            }
-          );
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
+        this.createPaymentFlowOnChangeListener(resolve)
+      );
 
-          window.paygreenjs.attachEventListener(
-            window.paygreenjs.Events.PAYMENT_FLOW_ONCHANGE,
-            this.createPaymentFlowOnChangeListener(resolve)
-          );
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.FULL_PAYMENT_DONE,
+        (event) => this.submitPaymentListener(event)
+      );
 
-          window.paygreenjs.attachEventListener(
-            window.paygreenjs.Events.FULL_PAYMENT_DONE,
-            (event) => this.submitPaymentListener(event)
-          );
+      window.paygreenjs.attachEventListener(
+        window.paygreenjs.Events.PAYMENT_FAIL,
+        (event) => this.submitPaymentListener(event)
+      );
 
-          window.paygreenjs.attachEventListener(
-            window.paygreenjs.Events.PAYMENT_FAIL,
-            (event) => this.submitPaymentListener(event)
-          );
+      // Move to next field automatically
+      // https://developers.paygreen.fr/docs/paygreenjs-customization#change-focus
+      window.paygreenjs.attachEventListener(window.paygreenjs.Events.PAN_FIELD_FULFILLED, () => {
+        paygreenjs.focus('exp');
+      });
+      window.paygreenjs.attachEventListener(window.paygreenjs.Events.EXP_FIELD_FULFILLED, () => {
+        paygreenjs.focus('cvv');
+      });
 
-          // Move to next field automatically
-          // https://developers.paygreen.fr/docs/paygreenjs-customization#change-focus
-          window.paygreenjs.attachEventListener(window.paygreenjs.Events.PAN_FIELD_FULFILLED, () => {
-            paygreenjs.focus('exp');
-          });
-          window.paygreenjs.attachEventListener(window.paygreenjs.Events.EXP_FIELD_FULFILLED, () => {
-            paygreenjs.focus('cvv');
-          });
+      let paygreenOptions = {
+        paymentOrderID: this.config.gatewayConfig.paygreen_payment_order_id,
+        objectSecret: this.config.gatewayConfig.paygreen_object_secret,
+        publicKey: this.config.gatewayConfig.publicKey,
+        mode: 'payment',
+        displayAuthentication: 'modal',
+        style,
+        paymentMethod: method === 'card' ? 'bank_card' : method,
+      }
 
-          let paygreenOptions = {
-            paymentOrderID: response.data.id,
-            objectSecret: response.data.object_secret,
-            publicKey: this.config.gatewayConfig.publicKey,
-            mode: 'payment',
-            displayAuthentication: 'modal',
-            style,
-            paymentMethod: method === 'card' ? 'bank_card' : method,
-          }
+      const status = window.paygreenjs.status();
+      const isPaygreenInitialized = status?.paymentOrder ?? false;
 
-          const status = window.paygreenjs.status();
-          const isPaygreenInitialized = status?.paymentOrder ?? false;
+      if (!isPaygreenInitialized) {
+        window.paygreenjs.init(paygreenOptions);
+      } else {
+        window.paygreenjs.setPaymentMethod(method === 'card' ? 'bank_card' : method);
+      }
 
-          if (!isPaygreenInitialized) {
-            window.paygreenjs.init(paygreenOptions);
-          } else {
-            window.paygreenjs.setPaymentMethod(method === 'card' ? 'bank_card' : method);
-          }
-
-          // We do not resolve the promise here
-          // It will be resolved in the PAYMENT_FLOW_ONCHANGE event listener
-
-        })
-        .catch(e => {
-          console.log(e)
-          reject(new Error(e.response.data.error.message))
-        })
+      // We do not resolve the promise here
+      // It will be resolved in the PAYMENT_FLOW_ONCHANGE event listener
     })
   },
   unmount() {

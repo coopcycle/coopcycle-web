@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,6 +70,7 @@ trait SelectPaymentMethodTrait
 
         $stripe = [];
         $paygreen = [];
+
         if ($cardPayment) {
             $hashId = $hashids8->encode($cardPayment->getId());
             $stripe = [
@@ -77,9 +79,16 @@ trait SelectPaymentMethodTrait
                 'clonePaymentMethodToConnectedAccountURL' => $this->generateUrl('stripe_clone_payment_method', ['hashId' => $hashId]),
                 'createSetupIntentOrAttachPMURL' => $this->generateUrl('stripe_create_setup_intent_or_attach_pm', ['hashId' => $hashId]),
             ];
-            $paygreen = [
-                'createPaymentOrderURL' => $this->generateUrl('paygreen_create_payment_order', ['hashId' => $hashId]),
-            ];
+        }
+
+        // For Paygreen
+        foreach ($order->getPayments() as $payment) {
+            $details = $payment->getDetails();
+            foreach ($details as $key => $value) {
+                if (str_starts_with($key, 'paygreen')) {
+                    $paygreen[$key] = $value;
+                }
+            }
         }
 
         return new JsonResponse([

@@ -9,6 +9,7 @@ use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
+use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Payment\Factory\PaymentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
@@ -23,6 +24,7 @@ class PaygreenManager
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private PaymentFactoryInterface $paymentFactory,
         private UrlGeneratorInterface $urlGenerator,
+        private ChannelContextInterface $channelContext,
         private string $country)
     {}
 
@@ -104,8 +106,8 @@ class PaygreenManager
         $paymentOrder->setShippingAddress($address);
         $paymentOrder->setDescription(sprintf('Order %s', $order->getNumber()));
         $paymentOrder->setShopId($shopId);
-        $paymentOrder->setReturnUrl($this->urlGenerator->generate('paygreen_return', referenceType: UrlGeneratorInterface::ABSOLUTE_URL));
-        $paymentOrder->setCancelUrl($this->urlGenerator->generate('paygreen_cancel', referenceType: UrlGeneratorInterface::ABSOLUTE_URL));
+        $paymentOrder->setReturnUrl($this->getCallbackUrl($order, 'paygreen_return'));
+        $paymentOrder->setCancelUrl($this->getCallbackUrl($order, 'paygreen_cancel'));
         $paymentOrder->setEligibleAmounts($this->getEligibleAmounts($order));
 
         // platforms is required when fees is set
@@ -240,5 +242,16 @@ class PaygreenManager
             'food' => $order->getTotal() - $ecommerceAmount,
             'ecommerce' => $ecommerceAmount,
         ];
+    }
+
+    private function getCallbackUrl(OrderInterface $order, string $route): string
+    {
+        $channel = $this->channelContext->getChannel();
+
+        if ('app' === $channel->getCode()) {
+            return sprintf('coopcycle:/%s', $this->urlGenerator->generate($route, referenceType: UrlGeneratorInterface::ABSOLUTE_PATH));
+        }
+
+        return $this->urlGenerator->generate($route, referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
     }
 }
