@@ -8,16 +8,8 @@ import axios from 'axios'
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
-
+  
   const [addresses, setAddresses] = useState([])
-
-  /**
-   * deliveryAddress contains :
-   * the address information as an object, 
-   * if it needs to be saved (in case it's new),
-   * if it needs to be modified (in case it's already saved)
-   */
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
 

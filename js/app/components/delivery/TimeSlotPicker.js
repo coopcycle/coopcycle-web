@@ -9,9 +9,6 @@ const baseURL = location.protocol + '//' + location.host
 
 export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
-
-  console.log(storeDeliveryLabels)
-
   useEffect(() => {
     const getTimeSlotsLabels = async () => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
@@ -55,8 +52,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   /** We initialize with the default timesSlots, then changed when user selects a different option */
 
   const [timeSlotChoices, setTimeSlotChoices] = useState([])
-  console.log('timeslotChoices', timeSlotChoices)
-
+ 
   const getTimeSlotOptions = async timeSlotUrl => {
     const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
     const jwt = jwtResp.jwt
@@ -123,8 +119,6 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
     }
   }, [values])
 
-  console.log('dateswithts', datesWithTimeslots)
-
   /** disabled dates */
 
   const dates = Object.keys(datesWithTimeslots || {}).map(date => moment(date))
@@ -133,7 +127,6 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
     return !dates.some(date => date.isSame(current, 'day'))
   }
 
-  console.log(values, options)
   const handleInitialChoicesChange = e => {
     const label = storeDeliveryLabels.find(
       label => label.name === e.target.value,
@@ -143,6 +136,8 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   }
 
   const handleDateChange = newDate => {
+    if (!newDate) return
+
     setValues({
       date: newDate,
       option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
@@ -151,6 +146,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   }
 
   const handleTimeSlotChange = newTimeslot => {
+    if (!newTimeslot) return
     setValues(prevState => ({ ...prevState, option: newTimeslot }))
   }
 

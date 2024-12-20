@@ -6,6 +6,21 @@ import { Input } from 'antd'
 import moment from 'moment'
 import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
 
+function getNextRoundedTime() {
+  const now = moment();
+  now.add(15, 'minutes');
+  const roundedMinutes = Math.ceil(now.minutes() / 5) * 5;
+  if (roundedMinutes >= 60) {
+    now.add(1, 'hour');
+    now.minutes(roundedMinutes - 60);
+  } else {
+    now.minutes(roundedMinutes);
+  }
+  now.seconds(0);
+
+  return now;
+}
+
 export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
     const initialValues = {
     name: '',
@@ -21,13 +36,14 @@ export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
     setSubmitting(false)
     }
   
-  const [afterValue, setAfterValue] = useState(moment())
-  const [beforeValue, setBeforeValue] = useState(moment().add(15, 'minutes'))
+  const [afterValue, setAfterValue] = useState(getNextRoundedTime())
+  const [beforeValue, setBeforeValue] = useState(getNextRoundedTime().add(15, 'minutes'))
   const [timeSlot, setTimeSlotValue] = useState(null)
   const format = 'LL'
-
-  console.log(timeSlot)
   
+  console.log(timeSlot)
+  console.log(afterValue, beforeValue)
+
   const [deliveryAddress, setDeliveryAddress] = useState({
     address: {
       streetAddress: "",
@@ -63,9 +79,14 @@ export default ({ addresses, onSubmitStatus, storeId, storeDeliveryInfos }) => {
               />
               {areDefinedTimeSlots() ?
                 <SwitchTimeSlotFreePicker
-                storeId={storeId}
-                storeDeliveryInfos={storeDeliveryInfos}
-                setTimeSlotValue={setTimeSlotValue}
+                  storeId={storeId}
+                  storeDeliveryInfos={storeDeliveryInfos}
+                  setTimeSlotValue={setTimeSlotValue}
+                  format={format}
+                  afterValue={afterValue}
+                  beforeValue={beforeValue}
+                  setAfterValue={setAfterValue}
+                  setBeforeValue={setBeforeValue}
                 /> :
                 <DateRangePicker
                   format={format}
