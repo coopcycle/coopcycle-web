@@ -19,4 +19,10 @@ final class PaymentDetailsOutput
      * @Groups({"payment_details"})
      */
     public $payments;
+
+    /**
+     * @var string|null
+     * @Groups({"payment_details", "order"})
+     */
+    public $paygreenWebviewUrl;
 }
