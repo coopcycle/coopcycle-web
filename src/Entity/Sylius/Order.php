@@ -43,6 +43,7 @@ use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\Api\Filter\OrderDateFilter;
+use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -470,6 +471,7 @@ use Webmozart\Assert\Assert as WMAssert;
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
  * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
+ * @ApiFilter(OrderStoreFilter::class)
  *
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})

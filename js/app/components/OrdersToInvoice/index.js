@@ -104,7 +104,7 @@ export default () => {
 
   const reloadData = (page, pageSize) => {
     trigger({
-      storeId,
+      store: [storeId],
       dateRange: [
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),

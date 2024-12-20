@@ -20,14 +20,15 @@ export const apiSlice = createApi({
     }),
     getOrders: builder.query({
       query: args => {
-        let stateParam = ''
+        let params = args.store.map(storeId => `store[]=${storeId}`).join('&')
+
         if (args.state && args.state.length > 0) {
-          stateParam =
-            '?' + args.state.map(state => `state[]=${state}`).join('&')
+          params +=
+            '&' + args.state.map(state => `state[]=${state}`).join('&')
         }
 
         return {
-          url: `api/stores/${args.storeId}/orders${stateParam}`,
+          url: `api/orders?${params}`,
           params: {
             'date[after]': args.dateRange[0],
             'date[before]': args.dateRange[1],
