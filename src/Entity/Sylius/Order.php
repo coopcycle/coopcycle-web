@@ -120,6 +120,11 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/me/orders",
  *       "controller"=MyOrders::class
+ *     },
+ *     "invoice_line_items"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     }
  *   },
  *   itemOperations={
