@@ -37,6 +37,7 @@ use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsControlle
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
+use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
@@ -125,7 +126,8 @@ use Webmozart\Assert\Assert as WMAssert;
  *     "invoice_line_items"={
  *       "method"="GET",
  *       "path"="/invoice_line_items",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
  *     }
  *   },
  *   itemOperations={
@@ -1962,6 +1964,19 @@ class Order extends BaseOrder implements OrderInterface
         return $this->hasVendor();
     }
 
+    public function getDeliveryItem(): ?OrderItemInterface
+    {
+        if ($this->isFoodtech()) {
+            //FIXME: delivery is modeled as an item only in non-foodtech orders
+            return null;
+        }
+
+        if ($deliveryItem = $this->getItems()->first()) {
+            return $deliveryItem;
+        } else {
+            return null;
+        }
+    }
 
     public function getDeliveryPrice(): PriceInterface
     {
@@ -1970,9 +1985,9 @@ class Order extends BaseOrder implements OrderInterface
             return new PricingRulesBasedPrice(0);
         }
 
-        $deliveryItem = $this->getItems()->first();
+        $deliveryItem = $this->getDeliveryItem();
 
-        if (false === $deliveryItem) {
+        if (null === $deliveryItem) {
             throw new \LogicException('Order has no delivery price');
         }
 
