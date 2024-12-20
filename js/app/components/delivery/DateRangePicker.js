@@ -36,7 +36,6 @@ function generateTimeSlots(afterHour = null) {
 }
 
 const DateTimeRangePicker = ({
-  defaultValue,
   format,
   afterValue,
   beforeValue,
@@ -45,37 +44,40 @@ const DateTimeRangePicker = ({
 }) => {
   const { t } = useTranslation()
 
+  /** we initialize defaultValues in case we use the switch from timeslots to free picker
+   * as we automatically set after and before to null when we use timeslots
+   */
+  const defaultAfterValue = moment()
+  const defaultBeforeValue = moment().add(15, 'minutes')
+
+  useEffect(() => {
+    if (!afterValue || !beforeValue) {
+      setAfterValue(defaultAfterValue)
+      setBeforeValue(defaultBeforeValue)
+    }
+  }, [afterValue, beforeValue])
+
   const [isComplexPicker, setIsComplexPicker] = useState(false)
 
-  console.log('after/beforeValue', afterValue, beforeValue)
-
-  // est ce qu'on a toujours besoin de values désormais sachant qu'on les transmet pas au symfony form ? Et qu'on a le after et le before de la tache
-  // Par contre il faut sécuriser le fait que si jamais il y a pas de valeur, c'est en effet now et now + 15
-  const [values, setValues] = useState(() =>
-    defaultValue
-      ? [moment(defaultValue.after), moment(defaultValue.before)]
-      : [moment(), moment().add(15, 'minutes')],
-  )
-
-  const [timeValues, setTimeValues] = useState(
-    afterValue && beforeValue
-      ? {
-          after: moment(afterValue).format('HH:mm'),
-          before: moment(beforeValue).format('HH:mm'),
-        }
-      : {},
-  )
+  const [timeValues, setTimeValues] = useState(() => {
+    const after = afterValue || defaultAfterValue
+    const before = beforeValue || defaultBeforeValue
+    return {
+      after: after.format('HH:mm'),
+      before: before.format('HH:mm'),
+    }
+  })
 
   const firstSelectOptions = generateTimeSlots()
   const [secondSelectOptions, setSecondSelectOptions] = useState([])
-  // à réécrire, les seconds time slots sont générés à partir de after reçu
+
   useEffect(() => {
     if (afterValue) {
       const updatedSecondOptions = generateTimeSlots(afterValue)
       setSecondSelectOptions(updatedSecondOptions)
     }
   }, [afterValue])
-  // ici on vient récupérer les valeurs de after et before passés en props et on vient modifier également, on passe plus par value
+
   const handleDateChange = newValue => {
     if (!newValue) return
 
@@ -87,7 +89,7 @@ const DateTimeRangePicker = ({
     setAfterValue(moment.utc(`${newDate} ${afterHour}`))
     setBeforeValue(moment.utc(`${newDate} ${beforeHour}`))
   }
-  // pareil ici, mais on garde la logique de mettre à jour les time values
+
   const handleAfterHourChange = newValue => {
     if (!newValue) return
 
@@ -110,7 +112,7 @@ const DateTimeRangePicker = ({
 
     setAfterValue(newAfterHour)
   }
-  // idem ici
+
   const handleBeforeHourChange = newValue => {
     if (!newValue) return
 
@@ -118,34 +120,24 @@ const DateTimeRangePicker = ({
       ...prevState,
       before: newValue,
     }))
-    const date = values[0].format('YYYY-MM-DD')
-    const beforeValue = moment(`${date} ${newValue}:00`)
-    setBeforeValue(beforeValue)
-  }
-  // on va devoir le réécrire pour coller avec la logique du after et before et séparer les deux valeurs rendues
-  const handleComplexPickerDateChange = newValue => {
-    if (!newValue) return
-    console.log(newValue)
+    const date = beforeValue.format('YYYY-MM-DD')
+    const newBeforeValue = moment(`${date} ${newValue}:00`)
+    setBeforeValue(newBeforeValue)
   }
 
-  // const isFirstRender = useRef(true)
-
-  // useEffect(() => {
-  //   if (isFirstRender.current) {
-  //     isFirstRender.current = false
-  //     return
-  //   }
-
-  //   onChange({ after: values[0], before: values[1] })
-  // }, [values, onChange])
+  const handleComplexPickerDateChange = newValues => {
+    if (!newValues) return
+    setAfterValue(newValues[0])
+    setBeforeValue(newValues[1])
+  }
 
   return isComplexPicker ? (
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <DatePicker.RangePicker
           style={{ width: '95%' }}
-          format={format}
-          defaultValue={values}
+          format={'DD MMMM YYYY HH:mm'}
+          defaultValue={[afterValue, beforeValue]}
           onChange={handleComplexPickerDateChange}
           showTime={{
             ...timePickerProps,
@@ -168,7 +160,7 @@ const DateTimeRangePicker = ({
           <DatePicker
             style={{ width: '50%' }}
             format={format}
-            defaultValue={values[0]}
+            defaultValue={afterValue || defaultAfterValue}
             onChange={newDate => {
               handleDateChange(newDate)
             }}
