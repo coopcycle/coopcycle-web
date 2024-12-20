@@ -7,7 +7,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Sylius\InvoiceLineItem;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,7 +23,7 @@ final class InvoiceLineItemCollectionDataProvider implements ContextAwareCollect
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return InvoiceLineItem::class === $resourceClass;
+        return Order::class === $resourceClass && 'invoice_line_items' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -37,15 +36,12 @@ final class InvoiceLineItemCollectionDataProvider implements ContextAwareCollect
 //            ->where('d.store = :store')
 //            ->setParameter('store', $store);
 
-        //FIXME: This is a hack to make filters work
-        $_resourceClass = Order::class;
-
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection(
                 $qb,
                 $queryNameGenerator,
-                $_resourceClass,
+                $resourceClass,
                 $operationName,
                 $context
             );
@@ -53,9 +49,9 @@ final class InvoiceLineItemCollectionDataProvider implements ContextAwareCollect
             if (
                 $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($_resourceClass, $operationName, $context)
+                $extension->supportsResult($resourceClass, $operationName, $context)
             ) {
-                return $extension->getResult($qb, $_resourceClass, $operationName, $context);
+                return $extension->getResult($qb, $resourceClass, $operationName, $context);
             }
         }
 
