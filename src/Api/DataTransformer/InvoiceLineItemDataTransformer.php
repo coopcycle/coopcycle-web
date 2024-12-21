@@ -35,9 +35,10 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
         }
 
         return new InvoiceLineItem(
+            $order->getDelivery()?->getStore()?->getId(),
             $order->getId(),
             $order->getNumber(),
-            $order->getShippingTimeRange()?->getUpper(),
+            $order->getShippingTimeRange()?->getUpper() ?? $order->getCreatedAt(),
             $description,
             $order->getTotal() - $order->getTaxTotal(),
             $order->getTaxTotal(),

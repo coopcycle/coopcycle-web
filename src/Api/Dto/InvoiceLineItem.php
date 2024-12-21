@@ -7,6 +7,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class InvoiceLineItem
 {
     #[Groups(["order"])]
+    public readonly ?int $storeId;
+
+    #[Groups(["order"])]
     public readonly int $orderId;
 
     #[Groups(["order"])]
@@ -28,6 +31,7 @@ class InvoiceLineItem
     public readonly float $total;
 
     public function __construct(
+        ?int $storeId,
         int $orderId,
         string $orderNumber,
         \DateTime $date,
@@ -37,6 +41,7 @@ class InvoiceLineItem
         float $total
     )
     {
+        $this->storeId = $storeId;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
         $this->date = $date;

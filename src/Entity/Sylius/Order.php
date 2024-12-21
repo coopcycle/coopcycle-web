@@ -128,6 +128,14 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/invoice_line_items",
  *       "security"="is_granted('ROLE_ADMIN')",
  *       "output"=InvoiceLineItem::class,
+ *     },
+ *     "invoice_line_items_export"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items/export",
+ *       "formats"={"csv"={"text/csv"}},
+ *       "pagination_enabled"=false,
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
  *     }
  *   },
  *   itemOperations={

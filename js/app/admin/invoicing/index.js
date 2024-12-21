@@ -1,9 +1,9 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import OrdersToInvoice from '../../components/OrdersToInvoice'
 import { createStoreFromPreloadedState } from '../../order/redux/store'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import { orderSlice } from '../../entities/order/reduxSlice'
+import OrdersToInvoice from './components/OrdersToInvoice'
 
 const buildInitialState = () => {
   // const shippingTimeRange = JSON.parse(orderDataElement.dataset.orderShippingTimeRange || null)
@@ -23,7 +23,7 @@ const store = createStoreFromPreloadedState(buildInitialState())
 
 export default () => {
   return (
-    <Provider store={ store }>
+    <Provider store={store}>
       <OrdersToInvoice />
     </Provider>
   )
