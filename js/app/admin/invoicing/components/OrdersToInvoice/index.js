@@ -3,10 +3,13 @@ import Modal from 'react-modal'
 
 import { useTranslation } from 'react-i18next'
 import { InputNumber, DatePicker, Table } from 'antd'
-import { useLazyGetInvoiceLineItemsQuery } from '../../api/slice'
-import Button from '../core/Button'
-import { money } from '../../utils/format'
-import { moment } from '../../../shared'
+import { useDispatch } from 'react-redux'
+
+import { useLazyGetInvoiceLineItemsQuery } from '../../../../api/slice'
+import { money } from '../../../../utils/format'
+import { moment } from '../../../../../shared'
+import Button from '../../../../components/core/Button'
+import { downloadFile } from '../../redux/actions'
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
@@ -15,11 +18,13 @@ export default () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
+  const [isModalOpen, setModalOpen] = useState(false)
+
   const [trigger, { isLoading, data }] = useLazyGetInvoiceLineItemsQuery()
 
   const { t } = useTranslation()
 
-  const [isModalOpen, setModalOpen] = useState(false)
+  const dispath = useDispatch()
 
   const { dataSource, total } = useMemo(() => {
     if (!data) {
@@ -31,9 +36,7 @@ export default () => {
         ...order,
         key: order['@id'],
         number: order.orderNumber,
-        date: order.date
-          ? moment(order.date).format('l')
-          : '?',
+        date: order.date ? moment(order.date).format('l') : '?',
         description: order.description,
         subTotal: money(order.subTotal),
         tax: money(order.tax),
@@ -102,6 +105,19 @@ export default () => {
     })
   }
 
+  const download = () => {
+    dispath(
+      downloadFile({
+        store: [storeId],
+        dateRange: [
+          dateRange[0].format('YYYY-MM-DD'),
+          dateRange[1].format('YYYY-MM-DD'),
+        ],
+        state: ['new', 'accepted', 'fulfilled'],
+      }),
+    )
+  }
+
   return (
     <div>
       <h3>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h3>
@@ -146,6 +162,21 @@ export default () => {
           />
         </div>
       </div>
+      <Button
+        primary
+        onClick={() => {
+          if (!storeId) {
+            return
+          }
+
+          if (!dateRange) {
+            return
+          }
+
+          setModalOpen(true)
+        }}>
+        {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
+      </Button>
       <Modal
         isOpen={isModalOpen}
         appElement={document.getElementById('warehouse')}
@@ -155,13 +186,19 @@ export default () => {
         style={{ content: { overflow: 'unset' } }}>
         <div className="modal-header">
           <h4 className="modal-title">
-            {t('ADMIN_WAREHOUSE_FORM_TITLE')}
+            {t('ADMIN_DASHBOARD_NAV_EXPORT')}
             <a className="pull-right" onClick={() => setModalOpen(false)}>
               <i className="fa fa-close"></i>
             </a>
           </h4>
         </div>
-        {/*<WarehouseForm initialValues={initialValues} onSubmit={onSubmit}/>*/}
+        <Button
+          primary
+          onClick={() => {
+            download()
+          }}>
+          {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
+        </Button>
       </Modal>
     </div>
   )
