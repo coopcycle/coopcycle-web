@@ -20,18 +20,9 @@ export const apiSlice = createApi({
     }),
     getInvoiceLineItems: builder.query({
       query: args => {
-        let params = args.store.map(storeId => `store[]=${storeId}`).join('&')
-
-        if (args.state && args.state.length > 0) {
-          params +=
-            '&' + args.state.map(state => `state[]=${state}`).join('&')
-        }
-
         return {
-          url: `api/invoice_line_items?${params}`,
+          url: `api/invoice_line_items?${args.params.join('&')}`,
           params: {
-            'date[after]': args.dateRange[0],
-            'date[before]': args.dateRange[1],
             page: args.page,
             itemsPerPage: args.pageSize,
           },

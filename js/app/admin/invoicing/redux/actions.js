@@ -1,28 +1,32 @@
 import { baseQueryWithReauth } from '../../../api/baseQuery'
 
-function prepareArgs(args) {
-  let params = args.store.map(storeId => `store[]=${storeId}`).join('&')
+export function prepareParams({ store, dateRange, state }) {
+  let params = []
 
-  if (args.state && args.state.length > 0) {
-    params += '&' + args.state.map(state => `state[]=${state}`).join('&')
+  params.push(...store.map(storeId => `store[]=${storeId}`))
+
+  if (state && state.length > 0) {
+    params.push(...state.map(state => `state[]=${state}`))
   }
 
-  return {
-    url: `api/invoice_line_items/export?${params}`,
-    params: {
-      'date[after]': args.dateRange[0],
-      'date[before]': args.dateRange[1],
-    },
-    responseHandler: 'text',
-  }
+  params.push(`date[after]=${dateRange[0]}`)
+  params.push(`date[before]=${dateRange[1]}`)
+
+  return params
 }
 
-export function downloadFile(args) {
+export function downloadFile({ params, filename }) {
   return async (dispatch, getState) => {
-    const result = await baseQueryWithReauth(prepareArgs(args), {
-      dispatch,
-      getState,
-    })
+    const result = await baseQueryWithReauth(
+      {
+        url: `api/invoice_line_items/export?${params.join('&')}`,
+        responseHandler: 'text',
+      },
+      {
+        dispatch,
+        getState,
+      },
+    )
 
     if (result.error) {
       console.warn('error', result.error)
@@ -32,7 +36,7 @@ export function downloadFile(args) {
     const blob = new Blob([result.data], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.download = `orders_${args.dateRange[0]}_${args.dateRange[1]}.csv`
+    link.download = filename
     link.href = url
     link.click()
 
