@@ -9,7 +9,7 @@ import { useLazyGetInvoiceLineItemsQuery } from '../../../../api/slice'
 import { money } from '../../../../utils/format'
 import { moment } from '../../../../../shared'
 import Button from '../../../../components/core/Button'
-import { downloadFile } from '../../redux/actions'
+import { downloadFile, prepareParams } from '../../redux/actions'
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
@@ -24,7 +24,18 @@ export default () => {
 
   const { t } = useTranslation()
 
-  const dispath = useDispatch()
+  const dispatch = useDispatch()
+
+  const params = useMemo(() => {
+    return prepareParams({
+      store: [storeId],
+      dateRange: [
+        dateRange[0].format('YYYY-MM-DD'),
+        dateRange[1].format('YYYY-MM-DD'),
+      ],
+      state: ['new', 'accepted', 'fulfilled'],
+    })
+  }, [storeId, dateRange])
 
   const { dataSource, total } = useMemo(() => {
     if (!data) {
@@ -94,26 +105,21 @@ export default () => {
 
   const reloadData = (page, pageSize) => {
     trigger({
-      store: [storeId],
-      dateRange: [
-        dateRange[0].format('YYYY-MM-DD'),
-        dateRange[1].format('YYYY-MM-DD'),
-      ],
-      state: ['new', 'accepted', 'fulfilled'],
+      params,
       page: page,
       pageSize: pageSize,
     })
   }
 
   const download = () => {
-    dispath(
+    const filename = `orders_${dateRange[0].format(
+      'YYYY-MM-DD',
+    )}_${dateRange[1].format('YYYY-MM-DD')}.csv`
+
+    dispatch(
       downloadFile({
-        store: [storeId],
-        dateRange: [
-          dateRange[0].format('YYYY-MM-DD'),
-          dateRange[1].format('YYYY-MM-DD'),
-        ],
-        state: ['new', 'accepted', 'fulfilled'],
+        params,
+        filename,
       }),
     )
   }
