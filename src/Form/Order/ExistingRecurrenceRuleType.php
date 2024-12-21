@@ -38,6 +38,7 @@ class ExistingRecurrenceRuleType extends DeliveryType
             'with_address_props' => true,
             // Pre-defined time slots are supported while creating a recurrence rule, but not while modifying a recurrence rule
             'use_time_slots' => false,
+            'with_price_preview' => true,
             'with_arbitrary_price' => true,
             'with_recurrence' => true
         ]);
