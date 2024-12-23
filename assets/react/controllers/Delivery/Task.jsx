@@ -3,25 +3,33 @@ import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input } from 'antd'
 import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
+import moment from 'moment'
+import { useTranslation } from 'react-i18next'
+
 
 export default ({task, addresses, storeId, storeDeliveryInfos, onUpdate }) => {
-
-  const [afterValue, setAfterValue] = useState(task?.afterValue)
-  const [beforeValue, setBeforeValue] = useState(task?.beforeValue)
+  const { t } = useTranslation()
+  
+  const [afterValue, setAfterValue] = useState(moment(task?.afterValue))
+  const [beforeValue, setBeforeValue] = useState(moment(task?.beforeValue))
   const [timeSlot, setTimeSlotValue] = useState(task?.timeSlot)
   const [commentary, setCommentary] = useState(task?.commentary)
-  const [deliveryAddress, setDeliveryAddress] = useState(task?.deliveryAddress)
+  const [deliveryAddress, setDeliveryAddress] = useState(task?.address)
+  const [toBeModified, setToBeModified] = useState(task?.toBeModified)
+  const [toBeRemembered, setToBeRemembered] = useState(task?.toBeRemembered)
   const format = 'LL'
   
     useEffect(() => {
       onUpdate({
-      afterValue,
-      beforeValue,
+      afterValue : afterValue?.toISOString(),
+      beforeValue : beforeValue?.toISOString(),
       timeSlot,
       commentary,
-      deliveryAddress,
+      address: deliveryAddress,
+      toBeModified,
+      toBeRemembered
     });
-    }, [afterValue, beforeValue, timeSlot, commentary, deliveryAddress]);
+    }, [afterValue, beforeValue, timeSlot, commentary, deliveryAddress, toBeModified, toBeRemembered]);
   
   
   const areDefinedTimeSlots = useCallback(() => {
@@ -37,6 +45,9 @@ export default ({task, addresses, storeId, storeDeliveryInfos, onUpdate }) => {
                 addresses={addresses}
                 deliveryAddress={deliveryAddress}
                 setDeliveryAddress={setDeliveryAddress}
+                setToBeModified={setToBeModified}
+        setToBeRemembered={setToBeRemembered}
+        toBeModified={toBeModified}
               />
               {areDefinedTimeSlots() ?
                 <SwitchTimeSlotFreePicker
@@ -63,6 +74,7 @@ export default ({task, addresses, storeId, storeDeliveryInfos, onUpdate }) => {
                   </label>
                   <TextArea
                     value={commentary}
+                    placeholder={t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER")}
                     onChange={e => setCommentary(e.target.value)}
                     rows={4}
                     style={{ resize: "none" }}

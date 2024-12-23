@@ -13,8 +13,6 @@ import { getCountry } from '../i18n'
 import './AddressBook.scss'
 import { SavedAddressesBox } from './SavedAddressesBox'
 
-// Fonction qui permet de gérer les icones 
-
 const AddressDetailsIcon = ({ prop }) => {
   switch (prop) {
     case 'name':
@@ -32,10 +30,13 @@ const transKeys = {
   contactName: 'ADMIN_DASHBOARD_TASK_FORM_ADDRESS_CONTACT_NAME',
 }
 
-// Fonctions qui permet de formater correctement les numéros de téléphone 
+// Fonctions qui permet de formater correctement les numéros de téléphone
 function getFormattedValue(prop, value) {
   if (prop === 'telephone' && typeof value === 'string') {
-    const phoneNumber = parsePhoneNumberFromString(value, (getCountry() || 'fr').toUpperCase())
+    const phoneNumber = parsePhoneNumberFromString(
+      value,
+      (getCountry() || 'fr').toUpperCase(),
+    )
 
     return phoneNumber ? phoneNumber.formatNational() : value
   }
@@ -45,7 +46,10 @@ function getFormattedValue(prop, value) {
 
 function getUnformattedValue(prop, value) {
   if (prop === 'telephone' && typeof value === 'string') {
-    const phoneNumber = parsePhoneNumberFromString(value, (getCountry() || 'fr').toUpperCase())
+    const phoneNumber = parsePhoneNumberFromString(
+      value,
+      (getCountry() || 'fr').toUpperCase(),
+    )
 
     return phoneNumber ? phoneNumber.format('E.164') : value
   }
@@ -57,8 +61,6 @@ function getUnformattedValue(prop, value) {
 }
 
 const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
-  // prop correspond à la propriété de l'adresse en cours d'édition (nom, tel ou contactName) Correspond aux trois champs différents
-
   const inputRef = useRef(null)
   const { t } = useTranslation()
   const [inputValue, setInputValue] = useState(
@@ -67,7 +69,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
 
   useEffect(() => {
     setInputValue(getFormattedValue(prop, address[prop]))
-  }, [address]) // on vient maj la valeur de l'input si l'adresse change
+  }, [address])
 
   if (!address) {
     return null
@@ -81,7 +83,6 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
   const onInputBlur = event => {
     saveInputValue(event.target.value)
   }
-  // on vient passer à l'input hidden la valeur -> voir comment on réécrit ça avec formik
   const onInputChange = event => {
     saveInputValue(event.target.value)
   }
@@ -99,7 +100,7 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
         defaultValue={inputValue}
         id={id + '__display'}
       />
-      <input // c'est le champ caché qui récupère la valeur formattée
+      <input
         type="text"
         tabIndex="-1"
         style={{
@@ -123,8 +124,8 @@ const AddressDetails = ({ address, prop, onChange, id, name, required }) => {
 
 const AddressBook = ({
   baseTestId,
-  addresses, // adresses pré-enregistrées
-  initialAddress, // nulle si nouvelle mais permet de passer si édition
+  addresses,
+  initialAddress,
   onAddressSelected,
   onDuplicateAddress,
   onClear,
@@ -145,7 +146,6 @@ const AddressBook = ({
     }
     setAddress(newAddress)
     onAddressSelected(newAddress.streetAddress, newAddress)
-    // pour gérer les modifications d'adresses existantes
     if (!alreadyAskedForDuplicate && address['@id']) {
       setAlreadyAskedForDuplicate(true)
       const oldValue = address[prop]
@@ -268,7 +268,7 @@ export default function (el, options) {
     newAddressControl,
     isNewAddressControl,
     duplicateAddressControl,
-    allowSearchSavedAddresses, // mais on ne lui passe jamais non ?
+    allowSearchSavedAddresses,
   } = options
 
   Modal.setAppElement(el)
@@ -278,7 +278,7 @@ export default function (el, options) {
     if (option.dataset.address) {
       addresses.push(JSON.parse(option.dataset.address))
     }
-  }) // on récupère les data du HTML
+  })
 
   let autosuggestProps = {}
 
@@ -300,10 +300,9 @@ export default function (el, options) {
   existingAddressControl.remove()
   el.appendChild(existingAddressControlHidden)
 
-  // Replace the new address text field by a hidden input with the same name & value
   const newAddressControlHidden = document.createElement('input')
 
-  // on vient mettre à jour les champs nom, etc.
+
   const newAddressControlName = newAddressControl.name
   const newAddressControlValue = newAddressControl.value
   const newAddressControlId = newAddressControl.id
