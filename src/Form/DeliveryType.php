@@ -59,9 +59,13 @@ class DeliveryType extends AbstractType
 
             $store = $delivery->getStore();
 
+            $isNew = null === $delivery->getId();
+            // other order types are foodtech and b2c deliveries (via Order form: https://docs.coopcycle.org/en/admin/deliveries/externaldisplay/)
+            $isStoreDeliveryOrder = $store !== null;
+
             // When this is a new delivery,
             // set defaults for pickup/dropoff date
-            if (null === $delivery->getId() && true === $options['asap_timing']) {
+            if ($isNew && true === $options['asap_timing']) {
 
                 $now = Carbon::now();
 
@@ -111,7 +115,7 @@ class DeliveryType extends AbstractType
 
             $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
             // customers/stores owners are not allowed to edit existing deliveries
-            $isEditEnabled = $this->authorizationChecker->isGranted('ROLE_DISPATCHER') || is_null($delivery->getId());
+            $isEditEnabled = ($isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_DISPATCHER')) || $isNew;
 
             if ($isMultiDropEnabled && $isEditEnabled) {
                 $form->add('addTask', ButtonType::class, [
@@ -130,7 +134,7 @@ class DeliveryType extends AbstractType
             }
 
             // Allow admins to define an arbitrary price
-            if (true === $options['with_arbitrary_price'] &&
+            if (true === $options['with_arbitrary_price'] && $isStoreDeliveryOrder &&
                 $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
 
                 // If the current price was calculated using pricing rules, display it as a hint
@@ -165,9 +169,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            $isDeliveryOrder = null !== $store;
-
-            if ($options['with_bookmark'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($options['with_bookmark'] && $isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('bookmark', CheckboxType::class, [
                     'label' => 'form.delivery.bookmark.label',
                     'mapped' => false,
@@ -176,7 +178,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            if ($options['with_recurrence'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($options['with_recurrence'] && $isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('recurrence', HiddenType::class, [
                     'required' => false,
                     'mapped' => false,
