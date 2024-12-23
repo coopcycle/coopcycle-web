@@ -135,19 +135,26 @@ class PricingManager
 
             $user = $this->getUser();
 
-            //FIXME: create an incident for orders added by ApiApp
+            $isUserWithAccount = $user instanceof User && null !== $user->getId();
+            // If it's not a user with an account, it could be an ApiApp
             // ApiKey: see BearerTokenAuthenticator
             // OAuth client: League\Bundle\OAuth2ServerBundle\Security\User\NullUser
-            $isUserWithAccount = $user instanceof User && null !== $user->getId();
 
-            if (null !== $incident && $isUserWithAccount) {
-                $incident->setTitle($this->translator->trans('form.delivery.price.missing.incident', [
+            if (null !== $incident) {
+                $title = $this->translator->trans('form.delivery.price.missing.incident', [
                     '%number%' => $order->getNumber(),
-                ]));
+                ]);
+
+                //FIXME: allow to set $createdBy API clients (ApiApp) and integrations; see Incident::createdBy
+                if (!$isUserWithAccount) {
+                    $title = $title . ' (API client)';
+                }
+
+                $incident->setTitle($title);
                 $incident->setFailureReasonCode('PRICE_REVIEW_NEEDED');
                 $incident->setTask($delivery->getPickup());
 
-                $this->createIncident->__invoke($incident, $user, $this->requestStack->getCurrentRequest());
+                $this->createIncident->__invoke($incident, $isUserWithAccount ? $user : null, $this->requestStack->getCurrentRequest());
             }
         }
 

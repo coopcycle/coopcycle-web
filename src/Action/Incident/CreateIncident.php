@@ -46,7 +46,7 @@ class CreateIncident
         return self::DEFAULT_TITLE;
     }
 
-    public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
+    public function __invoke(Incident $data, ?UserInterface $user, Request $request): Incident
     {
         $title = trim($data->getTitle() ?? '');
 
@@ -54,7 +54,9 @@ class CreateIncident
             $data->setTitle($this->findDescriptionByCode($data->getFailureReasonCode()));
         }
 
-        $data->setCreatedBy($user);
+        if (null !== $user) {
+            $data->setCreatedBy($user);
+        }
         $this->em->persist($data);
         $this->em->flush();
 
