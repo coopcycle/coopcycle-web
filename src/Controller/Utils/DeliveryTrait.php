@@ -3,14 +3,11 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
-use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Order\ExistingOrderType;
 use AppBundle\Pricing\PricingManager;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -23,17 +20,6 @@ trait DeliveryTrait
      * @return array
      */
     abstract protected function getDeliveryRoutes();
-
-    protected function getDeliveryPrice(Delivery $delivery, ?PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
-    {
-        $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
-
-        if (null === $price) {
-            throw new NoRuleMatchedException();
-        }
-
-        return (int) ($price);
-    }
 
     public function deliveryAction($id,
         Request $request,
