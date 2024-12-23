@@ -4,18 +4,27 @@ import { Input, Select, Checkbox, Button } from 'antd'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
+// import { getCountry } from '../i18n'
 
-export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
+export default function ({
+  addresses,
+  setDeliveryAddress,
+  deliveryAddress,
+  setToBeModified,
+  setToBeRemembered,
+  toBeModified,
+}) {
   const { t } = useTranslation()
 
   const [isModalOpen, setModalOpen] = useState(false)
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
     useState(false)
+  const [selectValue, setSelectValue] = useState(null)
 
   const handleModifyAddress = () => {
     if (
-      deliveryAddress.address['@id'] &&
-      !deliveryAddress.toBeModified &&
+      deliveryAddress['@id'] &&
+      !toBeModified &&
       !alreadyAskedForModification
     ) {
       setModalOpen(true)
@@ -27,10 +36,7 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
       address => address.streetAddress === value,
     )
 
-    setDeliveryAddress(prevState => ({
-      ...prevState,
-      address: selectedAddress,
-    }))
+    setDeliveryAddress(selectedAddress)
   }
 
   /**
@@ -46,10 +52,11 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
             style={{ width: '100%' }}
             showSearch
             placeholder="Rechercher une adresse enregistrée"
-            value={deliveryAddress.address.streetAddress}
+            value={selectValue}
             optionFilterProp="label"
             onChange={value => {
               onAddressSelected(value)
+              setSelectValue(value)
             }}
             filterOption={(input, option) =>
               option.label.toLowerCase().includes(input.toLowerCase())
@@ -70,19 +77,13 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
               const newValue = e.target.value
               handleModifyAddress()
 
-              setDeliveryAddress(prevState => {
-                const newState = {
-                  ...prevState,
-                  address: {
-                    ...prevState.address,
-                    name: newValue,
-                  },
-                }
-                return newState
-              })
+              setDeliveryAddress(prevState => ({
+                ...prevState,
+                name: newValue,
+              }))
             }}
             placeholder="Nom"
-            value={deliveryAddress.address.name}
+            value={deliveryAddress.name}
           />
         </div>
         <div className="col-md-4">
@@ -91,20 +92,13 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
               const newValue = e.target.value
 
               handleModifyAddress()
-
-              setDeliveryAddress(prevState => {
-                const newState = {
-                  ...prevState,
-                  address: {
-                    ...prevState.address,
-                    telephone: newValue,
-                  },
-                }
-                return newState
-              })
+              setDeliveryAddress(prevState => ({
+                ...prevState,
+                telephone: newValue,
+              }))
             }}
             placeholder="Téléphone"
-            value={deliveryAddress.address.telephone}
+            value={deliveryAddress.telephone}
           />
         </div>
         <div className="col-md-4">
@@ -112,20 +106,13 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
             onChange={e => {
               const newValue = e.target.value
               handleModifyAddress()
-
-              setDeliveryAddress(prevState => {
-                const newState = {
-                  ...prevState,
-                  address: {
-                    ...prevState.address,
-                    contactName: newValue,
-                  },
-                }
-                return newState
-              })
+              setDeliveryAddress(prevState => ({
+                ...prevState,
+                contactName: newValue,
+              }))
             }}
             placeholder="Contact"
-            value={deliveryAddress.address.contactName}
+            value={deliveryAddress.contactName}
           />
         </div>
         <div className="col-md-12">
@@ -136,22 +123,17 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
             reportValidity={true}
             preciseOnly={true}
             onAddressSelected={(value, address) => {
-              console.log(value, address)
-              setDeliveryAddress(prevState => ({
-                ...prevState,
-                address,
-              }))
-              console.log('value', value)
+              setDeliveryAddress(address)
+              setSelectValue(null)
             }}
             onClear={() => {
               setDeliveryAddress(prevState => ({
                 ...prevState,
-                selectedAddress: {
-                  streetAddress: '',
-                  name: '',
-                  contactName: '',
-                  telephone: '',
-                },
+
+                streetAddress: '',
+                name: '',
+                contactName: '',
+                telephone: '',
               }))
             }}
           />
@@ -159,15 +141,9 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
           <Checkbox
             onChange={e => {
               if (e.target.checked) {
-                setDeliveryAddress(prevState => ({
-                  ...prevState,
-                  toBeRemembered: true,
-                }))
+                setToBeRemembered(true)
               } else {
-                setDeliveryAddress(prevState => ({
-                  ...prevState,
-                  toBeRemembered: false,
-                }))
+                setToBeRemembered(false)
               }
             }}>
             Se souvenir de cette adresse
@@ -188,18 +164,14 @@ export default function ({ addresses, setDeliveryAddress, deliveryAddress }) {
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <h4 className="text-center">
-          {deliveryAddress.address.name} -{' '}
-          {deliveryAddress.address.streetAddress}
+          {deliveryAddress.name} - {deliveryAddress.streetAddress}
         </h4>
         <p>{t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER')}</p>
         <div className="d-flex justify-content-center">
           <Button
             className="mr-4"
             onClick={() => {
-              setDeliveryAddress(prevState => ({
-                ...prevState,
-                toBeModified: true,
-              }))
+              setToBeModified(true)
               setModalOpen(false)
             }}>
             {t('ADDRESS_BOOK_PROP_CHANGED_UPDATE')}

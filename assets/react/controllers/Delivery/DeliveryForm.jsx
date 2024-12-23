@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useState} from 'react'
 import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
@@ -27,39 +27,40 @@ export default function ({ isNew, storeId }) {
   const initialTasks = [
   {
     type: 'pickup',
-    afterValue: getNextRoundedTime(),
-    beforeValue: getNextRoundedTime().add(15, 'minutes'),
+    afterValue: getNextRoundedTime().toISOString(),
+    beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
     timeSlot: null,
     commentary: '',
-    deliveryAddress: {
       address: {
-        streetAddress: '',
-        name: '',
-        contactName: '',
-        telephone: '',
+      streetAddress: '',
+      name: '',
+      contactName: '',
+      telephone: '',
       },
-      toBeRemembered: false,
-      toBeModified: false,
-    },
+    toBeRemembered: false,
+    toBeModified: false,
+        
   },
   {
     type: 'dropoff',
-    afterValue: getNextRoundedTime(),
-    beforeValue: getNextRoundedTime().add(30, 'minutes'),
+    afterValue: getNextRoundedTime().toISOString(),
+    beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
     timeSlot: null,
     commentary: '',
-    deliveryAddress: {
-      address: {
-        streetAddress: '',
-        name: '',
-        contactName: '',
-        telephone: '',
-      },
-      toBeRemembered: false,
-      toBeModified: false,
+    address: {
+      streetAddress: '',
+      name: '',
+      contactName: '',
+      telephone: '',
     },
-  },
+    toBeRemembered: false,
+    toBeModified: false,
+    },
 ];
+
+  /**TODO : Format before and after when submiting (ISO format) 
+   * Format phone number
+  */
 
   const [tasks, setTasks] = useState(initialTasks)
   const [addresses, setAddresses] = useState([])
@@ -125,6 +126,30 @@ export default function ({ isNew, storeId }) {
   }, [storeId])
 
   console.log(isNew)
+
+  const handleSubmit = useCallback((async() => {
+     const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+    const jwt = jwtResp.jwt
+    const url = `${baseURL}/api/deliveries`
+
+    const response = await axios.post(
+      url,
+      {
+        store: storeDeliveryInfos['@id'],
+        tasks: tasks
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+          'Content-Type': 'application/ld+json'
+        }
+      }
+    );
+
+    console.log(response.data)
+
+
+  }), [tasks, storeDeliveryInfos])
   
   return (
   <ConfigProvider locale={antdLocale}>
@@ -139,7 +164,7 @@ export default function ({ isNew, storeId }) {
         // onDelete={() => deleteTask(index)}
       />
     ))}
-    <button type="submit">
+    <button type="submit" onClick={handleSubmit}>
       Soumettre
     </button>
   </ConfigProvider>
