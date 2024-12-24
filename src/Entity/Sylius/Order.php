@@ -128,6 +128,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/invoice_line_items",
  *       "security"="is_granted('ROLE_ADMIN')",
  *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"default_invoice_line_item"}}
  *     },
  *     "invoice_line_items_export"={
  *       "method"="GET",
@@ -136,6 +137,16 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "pagination_enabled"=false,
  *       "security"="is_granted('ROLE_ADMIN')",
  *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"export_invoice_line_item"}}
+ *     },
+ *     "invoice_line_items_odoo_export"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items/export/odoo",
+ *       "formats"={"csv"={"text/csv"}},
+ *       "pagination_enabled"=false,
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"odoo_export_invoice_line_item"}}
  *     }
  *   },
  *   itemOperations={

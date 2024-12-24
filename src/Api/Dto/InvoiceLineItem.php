@@ -3,35 +3,40 @@
 namespace AppBundle\Api\Dto;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 class InvoiceLineItem
 {
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly ?int $storeId;
 
-    #[Groups(["order"])]
+    #[Groups(["export_invoice_line_item"])]
+    public readonly ?string $storeLegalName;
+
+    #[Groups(["default_invoice_line_item"])]
     public readonly int $orderId;
 
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly string $orderNumber;
 
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
     public readonly \DateTime $date;
 
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
     public readonly string $description;
 
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
     public readonly float $subTotal;
 
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
     public readonly float $tax;
 
-    #[Groups(["order"])]
+    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
     public readonly float $total;
 
     public function __construct(
         ?int $storeId,
+        ?string $storeLegalName,
         int $orderId,
         string $orderNumber,
         \DateTime $date,
@@ -42,6 +47,7 @@ class InvoiceLineItem
     )
     {
         $this->storeId = $storeId;
+        $this->storeLegalName = $storeLegalName;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
         $this->date = $date;
@@ -50,4 +56,59 @@ class InvoiceLineItem
         $this->tax = $tax;
         $this->total = $total;
     }
+
+    // The only reason to have separate methods for Odoo
+    // is because it's not possible to specify different property names
+    // for different groups yet.
+    // https://github.com/symfony/symfony/issues/30483
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("External ID")]
+    public function getOdooExternalId(): string
+    {
+        return hash('sha256', $this->storeLegalName);
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Partner")]
+    public function getOdooPartner(): string
+    {
+        return $this->storeLegalName;
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice lines / Account")]
+    public function getOdooAccount(): string
+    {
+        return 'account_placeholder'; // Replace with actual logic
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice lines / Product")]
+    public function getOdooProduct(): string
+    {
+        return 'product_placeholder'; // Replace with actual logic
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice lines / Label")]
+    public function getOdooLabel(): string
+    {
+        return $this->description;
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice lines / Unit Price")]
+    public function getOdooUnitPrice(): float
+    {
+        return $this->subTotal;
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice lines / Quantity")]
+    public function getOdooQuantity(): int
+    {
+        return 1;
+    }
+
 }
