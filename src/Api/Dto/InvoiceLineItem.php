@@ -13,14 +13,19 @@ class InvoiceLineItem
     #[Groups(["export_invoice_line_item"])]
     public readonly ?string $storeLegalName;
 
+    public readonly string $invoiceId;
+
+    #[Groups(["export_invoice_line_item"])]
+    public readonly string $product;
+
+    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
+    public readonly \DateTime $date;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly int $orderId;
 
     #[Groups(["default_invoice_line_item"])]
     public readonly string $orderNumber;
-
-    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
-    public readonly \DateTime $date;
 
     #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
     public readonly string $description;
@@ -37,6 +42,8 @@ class InvoiceLineItem
     public function __construct(
         ?int $storeId,
         ?string $storeLegalName,
+        string $invoiceId,
+        string $product,
         int $orderId,
         string $orderNumber,
         \DateTime $date,
@@ -48,6 +55,8 @@ class InvoiceLineItem
     {
         $this->storeId = $storeId;
         $this->storeLegalName = $storeLegalName;
+        $this->invoiceId = $invoiceId;
+        $this->product = $product;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
         $this->date = $date;
@@ -66,7 +75,7 @@ class InvoiceLineItem
     #[SerializedName("External ID")]
     public function getOdooExternalId(): string
     {
-        return hash('sha256', $this->storeLegalName);
+        return $this->invoiceId;
     }
 
     #[Groups(["odoo_export_invoice_line_item"])]
@@ -87,7 +96,7 @@ class InvoiceLineItem
     #[SerializedName("Invoice lines / Product")]
     public function getOdooProduct(): string
     {
-        return 'product_placeholder'; // Replace with actual logic
+        return $this->product;
     }
 
     #[Groups(["odoo_export_invoice_line_item"])]
