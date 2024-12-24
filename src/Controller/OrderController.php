@@ -238,6 +238,11 @@ class OrderController extends AbstractController
                 $order->setCustomer($customer);
             }
 
+            // Reset phone number (important when a Saved address is used)
+            // The latest phone number will be set later by EnhanceShippingAddress
+            $shippingAddress = $order->getShippingAddress();
+            $shippingAddress->setTelephone(null);
+
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 

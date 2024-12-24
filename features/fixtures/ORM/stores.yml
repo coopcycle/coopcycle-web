@@ -133,6 +133,7 @@ AppBundle\Entity\Store:
     address: "@address_2"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_3'
+    packageSet: '@package_set_1'
     timeSlot: '@time_slot_1'
     __calls:
       - addAddress: [ "@address_2" ]
