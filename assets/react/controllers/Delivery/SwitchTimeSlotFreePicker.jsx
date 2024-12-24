@@ -2,22 +2,23 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import TimeSlotPicker from '../../../../js/app/components/delivery/TimeSlotPicker'
 import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
+import { useFormikContext } from 'formik'
 
-export default ({ storeId, storeDeliveryInfos, setTimeSlotValue, format, afterValue, beforeValue, setAfterValue, setBeforeValue }) => {
+export default ({ storeId, storeDeliveryInfos, index, format }) => {
   const {t} = useTranslation()
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
-
+  const {setFieldValue} = useFormikContext()
 
   useEffect(() => {
-    if (isTimeSlotSelect) {
-      setBeforeValue(null)
-      setAfterValue(null)
+    if  (isTimeSlotSelect)  {
+      setFieldValue(`tasks[${index}].afterValue`, null)
+      setFieldValue(`tasks[${index}].beforeValue`, null)
     } else {
-      setTimeSlotValue(null)
+      setFieldValue(`tasks[${index}].timeSlot`, null)
     }
   }, [isTimeSlotSelect])
-
+  
   return (
     <>
       {isTimeSlotSelect ? (
@@ -30,7 +31,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue, format, afterVa
             <TimeSlotPicker
              storeId={storeId}
             storeDeliveryInfos={storeDeliveryInfos}
-            setTimeSlotValue={setTimeSlotValue}
+            index={index}
             />
           </div>
           <i
@@ -49,11 +50,8 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue, format, afterVa
         <div style={{ display: 'flex', alignItems: 'baseline' }}>
           <div style={{ width: '95%' }}>
             <DateRangePicker
-              format={format}
-                  afterValue={afterValue}
-                  beforeValue={beforeValue}
-                  setAfterValue={setAfterValue}
-                  setBeforeValue={setBeforeValue}
+                format={format}
+                index={index}
             />
           </div>
           <i

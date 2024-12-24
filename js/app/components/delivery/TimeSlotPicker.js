@@ -2,12 +2,15 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
 import axios from 'axios'
+import { useFormikContext } from 'formik'
 
 import 'antd/es/input/style/index.css'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
+export default ({ storeId, storeDeliveryInfos, index }) => {
+  const { setFieldValue } = useFormikContext()
+
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
   useEffect(() => {
     const getTimeSlotsLabels = async () => {
@@ -52,7 +55,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   /** We initialize with the default timesSlots, then changed when user selects a different option */
 
   const [timeSlotChoices, setTimeSlotChoices] = useState([])
- 
+
   const getTimeSlotOptions = async timeSlotUrl => {
     const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
     const jwt = jwtResp.jwt
@@ -76,7 +79,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
    */
 
   const [datesWithTimeslots, setDatesWithTimeslots] = useState({})
-  const [values, setValues] = useState({})
+  const [selectedValues, setSelectedValues] = useState({})
   const [options, setOptions] = useState([])
 
   useEffect(() => {
@@ -100,7 +103,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
       if (availableDates.length > 0) {
         const firstDate = moment(availableDates[0])
         setOptions(formattedSlots[availableDates[0]])
-        setValues({
+        setSelectedValues({
           date: firstDate,
           option: formattedSlots[availableDates[0]][0],
         })
@@ -110,14 +113,14 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   }, [timeSlotChoices])
 
   useEffect(() => {
-    if (Object.keys(values).length !== 0) {
-      const date = values.date.format('YYYY-MM-DD')
-      const range = values.option
+    if (Object.keys(selectedValues).length !== 0) {
+      const date = selectedValues.date.format('YYYY-MM-DD')
+      const range = selectedValues.option
       const [first, second] = range.split('-')
       const timeSlot = `${date}T${first}:00Z/${date}T${second}:00Z`
-      setTimeSlotValue(timeSlot)
+      setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
     }
-  }, [values])
+  }, [selectedValues])
 
   /** disabled dates */
 
@@ -138,7 +141,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
   const handleDateChange = newDate => {
     if (!newDate) return
 
-    setValues({
+    setSelectedValues({
       date: newDate,
       option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
     })
@@ -147,7 +150,7 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
 
   const handleTimeSlotChange = newTimeslot => {
     if (!newTimeslot) return
-    setValues(prevState => ({ ...prevState, option: newTimeslot }))
+    setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
   }
 
   return (
@@ -171,27 +174,27 @@ export default ({ storeId, storeDeliveryInfos, setTimeSlotValue }) => {
       ) : null}
 
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
-        {values.date ? (
+        {selectedValues.date ? (
           <DatePicker
             format="LL"
             style={{ width: '60%' }}
             className="mr-2"
             disabledDate={disabledDate}
             disabled={dates.length > 1 ? false : true}
-            value={values.date}
+            value={selectedValues.date}
             onChange={date => {
               handleDateChange(date)
             }}
           />
         ) : null}
 
-        {values.option && options ? (
+        {selectedValues.option && options ? (
           <Select
             style={{ width: '35%' }}
             onChange={option => {
               handleTimeSlotChange(option)
             }}
-            value={values.option}>
+            value={selectedValues.option}>
             {options.length >= 1 &&
               options.map(option => (
                 <Select.Option key={option} value={option}>
