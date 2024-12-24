@@ -34,8 +34,11 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             );
         }
 
+        $store = $order->getDelivery()?->getStore();
+
         return new InvoiceLineItem(
-            $order->getDelivery()?->getStore()?->getId(),
+            $store?->getId(),
+            $store?->getLegalName() ?? $store?->getName(),
             $order->getId(),
             $order->getNumber(),
             $order->getShippingTimeRange()?->getUpper() ?? $order->getCreatedAt(),
@@ -50,5 +53,4 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
     {
         return InvoiceLineItem::class === $to && $data instanceof Order;
     }
-
 }
