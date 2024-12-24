@@ -17,7 +17,6 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
     {
     }
 
-
     public function transform($object, string $to, array $context = [])
     {
         $order = $object;
@@ -31,7 +30,7 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $requestId,
             $store?->getId() ?? 0
         ));
-        
+
         $deliveryItem = $order->getDeliveryItem();
 
         $product = '';
