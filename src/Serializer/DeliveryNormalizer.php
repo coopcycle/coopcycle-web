@@ -70,7 +70,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Delivery;
     }
 
-    private function denormalizeTask($data, Task $task, $format = null)
+    private function denormalizeTask($data, Task $task, Delivery $delivery, $format = null)
     {
         if (isset($data['type'])) {
             $task->setType(strtoupper($data['type']));
@@ -162,7 +162,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             $packageRepository = $this->doctrine->getRepository(Package::class);
 
             foreach ($data['packages'] as $p) {
-                $package = $packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByNameAndStore($p['type'], $delivery->getStore());
                 if ($package) {
                     $task->addPackageWithQuantity($package, $p['quantity']);
                 }
@@ -205,12 +205,12 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['tasks']) && is_array($data['tasks'])) {
             if (count($data['tasks']) === 2) {
-                $this->denormalizeTask($data['tasks'][0], $pickup, $format);
-                $this->denormalizeTask($data['tasks'][1], $dropoff, $format);
+                $this->denormalizeTask($data['tasks'][0], $pickup, $delivery, $format);
+                $this->denormalizeTask($data['tasks'][1], $dropoff, $delivery, $format);
             } else {
-                $tasks = array_map(function ($item) use ($format) {
+                $tasks = array_map(function ($item) use ($delivery, $format) {
                     $task = new Task();
-                    $this->denormalizeTask($item, $task, $format);
+                    $this->denormalizeTask($item, $task, $delivery, $format);
                     return $task;
                 }, $data['tasks']);
 
@@ -218,11 +218,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         } else {
             if (isset($data['dropoff'])) {
-                $this->denormalizeTask($data['dropoff'], $dropoff, $format);
+                $this->denormalizeTask($data['dropoff'], $dropoff, $delivery, $format);
             }
 
             if (isset($data['pickup'])) {
-                $this->denormalizeTask($data['pickup'], $pickup, $format);
+                $this->denormalizeTask($data['pickup'], $pickup, $delivery, $format);
             }
         }
 
@@ -231,7 +231,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             $packageRepository = $this->doctrine->getRepository(Package::class);
 
             foreach ($data['packages'] as $p) {
-                $package = $packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByNameAndStore($p['type'], $delivery->getStore());
                 if ($package) {
                     $delivery->addPackageWithQuantity($package, $p['quantity']);
                 }
