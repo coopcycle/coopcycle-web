@@ -3,6 +3,7 @@
 namespace AppBundle\Action\TaskList;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
@@ -20,7 +21,8 @@ final class SetItems
         private EntityManagerInterface $entityManager,
         private UserManager $userManager,
         private TaskListManager $taskListManager,
-        private TaskListNormalizer $taskListNormalizer
+        private TaskListNormalizer $taskListNormalizer,
+        private TaskListProvider $taskListProvider
     )
     {}
 
@@ -29,7 +31,7 @@ final class SetItems
         $date = new \DateTime($request->get('date'));
         $user = $this->userManager->findUserByUsername($request->get('username'));
 
-        $taskList = $this->taskListManager->getTaskListForUser($date, $user);
+        $taskList = $this->taskListProvider->getTaskListForUserAndDate($date, $user);
 
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);

@@ -3,6 +3,7 @@
 namespace AppBundle\Service;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
@@ -76,22 +77,4 @@ class TaskListManager {
             $task->assignTo($taskList->getCourier(), $taskList->getDate());
         }
     }
-
-    public function getTaskListForUser(\DateTime $date, User $user)
-    {
-        $taskList = $this->entityManager
-            ->getRepository(TaskList::class)
-            ->findOneBy(['date' => $date, 'courier' => $user]);
-
-        if (null === $taskList) {
-            $taskList = new TaskList();
-            $taskList->setDate($date);
-            $taskList->setCourier($user);
-            $this->entityManager->persist($taskList);
-            $this->entityManager->flush();
-        }
-
-        return $taskList;
-    }
-
 }
