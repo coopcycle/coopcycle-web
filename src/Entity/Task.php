@@ -490,12 +490,14 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $incidents;
 
     /**
-    * CO2 emissions from the previous task/warehouse to accomplish this task, in g
+    * CO2 emissions from the previous task/warehouse to accomplish this task
+    * @Groups({"task"})
     */
     private $co2Emissions = 0;
 
     /**
     * Distance from previous task, in meter
+    * @Groups({"task"})
     */
     private $distanceFromPrevious = 0;
 

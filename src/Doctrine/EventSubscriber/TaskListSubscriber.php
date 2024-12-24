@@ -34,7 +34,6 @@ class TaskListSubscriber implements EventSubscriber
         private readonly TranslatorInterface $translator,
         private readonly RoutingInterface $routing,
         private readonly TaskListRepository $taskListRepository,
-        private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger
     )
     {
@@ -49,11 +48,12 @@ class TaskListSubscriber implements EventSubscriber
         );
     }
 
-    private function calculate(TaskList $taskList)
+    private function calculate(TaskList $taskList, EntityManagerInterface $em)
     {
         $coordinates = [];
         $tasks = [];
-        $vehicle = $taskList->getVehicle(); 
+        $vehicle = $taskList->getVehicle();
+        $uow = $em->getUnitOfWork();
         
         if (!is_null($vehicle)) {
             $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
@@ -86,7 +86,16 @@ class TaskListSubscriber implements EventSubscriber
                     $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
                     $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
                     $task->setCo2Emissions($emissions);
-                    $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
+                }
+            } else {
+                $route = $this->routing->route(...$coordinates)['routes'][0];
+                $legs = $route["legs"];
+                foreach ($legs as $index => $leg) {
+                    $task = $taskList->getTasks()[$index + 1]; // we assume we start at the first task, as there is no warehouse
+                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
+                    $task->setCo2Emissions(0); // reset
+                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
                 }
             }
         }
@@ -95,9 +104,10 @@ class TaskListSubscriber implements EventSubscriber
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
+        $em = $args->getObjectManager();
 
         if ($entity instanceof TaskList) {
-            $this->calculate($entity);
+            $this->calculate($entity, $em);
         }
     }
 
@@ -166,7 +176,7 @@ class TaskListSubscriber implements EventSubscriber
         foreach ($this->taskLists as $taskList) { // @phpstan-ignore-line
 
             $this->logger->debug('TaskList was modified, recalculating…');
-            $this->calculate($taskList);
+            $this->calculate($taskList, $em);
 
             if ($uow->isInIdentityMap($taskList)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskList::class), $taskList);
