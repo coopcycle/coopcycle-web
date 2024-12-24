@@ -65,7 +65,6 @@ class DeliveryListener
 
     public function postPersist(Delivery $delivery)
     {
-        
         if ($delivery->getStore() && $delivery->getStore()->getDefaultCourier()) {
             $courier = $delivery->getStore()->getDefaultCourier();
             

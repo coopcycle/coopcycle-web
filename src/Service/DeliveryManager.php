@@ -106,6 +106,7 @@ class DeliveryManager
 
         if (null === $store = $delivery->getStore()) {
             $store = $this->storeExtractor->extractStore();
+            $delivery->setStore($store);
         }
 
         // If no pickup address is specified, use the store address
