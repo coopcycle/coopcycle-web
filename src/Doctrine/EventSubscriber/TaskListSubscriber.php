@@ -86,7 +86,9 @@ class TaskListSubscriber implements EventSubscriber
                     $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
                     $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
                     $task->setCo2Emissions($emissions);
-                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
+                    if ($uow->isInIdentityMap($task)) {
+                        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
+                    }
                 }
             } else {
                 $route = $this->routing->route(...$coordinates)['routes'][0];
@@ -95,7 +97,9 @@ class TaskListSubscriber implements EventSubscriber
                     $task = $taskList->getTasks()[$index + 1]; // we assume we start at the first task, as there is no warehouse
                     $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
                     $task->setCo2Emissions(0); // reset
-                    $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
+                    if ($uow->isInIdentityMap($task)) {
+                        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
+                    }
                 }
             }
         }
