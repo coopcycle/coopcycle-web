@@ -62,17 +62,15 @@ class CheckoutCustomerType extends AbstractType
                 ]);
             }
 
-            if (null === $customer || !$customer->hasUser() || empty($customer->getPhoneNumber())) {
-                $form->add('phoneNumber', PhoneNumberType::class, [
-                    'label' => 'form.checkout_address.telephone.label',
-                    'constraints' => [
-                        new Assert\NotBlank(),
-                        new AssertPhoneNumber(),
-                    ],
-                    'help' => 'form.checkout_address.telephone.help',
-                    'data' => $customer !== null ? $customer->getPhoneNumber() : '',
-                ]);
-            }
+            $form->add('phoneNumber', PhoneNumberType::class, [
+                'label' => 'form.checkout_address.telephone.label',
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new AssertPhoneNumber(),
+                ],
+                'help' => 'form.checkout_address.telephone.help',
+                'data' => $customer !== null ? $customer->getPhoneNumber() : '',
+            ]);
 
             if (null === $customer || !$customer->hasUser()) {
                 $form->add('legal', LegalType::class, [
