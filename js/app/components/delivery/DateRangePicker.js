@@ -3,8 +3,24 @@ import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { DatePicker, Select } from 'antd'
 import { timePickerProps } from '../../utils/antd'
+import { useFormikContext } from 'formik'
 
 import 'antd/es/input/style/index.css'
+
+function getNextRoundedTime() {
+  const now = moment()
+  now.add(15, 'minutes')
+  const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
+  if (roundedMinutes >= 60) {
+    now.add(1, 'hour')
+    now.minutes(roundedMinutes - 60)
+  } else {
+    now.minutes(roundedMinutes)
+  }
+  now.seconds(0)
+
+  return now
+}
 
 const { Option } = Select
 
@@ -35,27 +51,35 @@ function generateTimeSlots(afterHour = null) {
   })
 }
 
-const DateTimeRangePicker = ({
-  format,
-  afterValue,
-  beforeValue,
-  setAfterValue,
-  setBeforeValue,
-}) => {
+const DateTimeRangePicker = ({ format, index }) => {
   const { t } = useTranslation()
+  const { values, setFieldValue } = useFormikContext()
 
   /** we initialize defaultValues in case we use the switch from timeslots to free picker
    * as we automatically set after and before to null when we use timeslots
    */
-  const defaultAfterValue = moment()
-  const defaultBeforeValue = moment().add(15, 'minutes')
+
+  const defaultAfterValue = React.useMemo(() => getNextRoundedTime(), [])
+  const defaultBeforeValue = React.useMemo(
+    () => defaultAfterValue.clone().add(15, 'minutes'),
+    [defaultAfterValue],
+  )
+
+  /** we use internal state and then synchronize it with the form values */
+  const [afterValue, setAfterValue] = useState(() => {
+    const formValue = values.tasks[index].afterValue
+    return formValue ? moment(formValue) : defaultAfterValue
+  })
+
+  const [beforeValue, setBeforeValue] = useState(() => {
+    const formValue = values.tasks[index].beforeValue
+    return formValue ? moment(formValue) : defaultBeforeValue
+  })
 
   useEffect(() => {
-    if (!afterValue || !beforeValue) {
-      setAfterValue(defaultAfterValue)
-      setBeforeValue(defaultBeforeValue)
-    }
-  }, [afterValue, beforeValue])
+    setFieldValue(`tasks[${index}].afterValue`, afterValue.toISOString())
+    setFieldValue(`tasks[${index}].beforeValue`, beforeValue.toISOString())
+  }, [afterValue, beforeValue, index, setFieldValue])
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
 
@@ -76,24 +100,32 @@ const DateTimeRangePicker = ({
       const updatedSecondOptions = generateTimeSlots(afterValue)
       setSecondSelectOptions(updatedSecondOptions)
     }
-  }, [afterValue])
+
+    if (defaultAfterValue) {
+      const updatedSecondOptions = generateTimeSlots(defaultAfterValue)
+      setSecondSelectOptions(updatedSecondOptions)
+    }
+  }, [afterValue, defaultAfterValue])
 
   const handleDateChange = newValue => {
     if (!newValue) return
 
-    const afterHour = afterValue.format('HH:mm:ss')
-    const beforeHour = beforeValue.format('HH:mm:ss')
+    const afterHour =
+      afterValue?.format('HH:mm:ss') || defaultAfterValue.format('HH:mm:ss')
+    const beforeHour =
+      beforeValue?.format('HH:mm:ss') || defaultBeforeValue.format('HH:mm:ss')
 
     const newDate = newValue.format('YYYY-MM-DD')
 
-    setAfterValue(moment.utc(`${newDate} ${afterHour}`))
-    setBeforeValue(moment.utc(`${newDate} ${beforeHour}`))
+    setAfterValue(moment(`${newDate} ${afterHour}`))
+    setBeforeValue(moment(`${newDate} ${beforeHour}`))
   }
 
   const handleAfterHourChange = newValue => {
     if (!newValue) return
 
-    const date = afterValue.format('YYYY-MM-DD')
+    const date =
+      afterValue?.format('YYYY-MM-DD') || defaultAfterValue.format('YYYY-MM-DD')
     const newAfterHour = moment(`${date} ${newValue}:00`)
     const newBeforeHour = newAfterHour.clone().add(15, 'minutes')
 
@@ -120,15 +152,17 @@ const DateTimeRangePicker = ({
       ...prevState,
       before: newValue,
     }))
-    const date = beforeValue.format('YYYY-MM-DD')
+    const date =
+      beforeValue?.format('YYYY-MM-DD') ||
+      defaultAfterValue.format('YYYY-MM-DD')
     const newBeforeValue = moment(`${date} ${newValue}:00`)
     setBeforeValue(newBeforeValue)
   }
 
   const handleComplexPickerDateChange = newValues => {
     if (!newValues) return
-    setAfterValue(newValues[0])
-    setBeforeValue(newValues[1])
+    setBeforeValue(newValues[0])
+    setAfterValue(newValues[1])
   }
 
   return isComplexPicker ? (
@@ -137,7 +171,11 @@ const DateTimeRangePicker = ({
         <DatePicker.RangePicker
           style={{ width: '95%' }}
           format={'DD MMMM YYYY HH:mm'}
-          defaultValue={[afterValue, beforeValue]}
+          defaultValue={
+            afterValue && beforeValue
+              ? [afterValue, beforeValue]
+              : [defaultAfterValue, defaultBeforeValue]
+          }
           onChange={handleComplexPickerDateChange}
           showTime={{
             ...timePickerProps,

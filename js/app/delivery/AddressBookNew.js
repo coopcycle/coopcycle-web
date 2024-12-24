@@ -4,17 +4,13 @@ import { Input, Select, Checkbox, Button } from 'antd'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-// import { getCountry } from '../i18n'
+import { useFormikContext, Field } from 'formik'
 
-export default function ({
-  addresses,
-  setDeliveryAddress,
-  deliveryAddress,
-  setToBeModified,
-  setToBeRemembered,
-  toBeModified,
-}) {
+export default function AddressBook({ index, addresses }) {
   const { t } = useTranslation()
+  const { values, setFieldValue } = useFormikContext()
+  const deliveryAddress = values.tasks[index].address
+  const toBeModified = values.tasks[index].toBeModified
 
   const [isModalOpen, setModalOpen] = useState(false)
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
@@ -35,14 +31,8 @@ export default function ({
     const selectedAddress = addresses.find(
       address => address.streetAddress === value,
     )
-
-    setDeliveryAddress(selectedAddress)
+    setFieldValue(`tasks[${index}].address`, selectedAddress)
   }
-
-  /**
-   * TODO :
-   * Format telephone number
-   */
 
   return (
     <>
@@ -72,48 +62,52 @@ export default function ({
       </div>
       <div className="row mb-3">
         <div className="col-md-4">
-          <Input
-            onChange={e => {
-              const newValue = e.target.value
-              handleModifyAddress()
-
-              setDeliveryAddress(prevState => ({
-                ...prevState,
-                name: newValue,
-              }))
-            }}
-            placeholder="Nom"
-            value={deliveryAddress.name}
-          />
+          <Field name={`tasks[${index}].address.name`}>
+            {({ field }) => (
+              <Input
+                {...field}
+                onChange={e => {
+                  handleModifyAddress()
+                  setFieldValue(`tasks[${index}].address.name`, e.target.value)
+                }}
+                placeholder="Nom"
+              />
+            )}
+          </Field>
         </div>
         <div className="col-md-4">
-          <Input
-            onChange={e => {
-              const newValue = e.target.value
-
-              handleModifyAddress()
-              setDeliveryAddress(prevState => ({
-                ...prevState,
-                telephone: newValue,
-              }))
-            }}
-            placeholder="Téléphone"
-            value={deliveryAddress.telephone}
-          />
+          <Field name={`tasks[${index}].address.telephone`}>
+            {({ field }) => (
+              <Input
+                {...field}
+                onChange={e => {
+                  handleModifyAddress()
+                  setFieldValue(
+                    `tasks[${index}].address.telephone`,
+                    e.target.value,
+                  )
+                }}
+                placeholder="Téléphone"
+              />
+            )}
+          </Field>
         </div>
         <div className="col-md-4">
-          <Input
-            onChange={e => {
-              const newValue = e.target.value
-              handleModifyAddress()
-              setDeliveryAddress(prevState => ({
-                ...prevState,
-                contactName: newValue,
-              }))
-            }}
-            placeholder="Contact"
-            value={deliveryAddress.contactName}
-          />
+          <Field name={`tasks[${index}].address.contactName`}>
+            {({ field }) => (
+              <Input
+                {...field}
+                onChange={e => {
+                  handleModifyAddress()
+                  setFieldValue(
+                    `tasks[${index}].address.contactName`,
+                    e.target.value,
+                  )
+                }}
+                placeholder="Contact"
+              />
+            )}
+          </Field>
         </div>
         <div className="col-md-12">
           <AddressAutosuggest
@@ -123,31 +117,34 @@ export default function ({
             reportValidity={true}
             preciseOnly={true}
             onAddressSelected={(value, address) => {
-              setDeliveryAddress(address)
+              setFieldValue(`tasks[${index}].address`, address)
               setSelectValue(null)
             }}
             onClear={() => {
-              setDeliveryAddress(prevState => ({
-                ...prevState,
-
+              setFieldValue(`tasks[${index}].address`, {
                 streetAddress: '',
                 name: '',
                 contactName: '',
                 telephone: '',
-              }))
+              })
             }}
           />
 
-          <Checkbox
-            onChange={e => {
-              if (e.target.checked) {
-                setToBeRemembered(true)
-              } else {
-                setToBeRemembered(false)
-              }
-            }}>
-            Se souvenir de cette adresse
-          </Checkbox>
+          <Field name={`tasks[${index}].toBeRemembered`}>
+            {({ field }) => (
+              <Checkbox
+                {...field}
+                checked={field.value}
+                onChange={e =>
+                  setFieldValue(
+                    `tasks[${index}].toBeRemembered`,
+                    e.target.checked,
+                  )
+                }>
+                Se souvenir de cette adresse
+              </Checkbox>
+            )}
+          </Field>
         </div>
       </div>
 
@@ -171,7 +168,7 @@ export default function ({
           <Button
             className="mr-4"
             onClick={() => {
-              setToBeModified(true)
+              setFieldValue(`tasks[${index}].toBeModified`, true)
               setModalOpen(false)
             }}>
             {t('ADDRESS_BOOK_PROP_CHANGED_UPDATE')}
@@ -188,3 +185,4 @@ export default function ({
     </>
   )
 }
+

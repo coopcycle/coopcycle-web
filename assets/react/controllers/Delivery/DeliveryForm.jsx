@@ -1,4 +1,5 @@
-import React, {useCallback, useEffect, useState} from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import { Formik, Form, FieldArray } from 'formik';
 import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
@@ -24,64 +25,13 @@ const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
 
-  const initialTasks = [
-  {
-    type: 'pickup',
-    afterValue: getNextRoundedTime().toISOString(),
-    beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
-    timeSlot: null,
-    commentary: '',
-      address: {
-      streetAddress: '',
-      name: '',
-      contactName: '',
-      telephone: '',
-      },
-    toBeRemembered: false,
-    toBeModified: false,
-        
-  },
-  {
-    type: 'dropoff',
-    afterValue: getNextRoundedTime().toISOString(),
-    beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
-    timeSlot: null,
-    commentary: '',
-    address: {
-      streetAddress: '',
-      name: '',
-      contactName: '',
-      telephone: '',
-    },
-    toBeRemembered: false,
-    toBeModified: false,
-    },
-];
 
-  /**TODO : Format before and after when submiting (ISO format) 
+  /**TODO : 
    * Format phone number
   */
 
-  const [tasks, setTasks] = useState(initialTasks)
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
-
-  console.log(tasks)
-  
-
-//   const addTask = (task) => {
-//   setTasks((prevTasks) => [...prevTasks, task]);
-// };
-
-  const updateTask = (index, updatedTask) => {
-  setTasks((prevTasks) =>
-    prevTasks.map((task, i) => (i === index ? { ...task, ...updatedTask } : task))
-  );
-  };
-
-//   const deleteTask = (index) => {
-//   setTasks((prevTasks) => prevTasks.filter((_, i) => i !== index));
-// };
 
   useEffect(() => {
     
@@ -127,47 +77,78 @@ export default function ({ isNew, storeId }) {
 
   console.log(isNew)
 
-  const handleSubmit = useCallback((async() => {
+  // réécrire avec values
+  const handleSubmit = useCallback((async(values) => {
      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
     const jwt = jwtResp.jwt
     const url = `${baseURL}/api/deliveries`
 
-    const response = await axios.post(
-      url,
+    console.log(values)
+
+
+  }), [initialValues, storeDeliveryInfos])
+
+    const initialValues = {
+    tasks: [
       {
-        store: storeDeliveryInfos['@id'],
-        tasks: tasks
+        type: 'pickup',
+        afterValue: getNextRoundedTime().toISOString(),
+        beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
+        timeSlot: null,
+        commentary: '',
+        address: {
+          streetAddress: '',
+          name: '',
+          contactName: '',
+          telephone: '',
+        },
+        toBeRemembered: false,
+        toBeModified: false,
       },
       {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-          'Content-Type': 'application/ld+json'
-        }
-      }
-    );
-
-    console.log(response.data)
-
-
-  }), [tasks, storeDeliveryInfos])
+        type: 'dropoff',
+        afterValue: getNextRoundedTime().toISOString(),
+        beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
+        timeSlot: null,
+        commentary: '',
+        address: {
+          streetAddress: '',
+          name: '',
+          contactName: '',
+          telephone: '',
+        },
+        toBeRemembered: false,
+        toBeModified: false,
+      },
+    ],
+  };
   
   return (
-  <ConfigProvider locale={antdLocale}>
-    {tasks.map((task, index) => (
-      <Task
-        key={index}
-        task={task}
-        addresses={addresses}
-        storeId={storeId}
-        storeDeliveryInfos={storeDeliveryInfos}
-        onUpdate={(updatedTask) => updateTask(index, updatedTask)}
-        // onDelete={() => deleteTask(index)}
-      />
-    ))}
-    <button type="submit" onClick={handleSubmit}>
-      Soumettre
-    </button>
-  </ConfigProvider>
+    <ConfigProvider locale={antdLocale}>
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ values }) => (
+          <Form>
+            <FieldArray name="tasks">
+              {() => (
+                <>
+                  {values.tasks.map((task, index) => (
+                    <Task
+                      key={index}
+                      task={task}
+                      index={index}
+                      addresses={addresses}
+                      storeId={storeId}
+                      storeDeliveryInfos={storeDeliveryInfos}
+                    />
+                  ))}
+                </>
+              )}
+            </FieldArray>
+            <button type="submit">Soumettre</button>
+          </Form>
+        )}
+      </Formik>
+    </ConfigProvider>
 );
 
 }
