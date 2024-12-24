@@ -9,7 +9,6 @@ import { useFormikContext, Field } from 'formik'
 export default function AddressBook({ index, addresses }) {
   const { t } = useTranslation()
   const { values, setFieldValue } = useFormikContext()
-  const deliveryAddress = values.tasks[index].address
   const toBeModified = values.tasks[index].toBeModified
 
   const [isModalOpen, setModalOpen] = useState(false)
@@ -19,7 +18,7 @@ export default function AddressBook({ index, addresses }) {
 
   const handleModifyAddress = () => {
     if (
-      deliveryAddress['@id'] &&
+      values.tasks[index].address['@id'] &&
       !toBeModified &&
       !alreadyAskedForModification
     ) {
@@ -27,11 +26,18 @@ export default function AddressBook({ index, addresses }) {
     }
   }
 
-  const onAddressSelected = value => {
+  const handleAddressSelected = value => {
     const selectedAddress = addresses.find(
       address => address.streetAddress === value,
     )
-    setFieldValue(`tasks[${index}].address`, selectedAddress)
+    setFieldValue(`tasks[${index}].address`, {
+      ...selectedAddress,
+      streetAddress: selectedAddress.streetAddress || '',
+      name: selectedAddress.name || '',
+      telephone: selectedAddress.telephone || '',
+      contactName: selectedAddress.contactName || '',
+    })
+    setSelectValue(value)
   }
 
   return (
@@ -45,7 +51,7 @@ export default function AddressBook({ index, addresses }) {
             value={selectValue}
             optionFilterProp="label"
             onChange={value => {
-              onAddressSelected(value)
+              handleAddressSelected(value)
               setSelectValue(value)
             }}
             filterOption={(input, option) =>
@@ -63,12 +69,16 @@ export default function AddressBook({ index, addresses }) {
       <div className="row mb-3">
         <div className="col-md-4">
           <Field name={`tasks[${index}].address.name`}>
-            {({ field }) => (
+            {({ field, form }) => (
               <Input
                 {...field}
+                value={form.values.tasks[index].address.name}
                 onChange={e => {
                   handleModifyAddress()
-                  setFieldValue(`tasks[${index}].address.name`, e.target.value)
+                  form.setFieldValue(
+                    `tasks[${index}].address.name`,
+                    e.target.value,
+                  )
                 }}
                 placeholder="Nom"
               />
@@ -77,12 +87,13 @@ export default function AddressBook({ index, addresses }) {
         </div>
         <div className="col-md-4">
           <Field name={`tasks[${index}].address.telephone`}>
-            {({ field }) => (
+            {({ field, form }) => (
               <Input
                 {...field}
+                value={form.values.tasks[index].address.telephone}
                 onChange={e => {
                   handleModifyAddress()
-                  setFieldValue(
+                  form.setFieldValue(
                     `tasks[${index}].address.telephone`,
                     e.target.value,
                   )
@@ -94,12 +105,13 @@ export default function AddressBook({ index, addresses }) {
         </div>
         <div className="col-md-4">
           <Field name={`tasks[${index}].address.contactName`}>
-            {({ field }) => (
+            {({ field, form }) => (
               <Input
                 {...field}
+                value={form.values.tasks[index].address.contactName}
                 onChange={e => {
                   handleModifyAddress()
-                  setFieldValue(
+                  form.setFieldValue(
                     `tasks[${index}].address.contactName`,
                     e.target.value,
                   )
@@ -111,13 +123,19 @@ export default function AddressBook({ index, addresses }) {
         </div>
         <div className="col-md-12">
           <AddressAutosuggest
-            address={deliveryAddress.address}
+            address={values.tasks[index].address || ''}
             addresses={addresses}
             required={true}
             reportValidity={true}
             preciseOnly={true}
             onAddressSelected={(value, address) => {
-              setFieldValue(`tasks[${index}].address`, address)
+              setFieldValue(`tasks[${index}].address`, {
+                ...address,
+                streetAddress: address.streetAddress || '',
+                name: address.name || '',
+                telephone: address.telephone || '',
+                contactName: address.contactName || '',
+              })
               setSelectValue(null)
             }}
             onClear={() => {
@@ -127,6 +145,7 @@ export default function AddressBook({ index, addresses }) {
                 contactName: '',
                 telephone: '',
               })
+              setSelectValue(null)
             }}
           />
 
@@ -161,7 +180,8 @@ export default function AddressBook({ index, addresses }) {
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <h4 className="text-center">
-          {deliveryAddress.name} - {deliveryAddress.streetAddress}
+          {values.tasks[index].address.name} -{' '}
+          {values.tasks[index].address.streetAddress}
         </h4>
         <p>{t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER')}</p>
         <div className="d-flex justify-content-center">
@@ -185,4 +205,3 @@ export default function AddressBook({ index, addresses }) {
     </>
   )
 }
-
