@@ -1,15 +1,14 @@
 import React, { useMemo, useState } from 'react'
 import Modal from 'react-modal'
-
 import { useTranslation } from 'react-i18next'
 import { InputNumber, DatePicker, Table } from 'antd'
-import { useDispatch } from 'react-redux'
 
 import { useLazyGetInvoiceLineItemsQuery } from '../../../../api/slice'
 import { money } from '../../../../utils/format'
 import { moment } from '../../../../../shared'
 import Button from '../../../../components/core/Button'
-import { downloadFile, prepareParams } from '../../redux/actions'
+import { prepareParams } from '../../redux/actions'
+import ExportModalContent from '../ExportModalContent'
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
@@ -23,8 +22,6 @@ export default () => {
   const [trigger, { isLoading, data }] = useLazyGetInvoiceLineItemsQuery()
 
   const { t } = useTranslation()
-
-  const dispatch = useDispatch()
 
   const params = useMemo(() => {
     return prepareParams({
@@ -111,19 +108,6 @@ export default () => {
     })
   }
 
-  const download = () => {
-    const filename = `orders_${dateRange[0].format(
-      'YYYY-MM-DD',
-    )}_${dateRange[1].format('YYYY-MM-DD')}.csv`
-
-    dispatch(
-      downloadFile({
-        params,
-        filename,
-      }),
-    )
-  }
-
   return (
     <div>
       <h3>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h3>
@@ -185,26 +169,16 @@ export default () => {
       </Button>
       <Modal
         isOpen={isModalOpen}
-        appElement={document.getElementById('warehouse')}
+        appElement={document.getElementById('invoicing')}
         className="ReactModal__Content--no-default" // disable additional inline style from react-modal
         shouldCloseOnOverlayClick={true}
         shouldCloseOnEsc={true}
         style={{ content: { overflow: 'unset' } }}>
-        <div className="modal-header">
-          <h4 className="modal-title">
-            {t('ADMIN_DASHBOARD_NAV_EXPORT')}
-            <a className="pull-right" onClick={() => setModalOpen(false)}>
-              <i className="fa fa-close"></i>
-            </a>
-          </h4>
-        </div>
-        <Button
-          primary
-          onClick={() => {
-            download()
-          }}>
-          {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
-        </Button>
+        <ExportModalContent
+          dateRange={dateRange}
+          params={params}
+          setModalOpen={setModalOpen}
+        />
       </Modal>
     </div>
   )

@@ -15,11 +15,11 @@ export function prepareParams({ store, dateRange, state }) {
   return params
 }
 
-export function downloadFile({ params, filename }) {
+function downloadFile({ requestUrl, filename }) {
   return async (dispatch, getState) => {
     const result = await baseQueryWithReauth(
       {
-        url: `api/invoice_line_items/export?${params.join('&')}`,
+        url: requestUrl,
         responseHandler: 'text',
       },
       {
@@ -42,4 +42,19 @@ export function downloadFile({ params, filename }) {
 
     URL.revokeObjectURL(url)
   }
+}
+
+
+export function downloadStandardFile({ params, filename }) {
+  return downloadFile({
+    requestUrl: `api/invoice_line_items/export?${params.join('&')}`,
+    filename,
+  })
+}
+
+export function downloadOdooFile({ params, filename }) {
+  return downloadFile({
+    requestUrl: `api/invoice_line_items/export/odoo?${params.join('&')}`,
+    filename,
+  })
 }
