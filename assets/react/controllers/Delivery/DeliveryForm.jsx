@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Formik, Form, FieldArray } from 'formik';
+import { Formik, Form, FieldArray } from 'formik'
 import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
@@ -7,48 +7,42 @@ import axios from 'axios'
 import moment from 'moment'
 
 function getNextRoundedTime() {
-  const now = moment();
-  now.add(15, 'minutes');
-  const roundedMinutes = Math.ceil(now.minutes() / 5) * 5;
+  const now = moment()
+  now.add(15, 'minutes')
+  const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
   if (roundedMinutes >= 60) {
-    now.add(1, 'hour');
-    now.minutes(roundedMinutes - 60);
+    now.add(1, 'hour')
+    now.minutes(roundedMinutes - 60)
   } else {
-    now.minutes(roundedMinutes);
+    now.minutes(roundedMinutes)
   }
-  now.seconds(0);
+  now.seconds(0)
 
-  return now;
+  return now
 }
 
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
-
-
-  /**TODO : 
+  /**TODO :
    * Format phone number
-  */
+   */
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
 
   useEffect(() => {
-    
     const getAddresses = async () => {
-    const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-    const jwt = jwtResp.jwt
-    const url = `${baseURL}/api/stores/${storeId}/addresses`
-    const response = await axios.get(
-      url,
-      {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+      const url = `${baseURL}/api/stores/${storeId}/addresses`
+      const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${jwt}`
-        }
-      }
-    )
-    const addresses = await response.data["hydra:member"]   
-    setAddresses(addresses)
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      const addresses = await response.data['hydra:member']
+      setAddresses(addresses)
     }
 
     if (storeId) {
@@ -78,17 +72,34 @@ export default function ({ isNew, storeId }) {
   console.log(isNew)
 
   // réécrire avec values
-  const handleSubmit = useCallback((async(values) => {
-     const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-    const jwt = jwtResp.jwt
-    const url = `${baseURL}/api/deliveries`
+  const handleSubmit = useCallback(
+    async values => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+      const url = `${baseURL}/api/deliveries`
 
-    console.log(values)
+      const response = await axios.post(
+        url,
+        {
+          store: storeDeliveryInfos['@id'],
+          tasks: values.tasks,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/ld+json',
+          },
+        },
+      )
 
+      console.log(values)
+      console.log(response.data)
 
-  }), [initialValues, storeDeliveryInfos])
+    },
+    [storeDeliveryInfos],
+  )
 
-    const initialValues = {
+  const initialValues = {
     tasks: [
       {
         type: 'pickup',
@@ -121,8 +132,8 @@ export default function ({ isNew, storeId }) {
         toBeModified: false,
       },
     ],
-  };
-  
+  }
+
   return (
     <ConfigProvider locale={antdLocale}>
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
@@ -149,6 +160,5 @@ export default function ({ isNew, storeId }) {
         )}
       </Formik>
     </ConfigProvider>
-);
-
+  )
 }
