@@ -110,7 +110,7 @@ class InvoiceLineItem
     #[SerializedName("Invoice lines / Unit Price")]
     public function getOdooUnitPrice(): float
     {
-        return $this->subTotal;
+        return $this->subTotal / 100;
     }
 
     #[Groups(["odoo_export_invoice_line_item"])]
