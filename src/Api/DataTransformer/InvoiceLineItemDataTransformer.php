@@ -5,6 +5,7 @@ namespace AppBundle\Api\DataTransformer;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Service\SettingsManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -12,7 +13,8 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
 {
     public function __construct(
         private readonly TranslatorInterface $translator,
-        private readonly RequestStack $requestStack
+        private readonly RequestStack $requestStack,
+        private readonly SettingsManager $settingsManager
     )
     {
     }
@@ -56,6 +58,7 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $invoiceDate,
             $store?->getId(),
             $store?->getLegalName() ?? $store?->getName(),
+            $this->settingsManager->get('accounting_account') ?? '',
             $product,
             $order->getId(),
             $order->getNumber(),

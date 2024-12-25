@@ -17,6 +17,8 @@ class InvoiceLineItem
     #[Groups(["export_invoice_line_item"])]
     public readonly ?string $storeLegalName;
 
+    public readonly string $accountCode;
+
     #[Groups(["export_invoice_line_item"])]
     public readonly string $product;
 
@@ -46,6 +48,7 @@ class InvoiceLineItem
         \DateTime $invoiceDate,
         ?int $storeId,
         ?string $storeLegalName,
+        string $accountCode,
         string $product,
         int $orderId,
         string $orderNumber,
@@ -60,6 +63,7 @@ class InvoiceLineItem
         $this->invoiceDate = $invoiceDate;
         $this->storeId = $storeId;
         $this->storeLegalName = $storeLegalName;
+        $this->accountCode = $accountCode;
         $this->product = $product;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
@@ -100,7 +104,7 @@ class InvoiceLineItem
     #[SerializedName("Invoice lines / Account")]
     public function getOdooAccount(): string
     {
-        return 'account_placeholder'; // Replace with actual logic
+        return $this->accountCode;
     }
 
     #[Groups(["odoo_export_invoice_line_item"])]

@@ -1597,6 +1597,8 @@ form.settings.company_legal_name.label: "Legal name of the company"
 form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
+form.settings.accounting_account.label: "Account code"
+form.settings.accounting_account.help: "The default account code to record the delivery orders in the accounting system."
 business_restaurant_group.form.invalid: "There are errors or missing information, please check all the sections of the configuration."
 restaurants.edenred.add_restaurants: Add Edenred restaurants
 restaurants.edenred.add_list_title: List of restaurants to send to Edenred
