@@ -85,12 +85,13 @@ class InvoiceLineItem
         return $this->storeLegalName;
     }
 
-    #[Groups(["odoo_export_invoice_line_item"])]
-    #[SerializedName("Invoice lines / Account")]
-    public function getOdooAccount(): string
-    {
-        return 'account_placeholder'; // Replace with actual logic
-    }
+//FIXME: test on production, remove completely if not needed
+//    #[Groups(["odoo_export_invoice_line_item"])]
+//    #[SerializedName("Invoice lines / Account")]
+//    public function getOdooAccount(): string
+//    {
+//        return 'account_placeholder'; // Replace with actual logic
+//    }
 
     #[Groups(["odoo_export_invoice_line_item"])]
     #[SerializedName("Invoice lines / Product")]
