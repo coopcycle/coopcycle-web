@@ -7,13 +7,15 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 class InvoiceLineItem
 {
+    public readonly string $invoiceId;
+
+    public readonly \DateTime $invoiceDate;
+
     #[Groups(["default_invoice_line_item"])]
     public readonly ?int $storeId;
 
     #[Groups(["export_invoice_line_item"])]
     public readonly ?string $storeLegalName;
-
-    public readonly string $invoiceId;
 
     #[Groups(["export_invoice_line_item"])]
     public readonly string $product;
@@ -40,9 +42,10 @@ class InvoiceLineItem
     public readonly float $total;
 
     public function __construct(
+        string $invoiceId,
+        \DateTime $invoiceDate,
         ?int $storeId,
         ?string $storeLegalName,
-        string $invoiceId,
         string $product,
         int $orderId,
         string $orderNumber,
@@ -53,9 +56,10 @@ class InvoiceLineItem
         float $total
     )
     {
+        $this->invoiceId = $invoiceId;
+        $this->invoiceDate = $invoiceDate;
         $this->storeId = $storeId;
         $this->storeLegalName = $storeLegalName;
-        $this->invoiceId = $invoiceId;
         $this->product = $product;
         $this->orderId = $orderId;
         $this->orderNumber = $orderNumber;
@@ -79,19 +83,25 @@ class InvoiceLineItem
     }
 
     #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice Date")]
+    public function getOdooInvoiceDate(): string
+    {
+        return $this->invoiceDate->format('Y-m-d');
+    }
+
+    #[Groups(["odoo_export_invoice_line_item"])]
     #[SerializedName("Partner")]
     public function getOdooPartner(): string
     {
         return $this->storeLegalName;
     }
 
-//FIXME: test on production, remove completely if not needed
-//    #[Groups(["odoo_export_invoice_line_item"])]
-//    #[SerializedName("Invoice lines / Account")]
-//    public function getOdooAccount(): string
-//    {
-//        return 'account_placeholder'; // Replace with actual logic
-//    }
+    #[Groups(["odoo_export_invoice_line_item"])]
+    #[SerializedName("Invoice lines / Account")]
+    public function getOdooAccount(): string
+    {
+        return 'account_placeholder'; // Replace with actual logic
+    }
 
     #[Groups(["odoo_export_invoice_line_item"])]
     #[SerializedName("Invoice lines / Product")]

@@ -31,6 +31,8 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $store?->getId() ?? 0
         ));
 
+        $invoiceDate = new \DateTime();
+
         $deliveryItem = $order->getDeliveryItem();
 
         $product = '';
@@ -50,9 +52,10 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
         }
 
         return new InvoiceLineItem(
+            $invoiceId,
+            $invoiceDate,
             $store?->getId(),
             $store?->getLegalName() ?? $store?->getName(),
-            $invoiceId,
             $product,
             $order->getId(),
             $order->getNumber(),
