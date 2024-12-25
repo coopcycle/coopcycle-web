@@ -94,16 +94,20 @@ class SettingsType extends AbstractType
             ])
             ->add('sms_gateway_config', HiddenType::class, [
                 'required' => false,
-                'label' => 'form.settings.sms_gateway_config.label',
-        ])->add('company_legal_name', TextType::class, [
-            'required' => false,
-            'label' => 'form.settings.company_legal_name.label',
-            'help' => 'form.settings.company_legal_name.help',
-        ])->add('company_legal_id', TextType::class, [
-            'required' => false,
-            'label' => 'form.settings.company_legal_id.label',
-            'help' => 'form.settings.company_legal_id.help',
-        ]);
+                'label' => 'form.settings.sms_gateway_config.label',])
+            ->add('company_legal_name', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.company_legal_name.label',
+                'help' => 'form.settings.company_legal_name.help',])
+            ->add('company_legal_id', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.company_legal_id.label',
+                'help' => 'form.settings.company_legal_id.help',])
+            ->add('accounting_account', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.accounting_account.label',
+                'help' => 'form.settings.accounting_account.help',
+            ]);;
 
         // When cash on delivery is enabled, we want customers to register
         if (!$this->cashEnabled) {

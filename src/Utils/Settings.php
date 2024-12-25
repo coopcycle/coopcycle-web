@@ -78,6 +78,8 @@ class Settings
 
     public $subject_to_vat;
 
+    public $accounting_account;
+
     /**
      * @Assert\NotBlank(groups={"Default", "mandatory"})
      */
