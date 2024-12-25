@@ -9,56 +9,35 @@ use AppBundle\Form\PaymentGateway\PaygreenType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
 use AppBundle\Form\Type\GeocodingProviderType;
-use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettingsType extends AbstractType
 {
-    private $settingsManager;
-    private $phoneNumberUtil;
-    private $country;
-    private $isDemo;
-    private $googleEnabled;
-    private $cashEnabled;
-
     public function __construct(
-        SettingsManager $settingsManager,
-        PhoneNumberUtil $phoneNumberUtil,
-        GatewayResolver $gatewayResolver,
-        string $country,
-        bool $isDemo,
-        bool $googleEnabled,
-        bool $cashEnabled)
+        private readonly SettingsManager $settingsManager,
+        private readonly PhoneNumberUtil $phoneNumberUtil,
+        private readonly GatewayResolver $gatewayResolver,
+        private readonly string $country,
+        private readonly bool $isDemo,
+        private readonly bool $googleEnabled,
+        private readonly bool $cashEnabled)
     {
-        $this->settingsManager = $settingsManager;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->gatewayResolver = $gatewayResolver;
-        $this->country = $country;
-        $this->isDemo = $isDemo;
-        $this->googleEnabled = $googleEnabled;
-        $this->cashEnabled = $cashEnabled;
     }
 
     private function createPlaceholder($value)
