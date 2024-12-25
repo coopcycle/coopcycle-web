@@ -1632,6 +1632,7 @@ class AdminController extends AbstractController
             'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
         ]);
     }
+
     /**
      * @Route("/admin/embed", name="admin_embed")
      */
