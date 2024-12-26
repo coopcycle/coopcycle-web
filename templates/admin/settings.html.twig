@@ -67,15 +67,13 @@
 
   <hr>
 
-  {% if form.guest_checkout_enabled is defined %}
-    {{ form_row(form.guest_checkout_enabled) }}
-  {% endif %}
+  {{ form_row(form.currency_code) }}
 
   <hr>
 
-  {{ form_row(form.currency_code) }}
-
   {{ form_row(form.subject_to_vat) }}
+
+  <hr>
 
   {% if form.stripe is defined %}
     <hr>
@@ -172,6 +170,20 @@
     {% endfor %}
     </div>
   {% endif %}
+
+  <hr>
+
+  <h4>{% trans %}admin.settings.foodtech{% endtrans %}</h4>
+
+  {% if form.guest_checkout_enabled is defined %}
+    {{ form_row(form.guest_checkout_enabled) }}
+  {% endif %}
+
+  <hr>
+
+  <h4>{% trans %}admin.settings.on_demand_delivery{% endtrans %}</h4>
+
+  {{ form_row(form.on_demand_delivery_product_name) }}
 
   <hr>
 

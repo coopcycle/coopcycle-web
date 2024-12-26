@@ -15,6 +15,7 @@ use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
+use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,6 +34,7 @@ class SettingsType extends AbstractType
         private readonly SettingsManager $settingsManager,
         private readonly PhoneNumberUtil $phoneNumberUtil,
         private readonly GatewayResolver $gatewayResolver,
+        private readonly ProductRepositoryInterface $productRepository,
         private readonly string $country,
         private readonly bool $isDemo,
         private readonly bool $googleEnabled,
@@ -108,6 +110,17 @@ class SettingsType extends AbstractType
                 'label' => 'form.settings.accounting_account.label',
                 'help' => 'form.settings.accounting_account.help',
             ]);;
+
+        $onDemandDeliveryProduct = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+        if ($onDemandDeliveryProduct) {
+            $builder->add('on_demand_delivery_product_name', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.on_demand_delivery_product_name.label',
+                'help' => 'form.settings.on_demand_delivery_product_name.help',
+                'mapped' => false,
+                'data' => $onDemandDeliveryProduct->getName()
+            ]);
+        }
 
         // When cash on delivery is enabled, we want customers to register
         if (!$this->cashEnabled) {
@@ -245,6 +258,12 @@ class SettingsType extends AbstractType
                 $data->phone_number = $this->phoneNumberUtil->format($data->phone_number, PhoneNumberFormat::E164);
             }
             $event->setData($data);
+
+            if (null !== $event->getForm()->get('on_demand_delivery_product_name')) {
+                $name = $event->getForm()->get('on_demand_delivery_product_name')->getData();
+                $onDemandDeliveryProduct = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+                $onDemandDeliveryProduct->setName($name);
+            }
         });
     }
 }
