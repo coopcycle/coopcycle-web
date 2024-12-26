@@ -1183,6 +1183,7 @@ Feature: Deliveries
       """
     Then the response status code should be 400
     And the response should be in JSON
+    Then print last JSON response
     And the JSON should match:
       """
       {
@@ -1191,6 +1192,11 @@ Feature: Deliveries
         "hydra:title":"An error occurred",
         "hydra:description":@string@,
         "violations":[
+          {
+            "propertyPath":"items",
+            "message":@string@,
+            "code":null
+          },
           {
             "propertyPath":"items",
             "message":@string@,
