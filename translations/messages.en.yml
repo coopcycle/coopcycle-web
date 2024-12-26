@@ -884,6 +884,8 @@ recurrence_rule.legacy: Use dispatch dashboard to remove this rule
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
+admin.settings.foodtech: Food Tech
+admin.settings.on_demand_delivery: On Demand Delivery
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered to your home.
 index.our_restaurants: Our restaurants
@@ -1594,8 +1596,10 @@ form.settings.company_legal_name.label: "Legal name of the company"
 form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
+form.settings.on_demand_delivery_product_name.label: "Product name"
+form.settings.on_demand_delivery_product_name.help: "The name that will appear in the order summary and invoice"
 form.settings.accounting_account.label: "Account code"
-form.settings.accounting_account.help: "The default account code to record the delivery orders in the accounting system."
+form.settings.accounting_account.help: "The default account code to record on demand delivery orders in the accounting system."
 business_restaurant_group.form.invalid: "There are errors or missing information, please check all the sections of the configuration."
 restaurants.edenred.add_restaurants: Add restaurants
 restaurants.edenred.add_list_title: List of restaurants to send to Edenred
