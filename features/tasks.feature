@@ -53,7 +53,9 @@ Feature: Tasks
             "next":null,
             "packages": [],
             "barcode": "@array@",
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "co2Emissions": "@integer@",
+            "distanceFromPrevious": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -85,7 +87,9 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "barcode": "@array@",
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "co2Emissions": "@integer@",
+            "distanceFromPrevious": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -117,7 +121,9 @@ Feature: Tasks
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "co2Emissions": "@integer@",
+            "distanceFromPrevious": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -149,7 +155,9 @@ Feature: Tasks
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "co2Emissions": "@integer@",
+            "distanceFromPrevious": "@integer@"
           }
         ],
         "hydra:view": {
@@ -647,7 +655,9 @@ Feature: Tasks
         "incidents": [],
         "packages": [],
         "barcode": "@array@",
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "co2Emissions": "@integer@",
+        "distanceFromPrevious": "@integer@"
       }
       """
 
@@ -1120,7 +1130,9 @@ Feature: Tasks
         "incidents": [],
         "packages": [],
         "barcode": "@array@",
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "co2Emissions": "@integer@",
+        "distanceFromPrevious": "@integer@"
       }
       """
 
@@ -1203,7 +1215,9 @@ Feature: Tasks
         "incidents": [],
         "packages": [],
         "barcode": "@array@",
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "co2Emissions": "@integer@",
+        "distanceFromPrevious": "@integer@"
       }
       """
 
@@ -1336,7 +1350,9 @@ Feature: Tasks
             "incidents": [],
             "packages": [],
             "barcode": "@array@",
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "co2Emissions": "@integer@",
+            "distanceFromPrevious": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -1368,7 +1384,9 @@ Feature: Tasks
             "incidents": [],
             "packages": [],
             "barcode": "@array@",
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "co2Emissions": "@integer@",
+            "distanceFromPrevious": "@integer@"
           }
         ],
         "hydra:totalItems":2,

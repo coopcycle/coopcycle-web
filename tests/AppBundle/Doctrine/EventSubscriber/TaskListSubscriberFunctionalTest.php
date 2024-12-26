@@ -49,7 +49,6 @@ class TaskListSubscriberFunctionalTest extends KernelTestCase
             $translator->reveal(),
             $routing->reveal(),
             $taskListRepository,
-            $this->entityManager,
             new NullLogger()
         );
 

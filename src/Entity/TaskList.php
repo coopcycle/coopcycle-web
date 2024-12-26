@@ -29,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')",
  *       "openapi_context"={
- *         "summary"="Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks."
+ *         "summary"="Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses."
  *       },
  *       "normalization_context"={"groups"={"task_list", "task_collection", "task", "delivery", "address"}}
  *     },
