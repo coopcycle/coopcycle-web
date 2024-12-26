@@ -109,10 +109,12 @@ class DeliveryManager
     {
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
+        $store = $delivery->getStore();
+        $storeFromToken = $this->storeExtractor->extractStore();
 
-        if (null === $store = $delivery->getStore()) {
-            $store = $this->storeExtractor->extractStore();
-            $delivery->setStore($store);
+        if (!is_null($storeFromToken)) {
+            $store = $storeFromToken;
+            $delivery->setStore($storeFromToken);
         }
 
         // If no pickup address is specified, use the store address
@@ -120,7 +122,7 @@ class DeliveryManager
             $pickup->setAddress($store->getAddress());
         }
 
-        // If no pickup is specified, estimates pickup time from dropoff address and distance
+        // If no pickup time is specified, estimates pickup time from dropoff address and distance
         if (null !== $dropoff->getBefore() && null !== $dropoff->getAddress()) {
 
             foreach ($delivery->getTasksByType(Task::TYPE_PICKUP) as $p) {
