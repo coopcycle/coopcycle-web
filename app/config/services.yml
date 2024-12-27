@@ -428,7 +428,6 @@ services:
     arguments:
       - "@coopcycle.sylius.factory.product_variant.inner"
       - "@sylius.repository.product"
-      - "@sylius.repository.product_variant"
       - "@sylius.repository.tax_category"
       - "@coopcycle.settings_manager"
       - "@translator"
