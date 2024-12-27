@@ -1984,7 +1984,7 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         if ($deliveryItem = $this->getItems()->first()) {
-            return $deliveryItem;
+            return $deliveryItem; // @phpstan-ignore return.type
         } else {
             return null;
         }
