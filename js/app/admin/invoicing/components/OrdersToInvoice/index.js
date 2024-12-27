@@ -24,6 +24,14 @@ export default () => {
   const { t } = useTranslation()
 
   const params = useMemo(() => {
+    if (!storeId) {
+      return null
+    }
+
+    if (!dateRange) {
+      return null
+    }
+
     return prepareParams({
       store: [storeId],
       dateRange: [
@@ -101,6 +109,10 @@ export default () => {
   ]
 
   const reloadData = (page, pageSize) => {
+    if (!params) {
+      return
+    }
+
     trigger({
       params,
       page: page,
@@ -119,14 +131,6 @@ export default () => {
         <Button
           primary
           onClick={() => {
-            if (!storeId) {
-              return
-            }
-
-            if (!dateRange) {
-              return
-            }
-
             reloadData(currentPage, pageSize)
           }}>
           {t('ADMIN_ORDERS_TO_INVOICE_REFRESH')}
@@ -155,11 +159,7 @@ export default () => {
       <Button
         primary
         onClick={() => {
-          if (!storeId) {
-            return
-          }
-
-          if (!dateRange) {
+          if (!params) {
             return
           }
 
