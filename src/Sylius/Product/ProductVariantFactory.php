@@ -11,41 +11,20 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
-use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
-    /**
-     * @var ProductVariantFactoryInterface
-     */
-    private $factory;
-
-    private $productRepository;
-
-    private $productVariantRepository;
-
-    private $taxCategoryRepository;
-
-    private $settingsManager;
-
-    private $translator;
 
     public function __construct(
-        ProductVariantFactoryInterface $factory,
-        ProductRepositoryInterface $productRepository,
-        ProductVariantRepositoryInterface $productVariantRepository,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        SettingsManager $settingsManager,
-        TranslatorInterface $translator)
+        private readonly ProductVariantFactoryInterface $factory,
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private readonly SettingsManager $settingsManager,
+        private readonly TranslatorInterface $translator
+    )
     {
-        $this->factory = $factory;
-        $this->productRepository = $productRepository;
-        $this->productVariantRepository = $productVariantRepository;
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->settingsManager = $settingsManager;
-        $this->translator = $translator;
     }
 
     /**
