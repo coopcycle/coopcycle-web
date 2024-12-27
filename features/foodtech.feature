@@ -104,7 +104,7 @@ Feature: Food Tech
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/restaurants/1/orders{?date}",
+          "hydra:template":"/api/restaurants/1/orders{?date,state,state[],store,store[]}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":[
             {
@@ -112,6 +112,30 @@ Feature: Food Tech
               "variable":"date",
               "property":"date",
               "required":false
+            },
+            {
+              "@type": "IriTemplateMapping",
+              "variable": "state",
+              "property": "state",
+              "required": false
+            },
+            {
+              "@type": "IriTemplateMapping",
+              "variable": "state[]",
+              "property": "state",
+              "required": false
+            },
+            {
+              "@type": "IriTemplateMapping",
+              "variable": "store",
+              "property": "store",
+              "required": false
+            },
+            {
+              "@type": "IriTemplateMapping",
+              "variable": "store[]",
+              "property": "store",
+              "required": false
             }
           ]
         }
