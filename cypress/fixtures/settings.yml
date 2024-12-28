@@ -11,6 +11,10 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: subject_to_vat
     value: '1'
+  setting_accounting_account:
+    section: general
+    name: accounting_account
+    value: '411100'
   setting_administrator_email:
     section: general
     name: administrator_email
