@@ -1,6 +1,6 @@
 describe('Dispatch; admin; invite dispatcher', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/base.yml')
+    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/setup.yml -f cypress/fixtures/admin_user.yml')
   })
 
   it('should send an invitation to a user', () => {
