@@ -158,7 +158,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       {defaultLabel && timeSlotsLabels ? (
         <Radio.Group
           defaultValue={defaultLabel.name}
-          buttonStyle="solid"
           style={{ display: 'flex' }}>
           {timeSlotsLabels.map(label => (
             <Radio.Button

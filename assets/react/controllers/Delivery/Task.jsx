@@ -4,8 +4,10 @@ import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input } from 'antd'
 import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
+// import Packages from '../../../../js/app/components/delivery/Packages';
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
+import TotalWeight from '../../../../js/app/components/delivery/TotalWeight';
 
 
 export default ({addresses, storeId, index, storeDeliveryInfos }) => {
@@ -27,6 +29,8 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
         addresses={addresses}
         index={index}
       />
+      {/* {task.type === "dropoff" ? <Packages storeId={storeId} index={index} /> : null} */}
+      {task.type === "dropoff" ? <TotalWeight index={index} /> : null }
       {areDefinedTimeSlots() ? (
         <SwitchTimeSlotFreePicker
           storeId={storeId}
@@ -46,12 +50,12 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
         />
       )}
       <div className="mt-4">
-        <label htmlFor={`tasks[${index}].commentary`} className="block mb-2">
+        <label htmlFor={`tasks[${index}].comments`} className="block mb-2">
           Commentaire
         </label>
         <Field
           as={Input.TextArea}
-          name={`tasks[${index}].commentary`}
+          name={`tasks[${index}].comments`}
           placeholder={t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER")}
           rows={4}
           style={{ resize: "none" }}
