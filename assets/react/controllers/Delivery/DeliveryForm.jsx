@@ -115,6 +115,8 @@ export default function ({ isNew, storeId }) {
         },
         toBeRemembered: false,
         toBeModified: false,
+        packages: [], 
+        weight: 0
       },
       {
         type: 'dropoff',
@@ -130,7 +132,7 @@ export default function ({ isNew, storeId }) {
         },
         toBeRemembered: false,
         toBeModified: false,
-        // packages: [], 
+        packages: [], 
         weight: 0
       },
     ],

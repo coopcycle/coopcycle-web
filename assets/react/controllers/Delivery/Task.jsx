@@ -4,7 +4,7 @@ import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input } from 'antd'
 import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
-// import Packages from '../../../../js/app/components/delivery/Packages';
+import Packages from '../../../../js/app/components/delivery/Packages';
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from '../../../../js/app/components/delivery/TotalWeight';
@@ -29,8 +29,8 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
         addresses={addresses}
         index={index}
       />
-      {/* {task.type === "dropoff" ? <Packages storeId={storeId} index={index} /> : null} */}
-      {task.type === "dropoff" ? <TotalWeight index={index} /> : null }
+      <Packages storeId={storeId} index={index} />
+      <TotalWeight index={index} /> 
       {areDefinedTimeSlots() ? (
         <SwitchTimeSlotFreePicker
           storeId={storeId}
