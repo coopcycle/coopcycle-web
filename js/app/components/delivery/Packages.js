@@ -11,10 +11,6 @@ export default ({ storeId, index }) => {
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
 
-  console.log('PackagesPIcked', packagesPicked)
-
-  console.group(index)
-
   useEffect(() => {
     const getPackagesType = async () => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
@@ -27,8 +23,19 @@ export default ({ storeId, index }) => {
         },
       })
       const packages = await response.data['hydra:member']
-      console.group(packages)
+
+      const picked = []
+
+      for (const p of packages) {
+        const newPackages = {
+          type: p.name,
+          quantity: 0,
+        }
+        picked.push(newPackages)
+      }
+
       setPackagesType(packages)
+      setPackagesPicked(picked)
     }
 
     if (storeId) {
@@ -41,21 +48,35 @@ export default ({ storeId, index }) => {
   }, [packagesPicked])
 
   const handlePlusButton = item => {
-    setPackagesPicked([...packagesPicked, item])
+    const pack = packagesPicked.find(p => p.type === item.name)
+    const index = packagesPicked.findIndex(p => p === pack)
+    if (index !== -1) {
+      const newPackagesPicked = [...packagesPicked]
+      newPackagesPicked[index] = {
+        type: pack.type,
+        quantity: pack.quantity + 1,
+      }
+      setPackagesPicked(newPackagesPicked)
+    }
   }
 
   const handleMinusButton = item => {
-    const index = packagesPicked.findIndex(p => p === item)
+    const pack = packagesPicked.find(p => p.type === item.name)
+    const index = packagesPicked.findIndex(p => p === pack)
+
     if (index !== -1) {
       const newPackagesPicked = [...packagesPicked]
-      newPackagesPicked.splice(index, 1)
+      newPackagesPicked[index] = {
+        type: pack.type,
+        quantity: pack.quantity > 0 ? pack.quantity - 1 : 0,
+      }
       setPackagesPicked(newPackagesPicked)
     }
   }
 
   const calculateValue = item => {
-    const sameTypePackages = packagesPicked.filter(p => p === item)
-    return sameTypePackages.length
+    const sameTypePackage = packagesPicked.find(p => p.type === item.name)
+    return sameTypePackage.quantity
   }
 
   return (
