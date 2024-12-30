@@ -106,7 +106,7 @@ export default function ({ isNew, storeId }) {
         afterValue: getNextRoundedTime().toISOString(),
         beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
         timeSlot: null,
-        commentary: '',
+        comments: '',
         address: {
           streetAddress: '',
           name: '',
@@ -121,7 +121,7 @@ export default function ({ isNew, storeId }) {
         afterValue: getNextRoundedTime().toISOString(),
         beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
         timeSlot: null,
-        commentary: '',
+        comments: '',
         address: {
           streetAddress: '',
           name: '',
@@ -130,6 +130,8 @@ export default function ({ isNew, storeId }) {
         },
         toBeRemembered: false,
         toBeModified: false,
+        // packages: [], 
+        weight: 0
       },
     ],
   }
