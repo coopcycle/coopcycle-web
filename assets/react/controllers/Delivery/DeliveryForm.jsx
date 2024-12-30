@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
@@ -144,9 +145,10 @@ export default function ({ isNew, storeId }) {
         {({ values }) => (
           <Form>
             <FieldArray name="tasks">
-              {() => (
+              {(arrayHelpers) => (
                 <>
-                  {values.tasks.map((task, index) => (
+                        {values.tasks.map((task, index) => (
+                    <div key={index}>
                     <Task
                       key={index}
                       task={task}
@@ -154,8 +156,45 @@ export default function ({ isNew, storeId }) {
                       addresses={addresses}
                       storeId={storeId}
                       storeDeliveryInfos={storeDeliveryInfos}
-                    />
+                      
+                            />
+                            {task.type === 'dropoff' && index > 1 && (
+                        <Button
+                          onClick={() => arrayHelpers.remove(index)}
+                          type="button"
+                        >
+                          Remove this dropoff
+                        </Button>
+                      )}
+                    </div>
                   ))}
+                  <div>
+                    <p>Multiple dropoff is available</p>
+                    <Button
+                      onClick={() => {
+                        const newDropoff = {
+                          type: 'dropoff',
+                          afterValue: getNextRoundedTime().toISOString(),
+                          beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
+                          timeSlot: null,
+                          comments: '',
+                          address: {
+                            streetAddress: '',
+                            name: '',
+                            contactName: '',
+                            telephone: '',
+                          },
+                          toBeRemembered: false,
+                          toBeModified: false,
+                          packages: [],
+                          weight: 0
+                        };
+                        arrayHelpers.push(newDropoff);
+                      }}
+                    >
+                      Add a new dropoff
+                    </Button>
+                  </div>
                 </>
               )}
             </FieldArray>
