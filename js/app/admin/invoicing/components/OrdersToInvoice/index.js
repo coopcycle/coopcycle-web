@@ -121,52 +121,59 @@ export default () => {
   }
 
   return (
-    <div>
-      <h3>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h3>
-      <div>
-        {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STORE')}
-        <InputNumber min={0} onChange={setStoreId} />
-        {t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE')}
-        <DatePicker.RangePicker onChange={setDateRange} />
+    // marginTop: 48px: h5 marginTop (10px) + 38px
+    <div style={{ marginTop: '38px' }}>
+      <h5>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h5>
+      <div className="d-flex" style={{ marginTop: '12px', gap: '24px' }}>
+        {t('ADMIN_DASHBOARD_NAV_FILTERS')}:
+        <div className="d-flex flex-column">
+          {t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE')}
+          <DatePicker.RangePicker onChange={setDateRange} />
+        </div>
+        <div className="d-flex flex-column">
+          {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STORE')}
+          <InputNumber min={0} onChange={setStoreId} />
+        </div>
+        <div className="d-flex flex-column justify-content-end">
+          <Button
+            primary
+            onClick={() => {
+              reloadData(currentPage, pageSize)
+            }}>
+            {t('ADMIN_ORDERS_TO_INVOICE_REFRESH')}
+          </Button>
+        </div>
+      </div>
+      <Table
+        style={{ marginTop: '48px' }}
+        columns={columns}
+        loading={isLoading}
+        dataSource={dataSource}
+        rowKey="@id"
+        pagination={{
+          pageSize,
+          total,
+        }}
+        onChange={pagination => {
+          reloadData(pagination.current, pagination.pageSize)
+
+          setCurrentPage(pagination.current)
+          setPageSize(pagination.pageSize)
+        }}
+      />
+      <div className="d-flex justify-content-end" style={{ marginTop: '24px' }}>
         <Button
           primary
           onClick={() => {
-            reloadData(currentPage, pageSize)
+            if (!params) {
+              return
+            }
+
+            setModalOpen(true)
           }}>
-          {t('ADMIN_ORDERS_TO_INVOICE_REFRESH')}
+          {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
         </Button>
       </div>
-      <div className="row">
-        <div className="col-md-12">
-          <Table
-            columns={columns}
-            loading={isLoading}
-            dataSource={dataSource}
-            rowKey="@id"
-            pagination={{
-              pageSize,
-              total,
-            }}
-            onChange={pagination => {
-              reloadData(pagination.current, pagination.pageSize)
-
-              setCurrentPage(pagination.current)
-              setPageSize(pagination.pageSize)
-            }}
-          />
-        </div>
-      </div>
-      <Button
-        primary
-        onClick={() => {
-          if (!params) {
-            return
-          }
-
-          setModalOpen(true)
-        }}>
-        {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
-      </Button>
       <Modal
         isOpen={isModalOpen}
         appElement={document.getElementById('invoicing')}

@@ -59,24 +59,30 @@ export default ({ dateRange, params, setModalOpen }) => {
           </a>
         </h4>
       </div>
-      <Radio.Group onChange={onChange} value={destination}>
-        <Space direction="vertical">
-          <Radio value={DESTINATIONS.standard}>
-            {t('ADMIN_ORDERS_TO_INVOICE_DESTINATION_STANDARD')}
-          </Radio>
-          <Radio value={DESTINATIONS.odoo}>
-            {t('ADMIN_ORDERS_TO_INVOICE_DESTINATION_ODOO')}
-          </Radio>
-        </Space>
-      </Radio.Group>
-
-      <Button
-        primary
-        onClick={() => {
-          download()
-        }}>
-        {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
-      </Button>
+      <main className="modal-body d-flex flex-column">
+        <h5>{t('ADMIN_ORDERS_TO_INVOICE_FILE_FORMAT')}:</h5>
+        <Radio.Group onChange={onChange} value={destination}>
+          <Space direction="vertical">
+            <Radio value={DESTINATIONS.standard}>
+              {t('ADMIN_ORDERS_TO_INVOICE_DESTINATION_STANDARD')}
+            </Radio>
+            <Radio value={DESTINATIONS.odoo}>
+              {t('ADMIN_ORDERS_TO_INVOICE_DESTINATION_ODOO')}
+            </Radio>
+          </Space>
+        </Radio.Group>
+      </main>
+      <footer className="modal-footer">
+        <Button
+          primary
+          block
+          icon="download"
+          onClick={() => {
+            download()
+          }}>
+          {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
+        </Button>
+      </footer>
     </>
   )
 }
