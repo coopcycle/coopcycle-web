@@ -1508,7 +1508,7 @@ form.store_type.failure_reason_set.help: 'Select a list of <a href="%failure_rea
 adminDashboard.incidents.title: Incidents
 adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.createNew: Create a new incident
-adminDashboard.invoicing.title: Invoicing (PREVIEW)
+adminDashboard.invoicing.title: Invoicing [PREVIEW]
 adminDashboard.invoicing.help: "Prepare invoices"
 adminDashboard.invoicing.line_item.order_number: "Order #%number%"
 profile.delete_my_account: "Delete my account"

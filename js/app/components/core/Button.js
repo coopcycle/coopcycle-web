@@ -11,6 +11,7 @@ export default ({
   success,
   danger,
   link,
+  block,
 }) => {
   return (
     <button
@@ -21,6 +22,7 @@ export default ({
         'btn-success': success,
         'btn-danger': danger,
         'btn-link': link,
+        'btn-block': block,
       })}
       disabled={loading}>
       {loading ? (
