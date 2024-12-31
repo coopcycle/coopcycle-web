@@ -9,7 +9,7 @@ import moment from 'moment'
 import {money} from '../../controllers/Incident/utils.js'
 
 
-function getNextRoundedTime() {
+const getNextRoundedTime = () => {
   const now = moment()
   now.add(15, 'minutes')
   const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
@@ -23,6 +23,12 @@ function getNextRoundedTime() {
 
   return now
 }
+
+// const validate = values => {
+//   if (!values.name) {
+//     errors.name = 'L'
+//   }
+// }
 
 
 const baseURL = location.protocol + '//' + location.host
@@ -42,8 +48,8 @@ export default function ({ isNew, storeId }) {
     tasks: [
       {
         type: 'PICKUP',
-        afterValue: getNextRoundedTime().toISOString(),
-        beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
+        doneAfter: getNextRoundedTime().toISOString(),
+        doneBefore: getNextRoundedTime().add(15, 'minutes').toISOString(),
         timeSlot: null,
         comments: '',
         address: {
@@ -58,8 +64,8 @@ export default function ({ isNew, storeId }) {
       },
       {
         type: 'DROPOFF',
-        afterValue: getNextRoundedTime().toISOString(),
-        beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
+        doneAfter: getNextRoundedTime().toISOString(),
+        doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
         timeSlot: null,
         comments: '',
         address: {
@@ -143,8 +149,9 @@ export default function ({ isNew, storeId }) {
       })
         .catch(error => {
           if (error.response) {
-            setError({isError: true, errorMessage: error.response.data.violations[0].message} )
+            setError({isError: true, errorMessage: error.response.data['hydra:description']} )
             console.log("Erreur : ", error.response.data.violations[0].message)
+            console.log(values)
           }
         })
 
@@ -237,8 +244,8 @@ export default function ({ isNew, storeId }) {
                         onClick={() => {
                           const newDropoff = {
                             type: 'DROPOFF',
-                            afterValue: getNextRoundedTime().toISOString(),
-                            beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
+                            doneAfter: getNextRoundedTime().toISOString(),
+                            doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
                             timeSlot: null,
                             comments: '',
                             address: {

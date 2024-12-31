@@ -12,8 +12,8 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
 
   useEffect(() => {
     if  (isTimeSlotSelect)  {
-      setFieldValue(`tasks[${index}].afterValue`, null)
-      setFieldValue(`tasks[${index}].beforeValue`, null)
+      setFieldValue(`tasks[${index}].doneAfter`, null)
+      setFieldValue(`tasks[${index}].doneBefore`, null)
     } else {
       setFieldValue(`tasks[${index}].timeSlot`, null)
     }
