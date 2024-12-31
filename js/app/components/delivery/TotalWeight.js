@@ -7,21 +7,21 @@ export default ({ index }) => {
   const { setFieldValue } = useFormikContext()
 
   const [numberValue, setNumberValue] = useState(null)
-  const [weightUnit, setWeightUnit] = useState('Kg')
+  const [weightUnit, setWeightUnit] = useState('kg')
 
   useEffect(() => {
-    let weight
-    if (numberValue) {
+    if (numberValue !== null) {
+      let calculatedWeight = 0
       if (weightUnit === 'kg') {
-        weight = numberValue * 1000
-        setFieldValue(`tasks[${index}].weight`, weight)
+        calculatedWeight = numberValue * 1000
+      } else if (weightUnit === 'lbs') {
+        calculatedWeight = numberValue * 453.592
       }
-      if (weightUnit === 'lbs') {
-        weight = numberValue * 453.592
-        setFieldValue(`tasks[${index}].weight`, weight)
-      }
+      setFieldValue(`tasks[${index}].weight`, calculatedWeight)
+    } else {
+      setFieldValue(`tasks[${index}].weight`, 0)
     }
-  }, [numberValue, weightUnit])
+  }, [numberValue, weightUnit, index])
 
   return (
     <>

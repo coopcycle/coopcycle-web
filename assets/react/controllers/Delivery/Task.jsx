@@ -29,8 +29,14 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
         addresses={addresses}
         index={index}
       />
-      <Packages storeId={storeId} index={index} />
-      <TotalWeight index={index} /> 
+      {task.type === "dropoff" ?
+        <div>
+          <Packages storeId={storeId} index={index} />
+          <TotalWeight index={index} /> 
+        </div>
+        : null}
+        
+     
       {areDefinedTimeSlots() ? (
         <SwitchTimeSlotFreePicker
           storeId={storeId}

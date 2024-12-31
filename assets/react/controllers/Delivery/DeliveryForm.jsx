@@ -22,6 +22,73 @@ function getNextRoundedTime() {
   return now
 }
 
+// const caculateObjectType = {
+//   "store": "",
+//   "weight": 0,
+//   "pickup": {
+//     "type": "DROPOFF",
+//     "address": {
+//       "contactName": "string",
+//       "geo": {
+//         "latitude": 0,
+//         "longitude": 0
+//       },
+//       "streetAddress": "string",
+//       "telephone": {},
+//       "latLng": [
+//         "string"
+//       ]
+//     },
+//     "comments": "string",
+//     "weight": 0,
+//     "after": "1970-01-01T00:00:00.000Z",
+//     "before": "1970-01-01T00:00:00.000Z"
+//   },
+//   "dropoff": {
+//     "type": "DROPOFF",
+//     "address": {
+//       "contactName": "string",
+//       "geo": {
+//         "latitude": 0,
+//         "longitude": 0
+//       },
+//       "streetAddress": "string",
+//       "telephone": {},
+//       "latLng": [
+//         "string"
+//       ]
+//     },
+//     "comments": "string",
+//     "weight": 0,
+//     "after": "1970-01-01T00:00:00.000Z",
+//     "before": "1970-01-01T00:00:00.000Z"
+//   },
+//   "packages": [
+//     "string"
+//   ],
+//   "tasks": [
+//     {
+//       "type": "DROPOFF",
+//       "address": {
+//         "contactName": "string",
+//         "geo": {
+//           "latitude": 0,
+//           "longitude": 0
+//         },
+//         "streetAddress": "string",
+//         "telephone": {},
+//         "latLng": [
+//           "string"
+//         ]
+//       },
+//       "comments": "string",
+//       "weight": 0,
+//       "after": "1970-01-01T00:00:00.000Z",
+//       "before": "1970-01-01T00:00:00.000Z"
+//     }
+//   ]
+// }
+
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
@@ -31,6 +98,46 @@ export default function ({ isNew, storeId }) {
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+  const [calculateInfo, setCalculateInfo] = useState({})
+
+  console.log(calculateInfo)
+
+    const initialValues = {
+    tasks: [
+      {
+        type: 'pickup',
+        afterValue: getNextRoundedTime().toISOString(),
+        beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
+        timeSlot: null,
+        comments: '',
+        address: {
+          streetAddress: '',
+          name: '',
+          contactName: '',
+          telephone: '',
+        },
+        toBeRemembered: false,
+        toBeModified: false,
+      },
+      {
+        type: 'dropoff',
+        afterValue: getNextRoundedTime().toISOString(),
+        beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
+        timeSlot: null,
+        comments: '',
+        address: {
+          streetAddress: '',
+          name: '',
+          contactName: '',
+          telephone: '',
+        },
+        toBeRemembered: false,
+        toBeModified: false,
+        packages: [], 
+        weight: 0
+      },
+    ],
+  }
 
   useEffect(() => {
     const getAddresses = async () => {
@@ -70,6 +177,7 @@ export default function ({ isNew, storeId }) {
     }
   }, [storeId])
 
+
   console.log(isNew)
 
   // réécrire avec values
@@ -100,107 +208,91 @@ export default function ({ isNew, storeId }) {
     [storeDeliveryInfos],
   )
 
-  const initialValues = {
-    tasks: [
-      {
-        type: 'pickup',
-        afterValue: getNextRoundedTime().toISOString(),
-        beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
-        timeSlot: null,
-        comments: '',
-        address: {
-          streetAddress: '',
-          name: '',
-          contactName: '',
-          telephone: '',
-        },
-        toBeRemembered: false,
-        toBeModified: false,
-        packages: [], 
-        weight: 0
-      },
-      {
-        type: 'dropoff',
-        afterValue: getNextRoundedTime().toISOString(),
-        beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
-        timeSlot: null,
-        comments: '',
-        address: {
-          streetAddress: '',
-          name: '',
-          contactName: '',
-          telephone: '',
-        },
-        toBeRemembered: false,
-        toBeModified: false,
-        packages: [], 
-        weight: 0
-      },
-    ],
-  }
+
 
   return (
     <ConfigProvider locale={antdLocale}>
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ values }) => (
-          <Form>
-            <FieldArray name="tasks">
-              {(arrayHelpers) => (
-                <>
-                        {values.tasks.map((task, index) => (
-                    <div key={index}>
-                    <Task
-                      key={index}
-                      task={task}
-                      index={index}
-                      addresses={addresses}
-                      storeId={storeId}
-                      storeDeliveryInfos={storeDeliveryInfos}
+        {({ values }) => {
+          useEffect(() => {
+            // const weight = values.tasks.find(task => task.type === "dropoff").weight
+            const infos = {
+              store: storeId,
+                //   let weight = 0
+  //   for (const task of initialValues.tasks) {
+  //     weight += task.weight
+              //   }      
+              weight: values.tasks.find(task => task.type === "dropoff").weight,
+              pickup: values.tasks.find(task => task.type === "pickup"),
+              dropoff: values.tasks.find(task => task.type === "dropoff"),
+              tasks: values.tasks,
+            };
+
+            infos.packages = [...(infos.pickup?.packages || []), ...(infos.dropoff?.packages || [])];
+
+            setCalculateInfo(infos);
+          }, [values, storeId]);
+
+          return (
+            <Form>
+              <FieldArray name="tasks">
+                {(arrayHelpers) => (
+                  <>
+                    {values.tasks.map((task, index) => (
+                      <div key={index}>
+                        <Task
+                          key={index}
+                          task={task}
+                          index={index}
+                          addresses={addresses}
+                          storeId={storeId}
+                          storeDeliveryInfos={storeDeliveryInfos}
                       
-                            />
-                            {task.type === 'dropoff' && index > 1 && (
-                        <Button
-                          onClick={() => arrayHelpers.remove(index)}
-                          type="button"
-                        >
-                          Remove this dropoff
-                        </Button>
-                      )}
+                        />
+                        {task.type === 'dropoff' && index > 1 && (
+                          <Button
+                            onClick={() => arrayHelpers.remove(index)}
+                            type="button"
+                          >
+                            Remove this dropoff
+                          </Button>
+                        )}
+                      </div>
+                    ))}
+                    <div>
+                      <p>Multiple dropoff is available</p>
+                      <Button
+                        onClick={() => {
+                          const newDropoff = {
+                            type: 'dropoff',
+                            afterValue: getNextRoundedTime().toISOString(),
+                            beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
+                            timeSlot: null,
+                            comments: '',
+                            address: {
+                              streetAddress: '',
+                              name: '',
+                              contactName: '',
+                              telephone: '',
+                            },
+                            toBeRemembered: false,
+                            toBeModified: false,
+                            packages: [],
+                            weight: 0
+                          };
+                          arrayHelpers.push(newDropoff);
+                        }}
+                      >
+                        Add a new dropoff
+                      </Button>
                     </div>
-                  ))}
-                  <div>
-                    <p>Multiple dropoff is available</p>
-                    <Button
-                      onClick={() => {
-                        const newDropoff = {
-                          type: 'dropoff',
-                          afterValue: getNextRoundedTime().toISOString(),
-                          beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
-                          timeSlot: null,
-                          comments: '',
-                          address: {
-                            streetAddress: '',
-                            name: '',
-                            contactName: '',
-                            telephone: '',
-                          },
-                          toBeRemembered: false,
-                          toBeModified: false,
-                          packages: [],
-                          weight: 0
-                        };
-                        arrayHelpers.push(newDropoff);
-                      }}
-                    >
-                      Add a new dropoff
-                    </Button>
-                  </div>
-                </>
-              )}
-            </FieldArray>
-            <button type="submit">Soumettre</button>
-          </Form>
-        )}
+                  </>
+                )}
+              </FieldArray>
+              <button type="submit">Soumettre</button>
+            </Form>
+          )
+        }}
       </Formik>
     </ConfigProvider>
   )
