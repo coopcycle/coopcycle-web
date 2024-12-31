@@ -11,8 +11,6 @@ export default ({ storeId, index }) => {
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
 
-  console.log(packagesType)
-
   useEffect(() => {
     const getPackagesType = async () => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))

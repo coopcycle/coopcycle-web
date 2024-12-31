@@ -77,8 +77,8 @@ const DateTimeRangePicker = ({ format, index }) => {
   })
 
   useEffect(() => {
-    setFieldValue(`tasks[${index}].afterValue`, afterValue.toISOString())
-    setFieldValue(`tasks[${index}].beforeValue`, beforeValue.toISOString())
+    setFieldValue(`tasks[${index}].doneAfter`, afterValue.toISOString())
+    setFieldValue(`tasks[${index}].doneBefore`, beforeValue.toISOString())
   }, [afterValue, beforeValue, index, setFieldValue])
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
