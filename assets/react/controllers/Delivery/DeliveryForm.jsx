@@ -6,6 +6,7 @@ import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
 import moment from 'moment'
+import {money} from '../../controllers/Incident/utils.js'
 
 function getNextRoundedTime() {
   const now = moment()
@@ -22,72 +23,6 @@ function getNextRoundedTime() {
   return now
 }
 
-// const caculateObjectType = {
-//   "store": "",
-//   "weight": 0,
-//   "pickup": {
-//     "type": "DROPOFF",
-//     "address": {
-//       "contactName": "string",
-//       "geo": {
-//         "latitude": 0,
-//         "longitude": 0
-//       },
-//       "streetAddress": "string",
-//       "telephone": {},
-//       "latLng": [
-//         "string"
-//       ]
-//     },
-//     "comments": "string",
-//     "weight": 0,
-//     "after": "1970-01-01T00:00:00.000Z",
-//     "before": "1970-01-01T00:00:00.000Z"
-//   },
-//   "dropoff": {
-//     "type": "DROPOFF",
-//     "address": {
-//       "contactName": "string",
-//       "geo": {
-//         "latitude": 0,
-//         "longitude": 0
-//       },
-//       "streetAddress": "string",
-//       "telephone": {},
-//       "latLng": [
-//         "string"
-//       ]
-//     },
-//     "comments": "string",
-//     "weight": 0,
-//     "after": "1970-01-01T00:00:00.000Z",
-//     "before": "1970-01-01T00:00:00.000Z"
-//   },
-//   "packages": [
-//     "string"
-//   ],
-//   "tasks": [
-//     {
-//       "type": "DROPOFF",
-//       "address": {
-//         "contactName": "string",
-//         "geo": {
-//           "latitude": 0,
-//           "longitude": 0
-//         },
-//         "streetAddress": "string",
-//         "telephone": {},
-//         "latLng": [
-//           "string"
-//         ]
-//       },
-//       "comments": "string",
-//       "weight": 0,
-//       "after": "1970-01-01T00:00:00.000Z",
-//       "before": "1970-01-01T00:00:00.000Z"
-//     }
-//   ]
-// }
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -98,14 +33,15 @@ export default function ({ isNew, storeId }) {
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
-  const [calculateInfo, setCalculateInfo] = useState({})
+  const [calculatedPrice, setCalculatePrice] = useState(0)
 
-  console.log(calculateInfo)
+
+  console.log("price", calculatedPrice)
 
     const initialValues = {
     tasks: [
       {
-        type: 'pickup',
+        type: 'PICKUP',
         afterValue: getNextRoundedTime().toISOString(),
         beforeValue: getNextRoundedTime().add(15, 'minutes').toISOString(),
         timeSlot: null,
@@ -120,7 +56,7 @@ export default function ({ isNew, storeId }) {
         toBeModified: false,
       },
       {
-        type: 'dropoff',
+        type: 'DROPOFF',
         afterValue: getNextRoundedTime().toISOString(),
         beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
         timeSlot: null,
@@ -180,7 +116,6 @@ export default function ({ isNew, storeId }) {
 
   console.log(isNew)
 
-  // réécrire avec values
   const handleSubmit = useCallback(
     async values => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
@@ -213,24 +148,40 @@ export default function ({ isNew, storeId }) {
   return (
     <ConfigProvider locale={antdLocale}>
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ values }) => {
+        {({ values, isSubmitting, isValid }) => {
           useEffect(() => {
-            // const weight = values.tasks.find(task => task.type === "dropoff").weight
             const infos = {
-              store: storeId,
-                //   let weight = 0
-  //   for (const task of initialValues.tasks) {
-  //     weight += task.weight
-              //   }      
-              weight: values.tasks.find(task => task.type === "dropoff").weight,
-              pickup: values.tasks.find(task => task.type === "pickup"),
-              dropoff: values.tasks.find(task => task.type === "dropoff"),
+              store: storeDeliveryInfos["@id"],   
+              weight: values.tasks.find(task => task.type === "DROPOFF").weight,
+              pickup: values.tasks.find(task => task.type === "PICKUP"),
+              dropoff: values.tasks.find(task => task.type === "DROPOFF"),
+              packages: values.tasks.find(task => task.type === "DROPOFF").packages,
               tasks: values.tasks,
             };
 
-            infos.packages = [...(infos.pickup?.packages || []), ...(infos.dropoff?.packages || [])];
+            const calculatePrice = async () => {
+              const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+              const jwt = jwtResp.jwt
+              const url = `${baseURL}/api/retail_prices/calculate`
 
-            setCalculateInfo(infos);
+              const response = await axios.post(
+                url,
+                infos,
+                {
+                  headers: {
+                    Authorization: `Bearer ${jwt}`,
+                    'Content-Type': 'application/ld+json',
+                  },
+                },
+              )
+              console.log(response.data)
+              setCalculatePrice(response.data)
+
+            }
+            if (values.tasks.find(task => task.type === "PICKUP").address.streetAddress !== '' && values.tasks.find(task => task.type === "DROPOFF").address.streetAddress !== '') {
+              calculatePrice()
+            }
+            
           }, [values, storeId]);
 
           return (
@@ -249,7 +200,7 @@ export default function ({ isNew, storeId }) {
                           storeDeliveryInfos={storeDeliveryInfos}
                       
                         />
-                        {task.type === 'dropoff' && index > 1 && (
+                        {task.type === 'DROPOFF' && index > 1 && (
                           <Button
                             onClick={() => arrayHelpers.remove(index)}
                             type="button"
@@ -260,11 +211,12 @@ export default function ({ isNew, storeId }) {
                       </div>
                     ))}
                     <div>
-                      <p>Multiple dropoff is available</p>
+                      <p>Multiple dropoff is not available</p>
                       <Button
+                        disabled={true}
                         onClick={() => {
                           const newDropoff = {
-                            type: 'dropoff',
+                            type: 'DROPOFF',
                             afterValue: getNextRoundedTime().toISOString(),
                             beforeValue: getNextRoundedTime().add(30, 'minutes').toISOString(),
                             timeSlot: null,
@@ -289,7 +241,34 @@ export default function ({ isNew, storeId }) {
                   </>
                 )}
               </FieldArray>
-              <button type="submit">Soumettre</button>
+
+              <div className='deliveryform__total-price'>
+                <div>Total - Pricing </div>
+                <div>
+                  {calculatedPrice.amount 
+                    ? 
+                    <div>
+                      <div>
+                        ${money(calculatedPrice.amount)} VAT
+                      </div>
+                      <div>
+                        ${money(calculatedPrice.amount - calculatedPrice.tax.amount)} ex. VAT
+                      </div>
+                    </div>
+                    : 
+                    <div>
+                      <div>
+                        ${money(0)} VAT
+                      </div>
+                      <div>
+                        ${money(0)} ex. VAT
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <Button htmlType="submit" disabled={isSubmitting || !isValid}>Soumettre</Button>
             </Form>
           )
         }}

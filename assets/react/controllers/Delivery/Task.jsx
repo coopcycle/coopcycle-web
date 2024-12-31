@@ -24,12 +24,12 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
   
   return (
         <div>
-      <h2>Informations du {task.type === "pickup" ? "Retrait" : "Dépot"}</h2>
+      <h2>Informations du {task.type === "PICKUP" ? "Retrait" : "Dépot"}</h2>
       <AddressBookNew
         addresses={addresses}
         index={index}
       />
-      {task.type === "dropoff" ?
+      {task.type === "DROPOFF" ?
         <div>
           <Packages storeId={storeId} index={index} />
           <TotalWeight index={index} /> 
