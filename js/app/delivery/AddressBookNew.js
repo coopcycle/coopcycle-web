@@ -5,6 +5,37 @@ import AddressAutosuggest from '../components/AddressAutosuggest'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import { useFormikContext, Field } from 'formik'
+import { getCountry } from '../i18n'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+function getFormattedValue(value) {
+  if (typeof value === 'string') {
+    const phoneNumber = parsePhoneNumberFromString(
+      value,
+      (getCountry() || 'fr').toUpperCase(),
+    )
+
+    return phoneNumber ? phoneNumber.formatNational() : value
+  }
+
+  return value
+}
+
+function getUnformattedValue(value) {
+  if (typeof value === 'string') {
+    const phoneNumber = parsePhoneNumberFromString(
+      value,
+      (getCountry() || 'fr').toUpperCase(),
+    )
+
+    return phoneNumber ? phoneNumber.format('E.164') : value
+  }
+
+  // If value is null or undefined, we make sure to return an empty string,
+  // because React treats value={ undefined | null } as an uncontrolled component
+  // https://stackoverflow.com/questions/49969577/warning-when-changing-controlled-input-value-in-react
+  return value ?? ''
+}
 
 export default function AddressBook({ index, addresses }) {
   const { t } = useTranslation()
@@ -30,14 +61,28 @@ export default function AddressBook({ index, addresses }) {
     const selectedAddress = addresses.find(
       address => address.streetAddress === value,
     )
+    const formatedTelephone = getFormattedValue(selectedAddress.telephone)
+
+    console.log(formatedTelephone)
     setFieldValue(`tasks[${index}].address`, {
       ...selectedAddress,
       streetAddress: selectedAddress.streetAddress || '',
       name: selectedAddress.name || '',
       telephone: selectedAddress.telephone || '',
+      formatedTelephone,
       contactName: selectedAddress.contactName || '',
     })
     setSelectValue(value)
+  }
+
+  const handleTelephone = (e, form) => {
+    const formatedTelephone = e.target.value
+    const telephone = getUnformattedValue(formatedTelephone)
+    form.setFieldValue(
+      `tasks[${index}].address.formatedTelephone`,
+      formatedTelephone,
+    )
+    form.setFieldValue(`tasks[${index}].address.telephone`, telephone)
   }
 
   return (
@@ -86,17 +131,14 @@ export default function AddressBook({ index, addresses }) {
           </Field>
         </div>
         <div className="col-md-4">
-          <Field name={`tasks[${index}].address.telephone`}>
+          <Field name={`tasks[${index}].address.formatedTelephone`}>
             {({ field, form }) => (
               <Input
                 {...field}
-                value={form.values.tasks[index].address.telephone}
+                value={form.values.tasks[index].address.formatedTelephone}
                 onChange={e => {
                   handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.telephone`,
-                    e.target.value,
-                  )
+                  handleTelephone(e, form)
                 }}
                 placeholder="Téléphone"
               />
@@ -197,6 +239,7 @@ export default function AddressBook({ index, addresses }) {
             type="primary"
             onClick={() => {
               setModalOpen(false)
+              setAlreadyAskedForModification(true)
             }}>
             {t('ADDRESS_BOOK_PROP_CHANGED_ONLY_ONCE')}
           </Button>

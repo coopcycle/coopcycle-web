@@ -51,6 +51,7 @@ export default function ({ isNew, storeId }) {
           name: '',
           contactName: '',
           telephone: '',
+          formattedTelephone: ''
         },
         toBeRemembered: false,
         toBeModified: false,
@@ -66,6 +67,7 @@ export default function ({ isNew, storeId }) {
           name: '',
           contactName: '',
           telephone: '',
+          formattedTelephone : 's',
         },
         toBeRemembered: false,
         toBeModified: false,
