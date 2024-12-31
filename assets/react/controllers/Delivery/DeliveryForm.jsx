@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'antd'
-import { Formik, Form, FieldArray, ErrorMessage } from 'formik'
+import { Formik, Form, FieldArray } from 'formik'
 import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
 import moment from 'moment'
 import {money} from '../../controllers/Incident/utils.js'
-import { isError } from 'lodash'
+
 
 function getNextRoundedTime() {
   const now = moment()
@@ -32,7 +32,8 @@ export default function ({ isNew, storeId }) {
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
-  const [error, setError] = useState({isError: false, errorMessage: ' '})
+  const [error, setError] = useState({ isError: false, errorMessage: ' ' })
+  const [priceError, setPriceError] = useState({isPriceError: false, priceErrorMessage: ' '})
 
 
   console.log("price", calculatedPrice)
@@ -172,7 +173,7 @@ export default function ({ isNew, storeId }) {
               const jwt = jwtResp.jwt
               const url = `${baseURL}/api/retail_prices/calculate`
 
-              const response = await axios.post(
+              await axios.post(
                 url,
                 infos,
                 {
@@ -182,8 +183,14 @@ export default function ({ isNew, storeId }) {
                   },
                 },
               )
-              console.log(response.data)
-              setCalculatePrice(response.data)
+                .then(response => setCalculatePrice(response.data)
+                )
+                .catch(error => {
+                  if (error.response) {
+                    setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] } )
+                  console.log("Erreur : ", error.response.data['hydra:description'])
+                }
+              })
 
             }
             if (values.tasks.find(task => task.type === "PICKUP").address.streetAddress !== '' && values.tasks.find(task => task.type === "DROPOFF").address.streetAddress !== '') {
@@ -279,6 +286,12 @@ export default function ({ isNew, storeId }) {
                     </div>
                   }
                 </div>
+                {priceError.isPriceError ? 
+                  <div className="alert alert-info" role="alert">
+                    {priceError.priceErrorMessage}
+                  </div>
+              : null}
+                
               </div>
 
               <Button htmlType="submit" disabled={isSubmitting || !isValid}>Soumettre</Button>
