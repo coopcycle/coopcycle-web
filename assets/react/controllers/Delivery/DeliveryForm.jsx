@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'antd'
-import { Formik, Form, FieldArray } from 'formik'
+import { Formik, Form, FieldArray, ErrorMessage } from 'formik'
 import Task from './Task'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
 import moment from 'moment'
 import {money} from '../../controllers/Incident/utils.js'
+import { isError } from 'lodash'
 
 function getNextRoundedTime() {
   const now = moment()
@@ -27,13 +28,11 @@ function getNextRoundedTime() {
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
-  /**TODO :
-   * Format phone number
-   */
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
+  const [error, setError] = useState({isError: false, errorMessage: ' '})
 
 
   console.log("price", calculatedPrice)
@@ -124,7 +123,7 @@ export default function ({ isNew, storeId }) {
       const jwt = jwtResp.jwt
       const url = `${baseURL}/api/deliveries`
 
-      const response = await axios.post(
+      await axios.post(
         url,
         {
           store: storeDeliveryInfos['@id'],
@@ -137,9 +136,16 @@ export default function ({ isNew, storeId }) {
           },
         },
       )
-
-      console.log(values)
-      console.log(response.data)
+        .then(response => {
+              console.log(values)
+              console.log(response.data)
+      })
+        .catch(error => {
+          if (error.response) {
+            setError({isError: true, errorMessage: error.response.data.violations[0].message} )
+            console.log("Erreur : ", error.response.data.violations[0].message)
+          }
+        })
 
     },
     [storeDeliveryInfos],
@@ -188,6 +194,11 @@ export default function ({ isNew, storeId }) {
 
           return (
             <Form>
+              {error.isError ? 
+                <div className="alert alert-danger" role="alert">
+                  {error.errorMessage}
+                </div>
+              : null}
               <FieldArray name="tasks">
                 {(arrayHelpers) => (
                   <>
