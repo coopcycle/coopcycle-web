@@ -37,9 +37,9 @@ function getUnformattedValue(value) {
   return value ?? ''
 }
 
-export default function AddressBook({ index, addresses, handleBlur }) {
+export default function AddressBook({ index, addresses }) {
   const { t } = useTranslation()
-  const { values, setFieldValue, errors, touched } = useFormikContext()
+  const { values, setFieldValue, errors } = useFormikContext()
   const toBeModified = values.tasks[index].toBeModified
 
   const [isModalOpen, setModalOpen] = useState(false)
@@ -141,16 +141,14 @@ export default function AddressBook({ index, addresses, handleBlur }) {
                     handleModifyAddress()
                     handleTelephone(e, form)
                   }}
-                  onBlur={handleBlur}
                   placeholder="Téléphone"
                 />
 
-                {errors.tasks?.[index]?.address?.formatedTelephone &&
-                  touched.tasks?.[index]?.address?.formatedTelephone && (
-                    <div className="text-danger">
-                      {errors.tasks[index].address.formatedTelephone}
-                    </div>
-                  )}
+                {errors.tasks?.[index]?.address?.formatedTelephone && (
+                  <div className="text-danger">
+                    {errors.tasks[index].address.formatedTelephone}
+                  </div>
+                )}
               </>
             )}
           </Field>

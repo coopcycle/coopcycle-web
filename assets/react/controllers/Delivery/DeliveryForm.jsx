@@ -168,7 +168,8 @@ export default function ({ isNew, storeId }) {
   console.log(isNew)
 
   const handleSubmit = useCallback(
-    async values => {
+    async (values) => {
+      
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
       const jwt = jwtResp.jwt
       const url = `${baseURL}/api/deliveries`
@@ -210,10 +211,10 @@ export default function ({ isNew, storeId }) {
         initialValues={initialValues}
         onSubmit={handleSubmit}
         validate={validate}
-        validateOnChange={true}
-        validateOnBlur={true}
+        validateOnChange={false}
+        validateOnBlur={false}
       >
-        {({ values, isSubmitting, isValid, handleBlur }) => {
+        {({ values, isSubmitting}) => {
 
           console.log("values", values)
 
@@ -277,7 +278,6 @@ export default function ({ isNew, storeId }) {
                           addresses={addresses}
                           storeId={storeId}
                           storeDeliveryInfos={storeDeliveryInfos}
-                          handleBlur={handleBlur}
                         />
                         {task.type === 'DROPOFF' && index > 1 && (
                           <Button
@@ -353,7 +353,7 @@ export default function ({ isNew, storeId }) {
                 
               </div>
 
-              <Button htmlType="submit" disabled={isSubmitting || !isValid}>Soumettre</Button>
+              <Button htmlType="submit" disabled={isSubmitting}>Soumettre</Button>
             </Form>
           )
         }}
