@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik'
 const baseURL = location.protocol + '//' + location.host
 
 export default ({ storeId, index }) => {
-  const { setFieldValue } = useFormikContext()
+  const { setFieldValue, setFieldTouched, errors, touched } = useFormikContext()
 
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
@@ -45,7 +45,7 @@ export default ({ storeId, index }) => {
 
   useEffect(() => {
     setFieldValue(`tasks[${index}].packages`, packagesPicked)
-  }, [packagesPicked])
+  }, [packagesPicked, setFieldValue, index])
 
   const handlePlusButton = item => {
     const pack = packagesPicked.find(p => p.type === item.name)
@@ -57,7 +57,10 @@ export default ({ storeId, index }) => {
         quantity: pack.quantity + 1,
       }
       setPackagesPicked(newPackagesPicked)
+      setFieldTouched(`tasks[${index}].packages`, true, true)
     }
+    console.log('errors dans packages', errors)
+    console.log('touched dans packages', touched)
   }
 
   const handleMinusButton = item => {
@@ -71,8 +74,17 @@ export default ({ storeId, index }) => {
         quantity: pack.quantity > 0 ? pack.quantity - 1 : 0,
       }
       setPackagesPicked(newPackagesPicked)
+      setFieldTouched(`tasks[${index}].packages`, true, true)
     }
   }
+
+  console.log('touched', touched)
+
+  const touchedPackages = touched.tasks?.[index]?.packages
+  const errorsPackages = errors.tasks?.[index]?.packages
+
+  console.log('Touched packages:', touchedPackages)
+  console.log('Errors packages:', errorsPackages)
 
   const calculateValue = item => {
     const sameTypePackage = packagesPicked.find(p => p.type === item.name)
@@ -115,6 +127,10 @@ export default ({ storeId, index }) => {
           </div>
         </div>
       ))}
+      {errors.tasks?.[index]?.packages &&
+        touched.tasks?.find(task => task.packages === true) && (
+          <div className="text-danger">{errors.tasks[index].packages}</div>
+        )}
     </>
   )
 }

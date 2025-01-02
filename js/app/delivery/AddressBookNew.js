@@ -147,7 +147,9 @@ export default function AddressBook({ index, addresses, handleBlur }) {
 
                 {errors.tasks?.[index]?.address?.formatedTelephone &&
                   touched.tasks?.[index]?.address?.formatedTelephone && (
-                    <div>{errors.tasks[index].address.formatedTelephone}</div>
+                    <div className="text-danger">
+                      {errors.tasks[index].address.formatedTelephone}
+                    </div>
                   )}
               </>
             )}

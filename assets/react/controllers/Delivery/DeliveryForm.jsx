@@ -105,18 +105,22 @@ export default function ({ isNew, storeId }) {
           taskErrors.address.formatedTelephone = "You must enter a valid phone number.";
         }
 
-        if (values.tasks[i] === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
+        if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
           taskErrors.packages= "You must pick at least one package"
         }
 
-        if (values.tasks[i] === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
+        if (values.tasks[i].type === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
           taskErrors.weight = "You must specify a weight"
         }
 
         if (Object.keys(taskErrors).length > 0) {
           errors.tasks[i] = taskErrors
         }
+        
       }
+      console.log("errors", errors)
+    
+
 
       return Object.keys(errors.tasks).length > 0 ? errors : {}
 
