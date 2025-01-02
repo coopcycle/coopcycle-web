@@ -5,13 +5,12 @@ namespace AppBundle\Log;
 use Monolog\Processor\ProcessorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class RequestUriProcessor implements ProcessorInterface
+class RequestClientIpProcessor implements ProcessorInterface
 {
-    private $requestStack;
-
-    public function __construct(RequestStack $requestStack)
+    public function __construct(
+        private readonly RequestStack $requestStack
+    )
     {
-        $this->requestStack = $requestStack;
     }
 
     public function __invoke(array $record): array
@@ -21,9 +20,8 @@ class RequestUriProcessor implements ProcessorInterface
 
         // for logs coming from ApiLogSubscriber the $request variable is null and `extra`s are added by the ApiRequestResponseProcessor
 
-        if ($request) {
-            $record['extra']['method'] = $request->getMethod();
-            $record['extra']['request_uri'] = $request->getRequestUri();
+        if ($request && $request->headers->has('X-Forwarded-For')) {
+            $record['extra']['client_ip'] = $request->headers->get('X-Forwarded-For');
         }
 
         return $record;
