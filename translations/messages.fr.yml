@@ -362,6 +362,10 @@ checkout.breadcrumb.payment: Paiement
 checkout.breadcrumb.confirm: Confirmation
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
+form.store_type.pricing_rule_set.warning: Sans tarification,
+  le prix de livraison ne peut pas être calculé et suivi pour la facturation.
+  De plus, la contribution basée sur le montant de la commande ne sera pas disponible.
+form.store_type.pricing_rule_set.warning.list: La tarification n'est pas configurée
 form.store_type.prefill_pickup_address.label: Remplir automatiquement l'adresse de
   retrait
 form.store_type.create_orders.label: Créer des commandes
@@ -389,6 +393,8 @@ form.delivery.store.label: Magasin
 form.delivery.store.placeholder: Rechercher un magasin…
 form.delivery.confirm.label: Confirmer
 form.delivery.price.label: Prix
+form.delivery.price.missing: Contactez-nous pour plus de détails
+form.delivery.price.missing.incident: "Commande #%number%: Le prix de livraison n'a pas pu être calculé. Veuillez l'entrer manuellement et vérifier la tarification."
 form.delivery.to_be_confirmed.warning: Vous devez confirmer la commande
 form.delivery.has_order.info: Cette livraison est liée à une commande
 form.delivery.view_order: Voir la commande
@@ -428,6 +434,7 @@ form.address.company.function.label: Poste
 form.address.company.collaborator_number.label: Nombre de collaborateur-ices
 form.address.company.meal_estimate.label: Estimation du nombre de repas (par jour)
 form.company.make_the_request.label: Faire la demande
+pricing_rule_set.new: Nouvelle tarification
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
@@ -705,6 +712,7 @@ recurrence_rules.table.repeat: Répéter
 recurrence_rules.table.generate_orders: Générer des tâches/commandes automatiquement
 recurrence_rules.table.created_at: Règle créée
 recurrence_rule.legacy: Supprimer cette règle dans le panneau de dispatch
+recurrence_rule.price.missing: Le prix de livraison n'a pas pu être calculé. Veuillez vérifier la tarification.
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\

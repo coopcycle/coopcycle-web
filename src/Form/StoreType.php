@@ -36,6 +36,7 @@ class StoreType extends LocalBusinessType
                     'class' => PricingRuleSet::class,
                     'choice_label' => 'name',
                     'query_builder' => new OrderByNameQueryBuilder(),
+                    'required' => false,
                 ))
                 ->add('packageSet', EntityType::class, array(
                     'label' => 'form.store_type.package_set.label',
@@ -46,10 +47,6 @@ class StoreType extends LocalBusinessType
                 ))
                 ->add('prefillPickupAddress', CheckboxType::class, [
                     'label' => 'form.store_type.prefill_pickup_address.label',
-                    'required' => false,
-                ])
-                ->add('createOrders', CheckboxType::class, [
-                    'label' => 'form.store_type.create_orders.label',
                     'required' => false,
                 ])
                 ->add('weightRequired', CheckboxType::class, [

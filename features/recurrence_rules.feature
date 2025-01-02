@@ -343,6 +343,9 @@ Feature: Task recurrence rules
   Scenario: Apply recurrence rule creates delivery
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |

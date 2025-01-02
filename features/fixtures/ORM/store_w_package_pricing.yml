@@ -84,5 +84,4 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
-    createOrders: true
     packageSet: '@package_set_2'

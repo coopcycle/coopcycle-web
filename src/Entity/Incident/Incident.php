@@ -108,6 +108,7 @@ class Incident implements TaggableInterface {
 
 
     /**
+     * FIXME: allow to set $createdBy API clients (ApiApp) and integrations
      * @Groups({"incident"})
      */
     protected ?UserInterface $createdBy = null;

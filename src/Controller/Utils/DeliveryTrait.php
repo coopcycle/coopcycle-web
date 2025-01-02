@@ -3,21 +3,14 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Sylius\PriceInterface;
-use AppBundle\Exception\Pricing\NoRuleMatchedException;
-use AppBundle\Form\DeliveryType;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Form\Order\ExistingOrderType;
-use AppBundle\Service\DeliveryManager;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Order\OrderItemInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -28,28 +21,12 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, bool $attach = true): OrderInterface
-    {
-        return $factory->createForDelivery($delivery, $price, $customer, $attach);
-    }
-
-    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
-    {
-        $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
-
-        if (null === $price) {
-            throw new NoRuleMatchedException();
-        }
-
-        return (int) ($price);
-    }
-
     public function deliveryAction($id,
         Request $request,
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        OrderManager $orderManager
+        OrderManager $orderManager,
+        PricingManager $pricingManager,
     )
     {
         $delivery = $entityManager
@@ -60,8 +37,12 @@ trait DeliveryTrait
 
         $routes = $request->attributes->get('routes');
 
+        $order = $delivery->getOrder();
+        $price = $order?->getDeliveryPrice();
+
         $form = $this->createForm(ExistingOrderType::class, $delivery, [
-            'with_arbitrary_price' => null === $delivery->getOrder(),
+            'pricing_rules_based_price' => $price instanceof PricingRulesBasedPrice ? $price : null,
+            'arbitrary_price' => $price instanceof ArbitraryPrice ? $price : null
         ]);
 
         $form->handleRequest($request);
@@ -73,12 +54,20 @@ trait DeliveryTrait
                 $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($useArbitraryPrice) {
-                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                    $entityManager, $orderNumberAssigner);
-            } else {
-                $entityManager->persist($delivery);
-                $entityManager->flush();
+                $arbitraryPrice = $this->getArbitraryPrice($form);
+                if (null === $order) {
+                    // Should not happen normally, but just in case
+                    // there is still some delivery created without an order
+                    $order = $pricingManager->createOrder($delivery, [
+                        'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
+                    ]);
+                } else {
+                    $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                }
             }
+
+            $entityManager->persist($delivery);
+            $entityManager->flush();
 
             if ($form->has('bookmark')) {
                 $isBookmarked = true === $form->get('bookmark')->getData();
@@ -103,26 +92,23 @@ trait DeliveryTrait
         ]);
     }
 
-    protected function createOrderForDeliveryWithArbitraryPrice(
-        FormInterface $form,
-        OrderFactory $orderFactory,
-        Delivery $delivery,
-        EntityManagerInterface $entityManager,
-        OrderNumberAssignerInterface $orderNumberAssigner
-    )
+    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
+
+        if (!$form->has('arbitraryPrice')) {
+            return null;
+        }
+
+        if (true !== $form->get('arbitraryPrice')->getData()) {
+            return null;
+        }
+
         $variantPrice = $form->get('variantPrice')->getData();
         $variantName = $form->get('variantName')->getData();
 
-        $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
-
-        $order->setState(OrderInterface::STATE_ACCEPTED);
-
-        $entityManager->persist($order);
-        $entityManager->flush();
-
-        $orderNumberAssigner->assignNumber($order);
-
-        $entityManager->flush();
+        return new ArbitraryPrice($variantName, $variantPrice);
     }
 }
