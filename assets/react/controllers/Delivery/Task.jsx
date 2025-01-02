@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import TotalWeight from '../../../../js/app/components/delivery/TotalWeight';
 
 
-export default ({addresses, storeId, index, storeDeliveryInfos }) => {
+export default ({addresses, storeId, index, storeDeliveryInfos, handleBlur }) => {
   const { t } = useTranslation()
   
   const { values, setFieldValue } = useFormikContext();
@@ -28,6 +28,8 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
       <AddressBookNew
         addresses={addresses}
         index={index}
+        handleBlur={handleBlur}
+
       />
       {task.type === "DROPOFF" ?
         <div>

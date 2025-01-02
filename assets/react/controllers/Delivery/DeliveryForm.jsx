@@ -6,8 +6,11 @@ import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
 import moment from 'moment'
-import {money} from '../../controllers/Incident/utils.js'
+import { money } from '../../controllers/Incident/utils.js'
+import { PhoneNumberUtil } from 'google-libphonenumber'
+import { getCountry } from '../../../../js/app/i18n'
 
+const phoneUtil = PhoneNumberUtil.getInstance();
 
 const getNextRoundedTime = () => {
   const now = moment()
@@ -24,11 +27,16 @@ const getNextRoundedTime = () => {
   return now
 }
 
-// const validate = values => {
-//   if (!values.name) {
-//     errors.name = 'L'
-//   }
-// }
+const validatePhoneNumber = (telephone) => {
+  try {
+    const phoneNumber = telephone.startsWith('+')
+      ? phoneUtil.parse(telephone)
+      : phoneUtil.parse(telephone, getCountry());
+    return phoneUtil.isValidNumber(phoneNumber);
+  } catch (error) {
+    return false;
+  }
+};
 
 
 const baseURL = location.protocol + '//' + location.host
@@ -39,10 +47,9 @@ export default function ({ isNew, storeId }) {
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
-  const [priceError, setPriceError] = useState({isPriceError: false, priceErrorMessage: ' '})
-
-
-  console.log("price", calculatedPrice)
+  const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  
+  console.log(storeDeliveryInfos)
 
     const initialValues = {
     tasks: [
@@ -81,6 +88,38 @@ export default function ({ isNew, storeId }) {
         weight: 0
       },
     ],
+    }
+  
+    const validate = (values) => {
+      const errors = { tasks: [] };
+      
+      for (let i = 0; i < values.tasks.length; i++) {
+        
+        const taskErrors = {};
+
+        if (!values.tasks[i].address.formatedTelephone) {
+          taskErrors.address = taskErrors.address || {};
+          taskErrors.address.formatedTelephone = "You must enter a telephone number.";
+        } else if (!validatePhoneNumber(values.tasks[i].address.formatedTelephone)) {
+          taskErrors.address = taskErrors.address || {};
+          taskErrors.address.formatedTelephone = "You must enter a valid phone number.";
+        }
+
+        if (values.tasks[i] === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
+          taskErrors.packages= "You must pick at least one package"
+        }
+
+        if (values.tasks[i] === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
+          taskErrors.weight = "You must specify a weight"
+        }
+
+        if (Object.keys(taskErrors).length > 0) {
+          errors.tasks[i] = taskErrors
+        }
+      }
+
+      return Object.keys(errors.tasks).length > 0 ? errors : {}
+
   }
 
   useEffect(() => {
@@ -163,8 +202,17 @@ export default function ({ isNew, storeId }) {
 
   return (
     <ConfigProvider locale={antdLocale}>
-      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        {({ values, isSubmitting, isValid }) => {
+      <Formik
+        initialValues={initialValues}
+        onSubmit={handleSubmit}
+        validate={validate}
+        validateOnChange={true}
+        validateOnBlur={true}
+      >
+        {({ values, isSubmitting, isValid, handleBlur }) => {
+
+          console.log("values", values)
+
           useEffect(() => {
             const infos = {
               store: storeDeliveryInfos["@id"],   
@@ -225,7 +273,7 @@ export default function ({ isNew, storeId }) {
                           addresses={addresses}
                           storeId={storeId}
                           storeDeliveryInfos={storeDeliveryInfos}
-                      
+                          handleBlur={handleBlur}
                         />
                         {task.type === 'DROPOFF' && index > 1 && (
                           <Button
