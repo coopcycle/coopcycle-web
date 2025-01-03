@@ -5,7 +5,7 @@ context('Invoicing (role: admin)', () => {
     let cmd =
       'bin/console coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/on_demand_delivery_orders.yml --env test'
     if (prefix) {
-      cmd = `${ prefix } ${ cmd }`
+      cmd = `${prefix} ${cmd}`
     }
 
     cy.exec(cmd)
@@ -14,10 +14,10 @@ context('Invoicing (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  it('create delivery order', function () {
-    cy.visit('/admin/deliveries')
+  it('prepare data for invoicing', function () {
+    cy.visit('/admin/invoicing')
 
     //TODO: verify that invoice preparation flow is working
+    // after https://github.com/coopcycle/coopcycle/issues/162 is implemented
   })
-
 })
