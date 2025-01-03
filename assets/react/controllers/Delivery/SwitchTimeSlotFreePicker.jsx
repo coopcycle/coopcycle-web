@@ -62,8 +62,8 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
             title={t('SWITCH_DATEPICKER')}></i>
         </div>
       )}
-      {errors.tasks?.[index]?.doneAfter && (
-        <div className="text-danger">{errors.tasks[index].doneAfter}</div>
+      {errors.tasks?.[index]?.doneBefore && (
+        <div className="text-danger">{errors.tasks[index].doneBefore}</div>
       )}
     </>
   )

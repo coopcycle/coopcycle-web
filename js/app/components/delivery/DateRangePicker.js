@@ -245,8 +245,8 @@ const DateTimeRangePicker = ({ format, index }) => {
         onClick={() => setIsComplexPicker(!isComplexPicker)}>
         {t('SWITCH_COMPLEX_DATEPICKER')}
       </a>
-      {errors.tasks?.[index]?.doneAfter && (
-        <div className="text-danger">{errors.tasks[index].doneAfter}</div>
+      {errors.tasks?.[index]?.doneBefore && (
+        <div className="text-danger">{errors.tasks[index].doneBefore}</div>
       )}
     </>
   )
