@@ -42,7 +42,8 @@ const validatePhoneNumber = (telephone) => {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function ({ isNew, storeId }) {
+// as props we also have isNew to manage if it's a new delivery or an edit
+export default function ({  storeId }) {
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
@@ -50,8 +51,6 @@ export default function ({ isNew, storeId }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   
-  console.log("addresses", addresses)
-
     const initialValues = {
     tasks: [
       {
@@ -91,6 +90,7 @@ export default function ({ isNew, storeId }) {
     ],
     }
   
+
     const validate = (values) => {
       const errors = { tasks: [] };
       
@@ -108,11 +108,11 @@ export default function ({ isNew, storeId }) {
         }
 
         if (!values.tasks[i].address.formatedTelephone) {
-          taskErrors.address = taskErrors.address || {};
-          taskErrors.address.formatedTelephone = "You must enter a telephone number.";
+          taskErrors.address = taskErrors.address || {}; 
+          taskErrors.address.formatedTelephone = "You must enter a telephone number."
         } else if (!validatePhoneNumber(values.tasks[i].address.formatedTelephone)) {
-          taskErrors.address = taskErrors.address || {};
-          taskErrors.address.formatedTelephone = "You must enter a valid phone number.";
+          taskErrors.address = taskErrors.address || {}; 
+          taskErrors.address.formatedTelephone = "You must enter a valid phone number."
         }
 
         if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
@@ -130,7 +130,7 @@ export default function ({ isNew, storeId }) {
             taskErrors.doneBefore="Droppoff must be after Pickup"
           }
         }
-
+          // see if we change this validation because in case of large timeslot, the doneAfter can maybe be the same
         if (values.tasks[i].type === "DROPOFF" && values.tasks[i].timeSlot) {
           const doneAfterDropoff = values.tasks[i].timeSlot.slice(0, 19)
           const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
@@ -142,14 +142,9 @@ export default function ({ isNew, storeId }) {
         if (Object.keys(taskErrors).length > 0) {
           errors.tasks[i] = taskErrors
         }
-        
       }
-      console.log("errors", errors)
-    
-
 
       return Object.keys(errors.tasks).length > 0 ? errors : {}
-
   }
 
   useEffect(() => {
@@ -190,9 +185,6 @@ export default function ({ isNew, storeId }) {
     }
   }, [storeId])
 
-
-  console.log(isNew)
-
   const handleSubmit = useCallback(
     async (values) => {
       
@@ -214,15 +206,12 @@ export default function ({ isNew, storeId }) {
           },
         },
       )
-        .then(response => {
-              console.log(values)
-              console.log(response.data)
-      })
+      //   .then(response => {
+          // redirect 
+      // })
         .catch(error => {
           if (error.response) {
             setError({isError: true, errorMessage: error.response.data['hydra:description']} )
-            console.log("Erreur : ", error.response.data.violations[0].message)
-            console.log(values)
           }
         })
       
@@ -239,20 +228,13 @@ export default function ({ isNew, storeId }) {
             },
           },
           )
-            .then(
-              response => {
-                console.log(response.data)
-              }
-          )
             .catch(error => {
               if (error.response) {
                 setError({isError: true, errorMessage:error.response.data['hydra:description']})
               }
             })
         }
-        
       }
-
     },
     [storeDeliveryInfos],
   )
@@ -268,8 +250,8 @@ export default function ({ isNew, storeId }) {
         validateOnChange={false}
         validateOnBlur={false}
       >
-        {({ values, isSubmitting}) => {
-
+        {({ values, isSubmitting }) => {
+          
           console.log("values", values)
 
           useEffect(() => {
@@ -311,7 +293,7 @@ export default function ({ isNew, storeId }) {
               calculatePrice()
             }
             
-          }, [values, storeId]);
+          }, [values, storeDeliveryInfos]);
 
           return (
             <Form>

@@ -4,7 +4,7 @@ const { Option } = Select
 import { useFormikContext } from 'formik'
 
 export default ({ index }) => {
-  const { setFieldValue, setFieldTouched, errors, touched } = useFormikContext()
+  const { setFieldValue, errors } = useFormikContext()
 
   const [numberValue, setNumberValue] = useState(null)
   const [weightUnit, setWeightUnit] = useState('kg')
@@ -23,9 +23,7 @@ export default ({ index }) => {
     }
   }, [numberValue, weightUnit, index])
 
-  const handleBlur = () => {
-    setFieldTouched(`tasks[${index}].weight`, true, true)
-  }
+
 
   return (
     <>
@@ -37,14 +35,13 @@ export default ({ index }) => {
         onChange={value => {
           setNumberValue(value)
         }}
-        onBlur={handleBlur}
       />
       <Select value={weightUnit} onChange={value => setWeightUnit(value)}>
         <Option value="kg">Kg</Option>
         <Option value="lbs">Lbs</Option>
       </Select>
 
-      {errors.tasks?.[index]?.weight && touched.tasks?.[index]?.weight && (
+      {errors.tasks?.[index]?.weight && (
         <div className="text-danger">{errors.tasks[index].weight}</div>
       )}
     </>
