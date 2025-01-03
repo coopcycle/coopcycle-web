@@ -12,6 +12,7 @@ export default ({ storeId, index }) => {
   const [packagesPicked, setPackagesPicked] = useState([])
 
   useEffect(() => {
+    /** Fetch packages type and format the data in order to use them with the pickers.  */
     const getPackagesType = async () => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
       const jwt = jwtResp.jwt
@@ -74,6 +75,7 @@ export default ({ storeId, index }) => {
     }
   }
 
+  /**Used to make the input a controlated field */
   const calculateValue = item => {
     const sameTypePackage = packagesPicked.find(p => p.type === item.name)
     return sameTypePackage.quantity
@@ -103,7 +105,6 @@ export default ({ storeId, index }) => {
                   variant="filled"
                   onClick={() => {
                     handlePlusButton(item)
-                    calculateValue(item)
                   }}>
                   +
                 </Button>

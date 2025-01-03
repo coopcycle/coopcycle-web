@@ -14,10 +14,8 @@ function getFormattedValue(value) {
       value,
       (getCountry() || 'fr').toUpperCase(),
     )
-
     return phoneNumber ? phoneNumber.formatNational() : value
   }
-
   return value
 }
 
@@ -47,8 +45,7 @@ export default function AddressBook({ index, addresses }) {
     useState(false)
   const [selectValue, setSelectValue] = useState(null)
 
-  console.log('selectValue', selectValue)
-
+  /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
   const handleModifyAddress = () => {
     if (
       values.tasks[index].address['@id'] &&
@@ -59,13 +56,14 @@ export default function AddressBook({ index, addresses }) {
     }
   }
 
+  /** This one is used by the select. Only if the user picked a remembered address. */
+
   const handleAddressSelected = value => {
     const selectedAddress = addresses.find(
       address => address.streetAddress === value,
     )
     const formatedTelephone = getFormattedValue(selectedAddress.telephone)
 
-    console.log(formatedTelephone)
     setFieldValue(`tasks[${index}].address`, {
       ...selectedAddress,
       streetAddress: selectedAddress.streetAddress || '',
@@ -77,6 +75,7 @@ export default function AddressBook({ index, addresses }) {
     setSelectValue(value)
   }
 
+  /** The value used by the input is formatedTelephone, as we need to send telephone with international area code */
   const handleTelephone = (e, form) => {
     const formatedTelephone = e.target.value
     const telephone = getUnformattedValue(formatedTelephone)
@@ -99,7 +98,6 @@ export default function AddressBook({ index, addresses }) {
             optionFilterProp="label"
             onChange={value => {
               handleAddressSelected(value)
-              setSelectValue(value)
             }}
             filterOption={(input, option) =>
               option.label.toLowerCase().includes(input.toLowerCase())
@@ -183,27 +181,23 @@ export default function AddressBook({ index, addresses }) {
             onAddressSelected={(value, address) => {
               setFieldValue(`tasks[${index}].address`, {
                 ...address,
-                name: values.tasks[index].address.name
-                  ? values.tasks[index].address.name
-                  : '',
-                telephone: values.tasks[index].address.telephone
-                  ? values.tasks[index].address.telephone
-                  : '',
-                formatedTelephone: values.tasks[index].address.formatedTelephone
-                  ? values.tasks[index].address.formatedTelephone
-                  : '',
-                contactName: values.tasks[index].address.contactName
-                  ? values.tasks[index].address.contactName
-                  : '',
+                name: values.tasks[index].address.name || '',
+                telephone: values.tasks[index].address.telephone || '',
+                formatedTelephone:
+                  values.tasks[index].address.formatedTelephone || '',
+                contactName: values.tasks[index].address.contactName || '',
               })
               setSelectValue(null)
             }}
+            // Pb with onClear : values don't get updated, while validation triggered
             onClear={() => {
               setFieldValue(`tasks[${index}].address`, {
                 streetAddress: '',
-                name: '',
-                contactName: '',
-                telephone: '',
+                name: values.tasks[index].address.name || '',
+                telephone: values.tasks[index].address.telephone || '',
+                formatedTelephone:
+                  values.tasks[index].address.formatedTelephone || '',
+                contactName: values.tasks[index].address.contactName || '',
               })
               setSelectValue(null)
             }}
@@ -228,6 +222,7 @@ export default function AddressBook({ index, addresses }) {
         </div>
       </div>
 
+      {/* Modal to handle if the user want to change the remembred address just for once or forever */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => {

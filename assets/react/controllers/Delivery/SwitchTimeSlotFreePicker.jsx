@@ -11,7 +11,7 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
   const {setFieldValue, errors} = useFormikContext()
 
   useEffect(() => {
-    if  (isTimeSlotSelect)  {
+    if  (isTimeSlotSelect && storeDeliveryInfos.timeSlots.length > 0)  {
       setFieldValue(`tasks[${index}].doneAfter`, null)
       setFieldValue(`tasks[${index}].doneBefore`, null)
     } else {
@@ -29,7 +29,7 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
           }}>
           <div style={{ width: '95%' }}>
             <TimeSlotPicker
-             storeId={storeId}
+            storeId={storeId}
             storeDeliveryInfos={storeDeliveryInfos}
             index={index}
             />
