@@ -19,7 +19,7 @@ export default () => {
 
   const [isModalOpen, setModalOpen] = useState(false)
 
-  const [trigger, { isLoading, data }] = useLazyGetInvoiceLineItemsQuery()
+  const [trigger, { isFetching, data }] = useLazyGetInvoiceLineItemsQuery()
 
   const { t } = useTranslation()
 
@@ -147,7 +147,7 @@ export default () => {
       <Table
         style={{ marginTop: '48px' }}
         columns={columns}
-        loading={isLoading}
+        loading={isFetching}
         dataSource={dataSource}
         rowKey="@id"
         pagination={{
