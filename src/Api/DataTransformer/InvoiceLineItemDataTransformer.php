@@ -6,6 +6,7 @@ use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\SettingsManager;
+use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -14,7 +15,8 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly RequestStack $requestStack,
-        private readonly SettingsManager $settingsManager
+        private readonly SettingsManager $settingsManager,
+        private readonly string $locale
     )
     {
     }
@@ -41,12 +43,15 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
 
         $description = '';
 
+        $orderDate = $order->getShippingTimeRange()?->getUpper() ?? $order->getCreatedAt();
+
         if ($deliveryItem) {
             $product = $deliveryItem->getVariant()->getProduct()->getName();
 
-            $description = sprintf('%s - %s (%s)',
+            $description = sprintf('%s - %s - %s (%s)',
                 $product,
                 $deliveryItem->getVariant()->getName(),
+                Carbon::instance($orderDate)->locale($this->locale)->isoFormat('L'),
                 $this->translator->trans('adminDashboard.invoicing.line_item.order_number', [
                     '%number%' => $order->getNumber(),
                 ], 'messages')
@@ -62,7 +67,7 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $product,
             $order->getId(),
             $order->getNumber(),
-            $order->getShippingTimeRange()?->getUpper() ?? $order->getCreatedAt(),
+            $orderDate,
             $description,
             $order->getTotal() - $order->getTaxTotal(),
             $order->getTaxTotal(),

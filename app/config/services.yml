@@ -17,6 +17,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $locale: "%env(COOPCYCLE_LOCALE)%"
 
   AppBundle\Action\:
     resource: '../../src/Action/*'
