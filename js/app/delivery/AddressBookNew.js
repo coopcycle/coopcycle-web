@@ -47,6 +47,8 @@ export default function AddressBook({ index, addresses }) {
     useState(false)
   const [selectValue, setSelectValue] = useState(null)
 
+  console.log('selectValue', selectValue)
+
   const handleModifyAddress = () => {
     if (
       values.tasks[index].address['@id'] &&
@@ -181,10 +183,18 @@ export default function AddressBook({ index, addresses }) {
             onAddressSelected={(value, address) => {
               setFieldValue(`tasks[${index}].address`, {
                 ...address,
-                streetAddress: address.streetAddress || '',
-                name: address.name || '',
-                telephone: address.telephone || '',
-                contactName: address.contactName || '',
+                name: values.tasks[index].address.name
+                  ? values.tasks[index].address.name
+                  : '',
+                telephone: values.tasks[index].address.telephone
+                  ? values.tasks[index].address.telephone
+                  : '',
+                formatedTelephone: values.tasks[index].address.formatedTelephone
+                  ? values.tasks[index].address.formatedTelephone
+                  : '',
+                contactName: values.tasks[index].address.contactName
+                  ? values.tasks[index].address.contactName
+                  : '',
               })
               setSelectValue(null)
             }}
@@ -198,22 +208,23 @@ export default function AddressBook({ index, addresses }) {
               setSelectValue(null)
             }}
           />
-
-          <Field name={`tasks[${index}].toBeRemembered`}>
-            {({ field }) => (
-              <Checkbox
-                {...field}
-                checked={field.value}
-                onChange={e =>
-                  setFieldValue(
-                    `tasks[${index}].toBeRemembered`,
-                    e.target.checked,
-                  )
-                }>
-                Se souvenir de cette adresse
-              </Checkbox>
-            )}
-          </Field>
+          {!selectValue ? (
+            <Field name={`tasks[${index}].toBeRemembered`}>
+              {({ field }) => (
+                <Checkbox
+                  {...field}
+                  checked={field.value}
+                  onChange={e =>
+                    setFieldValue(
+                      `tasks[${index}].toBeRemembered`,
+                      e.target.checked,
+                    )
+                  }>
+                  Se souvenir de cette adresse
+                </Checkbox>
+              )}
+            </Field>
+          ) : null}
         </div>
       </div>
 
