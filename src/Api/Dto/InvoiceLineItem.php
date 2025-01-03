@@ -14,15 +14,13 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly ?int $storeId;
 
-    #[Groups(["export_invoice_line_item"])]
     public readonly ?string $storeLegalName;
 
     public readonly string $accountCode;
 
-    #[Groups(["export_invoice_line_item"])]
     public readonly string $product;
 
-    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly \DateTime $date;
 
     #[Groups(["default_invoice_line_item"])]
@@ -31,16 +29,16 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly string $orderNumber;
 
-    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly string $description;
 
-    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly float $subTotal;
 
-    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly float $tax;
 
-    #[Groups(["default_invoice_line_item", "export_invoice_line_item"])]
+    #[Groups(["default_invoice_line_item"])]
     public readonly float $total;
 
     public function __construct(
@@ -74,10 +72,47 @@ class InvoiceLineItem
         $this->total = $total;
     }
 
-    // The only reason to have separate methods for Odoo
+    // The only reason to have separate methods
     // is because it's not possible to specify different property names
     // for different groups yet.
     // https://github.com/symfony/symfony/issues/30483
+
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Organization")]
+    public function getStoreLegalName(): ?string
+    {
+        return $this->storeLegalName;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Description")]
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Total products (excl. VAT)")]
+    public function getSubtotal(): float
+    {
+        return $this->subTotal / 100;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Taxes")]
+    public function getTax(): float
+    {
+        return $this->tax / 100;
+    }
+
+    #[Groups(["export_invoice_line_item"])]
+    #[SerializedName("Total products (incl. VAT)")]
+    public function getTotal(): float
+    {
+        return $this->total / 100;
+    }
+
 
     #[Groups(["odoo_export_invoice_line_item"])]
     #[SerializedName("External ID")]
