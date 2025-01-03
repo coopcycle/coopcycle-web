@@ -198,7 +198,7 @@
         "ADMIN_INVOICING_TITLE": "Invoicing [PREVIEW]",
         "ADMIN_ORDERS_TO_INVOICE_TITLE": "Orders to invoice",
         "ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE": "Period",
-        "ADMIN_ORDERS_TO_INVOICE_FILTER_STORE": "Store ID (Preview only)",
+        "ADMIN_ORDERS_TO_INVOICE_FILTER_STORE": "Store ID (During Preview only)",
         "ADMIN_ORDERS_TO_INVOICE_REFRESH": "Refresh",
         "ADMIN_ORDERS_TO_INVOICE_DOWNLOAD": "Download",
         "ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL": "Order #",
