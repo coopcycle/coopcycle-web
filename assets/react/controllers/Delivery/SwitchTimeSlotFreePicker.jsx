@@ -8,7 +8,7 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
   const {t} = useTranslation()
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
-  const {setFieldValue} = useFormikContext()
+  const {setFieldValue, errors} = useFormikContext()
 
   useEffect(() => {
     if  (isTimeSlotSelect)  {
@@ -61,6 +61,9 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
             style={{ cursor: 'pointer', color: '#24537D', width: '5%' }}
             title={t('SWITCH_DATEPICKER')}></i>
         </div>
+      )}
+      {errors.tasks?.[index]?.doneAfter && (
+        <div className="text-danger">{errors.tasks[index].doneAfter}</div>
       )}
     </>
   )

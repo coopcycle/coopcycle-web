@@ -53,7 +53,7 @@ function generateTimeSlots(afterHour = null) {
 
 const DateTimeRangePicker = ({ format, index }) => {
   const { t } = useTranslation()
-  const { values, setFieldValue } = useFormikContext()
+  const { values, setFieldValue, errors } = useFormikContext()
 
   /** we initialize defaultValues in case we use the switch from timeslots to free picker
    * as we automatically set after and before to null when we use timeslots
@@ -245,6 +245,9 @@ const DateTimeRangePicker = ({ format, index }) => {
         onClick={() => setIsComplexPicker(!isComplexPicker)}>
         {t('SWITCH_COMPLEX_DATEPICKER')}
       </a>
+      {errors.tasks?.[index]?.doneAfter && (
+        <div className="text-danger">{errors.tasks[index].doneAfter}</div>
+      )}
     </>
   )
 }

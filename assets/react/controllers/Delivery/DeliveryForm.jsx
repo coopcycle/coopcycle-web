@@ -39,6 +39,7 @@ const validatePhoneNumber = (telephone) => {
 };
 
 
+
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ isNew, storeId }) {
@@ -49,7 +50,7 @@ export default function ({ isNew, storeId }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   
-  console.log(storeDeliveryInfos)
+  console.log("addresses", addresses)
 
     const initialValues = {
     tasks: [
@@ -116,6 +117,34 @@ export default function ({ isNew, storeId }) {
         if (Object.keys(taskErrors).length > 0) {
           errors.tasks[i] = taskErrors
         }
+
+        // let doneAfterPickup
+
+        // if (values.tasks[0].doneAfter) {
+        //   doneAfterPickup = values.tasks[0].doneAfter
+        // } else if (values.tasks[0].timeSlot) {
+        //   const after = values.tasks[0].timeSlot.slice(0, 19 )
+        //   doneAfterPickup = after
+        // }
+
+        // for (let i = 0; i < values.tasks.length - 1; i++) {
+          
+        //   let doneAfterDropoff
+
+        //   if (values.tasks[i+1].doneAfter) {
+        //     doneAfterDropoff = values.tasks[i+1].doneAfter
+        //   } else if (values.tasks[i+1].timeSlot) {
+        //     const after = values.tasks[i+1].timeSlot.slice(0, 19)
+        //     doneAfterDropoff = after
+        //   }
+          
+        //   const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
+
+        //   if (!isWellOrdered) {
+        //     errors.tasks[0].doneAfter = "Pickup must be before Dropoff"
+        //   }
+        // }
+
         
       }
       console.log("errors", errors)
@@ -172,10 +201,11 @@ export default function ({ isNew, storeId }) {
       
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
       const jwt = jwtResp.jwt
-      const url = `${baseURL}/api/deliveries`
+      const tasksUrl = `${baseURL}/api/deliveries`
+      const newAddressURL= `${baseURL}/api/me/addresses`
 
       await axios.post(
-        url,
+        tasksUrl,
         {
           store: storeDeliveryInfos['@id'],
           tasks: values.tasks,
@@ -198,6 +228,33 @@ export default function ({ isNew, storeId }) {
             console.log(values)
           }
         })
+      
+      for (const task of values.tasks) {
+        if (task.toBeRemembered) {
+          axios.post(
+            newAddressURL, 
+            task.address, 
+
+            {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+            'Content-Type': 'application/ld+json',
+            },
+          },
+          )
+            .then(
+              response => {
+                console.log(response.data)
+              }
+          )
+            .catch(error => {
+              if (error.response) {
+                setError({isError: true, errorMessage:error.response.data['hydra:description']})
+              }
+            })
+        }
+        
+      }
 
     },
     [storeDeliveryInfos],
