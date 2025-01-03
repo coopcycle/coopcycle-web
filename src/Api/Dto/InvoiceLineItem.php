@@ -80,35 +80,35 @@ class InvoiceLineItem
 
     #[Groups(["export_invoice_line_item"])]
     #[SerializedName("Organization")]
-    public function getStoreLegalName(): ?string
+    public function getFileExportOrganization(): ?string
     {
         return $this->storeLegalName;
     }
 
     #[Groups(["export_invoice_line_item"])]
     #[SerializedName("Description")]
-    public function getDescription(): string
+    public function getFileExportDescription(): string
     {
         return $this->description;
     }
 
     #[Groups(["export_invoice_line_item"])]
     #[SerializedName("Total products (excl. VAT)")]
-    public function getSubtotal(): float
+    public function getFileExportSubtotal(): float
     {
         return $this->subTotal / 100;
     }
 
     #[Groups(["export_invoice_line_item"])]
     #[SerializedName("Taxes")]
-    public function getTax(): float
+    public function getFileExportTax(): float
     {
         return $this->tax / 100;
     }
 
     #[Groups(["export_invoice_line_item"])]
     #[SerializedName("Total products (incl. VAT)")]
-    public function getTotal(): float
+    public function getFileExportTotal(): float
     {
         return $this->total / 100;
     }
