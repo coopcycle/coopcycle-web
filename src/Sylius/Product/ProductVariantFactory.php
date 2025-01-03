@@ -58,17 +58,24 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $nameParts = [];
 
         foreach ($delivery->getTasks() as $task) {
+            $clientName = $task->getAddress()->getName();
+
             $nameParts[] = sprintf('%s: %s',
                 $this->translator->trans(sprintf('task.type.%s', $task->getType())),
-                $task->getAddress()->getName());
+                $clientName ?: $task->getAddress()->getStreetAddress());
         }
 
-        $nameParts[] = sprintf('%s, %s km',
-            $this->translator->trans(sprintf('vehicle.%s', $delivery->getVehicle())),
-            (string) number_format($delivery->getDistance() / 1000, 2)
-        );
+        $nameParts[] = $this->metersToKilometers($delivery->getDistance());
 
-        //TODO: add weight and packages
+        if ($delivery->hasPackages()) {
+            foreach ($delivery->getPackages() as $packageQuantity) {
+                $nameParts[] = sprintf('%d × %s', $packageQuantity->getQuantity(), $packageQuantity->getPackage()->getName());
+            }
+        }
+
+        if ($delivery->getWeight()) {
+            $nameParts[] = $this->gramsToKilos($delivery->getWeight());
+        }
 
         $name = implode(' - ', $nameParts);
 
@@ -88,5 +95,15 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $productVariant->setTaxCategory($taxCategory);
 
         return $productVariant;
+    }
+
+    private function metersToKilometers($meters)
+    {
+        return sprintf('%s km', number_format($meters / 1000, 2));
+    }
+
+    private function gramsToKilos($grams)
+    {
+        return sprintf('%s kg', number_format($grams / 1000, 2));
     }
 }
