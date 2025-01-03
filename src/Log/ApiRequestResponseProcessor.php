@@ -51,6 +51,10 @@ class ApiRequestResponseProcessor
             $record['extra']['request_id'] = $request->headers->get('X-Request-ID');
         }
 
+        if ($request->headers->has('X-Forwarded-For')) {
+            $record['extra']['client_ip'] = $request->headers->get('X-Forwarded-For');
+        }
+
         $record['extra']['method'] = $request->getMethod();
         $record['extra']['request_uri'] = $request->getRequestUri();
         $record['extra']['status_code'] = $response->getStatusCode();
