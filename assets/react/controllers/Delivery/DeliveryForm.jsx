@@ -96,7 +96,16 @@ export default function ({ isNew, storeId }) {
       
       for (let i = 0; i < values.tasks.length; i++) {
         
-        const taskErrors = {};
+        const taskErrors = {}
+
+        let doneAfterPickup
+
+        if (values.tasks[0].doneAfter) {
+          doneAfterPickup = values.tasks[0].doneAfter
+        } else if (values.tasks[0].timeSlot) {
+          const after = values.tasks[0].timeSlot.slice(0, 19 )
+          doneAfterPickup = after
+        }
 
         if (!values.tasks[i].address.formatedTelephone) {
           taskErrors.address = taskErrors.address || {};
@@ -114,37 +123,25 @@ export default function ({ isNew, storeId }) {
           taskErrors.weight = "You must specify a weight"
         }
 
+        if (values.tasks[i].type === "DROPOFF" && values.tasks[i].doneAfter) {
+          const doneAfterDropoff = values.tasks[i].doneAfter
+          const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
+          if (!isWellOrdered) {
+            taskErrors.doneBefore="Droppoff must be after Pickup"
+          }
+        }
+
+        if (values.tasks[i].type === "DROPOFF" && values.tasks[i].timeSlot) {
+          const doneAfterDropoff = values.tasks[i].timeSlot.slice(0, 19)
+          const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
+          if (!isWellOrdered) {
+            taskErrors.doneBefore="Droppoff must be after Pickup"
+          }
+        }
+
         if (Object.keys(taskErrors).length > 0) {
           errors.tasks[i] = taskErrors
         }
-
-        // let doneAfterPickup
-
-        // if (values.tasks[0].doneAfter) {
-        //   doneAfterPickup = values.tasks[0].doneAfter
-        // } else if (values.tasks[0].timeSlot) {
-        //   const after = values.tasks[0].timeSlot.slice(0, 19 )
-        //   doneAfterPickup = after
-        // }
-
-        // for (let i = 0; i < values.tasks.length - 1; i++) {
-          
-        //   let doneAfterDropoff
-
-        //   if (values.tasks[i+1].doneAfter) {
-        //     doneAfterDropoff = values.tasks[i+1].doneAfter
-        //   } else if (values.tasks[i+1].timeSlot) {
-        //     const after = values.tasks[i+1].timeSlot.slice(0, 19)
-        //     doneAfterDropoff = after
-        //   }
-          
-        //   const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
-
-        //   if (!isWellOrdered) {
-        //     errors.tasks[0].doneAfter = "Pickup must be before Dropoff"
-        //   }
-        // }
-
         
       }
       console.log("errors", errors)
