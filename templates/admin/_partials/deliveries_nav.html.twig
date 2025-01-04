@@ -24,6 +24,14 @@
     enabled: is_granted('ROLE_DISPATCHER'),
   },
   {
+    title: 'adminDashboard.invoicing.title' | trans,
+    help: 'adminDashboard.invoicing.help' | trans,
+    path: path('admin_invoicing'),
+    icon: 'money',
+    active: ['admin_invoicing'],
+    enabled: is_granted('ROLE_ADMIN'),
+  },
+  {
     title: 'adminDashboard.pricing.title' | trans,
     help: 'adminDashboard.pricing.help' | trans,
     path: path('admin_deliveries_pricing'),

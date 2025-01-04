@@ -11,10 +11,10 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class Orders
 {
-    public function __construct(EntityManagerInterface $objectManager, AuthorizationCheckerInterface $authorizationChecker)
+    public function __construct(
+        private readonly EntityManagerInterface $objectManager,
+        private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->objectManager = $objectManager;
-        $this->authorizationChecker = $authorizationChecker;
     }
 
     public function __invoke($data, Request $request)

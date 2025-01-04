@@ -46,20 +46,15 @@
     </div>
   </div>
 
-  {{ form_row(form.subject_to_vat) }}
-  {% if form.guest_checkout_enabled is defined %}
-  {{ form_row(form.guest_checkout_enabled) }}
-  {% endif %}
-
   <div class="alert alert-danger">
     <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
     <div class="pull-right">
       <div id="maintenance"></div>
     </div>
     {% if maintenance is not empty %}
-    <div class="pull-right">
-      <a href="#" style="margin-right: 15px;" id="maintenance-edit">{{ 'basics.edit'|trans }}</a>
-    </div>
+      <div class="pull-right">
+        <a href="#" style="margin-right: 15px;" id="maintenance-edit">{{ 'basics.edit'|trans }}</a>
+      </div>
     {% endif %}
   </div>
 
@@ -69,6 +64,16 @@
       <div id="banner"></div>
     </div>
   </div>
+
+  <hr>
+
+  {{ form_row(form.currency_code) }}
+
+  <hr>
+
+  {{ form_row(form.subject_to_vat) }}
+
+  <hr>
 
   {% if form.stripe is defined %}
     <hr>
@@ -83,6 +88,32 @@
   {% if form.paygreen is defined %}
     <hr>
     {% include 'admin/_partials/paygreen.html.twig' %}
+  {% endif %}
+
+  <hr>
+
+  {{ form_row(form.accounting_account) }}
+
+  <hr>
+
+  <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
+
+  {{ form_row(form.latlng) }}
+
+  {% if form.autocomplete_provider is defined %}
+    {{ form_row(form.autocomplete_provider) }}
+  {% endif %}
+
+  {% if form.geocoding_provider is defined %}
+    {{ form_row(form.geocoding_provider) }}
+  {% endif %}
+
+  {% if form.google_api_key_custom is defined %}
+    {% set is_google_api_key_visible =
+      (form.autocomplete_provider.vars.data == 'google' or form.geocoding_provider.vars.data == 'google') %}
+    <div class="{{ not is_google_api_key_visible ? 'd-none' : '' }}" data-autocomplete-provider="google">
+      {{ form_row(form.google_api_key_custom) }}
+    </div>
   {% endif %}
 
   <hr>
@@ -126,26 +157,6 @@
 
   </div>
 
-  <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
-
-  {{ form_row(form.latlng) }}
-
-  {% if form.autocomplete_provider is defined %}
-    {{ form_row(form.autocomplete_provider) }}
-  {% endif %}
-
-  {% if form.geocoding_provider is defined %}
-    {{ form_row(form.geocoding_provider) }}
-  {% endif %}
-
-  {% if form.google_api_key_custom is defined %}
-    {% set is_google_api_key_visible =
-      (form.autocomplete_provider.vars.data == 'google' or form.geocoding_provider.vars.data == 'google') %}
-    <div class="{{ not is_google_api_key_visible ? 'd-none' : '' }}" data-autocomplete-provider="google">
-    {{ form_row(form.google_api_key_custom) }}
-    </div>
-  {% endif %}
-
   <hr>
 
   {% if form.notifications is defined %}
@@ -159,6 +170,20 @@
     {% endfor %}
     </div>
   {% endif %}
+
+  <hr>
+
+  <h4>{% trans %}admin.settings.foodtech{% endtrans %}</h4>
+
+  {% if form.guest_checkout_enabled is defined %}
+    {{ form_row(form.guest_checkout_enabled) }}
+  {% endif %}
+
+  <hr>
+
+  <h4>{% trans %}admin.settings.on_demand_delivery{% endtrans %}</h4>
+
+  {{ form_row(form.on_demand_delivery_product_name) }}
 
   <hr>
 

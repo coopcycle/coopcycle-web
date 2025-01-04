@@ -82,24 +82,19 @@ class OrderFactory implements FactoryInterface
             $order->setCustomer($customer);
         }
 
-        $this->setDeliveryPrice($order, $delivery, $price);
+        $this->addDeliveryOrderItem($order, $delivery, $price);
 
         return $order;
     }
 
-    private function setDeliveryPrice(OrderInterface $order, Delivery $delivery, PriceInterface $price)
+    private function addDeliveryOrderItem(OrderInterface $order, Delivery $delivery, PriceInterface $price)
     {
-        $variant = $this->productVariantFactory->createForDelivery($delivery, $price->getValue());
+        $variant = $this->productVariantFactory->createForDelivery($delivery, $price);
 
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);
         $orderItem->setUnitPrice($variant->getPrice());
-
-        if ($price instanceof ArbitraryPrice) {
-            $orderItem->setImmutable(true);
-            $variant->setName($price->getVariantName());
-            $variant->setCode(Uuid::uuid4()->toString());
-        }
+        $orderItem->setImmutable(true);
 
         $this->orderItemQuantityModifier->modify($orderItem, 1);
 
@@ -113,15 +108,15 @@ class OrderFactory implements FactoryInterface
             return;
         }
 
-        $deliveryItem = $order->getItems()->first();
+        $deliveryItem = $order->getDeliveryItem();
 
-        if (false === $deliveryItem) {
+        if (null === $deliveryItem) {
             $this->logger->info('No delivery item found in order');
         }
 
         // remove the previous price
         $this->orderModifier->removeFromOrder($order, $deliveryItem);
 
-        $this->setDeliveryPrice($order, $delivery, $price);
+        $this->addDeliveryOrderItem($order, $delivery, $price);
     }
 }

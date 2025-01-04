@@ -9,56 +9,37 @@ use AppBundle\Form\PaymentGateway\PaygreenType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
 use AppBundle\Form\Type\GeocodingProviderType;
-use Doctrine\ORM\EntityRepository;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
 use Misd\PhoneNumberBundle\Form\Type\PhoneNumberType;
 use Sylius\Bundle\CurrencyBundle\Form\Type\CurrencyChoiceType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SettingsType extends AbstractType
 {
-    private $settingsManager;
-    private $phoneNumberUtil;
-    private $country;
-    private $isDemo;
-    private $googleEnabled;
-    private $cashEnabled;
-
     public function __construct(
-        SettingsManager $settingsManager,
-        PhoneNumberUtil $phoneNumberUtil,
-        GatewayResolver $gatewayResolver,
-        string $country,
-        bool $isDemo,
-        bool $googleEnabled,
-        bool $cashEnabled)
+        private readonly SettingsManager $settingsManager,
+        private readonly PhoneNumberUtil $phoneNumberUtil,
+        private readonly GatewayResolver $gatewayResolver,
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly string $country,
+        private readonly bool $isDemo,
+        private readonly bool $googleEnabled,
+        private readonly bool $cashEnabled)
     {
-        $this->settingsManager = $settingsManager;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->gatewayResolver = $gatewayResolver;
-        $this->country = $country;
-        $this->isDemo = $isDemo;
-        $this->googleEnabled = $googleEnabled;
-        $this->cashEnabled = $cashEnabled;
     }
 
     private function createPlaceholder($value)
@@ -115,16 +96,31 @@ class SettingsType extends AbstractType
             ])
             ->add('sms_gateway_config', HiddenType::class, [
                 'required' => false,
-                'label' => 'form.settings.sms_gateway_config.label',
-        ])->add('company_legal_name', TextType::class, [
-            'required' => false,
-            'label' => 'form.settings.company_legal_name.label',
-            'help' => 'form.settings.company_legal_name.help',
-        ])->add('company_legal_id', TextType::class, [
-            'required' => false,
-            'label' => 'form.settings.company_legal_id.label',
-            'help' => 'form.settings.company_legal_id.help',
-        ]);
+                'label' => 'form.settings.sms_gateway_config.label',])
+            ->add('company_legal_name', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.company_legal_name.label',
+                'help' => 'form.settings.company_legal_name.help',])
+            ->add('company_legal_id', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.company_legal_id.label',
+                'help' => 'form.settings.company_legal_id.help',])
+            ->add('accounting_account', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.accounting_account.label',
+                'help' => 'form.settings.accounting_account.help',
+            ]);;
+
+        $onDemandDeliveryProduct = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+        if ($onDemandDeliveryProduct) {
+            $builder->add('on_demand_delivery_product_name', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.on_demand_delivery_product_name.label',
+                'help' => 'form.settings.on_demand_delivery_product_name.help',
+                'mapped' => false,
+                'data' => $onDemandDeliveryProduct->getName()
+            ]);
+        }
 
         // When cash on delivery is enabled, we want customers to register
         if (!$this->cashEnabled) {
@@ -262,6 +258,12 @@ class SettingsType extends AbstractType
                 $data->phone_number = $this->phoneNumberUtil->format($data->phone_number, PhoneNumberFormat::E164);
             }
             $event->setData($data);
+
+            if (null !== $event->getForm()->get('on_demand_delivery_product_name')) {
+                $name = $event->getForm()->get('on_demand_delivery_product_name')->getData();
+                $onDemandDeliveryProduct = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+                $onDemandDeliveryProduct->setName($name);
+            }
         });
     }
 }

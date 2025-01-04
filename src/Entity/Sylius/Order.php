@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
@@ -36,11 +37,14 @@ use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsControlle
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
+use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
+use AppBundle\Api\Filter\OrderDateFilter;
+use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -50,7 +54,6 @@ use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
-use AppBundle\Filter\OrderDateFilter;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -119,6 +122,31 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/me/orders",
  *       "controller"=MyOrders::class
+ *     },
+ *     "invoice_line_items"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"default_invoice_line_item"}}
+ *     },
+ *     "invoice_line_items_export"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items/export",
+ *       "formats"={"csv"={"text/csv"}},
+ *       "pagination_enabled"=false,
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"export_invoice_line_item"}}
+ *     },
+ *     "invoice_line_items_odoo_export"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items/export/odoo",
+ *       "formats"={"csv"={"text/csv"}},
+ *       "pagination_enabled"=false,
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"odoo_export_invoice_line_item"}}
  *     }
  *   },
  *   itemOperations={
@@ -463,6 +491,8 @@ use Webmozart\Assert\Assert as WMAssert;
  *   }
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
+ * @ApiFilter(OrderStoreFilter::class)
  *
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})
@@ -1946,6 +1976,19 @@ class Order extends BaseOrder implements OrderInterface
         return $this->hasVendor();
     }
 
+    public function getDeliveryItem(): ?OrderItemInterface
+    {
+        if ($this->isFoodtech()) {
+            //FIXME: delivery is modeled as an item only in non-foodtech orders
+            return null;
+        }
+
+        if ($deliveryItem = $this->getItems()->first()) {
+            return $deliveryItem; // @phpstan-ignore return.type
+        } else {
+            return null;
+        }
+    }
 
     public function getDeliveryPrice(): PriceInterface
     {
@@ -1954,20 +1997,20 @@ class Order extends BaseOrder implements OrderInterface
             return new PricingRulesBasedPrice(0);
         }
 
-        $deliveryItem = $this->getItems()->first();
+        $deliveryItem = $this->getDeliveryItem();
 
-        if (false === $deliveryItem) {
+        if (null === $deliveryItem) {
             throw new \LogicException('Order has no delivery price');
         }
 
         $productVariant = $deliveryItem->getVariant();
 
-        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
-            // price based on the PricingRuleSet
-            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
-        } else {
+        if (str_starts_with($productVariant->getCode(), 'RBTRR-PRC-')) {
             // custom price
             return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+        } else {
+            // price based on the PricingRuleSet
+            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
         }
     }
 }

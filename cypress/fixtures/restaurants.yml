@@ -1,8 +1,5 @@
 # Products
 
-include:
-  - sylius_taxation.yml
-
 # Packaging
 
 AppBundle\Entity\ReusablePackaging:
