@@ -1,4 +1,4 @@
-import './AddressBook.scss'
+import './AddressBookNew.scss'
 import React, { useState } from 'react'
 import { Input, Select, Checkbox, Button } from 'antd'
 import AddressAutosuggest from '../components/AddressAutosuggest'
@@ -87,143 +87,142 @@ export default function AddressBook({ index, addresses }) {
   }
 
   return (
-    <>
-      <div className="row">
-        <div className="col-md-12 mb-3">
-          <Select
-            style={{ width: '100%' }}
-            showSearch
-            placeholder="Rechercher une adresse enregistrée"
-            value={selectValue}
-            optionFilterProp="label"
-            onChange={value => {
-              handleAddressSelected(value)
-            }}
-            filterOption={(input, option) =>
-              option.label.toLowerCase().includes(input.toLowerCase())
-            }
-            options={addresses.map(address => ({
-              value: address.streetAddress,
-              label: address.streetAddress,
-              key: address['@id'],
-              id: address['@id'],
-            }))}
-          />
-        </div>
+  <div className="address-container mb-4">
+    <div className="row">
+      <div className="col-sm-12 mb-3">
+        <Select
+          style={{ width: '100%' }}
+          showSearch
+          placeholder="Rechercher une adresse enregistrée"
+          value={selectValue}
+          optionFilterProp="label"
+          onChange={value => {
+            handleAddressSelected(value)
+          }}
+          filterOption={(input, option) =>
+            option.label.toLowerCase().includes(input.toLowerCase())
+          }
+          options={addresses.map(address => ({
+            value: address.streetAddress,
+            label: address.streetAddress,
+            key: address['@id'],
+            id: address['@id'],
+          }))}
+        />
       </div>
-      <div className="row mb-3">
-        <div className="col-md-4">
-          <Field name={`tasks[${index}].address.name`}>
-            {({ field, form }) => (
+    </div>
+    <div className="mb-3 address-infos">
+      <div className="address-infos__item">
+        <Field name={`tasks[${index}].address.name`}>
+          {({ field, form }) => (
+            <Input
+              {...field}
+              value={form.values.tasks[index].address.name}
+              onChange={e => {
+                handleModifyAddress()
+                form.setFieldValue(
+                  `tasks[${index}].address.name`,
+                  e.target.value,
+                )
+              }}
+              placeholder="Nom"
+            />
+          )}
+        </Field>
+      </div>
+      <div className="address-infos__item">
+        <Field name={`tasks[${index}].address.formatedTelephone`}>
+          {({ field, form }) => (
+            <>
               <Input
                 {...field}
-                value={form.values.tasks[index].address.name}
+                value={form.values.tasks[index].address.formatedTelephone}
                 onChange={e => {
                   handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.name`,
-                    e.target.value,
-                  )
+                  handleTelephone(e, form)
                 }}
-                placeholder="Nom"
+                placeholder="Téléphone"
               />
-            )}
-          </Field>
-        </div>
-        <div className="col-md-4">
-          <Field name={`tasks[${index}].address.formatedTelephone`}>
-            {({ field, form }) => (
-              <>
-                <Input
-                  {...field}
-                  value={form.values.tasks[index].address.formatedTelephone}
-                  onChange={e => {
-                    handleModifyAddress()
-                    handleTelephone(e, form)
-                  }}
-                  placeholder="Téléphone"
-                />
-
-                {errors.tasks?.[index]?.address?.formatedTelephone && (
-                  <div className="text-danger">
-                    {errors.tasks[index].address.formatedTelephone}
-                  </div>
-                )}
-              </>
-            )}
-          </Field>
-        </div>
-        <div className="col-md-4">
-          <Field name={`tasks[${index}].address.contactName`}>
-            {({ field, form }) => (
-              <Input
-                {...field}
-                value={form.values.tasks[index].address.contactName}
-                onChange={e => {
-                  handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.contactName`,
-                    e.target.value,
-                  )
-                }}
-                placeholder="Contact"
-              />
-            )}
-          </Field>
-        </div>
-        <div className="col-md-12">
-          <AddressAutosuggest
-            address={values.tasks[index].address || ''}
-            addresses={addresses}
-            required={true}
-            reportValidity={true}
-            preciseOnly={true}
-            onAddressSelected={(value, address) => {
-              setFieldValue(`tasks[${index}].address`, {
-                ...address,
-                name: values.tasks[index].address.name || '',
-                telephone: values.tasks[index].address.telephone || '',
-                formatedTelephone:
-                  values.tasks[index].address.formatedTelephone || '',
-                contactName: values.tasks[index].address.contactName || '',
-              })
-              setSelectValue(null)
-            }}
-            // Pb with onClear : values don't get updated, while validation triggered
-            onClear={() => {
-              setFieldValue(`tasks[${index}].address`, {
-                streetAddress: '',
-                name: values.tasks[index].address.name || '',
-                telephone: values.tasks[index].address.telephone || '',
-                formatedTelephone:
-                  values.tasks[index].address.formatedTelephone || '',
-                contactName: values.tasks[index].address.contactName || '',
-              })
-              setSelectValue(null)
-            }}
-          />
-          {!selectValue ? (
-            <Field name={`tasks[${index}].toBeRemembered`}>
-              {({ field }) => (
-                <Checkbox
-                  {...field}
-                  checked={field.value}
-                  onChange={e =>
-                    setFieldValue(
-                      `tasks[${index}].toBeRemembered`,
-                      e.target.checked,
-                    )
-                  }>
-                  Se souvenir de cette adresse
-                </Checkbox>
+              {errors.tasks?.[index]?.address?.formatedTelephone && (
+                <div className="text-danger">
+                  {errors.tasks[index].address.formatedTelephone}
+                </div>
               )}
-            </Field>
-          ) : null}
-        </div>
+            </>
+          )}
+        </Field>
       </div>
-
+      <div className="address-infos__item">
+        <Field name={`tasks[${index}].address.contactName`}>
+          {({ field, form }) => (
+            <Input
+              {...field}
+              value={form.values.tasks[index].address.contactName}
+              onChange={e => {
+                handleModifyAddress()
+                form.setFieldValue(
+                  `tasks[${index}].address.contactName`,
+                  e.target.value,
+                )
+              }}
+              placeholder="Contact"
+            />
+          )}
+        </Field>
+      </div>
+    </div>
+    <div className="row">
+      <div className="col-sm-12">
+        <AddressAutosuggest
+          address={values.tasks[index].address || ''}
+          addresses={addresses}
+          required={true}
+          reportValidity={true}
+          preciseOnly={true}
+          onAddressSelected={(value, address) => {
+            setFieldValue(`tasks[${index}].address`, {
+              ...address,
+              name: values.tasks[index].address.name || '',
+              telephone: values.tasks[index].address.telephone || '',
+              formatedTelephone:
+                values.tasks[index].address.formatedTelephone || '',
+              contactName: values.tasks[index].address.contactName || '',
+            })
+            setSelectValue(null)
+          }}
+          onClear={() => {
+            setFieldValue(`tasks[${index}].address`, {
+              streetAddress: '',
+              name: values.tasks[index].address.name || '',
+              telephone: values.tasks[index].address.telephone || '',
+              formatedTelephone:
+                values.tasks[index].address.formatedTelephone || '',
+              contactName: values.tasks[index].address.contactName || '',
+            })
+            setSelectValue(null)
+          }}
+        />
+        {!selectValue && (
+          <Field name={`tasks[${index}].toBeRemembered`}>
+            {({ field }) => (
+              <Checkbox
+                {...field}
+                checked={field.value}
+                onChange={e =>
+                  setFieldValue(
+                    `tasks[${index}].toBeRemembered`,
+                    e.target.checked,
+                  )
+                }>
+                Se souvenir de cette adresse
+              </Checkbox>
+            )}
+          </Field>
+        )}
+      </div>
+    </div>
       {/* Modal to handle if the user want to change the remembred address just for once or forever */}
-      <Modal
+       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => {
           setModalOpen(false)
@@ -259,6 +258,6 @@ export default function AddressBook({ index, addresses }) {
           </Button>
         </div>
       </Modal>
-    </>
-  )
+  </div>
+)
 }
