@@ -324,6 +324,7 @@ order.summary.heading: Order %number%
 order.total_excluding_tax: Total (excl. VAT)
 order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
+order.items_total_excluding_tax: Total products (excl. VAT)
 order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation starting at %date%
@@ -375,6 +376,7 @@ order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
 order.adjustment_type.reusable_packaging: Packaging
 order.adjustment_type.tip: Tip
+order.adjustment_type.incident: Incident
 order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
