@@ -86,7 +86,7 @@ export default ({ storeId, index }) => {
       <div className="mb-2 font-weight-bold">Packages</div>
       {packagesType.map(item => (
         <div key={item['@id']} className="row mb-2">
-          <div className="col-sm-4" style={{ display: 'flex' }}>
+          <div className="col-xs-4" style={{ display: 'flex' }}>
             
               <Button
                 style={{ backgroundColor: '#f5f5f5' }}
@@ -96,7 +96,7 @@ export default ({ storeId, index }) => {
                 -
               </Button>
           
-              <div style={{ minWidth: '60%'}}>
+              <div style={{ minWidth: '50%'}}>
               <Input
                 className="text-center"
                 value={calculateValue(item)}
@@ -118,7 +118,7 @@ export default ({ storeId, index }) => {
               </Button>
            
           </div>
-          <div className="col-sm-8">
+          <div className="col-xs-8">
             <Input readOnly value={item.name} />
           </div>
         </div>
