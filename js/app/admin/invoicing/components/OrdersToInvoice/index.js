@@ -102,7 +102,7 @@ export default () => {
           href={window.Routing.generate('admin_order', { id: orderId })}
           target="_blank"
           rel="noopener noreferrer">
-          {t('EDIT')}
+          {t('VIEW')}
         </a>
       ),
     },
