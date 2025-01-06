@@ -23,7 +23,7 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
   
   return (
     <div>
-      <h2>Informations du {task.type === "PICKUP" ? "Retrait" : "Dépot"}</h2>
+      <h3 className='mb-4'>Informations du {task.type === "PICKUP" ? "Retrait" : "Dépot"}</h3>
 
       <AddressBookNew
         addresses={addresses}
@@ -50,9 +50,9 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
           index={index}
         />
       )}
-      <div className="mt-4">
-        <label htmlFor={`tasks[${index}].comments`} className="block mb-2">
-          Commentaire
+      <div className="mt-4 mb-4">
+        <label htmlFor={`tasks[${index}].comments`} className="block mb-2 font-weight-bold">
+          Commentaires
         </label>
         <Field
           as={Input.TextArea}

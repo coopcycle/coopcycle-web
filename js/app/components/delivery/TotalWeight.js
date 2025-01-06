@@ -26,24 +26,30 @@ export default ({ index }) => {
 
 
   return (
-    <>
-      <div>Total Weight</div>
-      <InputNumber
-        min={0}
-        placeholder="Weight"
-        value={numberValue}
-        onChange={value => {
-          setNumberValue(value)
-        }}
-      />
-      <Select value={weightUnit} onChange={value => setWeightUnit(value)}>
-        <Option value="kg">Kg</Option>
-        <Option value="lbs">Lbs</Option>
-      </Select>
+    <div className="mt-4 mb-4">
+      <div className="mb-2 font-weight-bold">Total Weight</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <InputNumber
+          style={{ width: '80%' }}
+          min={0}
+          placeholder="Weight"
+          value={numberValue}
+          onChange={value => {
+            setNumberValue(value)
+          }}
+        />
+        <Select
+          style={{ width: '15%' }}
+          value={weightUnit}
+          onChange={value => setWeightUnit(value)}>
+          <Option value="kg">Kg</Option>
+          <Option value="lbs">Lbs</Option>
+        </Select>
+      </div>
 
       {errors.tasks?.[index]?.weight && (
         <div className="text-danger">{errors.tasks[index].weight}</div>
       )}
-    </>
+    </div>
   )
 }

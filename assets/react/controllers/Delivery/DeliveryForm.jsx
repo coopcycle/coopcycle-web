@@ -130,14 +130,7 @@ export default function ({  storeId }) {
             taskErrors.doneBefore="Droppoff must be after Pickup"
           }
         }
-          // see if we change this validation because in case of large timeslot, the doneAfter can maybe be the same
-        if (values.tasks[i].type === "DROPOFF" && values.tasks[i].timeSlot) {
-          const doneAfterDropoff = values.tasks[i].timeSlot.slice(0, 19)
-          const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
-          if (!isWellOrdered) {
-            taskErrors.doneBefore="Droppoff must be after Pickup"
-          }
-        }
+
 
         if (Object.keys(taskErrors).length > 0) {
           errors.tasks[i] = taskErrors
@@ -279,12 +272,15 @@ export default function ({  storeId }) {
                   },
                 },
               )
-                .then(response => setCalculatePrice(response.data)
+                .then(response => {
+                  setCalculatePrice(response.data)
+                  setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+                }
                 )
                 .catch(error => {
                   if (error.response) {
-                    setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] } )
-                  console.log("Erreur : ", error.response.data['hydra:description'])
+                    setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+                    setCalculatePrice(0)
                 }
               })
 
@@ -296,17 +292,14 @@ export default function ({  storeId }) {
           }, [values, storeDeliveryInfos]);
 
           return (
-            <Form>
-              {error.isError ? 
-                <div className="alert alert-danger" role="alert">
-                  {error.errorMessage}
-                </div>
-              : null}
+            <Form className='container-fluid'>
+            <div className='new-delivery row'>
+              
               <FieldArray name="tasks">
                 {(arrayHelpers) => (
-                  <>
+                  <div className="new-order col-sm-9"  style={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
                     {values.tasks.map((task, index) => (
-                      <div key={index}>
+                      <div className='border p-4 mb-4' style={{maxWidth:'460px'}} key={index}>
                         <Task
                           key={index}
                           task={task}
@@ -315,81 +308,96 @@ export default function ({  storeId }) {
                           storeId={storeId}
                           storeDeliveryInfos={storeDeliveryInfos}
                         />
-                        {task.type === 'DROPOFF' && index > 1 && (
+                        {task.type === 'DROPOFF' && index > 1 ? (
                           <Button
                             onClick={() => arrayHelpers.remove(index)}
                             type="button"
+                            className='mb-4'
                           >
                             Remove this dropoff
                           </Button>
-                        )}
+                        ) : null}
+
+                        {task.type === 'DROPOFF' ? 
+                        <div className='mb-4' style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                          <p>Multiple dropoff is not available</p>
+                          <Button
+                            disabled={true}
+                            onClick={() => {
+                              const newDropoff = {
+                                type: 'DROPOFF',
+                                doneAfter: getNextRoundedTime().toISOString(),
+                                doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
+                                timeSlot: null,
+                                comments: '',
+                                address: {
+                                  streetAddress: '',
+                                  name: '',
+                                  contactName: '',
+                                  telephone: '',
+                                },
+                                toBeRemembered: false,
+                                toBeModified: false,
+                                packages: [],
+                                weight: 0
+                              };
+                              arrayHelpers.push(newDropoff);
+                            }}
+                          >
+                            Add a new dropoff
+                          </Button>
+                        </div> : null}
                       </div>
                     ))}
-                    <div>
-                      <p>Multiple dropoff is not available</p>
-                      <Button
-                        disabled={true}
-                        onClick={() => {
-                          const newDropoff = {
-                            type: 'DROPOFF',
-                            doneAfter: getNextRoundedTime().toISOString(),
-                            doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
-                            timeSlot: null,
-                            comments: '',
-                            address: {
-                              streetAddress: '',
-                              name: '',
-                              contactName: '',
-                              telephone: '',
-                            },
-                            toBeRemembered: false,
-                            toBeModified: false,
-                            packages: [],
-                            weight: 0
-                          };
-                          arrayHelpers.push(newDropoff);
-                        }}
-                      >
-                        Add a new dropoff
-                      </Button>
-                    </div>
-                  </>
+                    
+                  </div>
                 )}
               </FieldArray>
-
-              <div className='deliveryform__total-price'>
-                <div>Total - Pricing </div>
-                <div>
-                  {calculatedPrice.amount 
-                    ? 
+              <div className="order-informations col-sm-3">
+                <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
+                  <div className='font-weight-bold mb-2'>Total - Pricing </div>
                     <div>
+                    {calculatedPrice.amount 
+                      ? 
                       <div>
-                        ${money(calculatedPrice.amount)} VAT
+                        <div className='mb-1'>
+                          {money(calculatedPrice.amount)} VAT
+                        </div>
+                        <div>
+                          {money(calculatedPrice.amount - calculatedPrice.tax.amount)} ex. VAT
+                        </div>
                       </div>
+                      : 
                       <div>
-                        ${money(calculatedPrice.amount - calculatedPrice.tax.amount)} ex. VAT
+                        <div className='mb-1'>
+                          {money(0)} VAT
+                        </div>
+                        <div>
+                          {money(0)} ex. VAT
+                        </div>
                       </div>
-                    </div>
-                    : 
-                    <div>
-                      <div>
-                        ${money(0)} VAT
-                      </div>
-                      <div>
-                        ${money(0)} ex. VAT
-                      </div>
-                    </div>
-                  }
-                </div>
-                {priceError.isPriceError ? 
-                  <div className="alert alert-info" role="alert">
-                    {priceError.priceErrorMessage}
+                    }
                   </div>
-              : null}
+                  {priceError.isPriceError ? 
+                    <div className="alert alert-info mt-4" role="alert">
+                      {priceError.priceErrorMessage}
+                    </div>
+                : null}
                 
-              </div>
+                </div>
+              
+                <div className='order-informations__complete-order'>
+                  <Button  style={{ backgroundColor: '#F05A58', color: '#fff', height: '2.5em'}} htmlType="submit" disabled={isSubmitting}>Soumettre</Button>
+                  </div>
+                  
+                {error.isError ? 
+                  <div className="alert alert-danger mt-4" role="alert">
+                    {error.errorMessage}
+                  </div>
+                : null}
+                </div>
 
-              <Button htmlType="submit" disabled={isSubmitting}>Soumettre</Button>
+            </div>
             </Form>
           )
         }}

@@ -83,35 +83,42 @@ export default ({ storeId, index }) => {
 
   return (
     <>
-      <div>Packages</div>
+      <div className="mb-2 font-weight-bold">Packages</div>
       {packagesType.map(item => (
         <div key={item['@id']} className="row mb-2">
-          <div className="col-xs-3">
-            <div className="row">
-              <div className="col-xs-3 pr-1">
-                <Button
-                  color="default"
-                  variant="filled"
-                  onClick={() => handleMinusButton(item)}>
-                  -
-                </Button>
+          <div className="col-sm-4" style={{ display: 'flex' }}>
+            
+              <Button
+                style={{ backgroundColor: '#f5f5f5' }}
+                color="default"
+                variant="filled"
+                onClick={() => handleMinusButton(item)}>
+                -
+              </Button>
+          
+              <div style={{ minWidth: '60%'}}>
+              <Input
+                className="text-center"
+                value={calculateValue(item)}
+                style={
+                  calculateValue(item) !== 0 ? { fontWeight: '700'} : null
+                }
+              />
               </div>
-              <div className="col-xs-6 px-1 text-center">
-                <Input value={calculateValue(item)} />
-              </div>
-              <div className="col-xs-3 pl-1">
-                <Button
-                  color="default"
-                  variant="filled"
-                  onClick={() => {
-                    handlePlusButton(item)
-                  }}>
-                  +
-                </Button>
-              </div>
-            </div>
+      
+            
+              <Button
+                style={{ backgroundColor: '#f5f5f5' }}
+                color="default"
+                variant="filled"
+                onClick={() => {
+                  handlePlusButton(item)
+                }}>
+                +
+              </Button>
+           
           </div>
-          <div className="col-xs-9">
+          <div className="col-sm-8">
             <Input readOnly value={item.name} />
           </div>
         </div>

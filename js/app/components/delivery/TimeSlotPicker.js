@@ -155,8 +155,10 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   return (
     <>
+      <div className="mb-2 font-weight-bold">Tranche horaire</div>
       {defaultLabel && timeSlotsLabels ? (
         <Radio.Group
+          className="mb-2"
           defaultValue={defaultLabel.name}
           style={{ display: 'flex' }}>
           {timeSlotsLabels.map(label => (

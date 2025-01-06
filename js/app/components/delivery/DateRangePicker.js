@@ -55,6 +55,8 @@ const DateTimeRangePicker = ({ format, index }) => {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
 
+  const task = values.tasks[index]
+
   /** we initialize defaultValues in case we use the switch from timeslots to free picker
    * as we automatically set after and before to null when we use timeslots
    */
@@ -167,6 +169,11 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   return isComplexPicker ? (
     <>
+      {task.type === 'DROPOFF' ? (
+        <div className="mb-2 font-weight-bold">Heure de retrait </div>
+      ) : (
+        <div className="mb-2 font-weight-bold">Heure de dépot</div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <DatePicker.RangePicker
           style={{ width: '95%' }}
@@ -193,6 +200,11 @@ const DateTimeRangePicker = ({ format, index }) => {
     </>
   ) : (
     <>
+      {task.type === 'DROPOFF' ? (
+        <div className="mb-2 font-weight-bold">Heure de retrait </div>
+      ) : (
+        <div className="mb-2 font-weight-bold">Heure de dépot</div>
+      )}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ width: '95%' }}>
           <DatePicker
