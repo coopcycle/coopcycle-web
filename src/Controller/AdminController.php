@@ -397,26 +397,6 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/orders/{id}/edit", name="admin_order_edit")
-     */
-    public function editOrderAction($id)
-    {
-        $order = $this->orderRepository->find($id);
-
-        if (!$order) {
-            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
-        }
-
-        $delivery = $order->getDelivery();
-
-        if (null === $delivery) {
-            throw $this->createNotFoundException(sprintf('Order #%d does not have a delivery', $id));
-        }
-
-        return $this->redirectToRoute('admin_delivery', ['id' => $delivery->getId()]);
-    }
-
     public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
     {
         if ($request->query->has('order')) {

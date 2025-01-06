@@ -278,4 +278,19 @@ trait OrderTrait
             return $this->orderAsJson($order);
         }
     }
+
+    public function editOrderAction($id, EntityManagerInterface $entityManager)
+    {
+        $order = $entityManager->getRepository(Order::class)->find($id);
+
+        $this->denyAccessUnlessGranted('edit', $order);
+
+        $delivery = $order->getDelivery();
+
+        if (null === $delivery) {
+            throw $this->createNotFoundException(sprintf('Order #%d does not have a delivery', $id));
+        }
+
+        return $this->redirectToRoute('admin_delivery', ['id' => $delivery->getId()]);
+    }
 }

@@ -99,7 +99,7 @@ export default () => {
       align: 'right',
       render: orderId => (
         <a
-          href={window.Routing.generate('admin_order_edit', { id: orderId })}
+          href={window.Routing.generate('admin_order', { id: orderId })}
           target="_blank"
           rel="noopener noreferrer">
           {t('EDIT')}
