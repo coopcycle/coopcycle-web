@@ -1,6 +1,6 @@
 import React from 'react'
-import Impl from '../../../../../js/app/admin/invoicing'
+import Page from '../../../../../js/app/admin/invoicing/page'
 
 export default (props) => {
-  return (<Impl {...props} />)
+  return (<Page {...props} />)
 }
