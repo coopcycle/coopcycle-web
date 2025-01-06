@@ -25,6 +25,15 @@
         <li><a>{% include '_partials/order/state.html.twig' %}</a></li>
         <li><a>{{ 'basics.updated_at'|trans({ '%date%': order.updatedAt|format_datetime('medium', 'short') }) }}</a></li>
       </ul>
+      <div class="nav navbar-nav navbar-right">
+        {% if is_granted('ROLE_DISPATCHER') and order.isDeliveryForStore() %}
+          <li>
+            <a href="{{ path('admin_order_edit', { id: order.id }) }}">
+              <i class="fa fa-pencil"></i>  {% trans %}basics.edit{% endtrans %}
+            </a>
+          </li>
+        {% endif %}
+      </div>
     </div>
   </div>
 </nav>

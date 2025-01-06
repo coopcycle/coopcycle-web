@@ -62,6 +62,11 @@ admin_order:
     defaults: { _controller: AppBundle\Controller\AdminController::orderAction }
     methods:  [ GET, POST ]
 
+admin_order_edit:
+  path:     /admin/orders/{id}/edit
+  defaults: { _controller: AppBundle\Controller\AdminController::editOrderAction }
+  methods:  [ GET ]
+
 admin_orders:
     path:     /admin/orders
     defaults:

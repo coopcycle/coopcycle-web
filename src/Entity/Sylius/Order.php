@@ -1983,6 +1983,16 @@ class Order extends BaseOrder implements OrderInterface
         return $this->hasVendor();
     }
 
+    public function isDeliveryForStore(): bool
+    {
+        //FIXME: combine with $this->getStoreType() implementation
+
+        // There are two types of On Demand Delivery orders:
+        // 1. Local Commerce and Last Mile ("store") orders (this method)
+        // 2. B2C via Order form
+        return !is_null($this->getDelivery()?->getStore());
+    }
+
     public function getDeliveryItem(): ?OrderItemInterface
     {
         if ($this->isFoodtech()) {
