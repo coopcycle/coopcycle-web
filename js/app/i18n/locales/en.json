@@ -565,6 +565,7 @@
         "APPLY": "Apply",
         "CURRENT_PRICE": "Current price",
         "NEW_PRICE": "New price",
+        "VIEW": "View",
         "EDIT": "Edit",
         "APPLY_A_PRICE_DIFFERENCE": "Apply a price difference",
         "SEND_REPORT_TO_THE_TRANSPORTER": "Send report to the transporter",
