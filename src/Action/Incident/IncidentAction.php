@@ -10,24 +10,25 @@ use AppBundle\Entity\Store;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use DateTime;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
-use Sylius\Component\Order\Model\Adjustment;
+use Doctrine\ORM\EntityManagerInterface;
+use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IncidentAction extends Base
 {
 
-    private ObjectManager $entityManager;
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        private TaskManager $taskManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TaskManager $taskManager,
+        private readonly AdjustmentFactoryInterface $adjustmentFactory,
+        private readonly OrderProcessorInterface $orderProcessor,
+        private readonly TranslatorInterface $translator,
     )
     {
-        $this->entityManager = $doctrine->getManager();
     }
 
     public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
@@ -132,11 +133,13 @@ class IncidentAction extends Base
             throw new \InvalidArgumentException("Price diff cannot be negative");
         }
 
-        $adjustment = new Adjustment();
-        $adjustment->setType(AdjustmentInterface::INCIDENT_ADJUSTMENT);
-        $adjustment->setAmount($priceDiff);
-        $adjustment->setLabel("Incident");
+        $adjustment = $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::INCIDENT_ADJUSTMENT,
+            $this->translator->trans('order.adjustment_type.incident'),
+            $priceDiff);
         $order->addAdjustment($adjustment);
+
+        $this->orderProcessor->process($order);
 
         $this->entityManager->persist($order);
 

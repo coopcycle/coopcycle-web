@@ -7,7 +7,7 @@
     <th>{% trans %}order.list.state{% endtrans %}</th>
     <th>{% trans %}order.list.summary{% endtrans %}</th>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
+    <th class="text-right">{% trans %}order.items_total_excluding_tax{% endtrans %}</th>
     <th class="text-right">{% trans %}basics.platform_fees{% endtrans %}</th>
     {% endif %}
     <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
