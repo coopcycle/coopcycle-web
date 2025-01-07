@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import axios from 'axios'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
@@ -8,8 +9,12 @@ import Packages from '../../../../js/app/delivery/Packages'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from '../../../../js/app/delivery/TotalWeight'
 
+const baseURL = location.protocol + '//' + location.host
 
 export default ({addresses, storeId, index, storeDeliveryInfos }) => {
+  
+  const [packages, setPackages] = useState(null)
+  
   const { t } = useTranslation()
   
   const { values } = useFormikContext()
@@ -17,7 +22,25 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
 
   const format = 'LL'
 
-  console.log(storeDeliveryInfos)
+    useEffect(() => {
+    const getPackages = async () => {
+      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+      const jwt = jwtResp.jwt
+      const url = `${baseURL}/api/stores/${storeId}/packages`
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${jwt}`,
+        },
+      })
+      const packages = await response.data['hydra:member']
+
+      if (packages?.length > 0) {
+        setPackages(packages)
+      }
+    }
+    getPackages()
+  }, [storeId])
+
   
   const areDefinedTimeSlots = useCallback(() => {
   return storeDeliveryInfos && Array.isArray(storeDeliveryInfos.timeSlots) && storeDeliveryInfos.timeSlots.length > 0
@@ -34,7 +57,7 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
 
       {task.type === "DROPOFF" ?
         <div>
-          <Packages storeId={storeId} index={index}  />
+          { packages ? <Packages storeId={storeId} index={index} packages={packages} /> : null}
           <TotalWeight index={index} /> 
         </div>
         : null}
