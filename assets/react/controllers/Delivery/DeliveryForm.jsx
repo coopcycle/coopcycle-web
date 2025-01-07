@@ -53,8 +53,10 @@ export default function ({  storeId }) {
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   
   const { t } = useTranslation()
-  
-    const initialValues = {
+
+  const previousUrl = document.referrer;
+
+  const initialValues = {
     tasks: [
       {
         type: 'PICKUP',
@@ -202,9 +204,8 @@ export default function ({  storeId }) {
           },
         },
       )
-        .then(response => {
-        // redirect
-          console.log(response)
+        .then(() => {
+          window.location.href =previousUrl
       })
         .catch(error => {
           if (error.response) {
