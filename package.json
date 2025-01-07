@@ -28,8 +28,7 @@
     "google-libphonenumber": "^3.2.40",
     "lodash": "^4.17.21",
     "promise": "^8.3.0",
-    "whatwg-fetch": "^2.0.4",
-    "yup": "^1.5.0"
+    "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
