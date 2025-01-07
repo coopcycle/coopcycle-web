@@ -84,6 +84,7 @@ adminDashboard.users.export.optins.marketting: Users who agree to receive promot
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
+adminDashboard.pricing.docs_path: /en/admin/deliveries/pricing/
 adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.duplicate: Duplicate
@@ -1510,6 +1511,7 @@ form.store_type.failure_reason_set.label: "Failure Reasons"
 form.store_type.failure_reason_set.help: 'Select a list of <a href="%failure_reason_set%">failure reasons</a> to be used in this %entity%.'
 adminDashboard.incidents.title: Incidents
 adminDashboard.incidents.help: "Manage incidents."
+adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
 adminDashboard.invoicing.title: Invoicing [PREVIEW]
 adminDashboard.invoicing.help: "Prepare invoices"

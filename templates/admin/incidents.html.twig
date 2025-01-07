@@ -9,6 +9,10 @@
 <li>{% trans %}adminDashboard.incidents.title{% endtrans %}</li>
 {% endblock %}
 
+{% block docs %}
+  {% include '_partials/docs.html.twig' with { docsPath: 'adminDashboard.incidents.docs_path' } %}
+{% endblock %}
+
 {% block content %}
 <div {{ react_component('Incident/List') }}></div>
 {% endblock %}
