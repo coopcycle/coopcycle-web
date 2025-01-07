@@ -388,13 +388,13 @@ class AdminController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/item.html.twig', [
+        return $this->render('order/item.html.twig', $this->auth([
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
-        ]);
+        ]));
     }
 
     public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
