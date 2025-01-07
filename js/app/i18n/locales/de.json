@@ -173,7 +173,25 @@
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Bitte wählen Sie einen anderen Zeitraum",
         "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Lieferzeit ändern",
         "GENERIC_BARCODE_HELP": "Dieser Aufgaben-Barcode kann alle verknüpften Pakete als eine Einheit verfolgen. Verwenden Sie ihn für eine vereinfachte Verfolgung der gesamten Lieferung. Für eine detaillierte Verfolgung der einzelnen Pakete verwenden Sie stattdessen die individuellen Paket-Barcodes.",
-        "SWITCH_COMPLEX_DATEPICKER": "Wählen Sie ein Datum über mehrere Tage"
+        "SWITCH_COMPLEX_DATEPICKER": "Wählen Sie ein Datum über mehrere Tage", 
+        "DELIVERY_FORM_PICKUP_INFORMATIONS": "Abholinformationen",
+        "DELIVERY_FORM_DROPOFF_INFORMATIONS": "Abgabinformationen",
+        "DELIVERY_FORM_PACKAGES": "Waren",
+        "DELIVERY_FORM_WEIGHT": "Gewicht",
+        "DELIVERY_FORM_TOTAL_WEIGHT": "Gesamtgewicht",
+        "DELIVERY_FORM_COMMENTARY": "Geben Sie alle nützlichen Details zur Durchführung der Aufgabe an",
+        "DELIVERY_FORM_MULTIDROPOFF": "Mehrfache Abgaben sind nicht verfügbar",
+        "DELIVERY_FORM_ADD_DROPOFF": "Eine Abgabe hinzufügen",
+        "DELIVERY_FORM_SUBMIT": "Speichern",
+        "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Kontakt",
+        "DELIVERY_FORM_ERROR_PACKAGES": "Bitte wählen Sie mindestens eine Ware aus",
+        "DELIVERY_FORM_ERROR_TELEPHONE": "Bitte geben Sie eine Telefonnummer ein",
+        "DELIVERY_FORM_ERROR_WEIGHT": "Bitte geben Sie ein Gewicht an",
+        "DELIVERY_FORM_ERROR_HOUR": "Die Abgabe muss vor der Abholung erfolgen",
+        "DELIVERY_FORM_REMEMBER_ADDRESS": "Diese Adresse merken",
+        "DELIVERY_FORM_TOTAL_PRICE": "Gesamtpreis",
+        "DELIVERY_FORM_TOTAL_VAT": "Inkl. MwSt.",
+        "DELIVERY_FORM_TOTAL_EX_VAT": "Ohne MwSt."
     }
 
 }

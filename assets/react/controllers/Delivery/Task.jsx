@@ -3,10 +3,10 @@ import { useFormikContext, Field } from 'formik'
 import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input } from 'antd'
-import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
-import Packages from '../../../../js/app/components/delivery/Packages'
+import DateRangePicker from '../../../../js/app/delivery/DateRangePicker'
+import Packages from '../../../../js/app/delivery/Packages'
 import { useTranslation } from 'react-i18next'
-import TotalWeight from '../../../../js/app/components/delivery/TotalWeight'
+import TotalWeight from '../../../../js/app/delivery/TotalWeight'
 
 
 export default ({addresses, storeId, index, storeDeliveryInfos }) => {
@@ -16,6 +16,8 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
   const task = values.tasks[index];
 
   const format = 'LL'
+
+  console.log(storeDeliveryInfos)
   
   const areDefinedTimeSlots = useCallback(() => {
   return storeDeliveryInfos && Array.isArray(storeDeliveryInfos.timeSlots) && storeDeliveryInfos.timeSlots.length > 0
@@ -23,7 +25,7 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
   
   return (
     <div>
-      <h3 className='mb-4'>Informations du {task.type === "PICKUP" ? "Retrait" : "Dépot"}</h3>
+      <h3 className='mb-4'>{task.type === "PICKUP" ? t("DELIVERY_FORM_PICKUP_INFORMATIONS") : t("DELIVERY_FORM_DROPOFF_INFORMATIONS")}</h3>
 
       <AddressBookNew
         addresses={addresses}
@@ -52,7 +54,7 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
       )}
       <div className="mt-4 mb-4">
         <label htmlFor={`tasks[${index}].comments`} className="block mb-2 font-weight-bold">
-          Commentaires
+          {t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL")}
         </label>
         <Field
           as={Input.TextArea}

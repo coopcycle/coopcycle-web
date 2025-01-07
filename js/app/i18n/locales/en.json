@@ -609,6 +609,24 @@
         "PM_RESTOFLASH": "Restoflash",
         "PM_CONECS": "Titres-restaurant",
         "PM_SWILE": "Swile",
-        "SWITCH_COMPLEX_DATEPICKER": "Sélectionner une date sur plusieurs jours"
+        "SWITCH_COMPLEX_DATEPICKER": "Sélectionner une date sur plusieurs jours", 
+        "DELIVERY_FORM_PICKUP_INFORMATIONS": "Pickup Information",
+        "DELIVERY_FORM_DROPOFF_INFORMATIONS": "Dropoff Information",
+        "DELIVERY_FORM_PACKAGES": "Packages",
+        "DELIVERY_FORM_WEIGHT": "Weight",
+        "DELIVERY_FORM_TOTAL_WEIGHT": "Total weight",
+        "DELIVERY_FORM_COMMENTARY": "Specify all useful details for the task execution",
+        "DELIVERY_FORM_MULTIDROPOFF": "Multiple dropoffs are not available",
+        "DELIVERY_FORM_ADD_DROPOFF": "Add a dropoff",
+        "DELIVERY_FORM_SUBMIT": "Submit",
+        "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contact",
+        "DELIVERY_FORM_ERROR_PACKAGES": "Please select at least one package",
+        "DELIVERY_FORM_ERROR_TELEPHONE": "Please enter a phone number",
+        "DELIVERY_FORM_ERROR_WEIGHT": "Please specify a weight",
+        "DELIVERY_FORM_ERROR_HOUR": "Dropoff must be before pickup",
+        "DELIVERY_FORM_REMEMBER_ADDRESS": "Remember this address",
+        "DELIVERY_FORM_TOTAL_PRICE": "Total price",
+        "DELIVERY_FORM_TOTAL_VAT": "Incl. VAT",
+        "DELIVERY_FORM_TOTAL_EX_VAT": "Excl. VAT"
     }
 }

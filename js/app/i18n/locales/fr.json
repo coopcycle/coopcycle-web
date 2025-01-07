@@ -603,6 +603,24 @@
         "GROUP_ORDER_START": "Commencer une commande groupée",
         "GROUP_ORDER_SHARE_LINK": "Partagez le lien avec d'autres pour participer à votre commande. Une fois qu'ils ont terminé, vous pouvez passer la commande.",
         "GENERIC_BARCODE_HELP": "Ce code-barres de tâche peut suivre tous les colis liés comme une seule unité. Utilisez-le pour simplifier le suivi de l'ensemble de la livraison. Pour un suivi détaillé colis par colis, utilisez plutôt les codes-barres individuels des colis.",
-        "SWITCH_TIMESLOTPICKER": "Sélectionner une tranche horaire personnalisée"
+        "SWITCH_TIMESLOTPICKER": "Sélectionner une tranche horaire personnalisée", 
+        "DELIVERY_FORM_PICKUP_INFORMATIONS": "Informations du retrait",
+        "DELIVERY_FORM_DROPOFF_INFORMATIONS": "Informations du dépôt",
+        "DELIVERY_FORM_PACKAGES": "Marchandises",
+        "DELIVERY_FORM_WEIGHT": "Poids",
+        "DELIVERY_FORM_TOTAL_WEIGHT": "Poids total",
+        "DELIVERY_FORM_COMMENTARY": "Précisez tous les détails utiles à l'exécution de la tâche",
+        "DELIVERY_FORM_MULTIDROPOFF": "Les dépôts multiples ne sont pas disponibles",
+        "DELIVERY_FORM_ADD_DROPOFF": "Ajouter un dépôt",
+        "DELIVERY_FORM_SUBMIT": "Enregistrer",
+        "DELIVERY_FORM_ERROR_PACKAGES": "Veuillez sélectionner au moins une marchandise",
+        "DELIVERY_FORM_ERROR_TELEPHONE": "Veuillez entrer un numéro de téléphone",
+        "DELIVERY_FORM_ERROR_WEIGHT": "Veuillez spécifier un poids",
+        "DELIVERY_FORM_ERROR_HOUR": "Le dépôt doit être avant le retrait",
+        "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contact",
+        "DELIVERY_FORM_REMEMBER_ADDRESS": "Se souvenir de cette adresse",
+        "DELIVERY_FORM_TOTAL_PRICE": "Prix total",
+        "DELIVERY_FORM_TOTAL_VAT": "TTC",
+        "DELIVERY_FORM_TOTAL_EX_VAT": "HT"
     }
 }

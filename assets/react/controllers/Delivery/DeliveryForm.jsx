@@ -9,6 +9,7 @@ import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n'
+import { useTranslation } from 'react-i18next'
 
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -50,6 +51,8 @@ export default function ({  storeId }) {
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  
+  const { t } = useTranslation()
   
     const initialValues = {
     tasks: [
@@ -109,25 +112,25 @@ export default function ({  storeId }) {
 
         if (!values.tasks[i].address.formatedTelephone) {
           taskErrors.address = taskErrors.address || {}; 
-          taskErrors.address.formatedTelephone = "You must enter a telephone number."
+          taskErrors.address.formatedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
         } else if (!validatePhoneNumber(values.tasks[i].address.formatedTelephone)) {
           taskErrors.address = taskErrors.address || {}; 
-          taskErrors.address.formatedTelephone = "You must enter a valid phone number."
+          taskErrors.address.formatedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
         }
 
         if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
-          taskErrors.packages= "You must pick at least one package"
+          taskErrors.packages= t("DELIVERY_FORM_ERROR_PACKAGES")
         }
 
         if (values.tasks[i].type === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
-          taskErrors.weight = "You must specify a weight"
+          taskErrors.weight = t("DELIVERY_FORM_ERROR_WEIGHT")
         }
 
         if (values.tasks[i].type === "DROPOFF" && values.tasks[i].doneAfter) {
           const doneAfterDropoff = values.tasks[i].doneAfter
           const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
           if (!isWellOrdered) {
-            taskErrors.doneBefore="Droppoff must be after Pickup"
+            taskErrors.doneBefore=t("DELIVERY_FORM_ERROR_HOUR")
           }
         }
 
@@ -199,9 +202,10 @@ export default function ({  storeId }) {
           },
         },
       )
-      //   .then(response => {
-          // redirect 
-      // })
+        .then(response => {
+        // redirect
+          console.log(response)
+      })
         .catch(error => {
           if (error.response) {
             setError({isError: true, errorMessage: error.response.data['hydra:description']} )
@@ -320,7 +324,7 @@ export default function ({  storeId }) {
 
                         {task.type === 'DROPOFF' ? 
                         <div className='mb-4' style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                          <p>Multiple dropoff is not available</p>
+                          <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
                           <Button
                             disabled={true}
                             onClick={() => {
@@ -344,7 +348,7 @@ export default function ({  storeId }) {
                               arrayHelpers.push(newDropoff);
                             }}
                           >
-                            Add a new dropoff
+                            {t("DELIVERY_FORM_ADD_DROPOFF")}
                           </Button>
                         </div> : null}
                       </div>
@@ -355,25 +359,25 @@ export default function ({  storeId }) {
               </FieldArray>
               <div className="order-informations col-sm-3">
                 <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-                  <div className='font-weight-bold mb-2'>Total - Pricing </div>
+                  <div className='font-weight-bold mb-2'>{t("DELIVERY_FORM_TOTAL_PRICE")} </div>
                     <div>
                     {calculatedPrice.amount 
                       ? 
                       <div>
                         <div className='mb-1'>
-                          {money(calculatedPrice.amount)} VAT
+                          {money(calculatedPrice.amount)} {t("DELIVERY_FORM_TOTAL_VAT")}
                         </div>
                         <div>
-                          {money(calculatedPrice.amount - calculatedPrice.tax.amount)} ex. VAT
+                          {money(calculatedPrice.amount - calculatedPrice.tax.amount)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
                         </div>
                       </div>
                       : 
                       <div>
                         <div className='mb-1'>
-                          {money(0)} VAT
+                          {money(0)} {t("DELIVERY_FORM_TOTAL_VAT")}
                         </div>
                         <div>
-                          {money(0)} ex. VAT
+                          {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
                         </div>
                       </div>
                     }
@@ -387,7 +391,11 @@ export default function ({  storeId }) {
                 </div>
               
                 <div className='order-informations__complete-order'>
-                  <Button  style={{ backgroundColor: '#F05A58', color: '#fff', height: '2.5em'}} htmlType="submit" disabled={isSubmitting}>Soumettre</Button>
+                    <Button
+                      style={{ backgroundColor: '#F05A58', color: '#fff', height: '2.5em' }}
+                      htmlType="submit" disabled={isSubmitting}>
+                      {t("DELIVERY_FORM_SUBMIT")}
+                    </Button>
                   </div>
                   
                 {error.isError ? 

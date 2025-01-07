@@ -2,6 +2,7 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'antd'
 import { useFormikContext } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -10,6 +11,8 @@ export default ({ storeId, index }) => {
 
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
+
+  const {t} = useTranslation()
 
   useEffect(() => {
     /** Fetch packages type and format the data in order to use them with the pickers.  */
@@ -83,7 +86,7 @@ export default ({ storeId, index }) => {
 
   return (
     <>
-      <div className="mb-2 font-weight-bold">Packages</div>
+      <div className="mb-2 font-weight-bold">{t("DELIVERY_FORM_PACKAGES")}</div>
       {packagesType.map(item => (
         <div key={item['@id']} className="row mb-2">
           <div className="col-xs-4" style={{ display: 'flex' }}>

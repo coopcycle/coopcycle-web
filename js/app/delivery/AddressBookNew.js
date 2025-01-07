@@ -93,7 +93,7 @@ export default function AddressBook({ index, addresses }) {
         <Select
           style={{ width: '100%' }}
           showSearch
-          placeholder="Rechercher une adresse enregistrée"
+          placeholder={t("TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME")}
           value={selectValue}
           optionFilterProp="label"
           onChange={value => {
@@ -125,7 +125,7 @@ export default function AddressBook({ index, addresses }) {
                   e.target.value,
                 )
               }}
-              placeholder="Nom"
+              placeholder={t("ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL")}
             />
           )}
         </Field>
@@ -141,7 +141,7 @@ export default function AddressBook({ index, addresses }) {
                   handleModifyAddress()
                   handleTelephone(e, form)
                 }}
-                placeholder="Téléphone"
+                placeholder={t("ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL")}
               />
               {errors.tasks?.[index]?.address?.formatedTelephone && (
                 <div className="text-danger">
@@ -165,7 +165,7 @@ export default function AddressBook({ index, addresses }) {
                   e.target.value,
                 )
               }}
-              placeholder="Contact"
+              placeholder={t("DELIVERY_FORM_CONTACT_PLACEHOLDER")}
             />
           )}
         </Field>
@@ -214,7 +214,7 @@ export default function AddressBook({ index, addresses }) {
                     e.target.checked,
                   )
                 }>
-                Se souvenir de cette adresse
+                {t("DELIVERY_FORM_REMEMBER_ADDRESS")}
               </Checkbox>
             )}
           </Field>
