@@ -252,11 +252,10 @@ export default function ({  storeId }) {
           console.log("values", values)
 
           useEffect(() => {
+
             const infos = {
               store: storeDeliveryInfos["@id"],   
               weight: values.tasks.find(task => task.type === "DROPOFF").weight,
-              pickup: values.tasks.find(task => task.type === "PICKUP"),
-              dropoff: values.tasks.find(task => task.type === "DROPOFF"),
               packages: values.tasks.find(task => task.type === "DROPOFF").packages,
               tasks: values.tasks,
             };
@@ -326,7 +325,7 @@ export default function ({  storeId }) {
                         <div className='mb-4' style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                           <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
                           <Button
-                            disabled={true}
+                            disabled={false}
                             onClick={() => {
                               const newDropoff = {
                                 type: 'DROPOFF',
