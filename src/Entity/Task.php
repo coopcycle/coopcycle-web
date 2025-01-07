@@ -376,7 +376,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * @Assert\Choice({"PICKUP", "DROPOFF"})
-     * @Groups({"task", "task_create", "task_edit", "delivery_create"})
+     * @Groups({"task", "task_create", "task_edit", "delivery_create", "pricing_deliveries"})
      */
     private $type = self::TYPE_DROPOFF;
 
@@ -390,7 +390,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @Assert\NotNull()
      * @Assert\Valid()
-     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create"})
+     * @Groups({"task", "task_create", "task_edit", "address", "address_create", "delivery_create", "pricing_deliveries"})
      */
     private $address;
 
@@ -621,7 +621,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * @SerializedName("after")
-     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      * @return Task
      */
     public function setAfter(?\DateTime $doneAfter)
@@ -633,7 +633,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * @SerializedName("before")
-     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create"})
+     * @Groups({"task", "task_create", "task_edit", "delivery", "delivery_create", "pricing_deliveries"})
      */
     public function getBefore()
     {
