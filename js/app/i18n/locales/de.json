@@ -180,7 +180,7 @@
         "DELIVERY_FORM_WEIGHT": "Gewicht",
         "DELIVERY_FORM_TOTAL_WEIGHT": "Gesamtgewicht",
         "DELIVERY_FORM_COMMENTARY": "Geben Sie alle nützlichen Details zur Durchführung der Aufgabe an",
-        "DELIVERY_FORM_MULTIDROPOFF": "Mehrfache Abgaben sind nicht verfügbar",
+        "DELIVERY_FORM_MULTIDROPOFF": "Mehrfache Abgaben sind verfügbar",
         "DELIVERY_FORM_ADD_DROPOFF": "Eine Abgabe hinzufügen",
         "DELIVERY_FORM_SUBMIT": "Speichern",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Kontakt",

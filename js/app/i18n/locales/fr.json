@@ -610,7 +610,7 @@
         "DELIVERY_FORM_WEIGHT": "Poids",
         "DELIVERY_FORM_TOTAL_WEIGHT": "Poids total",
         "DELIVERY_FORM_COMMENTARY": "Précisez tous les détails utiles à l'exécution de la tâche",
-        "DELIVERY_FORM_MULTIDROPOFF": "Les dépôts multiples ne sont pas disponibles",
+        "DELIVERY_FORM_MULTIDROPOFF": "Les dépôts multiples sont disponibles",
         "DELIVERY_FORM_ADD_DROPOFF": "Ajouter un dépôt",
         "DELIVERY_FORM_SUBMIT": "Enregistrer",
         "DELIVERY_FORM_ERROR_PACKAGES": "Veuillez sélectionner au moins une marchandise",
