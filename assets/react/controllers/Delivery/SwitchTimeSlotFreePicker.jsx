@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import TimeSlotPicker from '../../../../js/app/components/delivery/TimeSlotPicker'
-import DateRangePicker from '../../../../js/app/components/delivery/DateRangePicker'
+import TimeSlotPicker from '../../../../js/app/delivery/TimeSlotPicker'
+import DateRangePicker from '../../../../js/app/delivery/DateRangePicker'
 import { useFormikContext } from 'formik'
 
 export default ({ storeId, storeDeliveryInfos, index, format }) => {

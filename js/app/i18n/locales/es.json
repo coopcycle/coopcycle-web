@@ -441,6 +441,24 @@
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT": "Por favor, elige otro intervalo de tiempo",
         "CART_TIME_RANGE_CHANGED_MODAL_SELECT_TIME_RANGE_ACTION": "Cambiar hora de entrega",
         "GENERIC_BARCODE_HELP": "Este código de barras de tarea puede rastrear todos los paquetes vinculados como una sola unidad. Úselo para simplificar el seguimiento de toda la entrega. Para un seguimiento detallado paquete por paquete, utilice los códigos de barras individuales de los paquetes.",
-        "SWITCH_TIMESLOTPICKER": "Seleccionar un intervalo de tiempo personalizado"
+        "SWITCH_TIMESLOTPICKER": "Seleccionar un intervalo de tiempo personalizado",
+        "DELIVERY_FORM_PICKUP_INFORMATIONS": "Información de recogida",
+        "DELIVERY_FORM_DROPOFF_INFORMATIONS": "Información de entrega",
+        "DELIVERY_FORM_PACKAGES": "Mercancías",
+        "DELIVERY_FORM_WEIGHT": "Peso",
+        "DELIVERY_FORM_TOTAL_WEIGHT": "Peso total",
+        "DELIVERY_FORM_COMMENTARY": "Especifique todos los detalles útiles para la ejecución de la tarea",
+        "DELIVERY_FORM_MULTIDROPOFF": "Las entregas múltiples no están disponibles",
+        "DELIVERY_FORM_ADD_DROPOFF": "Añadir una entrega",
+        "DELIVERY_FORM_SUBMIT": "Guardar",
+        "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contacto",
+        "DELIVERY_FORM_ERROR_PACKAGES": "Por favor seleccione al menos una mercancía",
+        "DELIVERY_FORM_ERROR_TELEPHONE": "Por favor ingrese un número de teléfono",
+        "DELIVERY_FORM_ERROR_WEIGHT": "Por favor especifique un peso",
+        "DELIVERY_FORM_ERROR_HOUR": "La entrega debe ser antes de la recogida",
+        "DELIVERY_FORM_REMEMBER_ADDRESS": "Recordar esta dirección",
+        "DELIVERY_FORM_TOTAL_PRICE": "Precio total",
+        "DELIVERY_FORM_TOTAL_VAT": "IVA incluido",
+        "DELIVERY_FORM_TOTAL_EX_VAT": "Sin IVA"
     }
 }

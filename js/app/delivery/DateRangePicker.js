@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { DatePicker, Select } from 'antd'
-import { timePickerProps } from '../../utils/antd'
+import { timePickerProps } from '../utils/antd'
 import { useFormikContext } from 'formik'
 
 import 'antd/es/input/style/index.css'
