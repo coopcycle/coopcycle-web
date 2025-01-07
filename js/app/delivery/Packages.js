@@ -1,12 +1,11 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'antd'
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
-const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeId, index }) => {
+
+export default ({ storeId, index, packages }) => {
   const { setFieldValue, errors } = useFormikContext()
 
   const [packagesType, setPackagesType] = useState([])
@@ -15,20 +14,8 @@ export default ({ storeId, index }) => {
   const {t} = useTranslation()
 
   useEffect(() => {
-    /** Fetch packages type and format the data in order to use them with the pickers.  */
-    const getPackagesType = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
-      const url = `${baseURL}/api/stores/${storeId}/packages`
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      const packages = await response.data['hydra:member']
-
-      const picked = []
+    /** format the data in order to use them with the pickers.  */
+    const picked = []
 
       for (const p of packages) {
         const newPackages = {
@@ -40,12 +27,9 @@ export default ({ storeId, index }) => {
 
       setPackagesType(packages)
       setPackagesPicked(picked)
-    }
 
-    if (storeId) {
-      getPackagesType()
-    }
-  }, [storeId])
+
+  }, [storeId, packages])
 
   useEffect(() => {
     setFieldValue(`tasks[${index}].packages`, packagesPicked)
