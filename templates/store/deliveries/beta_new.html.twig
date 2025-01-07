@@ -1,0 +1,28 @@
+{% extends layout %}
+
+{% block dashboard_subnav %}
+  <div>
+    <a href="{{ path(back_route) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
+    </a>
+  </div>
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+  <li>{% trans %}orders.new{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+  {% include 'delivery/_partials/navbar.html.twig' %}
+  
+  {% block alerts %}
+  {% endblock %}
+
+  
+  {% set is_new = delivery.id is null %}
+
+  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id }) }}></div>
+{% endblock %}

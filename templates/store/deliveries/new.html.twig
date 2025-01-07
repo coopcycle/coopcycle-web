@@ -5,13 +5,23 @@
 {% endblock %}
 
 {% block breadcrumb %}
-
   <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
   <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
   <li>{% trans %}orders.new{% endtrans %}</li>
-
 {% endblock %}
 
 {% if is_granted('ROLE_DISPATCHER') %}
   {% set title = 'orders.new'|trans %}
 {% endif %}
+
+
+{% block content %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    <div class="alert alert-info">
+      You can access the more-friendly, beta version of the delivery form <a href="{{ path('admin_store_delivery_new_beta', { id: store.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+  {{ parent() }}
+
+{% endblock %}
