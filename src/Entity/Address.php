@@ -145,7 +145,7 @@ class Address extends BaseAddress
     /**
      * @param array $latLng
      * @SerializedName("latLng")
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     public function setLatLng(array $latLng)
     {
