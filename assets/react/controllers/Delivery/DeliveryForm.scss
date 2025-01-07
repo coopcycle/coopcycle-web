@@ -1,0 +1,33 @@
+.new-order, .delivery-form {
+  display: flex;
+  flex-wrap: wrap;
+  
+}
+
+.new-order {
+  background-color: #f0f;
+  justify-content: space-around;
+  gap: 2em;
+}
+
+.delivery-form {
+  background-color: aqua;
+  justify-content: space-between;
+
+}
+
+.order-informations {
+  align-self: start;
+  position: sticky;
+  top:0;
+  background-color: rgb(255, 221, 0);
+  min-width: 300px;
+}
+
+
+@media (max-width: 768px) {
+  .order-informations {
+    position: relative;
+    top: 10px;
+  }
+}

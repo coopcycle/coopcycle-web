@@ -370,7 +370,7 @@
         "DELIVERY_FORM_WEIGHT": "Peso",
         "DELIVERY_FORM_TOTAL_WEIGHT": "Peso totale",
         "DELIVERY_FORM_COMMENTARY": "Specifica tutti i dettagli utili per l'esecuzione del compito",
-        "DELIVERY_FORM_MULTIDROPOFF": "Consegne multiple non disponibili",
+        "DELIVERY_FORM_MULTIDROPOFF": "Consegne multiple disponibili",
         "DELIVERY_FORM_ADD_DROPOFF": "Aggiungi una consegna",
         "DELIVERY_FORM_SUBMIT": "Salva",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contatto",
