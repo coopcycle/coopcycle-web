@@ -3,7 +3,7 @@ import { Button, Input } from 'antd'
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
-
+import './Packages.scss'
 
 export default ({ storeId, index, packages }) => {
   const { setFieldValue, errors } = useFormikContext()
@@ -11,24 +11,22 @@ export default ({ storeId, index, packages }) => {
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
 
   useEffect(() => {
     /** format the data in order to use them with the pickers.  */
     const picked = []
 
-      for (const p of packages) {
-        const newPackages = {
-          type: p.name,
-          quantity: 0,
-        }
-        picked.push(newPackages)
+    for (const p of packages) {
+      const newPackages = {
+        type: p.name,
+        quantity: 0,
       }
+      picked.push(newPackages)
+    }
 
-      setPackagesType(packages)
-      setPackagesPicked(picked)
-
-
+    setPackagesType(packages)
+    setPackagesPicked(picked)
   }, [storeId, packages])
 
   useEffect(() => {
@@ -70,42 +68,33 @@ export default ({ storeId, index, packages }) => {
 
   return (
     <>
-      <div className="mb-2 font-weight-bold">{t("DELIVERY_FORM_PACKAGES")}</div>
+      <div className="mb-2 font-weight-bold">{t('DELIVERY_FORM_PACKAGES')}</div>
       {packagesType.map(item => (
-        <div key={item['@id']} className="row mb-2">
-          <div className="col-xs-4" style={{ display: 'flex' }}>
-            
-              <Button
-                style={{ backgroundColor: '#f5f5f5' }}
-                color="default"
-                variant="filled"
-                onClick={() => handleMinusButton(item)}>
-                -
-              </Button>
-          
-              <div style={{ minWidth: '50%'}}>
+        <div key={item['@id']} className="packages-item mb-2">
+          <div className="packages-item__quantity ">
+            <div className="packages-item__quantity__button">
+              <Button onClick={() => handleMinusButton(item)}>-</Button>
+            </div>
+
+            <div className="packages-item__quantity__input text-center">
               <Input
-                className="text-center"
                 value={calculateValue(item)}
                 style={
-                  calculateValue(item) !== 0 ? { fontWeight: '700'} : null
+                  calculateValue(item) !== 0 ? { fontWeight: '700' } : null
                 }
               />
-              </div>
-      
-            
+            </div>
+
+            <div className="packages-item__quantity__button">
               <Button
-                style={{ backgroundColor: '#f5f5f5' }}
-                color="default"
-                variant="filled"
                 onClick={() => {
                   handlePlusButton(item)
                 }}>
                 +
               </Button>
-           
+            </div>
           </div>
-          <div className="col-xs-8">
+          <div className="packages-item__name ">
             <Input readOnly value={item.name} />
           </div>
         </div>

@@ -191,7 +191,8 @@
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Diese Adresse merken",
         "DELIVERY_FORM_TOTAL_PRICE": "Gesamtpreis",
         "DELIVERY_FORM_TOTAL_VAT": "Inkl. MwSt.",
-        "DELIVERY_FORM_TOTAL_EX_VAT": "Ohne MwSt."
+        "DELIVERY_FORM_TOTAL_EX_VAT": "Ohne MwSt.",
+        "DELIVERY_FORM_REMOVE_DROPOFF": "Diesen Abgabeort entfernen"
     }
 
 }
