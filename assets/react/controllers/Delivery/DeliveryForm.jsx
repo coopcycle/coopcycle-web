@@ -296,14 +296,14 @@ export default function ({  storeId }) {
           }, [values, storeDeliveryInfos]);
 
           return (
-            <Form className='container-fluid'>
+            <Form >
             <div className='delivery-form' >
               
               <FieldArray name="tasks">
                 {(arrayHelpers) => (
                   <div className="new-order" >
                     {values.tasks.map((task, index) => (
-                      <div className='border p-4 mb-4' style={{maxWidth:'460px'}} key={index}>
+                      <div className='new-order__item border p-4 mb-4' key={index}>
                         <Task
                           key={index}
                           task={task}
@@ -413,181 +413,4 @@ export default function ({  storeId }) {
       </Formik>
     </ConfigProvider>
   )
-
-
-
-  // return (
-  //   <ConfigProvider locale={antdLocale}>
-  //     <Formik
-  //       initialValues={initialValues}
-  //       onSubmit={handleSubmit}
-  //       validate={validate}
-  //       validateOnChange={false}
-  //       validateOnBlur={false}
-  //     >
-  //       {({ values, isSubmitting }) => {
-          
-  //         console.log("values", values)
-
-  //         useEffect(() => {
-
-  //           const infos = {
-  //             store: storeDeliveryInfos["@id"],   
-  //             weight: values.tasks.find(task => task.type === "DROPOFF").weight,
-  //             packages: values.tasks.find(task => task.type === "DROPOFF").packages,
-  //             tasks: values.tasks,
-  //           };
-
-  //           const calculatePrice = async () => {
-  //             const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-  //             const jwt = jwtResp.jwt
-  //             const url = `${baseURL}/api/retail_prices/calculate`
-
-  //             await axios.post(
-  //               url,
-  //               infos,
-  //               {
-  //                 headers: {
-  //                   Authorization: `Bearer ${jwt}`,
-  //                   'Content-Type': 'application/ld+json',
-  //                 },
-  //               },
-  //             )
-  //               .then(response => {
-  //                 setCalculatePrice(response.data)
-  //                 setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-  //               }
-  //               )
-  //               .catch(error => {
-  //                 if (error.response) {
-  //                   setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-  //                   setCalculatePrice(0)
-  //               }
-  //             })
-
-  //           }
-  //           if (values.tasks.find(task => task.type === "PICKUP").address.streetAddress !== '' && values.tasks.find(task => task.type === "DROPOFF").address.streetAddress !== '') {
-  //             calculatePrice()
-  //           }
-            
-  //         }, [values, storeDeliveryInfos]);
-
-  //         return (
-  //           <Form className='container-fluid'>
-  //           <div className='new-delivery row'>
-              
-  //             <FieldArray name="tasks">
-  //               {(arrayHelpers) => (
-  //                 <div className="new-order col-sm-9"  style={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
-  //                   {values.tasks.map((task, index) => (
-  //                     <div className='border p-4 mb-4' style={{maxWidth:'460px'}} key={index}>
-  //                       <Task
-  //                         key={index}
-  //                         task={task}
-  //                         index={index}
-  //                         addresses={addresses}
-  //                         storeId={storeId}
-  //                         storeDeliveryInfos={storeDeliveryInfos}
-  //                       />
-  //                       {task.type === 'DROPOFF' && index > 1 ? (
-  //                         <Button
-  //                           onClick={() => arrayHelpers.remove(index)}
-  //                           type="button"
-  //                           className='mb-4'
-  //                         >
-  //                           Remove this dropoff
-  //                         </Button>
-  //                       ) : null}
-
-  //                       {task.type === 'DROPOFF' ? 
-  //                       <div className='mb-4' style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-  //                         <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
-  //                         <Button
-  //                           disabled={false}
-  //                           onClick={() => {
-  //                             const newDropoff = {
-  //                               type: 'DROPOFF',
-  //                               doneAfter: getNextRoundedTime().toISOString(),
-  //                               doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
-  //                               timeSlot: null,
-  //                               comments: '',
-  //                               address: {
-  //                                 streetAddress: '',
-  //                                 name: '',
-  //                                 contactName: '',
-  //                                 telephone: '',
-  //                               },
-  //                               toBeRemembered: false,
-  //                               toBeModified: false,
-  //                               packages: [],
-  //                               weight: 0
-  //                             };
-  //                             arrayHelpers.push(newDropoff);
-  //                           }}
-  //                         >
-  //                           {t("DELIVERY_FORM_ADD_DROPOFF")}
-  //                         </Button>
-  //                       </div> : null}
-  //                     </div>
-  //                   ))}
-                    
-  //                 </div>
-  //               )}
-  //             </FieldArray>
-    
-  //             <div className="order-informations col-sm-3"> 
-  //               <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-  //                 <div className='font-weight-bold mb-2'>{t("DELIVERY_FORM_TOTAL_PRICE")} </div>
-  //                   <div>
-  //                   {calculatedPrice.amount 
-  //                     ? 
-  //                     <div>
-  //                       <div className='mb-1'>
-  //                         {money(calculatedPrice.amount)} {t("DELIVERY_FORM_TOTAL_VAT")}
-  //                       </div>
-  //                       <div>
-  //                         {money(calculatedPrice.amount - calculatedPrice.tax.amount)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-  //                       </div>
-  //                     </div>
-  //                     : 
-  //                     <div>
-  //                       <div className='mb-1'>
-  //                         {money(0)} {t("DELIVERY_FORM_TOTAL_VAT")}
-  //                       </div>
-  //                       <div>
-  //                         {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-  //                       </div>
-  //                     </div>
-  //                   }
-  //                 </div>
-  //                 {priceError.isPriceError ? 
-  //                   <div className="alert alert-danger mt-4" role="alert">
-  //                     {priceError.priceErrorMessage}
-  //                   </div>
-  //               : null}
-                
-  //               </div>
-              
-  //               <div className='order-informations__complete-order'>
-  //                   <Button
-  //                     style={{ backgroundColor: '#F05A58', color: '#fff', height: '2.5em' }}
-  //                     htmlType="submit" disabled={isSubmitting}>
-  //                     {t("DELIVERY_FORM_SUBMIT")}
-  //                   </Button>
-  //                 </div>
-                  
-  //               {error.isError ? 
-  //                 <div className="alert alert-danger mt-4" role="alert">
-  //                   {error.errorMessage}
-  //                 </div>
-  //               : null}
-  //               </div>
-
-  //           </div>
-  //           </Form>
-  //         )
-  //       }}
-  //     </Formik>
-  //   </ConfigProvider>
-  // )
 }

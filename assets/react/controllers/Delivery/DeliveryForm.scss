@@ -5,14 +5,16 @@
 }
 
 .new-order {
-  background-color: #f0f;
   justify-content: space-around;
   gap: 2em;
+  
+  &__item {
+    max-width: 400px;
+  }
 }
 
 .delivery-form {
-  background-color: aqua;
-  justify-content: space-between;
+  justify-content: space-around;
 
 }
 
@@ -20,14 +22,37 @@
   align-self: start;
   position: sticky;
   top:0;
-  background-color: rgb(255, 221, 0);
   min-width: 300px;
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
+
+  .delivery-form{
+    flex-wrap:nowrap
+  }
+
   .order-informations {
-    position: relative;
-    top: 10px;
+    min-width: 200px
+  }
+
+  .new-order{
+    flex-direction: column;
+  }
+
+
+}
+
+@media (max-width: 768px){
+  .delivery-form{
+    flex-direction: column;
+    align-items: center;
+    gap: 2em
+  }
+
+  .order-informations{
+
+    width: 100%;
+    text-align: center;
   }
 }
