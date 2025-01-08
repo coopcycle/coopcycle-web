@@ -347,7 +347,7 @@ export default function ({  storeId }) {
                             type="button"
                             className='mb-4'
                           >
-                            Remove this dropoff
+                            {t("DELIVERY_FORM_REMOVE_DROPOFF")}
                           </Button>
                         ) : null}
 

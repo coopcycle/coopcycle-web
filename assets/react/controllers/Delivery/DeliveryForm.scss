@@ -3,7 +3,6 @@
   flex-wrap: wrap;
   gap: 2em;
   padding: 2em;
-  
 }
 
 .new-order {
@@ -20,7 +19,6 @@
 
 .delivery-form {
   justify-content: space-around;
-
 }
 
 .order-informations {
@@ -44,13 +42,10 @@
   .new-order{
     flex-direction: column;
 
-
     &__item {
       max-width: 100%;
     }
   }
-
-
 }
 
 @media (max-width: 768px){
@@ -64,9 +59,8 @@
     margin-top: 2em;
     max-width: 100%;
   }
-  
-  .order-informations{
 
+  .order-informations{
     width: 100%;
     text-align: center;
   }

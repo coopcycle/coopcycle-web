@@ -459,6 +459,7 @@
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Recordar esta dirección",
         "DELIVERY_FORM_TOTAL_PRICE": "Precio total",
         "DELIVERY_FORM_TOTAL_VAT": "IVA incluido",
-        "DELIVERY_FORM_TOTAL_EX_VAT": "Sin IVA"
+        "DELIVERY_FORM_TOTAL_EX_VAT": "Sin IVA",
+        "DELIVERY_FORM_REMOVE_DROPOFF": "Eliminar esta entrega"
     }
 }

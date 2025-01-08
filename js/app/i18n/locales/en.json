@@ -624,6 +624,7 @@
       "DELIVERY_FORM_REMEMBER_ADDRESS": "Remember this address",
       "DELIVERY_FORM_TOTAL_PRICE": "Total price",
       "DELIVERY_FORM_TOTAL_VAT": "Incl. VAT",
-      "DELIVERY_FORM_TOTAL_EX_VAT": "Excl. VAT"
+      "DELIVERY_FORM_TOTAL_EX_VAT": "Excl. VAT",
+      "DELIVERY_FORM_REMOVE_DROPOFF": "Remove this dropoff"
     }
 }
