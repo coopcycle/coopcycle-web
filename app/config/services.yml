@@ -1015,6 +1015,7 @@ services:
   AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
   AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer: ~
   AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
+  AppBundle\Api\DataTransformer\StoreAddAddressDataTransformer: ~
   AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
   AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
   AppBundle\Api\DataTransformer\EdenredCredentialsInputDataTransformer: ~
@@ -1221,6 +1222,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\StoreVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\AddressVoter:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\UserVoter:

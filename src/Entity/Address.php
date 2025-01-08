@@ -31,6 +31,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "patch"={
+ *       "method"="PATCH",
+ *       "access_control"="is_granted('edit', object)"
  *     }
  *   },
  *   subresourceOperations={
