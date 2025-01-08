@@ -7,13 +7,15 @@ import { ConfigProvider } from 'antd'
 import axios from 'axios'
 import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
-import { PhoneNumberUtil } from 'google-libphonenumber'
-import { getCountry } from '../../../../js/app/i18n'
+// use for phone validation
+// import { PhoneNumberUtil } from 'google-libphonenumber'
+// import { getCountry } from '../../../../js/app/i18n' 
 import { useTranslation } from 'react-i18next'
 
 import "./DeliveryForm.scss"
 
-const phoneUtil = PhoneNumberUtil.getInstance();
+/** used in case of phone validation */
+// const phoneUtil = PhoneNumberUtil.getInstance();
 
 const getNextRoundedTime = () => {
   const now = moment()
@@ -30,16 +32,19 @@ const getNextRoundedTime = () => {
   return now
 }
 
-const validatePhoneNumber = (telephone) => {
-  try {
-    const phoneNumber = telephone.startsWith('+')
-      ? phoneUtil.parse(telephone)
-      : phoneUtil.parse(telephone, getCountry());
-    return phoneUtil.isValidNumber(phoneNumber);
-  } catch (error) {
-    return false;
-  }
-};
+/** Needed in case we add phone validation for store */
+
+// const validatePhoneNumber = (telephone) => {
+  // if(telephone){
+//   try {
+//     const phoneNumber = telephone.startsWith('+')
+//       ? phoneUtil.parse(telephone)
+//       : phoneUtil.parse(telephone, getCountry());
+//     return phoneUtil.isValidNumber(phoneNumber);
+//   } catch (error) {
+//     return false;
+//   }
+// };
 
 
 
@@ -70,8 +75,8 @@ export default function ({  storeId }) {
           streetAddress: '',
           name: '',
           contactName: '',
-          telephone: '',
-          formattedTelephone: ''
+          telephone: null,
+          formattedTelephone: null
         },
         toBeRemembered: false,
         toBeModified: false,
@@ -86,8 +91,8 @@ export default function ({  storeId }) {
           streetAddress: '',
           name: '',
           contactName: '',
-          telephone: '',
-          formattedTelephone : 's',
+          telephone: null,
+          formattedTelephone : null,
         },
         toBeRemembered: false,
         toBeModified: false,
@@ -114,13 +119,15 @@ export default function ({  storeId }) {
           doneAfterPickup = after
         }
 
-        if (!values.tasks[i].address.formatedTelephone) {
-          taskErrors.address = taskErrors.address || {}; 
-          taskErrors.address.formatedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
-        } else if (!validatePhoneNumber(values.tasks[i].address.formatedTelephone)) {
-          taskErrors.address = taskErrors.address || {}; 
-          taskErrors.address.formatedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
-        }
+        /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
+
+        // if (!values.tasks[i].address.formatedTelephone) {
+        //   taskErrors.address = taskErrors.address || {}; 
+        //   taskErrors.address.formatedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
+        // } else if (!validatePhoneNumber(values.tasks[i].address.formatedTelephone)) {
+        //   taskErrors.address = taskErrors.address || {}; 
+        //   taskErrors.address.formatedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
+        // }
 
         if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
           taskErrors.packages= t("DELIVERY_FORM_ERROR_PACKAGES")
@@ -191,7 +198,49 @@ export default function ({  storeId }) {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
       const jwt = jwtResp.jwt
       const tasksUrl = `${baseURL}/api/deliveries`
-      const newAddressURL= `${baseURL}/api/me/addresses`
+      const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
+
+
+      for (const task of values.tasks) {
+        if (task.toBeModified) {
+          axios.patch(
+            `${baseURL}${task.address['@id']}`,
+            task.address,
+            {
+              headers: {
+                Authorization: `Bearer ${jwt}`,
+                'Content-Type': 'application/ld+json',
+                },
+            },
+          )
+          .catch(error => {
+              if (error.response) {
+                setError({isError: true, errorMessage:error.response.data['hydra:description']})
+              }
+            })
+        }
+      }
+
+      for (const task of values.tasks) {
+        if (task.toBeRemembered) {
+          axios.post(
+            saveAddressUrl, 
+            task.address, 
+
+            {
+              headers: {
+                Authorization: `Bearer ${jwt}`,
+                'Content-Type': 'application/ld+json',
+                },
+            },
+          )
+            .catch(error => {
+              if (error.response) {
+                setError({isError: true, errorMessage:error.response.data['hydra:description']})
+              }
+            })
+        }
+      }
 
       await axios.post(
         tasksUrl,
@@ -206,35 +255,17 @@ export default function ({  storeId }) {
           },
         },
       )
-        .then(() => {
-          window.location.href =previousUrl
-      })
+        .then(()=> {
+              window.location.href =previousUrl
+          }
+        )
         .catch(error => {
           if (error.response) {
             setError({isError: true, errorMessage: error.response.data['hydra:description']} )
           }
         })
-      
-      for (const task of values.tasks) {
-        if (task.toBeRemembered) {
-          axios.post(
-            newAddressURL, 
-            task.address, 
 
-            {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            'Content-Type': 'application/ld+json',
-            },
-          },
-          )
-            .catch(error => {
-              if (error.response) {
-                setError({isError: true, errorMessage:error.response.data['hydra:description']})
-              }
-            })
-        }
-      }
+      
     },
     [storeDeliveryInfos],
   )
@@ -250,8 +281,6 @@ export default function ({  storeId }) {
       >
         {({ values, isSubmitting }) => {
           
-          console.log("values", values)
-
           useEffect(() => {
 
             const infos = {
