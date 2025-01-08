@@ -5,6 +5,8 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use AppBundle\Action\Store\AddAddress;
+
 use AppBundle\Action\MyStores;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
@@ -14,6 +16,7 @@ use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,6 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
 use AppBundle\Action\Store\Packages as Packages;
+
 
 /**
  * A retail good store.
@@ -73,6 +77,13 @@ use AppBundle\Action\Store\Packages as Packages;
  *       "controller"=Packages::class,
  *       "normalization_context"={"groups"={"store_packages"}},
  *       "security"="is_granted('edit', object)"
+ *     },
+ *     "add_address"={
+ *       "method"="POST",
+ *       "path"="/stores/{id}/addresses",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=Address::class,
+ *       "controller"=AddAddress::class
  *     },
  *   },
  *   subresourceOperations={
