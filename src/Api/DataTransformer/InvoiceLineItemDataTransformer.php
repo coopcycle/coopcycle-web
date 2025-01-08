@@ -56,6 +56,10 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
                     '%number%' => $order->getNumber(),
                 ], 'messages')
             );
+
+            // Remove special characters (emojis, etc.) from the description
+            // See https://symbl.cc/en/unicode-table/ for a list of Unicode ranges
+            $description = preg_replace('/[\x{2600}-\x{27FF}\x{10000}-\x{10FFFF}]/u', '', $description);
         }
 
         return new InvoiceLineItem(
