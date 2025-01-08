@@ -4,8 +4,6 @@ import moment from 'moment'
 import axios from 'axios'
 import { useFormikContext } from 'formik'
 
-import 'antd/es/input/style/index.css'
-
 const baseURL = location.protocol + '//' + location.host
 
 export default ({ storeId, storeDeliveryInfos, index }) => {
@@ -130,7 +128,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     return !dates.some(date => date.isSame(current, 'day'))
   }
 
-  const handleInitialChoicesChange = e => {
+  const handleTimeSlotLabelChange = e => {
     const label = storeDeliveryLabels.find(
       label => label.name === e.target.value,
     )
@@ -166,7 +164,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
               key={label}
               value={label}
               onChange={timeSlot => {
-                handleInitialChoicesChange(timeSlot)
+                handleTimeSlotLabelChange(timeSlot)
               }}>
               {label}
             </Radio.Button>

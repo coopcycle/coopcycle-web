@@ -1,11 +1,11 @@
 import './AddressBookNew.scss'
 import React, { useState } from 'react'
 import { Input, Select, Checkbox, Button } from 'antd'
-import AddressAutosuggest from '../components/AddressAutosuggest'
+import AddressAutosuggest from '../AddressAutosuggest'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import { useFormikContext, Field } from 'formik'
-import { getCountry } from '../i18n'
+import { getCountry } from '../../i18n'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 function getFormattedValue(value) {
@@ -38,7 +38,7 @@ function getUnformattedValue(value) {
 export default function AddressBook({ index, addresses }) {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
-  const toBeModified = values.tasks[index].toBeModified
+  const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
 
   const [isModalOpen, setModalOpen] = useState(false)
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
@@ -49,7 +49,7 @@ export default function AddressBook({ index, addresses }) {
   const handleModifyAddress = () => {
     if (
       values.tasks[index].address['@id'] &&
-      !toBeModified &&
+      !updateInStoreAddresses &&
       !alreadyAskedForModification
     ) {
       setModalOpen(true)
@@ -62,35 +62,43 @@ export default function AddressBook({ index, addresses }) {
     const selectedAddress = addresses.find(
       address => address.streetAddress === value,
     )
-    const formatedTelephone = getFormattedValue(selectedAddress.telephone)
+    const formattedTelephone = getFormattedValue(selectedAddress.telephone)
 
     setFieldValue(`tasks[${index}].address`, {
       ...selectedAddress,
       streetAddress: selectedAddress.streetAddress || '',
       name: selectedAddress.name || '',
       telephone: selectedAddress.telephone || null,
-      formatedTelephone,
+      formattedTelephone,
       contactName: selectedAddress.contactName || '',
     })
     setSelectValue(value)
   }
 
-  /** The value used by the input is formatedTelephone, as we need to send telephone with international area code */
+  /** The value used by the input is formatedTelephone, as we need to send telephone with international area code
+   * We also need to set the value to null if input is empty because React treats it as empty string and it causes validation errors from the back
+   */
   const handleTelephone = (e, form) => {
-    const formatedTelephone = e.target.value
-    const telephone = getUnformattedValue(formatedTelephone)
-    form.setFieldValue(
-      `tasks[${index}].address.formatedTelephone`,
-      formatedTelephone,
-    )
-    form.setFieldValue(`tasks[${index}].address.telephone`, telephone)
+    const formattedTelephone = e.target.value
+
+    if (formattedTelephone === '') {
+      form.setFieldValue(`tasks[${index}].address.formattedTelephone`, null)
+      form.setFieldValue(`tasks[${index}].address.telephone`, null)
+    } else {
+      const telephone = getUnformattedValue(formattedTelephone)
+      form.setFieldValue(
+        `tasks[${index}].address.formattedTelephone`,
+        formattedTelephone,
+      )
+      form.setFieldValue(`tasks[${index}].address.telephone`, telephone)
+    }
   }
 
   /** to reset if the address has to be modified in case the user changes the address selected */
 
   const resetToBeModified = () => {
-    if (toBeModified) {
-      setFieldValue(`tasks[${index}].toBeModified`, false)
+    if (updateInStoreAddresses) {
+      setFieldValue(`tasks[${index}].updateInStoreAddresses`, false)
     }
     setAlreadyAskedForModification(false)
   }
@@ -141,12 +149,12 @@ export default function AddressBook({ index, addresses }) {
           </Field>
         </div>
         <div className="address-infos__item">
-          <Field name={`tasks[${index}].address.formatedTelephone`}>
+          <Field name={`tasks[${index}].address.formattedTelephone`}>
             {({ field, form }) => (
               <>
                 <Input
                   {...field}
-                  value={form.values.tasks[index].address.formatedTelephone}
+                  value={form.values.tasks[index].address.formattedTelephone}
                   onChange={e => {
                     handleModifyAddress()
                     handleTelephone(e, form)
@@ -155,9 +163,9 @@ export default function AddressBook({ index, addresses }) {
                     'ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL',
                   )}
                 />
-                {errors.tasks?.[index]?.address?.formatedTelephone && (
+                {errors.tasks?.[index]?.address?.formattedTelephone && (
                   <div className="text-danger">
-                    {errors.tasks[index].address.formatedTelephone}
+                    {errors.tasks[index].address.formattedTelephone}
                   </div>
                 )}
               </>
@@ -196,8 +204,8 @@ export default function AddressBook({ index, addresses }) {
                 ...address,
                 name: values.tasks[index].address.name || '',
                 telephone: values.tasks[index].address.telephone || null,
-                formatedTelephone:
-                  values.tasks[index].address.formatedTelephone || null,
+                formattedTelephone:
+                  values.tasks[index].address.formattedTelephone || null,
                 contactName: values.tasks[index].address.contactName || '',
               })
               setSelectValue(null)
@@ -208,22 +216,22 @@ export default function AddressBook({ index, addresses }) {
                 streetAddress: '',
                 name: values.tasks[index].address.name || '',
                 telephone: values.tasks[index].address.telephone || null,
-                formatedTelephone:
-                  values.tasks[index].address.formatedTelephone || null,
+                formattedTelephone:
+                  values.tasks[index].address.formattedTelephone || null,
                 contactName: values.tasks[index].address.contactName || '',
               })
               setSelectValue(null)
             }}
           />
           {!selectValue && (
-            <Field name={`tasks[${index}].toBeRemembered`}>
+            <Field name={`tasks[${index}].saveInStoreAddresses`}>
               {({ field }) => (
                 <Checkbox
                   {...field}
                   checked={field.value}
                   onChange={e =>
                     setFieldValue(
-                      `tasks[${index}].toBeRemembered`,
+                      `tasks[${index}].saveInStoreAddresses`,
                       e.target.checked,
                     )
                   }>
@@ -256,7 +264,7 @@ export default function AddressBook({ index, addresses }) {
           <Button
             className="mr-4"
             onClick={() => {
-              setFieldValue(`tasks[${index}].toBeModified`, true)
+              setFieldValue(`tasks[${index}].updateInStoreAddresses`, true)
               setModalOpen(false)
             }}>
             {t('ADDRESS_BOOK_PROP_CHANGED_UPDATE')}

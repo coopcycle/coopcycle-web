@@ -1,25 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
-import Task from './Task'
+import Task from '../../../../js/app/components/delivery-form/Task.js'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import axios from 'axios'
 import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
-// use for phone validation
-// import { PhoneNumberUtil } from 'google-libphonenumber'
-// import { getCountry } from '../../../../js/app/i18n' 
+
+import { PhoneNumberUtil } from 'google-libphonenumber'
+import { getCountry } from '../../../../js/app/i18n' 
 import { useTranslation } from 'react-i18next'
 
 import "./DeliveryForm.scss"
 
 /** used in case of phone validation */
-// const phoneUtil = PhoneNumberUtil.getInstance();
+const phoneUtil = PhoneNumberUtil.getInstance();
 
 const getNextRoundedTime = () => {
   const now = moment()
-  now.add(15, 'minutes')
+  now.add(60, 'minutes')
   const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
   if (roundedMinutes >= 60) {
     now.add(1, 'hour')
@@ -32,20 +32,55 @@ const getNextRoundedTime = () => {
   return now
 }
 
-/** Needed in case we add phone validation for store */
+/** Te be revamp for store as telephone is needed */
+const validatePhoneNumber = (telephone) => {
+  if (telephone) {
+    try {
+      const phoneNumber = telephone.startsWith('+')
+        ? phoneUtil.parse(telephone)
+        : phoneUtil.parse(telephone, getCountry())
+      return phoneUtil.isValidNumber(phoneNumber)
+    } catch (error) {
+      return false
+    }
+  } else {
+    return true
+  }
+};
 
-// const validatePhoneNumber = (telephone) => {
-  // if(telephone){
-//   try {
-//     const phoneNumber = telephone.startsWith('+')
-//       ? phoneUtil.parse(telephone)
-//       : phoneUtil.parse(telephone, getCountry());
-//     return phoneUtil.isValidNumber(phoneNumber);
-//   } catch (error) {
-//     return false;
-//   }
-// };
+const dropoffSchema = {
+  type: 'DROPOFF',
+  doneAfter: getNextRoundedTime().toISOString(),
+  doneBefore: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  timeSlot: null,
+  comments: '',
+  address: {
+    streetAddress: '',
+    name: '',
+    contactName: '',
+    telephone: '',
+    },
+  updateInStoreAddresses: false,
+  packages: [],
+  weight: 0
+  };
 
+const pickupSchema = {
+  type: 'PICKUP',
+    doneAfter: getNextRoundedTime().toISOString(),
+    doneBefore: getNextRoundedTime().add(60, 'minutes').toISOString(),
+    timeSlot: null,
+    comments: '',
+    address: {
+      streetAddress: '',
+      name: '',
+      contactName: '',
+      telephone: null,
+      formattedTelephone: null
+    },
+    saveInStoreAddresses: false,
+    updateInStoreAddresses: false,
+}
 
 
 const baseURL = location.protocol + '//' + location.host
@@ -61,46 +96,12 @@ export default function ({  storeId }) {
   
   const { t } = useTranslation()
 
-  const previousUrl = document.referrer;
-
   const initialValues = {
     tasks: [
-      {
-        type: 'PICKUP',
-        doneAfter: getNextRoundedTime().toISOString(),
-        doneBefore: getNextRoundedTime().add(15, 'minutes').toISOString(),
-        timeSlot: null,
-        comments: '',
-        address: {
-          streetAddress: '',
-          name: '',
-          contactName: '',
-          telephone: null,
-          formattedTelephone: null
-        },
-        toBeRemembered: false,
-        toBeModified: false,
-      },
-      {
-        type: 'DROPOFF',
-        doneAfter: getNextRoundedTime().toISOString(),
-        doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
-        timeSlot: null,
-        comments: '',
-        address: {
-          streetAddress: '',
-          name: '',
-          contactName: '',
-          telephone: null,
-          formattedTelephone : null,
-        },
-        toBeRemembered: false,
-        toBeModified: false,
-        packages: [], 
-        weight: 0
-      },
+      pickupSchema,
+      dropoffSchema,
     ],
-    }
+  }
   
 
     const validate = (values) => {
@@ -119,15 +120,25 @@ export default function ({  storeId }) {
           doneAfterPickup = after
         }
 
+         if (values.tasks[i].type === "DROPOFF" && values.tasks[i].doneAfter) {
+          const doneAfterDropoff = values.tasks[i].doneAfter
+          const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
+          if (!isWellOrdered) {
+            taskErrors.doneBefore=t("DELIVERY_FORM_ERROR_HOUR")
+          }
+        }
+
         /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
 
-        // if (!values.tasks[i].address.formatedTelephone) {
+        // if (!values.tasks[i].address.formattedTelephone) {
         //   taskErrors.address = taskErrors.address || {}; 
-        //   taskErrors.address.formatedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
-        // } else if (!validatePhoneNumber(values.tasks[i].address.formatedTelephone)) {
-        //   taskErrors.address = taskErrors.address || {}; 
-        //   taskErrors.address.formatedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
-        // }
+        //   taskErrors.address.formattedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
+        // } 
+        
+        if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
+          taskErrors.address = taskErrors.address || {}; 
+          taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
+        }
 
         if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
           taskErrors.packages= t("DELIVERY_FORM_ERROR_PACKAGES")
@@ -136,15 +147,6 @@ export default function ({  storeId }) {
         if (values.tasks[i].type === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
           taskErrors.weight = t("DELIVERY_FORM_ERROR_WEIGHT")
         }
-
-        if (values.tasks[i].type === "DROPOFF" && values.tasks[i].doneAfter) {
-          const doneAfterDropoff = values.tasks[i].doneAfter
-          const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
-          if (!isWellOrdered) {
-            taskErrors.doneBefore=t("DELIVERY_FORM_ERROR_HOUR")
-          }
-        }
-
 
         if (Object.keys(taskErrors).length > 0) {
           errors.tasks[i] = taskErrors
@@ -197,53 +199,11 @@ export default function ({  storeId }) {
       
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
       const jwt = jwtResp.jwt
-      const tasksUrl = `${baseURL}/api/deliveries`
+      const createDeliveryUrl = `${baseURL}/api/deliveries`
       const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
 
-
-      for (const task of values.tasks) {
-        if (task.toBeModified) {
-          axios.patch(
-            `${baseURL}${task.address['@id']}`,
-            task.address,
-            {
-              headers: {
-                Authorization: `Bearer ${jwt}`,
-                'Content-Type': 'application/ld+json',
-                },
-            },
-          )
-          .catch(error => {
-              if (error.response) {
-                setError({isError: true, errorMessage:error.response.data['hydra:description']})
-              }
-            })
-        }
-      }
-
-      for (const task of values.tasks) {
-        if (task.toBeRemembered) {
-          axios.post(
-            saveAddressUrl, 
-            task.address, 
-
-            {
-              headers: {
-                Authorization: `Bearer ${jwt}`,
-                'Content-Type': 'application/ld+json',
-                },
-            },
-          )
-            .catch(error => {
-              if (error.response) {
-                setError({isError: true, errorMessage:error.response.data['hydra:description']})
-              }
-            })
-        }
-      }
-
       await axios.post(
-        tasksUrl,
+        createDeliveryUrl,
         {
           store: storeDeliveryInfos['@id'],
           tasks: values.tasks,
@@ -255,8 +215,48 @@ export default function ({  storeId }) {
           },
         },
       )
-        .then(()=> {
-              window.location.href =previousUrl
+        .then(() => {
+          for (const task of values.tasks) {
+            if (task.updateInStoreAddresses) {
+              axios.patch(
+                `${baseURL}${task.address['@id']}`,
+                task.address,
+                {
+                  headers: {
+                    Authorization: `Bearer ${jwt}`,
+                    'Content-Type': 'application/ld+json',
+                    },
+                },
+              )
+              .catch(error => {
+                  if (error.response) {
+                    setError({isError: true, errorMessage:error.response.data['hydra:description']})
+                  }
+                })
+            }
+          }
+
+          for (const task of values.tasks) {
+            if (task.saveInStoreAddresses) {
+              axios.post(
+                saveAddressUrl, 
+                task.address, 
+
+                {
+                  headers: {
+                    Authorization: `Bearer ${jwt}`,
+                    'Content-Type': 'application/ld+json',
+                    },
+                },
+              )
+                .catch(error => {
+                  if (error.response) {
+                    setError({isError: true, errorMessage:error.response.data['hydra:description']})
+                  }
+                })
+              }
+          }
+            window.history.go(-2);
           }
         )
         .catch(error => {
@@ -280,6 +280,8 @@ export default function ({  storeId }) {
         validateOnBlur={false}
       >
         {({ values, isSubmitting }) => {
+
+            console.log(values)
           
           useEffect(() => {
 
@@ -357,24 +359,7 @@ export default function ({  storeId }) {
                           <Button
                             disabled={false}
                             onClick={() => {
-                              const newDropoff = {
-                                type: 'DROPOFF',
-                                doneAfter: getNextRoundedTime().toISOString(),
-                                doneBefore: getNextRoundedTime().add(30, 'minutes').toISOString(),
-                                timeSlot: null,
-                                comments: '',
-                                address: {
-                                  streetAddress: '',
-                                  name: '',
-                                  contactName: '',
-                                  telephone: '',
-                                },
-                                toBeRemembered: false,
-                                toBeModified: false,
-                                packages: [],
-                                weight: 0
-                              };
-                              arrayHelpers.push(newDropoff);
+                              arrayHelpers.push(dropoffSchema);
                             }}
                           >
                             {t("DELIVERY_FORM_ADD_DROPOFF")}
