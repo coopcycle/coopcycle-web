@@ -9,6 +9,8 @@ import Packages from '../../../../js/app/delivery/Packages'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from '../../../../js/app/delivery/TotalWeight'
 
+import './Task.scss'
+
 const baseURL = location.protocol + '//' + location.host
 
 export default ({addresses, storeId, index, storeDeliveryInfos }) => {
@@ -47,45 +49,52 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
   }, [storeDeliveryInfos])
   
   return (
-    <div>
-      <h3 className='mb-4'>{task.type === "PICKUP" ? t("DELIVERY_FORM_PICKUP_INFORMATIONS") : t("DELIVERY_FORM_DROPOFF_INFORMATIONS")}</h3>
+    <div className='task'>
 
-      <AddressBookNew
-        addresses={addresses}
-        index={index}
-      />
+      <div className='task__header'>
+        { task.type === 'PICKUP' ? <i className='fa fa-arrow-up'></i> : <i className='fa fa-arrow-down'></i>}
+        <h3 className='task__header__title mb-4'>{task.type === "PICKUP" ? t("DELIVERY_FORM_PICKUP_INFORMATIONS") : t("DELIVERY_FORM_DROPOFF_INFORMATIONS")}</h3>
+      </div>
 
-      {task.type === "DROPOFF" ?
-        <div>
-          { packages ? <Packages storeId={storeId} index={index} packages={packages} /> : null}
-          <TotalWeight index={index} /> 
+      <div className='task__body'> 
+      
+        <AddressBookNew
+          addresses={addresses}
+          index={index}
+        />
+
+        {task.type === "DROPOFF" ?
+          <div>
+            { packages ? <Packages storeId={storeId} index={index} packages={packages} /> : null}
+            <TotalWeight index={index} /> 
+          </div>
+          : null}
+          
+        {areDefinedTimeSlots() ? (
+          <SwitchTimeSlotFreePicker
+            storeId={storeId}
+            storeDeliveryInfos={storeDeliveryInfos}
+            index={index}
+            format={format}
+          />
+        ) : ( 
+          <DateRangePicker
+            format={format}
+            index={index}
+          />
+        )}
+        <div className="mt-4 mb-4">
+          <label htmlFor={`tasks[${index}].comments`} className="block mb-2 font-weight-bold">
+            {t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL")}
+          </label>
+          <Field
+            as={Input.TextArea}
+            name={`tasks[${index}].comments`}
+            placeholder={t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER")}
+            rows={4}
+            style={{ resize: "none" }}
+          />
         </div>
-        : null}
-        
-      {areDefinedTimeSlots() ? (
-        <SwitchTimeSlotFreePicker
-          storeId={storeId}
-          storeDeliveryInfos={storeDeliveryInfos}
-          index={index}
-          format={format}
-        />
-      ) : ( 
-        <DateRangePicker
-          format={format}
-          index={index}
-        />
-      )}
-      <div className="mt-4 mb-4">
-        <label htmlFor={`tasks[${index}].comments`} className="block mb-2 font-weight-bold">
-          {t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL")}
-        </label>
-        <Field
-          as={Input.TextArea}
-          name={`tasks[${index}].comments`}
-          placeholder={t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER")}
-          rows={4}
-          style={{ resize: "none" }}
-        />
       </div>
     </div>
   )

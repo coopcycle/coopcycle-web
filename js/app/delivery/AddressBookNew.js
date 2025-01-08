@@ -68,7 +68,7 @@ export default function AddressBook({ index, addresses }) {
       ...selectedAddress,
       streetAddress: selectedAddress.streetAddress || '',
       name: selectedAddress.name || '',
-      telephone: selectedAddress.telephone || '',
+      telephone: selectedAddress.telephone || null,
       formatedTelephone,
       contactName: selectedAddress.contactName || '',
     })
@@ -86,143 +86,156 @@ export default function AddressBook({ index, addresses }) {
     form.setFieldValue(`tasks[${index}].address.telephone`, telephone)
   }
 
+  /** to reset if the address has to be modified in case the user changes the address selected */
+
+  const resetToBeModified = () => {
+    if (toBeModified) {
+      setFieldValue(`tasks[${index}].toBeModified`, false)
+    }
+    setAlreadyAskedForModification(false)
+  }
+
   return (
-  <div className="address-container mb-4">
-    <div className="row">
-      <div className="col-sm-12 mb-3">
-        <Select
-          style={{ width: '100%' }}
-          showSearch
-          placeholder={t("TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME")}
-          value={selectValue}
-          optionFilterProp="label"
-          onChange={value => {
-            handleAddressSelected(value)
-          }}
-          filterOption={(input, option) =>
-            option.label.toLowerCase().includes(input.toLowerCase())
-          }
-          options={addresses.map(address => ({
-            value: address.streetAddress,
-            label: address.streetAddress,
-            key: address['@id'],
-            id: address['@id'],
-          }))}
-        />
+    <div className="address-container mb-4">
+      <div className="row">
+        <div className="col-sm-12 mb-3">
+          <Select
+            style={{ width: '100%' }}
+            showSearch
+            placeholder={t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}
+            value={selectValue}
+            optionFilterProp="label"
+            onChange={value => {
+              handleAddressSelected(value)
+              resetToBeModified()
+            }}
+            filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase())
+            }
+            options={addresses.map(address => ({
+              value: address.streetAddress,
+              label: address.streetAddress,
+              key: address['@id'],
+              id: address['@id'],
+            }))}
+          />
+        </div>
       </div>
-    </div>
-    <div className="mb-3 address-infos">
-      <div className="address-infos__item">
-        <Field name={`tasks[${index}].address.name`}>
-          {({ field, form }) => (
-            <Input
-              {...field}
-              value={form.values.tasks[index].address.name}
-              onChange={e => {
-                handleModifyAddress()
-                form.setFieldValue(
-                  `tasks[${index}].address.name`,
-                  e.target.value,
-                )
-              }}
-              placeholder={t("ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL")}
-            />
-          )}
-        </Field>
-      </div>
-      <div className="address-infos__item">
-        <Field name={`tasks[${index}].address.formatedTelephone`}>
-          {({ field, form }) => (
-            <>
+      <div className="mb-3 address-infos">
+        <div className="address-infos__item">
+          <Field name={`tasks[${index}].address.name`}>
+            {({ field, form }) => (
               <Input
                 {...field}
-                value={form.values.tasks[index].address.formatedTelephone}
+                value={form.values.tasks[index].address.name}
                 onChange={e => {
                   handleModifyAddress()
-                  handleTelephone(e, form)
-                }}
-                placeholder={t("ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL")}
-              />
-              {errors.tasks?.[index]?.address?.formatedTelephone && (
-                <div className="text-danger">
-                  {errors.tasks[index].address.formatedTelephone}
-                </div>
-              )}
-            </>
-          )}
-        </Field>
-      </div>
-      <div className="address-infos__item">
-        <Field name={`tasks[${index}].address.contactName`}>
-          {({ field, form }) => (
-            <Input
-              {...field}
-              value={form.values.tasks[index].address.contactName}
-              onChange={e => {
-                handleModifyAddress()
-                form.setFieldValue(
-                  `tasks[${index}].address.contactName`,
-                  e.target.value,
-                )
-              }}
-              placeholder={t("DELIVERY_FORM_CONTACT_PLACEHOLDER")}
-            />
-          )}
-        </Field>
-      </div>
-    </div>
-    <div className="row">
-      <div className="col-sm-12">
-        <AddressAutosuggest
-          address={values.tasks[index].address || ''}
-          addresses={addresses}
-          required={true}
-          reportValidity={true}
-          preciseOnly={true}
-          onAddressSelected={(value, address) => {
-            setFieldValue(`tasks[${index}].address`, {
-              ...address,
-              name: values.tasks[index].address.name || '',
-              telephone: values.tasks[index].address.telephone || '',
-              formatedTelephone:
-                values.tasks[index].address.formatedTelephone || '',
-              contactName: values.tasks[index].address.contactName || '',
-            })
-            setSelectValue(null)
-          }}
-          onClear={() => {
-            setFieldValue(`tasks[${index}].address`, {
-              streetAddress: '',
-              name: values.tasks[index].address.name || '',
-              telephone: values.tasks[index].address.telephone || '',
-              formatedTelephone:
-                values.tasks[index].address.formatedTelephone || '',
-              contactName: values.tasks[index].address.contactName || '',
-            })
-            setSelectValue(null)
-          }}
-        />
-        {!selectValue && (
-          <Field name={`tasks[${index}].toBeRemembered`}>
-            {({ field }) => (
-              <Checkbox
-                {...field}
-                checked={field.value}
-                onChange={e =>
-                  setFieldValue(
-                    `tasks[${index}].toBeRemembered`,
-                    e.target.checked,
+                  form.setFieldValue(
+                    `tasks[${index}].address.name`,
+                    e.target.value,
                   )
-                }>
-                {t("DELIVERY_FORM_REMEMBER_ADDRESS")}
-              </Checkbox>
+                }}
+                placeholder={t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL')}
+              />
             )}
           </Field>
-        )}
+        </div>
+        <div className="address-infos__item">
+          <Field name={`tasks[${index}].address.formatedTelephone`}>
+            {({ field, form }) => (
+              <>
+                <Input
+                  {...field}
+                  value={form.values.tasks[index].address.formatedTelephone}
+                  onChange={e => {
+                    handleModifyAddress()
+                    handleTelephone(e, form)
+                  }}
+                  placeholder={t(
+                    'ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_LABEL',
+                  )}
+                />
+                {errors.tasks?.[index]?.address?.formatedTelephone && (
+                  <div className="text-danger">
+                    {errors.tasks[index].address.formatedTelephone}
+                  </div>
+                )}
+              </>
+            )}
+          </Field>
+        </div>
+        <div className="address-infos__item">
+          <Field name={`tasks[${index}].address.contactName`}>
+            {({ field, form }) => (
+              <Input
+                {...field}
+                value={form.values.tasks[index].address.contactName}
+                onChange={e => {
+                  handleModifyAddress()
+                  form.setFieldValue(
+                    `tasks[${index}].address.contactName`,
+                    e.target.value,
+                  )
+                }}
+                placeholder={t('DELIVERY_FORM_CONTACT_PLACEHOLDER')}
+              />
+            )}
+          </Field>
+        </div>
       </div>
-    </div>
+      <div className="row">
+        <div className="col-sm-12">
+          <AddressAutosuggest
+            address={values.tasks[index].address || ''}
+            addresses={addresses}
+            required={true}
+            reportValidity={true}
+            preciseOnly={true}
+            onAddressSelected={(value, address) => {
+              setFieldValue(`tasks[${index}].address`, {
+                ...address,
+                name: values.tasks[index].address.name || '',
+                telephone: values.tasks[index].address.telephone || null,
+                formatedTelephone:
+                  values.tasks[index].address.formatedTelephone || null,
+                contactName: values.tasks[index].address.contactName || '',
+              })
+              setSelectValue(null)
+              resetToBeModified()
+            }}
+            onClear={() => {
+              setFieldValue(`tasks[${index}].address`, {
+                streetAddress: '',
+                name: values.tasks[index].address.name || '',
+                telephone: values.tasks[index].address.telephone || null,
+                formatedTelephone:
+                  values.tasks[index].address.formatedTelephone || null,
+                contactName: values.tasks[index].address.contactName || '',
+              })
+              setSelectValue(null)
+            }}
+          />
+          {!selectValue && (
+            <Field name={`tasks[${index}].toBeRemembered`}>
+              {({ field }) => (
+                <Checkbox
+                  {...field}
+                  checked={field.value}
+                  onChange={e =>
+                    setFieldValue(
+                      `tasks[${index}].toBeRemembered`,
+                      e.target.checked,
+                    )
+                  }>
+                  {t('DELIVERY_FORM_REMEMBER_ADDRESS')}
+                </Checkbox>
+              )}
+            </Field>
+          )}
+        </div>
+      </div>
       {/* Modal to handle if the user want to change the remembred address just for once or forever */}
-       <Modal
+      <Modal
         isOpen={isModalOpen}
         onRequestClose={() => {
           setModalOpen(false)
@@ -258,6 +271,6 @@ export default function AddressBook({ index, addresses }) {
           </Button>
         </div>
       </Modal>
-  </div>
-)
+    </div>
+  )
 }
