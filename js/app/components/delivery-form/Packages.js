@@ -61,7 +61,7 @@ export default ({ storeId, index, packages }) => {
   }
 
   /**Used to make the input a controlated field */
-  const calculateValue = item => {
+  const gatPackageQuantity = item => {
     const sameTypePackage = packagesPicked.find(p => p.type === item.name)
     return sameTypePackage.quantity
   }
@@ -78,9 +78,9 @@ export default ({ storeId, index, packages }) => {
 
             <div className="packages-item__quantity__input text-center">
               <Input
-                value={calculateValue(item)}
+                value={gatPackageQuantity(item)}
                 style={
-                  calculateValue(item) !== 0 ? { fontWeight: '700' } : null
+                  gatPackageQuantity(item) !== 0 ? { fontWeight: '700' } : null
                 }
               />
             </div>

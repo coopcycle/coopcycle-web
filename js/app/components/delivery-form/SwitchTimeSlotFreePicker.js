@@ -1,64 +1,52 @@
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import TimeSlotPicker from '../../../../js/app/delivery/TimeSlotPicker'
-import DateRangePicker from '../../../../js/app/delivery/DateRangePicker'
+import TimeSlotPicker from './TimeSlotPicker'
+import DateRangePicker from './DateRangePicker'
 import { useFormikContext } from 'formik'
 
+import './SwitchTimeSlotFreePicker.scss'
+
 export default ({ storeId, storeDeliveryInfos, index, format }) => {
-  const {t} = useTranslation()
+  const { t } = useTranslation()
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
-  const {setFieldValue, errors} = useFormikContext()
+  const { setFieldValue, errors } = useFormikContext()
 
   useEffect(() => {
-    if  (isTimeSlotSelect && storeDeliveryInfos.timeSlots.length > 0)  {
+    if (isTimeSlotSelect && storeDeliveryInfos.timeSlots.length > 0) {
       setFieldValue(`tasks[${index}].doneAfter`, null)
       setFieldValue(`tasks[${index}].doneBefore`, null)
     } else {
       setFieldValue(`tasks[${index}].timeSlot`, null)
     }
   }, [isTimeSlotSelect])
-  
+
   return (
     <>
       {isTimeSlotSelect ? (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'flex-end',
-          }}>
-          <div style={{ width: '95%' }}>
+        <div className="timeslot-container">
+          <div className="timeslot-container__picker" style={{ width: '95%' }}>
             <TimeSlotPicker
-            storeId={storeId}
-            storeDeliveryInfos={storeDeliveryInfos}
-            index={index}
+              storeId={storeId}
+              storeDeliveryInfos={storeDeliveryInfos}
+              index={index}
             />
           </div>
           <i
-            className="fa fa-calendar"
+            className="timeslot-container__icon fa fa-calendar"
             aria-hidden="true"
             onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
-            style={{
-              cursor: 'pointer',
-              color: '#24537D',
-              width: '5%',
-              lineHeight: '32px',
-            }}
             title={t('SWITCH_TIMESLOTPICKER')}></i>
         </div>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'baseline' }}>
-          <div style={{ width: '95%' }}>
-            <DateRangePicker
-                format={format}
-                index={index}
-            />
+        <div className="daterange-picker-container">
+          <div className="daterange-picker-container__picker">
+            <DateRangePicker format={format} index={index} />
           </div>
           <i
-            className="fa fa-calendar"
+            className="daterange-picker-container__icon fa fa-calendar"
             aria-hidden="true"
             onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
-            style={{ cursor: 'pointer', color: '#24537D', width: '5%' }}
             title={t('SWITCH_DATEPICKER')}></i>
         </div>
       )}
@@ -68,4 +56,3 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
     </>
   )
 }
-

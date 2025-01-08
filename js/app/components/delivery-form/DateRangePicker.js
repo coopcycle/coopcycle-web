@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { DatePicker, Select } from 'antd'
-import { timePickerProps } from '../utils/antd'
+import { timePickerProps } from '../../utils/antd'
 import { useFormikContext } from 'formik'
 
 import 'antd/es/input/style/index.css'
 
 function getNextRoundedTime() {
   const now = moment()
-  now.add(15, 'minutes')
+  now.add(60, 'minutes')
   const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
   if (roundedMinutes >= 60) {
     now.add(1, 'hour')
@@ -63,7 +63,7 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   const defaultAfterValue = React.useMemo(() => getNextRoundedTime(), [])
   const defaultBeforeValue = React.useMemo(
-    () => defaultAfterValue.clone().add(15, 'minutes'),
+    () => defaultAfterValue.clone().add(60, 'minutes'),
     [defaultAfterValue],
   )
 
@@ -129,7 +129,7 @@ const DateTimeRangePicker = ({ format, index }) => {
     const date =
       afterValue?.format('YYYY-MM-DD') || defaultAfterValue.format('YYYY-MM-DD')
     const newAfterHour = moment(`${date} ${newValue}:00`)
-    const newBeforeHour = newAfterHour.clone().add(15, 'minutes')
+    const newBeforeHour = newAfterHour.clone().add(60, 'minutes')
 
     setTimeValues({
       after: newAfterHour.format('HH:mm'),

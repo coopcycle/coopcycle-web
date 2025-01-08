@@ -1,30 +1,29 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useFormikContext, Field } from 'formik'
-import AddressBookNew from '../../../../js/app/delivery/AddressBookNew'
+import AddressBookNew from './AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input } from 'antd'
-import DateRangePicker from '../../../../js/app/delivery/DateRangePicker'
-import Packages from '../../../../js/app/delivery/Packages'
+import DateRangePicker from './DateRangePicker'
+import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
-import TotalWeight from '../../../../js/app/delivery/TotalWeight'
+import TotalWeight from './TotalWeight'
 
 import './Task.scss'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({addresses, storeId, index, storeDeliveryInfos }) => {
-  
+export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
   const [packages, setPackages] = useState(null)
-  
+
   const { t } = useTranslation()
-  
+
   const { values } = useFormikContext()
-  const task = values.tasks[index];
+  const task = values.tasks[index]
 
   const format = 'LL'
 
-    useEffect(() => {
+  useEffect(() => {
     const getPackages = async () => {
       const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
       const jwt = jwtResp.jwt
@@ -43,33 +42,41 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
     getPackages()
   }, [storeId])
 
-  
   const areDefinedTimeSlots = useCallback(() => {
-  return storeDeliveryInfos && Array.isArray(storeDeliveryInfos.timeSlots) && storeDeliveryInfos.timeSlots.length > 0
+    return (
+      storeDeliveryInfos &&
+      Array.isArray(storeDeliveryInfos.timeSlots) &&
+      storeDeliveryInfos.timeSlots.length > 0
+    )
   }, [storeDeliveryInfos])
-  
-  return (
-    <div className='task'>
 
-      <div className='task__header'>
-        { task.type === 'PICKUP' ? <i className='fa fa-arrow-up'></i> : <i className='fa fa-arrow-down'></i>}
-        <h3 className='task__header__title mb-4'>{task.type === "PICKUP" ? t("DELIVERY_FORM_PICKUP_INFORMATIONS") : t("DELIVERY_FORM_DROPOFF_INFORMATIONS")}</h3>
+  return (
+    <div className="task">
+      <div className="task__header">
+        {task.type === 'PICKUP' ? (
+          <i className="fa fa-arrow-up"></i>
+        ) : (
+          <i className="fa fa-arrow-down"></i>
+        )}
+        <h3 className="task__header__title mb-4">
+          {task.type === 'PICKUP'
+            ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
+            : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
+        </h3>
       </div>
 
-      <div className='task__body'> 
-      
-        <AddressBookNew
-          addresses={addresses}
-          index={index}
-        />
+      <div className="task__body">
+        <AddressBookNew addresses={addresses} index={index} />
 
-        {task.type === "DROPOFF" ?
+        {task.type === 'DROPOFF' ? (
           <div>
-            { packages ? <Packages storeId={storeId} index={index} packages={packages} /> : null}
-            <TotalWeight index={index} /> 
+            {packages ? (
+              <Packages storeId={storeId} index={index} packages={packages} />
+            ) : null}
+            <TotalWeight index={index} />
           </div>
-          : null}
-          
+        ) : null}
+
         {areDefinedTimeSlots() ? (
           <SwitchTimeSlotFreePicker
             storeId={storeId}
@@ -77,27 +84,24 @@ export default ({addresses, storeId, index, storeDeliveryInfos }) => {
             index={index}
             format={format}
           />
-        ) : ( 
-          <DateRangePicker
-            format={format}
-            index={index}
-          />
+        ) : (
+          <DateRangePicker format={format} index={index} />
         )}
         <div className="mt-4 mb-4">
-          <label htmlFor={`tasks[${index}].comments`} className="block mb-2 font-weight-bold">
-            {t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL")}
+          <label
+            htmlFor={`tasks[${index}].comments`}
+            className="block mb-2 font-weight-bold">
+            {t('ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL')}
           </label>
           <Field
             as={Input.TextArea}
             name={`tasks[${index}].comments`}
-            placeholder={t("ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER")}
+            placeholder={t('ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER')}
             rows={4}
-            style={{ resize: "none" }}
+            style={{ resize: 'none' }}
           />
         </div>
       </div>
     </div>
   )
 }
-
-

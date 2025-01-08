@@ -1,0 +1,30 @@
+.timeslot-container{
+  display: flex;
+  align-items: flex-end;
+
+  &__picker{
+    width: 95%
+  }
+
+  &__icon{
+    cursor: pointer;
+    color: #24537D;
+    width: 5%;
+    line-height: 32px,
+  }
+}
+
+.daterange-picker-container{
+  display: flex;
+  align-items: center;
+
+    &__picker{
+    width: 95%
+  }
+
+  &__icon{
+    cursor: pointer;
+    color: #24537D;
+    width: 5%;
+  }
+}
