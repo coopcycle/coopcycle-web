@@ -393,15 +393,17 @@ trait StoreTrait
             $delivery = $store->createDelivery();
         }
 
-        return $this->render('store/deliveries/beta_new.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'store' => $store,
-            'delivery' => $delivery,
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'back_route' => $routes['back'],
-            'show_left_menu' => true,
-        ]);
+        return $this->render(
+            'store/deliveries/beta_new.html.twig',
+            $this->auth([
+                'layout' => $request->attributes->get('layout'),
+                'store' => $store,
+                'delivery' => $delivery,
+                'stores_route' => $routes['stores'],
+                'store_route' => $routes['store'],
+                'back_route' => $routes['back'],
+                'show_left_menu' => true,
+        ]));
     }
 
     private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager)
