@@ -5,7 +5,7 @@ import { DatePicker, Select } from 'antd'
 import { timePickerProps } from '../../utils/antd'
 import { useFormikContext } from 'formik'
 
-import 'antd/es/input/style/index.css'
+import './DateRangePicker.scss'
 
 function getNextRoundedTime() {
   const now = moment()
@@ -205,51 +205,49 @@ const DateTimeRangePicker = ({ format, index }) => {
       ) : (
         <div className="mb-2 font-weight-bold">Heure de dépot</div>
       )}
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <div style={{ width: '95%' }}>
-          <DatePicker
-            style={{ width: '50%' }}
-            format={format}
-            defaultValue={afterValue || defaultAfterValue}
-            onChange={newDate => {
-              handleDateChange(newDate)
-            }}
-          />
+      <div className="picker-container">
+        <DatePicker
+          className="picker-container__datepicker mr-2"
+          format={format}
+          defaultValue={afterValue || defaultAfterValue}
+          onChange={newDate => {
+            handleDateChange(newDate)
+          }}
+        />
 
-          <Select
-            style={{ width: '25%' }}
-            format={format}
-            value={timeValues.after}
-            onChange={newAfterHour => {
-              handleAfterHourChange(newAfterHour)
-            }}>
-            {firstSelectOptions.map(option => (
-              <Option
-                key={option.time.format('HH:mm')}
-                value={option.time.format('HH:mm')}
-                disabled={option.disabled}>
-                {option.time.format('HH:mm')}
-              </Option>
-            ))}
-          </Select>
+        <Select
+          className="picker-container__select-left mr-2"
+          format={format}
+          value={timeValues.after}
+          onChange={newAfterHour => {
+            handleAfterHourChange(newAfterHour)
+          }}>
+          {firstSelectOptions.map(option => (
+            <Option
+              key={option.time.format('HH:mm')}
+              value={option.time.format('HH:mm')}
+              disabled={option.disabled}>
+              {option.time.format('HH:mm')}
+            </Option>
+          ))}
+        </Select>
 
-          <Select
-            style={{ width: '25%' }}
-            format={format}
-            value={timeValues.before}
-            onChange={newBeforeHour => {
-              handleBeforeHourChange(newBeforeHour)
-            }}>
-            {secondSelectOptions.map(option => (
-              <Option
-                key={option.time.format('HH:mm')}
-                value={option.time.format('HH:mm')}
-                disabled={option.disabled}>
-                {option.time.format('HH:mm')}
-              </Option>
-            ))}
-          </Select>
-        </div>
+        <Select
+          className="picker-container__select-right"
+          format={format}
+          value={timeValues.before}
+          onChange={newBeforeHour => {
+            handleBeforeHourChange(newBeforeHour)
+          }}>
+          {secondSelectOptions.map(option => (
+            <Option
+              key={option.time.format('HH:mm')}
+              value={option.time.format('HH:mm')}
+              disabled={option.disabled}>
+              {option.time.format('HH:mm')}
+            </Option>
+          ))}
+        </Select>
       </div>
       <a
         className="text-secondary"

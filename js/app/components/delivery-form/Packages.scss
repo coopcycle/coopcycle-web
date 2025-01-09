@@ -1,13 +1,14 @@
 .packages-item {
   display: flex;
   justify-content: space-between;
+  align-items:center;
 
   &__quantity {
     display: flex;   
     max-width: 35%;
 
     &__button {
-      background-color: #f5f5f5;
+      background-color: #f3f2f2f8;
       flex-shrink: 1;
     }
 
@@ -31,7 +32,6 @@
         max-width: 30%;
       }
     }
-
     &__name {
         min-width: 50%;
       }
