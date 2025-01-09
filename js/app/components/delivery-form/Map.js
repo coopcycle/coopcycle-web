@@ -18,11 +18,9 @@ export default ({ storeDeliveryInfos, tasks }) => {
   const [storeGeo, setStoreGeo] = useState(null)
   const [deliveryGeo, setDeliveryGeo] = useState([])
   const [deliveryRoute, setDeliveryRoute] = useState('')
+  const [distance, setDistance] = useState({ kms: 0 })
 
-  console.log('route', deliveryRoute)
-
-  console.log('map', tasks)
-  console.log(deliveryGeo)
+  console.log(distance)
 
   useEffect(() => {
     if (storeDeliveryInfos.address) {
@@ -45,17 +43,12 @@ export default ({ storeDeliveryInfos, tasks }) => {
     })
 
     MapHelper.route(allLatLng).then(route => {
-      // const distance = parseInt(route.distance, 10)
-      // const kms = (distance / 1000).toFixed(2)
+      const distance = parseInt(route.distance, 10)
+      const kms = (distance / 1000).toFixed(2)
       const decodeRoute = MapHelper.decodePolyline(route.geometry)
       const coordinates = decodeRoute.map(coord => [coord.lat, coord.lng])
       setDeliveryRoute(coordinates)
-
-      // return {
-      //   distance,
-      //   kms,
-
-      // }
+      setDistance({ kms })
     })
     setDeliveryGeo(allLatLng)
   }, [tasks])
@@ -63,24 +56,27 @@ export default ({ storeDeliveryInfos, tasks }) => {
   return (
     <>
       {storeGeo ? (
-        <MapContainer
-          center={[storeGeo.latitude, storeGeo.longitude]}
-          zoom={12}
-          scrollWheelZoom={false}
-          style={{ height: '250px', width: '100%' }}>
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          {deliveryGeo.length > 0
-            ? deliveryGeo.map((geo, index) => (
-                <Marker key={index} position={geo} />
-              ))
-            : null}
-          {deliveryGeo.length > 0 ? (
-            <Polyline positions={deliveryRoute} />
-          ) : null}
-        </MapContainer>
+        <>
+          <MapContainer
+            center={[storeGeo.latitude, storeGeo.longitude]}
+            zoom={12}
+            scrollWheelZoom={false}
+            style={{ height: '250px', width: '100%' }}>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            {deliveryGeo.length > 0
+              ? deliveryGeo.map((geo, index) => (
+                  <Marker key={index} position={geo} />
+                ))
+              : null}
+            {deliveryGeo.length > 0 ? (
+              <Polyline positions={deliveryRoute} />
+            ) : null}
+          </MapContainer>
+          <div className="mt-2 mb-4">Distance : {distance.kms} kms</div>
+        </>
       ) : (
         <div>Loading</div>
       )}
