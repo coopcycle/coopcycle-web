@@ -44,7 +44,7 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
             <DateRangePicker format={format} index={index} />
           </div>
           <i
-            className="daterange-picker-container__icon fa fa-calendar"
+            className="daterange-picker-container__icon fa fa-calendar text-right"
             aria-hidden="true"
             onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
             title={t('SWITCH_DATEPICKER')}></i>
