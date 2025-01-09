@@ -28,14 +28,7 @@ final class InvoiceLineItemGroupedByStoreCollectionDataProvider implements Conte
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $qb = $this->entityManager->createQueryBuilder()
-            ->select([
-                'IDENTITY(d.store) AS store_id',
-                'COUNT(o.id) as orders',
-                'SUM(o.total) as total',
-            ])
-            ->from(Order::class, 'o');
-
+        $qb = $this->entityManager->getRepository(Order::class)->createQueryBuilder('o');
         $qb->join(Delivery::class, 'd', Join::WITH, 'd.order = o');
 
         $queryNameGenerator = new QueryNameGenerator();
@@ -53,20 +46,47 @@ final class InvoiceLineItemGroupedByStoreCollectionDataProvider implements Conte
                 &&
                 $extension->supportsResult($resourceClass, $operationName, $context)
             ) {
-                // Reset the default orderBy, as it conflicts with the groupBy
-                $qb->resetDQLParts(['orderBy']);
-
-                return $extension->getResult($this->groupByStore($qb), $resourceClass, $operationName, $context);
+                $orders = $extension->getResult($qb, $resourceClass, $operationName, $context);
+                return $this->groupByStore($orders);
             }
         }
 
-        return $this->groupByStore($qb)
-            ->getQuery()->getResult();
+        $orders = $qb->getQuery()->getResult();
+        return $this->groupByStore($orders);
     }
 
-    private function groupByStore($qb)
+    private function groupByStore($orders)
     {
-        return $qb
-            ->groupBy('d.store');
+        $ordersByStore = [];
+        foreach ($orders as $result) {
+            $storeId = $result->getDelivery()->getStore()->getId();
+            if (!isset($ordersByStore[$storeId])) {
+                $ordersByStore[$storeId] = [];
+            }
+            $ordersByStore[$storeId][] = $result;
+        }
+
+        $activityByStore = [];
+
+        foreach ($ordersByStore as $storeId => $orders) {
+            $store = $orders[0]->getDelivery()->getStore();
+            $total = array_reduce($orders, function ($carry, $order) {
+                return $carry + $order->getTotal();
+            }, 0);
+            $taxTotal = array_reduce($orders, function ($carry, $order) {
+                return $carry + $order->getTaxTotal();
+            }, 0);
+            $subTotal = $total - $taxTotal;
+
+            $activityByStore[] = [
+                'store' => $store,
+                'orders' => count($orders),
+                'subTotal' => $subTotal,
+                'taxTotal' => $taxTotal,
+                'total' => $total,
+            ];
+        }
+
+        return $activityByStore;
     }
 }
