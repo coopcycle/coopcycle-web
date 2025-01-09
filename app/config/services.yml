@@ -946,6 +946,12 @@ services:
     tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
     autoconfigure: false
 
+  AppBundle\Api\DataProvider\InvoiceLineItemGroupedByStoreCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
