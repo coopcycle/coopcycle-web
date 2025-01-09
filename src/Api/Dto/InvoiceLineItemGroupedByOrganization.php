@@ -7,7 +7,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class InvoiceLineItemGroupedByOrganization
 {
     #[Groups(["default_invoice_line_item"])]
-    public readonly int $organizationId;
+    public readonly int $storeId;
 
     #[Groups(["default_invoice_line_item"])]
     public readonly string $organizationLegalName;
@@ -25,7 +25,7 @@ class InvoiceLineItemGroupedByOrganization
     public readonly int $total;
 
     public function __construct(
-        int $organizationId,
+        int $storeId,
         string $organizationLegalName,
         int $ordersCount,
         int $subTotal,
@@ -33,7 +33,7 @@ class InvoiceLineItemGroupedByOrganization
         int $total
     )
     {
-        $this->organizationId = $organizationId;
+        $this->storeId = $storeId;
         $this->organizationLegalName = $organizationLegalName;
         $this->ordersCount = $ordersCount;
         $this->subTotal = $subTotal;

@@ -12,7 +12,7 @@ class InvoiceLineItem
     public readonly \DateTime $invoiceDate;
 
     #[Groups(["default_invoice_line_item"])]
-    public readonly ?int $organizationId;
+    public readonly ?int $storeId;
 
     public readonly ?string $organizationLegalName;
 
@@ -44,7 +44,7 @@ class InvoiceLineItem
     public function __construct(
         string $invoiceId,
         \DateTime $invoiceDate,
-        ?int $organizationId,
+        ?int $storeId,
         ?string $organizationLegalName,
         string $accountCode,
         string $product,
@@ -59,7 +59,7 @@ class InvoiceLineItem
     {
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
-        $this->organizationId = $organizationId;
+        $this->storeId = $storeId;
         $this->organizationLegalName = $organizationLegalName;
         $this->accountCode = $accountCode;
         $this->product = $product;
