@@ -72,31 +72,31 @@ export default ({ storeId, index, packages }) => {
       {packagesType.map(item => (
         <div key={item['@id']} className="packages-item mb-2">
           <div className="packages-item__quantity ">
-            <div className="packages-item__quantity__button">
-              <Button onClick={() => handleMinusButton(item)}>-</Button>
-            </div>
+            <Button
+              className="packages-item__quantity__button"
+              onClick={() => handleMinusButton(item)}>
+              -
+            </Button>
 
-            <div className="packages-item__quantity__input text-center">
-              <Input
-                value={gatPackageQuantity(item)}
-                style={
-                  gatPackageQuantity(item) !== 0 ? { fontWeight: '700' } : null
-                }
-              />
-            </div>
+            <Input
+              className="packages-item__quantity__input text-center"
+              value={gatPackageQuantity(item)}
+              style={
+                gatPackageQuantity(item) !== 0 ? { fontWeight: '700' } : null
+              }
+            />
 
-            <div className="packages-item__quantity__button">
-              <Button
-                onClick={() => {
-                  handlePlusButton(item)
-                }}>
-                +
-              </Button>
-            </div>
+            <Button
+              className="packages-item__quantity__button"
+              onClick={() => {
+                handlePlusButton(item)
+              }}>
+              +
+            </Button>
           </div>
-          <div className="packages-item__name ">
-            <Input readOnly value={item.name} />
-          </div>
+          <span className="packages-item__name border pl-3 pt-1 pb-1">
+            {item.name}
+          </span>
         </div>
       ))}
       {errors.tasks?.[index]?.packages && (
