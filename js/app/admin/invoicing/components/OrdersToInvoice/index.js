@@ -1,25 +1,22 @@
 import React, { useMemo, useState } from 'react'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-import { InputNumber, DatePicker, Table } from 'antd'
+import { InputNumber, DatePicker } from 'antd'
 
-import { useLazyGetInvoiceLineItemsQuery } from '../../../../api/slice'
-import { money } from '../../../../utils/format'
-import { moment } from '../../../../../shared'
 import Button from '../../../../components/core/Button'
 import { prepareParams } from '../../redux/actions'
 import ExportModalContent from '../ExportModalContent'
+import OrdersTable from '../OrdersTable'
+
+const ordersStates = ['new', 'accepted', 'fulfilled']
 
 export default () => {
   const [storeId, setStoreId] = useState(null)
   const [dateRange, setDateRange] = useState(null)
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [reloadKey, setReloadKey] = useState(0)
 
   const [isModalOpen, setModalOpen] = useState(false)
-
-  const [trigger, { isFetching, data }] = useLazyGetInvoiceLineItemsQuery()
 
   const { t } = useTranslation()
 
@@ -38,87 +35,9 @@ export default () => {
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
-      state: ['new', 'accepted', 'fulfilled'],
+      state: ordersStates,
     })
   }, [storeId, dateRange])
-
-  const { dataSource, total } = useMemo(() => {
-    if (!data) {
-      return { datasource: undefined, total: 0 }
-    }
-
-    return {
-      dataSource: data['hydra:member'].map(order => ({
-        ...order,
-        key: order['@id'],
-        number: order.orderNumber,
-        date: order.date ? moment(order.date).format('l') : '?',
-        description: order.description,
-        subTotal: money(order.subTotal),
-        tax: money(order.tax),
-        total: money(order.total),
-      })),
-      total: data['hydra:totalItems'],
-    }
-  }, [data])
-
-  const columns = [
-    {
-      title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL'),
-      dataIndex: 'number',
-      key: 'number',
-    },
-    {
-      title: t('ADMIN_ORDERS_TO_INVOICE_DATE_LABEL'),
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: t('ADMIN_ORDERS_TO_INVOICE_DESCRIPTION_LABEL'),
-      dataIndex: 'description',
-      key: 'description',
-    },
-    {
-      title: t('ADMIN_ORDERS_TO_INVOICE_SUB_TOTAL_LABEL'),
-      dataIndex: 'subTotal',
-      key: 'subTotal',
-    },
-    {
-      title: t('ADMIN_ORDERS_TO_INVOICE_TAXES_LABEL'),
-      dataIndex: 'tax',
-      key: 'tax',
-    },
-    {
-      title: t('ADMIN_ORDERS_TO_INVOICE_TOTAL_LABEL'),
-      dataIndex: 'total',
-      key: 'total',
-    },
-    {
-      key: 'action',
-      dataIndex: 'orderId',
-      align: 'right',
-      render: orderId => (
-        <a
-          href={window.Routing.generate('admin_order', { id: orderId })}
-          target="_blank"
-          rel="noopener noreferrer">
-          {t('VIEW')}
-        </a>
-      ),
-    },
-  ]
-
-  const reloadData = (page, pageSize) => {
-    if (!params) {
-      return
-    }
-
-    trigger({
-      params,
-      page: page,
-      pageSize: pageSize,
-    })
-  }
 
   return (
     // marginTop: 48px: h5 marginTop (10px) + 38px
@@ -138,28 +57,17 @@ export default () => {
           <Button
             primary
             onClick={() => {
-              reloadData(currentPage, pageSize)
+              setReloadKey(reloadKey + 1)
             }}>
             {t('ADMIN_ORDERS_TO_INVOICE_REFRESH')}
           </Button>
         </div>
       </div>
-      <Table
-        style={{ marginTop: '48px' }}
-        columns={columns}
-        loading={isFetching}
-        dataSource={dataSource}
-        rowKey="@id"
-        pagination={{
-          pageSize,
-          total,
-        }}
-        onChange={pagination => {
-          reloadData(pagination.current, pagination.pageSize)
-
-          setCurrentPage(pagination.current)
-          setPageSize(pagination.pageSize)
-        }}
+      <OrdersTable
+        ordersStates={ordersStates}
+        dateRange={dateRange}
+        storeId={storeId}
+        reloadKey={reloadKey}
       />
       <div className="d-flex justify-content-end" style={{ marginTop: '24px' }}>
         <Button
