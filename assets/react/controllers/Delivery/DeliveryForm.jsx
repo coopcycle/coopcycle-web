@@ -6,6 +6,8 @@ import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
+import Map from '../../../../js/app/components/delivery-form/Map.js'
+
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n' 
@@ -95,6 +97,8 @@ export default function ({  storeId }) {
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  
+
   
     const { t } = useTranslation()
 
@@ -344,6 +348,13 @@ export default function ({  storeId }) {
                 : null}
                 
                 </div>
+                  
+                <div>
+                    <Map
+                      storeDeliveryInfos={storeDeliveryInfos}
+                      tasks={values.tasks}
+                    />
+                </div>  
               
                 <div className='order-informations__complete-order'>
                     <Button
