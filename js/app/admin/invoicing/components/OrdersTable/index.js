@@ -1,5 +1,5 @@
 import { Table } from 'antd'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { moment } from '../../../../../shared'
 import { money } from '../../../../utils/format'
 import { useLazyGetInvoiceLineItemsQuery } from '../../../../api/slice'
@@ -39,7 +39,7 @@ export default function OrdersTable({
       ],
       state: ordersStates,
     })
-  }, [storeId, dateRange])
+  }, [ordersStates, dateRange, storeId])
 
   const { dataSource, total } = useMemo(() => {
     if (!data) {
@@ -107,17 +107,20 @@ export default function OrdersTable({
     },
   ]
 
-  const reloadData = (page, pageSize) => {
-    if (!params) {
-      return
-    }
+  const reloadData = useCallback(
+    (page, pageSize) => {
+      if (!params) {
+        return
+      }
 
-    trigger({
-      params,
-      page: page,
-      pageSize: pageSize,
-    })
-  }
+      trigger({
+        params,
+        page: page,
+        pageSize: pageSize,
+      })
+    },
+    [params, trigger],
+  )
 
   useEffect(() => {
     if (reloadKey === previousReloadKey) {
@@ -125,7 +128,7 @@ export default function OrdersTable({
     }
 
     reloadData(currentPage, pageSize)
-  }, [reloadKey, previousReloadKey, currentPage, pageSize])
+  }, [reloadKey, previousReloadKey, currentPage, pageSize, reloadData])
 
   return (
     <Table
