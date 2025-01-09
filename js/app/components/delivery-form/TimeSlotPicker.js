@@ -1,28 +1,27 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
-import axios from 'axios'
 import { useFormikContext } from 'formik'
 
 const baseURL = location.protocol + '//' + location.host
+
+const httpClient = new window._auth.httpClient()
 
 export default ({ storeId, storeDeliveryInfos, index }) => {
   const { setFieldValue } = useFormikContext()
 
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
+
   useEffect(() => {
     const getTimeSlotsLabels = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
       const url = `${baseURL}/api/stores/${storeId}/time_slots`
 
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      const timeSlotsLabel = await response.data['hydra:member']
-      setStoreDeliveryLabels(timeSlotsLabel)
+      const { response } = await httpClient.get(url)
+
+      if (response) {
+        const timeSlotsLabel = response['hydra:member']
+        setStoreDeliveryLabels(timeSlotsLabel)
+      }
     }
     if (storeId) {
       getTimeSlotsLabels()
@@ -55,16 +54,11 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   const [timeSlotChoices, setTimeSlotChoices] = useState([])
 
   const getTimeSlotOptions = async timeSlotUrl => {
-    const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-    const jwt = jwtResp.jwt
     const url = `${baseURL}${timeSlotUrl}/choices`
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    })
-    const choices = response.data['choices']
-    setTimeSlotChoices(choices)
+    const { response } = await httpClient.get(url)
+    if (response) {
+      setTimeSlotChoices(response['choices'])
+    }
   }
 
   useEffect(() => {

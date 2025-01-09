@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import axios from 'axios'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from './AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
@@ -12,6 +11,7 @@ import TotalWeight from './TotalWeight'
 import './Task.scss'
 
 const baseURL = location.protocol + '//' + location.host
+const httpClient = new window._auth.httpClient()
 
 export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
   const [packages, setPackages] = useState(null)
@@ -25,18 +25,15 @@ export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
 
   useEffect(() => {
     const getPackages = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
       const url = `${baseURL}/api/stores/${storeId}/packages`
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      const packages = await response.data['hydra:member']
 
-      if (packages?.length > 0) {
-        setPackages(packages)
+      const { response } = await httpClient.get(url)
+
+      if (response) {
+        const packages = response['hydra:member']
+        if (packages?.length > 0) {
+          setPackages(packages)
+        }
       }
     }
     getPackages()

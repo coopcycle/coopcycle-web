@@ -4,7 +4,6 @@ import { Formik, Form, FieldArray } from 'formik'
 import Task from '../../../../js/app/components/delivery-form/Task.js'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
-import axios from 'axios'
 import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
 
@@ -13,6 +12,9 @@ import { getCountry } from '../../../../js/app/i18n'
 import { useTranslation } from 'react-i18next'
 
 import "./DeliveryForm.scss"
+
+const httpClient = new window._auth.httpClient()
+
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -94,7 +96,7 @@ export default function ({  storeId }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   
-  const { t } = useTranslation()
+    const { t } = useTranslation()
 
   const initialValues = {
     tasks: [
@@ -158,16 +160,14 @@ export default function ({  storeId }) {
 
   useEffect(() => {
     const getAddresses = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
+
       const url = `${baseURL}/api/stores/${storeId}/addresses`
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      const addresses = await response.data['hydra:member']
-      setAddresses(addresses)
+      const {response} = await httpClient.get(url)
+
+      if (response) {
+        const addresses = response['hydra:member']
+        setAddresses(addresses)
+      }
     }
 
     if (storeId) {
@@ -175,100 +175,52 @@ export default function ({  storeId }) {
     }
   }, [storeId])
 
+
   useEffect(() => {
     const fetchStoreInfos = async () => {
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
-
       const url = `${baseURL}/api/stores/${storeId}`
 
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${jwt}`,
-        },
-      })
-      setStoreDeliveryInfos(response.data)
+      const { response } = await httpClient.get(url)
+      
+      if (response) {
+        setStoreDeliveryInfos(response)
+      }
     }
-    if (storeId) {
-      fetchStoreInfos()
-    }
+    fetchStoreInfos()
   }, [storeId])
 
-  const handleSubmit = useCallback(
-    async (values) => {
-      
-      const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-      const jwt = jwtResp.jwt
-      const createDeliveryUrl = `${baseURL}/api/deliveries`
-      const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
+  const handleSubmit = useCallback(async (values) => {
+    const createDeliveryUrl = `${baseURL}/api/deliveries`
+    const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
+    
+    const {response,error} = await httpClient.post(createDeliveryUrl, {store: storeDeliveryInfos['@id'],
+          tasks: values.tasks}
+    )
+    if (error) {
+      setError({isError: true, errorMessage:error.response.data['hydra:description']})
+      return
+    }
 
-      await axios.post(
-        createDeliveryUrl,
-        {
-          store: storeDeliveryInfos['@id'],
-          tasks: values.tasks,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${jwt}`,
-            'Content-Type': 'application/ld+json',
-          },
-        },
-      )
-        .then(() => {
-          for (const task of values.tasks) {
-            if (task.updateInStoreAddresses) {
-              axios.patch(
-                `${baseURL}${task.address['@id']}`,
-                task.address,
-                {
-                  headers: {
-                    Authorization: `Bearer ${jwt}`,
-                    'Content-Type': 'application/ld+json',
-                    },
-                },
-              )
-              .catch(error => {
-                  if (error.response) {
-                    setError({isError: true, errorMessage:error.response.data['hydra:description']})
-                  }
-                })
-            }
+    if (response) {
+      for (const task of values.tasks) {
+        if (task.saveInStoreAddresses) {
+          await httpClient.post(saveAddressUrl, task.address)
+          if (error) {
+            setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
+            return
           }
-
-          for (const task of values.tasks) {
-            if (task.saveInStoreAddresses) {
-              axios.post(
-                saveAddressUrl, 
-                task.address, 
-
-                {
-                  headers: {
-                    Authorization: `Bearer ${jwt}`,
-                    'Content-Type': 'application/ld+json',
-                    },
-                },
-              )
-                .catch(error => {
-                  if (error.response) {
-                    setError({isError: true, errorMessage:error.response.data['hydra:description']})
-                  }
-                })
-              }
+        }
+        if (task.updateInStoreAddresses) {
+          await httpClient.patch(`${baseURL}${task.address['@id']}`, task.address)
+          if (error) {
+            setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
+            return
           }
-            window.history.go(-2);
-          }
-        )
-        .catch(error => {
-          if (error.response) {
-            setError({isError: true, errorMessage: error.response.data['hydra:description']} )
-          }
-        })
-
-      
-    },
-    [storeDeliveryInfos],
-  )
+        }
+      }
+      window.history.go(-2);
+    }
+  }, [storeDeliveryInfos])
 
     return (
     <ConfigProvider locale={antdLocale}>
@@ -293,31 +245,19 @@ export default function ({  storeId }) {
             };
 
             const calculatePrice = async () => {
-              const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
-              const jwt = jwtResp.jwt
               const url = `${baseURL}/api/retail_prices/calculate`
 
-              await axios.post(
-                url,
-                infos,
-                {
-                  headers: {
-                    Authorization: `Bearer ${jwt}`,
-                    'Content-Type': 'application/ld+json',
-                  },
-                },
-              )
-                .then(response => {
-                  setCalculatePrice(response.data)
-                  setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-                }
-                )
-                .catch(error => {
-                  if (error.response) {
-                    setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-                    setCalculatePrice(0)
-                }
-              })
+              const { response, error } = await httpClient.post(url, infos)
+              
+              if (error) {
+                setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+                setCalculatePrice(0)
+              }
+
+              if (response) {
+                setCalculatePrice(response)
+                setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+              }
 
             }
             if (values.tasks.find(task => task.type === "PICKUP").address.streetAddress !== '' && values.tasks.find(task => task.type === "DROPOFF").address.streetAddress !== '') {
