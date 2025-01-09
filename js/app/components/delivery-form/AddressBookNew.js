@@ -8,6 +8,7 @@ import { useFormikContext, Field } from 'formik'
 import { getCountry } from '../../i18n'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+
 function getFormattedValue(value) {
   if (typeof value === 'string') {
     const phoneNumber = parsePhoneNumberFromString(
