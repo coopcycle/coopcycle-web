@@ -12,9 +12,9 @@ class InvoiceLineItem
     public readonly \DateTime $invoiceDate;
 
     #[Groups(["default_invoice_line_item"])]
-    public readonly ?int $storeId;
+    public readonly ?int $organizationId;
 
-    public readonly ?string $storeLegalName;
+    public readonly ?string $organizationLegalName;
 
     public readonly string $accountCode;
 
@@ -33,34 +33,34 @@ class InvoiceLineItem
     public readonly string $description;
 
     #[Groups(["default_invoice_line_item"])]
-    public readonly float $subTotal;
+    public readonly int $subTotal;
 
     #[Groups(["default_invoice_line_item"])]
-    public readonly float $tax;
+    public readonly int $tax;
 
     #[Groups(["default_invoice_line_item"])]
-    public readonly float $total;
+    public readonly int $total;
 
     public function __construct(
         string $invoiceId,
         \DateTime $invoiceDate,
-        ?int $storeId,
-        ?string $storeLegalName,
+        ?int $organizationId,
+        ?string $organizationLegalName,
         string $accountCode,
         string $product,
         int $orderId,
         string $orderNumber,
         \DateTime $date,
         string $description,
-        float $subTotal,
-        float $tax,
-        float $total
+        int $subTotal,
+        int $tax,
+        int $total
     )
     {
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
-        $this->storeId = $storeId;
-        $this->storeLegalName = $storeLegalName;
+        $this->organizationId = $organizationId;
+        $this->organizationLegalName = $organizationLegalName;
         $this->accountCode = $accountCode;
         $this->product = $product;
         $this->orderId = $orderId;
@@ -82,7 +82,7 @@ class InvoiceLineItem
     #[SerializedName("Organization")]
     public function getFileExportOrganization(): ?string
     {
-        return $this->storeLegalName;
+        return $this->organizationLegalName;
     }
 
     #[Groups(["export_invoice_line_item"])]
@@ -132,7 +132,7 @@ class InvoiceLineItem
     #[SerializedName("Partner")]
     public function getOdooPartner(): string
     {
-        return $this->storeLegalName;
+        return $this->organizationLegalName;
     }
 
     #[Groups(["odoo_export_invoice_line_item"])]

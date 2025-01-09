@@ -6,12 +6,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensio
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
 
-final class InvoiceLineItemGroupedByStoreCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
 
     public function __construct(
@@ -23,7 +24,7 @@ final class InvoiceLineItemGroupedByStoreCollectionDataProvider implements Conte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Order::class === $resourceClass && 'invoice_line_items_grouped_by_store' === $operationName;
+        return Order::class === $resourceClass && 'invoice_line_items_grouped_by_organization' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -73,18 +74,19 @@ final class InvoiceLineItemGroupedByStoreCollectionDataProvider implements Conte
             $total = array_reduce($orders, function ($carry, $order) {
                 return $carry + $order->getTotal();
             }, 0);
-            $taxTotal = array_reduce($orders, function ($carry, $order) {
+            $tax = array_reduce($orders, function ($carry, $order) {
                 return $carry + $order->getTaxTotal();
             }, 0);
-            $subTotal = $total - $taxTotal;
+            $subTotal = $total - $tax;
 
-            $activityByStore[] = [
-                'store' => $store,
-                'orders' => count($orders),
-                'subTotal' => $subTotal,
-                'taxTotal' => $taxTotal,
-                'total' => $total,
-            ];
+            $activityByStore[] = new InvoiceLineItemGroupedByOrganization(
+                $store->getId(),
+                $store->getLegalName() ?? $store->getName(),
+                count($orders),
+                $subTotal,
+                $tax,
+                $total
+            );
         }
 
         return $activityByStore;

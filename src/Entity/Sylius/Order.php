@@ -38,7 +38,7 @@ use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
 use AppBundle\Api\Dto\InvoiceLineItem;
-use AppBundle\Api\Dto\InvoiceLineItemGroupedByStore;
+use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
@@ -124,12 +124,12 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/me/orders",
  *       "controller"=MyOrders::class
  *     },
- *     "invoice_line_items_grouped_by_store"={
+ *     "invoice_line_items_grouped_by_organization"={
  *        "method"="GET",
- *        "path"="/invoice_line_items/grouped_by_store",
+ *        "path"="/invoice_line_items/grouped_by_organization",
  *        "security"="is_granted('ROLE_ADMIN')",
- *        "output"=InvoiceLineItemGroupedByStore::class,
- *        "normalization_context"={"groups"={"default"}}
+ *        "output"=InvoiceLineItemGroupedByOrganization::class,
+ *        "normalization_context"={"groups"={"default_invoice_line_item"}}
  *      },
  *     "invoice_line_items"={
  *       "method"="GET",
