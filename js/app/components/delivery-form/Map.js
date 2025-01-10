@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import L from 'leaflet'
-import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import MapHelper from '../../MapHelper'
 import 'leaflet/dist/leaflet.css'
+import 'leaflet-arrowheads'
+require('beautifymarker')
 
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-
-let DefaultIcon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-})
-
-L.Marker.prototype.options.icon = DefaultIcon
+function createMarkerIcon(icon, iconShape, color) {
+  return L.BeautifyIcon.icon({
+    icon: icon,
+    iconShape: iconShape,
+    borderColor: color,
+    textColor: color,
+    backgroundColor: 'transparent',
+  })
+}
 
 export default ({ storeDeliveryInfos, tasks }) => {
   const [storeGeo, setStoreGeo] = useState(null)
@@ -21,6 +23,29 @@ export default ({ storeDeliveryInfos, tasks }) => {
   const [distance, setDistance] = useState({ kms: 0 })
 
   console.log(distance)
+
+  const CustomMarker = ({ position, icon, iconShape, color }) => {
+    const markerIcon = createMarkerIcon(icon, iconShape, color)
+
+    return <Marker position={position} icon={markerIcon} />
+  }
+
+  const ArrowheadPolyline = ({ positions, options }) => {
+    const map = useMap()
+
+    useEffect(() => {
+      if (!map) return
+
+      const polyline = L.polyline(positions, options).addTo(map)
+      polyline.arrowheads()
+
+      return () => {
+        map.removeLayer(polyline)
+      }
+    }, [positions, options])
+
+    return null
+  }
 
   useEffect(() => {
     if (storeDeliveryInfos.address) {
@@ -31,25 +56,27 @@ export default ({ storeDeliveryInfos, tasks }) => {
     }
   }, [storeDeliveryInfos])
 
-  // je fais un map des tasks pour avoir un array avec seulement les coordonnées des taches pour générer mes markers
-
   useEffect(() => {
-    const geo = tasks.map(task => task.address.geo).filter(Boolean)
-    const allLatLng = []
+    const allLatLng = tasks
+      .map(task => ({
+        latLng: [task.address.geo?.latitude, task.address.geo?.longitude],
+        type: task.type,
+      }))
+      .filter(item => item.latLng[0] && item.latLng[1])
 
-    geo.forEach(g => {
-      const latLong = [g.latitude, g.longitude]
-      allLatLng.push(latLong)
-    })
+    const latLngArray = allLatLng.map(item => item.latLng)
 
-    MapHelper.route(allLatLng).then(route => {
-      const distance = parseInt(route.distance, 10)
-      const kms = (distance / 1000).toFixed(2)
-      const decodeRoute = MapHelper.decodePolyline(route.geometry)
-      const coordinates = decodeRoute.map(coord => [coord.lat, coord.lng])
-      setDeliveryRoute(coordinates)
-      setDistance({ kms })
-    })
+    if (latLngArray.length > 1) {
+      MapHelper.route(latLngArray).then(route => {
+        const distance = parseInt(route.distance, 10)
+        const kms = (distance / 1000).toFixed(2)
+        const decodeRoute = MapHelper.decodePolyline(route.geometry)
+        const coordinates = decodeRoute.map(coord => [coord.lat, coord.lng])
+        setDeliveryRoute(coordinates)
+        setDistance({ kms })
+      })
+    }
+
     setDeliveryGeo(allLatLng)
   }, [tasks])
 
@@ -62,17 +89,42 @@ export default ({ storeDeliveryInfos, tasks }) => {
             zoom={12}
             scrollWheelZoom={false}
             style={{ height: '250px', width: '100%' }}>
-            <TileLayer
+            {/* <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            /> */}
+
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              subdomains="abcd"
+              maxZoom={19}
             />
+
             {deliveryGeo.length > 0
               ? deliveryGeo.map((geo, index) => (
-                  <Marker key={index} position={geo} />
+                  <CustomMarker
+                    key={index}
+                    position={geo.latLng}
+                    icon={geo.type === 'PICKUP' ? 'cube' : 'flag'}
+                    iconShape="marker"
+                    color="#ff0000"
+                  />
                 ))
               : null}
             {deliveryGeo.length > 0 ? (
-              <Polyline positions={deliveryRoute} />
+              <ArrowheadPolyline
+                positions={deliveryRoute}
+                options={{
+                  color: '#3498DB',
+                  // weight: 3,
+                  // arrowheads: {
+                  //   frequency: 'endonly',
+                  //   size: '15px',
+                  //   fill: true,
+                  // },
+                }}
+              />
             ) : null}
           </MapContainer>
           <div className="mt-2 mb-4">Distance : {distance.kms} kms</div>
