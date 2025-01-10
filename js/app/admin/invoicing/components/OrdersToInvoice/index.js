@@ -1,17 +1,17 @@
 import React, { useMemo, useState } from 'react'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-import { InputNumber, DatePicker } from 'antd'
+import { DatePicker } from 'antd'
 
 import Button from '../../../../components/core/Button'
 import { prepareParams } from '../../redux/actions'
 import ExportModalContent from '../ExportModalContent'
-import OrdersTable from '../OrdersTable'
+import OrganizationsTable from '../OrganizationsTable'
 
 const ordersStates = ['new', 'accepted', 'fulfilled']
 
 export default () => {
-  const [storeId, setStoreId] = useState(null)
+  const [selectedStoreIds, setSelectedStoreIds] = useState([])
   const [dateRange, setDateRange] = useState(null)
 
   const [reloadKey, setReloadKey] = useState(0)
@@ -21,7 +21,7 @@ export default () => {
   const { t } = useTranslation()
 
   const params = useMemo(() => {
-    if (!storeId) {
+    if (selectedStoreIds.length === 0) {
       return null
     }
 
@@ -30,14 +30,14 @@ export default () => {
     }
 
     return prepareParams({
-      store: [storeId],
+      store: selectedStoreIds,
       dateRange: [
         dateRange[0].format('YYYY-MM-DD'),
         dateRange[1].format('YYYY-MM-DD'),
       ],
       state: ordersStates,
     })
-  }, [storeId, dateRange])
+  }, [selectedStoreIds, dateRange])
 
   return (
     // marginTop: 48px: h5 marginTop (10px) + 38px
@@ -49,10 +49,6 @@ export default () => {
           {t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE')}
           <DatePicker.RangePicker onChange={setDateRange} />
         </div>
-        <div className="d-flex flex-column">
-          {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STORE')}
-          <InputNumber min={0} onChange={setStoreId} />
-        </div>
         <div className="d-flex flex-column justify-content-end">
           <Button
             primary
@@ -63,11 +59,11 @@ export default () => {
           </Button>
         </div>
       </div>
-      <OrdersTable
+      <OrganizationsTable
         ordersStates={ordersStates}
         dateRange={dateRange}
-        storeId={storeId}
         reloadKey={reloadKey}
+        setSelectedStoreIds={setSelectedStoreIds}
       />
       <div className="d-flex justify-content-end" style={{ marginTop: '24px' }}>
         <Button

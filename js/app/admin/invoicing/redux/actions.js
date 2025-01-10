@@ -3,7 +3,9 @@ import { baseQueryWithReauth } from '../../../api/baseQuery'
 export function prepareParams({ store, dateRange, state }) {
   let params = []
 
-  params.push(...store.map(storeId => `store[]=${storeId}`))
+  if (store && store.length > 0) {
+    params.push(...store.map(storeId => `store[]=${storeId}`))
+  }
 
   if (state && state.length > 0) {
     params.push(...state.map(state => `state[]=${state}`))
@@ -43,7 +45,6 @@ function downloadFile({ requestUrl, filename }) {
     URL.revokeObjectURL(url)
   }
 }
-
 
 export function downloadStandardFile({ params, filename }) {
   return downloadFile({
