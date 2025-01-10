@@ -6,6 +6,7 @@ import MapHelper from '../../MapHelper'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-arrowheads'
 require('beautifymarker')
+import DeliveryResume from './DeliveryResume'
 
 const createMarkerIcon = (icon, iconShape, color) => {
   return L.BeautifyIcon.icon({
@@ -142,7 +143,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
               <FitBoundsToMarkers positions={storeGeo} />
             )}
           </MapContainer>
-          <div className="mt-2 mb-4">Distance : {distance.kms} kms</div>
+          <DeliveryResume distance={distance.kms} tasks={tasks} />
         </>
       ) : (
         <Spinner />
