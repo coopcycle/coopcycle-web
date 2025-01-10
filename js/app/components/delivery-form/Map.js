@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import Spinner from '../core/Spinner'
 import L from 'leaflet'
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
 import MapHelper from '../../MapHelper'
@@ -39,14 +40,23 @@ const ArrowheadPolyline = ({ positions, options }) => {
   return null
 }
 
-const FitBoundsToMarkers = ({ positions }) => {
+const FitBoundsToMarkers = ({ positions, maxZoom = 17 }) => {
   const map = useMap()
 
   useEffect(() => {
-    if (positions && positions.length > 0) {
+    if (Array.isArray(positions) && positions.length > 0) {
       const bounds = L.latLngBounds(positions.map(pos => pos.latLng))
       if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50] })
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom })
+      }
+    } else if (
+      positions &&
+      typeof positions.latitude === 'number' &&
+      typeof positions.longitude === 'number'
+    ) {
+      const bounds = L.latLngBounds([[positions.latitude, positions.longitude]])
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom })
       }
     }
   }, [map, positions])
@@ -98,15 +108,8 @@ export default ({ storeDeliveryInfos, tasks }) => {
       {storeGeo ? (
         <>
           <MapContainer
-            center={[storeGeo.latitude, storeGeo.longitude]}
-            zoom={13}
             scrollWheelZoom={false}
             style={{ height: '250px', width: '100%' }}>
-            {/* <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            /> */}
-
             <TileLayer
               url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -130,21 +133,19 @@ export default ({ storeDeliveryInfos, tasks }) => {
                 positions={deliveryRoute}
                 options={{
                   color: '#3498DB',
-                  // weight: 3,
-                  // arrowheads: {
-                  //   frequency: 'endonly',
-                  //   size: '15px',
-                  //   fill: true,
-                  // },
                 }}
               />
             ) : null}
-            <FitBoundsToMarkers positions={deliveryGeo} />
+            {deliveryGeo.length > 0 ? (
+              <FitBoundsToMarkers positions={deliveryGeo} />
+            ) : (
+              <FitBoundsToMarkers positions={storeGeo} />
+            )}
           </MapContainer>
           <div className="mt-2 mb-4">Distance : {distance.kms} kms</div>
         </>
       ) : (
-        <div>Loading</div>
+        <Spinner />
       )}
     </>
   )
