@@ -85,12 +85,12 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
     private function groupByStore($orders)
     {
         $ordersByStore = [];
-        foreach ($orders as $result) {
-            $storeId = $result->getDelivery()->getStore()->getId();
+        foreach ($orders as $order) {
+            $storeId = $order->getDelivery()->getStore()->getId();
             if (!isset($ordersByStore[$storeId])) {
                 $ordersByStore[$storeId] = [];
             }
-            $ordersByStore[$storeId][] = $result;
+            $ordersByStore[$storeId][] = $order;
         }
 
         $activityByStore = [];
@@ -114,6 +114,10 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                 $total
             );
         }
+
+        usort($activityByStore, function ($a, $b) {
+            return strcmp($a->organizationLegalName, $b->organizationLegalName);
+        });
 
         return $activityByStore;
     }
