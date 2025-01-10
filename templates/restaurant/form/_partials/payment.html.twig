@@ -42,6 +42,10 @@
     {{ form_row(form.paygreenShopId) }}
   {% endif %}
 
+  {% if form.usePaygreen is defined %}
+    {{ form_row(form.usePaygreen) }}
+  {% endif %}
+
 {% endif %}
 
 {% if form.allowStripeConnect is defined and not form.allowStripeConnect.rendered %}

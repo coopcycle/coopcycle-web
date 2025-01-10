@@ -1647,3 +1647,4 @@ loopeat.incident.unexpected_returns: Unexpected number of zero waste returns
 form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
 form.store.urbantz_hub_id: Urbantz Hub Id
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
+restaurant.form.use_paygreen.label: Use Paygreen for this shop

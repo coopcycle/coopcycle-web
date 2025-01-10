@@ -1854,7 +1854,7 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        return $this->getRestaurant()->supportsPaygreen();
+        return $this->getRestaurant()->supportsPaygreen() && 'paygreen' === $this->getRestaurant()->getPaymentGateway();
     }
 
     public function getSubscription(): ?RecurrenceRule
