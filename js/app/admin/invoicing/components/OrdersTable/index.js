@@ -1,9 +1,10 @@
+import React, { useEffect, useMemo, useState } from 'react'
 import { Table } from 'antd'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { moment } from '../../../../../shared'
-import { money } from '../../../../utils/format'
-import { useLazyGetInvoiceLineItemsQuery } from '../../../../api/slice'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment'
+
+import { money } from '../../../../utils/format'
+import { useGetInvoiceLineItemsQuery } from '../../../../api/slice'
 import { prepareParams } from '../../redux/actions'
 import { usePrevious } from '../../../../dashboard/redux/utils'
 
@@ -16,11 +17,7 @@ export default function OrdersTable({
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
-  const [trigger, { isFetching, data }] = useLazyGetInvoiceLineItemsQuery()
-
   const previousReloadKey = usePrevious(reloadKey)
-
-  const { t } = useTranslation()
 
   const params = useMemo(() => {
     if (!storeId) {
@@ -41,6 +38,14 @@ export default function OrdersTable({
     })
   }, [ordersStates, dateRange, storeId])
 
+  const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
+    params,
+    page: currentPage,
+    pageSize: pageSize,
+  })
+
+  const { t } = useTranslation()
+
   const { dataSource, total } = useMemo(() => {
     if (!data) {
       return { datasource: undefined, total: 0 }
@@ -48,8 +53,8 @@ export default function OrdersTable({
 
     return {
       dataSource: data['hydra:member'].map(order => ({
-        ...order,
-        key: order['@id'],
+        rowKey: order['@id'],
+        orderId: order.orderId,
         number: order.orderNumber,
         date: order.date ? moment(order.date).format('l') : '?',
         description: order.description,
@@ -107,28 +112,13 @@ export default function OrdersTable({
     },
   ]
 
-  const reloadData = useCallback(
-    (page, pageSize) => {
-      if (!params) {
-        return
-      }
-
-      trigger({
-        params,
-        page: page,
-        pageSize: pageSize,
-      })
-    },
-    [params, trigger],
-  )
-
   useEffect(() => {
     if (reloadKey === previousReloadKey) {
       return
     }
 
-    reloadData(currentPage, pageSize)
-  }, [reloadKey, previousReloadKey, currentPage, pageSize, reloadData])
+    refetch()
+  }, [reloadKey, previousReloadKey, refetch])
 
   return (
     <Table
@@ -136,14 +126,12 @@ export default function OrdersTable({
       columns={columns}
       loading={isFetching}
       dataSource={dataSource}
-      rowKey="@id"
+      rowKey="rowKey"
       pagination={{
         pageSize,
         total,
       }}
       onChange={pagination => {
-        reloadData(pagination.current, pagination.pageSize)
-
         setCurrentPage(pagination.current)
         setPageSize(pagination.pageSize)
       }}
