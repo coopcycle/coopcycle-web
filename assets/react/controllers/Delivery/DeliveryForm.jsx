@@ -317,6 +317,12 @@ export default function ({  storeId }) {
               </FieldArray>
     
               <div className="order-informations"> 
+                <div className="order-informations__map">
+                    <Map
+                      storeDeliveryInfos={storeDeliveryInfos}
+                      tasks={values.tasks}
+                    />
+                </div>  
                 <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
                   <div className='font-weight-bold mb-2'>{t("DELIVERY_FORM_TOTAL_PRICE")} </div>
                     <div>
@@ -349,12 +355,6 @@ export default function ({  storeId }) {
                 
                 </div>
                   
-                <div>
-                    <Map
-                      storeDeliveryInfos={storeDeliveryInfos}
-                      tasks={values.tasks}
-                    />
-                </div>  
               
                 <div className='order-informations__complete-order'>
                     <Button
