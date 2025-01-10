@@ -8,12 +8,12 @@
 .new-order {
   display: flex;
   justify-content: space-between;
-  gap: 2em;
-  max-width: 70%;
+  gap: 1em;
+  max-width: 65%;
   flex-wrap: wrap;
   
   &__item {
-    max-width: 45%;
+    max-width: 47%;
   }
 }
 
@@ -25,11 +25,12 @@
   align-self: start;
   position: sticky;
   top:0;
-  min-width: 280px;
+  // min-width: 350px;
+  min-width: 30%;
 }
 
 
-@media (max-width: 1200px) {
+@media (max-width: 1250px) {
 
   .delivery-form{
     flex-wrap:nowrap

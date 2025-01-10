@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 export default ({ distance, tasks }) => {
   const [createdTasks, setCreatedTasks] = useState(null)
-  console.log(createdTasks)
 
   useEffect(() => {
     const createdTasks = tasks.filter(task => task.address.streetAddress !== '')
@@ -10,19 +9,21 @@ export default ({ distance, tasks }) => {
   }, [tasks])
 
   return (
-    <div className="resume mt-2 mb-4">
-      <div className="resume__title"> Résumé </div>
-      <div className="resume__distance"> Distance : {distance} kms </div>
+    <div className="resume mb-4">
+      <div className="resume__distance mt-2 mb-4">
+        {' '}
+        <span className="font-weight-bold">Distance</span> : {distance} kms{' '}
+      </div>
       <div className="resumer__tasks">
         {createdTasks?.map((task, index) => (
-          <div key={index} className="resume__tasks__item">
+          <div key={index} className="resume__tasks__item mb-3">
             <div>
               {task.type === 'PICKUP' ? (
-                <div className="resume__tasks__item__title">
+                <div className="resume__tasks__item__title mb-1 font-weight-bold">
                   <i className="fa fa-arrow-up"></i> Pickup{' '}
                 </div>
               ) : (
-                <div className="resume__tasks__item__title">
+                <div className="resume__tasks__item__title mb-1 font-weight-bold">
                   <i className="fa fa-arrow-down"></i> Dropoff
                 </div>
               )}

@@ -69,8 +69,6 @@ export default ({ storeDeliveryInfos, tasks }) => {
   const [deliveryRoute, setDeliveryRoute] = useState('')
   const [distance, setDistance] = useState({ kms: 0 })
 
-  console.log(deliveryGeo)
-
   useEffect(() => {
     if (storeDeliveryInfos.address) {
       setStoreGeo({
@@ -109,6 +107,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
       {storeGeo ? (
         <>
           <MapContainer
+            className="mb-3"
             scrollWheelZoom={false}
             style={{ height: '250px', width: '100%' }}>
             <TileLayer
