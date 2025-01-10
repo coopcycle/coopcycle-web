@@ -12,31 +12,31 @@ AppBundle\Entity\ReusablePackaging:
     tracked: false
 
 AppBundle\Entity\Sylius\ProductOptionValue:
-  hamburger_accompaniment_french_fries_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_accompaniment_french_fries_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_ACCOMPANIMENT_FRENCH_FRIES_<current()>'
     currentLocale: fr
     value: French Fries
-  hamburger_accompaniment_salad_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_accompaniment_salad_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_ACCOMPANIMENT_SALAD_<current()>'
     currentLocale: fr
     value: Salad
-  hamburger_drink_cola_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_drink_cola_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_DRINK_COLA_<current()>'
     currentLocale: fr
     value: Cola
-  hamburger_drink_still_water_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_drink_still_water_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_DRINK_STILL_WATER_<current()>'
     currentLocale: fr
     value: Still Water
 
 AppBundle\Entity\Sylius\ProductOption:
-  hamburger_accompaniment_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_accompaniment_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_ACCOMPANIMENT_<current()>'
     strategy: free
     currentLocale: fr
     name: Hamburger Accompaniment
     values: [ "@hamburger_accompaniment_french_fries_<current()>", "@hamburger_accompaniment_salad_<current()>" ]
-  hamburger_drink_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_drink_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_DRINK_<current()>'
     strategy: free
     currentLocale: fr
@@ -62,25 +62,25 @@ AppBundle\Entity\Sylius\ProductVariant:
     name: Sandwich
     code: SANDWICH_LUNCH_SPECIAL_DEFAULT
     price: 3000
-  hamburger_default_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_default_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     taxCategory: "@tva_conso_immediate"
     currentLocale: fr
     name: Hamburger
     code: 'HAMBURGER_DEFAULT_<current()>'
     price: 1200
-  cheeseburger_default_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  cheeseburger_default_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     taxCategory: "@tva_conso_immediate"
     currentLocale: fr
     name: Cheeseburger
     code: 'CHEESEBURGER_DEFAULT_<current()>'
     price: 1200
-  cheesecake_default_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  cheesecake_default_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     taxCategory: "@tva_conso_immediate"
     currentLocale: fr
     name: Cheese Cake
     code: 'CHEESECAKE_DEFAULT_<current()>'
     price: 800
-  carrotcake_default_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  carrotcake_default_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     taxCategory: "@tva_conso_immediate"
     currentLocale: fr
     name: Carrot Cake
@@ -115,7 +115,7 @@ AppBundle\Entity\Sylius\Product:
     slug: sandwich-lunch-special
     enabled: true
     variants: [ "@sandwich_lunch_special_default" ]
-  hamburger_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  hamburger_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'HAMBURGER_<current()>'
     currentLocale: fr
     name: Hamburger
@@ -123,7 +123,7 @@ AppBundle\Entity\Sylius\Product:
     enabled: true
     variants: [ "@hamburger_default_<current()>" ]
     options: [ "@hamburger_accompaniment_<current()>", "@hamburger_drink_<current()>" ]
-  cheeseburger_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  cheeseburger_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'CHEESEBURGER_<current()>'
     currentLocale: fr
     name: Cheeseburger
@@ -131,14 +131,14 @@ AppBundle\Entity\Sylius\Product:
     enabled: true
     variants: [ "@cheeseburger_default_<current()>" ]
     options: [ "@hamburger_accompaniment_<current()>", "@hamburger_drink_<current()>" ]
-  cheesecake_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  cheesecake_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'CHEESECAKE_<current()>'
     currentLocale: fr
     name: Cheese Cake
     slug: 'cheesecake_<current()>'
     enabled: true
     variants: [ "@cheesecake_default_<current()>" ]
-  carrotcake_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  carrotcake_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'CARROTCAKE_<current()>'
     currentLocale: fr
     name: Carrot Cake
@@ -164,7 +164,7 @@ AppBundle\Entity\ReusablePackagings:
 # Menus
 
 AppBundle\Entity\Sylius\Taxon:
-  section_main_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  section_main_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'MAIN_<current()>'
     currentLocale: fr
     slug: 'main_<current()>'
@@ -172,7 +172,7 @@ AppBundle\Entity\Sylius\Taxon:
     __calls:
       - addProduct: [ "@hamburger_<current()>" ]
       - addProduct: [ "@cheeseburger_<current()>" ]
-  section_desserts_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  section_desserts_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: 'DESSERTS_<current()>'
     currentLocale: fr
     slug: 'desserts_<current()>'
@@ -180,7 +180,7 @@ AppBundle\Entity\Sylius\Taxon:
     __calls:
       - addProduct: [ "@cheesecake_<current()>" ]
       - addProduct: [ "@carrotcake_<current()>" ]
-  menu_{crazy_hamburger, restaurant_with_cash_on_delivery}:
+  menu_{crazy_hamburger, restaurant_with_cash_on_delivery, restaurant_with_collection}:
     code: "ROOT_<current()>"
     currentLocale: fr
     slug: 'root_<current()>'
@@ -260,7 +260,6 @@ AppBundle\Entity\LocalBusiness:
     edenred_sync_sent: false
     __calls:
       - setMinimumAmount: [ 'delivery', 1500 ]
-      - setMinimumAmount: [ 'collection', 1500 ]
       - addProduct: [ "@hamburger_crazy_hamburger" ]
       - addProduct: [ "@cheeseburger_crazy_hamburger" ]
       - addProduct: [ "@cheesecake_crazy_hamburger" ]
@@ -281,13 +280,34 @@ AppBundle\Entity\LocalBusiness:
     cash_on_delivery_enabled: true
     __calls:
       - setMinimumAmount: [ 'delivery', 1500 ]
-      - setMinimumAmount: [ 'collection', 1500 ]
       - addProduct: [ "@hamburger_restaurant_with_cash_on_delivery" ]
       - addProduct: [ "@cheeseburger_restaurant_with_cash_on_delivery" ]
       - addProduct: [ "@cheesecake_restaurant_with_cash_on_delivery" ]
       - addProduct: [ "@carrotcake_restaurant_with_cash_on_delivery" ]
       - addTaxon: [ "@menu_restaurant_with_cash_on_delivery" ]
       - setMenuTaxon: [ "@menu_restaurant_with_cash_on_delivery" ]
+  restaurant_with_collection:
+    name: Restaurant with collection
+    address: "@address_1"
+    openingHours: [ 'Mo-Su 09:30-23:59' ]
+    enabled: true
+    contract: "@contract_1"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
+    __calls:
+      - setMinimumAmount: [ 'delivery', 1500 ]
+      - setMinimumAmount: [ 'collection', 1500 ]
+      - addFulfillmentMethod: [ 'collection', true ]
+      - setOpeningHours:
+          - [ 'Mo-Su 09:30-23:59' ]
+          - 'collection'
+      - addProduct: [ "@hamburger_restaurant_with_collection" ]
+      - addProduct: [ "@cheeseburger_restaurant_with_collection" ]
+      - addProduct: [ "@cheesecake_restaurant_with_collection" ]
+      - addProduct: [ "@carrotcake_restaurant_with_collection" ]
+      - addTaxon: [ "@menu_restaurant_with_collection" ]
+      - setMenuTaxon: [ "@menu_restaurant_with_collection" ]
   pizza_express:
     name: Pizza Express
     address: "@address_2"
