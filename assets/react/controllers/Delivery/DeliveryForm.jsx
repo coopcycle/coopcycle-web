@@ -264,7 +264,7 @@ export default function ({  storeId }) {
               }
 
             }
-            if (values.tasks.find(task => task.type === "PICKUP").address.streetAddress !== '' && values.tasks.find(task => task.type === "DROPOFF").address.streetAddress !== '') {
+            if (values.tasks.every(task =>task.address.streetAddress)) {
               calculatePrice()
             }
             
