@@ -86,7 +86,13 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
     {
         $ordersByStore = [];
         foreach ($orders as $order) {
-            $storeId = $order->getDelivery()->getStore()->getId();
+            $storeId = $order->getDelivery()->getStore()?->getId();
+
+            //FIXME; currently only On Demand Delivery orders for stores are supported
+            if (null === $storeId) {
+                continue;
+            }
+
             if (!isset($ordersByStore[$storeId])) {
                 $ordersByStore[$storeId] = [];
             }
