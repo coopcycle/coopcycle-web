@@ -237,8 +237,6 @@ export default function ({  storeId }) {
       >
         {({ values, isSubmitting }) => {
 
-            console.log(values)
-          
           useEffect(() => {
 
             const infos = {
