@@ -34,21 +34,47 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
-            $extension->applyToCollection(
-                $qb,
-                $queryNameGenerator,
-                $resourceClass,
-                $operationName,
-                $context
-            );
-
-            if (
-                $extension instanceof QueryResultCollectionExtensionInterface
+            $isPaginationExtension = $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operationName, $context)
-            ) {
-                $orders = $extension->getResult($qb, $resourceClass, $operationName, $context);
-                return $this->groupByStore($orders);
+                $extension->supportsResult($resourceClass, $operationName, $context);
+
+            // Do not apply pagination extension directly, as it will conflict with the groupBy
+            if (!$isPaginationExtension) {
+                $extension->applyToCollection(
+                    $qb,
+                    $queryNameGenerator,
+                    $resourceClass,
+                    $operationName,
+                    $context
+                );
+            } else {
+                // Fetch all orders first, and then apply the pagination extension
+                $orders = $qb->getQuery()->getResult();
+
+                // Relying on API Platform's pagination extension to get the pagination parameters (offset and page size)
+
+                // Reset the default orderBy, as it conflicts with the groupBy
+                $qb->resetDQLParts(['orderBy']);
+                $qb->select('IDENTITY(d.store) AS store_id');
+                $qb->groupBy('d.store');
+
+                $extension->applyToCollection(
+                    $qb,
+                    $queryNameGenerator,
+                    $resourceClass,
+                    $operationName,
+                    $context
+                );
+                $extension->getResult($qb, $resourceClass, $operationName, $context);
+                $offset = $qb->getFirstResult();
+                $pageSize = $qb->getMaxResults();
+
+                // Manually applying pagination parameters to the array
+                return array_slice(
+                    $this->groupByStore($orders),
+                    $offset,
+                    $pageSize
+                );
             }
         }
 
