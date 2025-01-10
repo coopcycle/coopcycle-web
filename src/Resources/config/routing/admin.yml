@@ -765,3 +765,10 @@ admin_restaurant_image_from_url:
       restaurants: admin_restaurants
       restaurant: admin_restaurant
   methods: [ POST ]
+
+admin_restaurants_meal_voucher_transactions:
+    path: /admin/restaurants/meal-vouchers/transactions
+    defaults:
+        _controller: AppBundle\Controller\AdminController::mealVouchersTransactionsAction
+        layout: 'admin.html.twig'
+    methods: [ GET, POST ]

@@ -1306,8 +1306,8 @@ form.product.alcohol.help: Marca esta opción únicamente si este producto es un
   alcohólica, como una botella de vino.
 form.product.alcohol.label: Este producto es una bebida alcohólica
 restaurants.edenred_transactions.title: Transacciones Edenred
-restaurants.edenred_transactions.edenred_amount: Cantidad pagada con Edenred
-restaurants.edenred_transactions.disclaimer: Esta página muestra todos los pedidos
+restaurants.meal_vouchers_transactions.amount: Cantidad pagada con Edenred
+restaurants.meal_vouchers_transactions.disclaimer: Esta página muestra todos los pedidos
   pagados con Edenred, parcial o totalmente. Para estos pedidos, todo el dinero fue
   recolectado por el comercio. Por lo tanto, debe mandar una factura a cada comercio
   para reclamar las comisiones pendientes de pago.

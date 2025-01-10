@@ -1141,8 +1141,8 @@ form.product.alcohol.help: Toto políčko zaškrtněte pouze v případě, že s
   alkoholický nápoj, například láhev vína.
 form.product.alcohol.label: Tento výrobek je alkoholický nápoj
 restaurants.edenred_transactions.title: Transakce Edenred
-restaurants.edenred_transactions.edenred_amount: Částka vyplacená společností Edenred
-restaurants.edenred_transactions.disclaimer: Na této stránce jsou uvedeny všechny
+restaurants.meal_vouchers_transactions.amount: Částka vyplacená společností Edenred
+restaurants.meal_vouchers_transactions.disclaimer: Na této stránce jsou uvedeny všechny
   objednávky, které byly částečně nebo zcela zaplaceny u společnosti Edenred. U těchto
   objednávek byly všechny peníze vybrány restaurací. Proto musíte každé restauraci
   zaslat fakturu, abyste si mohli nárokovat dlužné provize.
