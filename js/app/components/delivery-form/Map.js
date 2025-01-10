@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-arrowheads'
 require('beautifymarker')
 
-function createMarkerIcon(icon, iconShape, color) {
+const createMarkerIcon = (icon, iconShape, color) => {
   return L.BeautifyIcon.icon({
     icon: icon,
     iconShape: iconShape,
@@ -16,36 +16,49 @@ function createMarkerIcon(icon, iconShape, color) {
   })
 }
 
+const CustomMarker = ({ position, icon, iconShape, color }) => {
+  const markerIcon = createMarkerIcon(icon, iconShape, color)
+
+  return <Marker position={position} icon={markerIcon} />
+}
+
+const ArrowheadPolyline = ({ positions, options }) => {
+  const map = useMap()
+
+  useEffect(() => {
+    if (!map) return
+
+    const polyline = L.polyline(positions, options).addTo(map)
+    polyline.arrowheads()
+
+    return () => {
+      map.removeLayer(polyline)
+    }
+  }, [positions, options])
+
+  return null
+}
+
+const FitBoundsToMarkers = ({ positions }) => {
+  const map = useMap()
+
+  useEffect(() => {
+    if (positions && positions.length > 0) {
+      const bounds = L.latLngBounds(positions.map(pos => pos.latLng))
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [50, 50] })
+      }
+    }
+  }, [map, positions])
+}
+
 export default ({ storeDeliveryInfos, tasks }) => {
   const [storeGeo, setStoreGeo] = useState(null)
   const [deliveryGeo, setDeliveryGeo] = useState([])
   const [deliveryRoute, setDeliveryRoute] = useState('')
   const [distance, setDistance] = useState({ kms: 0 })
 
-  console.log(distance)
-
-  const CustomMarker = ({ position, icon, iconShape, color }) => {
-    const markerIcon = createMarkerIcon(icon, iconShape, color)
-
-    return <Marker position={position} icon={markerIcon} />
-  }
-
-  const ArrowheadPolyline = ({ positions, options }) => {
-    const map = useMap()
-
-    useEffect(() => {
-      if (!map) return
-
-      const polyline = L.polyline(positions, options).addTo(map)
-      polyline.arrowheads()
-
-      return () => {
-        map.removeLayer(polyline)
-      }
-    }, [positions, options])
-
-    return null
-  }
+  console.log(deliveryGeo)
 
   useEffect(() => {
     if (storeDeliveryInfos.address) {
@@ -86,7 +99,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
         <>
           <MapContainer
             center={[storeGeo.latitude, storeGeo.longitude]}
-            zoom={12}
+            zoom={13}
             scrollWheelZoom={false}
             style={{ height: '250px', width: '100%' }}>
             {/* <TileLayer
@@ -126,6 +139,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
                 }}
               />
             ) : null}
+            <FitBoundsToMarkers positions={deliveryGeo} />
           </MapContainer>
           <div className="mt-2 mb-4">Distance : {distance.kms} kms</div>
         </>
