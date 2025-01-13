@@ -8,6 +8,14 @@ admin_delivery:
           back: admin_deliveries
   methods:  [ GET, POST ]
 
+
+admin_delivery_beta:
+  path: /admin/deliveries/{id}/beta
+  defaults:
+      _controller: AppBundle\Controller\AdminController::deliveryActionBeta
+      layout: 'admin.html.twig'
+  methods:  [ GET ]
+
 admin_order_receipt:
     path:     /admin/orders/{orderNumber}/receipt.pdf
     defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptAction }

@@ -44,6 +44,29 @@ trait DeliveryTrait
         return (int) ($price);
     }
 
+    public function deliveryActionBeta($id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderNumberAssignerInterface $orderNumberAssigner,
+        OrderManager $orderManager
+    )
+    {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery, 'view');
+
+        return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
+            'delivery' => $delivery,
+            'store' => $delivery->getStore(),
+            'layout' => $request->attributes->get('layout'),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
+        ]));
+    }
+
+
     public function deliveryAction($id,
         Request $request,
         OrderFactory $orderFactory,
