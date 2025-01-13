@@ -604,6 +604,64 @@ Feature: Stores
       }
       """
 
+  Scenario: Add an adress to store saved addresses as admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/stores/2/addresses" with body:
+    """
+      {
+        "contactName":null,
+        "geo":{
+          "latitude":48.8317573,
+          "longitude":2.326347
+        },
+        "streetAddress":"10 rue Mouton Duvernet, Paris",
+        "telephone":null,
+        "name":null,
+        "description": null
+      }
+    """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
+    And the response should be in JSON
+    Then print last JSON response
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Address",
+        "@id":"/api/stores/2/addresses",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          { "@*@": "@*@"},
+          {
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "contactName":null,
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":48.8317573,
+              "longitude":2.326347
+            },
+            "streetAddress":"10 rue Mouton Duvernet, Paris",
+            "telephone":null,
+            "name":null,
+            "description": null
+          }
+        ],
+        "hydra:totalItems":2
+      }
+      """
+
   Scenario: Reorder store time slots
     Given the fixtures files are loaded:
       | sylius_channels.yml |
