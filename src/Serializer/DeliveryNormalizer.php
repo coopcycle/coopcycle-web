@@ -45,10 +45,6 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             'hashid' => $this->hashids->encode($object->getId())
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $data['tasks'] = array_map(function (Task $task) use ($format, $context) {
-            return $this->normalizer->normalize($task, $format, $context);
-        }, $object->getTasks());
-
         if (!$object->isCompleted()) {
 
             $point = $this->tile38Helper->getLastLocationByDelivery($object);
