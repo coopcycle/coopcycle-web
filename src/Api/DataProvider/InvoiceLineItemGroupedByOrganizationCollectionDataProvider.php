@@ -36,7 +36,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
         foreach ($this->collectionExtensions as $extension) {
             $isPaginationExtension = $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operationName);
+                $extension->supportsResult($resourceClass, $operationName, $context);
 
             // Do not apply pagination extension directly, as it will conflict with the groupBy
             if (!$isPaginationExtension) {
@@ -44,7 +44,8 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                     $qb,
                     $queryNameGenerator,
                     $resourceClass,
-                    $operationName
+                    $operationName,
+                    $context
                 );
             } else {
                 // Fetch all orders first, and then apply the pagination extension
@@ -61,9 +62,10 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                     $qb,
                     $queryNameGenerator,
                     $resourceClass,
-                    $operationName
+                    $operationName,
+                    $context
                 );
-                $extension->getResult($qb);
+                $extension->getResult($qb, $resourceClass, $operationName, $context);
                 $offset = $qb->getFirstResult();
                 $pageSize = $qb->getMaxResults();
 
