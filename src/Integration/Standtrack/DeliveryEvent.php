@@ -43,7 +43,7 @@ class DeliveryEvent
             'M03003' => $senderGln,
             'M03008' => $this->eventDateTime->format('Ymd'),
             'M03009' => $this->eventDateTime->format('Hi'),
-            'IUB\'s' => array_map(
+            'iuBs' => array_map(
                 fn(string $iubCode) => [
                     'M03010' => $iubCode,
                     'M03011' => 'OK'
