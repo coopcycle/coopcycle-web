@@ -122,7 +122,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
                   <CustomMarker
                     key={index}
                     position={geo.latLng}
-                    icon={geo.type === 'PICKUP' ? 'cube' : 'flag'}
+                    icon={geo.type === 'PICKUP' ? 'cube' : 'arrow-down'}
                     iconShape="marker"
                     color="#ff0000"
                   />
