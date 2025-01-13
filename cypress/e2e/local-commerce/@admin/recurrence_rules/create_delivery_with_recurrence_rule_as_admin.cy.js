@@ -88,11 +88,11 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     it('create delivery order and a recurrence rule', function () {
       cy.visit('/admin/stores')
 
-      cy.get('[data-testid=store_Store_without_time_slots__list_item]')
+      cy.get('[data-testid=store_Acme_without_time_slots__list_item]')
         .find('.dropdown-toggle')
         .click()
 
-      cy.get('[data-testid=store_Store_without_time_slots__list_item]')
+      cy.get('[data-testid=store_Acme_without_time_slots__list_item]')
         .contains('Créer une livraison')
         .click()
 

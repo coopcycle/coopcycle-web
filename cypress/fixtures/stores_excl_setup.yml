@@ -76,7 +76,7 @@ AppBundle\Entity\Store:
       - addAddress: [ "@client_1" ]
 
   store_without_time_slots:
-    name: 'Store without time slots'
+    name: 'Acme without time slots'
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
@@ -85,7 +85,7 @@ AppBundle\Entity\Store:
       - addAddress: [ "@client_1" ]
 
   store_no_pricing:
-    name: 'Store without pricing'
+    name: 'Acme without pricing'
     address: "@address_1"
     enabled: true
     timeSlot: '@time_slot_1'
@@ -94,7 +94,7 @@ AppBundle\Entity\Store:
       - addAddress: [ "@client_1" ]
 
   store_invalid_pricing:
-    name: 'Store with invalid pricing'
+    name: 'Acme with invalid pricing'
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_impossible'
