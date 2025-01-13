@@ -5,9 +5,10 @@ import { useFormikContext } from 'formik'
 
 const baseURL = location.protocol + '//' + location.host
 
-const httpClient = new window._auth.httpClient()
-
 export default ({ storeId, storeDeliveryInfos, index }) => {
+
+  const httpClient = new window._auth.httpClient()
+
   const { setFieldValue } = useFormikContext()
 
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
