@@ -13,9 +13,6 @@ import { useTranslation } from 'react-i18next'
 
 import "./DeliveryForm.scss"
 
-const httpClient = new window._auth.httpClient()
-
-
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -89,6 +86,8 @@ const baseURL = location.protocol + '//' + location.host
 
 // as props we also have isNew to manage if it's a new delivery or an edit
 export default function ({  storeId }) {
+
+  const httpClient = new window._auth.httpClient()
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
