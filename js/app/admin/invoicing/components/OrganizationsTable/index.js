@@ -121,7 +121,6 @@ export default function OrganizationsTable({
         setPageSize(pagination.pageSize)
       }}
       expandable={{
-        expandRowByClick: true,
         expandedRowRender: record => {
           return (
             <OrdersTable
