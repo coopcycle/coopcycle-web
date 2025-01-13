@@ -4,6 +4,7 @@ namespace AppBundle\Api\DataProvider;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
+use ApiPlatform\Core\DataProvider\ArrayPaginator;
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
@@ -50,14 +51,9 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
             } else {
                 // Fetch all orders first, and then apply the pagination extension
                 $orders = $qb->getQuery()->getResult();
+                $ordersGrouppedByStore = $this->groupByStore($orders);
 
                 // Relying on API Platform's pagination extension to get the pagination parameters (offset and page size)
-
-                // Reset the default orderBy, as it conflicts with the groupBy
-                $qb->resetDQLParts(['orderBy']);
-                $qb->select('IDENTITY(d.store) AS store_id');
-                $qb->groupBy('d.store');
-
                 $extension->applyToCollection(
                     $qb,
                     $queryNameGenerator,
@@ -66,15 +62,11 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                     $context
                 );
                 $extension->getResult($qb, $resourceClass, $operationName, $context);
-                $offset = $qb->getFirstResult();
-                $pageSize = $qb->getMaxResults();
 
-                // Manually applying pagination parameters to the array
-                return array_slice(
-                    $this->groupByStore($orders),
-                    $offset,
-                    $pageSize
-                );
+                $offset = $qb->getFirstResult();
+                $itemsPerPage = $qb->getMaxResults();
+                
+                return new ArrayPaginator($ordersGrouppedByStore, $offset, $itemsPerPage);
             }
         }
 
