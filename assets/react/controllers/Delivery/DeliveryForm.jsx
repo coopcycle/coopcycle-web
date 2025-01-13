@@ -7,6 +7,7 @@ import { ConfigProvider } from 'antd'
 import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
 import Map from '../../../../js/app/components/delivery-form/Map.js'
+import Spinner from '../../../../js/app/components/core/Spinner.js'
 
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
@@ -105,11 +106,7 @@ export default function ({ storeId, deliveryId }) {
       dropoffSchema,
     ]
   })
-
-  console.log("initial values", initialValues)
-
-
-
+  const [isLoading, setIsLoading] = useState(true)
 
   const { t } = useTranslation()
 
@@ -122,6 +119,7 @@ export default function ({ storeId, deliveryId }) {
         ],
       }
       setInitialValues(initialValues)
+      setIsLoading(false)
     }
   }, [deliveryId])
   
@@ -185,8 +183,11 @@ export default function ({ storeId, deliveryId }) {
     const { response } = await httpClient.get(url)
 
     if (response){
-      setInitialValues(response.tasks)
+      setInitialValues({ tasks : response.tasks })
+      setIsLoading(false)
     }
+      
+    console.log("response", response)
            
     }
     getDeliveryRessource()
@@ -258,155 +259,162 @@ export default function ({ storeId, deliveryId }) {
     }
   }, [storeDeliveryInfos])
 
+
   return (
-    <ConfigProvider locale={antdLocale}>
-      <Formik
-        initialValues={initialValues}
-        onSubmit={handleSubmit}
-        validate={validate}
-        validateOnChange={false}
-        validateOnBlur={false}
-      >
-        {({ values, isSubmitting }) => {
+    isLoading ? 
+      <Spinner/>
+      :
+      <ConfigProvider locale={antdLocale}>
+        <Formik
+          initialValues={initialValues}
+          onSubmit={handleSubmit}
+          validate={validate}
+          validateOnChange={false}
+          validateOnBlur={false}
+        >
+          {({ values, isSubmitting }) => {
 
-          useEffect(() => {
+            console.log(values)
 
-            const infos = {
-              store: storeDeliveryInfos["@id"],
-              weight: values.tasks.find(task => task.type === "DROPOFF").weight,
-              packages: values.tasks.find(task => task.type === "DROPOFF").packages,
-              tasks: values.tasks,
-            };
+            useEffect(() => {
 
-            const calculatePrice = async () => {
-              const url = `${baseURL}/api/retail_prices/calculate`
+              const infos = {
+                store: storeDeliveryInfos["@id"],
+                weight: values.tasks.find(task => task.type === "DROPOFF").weight,
+                packages: values.tasks.find(task => task.type === "DROPOFF").packages,
+                tasks: values.tasks,
+              };
 
-              const { response, error } = await httpClient.post(url, infos)
+              const calculatePrice = async () => {
+                const url = `${baseURL}/api/retail_prices/calculate`
 
-              if (error) {
-                setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-                setCalculatePrice(0)
+                const { response, error } = await httpClient.post(url, infos)
+
+                if (error) {
+                  setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+                  setCalculatePrice(0)
+                }
+
+                if (response) {
+                  setCalculatePrice(response)
+                  setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+                }
+
+              }
+              if (values.tasks.every(task => task.address.streetAddress)) {
+                calculatePrice()
               }
 
-              if (response) {
-                setCalculatePrice(response)
-                setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-              }
+            }, [values, storeDeliveryInfos]);
 
-            }
-            if (values.tasks.every(task => task.address.streetAddress)) {
-              calculatePrice()
-            }
+            return (
+              <Form >
+                <div className='delivery-form' >
 
-          }, [values, storeDeliveryInfos]);
-
-          return (
-            <Form >
-              <div className='delivery-form' >
-
-                <FieldArray name="tasks">
-                  {(arrayHelpers) => (
-                    <div className="new-order" >
-                      {values.tasks.map((task, index) => (
-                        <div className='new-order__item border p-4 mb-4' key={index}>
-                          <Task
-                            key={index}
-                            task={task}
-                            index={index}
-                            addresses={addresses}
-                            storeId={storeId}
-                            storeDeliveryInfos={storeDeliveryInfos}
-                          />
-                          {task.type === 'DROPOFF' && index > 1 ? (
-                            <Button
-                              onClick={() => arrayHelpers.remove(index)}
-                              type="button"
-                              className='mb-4'
-                            >
-                              {t("DELIVERY_FORM_REMOVE_DROPOFF")}
-                            </Button>
-                          ) : null}
-
-                          {task.type === 'DROPOFF' ?
-                            <div className='mb-4' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
+                  <FieldArray name="tasks">
+                    {(arrayHelpers) => (
+                      <div className="new-order" >
+                        {values.tasks.map((task, index) => (
+                          <div className='new-order__item border p-4 mb-4' key={index}>
+                            <Task
+                              deliveryId={deliveryId}
+                              key={index}
+                              task={task}
+                              index={index}
+                              addresses={addresses}
+                              storeId={storeId}
+                              storeDeliveryInfos={storeDeliveryInfos}
+                            />
+                            {task.type === 'DROPOFF' && index > 1 ? (
                               <Button
-                                disabled={false}
-                                onClick={() => {
-                                  arrayHelpers.push(dropoffSchema);
-                                }}
+                                onClick={() => arrayHelpers.remove(index)}
+                                type="button"
+                                className='mb-4'
                               >
-                                {t("DELIVERY_FORM_ADD_DROPOFF")}
+                                {t("DELIVERY_FORM_REMOVE_DROPOFF")}
                               </Button>
-                            </div> : null}
+                            ) : null}
+
+                            {task.type === 'DROPOFF' ?
+                              <div className='mb-4' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
+                                <Button
+                                  disabled={false}
+                                  onClick={() => {
+                                    arrayHelpers.push(dropoffSchema);
+                                  }}
+                                >
+                                  {t("DELIVERY_FORM_ADD_DROPOFF")}
+                                </Button>
+                              </div> : null}
+                          </div>
+                        ))}
+
+                      </div>
+                    )}
+                  </FieldArray>
+
+                  <div className="order-informations">
+                    <div className="order-informations__map">
+                      <Map
+                        storeDeliveryInfos={storeDeliveryInfos}
+                        tasks={values.tasks}
+                      />
+                    </div>
+                    <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
+                      <div className='font-weight-bold mb-2'>{t("DELIVERY_FORM_TOTAL_PRICE")} </div>
+                      <div>
+                        {calculatedPrice.amount
+                          ?
+                          <div>
+                            <div className='mb-1'>
+                              {money(calculatedPrice.amount)} {t("DELIVERY_FORM_TOTAL_VAT")}
+                            </div>
+                            <div>
+                              {money(calculatedPrice.amount - calculatedPrice.tax.amount)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
+                            </div>
+                          </div>
+                          :
+                          <div>
+                            <div className='mb-1'>
+                              {money(0)} {t("DELIVERY_FORM_TOTAL_VAT")}
+                            </div>
+                            <div>
+                              {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
+                            </div>
+                          </div>
+                        }
+                      </div>
+                      {priceError.isPriceError ?
+                        <div className="alert alert-danger mt-4" role="alert">
+                          {priceError.priceErrorMessage}
                         </div>
-                      ))}
+                        : null}
 
                     </div>
-                  )}
-                </FieldArray>
 
-                <div className="order-informations">
-                  <div className="order-informations__map">
-                    <Map
-                      storeDeliveryInfos={storeDeliveryInfos}
-                      tasks={values.tasks}
-                    />
-                  </div>
-                  <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-                    <div className='font-weight-bold mb-2'>{t("DELIVERY_FORM_TOTAL_PRICE")} </div>
-                    <div>
-                      {calculatedPrice.amount
-                        ?
-                        <div>
-                          <div className='mb-1'>
-                            {money(calculatedPrice.amount)} {t("DELIVERY_FORM_TOTAL_VAT")}
-                          </div>
-                          <div>
-                            {money(calculatedPrice.amount - calculatedPrice.tax.amount)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-                          </div>
-                        </div>
-                        :
-                        <div>
-                          <div className='mb-1'>
-                            {money(0)} {t("DELIVERY_FORM_TOTAL_VAT")}
-                          </div>
-                          <div>
-                            {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-                          </div>
-                        </div>
-                      }
+
+                    <div className='order-informations__complete-order'>
+                      <Button
+                        type="primary"
+                        style={{ height: '2.5em' }}
+                        htmlType="submit" disabled={isSubmitting}>
+                        {t("DELIVERY_FORM_SUBMIT")}
+                      </Button>
                     </div>
-                    {priceError.isPriceError ?
+
+                    {error.isError ?
                       <div className="alert alert-danger mt-4" role="alert">
-                        {priceError.priceErrorMessage}
+                        {error.errorMessage}
                       </div>
                       : null}
-
                   </div>
 
-
-                  <div className='order-informations__complete-order'>
-                    <Button
-                      type="primary"
-                      style={{ height: '2.5em' }}
-                      htmlType="submit" disabled={isSubmitting}>
-                      {t("DELIVERY_FORM_SUBMIT")}
-                    </Button>
-                  </div>
-
-                  {error.isError ?
-                    <div className="alert alert-danger mt-4" role="alert">
-                      {error.errorMessage}
-                    </div>
-                    : null}
                 </div>
-
-              </div>
-            </Form>
-          )
-        }}
-      </Formik>
-    </ConfigProvider>
+              </Form>
+            )
+          }}
+        </Formik>
+      </ConfigProvider>
   )
 }

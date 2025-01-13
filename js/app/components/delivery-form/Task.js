@@ -13,7 +13,13 @@ import './Task.scss'
 const baseURL = location.protocol + '//' + location.host
 const httpClient = new window._auth.httpClient()
 
-export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
+export default ({
+  addresses,
+  storeId,
+  index,
+  storeDeliveryInfos,
+  deliveryId,
+}) => {
   const [packages, setPackages] = useState(null)
 
   const { t } = useTranslation()
@@ -68,9 +74,14 @@ export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
         {task.type === 'DROPOFF' ? (
           <div>
             {packages ? (
-              <Packages storeId={storeId} index={index} packages={packages} />
+              <Packages
+                storeId={storeId}
+                index={index}
+                packages={packages}
+                deliveryId={deliveryId}
+              />
             ) : null}
-            <TotalWeight index={index} />
+            <TotalWeight index={index} deliveryId={deliveryId} />
           </div>
         ) : null}
 

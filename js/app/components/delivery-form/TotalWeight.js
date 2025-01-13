@@ -4,13 +4,19 @@ const { Option } = Select
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
-export default ({ index }) => {
-  const { setFieldValue, errors } = useFormikContext()
+export default ({ index, deliveryId }) => {
+  const { setFieldValue, errors, values } = useFormikContext()
 
   const [numberValue, setNumberValue] = useState(null)
   const [weightUnit, setWeightUnit] = useState('kg')
 
-  const {t} = useTranslation()
+  const { t } = useTranslation()
+
+  useEffect(() => {
+    if (deliveryId) {
+      setNumberValue(+values.tasks[index].weight / 1000)
+    }
+  }, [deliveryId])
 
   useEffect(() => {
     if (numberValue !== null) {
@@ -26,16 +32,16 @@ export default ({ index }) => {
     }
   }, [numberValue, weightUnit, index])
 
-
-
   return (
     <div className="mt-4 mb-4">
-      <div className="mb-2 font-weight-bold">{ t("DELIVERY_FORM_TOTAL_WEIGHT")}</div>
+      <div className="mb-2 font-weight-bold">
+        {t('DELIVERY_FORM_TOTAL_WEIGHT')}
+      </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <InputNumber
           style={{ width: '80%' }}
           min={0}
-          placeholder={t("DELIVERY_FORM_WEIGHT")}
+          placeholder={t('DELIVERY_FORM_WEIGHT')}
           value={numberValue}
           onChange={value => {
             setNumberValue(value)

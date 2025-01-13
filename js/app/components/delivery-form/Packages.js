@@ -5,16 +5,18 @@ import { useTranslation } from 'react-i18next'
 
 import './Packages.scss'
 
-export default ({ storeId, index, packages }) => {
-  const { setFieldValue, errors } = useFormikContext()
+export default ({ storeId, index, packages, deliveryId }) => {
+  const { setFieldValue, errors, values } = useFormikContext()
 
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
+  console.log('packagespicked', packagesPicked)
 
   const { t } = useTranslation()
 
   useEffect(() => {
-    /** format the data in order to use them with the pickers.  */
+    /** format the data in order to use them with the pickers */
+
     const picked = []
 
     for (const p of packages) {
@@ -26,8 +28,20 @@ export default ({ storeId, index, packages }) => {
     }
 
     setPackagesType(packages)
-    setPackagesPicked(picked)
-  }, [storeId, packages])
+
+    if (deliveryId) {
+      const packagesToEdit = values.tasks[index].packages
+      const newPackagesArray = picked.map(p => {
+        const match = packagesToEdit.find(item => item.type === p.type)
+        return match || p
+      })
+      setPackagesPicked(newPackagesArray)
+    } else {
+      setPackagesPicked(picked)
+    }
+  }, [storeId, packages, deliveryId])
+
+  /** Insert the data in edit mode */
 
   useEffect(() => {
     setFieldValue(`tasks[${index}].packages`, packagesPicked)
