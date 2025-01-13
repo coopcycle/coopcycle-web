@@ -54,8 +54,8 @@ const validatePhoneNumber = (telephone) => {
 
 const dropoffSchema = {
   type: 'DROPOFF',
-  doneAfter: getNextRoundedTime().toISOString(),
-  doneBefore: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  after: getNextRoundedTime().toISOString(),
+  before: getNextRoundedTime().add(60, 'minutes').toISOString(),
   timeSlot: null,
   comments: '',
   address: {
@@ -71,8 +71,8 @@ const dropoffSchema = {
 
 const pickupSchema = {
   type: 'PICKUP',
-  doneAfter: getNextRoundedTime().toISOString(),
-  doneBefore: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  after: getNextRoundedTime().toISOString(),
+  before: getNextRoundedTime().add(60, 'minutes').toISOString(),
   timeSlot: null,
   comments: '',
   address: {
@@ -99,20 +99,32 @@ export default function ({ storeId, deliveryId }) {
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
-  const [deliveryRessouce, setDeliveryRessource] = useState(null)
+  const [initialValues, setInitialValues] = useState({
+    tasks: [
+      pickupSchema,
+      dropoffSchema,
+    ]
+  })
 
-  console.log(deliveryRessouce)
+  console.log("initial values", initialValues)
+
 
 
 
   const { t } = useTranslation()
 
-  const initialValues = {
-    tasks: [
-      pickupSchema,
-      dropoffSchema,
-    ],
-  }
+  useEffect(() => {
+    if (!deliveryId) {
+      const initialValues = {
+        tasks: [
+          pickupSchema,
+          dropoffSchema,
+        ],
+      }
+      setInitialValues(initialValues)
+    }
+  }, [deliveryId])
+  
 
 
   const validate = (values) => {
@@ -124,18 +136,18 @@ export default function ({ storeId, deliveryId }) {
 
       let doneAfterPickup
 
-      if (values.tasks[0].doneAfter) {
-        doneAfterPickup = values.tasks[0].doneAfter
+      if (values.tasks[0].after) {
+        doneAfterPickup = values.tasks[0].after
       } else if (values.tasks[0].timeSlot) {
         const after = values.tasks[0].timeSlot.slice(0, 19)
         doneAfterPickup = after
       }
 
-      if (values.tasks[i].type === "DROPOFF" && values.tasks[i].doneAfter) {
-        const doneAfterDropoff = values.tasks[i].doneAfter
+      if (values.tasks[i].type === "DROPOFF" && values.tasks[i].after) {
+        const doneAfterDropoff = values.tasks[i].after
         const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
         if (!isWellOrdered) {
-          taskErrors.doneBefore = t("DELIVERY_FORM_ERROR_HOUR")
+          taskErrors.before = t("DELIVERY_FORM_ERROR_HOUR")
         }
       }
 
@@ -170,19 +182,12 @@ export default function ({ storeId, deliveryId }) {
   useEffect(() => {
     const url = `${baseURL}/api/deliveries/${deliveryId}`
     const getDeliveryRessource = async () => {
-      const { response } = await httpClient.get(url)
+    const { response } = await httpClient.get(url)
 
-      if (response){
-        // setDeliveryRessource(response)
-      const pickup = { ...response.pickup, type: "PICKUP" }
-        const dropoff = { ...response.dropoff, type: "DROPOFF" }
-        
-        console.log(response)
-
-      setDeliveryRessource([pickup, dropoff])
-      }
-      
-      
+    if (response){
+      setInitialValues(response.tasks)
+    }
+           
     }
     getDeliveryRessource()
   }, [deliveryId])

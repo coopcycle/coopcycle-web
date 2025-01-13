@@ -79,8 +79,8 @@ const DateTimeRangePicker = ({ format, index }) => {
   })
 
   useEffect(() => {
-    setFieldValue(`tasks[${index}].doneAfter`, afterValue.toISOString())
-    setFieldValue(`tasks[${index}].doneBefore`, beforeValue.toISOString())
+    setFieldValue(`tasks[${index}].after`, afterValue.toISOString())
+    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString())
   }, [afterValue, beforeValue, index, setFieldValue])
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
@@ -255,8 +255,8 @@ const DateTimeRangePicker = ({ format, index }) => {
         onClick={() => setIsComplexPicker(!isComplexPicker)}>
         {t('SWITCH_COMPLEX_DATEPICKER')}
       </a>
-      {errors.tasks?.[index]?.doneBefore && (
-        <div className="text-danger">{errors.tasks[index].doneBefore}</div>
+      {errors.tasks?.[index]?.before && (
+        <div className="text-danger">{errors.tasks[index].before}</div>
       )}
     </>
   )

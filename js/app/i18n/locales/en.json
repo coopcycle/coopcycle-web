@@ -608,6 +608,7 @@
         "GENERIC_BARCODE_HELP": "This task barcode can track all linked packages as a single unit. Use it for simplified tracking of the entire delivery. For detailed package-by-package tracking, use individual package barcodes instead.",
         "PM_RESTOFLASH": "Restoflash",
         "PM_CONECS": "Titres-restaurant",
-        "PM_SWILE": "Swile"
+        "PM_SWILE": "Swile",
+        "SWITCH_COMPLEX_DATEPICKER": "Select a date over multiple days"
     }
 }

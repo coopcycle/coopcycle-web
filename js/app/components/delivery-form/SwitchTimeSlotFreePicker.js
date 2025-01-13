@@ -14,8 +14,8 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
 
   useEffect(() => {
     if (isTimeSlotSelect && storeDeliveryInfos.timeSlots.length > 0) {
-      setFieldValue(`tasks[${index}].doneAfter`, null)
-      setFieldValue(`tasks[${index}].doneBefore`, null)
+      setFieldValue(`tasks[${index}].after`, null)
+      setFieldValue(`tasks[${index}].before`, null)
     } else {
       setFieldValue(`tasks[${index}].timeSlot`, null)
     }
@@ -50,8 +50,8 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
             title={t('SWITCH_DATEPICKER')}></i>
         </div>
       )}
-      {errors.tasks?.[index]?.doneBefore && (
-        <div className="text-danger">{errors.tasks[index].doneBefore}</div>
+      {errors.tasks?.[index]?.before && (
+        <div className="text-danger">{errors.tasks[index].before}</div>
       )}
     </>
   )
