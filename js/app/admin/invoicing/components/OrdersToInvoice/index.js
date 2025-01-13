@@ -51,6 +51,7 @@ export default () => {
         </div>
         <div className="d-flex flex-column justify-content-end">
           <Button
+            testID="invoicing.refresh"
             primary
             onClick={() => {
               setReloadKey(reloadKey + 1)

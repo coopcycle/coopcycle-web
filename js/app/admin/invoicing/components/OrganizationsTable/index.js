@@ -104,6 +104,7 @@ export default function OrganizationsTable({
 
   return (
     <Table
+      data-testid="invoicing.organizations"
       style={{ marginTop: '48px' }}
       columns={columns}
       loading={isFetching}
