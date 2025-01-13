@@ -52,7 +52,7 @@ class DeliveryRequest
                 "reasons" => [
                     "REFUSED_EXCEPTION"
                 ],
-                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+                "comment" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
             ], 202);
         }
 
@@ -97,6 +97,9 @@ class DeliveryRequest
         $data->deliveryObject = $delivery;
         $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
 
+        $pickup = $delivery->getPickup();
+
+        // TODO Add label only for pickup
         foreach ($delivery->getTasks() as $task) {
 
             $barcode = BarcodeUtils::getRawBarcodeFromTask($task);

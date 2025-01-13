@@ -21,6 +21,7 @@ failure_reasons:
     - { code: "PACKAGING_ISSUE", description: "delivery.failure_reason.default.packaging_problems" }
     - { code: "HOLIDAY", description: "delivery.failure_reason.default.holiday_closure" }
     - { code: "ADDRESS_REVIEW_NEEDED", description: "delivery.failure_reason.default.address_review_needed" }
+    - { code: "PRICE_REVIEW_NEEDED", description: "delivery.failure_reason.default.price_review_needed" }
   dbschenker:
     - { option: "state", code: "AAR", description: "delivery.failure_reason.transporter.state.aar" }
     - { option: "state", code: "RAQ", description: "delivery.failure_reason.transporter.state.raq" }

@@ -1939,4 +1939,35 @@ class Order extends BaseOrder implements OrderInterface
 
         return null;
     }
+
+    public function isFoodtech(): bool
+    {
+        //FIXME: combine with $this->getStoreType() implementation
+        return $this->hasVendor();
+    }
+
+
+    public function getDeliveryPrice(): PriceInterface
+    {
+        if ($this->isFoodtech()) {
+            //FIXME: get the delivery price for food tech orders from Adjustments
+            return new PricingRulesBasedPrice(0);
+        }
+
+        $deliveryItem = $this->getItems()->first();
+
+        if (false === $deliveryItem) {
+            throw new \LogicException('Order has no delivery price');
+        }
+
+        $productVariant = $deliveryItem->getVariant();
+
+        if (str_starts_with($productVariant->getCode(), 'CPCCL-ODDLVR')) {
+            // price based on the PricingRuleSet
+            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
+        } else {
+            // custom price
+            return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+        }
+    }
 }

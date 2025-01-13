@@ -102,7 +102,8 @@ class AddressModal extends Component {
             'visible': this.props.isCollectionEnabled,
             'invisible': !this.props.isCollectionEnabled,
           }) }
-          onClick={ this.props.enableTakeaway }>
+          onClick={ this.props.enableTakeaway }
+          data-testid="fulfilment_method.collection">
           { this.props.t('CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY') }
         </button>
       </Modal>

@@ -34,11 +34,17 @@ class DeliveryManager
     )
     {}
 
-    public function getPrice(Delivery $delivery, PricingRuleSet $ruleSet)
+    public function getPrice(Delivery $delivery, ?PricingRuleSet $ruleSet): ?int
     {
+        // if no Pricing Rules are defined, the default rule is to set the price to 0
+        if (null === $ruleSet) {
+            return 0;
+        }
+
         $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
         $visitor->visitDelivery($delivery);
 
+        // if the Pricing Rules are configured but none of them matched, the price is null
         return $visitor->getPrice();
     }
 

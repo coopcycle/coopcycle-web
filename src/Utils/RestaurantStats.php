@@ -34,9 +34,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RestaurantStats implements \Countable
 {
     private $result;
-    private $translator;
-    private $withVendorName;
-    private $withMessenger;
+    private $ids;
 
     private $columnTotals = [];
     private $taxTotals = [];
@@ -46,34 +44,26 @@ class RestaurantStats implements \Countable
 
     private $numberFormatter;
 
-    private bool $nonProfitsEnabled;
-    private bool $withBillingMethod;
-
     const MAX_RESULTS = 50;
 
+    private $serviceTaxRateCode;
+
+    private $messengers;
+
     public function __construct(
-        EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
         \DateTime $start,
         \DateTime $end,
         ?LocalBusiness $restaurant,
-        PaginatorInterface $paginator,
+        private readonly PaginatorInterface $paginator,
         string $locale,
-        TranslatorInterface $translator,
-        TaxesHelper $taxesHelper,
-        bool $withVendorName = false,
-        bool $withMessenger = false,
-        bool $nonProfitsEnabled = false,
-        bool $withBillingMethod = false)
+        private readonly TranslatorInterface $translator,
+        private readonly TaxesHelper $taxesHelper,
+        private readonly bool $withVendorName = false,
+        private readonly bool $withMessenger = false,
+        private readonly bool $nonProfitsEnabled = false,
+        private readonly bool $withBillingMethod = false)
     {
-        $this->entityManager = $entityManager;
-
-        $this->paginator = $paginator;
-        $this->translator = $translator;
-        $this->taxesHelper = $taxesHelper;
-        $this->withVendorName = $withVendorName;
-        $this->withMessenger = $withMessenger;
-        $this->nonProfitsEnabled = $nonProfitsEnabled;
-        $this->withBillingMethod = $withBillingMethod;
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);

@@ -1242,7 +1242,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theStoreWithNameHasOrderCreationEnabled($storeName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
-        $store->setCreateOrders(true);
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 

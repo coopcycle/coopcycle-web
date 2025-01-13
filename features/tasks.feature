@@ -2734,7 +2734,7 @@ Feature: Tasks
         "@id":"/api/tasks",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
-        "hydra:totalItems":21,
+        "hydra:totalItems":22,
         "hydra:search":{
           "@*@":"@*@"
         }

@@ -19,7 +19,7 @@ class RequestUriProcessor implements ProcessorInterface
 
         $request = $this->requestStack->getCurrentRequest();
 
-        // for logs coming from ApiLogSubscriber the $request variable is null and `extra`s are added by the ApiResponseProcessor
+        // for logs coming from ApiLogSubscriber the $request variable is null and `extra`s are added by the ApiRequestResponseProcessor
 
         if ($request) {
             $record['extra']['method'] = $request->getMethod();

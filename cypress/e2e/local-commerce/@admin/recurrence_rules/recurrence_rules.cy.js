@@ -5,7 +5,7 @@ context('Managing recurrence rules (role: admin)', () => {
     let cmd =
       'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
     if (prefix) {
-      cmd = `${prefix} ${cmd}`
+      cmd = `${ prefix } ${ cmd }`
     }
 
     cy.exec(cmd)
@@ -26,46 +26,12 @@ context('Managing recurrence rules (role: admin)', () => {
       .click()
 
     // Pickup
-
-    cy.searchAddress(
-      '[data-form="task"]:nth-of-type(1)',
-      '23 Avenue Claude Vellefaux, 75010 Paris, France',
-      /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
-    )
-
-    cy.get('#delivery_tasks_0_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_0_address_name__display')
-      .type('Office')
-
-    cy.get('#delivery_tasks_0_address_telephone__display').clear()
-    cy.get('#delivery_tasks_0_address_telephone__display')
-      .type('+33112121212')
-
-    cy.get('#delivery_tasks_0_address_contactName__display').clear()
-    cy.get('#delivery_tasks_0_address_contactName__display').type('John Doe')
+    cy.chooseSavedPickupAddress(1)
 
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
-
-    cy.searchAddress(
-      '[data-form="task"]:nth-of-type(2)',
-      '72 Rue Saint-Maur, 75011 Paris, France',
-      /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
-    )
-
-    cy.get('#delivery_tasks_1_address_name__display')
-    .clear()
-    cy.get('#delivery_tasks_1_address_name__display')
-      .type('Office')
-
-    cy.get('#delivery_tasks_1_address_telephone__display').clear()
-    cy.get('#delivery_tasks_1_address_telephone__display')
-      .type('+33112121212')
-
-    cy.get('#delivery_tasks_1_address_contactName__display').clear()
-    cy.get('#delivery_tasks_1_address_contactName__display').type('Jane smith')
+    cy.chooseSavedDropoff1Address(2)
 
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
@@ -74,9 +40,9 @@ context('Managing recurrence rules (role: admin)', () => {
 
     cy.get('[data-tax="included"]').contains('4,99 €')
 
-    cy.get('#delivery_form__recurrence__container').find('a').click();
-    cy.chooseDaysOfTheWeek([5, 6]);
-    cy.get('[data-testid=save]').click();
+    cy.get('#delivery_form__recurrence__container').find('a').click()
+    cy.chooseDaysOfTheWeek([ 5, 6 ])
+    cy.get('[data-testid=save]').click()
 
     cy.get('#delivery-submit').click()
   })
@@ -87,10 +53,10 @@ context('Managing recurrence rules (role: admin)', () => {
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
-    cy.get('[data-testid="store"]').click();
+    cy.get('[data-testid="store"]').click()
 
     // Store page
-    cy.get('[data-testid="recurrence-rules"]').click();
+    cy.get('[data-testid="recurrence-rules"]').click()
 
     // Recurrence rules page
     cy.location('pathname', { timeout: 10000 }).should(
@@ -117,28 +83,34 @@ context('Managing recurrence rules (role: admin)', () => {
       .click()
 
     // Delivery page
-    cy.get('a[href*="recurrence-rules"]')
+    cy.get('[data-testid="breadcrumb"]')
+      .find('[data-testid="order_id"]')
       .click()
 
-    // Recurrence rule page
-    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
+    // Order page
+    cy.get('a[href*="recurrence-rules"]').click()
 
-    cy.get('#delivery_form__recurrence__container').click();
-    cy.chooseDaysOfTheWeek([1]);
-    cy.get('[data-testid=save]').click();
+    // Recurrence rule page
+    cy.get('#delivery_form__recurrence__container')
+      .contains('chaque semaine le vendredi, samedi')
+
+    cy.get('#delivery_form__recurrence__container').click()
+    cy.chooseDaysOfTheWeek([ 1 ])
+    cy.get('[data-testid=save]').click()
 
     cy.get('#delivery-submit').click()
 
-    // Delivery page
+    // Order page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
-      /\/admin\/deliveries\/[0-9]+$/,
+      /\/admin\/orders\/[0-9]+$/,
     )
     cy.get('a[href*="recurrence-rules"]')
       .click()
 
     // Recurrence rule page
-    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le lundi')
+    cy.get('#delivery_form__recurrence__container')
+      .contains('chaque semaine le lundi')
   })
 
   it('cancel recurrence rule', function () {
@@ -153,28 +125,34 @@ context('Managing recurrence rules (role: admin)', () => {
       .click()
 
     // Delivery page
-    cy.get('a[href*="recurrence-rules"]')
+    cy.get('[data-testid="breadcrumb"]')
+      .find('[data-testid="order_id"]')
       .click()
 
-    // Recurrence rule page
-    cy.get('#delivery_form__recurrence__container').contains('chaque semaine le vendredi, samedi')
+    // Order page
+    cy.get('a[href*="recurrence-rules"]').click()
 
-    cy.get('#delivery_form__recurrence__container').click();
-    cy.get('.ant-btn-danger > :nth-child(2)').click();
-    cy.get('.ant-popover-buttons > .ant-btn-primary > span').click();
+    // Recurrence rule page
+    cy.get('#delivery_form__recurrence__container')
+      .contains('chaque semaine le vendredi, samedi')
+
+    cy.get('#delivery_form__recurrence__container').click()
+    cy.get('.ant-btn-danger > :nth-child(2)').click()
+    cy.get('.ant-popover-buttons > .ant-btn-primary > span').click()
 
     cy.get('#delivery-submit').click()
 
-    // Delivery page
+    // Order page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
-      /\/admin\/deliveries\/[0-9]+$/,
+      /\/admin\/orders\/[0-9]+$/,
     )
     cy.get('a[href*="recurrence-rules"]')
       .click()
 
     // Recurrence rule page
-    cy.get('#delivery_form__recurrence__container').contains('Règle de récurrence annulée')
+    cy.get('#delivery_form__recurrence__container')
+      .contains('Règle de récurrence annulée')
 
   })
 })

@@ -9,64 +9,26 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Taxation\Calculator\CalculatorInterface;
-use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Webmozart\Assert\Assert;
 
 class OrderFactory implements FactoryInterface
 {
-    /**
-     * @var FactoryInterface
-     */
-    private $factory;
-
-    /**
-     * @var ChannelContextInterface
-     */
-    private $channelContext;
-
-    /**
-     * @var FactoryInterface $orderItemFactory
-     */
-    private $orderItemFactory;
-
-    /**
-     * @var ProductVariantFactoryInterface $productVariantFactory
-     */
-    private $productVariantFactory;
-
-    /**
-     * @var OrderItemQuantityModifierInterface $orderItemQuantityModifier
-     */
-    private $orderItemQuantityModifier;
-
-    /**
-     * @var OrderModifierInterface $orderModifier
-     */
-    private $orderModifier;
-
-    /**
-     * @param FactoryInterface $factory
-     */
     public function __construct(
-        FactoryInterface $factory,
-        ChannelContextInterface $channelContext,
-        FactoryInterface $orderItemFactory,
-        ProductVariantFactoryInterface $productVariantFactory,
-        OrderItemQuantityModifierInterface $orderItemQuantityModifier,
-        OrderModifierInterface $orderModifier)
+        private readonly FactoryInterface $factory,
+        private readonly ChannelContextInterface $channelContext,
+        private readonly FactoryInterface $orderItemFactory,
+        private readonly ProductVariantFactory $productVariantFactory,
+        private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        private readonly OrderModifierInterface $orderModifier,
+        private readonly LoggerInterface $logger
+    )
     {
-        $this->factory = $factory;
-        $this->channelContext = $channelContext;
-        $this->orderItemFactory = $orderItemFactory;
-        $this->productVariantFactory = $productVariantFactory;
-        $this->orderItemQuantityModifier = $orderItemQuantityModifier;
-        $this->orderModifier = $orderModifier;
     }
 
     /**
@@ -92,7 +54,7 @@ class OrderFactory implements FactoryInterface
         return $order;
     }
 
-    public function createForDelivery(Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true): OrderInterface
+    public function createForDeliveryAndPrice(Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true): OrderInterface
     {
         Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
 
@@ -120,6 +82,13 @@ class OrderFactory implements FactoryInterface
             $order->setCustomer($customer);
         }
 
+        $this->setDeliveryPrice($order, $delivery, $price);
+
+        return $order;
+    }
+
+    private function setDeliveryPrice(OrderInterface $order, Delivery $delivery, PriceInterface $price)
+    {
         $variant = $this->productVariantFactory->createForDelivery($delivery, $price->getValue());
 
         $orderItem = $this->orderItemFactory->createNew();
@@ -135,7 +104,24 @@ class OrderFactory implements FactoryInterface
         $this->orderItemQuantityModifier->modify($orderItem, 1);
 
         $this->orderModifier->addToOrder($order, $orderItem);
+    }
 
-        return $order;
+    public function updateDeliveryPrice(OrderInterface $order, Delivery $delivery, PriceInterface $price)
+    {
+        if ($order->isFoodtech()) {
+            $this->logger->info('Price update is not supported for foodtech orders');
+            return;
+        }
+
+        $deliveryItem = $order->getItems()->first();
+
+        if (false === $deliveryItem) {
+            $this->logger->info('No delivery item found in order');
+        }
+
+        // remove the previous price
+        $this->orderModifier->removeFromOrder($order, $deliveryItem);
+
+        $this->setDeliveryPrice($order, $delivery, $price);
     }
 }

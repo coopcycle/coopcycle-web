@@ -94,6 +94,8 @@
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-jest": "^24.7.0",
     "eslint-plugin-react": "^7.31.10",
+    "eslint-plugin-react-compiler": "^19.0.0-beta-63e3235-20250105",
+    "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-storybook": "^0.6.15",
     "eslint-webpack-plugin": "^2.6.0",
     "font-awesome": "^4.7.0",

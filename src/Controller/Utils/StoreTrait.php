@@ -11,7 +11,6 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
@@ -29,7 +28,6 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
@@ -45,7 +43,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -284,11 +281,8 @@ trait StoreTrait
     }
 
     public function newStoreDeliveryAction($id, Request $request,
-        DeliveryManager $deliveryManager,
         PricingManager $pricingManager,
         OrderManager $orderManager,
-        OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
         LoggerInterface $logger)
@@ -328,51 +322,39 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
-            if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
-                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                    $entityManager, $orderNumberAssigner);
+            $priceForOrder = null;
 
-                $order = $delivery->getOrder();
-                $this->handleBookmark($orderManager, $form, $order);
-                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
-
-                $entityManager->flush();
-
-                return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-            } elseif ($store->getCreateOrders()) {
-
-                try {
-
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $this->getUser()->getCustomer());
-                    $entityManager->persist($order);
-
-                    $this->handleRememberAddress($store, $form);
-                    $this->handleBookmark($orderManager, $form, $order);
-
-                    $entityManager->flush();
-
-                    // We need to persist the order before calling onDemand,
-                    // because an auto increment is needed to generate a number
-                    $orderManager->onDemand($order);
-
-                    $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order);
-
-                    $entityManager->flush();
-
-                    return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-                } catch (NoRuleMatchedException $e) {
-                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                    $form->addError(new FormError($message));
-                }
-
+            if ($this->isGranted('ROLE_ADMIN') && $arbitraryPrice = $this->getArbitraryPrice($form)) {
+                $priceForOrder = new UseArbitraryPrice($arbitraryPrice);
             } else {
+                $priceForOrder = new UsePricingRules();
+            }
+
+            $order = null;
+            try {
+                $order = $pricingManager->createOrder($delivery, [
+                    'pricingStrategy' => $priceForOrder,
+                    // Force an admin to fix the pricing rules
+                    // maybe it would be a better UX to create an incident instead
+                    'throwException' => $this->isGranted('ROLE_ADMIN')
+                ]);
+
+            } catch (NoRuleMatchedException $e) {
+                $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+            }
+
+            if (null !== $order) {
 
                 $this->handleRememberAddress($store, $form);
+                $this->handleBookmark($orderManager, $form, $order);
 
-                $entityManager->persist($delivery);
+                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
+
+                if ($this->isGranted('ROLE_ADMIN')) {
+                    $order->setState(OrderInterface::STATE_ACCEPTED);
+                }
+
                 $entityManager->flush();
 
                 // TODO Add flash message
@@ -467,7 +449,7 @@ trait StoreTrait
         // to make sure that tasks' after/before dates are in the future
         $startDate = Carbon::now()->addDay()->format('Y-m-d');
         $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
-        
+
         $routes = $request->attributes->get('routes');
 
         $arbitraryPrice = null;
@@ -484,7 +466,12 @@ trait StoreTrait
 
             $tempDelivery = $form->getData();
 
-            $arbitraryPrice = $this->getArbitraryPrice($form);
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $arbitraryPrice = $this->getArbitraryPrice($form);
+            } else {
+                $arbitraryPrice = null;
+            }
+
             $recurrRule = $this->getRecurrRule($form, $logger);
 
             if (null !== $recurrRule) {
@@ -565,27 +552,6 @@ trait StoreTrait
             }
         }
     }
-
-    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
-    {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            return null;
-        }
-
-        if (!$form->has('arbitraryPrice')) {
-            return null;
-        }
-
-        if (true !== $form->get('arbitraryPrice')->getData()) {
-            return null;
-        }
-
-        $variantPrice = $form->get('variantPrice')->getData();
-        $variantName = $form->get('variantName')->getData();
-
-        return new ArbitraryPrice($variantName, $variantPrice);
-    }
-
 
     private function getRecurrRule(FormInterface $form, LoggerInterface $logger): ?Rule
     {
@@ -796,7 +762,13 @@ trait StoreTrait
         $startDate = Carbon::now()->addDay()->format('Y-m-d');
 
         foreach ($recurrenceRules as $rule) {
-            $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false);
+            $templateOrder = null;
+            $isInvalidPricing = false;
+            try {
+                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
+            } catch (NoRuleMatchedException $e) {
+                $isInvalidPricing = true;
+            }
             $templateDelivery = $templateOrder ? $templateOrder->getDelivery() : $deliveryManager->createDeliveryFromRecurrenceRule($rule, $startDate, false);
             $templateTasks = $templateDelivery ? $templateDelivery->getTasks() : $deliveryManager->createTasksFromRecurrenceRule($rule, $startDate, false);
 
@@ -807,6 +779,7 @@ trait StoreTrait
                 'templateTasks' => $templateTasks,
                 'templateDelivery' => $templateDelivery, // might be null if we cannot create a valid delivery (could be the case for some recurrence rules created from Dispatch dashboard)
                 'templateOrder' => $templateOrder, // might be null if we cannot calculate the price
+                'isInvalidPricing' => $isInvalidPricing,
                 'generateOrders' => !$isLegacy && $rule->isGenerateOrders(), //in the future that will be configurable
                 'isLegacy' => $isLegacy,
             ];
@@ -934,8 +907,8 @@ trait StoreTrait
         MessageBusInterface $messageBus,
         SlugifyInterface $slugify,
         string $routeTo)
-    {   
-        
+    {
+
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $form->get('file')->getData();
 

@@ -570,3 +570,49 @@ Feature: Retail prices
         }
       }
       """
+
+    Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | store_w_package_pricing.yml |
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "packages": [
+          {"type": "XL", "quantity": 2}
+        ],
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":699,
+        "currency":"EUR",
+        "tax":{
+          "amount":@integer@,
+          "included": true
+        }
+      }
+      """

@@ -8,6 +8,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
     'plugin:jest/recommended',
     'plugin:storybook/recommended',
     'plugin:cypress/recommended',
@@ -20,7 +21,11 @@ module.exports = {
     ecmaVersion: 6,
     sourceType: 'module',
   },
-  plugins: ['react', 'jest'],
+  plugins: [
+    'react',
+    'eslint-plugin-react-compiler',
+    'jest'
+  ],
   globals: {
     $: true,
     io: true,
@@ -40,7 +45,8 @@ module.exports = {
     'react/prop-types': 'off',
     'react/display-name': 'off',
     'react/no-deprecated': 'warn',
-    "cypress/unsafe-to-chain-command": "warn",
-    "cypress/no-unnecessary-waiting": "warn",
+    'react-compiler/react-compiler': 'warn',
+    'cypress/unsafe-to-chain-command': 'warn',
+    'cypress/no-unnecessary-waiting': 'warn',
   },
 }

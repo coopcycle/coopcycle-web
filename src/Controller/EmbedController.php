@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -38,6 +39,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class EmbedController extends AbstractController
 {
+    use AccessControlTrait;
     use DeliveryTrait;
 
     public function __construct(
@@ -158,15 +160,16 @@ class EmbedController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            try {
+            $delivery = $form->getData();
 
-                $delivery = $form->getData();
+            $price = $deliveryManager->getPrice($delivery, $this->getPricingRuleSet($request));
 
-                $price = $this->getDeliveryPrice(
-                    $delivery,
-                    $this->getPricingRuleSet($request),
-                    $deliveryManager
-                );
+            if (null === $price) {
+
+                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+
+            } else  {
 
                 $submission = new DeliveryFormSubmission();
                 $submission->setDeliveryForm($this->getDeliveryForm($request));
@@ -183,11 +186,7 @@ class EmbedController extends AbstractController
                     'data' => $hashids->encode($submission->getId()),
                 ]);
 
-            } catch (NoRuleMatchedException $e) {
-                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                $form->addError(new FormError($message));
             }
-
         }
 
         return $this->render('embed/delivery/start.html.twig', [
@@ -332,7 +331,7 @@ class EmbedController extends AbstractController
             $telephone = $form->get('telephone')->getData();
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $customer, $attach = false);
+            $order    = $orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price), $customer, false);
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
