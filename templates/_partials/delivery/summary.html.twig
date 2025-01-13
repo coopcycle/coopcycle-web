@@ -5,7 +5,7 @@
         <span class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
         {% if task.isCancelled() %}<del>{% endif %}
         {% if task.address.name is not empty %}
-            <span><b>{{ task.address.name }}</b></span>
+            <span><b>{{ task.address.name }}</b> - {{ task.address.streetAddress }}</span>
         {% else %}
             {{ task.address.streetAddress }}
         {% endif %}
