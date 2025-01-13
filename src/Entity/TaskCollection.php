@@ -133,6 +133,7 @@ abstract class TaskCollection
 
     /**
      * @return Task[]
+     * @Groups({"delivery"})
      */
     public function getTasks(string $expression = '')
     {
