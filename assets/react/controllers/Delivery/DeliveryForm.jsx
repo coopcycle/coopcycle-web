@@ -356,7 +356,8 @@ export default function ({  storeId }) {
               
                 <div className='order-informations__complete-order'>
                     <Button
-                      style={{ backgroundColor: '#F05A58', color: '#fff', height: '2.5em' }}
+                      type="primary"
+                      style={{  height: '2.5em' }}
                       htmlType="submit" disabled={isSubmitting}>
                       {t("DELIVERY_FORM_SUBMIT")}
                     </Button>
