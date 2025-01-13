@@ -634,7 +634,6 @@ Feature: Stores
     And I add "Accept" header equal to "application/ld+json"
     When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
       """
       {
