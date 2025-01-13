@@ -90,7 +90,7 @@ class StandtrackClient {
     public function reportIncident(
         string $shipmentNumber,
         string $iubCode,
-        int $incidentType,
+        IncidentType $incidentType,
         ?string $receiverGln = null
     ): array {
         $event = new DeliveryEvent(

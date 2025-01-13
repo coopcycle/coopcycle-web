@@ -6,17 +6,24 @@ use DateTimeInterface;
 
 class DeliveryEvent
 {
-    private int $eventType;
+    private EventType $eventType;
     private string $shipmentNumber;
     private array $iubCodes;
     private ?string $receiverGln;
     private ?\DateTimeInterface $eventDateTime;
-    private ?int $incidentType;
+    private ?IncidentType $incidentType;
 
     /**
      * @param array<int,mixed> $iubCodes
      */
-    public function __construct(int $eventType, string $shipmentNumber, array $iubCodes, ?string $receiverGln = null, ?\DateTimeInterface $eventDateTime = null, ?int $incidentType = null) {
+    public function __construct(
+        EventType $eventType,
+        string $shipmentNumber,
+        array $iubCodes,
+        ?string $receiverGln = null,
+        ?\DateTimeInterface $eventDateTime = null,
+        ?IncidentType $incidentType = null
+    ) {
         $this->eventType = $eventType;
         $this->shipmentNumber = $shipmentNumber;
         $this->iubCodes = $iubCodes;
@@ -51,7 +58,7 @@ class DeliveryEvent
 
         // Add incident type if this is an incident event
         if ($this->eventType === EventType::INCIDENT && $this->incidentType !== null) {
-            $payload['M03012'] = $this->incidentType;
+            $payload['M03012'] = $this->incidentType->value;
         }
 
         return $payload;
