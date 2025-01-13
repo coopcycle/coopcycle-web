@@ -90,13 +90,18 @@ const pickupSchema = {
 const baseURL = location.protocol + '//' + location.host
 
 // as props we also have isNew to manage if it's a new delivery or an edit
-export default function({ storeId, deliveryId }) {
+export default function ({ storeId, deliveryId }) {
+  
+  console.log(deliveryId)
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  const [deliveryRessouce, setDeliveryRessource] = useState(null)
+
+  console.log(deliveryRessouce)
 
 
 
@@ -161,6 +166,26 @@ export default function({ storeId, deliveryId }) {
 
     return Object.keys(errors.tasks).length > 0 ? errors : {}
   }
+
+  useEffect(() => {
+    const url = `${baseURL}/api/deliveries/${deliveryId}`
+    const getDeliveryRessource = async () => {
+      const { response } = await httpClient.get(url)
+
+      if (response){
+        // setDeliveryRessource(response)
+      const pickup = { ...response.pickup, type: "PICKUP" }
+        const dropoff = { ...response.dropoff, type: "DROPOFF" }
+        
+        console.log(response)
+
+      setDeliveryRessource([pickup, dropoff])
+      }
+      
+      
+    }
+    getDeliveryRessource()
+  }, [deliveryId])
 
   useEffect(() => {
     const getAddresses = async () => {
