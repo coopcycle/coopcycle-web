@@ -37,7 +37,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
         foreach ($this->collectionExtensions as $extension) {
             $isPaginationExtension = $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operationName, $context);
+                $extension->supportsResult($resourceClass, $operationName, $context); // @phpstan-ignore arguments.count
 
             // Do not apply pagination extension directly, as it will conflict with the groupBy
             if (!$isPaginationExtension) {
@@ -54,6 +54,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                 $ordersGrouppedByStore = $this->groupByStore($orders);
 
                 // Relying on API Platform's pagination extension to get the pagination parameters (offset and page size)
+                // @phpstan-ignore arguments.count
                 $extension->applyToCollection(
                     $qb,
                     $queryNameGenerator,
@@ -61,7 +62,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                     $operationName,
                     $context
                 );
-                $extension->getResult($qb, $resourceClass, $operationName, $context);
+                $extension->getResult($qb, $resourceClass, $operationName, $context); // @phpstan-ignore arguments.count
 
                 $offset = $qb->getFirstResult();
                 $itemsPerPage = $qb->getMaxResults();
