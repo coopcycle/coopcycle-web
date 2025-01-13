@@ -11,6 +11,7 @@
   gap: 1em;
   max-width: 65%;
   flex-wrap: wrap;
+  overflow: hidden;
   
   &__item {
     max-width: 47%;
@@ -25,7 +26,6 @@
   align-self: start;
   position: sticky;
   top:0;
-  // min-width: 350px;
   min-width: 30%;
 }
 
@@ -64,5 +64,12 @@
   .order-informations{
     width: 100%;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__map {
+      width: 100%
+    }
   }
 }
