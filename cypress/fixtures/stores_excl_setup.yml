@@ -65,6 +65,16 @@ AppBundle\Entity\Store:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
 
+  store_{2..50}:
+    name: '<company()>'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
   store_without_time_slots:
     name: 'Store without time slots'
     address: "@address_1"

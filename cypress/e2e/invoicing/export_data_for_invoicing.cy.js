@@ -17,7 +17,19 @@ context('Invoicing (role: admin)', () => {
   it('prepare data for invoicing', function () {
     cy.visit('/admin/invoicing')
 
-    //TODO: verify that invoice preparation flow is working
-    // after https://github.com/coopcycle/coopcycle/issues/162 is implemented
+    // Choose 1 month
+    cy.get('.ant-picker-input-active > input').click()
+    cy.get(
+      ':nth-child(1) > .ant-picker-date-panel > .ant-picker-body > .ant-picker-content > tbody > :nth-child(1) > .ant-picker-cell-start > .ant-picker-cell-inner',
+    ).click()
+    cy.get(
+      ':nth-child(1) > .ant-picker-date-panel > .ant-picker-body > .ant-picker-content > tbody > :nth-child(5) > .ant-picker-cell-end > .ant-picker-cell-inner',
+    ).click()
+
+    cy.get('[data-testid="invoicing.refresh"]').click()
+
+    cy.get('[data-testid="invoicing.organizations"]')
+      .contains(/Acme/, { timeout: 10000 })
+      .should('exist')
   })
 })

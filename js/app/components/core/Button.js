@@ -12,9 +12,11 @@ export default ({
   danger,
   link,
   block,
+  testID
 }) => {
   return (
     <button
+      data-testid={testID}
       onClick={onClick}
       className={classNames({
         btn: true,
