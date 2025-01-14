@@ -28,6 +28,7 @@
     "google-libphonenumber": "^3.2.40",
     "lodash": "^4.17.21",
     "promise": "^8.3.0",
+    "react-leaflet": "^4.2.1",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
