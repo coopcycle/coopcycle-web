@@ -1,0 +1,21 @@
+.address-infos{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  &__item{
+    width: 31%
+  }
+}
+
+@media (max-width: 768px) {
+  .address-infos{
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.5em;
+
+  &__item{
+    width: 100%
+  }
+}
+}

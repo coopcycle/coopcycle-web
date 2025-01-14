@@ -362,6 +362,26 @@
         "ADMIN_DASHBOARD_CREATE_GROUP": "Crea gruppo",
         "ADMIN_DASHBOARD_GROUP_NAME_LABEL": "Nome del gruppo",
         "RULE_PICKER_LINE_VOLUME_UNITS": "Unità di volume",
-        "GENERIC_BARCODE_HELP": "Questo codice a barre dell'attività può tracciare tutti i pacchi collegati come un'unica unità. Utilizzalo per semplificare il monitoraggio dell'intera consegna. Per un monitoraggio dettagliato pacco per pacco, utilizza invece i codici a barre dei singoli pacchi."
+        "GENERIC_BARCODE_HELP": "Questo codice a barre dell'attività può tracciare tutti i pacchi collegati come un'unica unità. Utilizzalo per semplificare il monitoraggio dell'intera consegna. Per un monitoraggio dettagliato pacco per pacco, utilizza invece i codici a barre dei singoli pacchi.",
+        "SWITCH_TIMESLOTPICKER": "Selezionare una fascia oraria personalizzata", 
+        "DELIVERY_FORM_PICKUP_INFORMATIONS": "Informazioni sul ritiro",
+        "DELIVERY_FORM_DROPOFF_INFORMATIONS": "Informazioni sulla consegna",
+        "DELIVERY_FORM_PACKAGES": "Merci",
+        "DELIVERY_FORM_WEIGHT": "Peso",
+        "DELIVERY_FORM_TOTAL_WEIGHT": "Peso totale",
+        "DELIVERY_FORM_COMMENTARY": "Specifica tutti i dettagli utili per l'esecuzione del compito",
+        "DELIVERY_FORM_MULTIDROPOFF": "Consegne multiple disponibili",
+        "DELIVERY_FORM_ADD_DROPOFF": "Aggiungi una consegna",
+        "DELIVERY_FORM_SUBMIT": "Salva",
+        "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contatto",
+        "DELIVERY_FORM_ERROR_PACKAGES": "Seleziona almeno una merce",
+        "DELIVERY_FORM_ERROR_TELEPHONE": "Inserisci un numero di telefono",
+        "DELIVERY_FORM_ERROR_WEIGHT": "Specifica un peso",
+        "DELIVERY_FORM_ERROR_HOUR": "La consegna deve avvenire prima del ritiro",
+        "DELIVERY_FORM_REMEMBER_ADDRESS": "Ricorda questo indirizzo",
+        "DELIVERY_FORM_TOTAL_PRICE": "Prezzo totale",
+        "DELIVERY_FORM_TOTAL_VAT": "IVA inclusa",
+        "DELIVERY_FORM_TOTAL_EX_VAT": "IVA esclusa",
+        "DELIVERY_FORM_REMOVE_DROPOFF": "Rimuovi questa consegna"
     }
 }
