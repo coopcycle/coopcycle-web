@@ -14,6 +14,11 @@ admin_delivery_beta:
   defaults:
       _controller: AppBundle\Controller\AdminController::deliveryActionBeta
       layout: 'admin.html.twig'
+      routes:
+        stores: admin_stores
+        store: admin_store
+        success: admin_store_deliveries
+        back: admin_deliveries
   methods:  [ GET ]
 
 admin_order_receipt:

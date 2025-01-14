@@ -87,12 +87,13 @@ export default ({
           </div>
         ) : null}
 
-        {areDefinedTimeSlots() ? (
+        {areDefinedTimeSlots() & !deliveryId ? (
           <SwitchTimeSlotFreePicker
             storeId={storeId}
             storeDeliveryInfos={storeDeliveryInfos}
             index={index}
             format={format}
+            deliveryId={deliveryId}
           />
         ) : (
           <DateRangePicker format={format} index={index} />

@@ -69,12 +69,12 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   /** we use internal state and then synchronize it with the form values */
   const [afterValue, setAfterValue] = useState(() => {
-    const formValue = values.tasks[index].afterValue
+    const formValue = values.tasks[index].after
     return formValue ? moment(formValue) : defaultAfterValue
   })
 
   const [beforeValue, setBeforeValue] = useState(() => {
-    const formValue = values.tasks[index].beforeValue
+    const formValue = values.tasks[index].before
     return formValue ? moment(formValue) : defaultBeforeValue
   })
 
@@ -131,7 +131,6 @@ const DateTimeRangePicker = ({ format, index }) => {
     const newAfterHour = moment(`${date} ${newValue}:00`)
     const newBeforeHour = newAfterHour.clone().add(60, 'minutes')
 
-    console.log(newAfterHour, newBeforeHour)
     setTimeValues({
       after: newAfterHour.format('HH:mm'),
       before: newBeforeHour.format('HH:mm'),
@@ -152,8 +151,6 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   const handleBeforeHourChange = newValue => {
     if (!newValue) return
-
-    console.log(newValue)
 
     setTimeValues(prevState => ({
       ...prevState,

@@ -98,6 +98,8 @@ export default function ({ storeId, deliveryId }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
 
+  console.log("deliveryId", deliveryId)
+
   const [initialValues, setInitialValues] = useState({
     tasks: [
       pickupSchema,
@@ -160,23 +162,16 @@ export default function ({ storeId, deliveryId }) {
     return Object.keys(errors.tasks).length > 0 ? errors : {}
   }
 
-  useEffect(() => {
-    const url = `${baseURL}/api/deliveries/${deliveryId}`
-    const getDeliveryRessource = async () => {
-    const { response } = await httpClient.get(url)
-    /** We have to remove the id to calculate the price, the endpoint can't handle it */
+  useEffect(() => {  
+    const url = `${baseURL}/api/deliveries/${deliveryId}`    
+    const getDeliveryRessource = async () => {    
+      const { response } = await httpClient.get(url)
       if (response) {
-        const tasksWithoutId = response.tasks.map(task => {
-        const { ["@id"]: _, ...taskWithoutId } = task;
-        return taskWithoutId;
-      });
-        console.log("taskwithout Id", tasksWithoutId)
-      setInitialValues({ tasks : tasksWithoutId })
-      setIsLoading(false)
+          setInitialValues(response)
+          setIsLoading(false)
+      }
     }
-                 
-    }
-    getDeliveryRessource()
+     getDeliveryRessource()
   }, [deliveryId])
 
   useEffect(() => {
@@ -262,15 +257,26 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
-            console.log(values)
+            console.log("values", values)
 
-            useEffect(() => {
-
+            const getPrice = useCallback(() => {
+            
+               // we have to remove Id from task unless the endpoint cannot calculate the price
+              const removeId = () => {
+                const tasksWithoutId = values.tasks.map(task => {
+                  if (task["@id"]) {
+                    delete task["@id"]
+                  }
+                  return task
+                })
+                return tasksWithoutId
+              }
+              
               const infos = {
                 store: storeDeliveryInfos["@id"],
                 weight: values.tasks.find(task => task.type === "DROPOFF").weight,
                 packages: values.tasks.find(task => task.type === "DROPOFF").packages,
-                tasks: values.tasks,
+                tasks: deliveryId ? removeId() : values.tasks,
               };
 
               const calculatePrice = async () => {
@@ -292,6 +298,12 @@ export default function ({ storeId, deliveryId }) {
               if (values.tasks.every(task => task.address.streetAddress)) {
                 calculatePrice()
               }
+
+            }, [values, storeDeliveryInfos, deliveryId])
+
+            useEffect(() => {
+
+              getPrice()
 
             }, [values, storeDeliveryInfos]);
 
@@ -380,7 +392,6 @@ export default function ({ storeId, deliveryId }) {
                         : null}
 
                     </div>
-
 
                     <div className='order-informations__complete-order'>
                       <Button
