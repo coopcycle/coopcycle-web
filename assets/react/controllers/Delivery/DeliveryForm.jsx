@@ -171,7 +171,7 @@ export default function ({ storeId, deliveryId }) {
           setIsLoading(false)
       }
     }
-     getDeliveryRessource()
+     if (deliveryId) getDeliveryRessource()
   }, [deliveryId])
 
   useEffect(() => {
@@ -206,20 +206,44 @@ export default function ({ storeId, deliveryId }) {
   }, [storeId])
 
   const handleSubmit = useCallback(async (values) => {
-    const createDeliveryUrl = `${baseURL}/api/deliveries`
     const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
+    
 
-    const { response, error } = await httpClient.post(createDeliveryUrl, {
-      store: storeDeliveryInfos['@id'],
-      tasks: values.tasks
+
+    const getUrl = (deliveryId) => {
+      if (deliveryId) {
+        const editDeliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
+        return editDeliveryURL
+      } else {
+        const createDeliveryUrl = `${baseURL}/api/deliveries`
+        return createDeliveryUrl
+      }
     }
-    )
+
+    const createOrEditADelivery = async (deliveryId) => {
+      const url = getUrl(deliveryId);
+      const method = deliveryId ? 'put' : 'post';
+      
+      return await httpClient[method](url, {
+        store: storeDeliveryInfos['@id'],
+        tasks: values.tasks
+      });
+    }
+
+    // const { response, error } = await httpClient.post(createDeliveryUrl, {
+    //   store: storeDeliveryInfos['@id'],
+    //   tasks: values.tasks
+    // })
+
+    const {response, error} = await createOrEditADelivery(deliveryId)
+
     if (error) {
       setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
       return
     }
 
     if (response) {
+      console.log("response", response)
       for (const task of values.tasks) {
         if (task.saveInStoreAddresses) {
           await httpClient.post(saveAddressUrl, task.address)
@@ -305,7 +329,11 @@ export default function ({ storeId, deliveryId }) {
 
               getPrice()
 
-            }, [values, storeDeliveryInfos]);
+            }, [storeId,
+                values.tasks.map(task => task.address.streetAddress).join(','),
+                values.tasks.find(task => task.type === "DROPOFF").weight,
+                values.tasks.find(task => task.type === "DROPOFF").packages,
+                deliveryId]);
 
             return (
               <Form >

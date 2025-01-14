@@ -43,7 +43,8 @@ export default ({ storeId, index, packages, deliveryId }) => {
   /** Insert the data in edit mode */
 
   useEffect(() => {
-    setFieldValue(`tasks[${index}].packages`, packagesPicked)
+    const filteredPackages = packagesPicked.filter(p => p.quantity > 0)
+    setFieldValue(`tasks[${index}].packages`, filteredPackages)
   }, [packagesPicked, setFieldValue, index])
 
   const handlePlusButton = item => {
