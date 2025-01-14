@@ -224,7 +224,9 @@ export default function({ storeId }) {
           }
         }
       }
-      window.history.go(-2);
+
+      // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
+      window.location = "/admin/deliveries";
     }
   }, [storeDeliveryInfos])
 
