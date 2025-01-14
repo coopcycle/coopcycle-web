@@ -10,7 +10,6 @@ export default ({ storeId, index, packages, deliveryId }) => {
 
   const [packagesType, setPackagesType] = useState([])
   const [packagesPicked, setPackagesPicked] = useState([])
-  console.log('packagespicked', packagesPicked)
 
   const { t } = useTranslation()
 

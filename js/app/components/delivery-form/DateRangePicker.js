@@ -79,8 +79,8 @@ const DateTimeRangePicker = ({ format, index }) => {
   })
 
   useEffect(() => {
-    setFieldValue(`tasks[${index}].after`, afterValue.toISOString())
-    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString())
+    setFieldValue(`tasks[${index}].after`, afterValue.toISOString(true))
+    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString(true))
   }, [afterValue, beforeValue, index, setFieldValue])
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
@@ -149,6 +149,8 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   const handleBeforeHourChange = newValue => {
     if (!newValue) return
+
+    console.log(newValue)
 
     setTimeValues(prevState => ({
       ...prevState,

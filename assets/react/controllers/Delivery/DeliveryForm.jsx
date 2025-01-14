@@ -93,8 +93,6 @@ const baseURL = location.protocol + '//' + location.host
 // as props we also have isNew to manage if it's a new delivery or an edit
 export default function ({ storeId, deliveryId }) {
   
-  console.log(deliveryId)
-
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
@@ -182,13 +180,12 @@ export default function ({ storeId, deliveryId }) {
     const getDeliveryRessource = async () => {
     const { response } = await httpClient.get(url)
 
-    if (response){
+      if (response) {
+        console.log("tasks", response.tasks)
       setInitialValues({ tasks : response.tasks })
       setIsLoading(false)
     }
-      
-    console.log("response", response)
-           
+                 
     }
     getDeliveryRessource()
   }, [deliveryId])
