@@ -131,20 +131,23 @@ const DateTimeRangePicker = ({ format, index }) => {
     const newAfterHour = moment(`${date} ${newValue}:00`)
     const newBeforeHour = newAfterHour.clone().add(60, 'minutes')
 
+    console.log(newAfterHour, newBeforeHour)
     setTimeValues({
       after: newAfterHour.format('HH:mm'),
       before: newBeforeHour.format('HH:mm'),
     })
 
+    // generate optios for the second picker (beforeValue)
     const afterHour = moment({
       h: newAfterHour.hours(),
       m: newAfterHour.minutes(),
     })
-
     const updatedSecondOptions = generateTimeSlots(afterHour)
     setSecondSelectOptions(updatedSecondOptions)
 
+    // set the form values for the delivery object
     setAfterValue(newAfterHour)
+    setBeforeValue(newBeforeHour)
   }
 
   const handleBeforeHourChange = newValue => {

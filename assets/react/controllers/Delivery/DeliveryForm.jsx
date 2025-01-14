@@ -236,6 +236,7 @@ export default function ({  storeId }) {
         validateOnBlur={false}
       >
         {({ values, isSubmitting }) => {
+          console.log(values)
 
           useEffect(() => {
 
