@@ -18,7 +18,7 @@
 {% block content %}
   {% if is_granted('ROLE_DISPATCHER') %}
     <div class="alert alert-info">
-      You can access the more-friendly, beta version of the delivery form <a href="{{ path('admin_store_delivery_new_beta', { id: store.id }) }}">click here</a>.
+      You can access the more-friendly, beta version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_store_delivery_new_beta', { id: store.id }) }}">click here</a>.
     </div>
   {% endif %}
 
