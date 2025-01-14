@@ -166,8 +166,8 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   const handleComplexPickerDateChange = newValues => {
     if (!newValues) return
-    setBeforeValue(newValues[0])
-    setAfterValue(newValues[1])
+    setAfterValue(newValues[0])
+    setBeforeValue(newValues[1])
   }
 
   return isComplexPicker ? (
