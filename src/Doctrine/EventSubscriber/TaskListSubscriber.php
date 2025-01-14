@@ -77,31 +77,6 @@ class TaskListSubscriber implements EventSubscriber
             $taskList->setDistance($this->routing->getDistance(...$coordinates));
             $taskList->setDuration($this->routing->getDuration(...$coordinates));
             $taskList->setPolyline($this->routing->getPolyline(...$coordinates));
-
-            if (!is_null($vehicle)) {
-                $route = $this->routing->route(...$coordinates)['routes'][0];
-                $legs = array_slice($route["legs"], 0, -1);
-                foreach ($legs as $index => $leg) {
-                    $task = $taskList->getTasks()[$index];
-                    $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
-                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
-                    $task->setCo2Emissions($emissions);
-                    if ($uow->isInIdentityMap($task)) {
-                        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
-                    }
-                }
-            } else {
-                $route = $this->routing->route(...$coordinates)['routes'][0];
-                $legs = $route["legs"];
-                foreach ($legs as $index => $leg) {
-                    $task = $taskList->getTasks()[$index + 1]; // we assume we start at the first task, as there is no warehouse
-                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
-                    $task->setCo2Emissions(0); // reset
-                    if ($uow->isInIdentityMap($task)) {
-                        $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(Task::class), $task);
-                    }
-                }
-            }
         }
     }
 
