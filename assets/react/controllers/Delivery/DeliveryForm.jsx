@@ -16,9 +16,6 @@ import { useTranslation } from 'react-i18next'
 
 import "./DeliveryForm.scss"
 
-const httpClient = new window._auth.httpClient()
-
-
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
 
@@ -64,11 +61,11 @@ const dropoffSchema = {
     name: '',
     contactName: '',
     telephone: '',
-  },
+    },
   updateInStoreAddresses: false,
   packages: [],
   weight: 0
-};
+  };
 
 const pickupSchema = {
   type: 'PICKUP',
@@ -93,41 +90,29 @@ const baseURL = location.protocol + '//' + location.host
 // as props we also have isNew to manage if it's a new delivery or an edit
 export default function ({ storeId, deliveryId }) {
   
+  const httpClient = new window._auth.httpClient()
+
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+
   const [initialValues, setInitialValues] = useState({
     tasks: [
       pickupSchema,
       dropoffSchema,
     ]
   })
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
 
   const { t } = useTranslation()
-
-  useEffect(() => {
-    if (!deliveryId) {
-      const initialValues = {
-        tasks: [
-          pickupSchema,
-          dropoffSchema,
-        ],
-      }
-      setInitialValues(initialValues)
-      setIsLoading(false)
-    }
-  }, [deliveryId])
   
-
-
   const validate = (values) => {
     const errors = { tasks: [] };
-
+    
     for (let i = 0; i < values.tasks.length; i++) {
-
+      
       const taskErrors = {}
 
       let doneAfterPickup
@@ -135,7 +120,7 @@ export default function ({ storeId, deliveryId }) {
       if (values.tasks[0].after) {
         doneAfterPickup = values.tasks[0].after
       } else if (values.tasks[0].timeSlot) {
-        const after = values.tasks[0].timeSlot.slice(0, 19)
+        const after = values.tasks[0].timeSlot.slice(0, 19 )
         doneAfterPickup = after
       }
 
@@ -150,17 +135,17 @@ export default function ({ storeId, deliveryId }) {
       /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
 
       // if (!values.tasks[i].address.formattedTelephone) {
-      //   taskErrors.address = taskErrors.address || {};
+      //   taskErrors.address = taskErrors.address || {}; 
       //   taskErrors.address.formattedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
-      // }
-
+      // } 
+      
       if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
-        taskErrors.address = taskErrors.address || {};
+        taskErrors.address = taskErrors.address || {}; 
         taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
       }
 
       if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
-        taskErrors.packages = t("DELIVERY_FORM_ERROR_PACKAGES")
+        taskErrors.packages= t("DELIVERY_FORM_ERROR_PACKAGES")
       }
 
       if (values.tasks[i].type === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
@@ -198,7 +183,7 @@ export default function ({ storeId, deliveryId }) {
     const getAddresses = async () => {
 
       const url = `${baseURL}/api/stores/${storeId}/addresses`
-      const { response } = await httpClient.get(url)
+      const {response} = await httpClient.get(url)
 
       if (response) {
         const addresses = response['hydra:member']
@@ -217,7 +202,7 @@ export default function ({ storeId, deliveryId }) {
       const url = `${baseURL}/api/stores/${storeId}`
 
       const { response } = await httpClient.get(url)
-
+      
       if (response) {
         setStoreDeliveryInfos(response)
       }
@@ -256,7 +241,9 @@ export default function ({ storeId, deliveryId }) {
           }
         }
       }
-      window.history.go(-2);
+
+      // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
+      window.location = "/admin/deliveries";
     }
   }, [storeDeliveryInfos])
 

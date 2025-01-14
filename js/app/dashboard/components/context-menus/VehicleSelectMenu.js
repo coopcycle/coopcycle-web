@@ -6,11 +6,11 @@ import { useTranslation } from "react-i18next"
 import { setTaskListTrailer, setTaskListVehicle } from "../../redux/actions"
 import { selectIsFleetManagementLoaded } from "../../redux/selectors"
 
-const { hideAll } = useContextMenu({
-  id: 'vehicle-selectmenu',
-})
-
 export default () => {
+
+  const { hideAll } = useContextMenu({
+    id: 'vehicle-selectmenu',
+  })
 
   const { t } = useTranslation()
   const vehicles = useSelector(selectAllVehicles)

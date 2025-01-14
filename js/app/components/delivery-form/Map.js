@@ -128,7 +128,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
                   />
                 ))
               : null}
-            {deliveryGeo.length > 0 ? (
+            {deliveryGeo.length > 1 ? (
               <ArrowheadPolyline
                 positions={deliveryRoute}
                 options={{
