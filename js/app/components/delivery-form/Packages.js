@@ -44,7 +44,9 @@ export default ({ storeId, index, packages, deliveryId }) => {
 
   useEffect(() => {
     const filteredPackages = packagesPicked.filter(p => p.quantity > 0)
-    setFieldValue(`tasks[${index}].packages`, filteredPackages)
+    if (filteredPackages.length > 0) {
+      setFieldValue(`tasks[${index}].packages`, filteredPackages)
+    }
   }, [packagesPicked, setFieldValue, index])
 
   const handlePlusButton = item => {

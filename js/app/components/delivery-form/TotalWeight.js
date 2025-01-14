@@ -27,9 +27,7 @@ export default ({ index, deliveryId }) => {
         calculatedWeight = numberValue * 453.592
       }
       setFieldValue(`tasks[${index}].weight`, calculatedWeight)
-    } else {
-      setFieldValue(`tasks[${index}].weight`, 0)
-    }
+    } 
   }, [numberValue, weightUnit, index])
 
   return (

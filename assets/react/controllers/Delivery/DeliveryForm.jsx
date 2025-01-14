@@ -98,8 +98,6 @@ export default function ({ storeId, deliveryId }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
 
-  console.log("deliveryId", deliveryId)
-
   const [initialValues, setInitialValues] = useState({
     tasks: [
       pickupSchema,
@@ -162,54 +160,40 @@ export default function ({ storeId, deliveryId }) {
     return Object.keys(errors.tasks).length > 0 ? errors : {}
   }
 
-  useEffect(() => {  
-    const url = `${baseURL}/api/deliveries/${deliveryId}`    
-    const getDeliveryRessource = async () => {    
-      const { response } = await httpClient.get(url)
-      if (response) {
-          setInitialValues(response)
+  useEffect(() => {
+    const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
+    const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
+    const storeURL = `${baseURL}/api/stores/${storeId}`
+
+    if (deliveryId) {
+        Promise.all([
+        httpClient.get(deliveryURL),
+        httpClient.get(addressesURL),
+        httpClient.get(storeURL),
+        ]).then(values => {
+          const [delivery, addresses, storeInfos] = values
+          setInitialValues(delivery.response)
+          setAddresses(addresses.response['hydra:member'])
+          setStoreDeliveryInfos(storeInfos.response)
           setIsLoading(false)
-      }
+      })
+    } else {
+        Promise.all([
+        httpClient.get(addressesURL),
+        httpClient.get(storeURL),
+        ]).then(values => {
+          const [addresses, storeInfos] = values
+          setAddresses(addresses.response['hydra:member'])
+          setStoreDeliveryInfos(storeInfos.response)
+          setIsLoading(false)
+      })
     }
-     if (deliveryId) getDeliveryRessource()
-  }, [deliveryId])
+  }, [deliveryId, storeId])
 
-  useEffect(() => {
-    const getAddresses = async () => {
-
-      const url = `${baseURL}/api/stores/${storeId}/addresses`
-      const {response} = await httpClient.get(url)
-
-      if (response) {
-        const addresses = response['hydra:member']
-        setAddresses(addresses)
-      }
-    }
-
-    if (storeId) {
-      getAddresses()
-    }
-  }, [storeId])
-
-
-  useEffect(() => {
-    const fetchStoreInfos = async () => {
-      const url = `${baseURL}/api/stores/${storeId}`
-
-      const { response } = await httpClient.get(url)
-      
-      if (response) {
-        setStoreDeliveryInfos(response)
-      }
-    }
-    fetchStoreInfos()
-  }, [storeId])
 
   const handleSubmit = useCallback(async (values) => {
     const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
     
-
-
     const getUrl = (deliveryId) => {
       if (deliveryId) {
         const editDeliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
@@ -230,11 +214,6 @@ export default function ({ storeId, deliveryId }) {
       });
     }
 
-    // const { response, error } = await httpClient.post(createDeliveryUrl, {
-    //   store: storeDeliveryInfos['@id'],
-    //   tasks: values.tasks
-    // })
-
     const {response, error} = await createOrEditADelivery(deliveryId)
 
     if (error) {
@@ -243,7 +222,6 @@ export default function ({ storeId, deliveryId }) {
     }
 
     if (response) {
-      console.log("response", response)
       for (const task of values.tasks) {
         if (task.saveInStoreAddresses) {
           await httpClient.post(saveAddressUrl, task.address)
@@ -281,8 +259,6 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
-            console.log("values", values)
-
             const getPrice = useCallback(() => {
             
                // we have to remove Id from task unless the endpoint cannot calculate the price
@@ -305,7 +281,6 @@ export default function ({ storeId, deliveryId }) {
 
               const calculatePrice = async () => {
                 const url = `${baseURL}/api/retail_prices/calculate`
-
                 const { response, error } = await httpClient.post(url, infos)
 
                 if (error) {
@@ -323,17 +298,11 @@ export default function ({ storeId, deliveryId }) {
                 calculatePrice()
               }
 
-            }, [values, storeDeliveryInfos, deliveryId])
+            }, [values.tasks, storeDeliveryInfos, deliveryId])
 
             useEffect(() => {
-
-              getPrice()
-
-            }, [storeId,
-                values.tasks.map(task => task.address.streetAddress).join(','),
-                values.tasks.find(task => task.type === "DROPOFF").weight,
-                values.tasks.find(task => task.type === "DROPOFF").packages,
-                deliveryId]);
+                getPrice()
+            }, [values.tasks, storeDeliveryInfos, deliveryId]);
 
             return (
               <Form >
