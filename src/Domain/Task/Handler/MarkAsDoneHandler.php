@@ -88,15 +88,14 @@ class MarkAsDoneHandler
 
         $route = $this->routing->route(...$coordinates)['routes'][0];
 
-
         if (!is_null($vehicle)) {
             $legs = array_slice($route["legs"], 0, -1); // return to the warehouse is not materialized by a task
             foreach ($legs as $index => $leg) {
                 $current = $taskList->getTasks()[$index];
                 if ($current->getId() === $task->getId()) {
                     $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
-                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
-                    $task->setCo2Emissions($emissions);
+                    $task->setTraveledDistanceMeter(intval($leg['distance'])); // in meter
+                    $task->setEmittedCo2($emissions);
                     break;
                 }
             }
@@ -104,9 +103,9 @@ class MarkAsDoneHandler
             $legs = $route["legs"];
             foreach ($legs as $index => $leg) {
                 $current = $taskList->getTasks()[$index + 1]; // we assume we start at the first task, as there is no warehouse
-                if ($current === $task) {
-                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
-                    $task->setCo2Emissions(0);
+                if ($current->getId() === $task->getId()) {
+                    $task->setTraveledDistanceMeter(intval($leg['distance'])); // in meter
+                    $task->setEmittedCo2(0);
                     break;
                 } // reset
             }

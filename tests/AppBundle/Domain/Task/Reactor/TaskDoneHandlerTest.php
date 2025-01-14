@@ -64,8 +64,8 @@ class TaskDoneHandlerTest extends KernelTestCase
 
         $task = $taskList->getTasks()[0];
 
-        $this->assertEquals(0, $task->getCo2emissions());
-        $this->assertEquals(0, $task->getDistanceFromPrevious());
+        $this->assertEquals(0, $task->getEmittedCo2());
+        $this->assertEquals(0, $task->getTraveledDistanceMeter());
 
         $vehicle = $this->entityManager->getRepository(Vehicle::class)->findAll()[0];        
 
@@ -80,8 +80,8 @@ class TaskDoneHandlerTest extends KernelTestCase
 
         $this->taskManager->markAsDone($task);
 
-        $this->assertEquals(41, $task->getCo2emissions());
-        $this->assertEquals(4175, $task->getDistanceFromPrevious());
+        $this->assertEquals(41, $task->getEmittedCo2());
+        $this->assertEquals(4175, $task->getTraveledDistanceMeter());
 
         // task not in a tour
         $task = $taskList->getTasks()[4];
@@ -89,8 +89,41 @@ class TaskDoneHandlerTest extends KernelTestCase
 
         $this->taskManager->markAsDone($task);
 
-        $this->assertEquals(40, $task->getCo2emissions());
-        $this->assertEquals(405, $task->getDistanceFromPrevious());
+        $this->assertEquals(40, $task->getEmittedCo2());
+        $this->assertEquals(4045, $task->getTraveledDistanceMeter());
+
+    }
+
+    public function testCO2CalculationWithoutVehicle() {
+
+        $this->fixturesLoader->load([
+            __DIR__.'/../../../../../features/fixtures/ORM/task_list.yml'
+        ]);
+
+        $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
+
+        $task = $taskList->getTasks()[0];
+
+        $this->assertEquals(0, $task->getEmittedCo2());
+        $this->assertEquals(0, $task->getTraveledDistanceMeter());
+
+        // task in a tour
+        $task = $taskList->getTasks()[0];
+        $task = $this->entityManager->getRepository(Task::class)->findOneBy(['id' => $task->getId()]);
+
+        $this->taskManager->markAsDone($task);
+
+        $this->assertEquals(0, $task->getEmittedCo2());
+        $this->assertEquals(0, $task->getTraveledDistanceMeter());
+
+        // task not in a tour
+        $task = $taskList->getTasks()[4];
+        $task = $this->entityManager->getRepository(Task::class)->findOneBy(['id' => $task->getId()]);
+
+        $this->taskManager->markAsDone($task);
+
+        $this->assertEquals(0, $task->getEmittedCo2());
+        $this->assertEquals(4045, $task->getTraveledDistanceMeter());
 
     }
 }
