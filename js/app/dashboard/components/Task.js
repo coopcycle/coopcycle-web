@@ -168,10 +168,6 @@ const TaskIconRight = ({ task, onRemove }) => {
   return null
 }
 
-const { show } = useContextMenu({
-  id: 'task-contextmenu',
-})
-
 class Task extends React.Component {
 
   constructor(props) {
@@ -278,7 +274,7 @@ class Task extends React.Component {
 
         this.props.selectTask(task)
 
-        show({ event: e, props: task})
+        this.props.show({ event: e, props: task})
       }
     }
 
@@ -381,4 +377,19 @@ function mapDispatchToProps (dispatch) {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Task))
+function withHooks(ClassComponent) {
+  return function CompWithHook(props) {
+    const { show } = useContextMenu({
+      id: 'task-contextmenu',
+    })
+
+    return (
+      <ClassComponent
+        {...props}
+        show={show}
+      />
+    );
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withHooks(Task)))
