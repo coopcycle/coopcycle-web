@@ -179,10 +179,14 @@ export default function ({ storeId, deliveryId }) {
     const url = `${baseURL}/api/deliveries/${deliveryId}`
     const getDeliveryRessource = async () => {
     const { response } = await httpClient.get(url)
-
+    /** We have to remove the id to calculate the price, the endpoint can't handle it */
       if (response) {
-        console.log("tasks", response.tasks)
-      setInitialValues({ tasks : response.tasks })
+        const tasksWithoutId = response.tasks.map(task => {
+        const { ["@id"]: _, ...taskWithoutId } = task;
+        return taskWithoutId;
+      });
+        console.log("taskwithout Id", tasksWithoutId)
+      setInitialValues({ tasks : tasksWithoutId })
       setIsLoading(false)
     }
                  
