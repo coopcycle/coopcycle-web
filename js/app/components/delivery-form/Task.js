@@ -11,9 +11,11 @@ import TotalWeight from './TotalWeight'
 import './Task.scss'
 
 const baseURL = location.protocol + '//' + location.host
-const httpClient = new window._auth.httpClient()
 
 export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
+  
+  const httpClient = new window._auth.httpClient()
+
   const [packages, setPackages] = useState(null)
 
   const { t } = useTranslation()

@@ -90,7 +90,7 @@ const pickupSchema = {
 const baseURL = location.protocol + '//' + location.host
 
 // as props we also have isNew to manage if it's a new delivery or an edit
-export default function({ storeId, deliveryId }) {
+export default function({ storeId }) {
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})

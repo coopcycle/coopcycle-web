@@ -54,15 +54,16 @@ async function _handleFormSubmit(
 }
 
 function ImagesSelector({ images, onChange }) {
-  if (images.length === 0) {
-    return <Empty description="No images" />;
-  }
 
   const [selectedImages, setSelectedImages] = useState([]);
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
 
   const { t } = useTranslation();
+
+  if (images.length === 0) {
+    return <Empty description="No images" />;
+  }
 
   const handleOnChange = (checkedList) => {
     setCheckAll(checkedList.length === images.length);
