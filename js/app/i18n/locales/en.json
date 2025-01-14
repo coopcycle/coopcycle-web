@@ -623,7 +623,7 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Please select at least one package",
         "DELIVERY_FORM_ERROR_TELEPHONE": "Please enter a phone number",
         "DELIVERY_FORM_ERROR_WEIGHT": "Please specify a weight",
-        "DELIVERY_FORM_ERROR_HOUR": "Dropoff must be before pickup",
+        "DELIVERY_FORM_ERROR_HOUR": "Pickup must be before drop-off",        
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Remember this address",
         "DELIVERY_FORM_TOTAL_PRICE": "Total price",
         "DELIVERY_FORM_TOTAL_VAT": "Incl. VAT",

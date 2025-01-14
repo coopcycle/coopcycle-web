@@ -187,7 +187,7 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Bitte wählen Sie mindestens eine Ware aus",
         "DELIVERY_FORM_ERROR_TELEPHONE": "Bitte geben Sie eine Telefonnummer ein",
         "DELIVERY_FORM_ERROR_WEIGHT": "Bitte geben Sie ein Gewicht an",
-        "DELIVERY_FORM_ERROR_HOUR": "Die Abgabe muss vor der Abholung erfolgen",
+        "DELIVERY_FORM_ERROR_HOUR": "Die Abholung muss vor der Abgabe erfolgen",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Diese Adresse merken",
         "DELIVERY_FORM_TOTAL_PRICE": "Gesamtpreis",
         "DELIVERY_FORM_TOTAL_VAT": "Inkl. MwSt.",

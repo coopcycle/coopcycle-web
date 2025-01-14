@@ -616,7 +616,7 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Veuillez sélectionner au moins une marchandise",
         "DELIVERY_FORM_ERROR_TELEPHONE": "Veuillez entrer un numéro de téléphone",
         "DELIVERY_FORM_ERROR_WEIGHT": "Veuillez spécifier un poids",
-        "DELIVERY_FORM_ERROR_HOUR": "Le dépôt doit être avant le retrait",
+        "DELIVERY_FORM_ERROR_HOUR": "Le retrait doit être avant le dépôt",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contact",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Se souvenir de cette adresse",
         "DELIVERY_FORM_TOTAL_PRICE": "Prix total",

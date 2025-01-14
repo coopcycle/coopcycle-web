@@ -377,7 +377,7 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Seleziona almeno una merce",
         "DELIVERY_FORM_ERROR_TELEPHONE": "Inserisci un numero di telefono",
         "DELIVERY_FORM_ERROR_WEIGHT": "Specifica un peso",
-        "DELIVERY_FORM_ERROR_HOUR": "La consegna deve avvenire prima del ritiro",
+        "DELIVERY_FORM_ERROR_HOUR": "Il ritiro deve essere prima della consegna",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Ricorda questo indirizzo",
         "DELIVERY_FORM_TOTAL_PRICE": "Prezzo totale",
         "DELIVERY_FORM_TOTAL_VAT": "IVA inclusa",
