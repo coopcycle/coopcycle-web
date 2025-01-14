@@ -82,20 +82,14 @@ class PaygreenManager
         $shopId = $order->getRestaurant()->getPaygreenShopId();
         $reference = sprintf('ord_%s', $this->hashids8->encode($order->getId()));
 
-        // If a valid payment order already exists for this order, we recycle it
+        // If a valid payment order already exists for this order, we cancel it
         $response = $this->paygreenClient->listPaymentOrder($reference);
         if ($response->getStatusCode() === 200) {
             $data = json_decode($response->getBody()->getContents(), true);
             if (count($data['data']) > 0) {
                 foreach ($data['data'] as $po) {
                     if ($po['status'] === 'payment_order.pending') {
-                        $expiresAt = Carbon::parse($po['expires_at'])->tz(date_default_timezone_get());
-
-                        $isExpired = $expiresAt->isBefore(Carbon::now());
-
-                        if (!$isExpired) {
-                            return $po;
-                        }
+                        $this->paygreenClient->cancelPaymentOrder($po['id']);
                     }
                 }
             }
