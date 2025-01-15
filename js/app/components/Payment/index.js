@@ -18,6 +18,7 @@ import {
 import { selectPersistedTimeRange } from '../order/timeRange/reduxSlice'
 import { checkTimeRange } from '../../utils/order/helpers'
 import { apiSlice } from '../../api/slice'
+import { notification } from 'antd'
 
 import './paygreen.scss'
 
@@ -158,7 +159,7 @@ export default function(formSelector, options) {
     }
   }
 
-  form.addEventListener('submit', async function (event) {
+  form.addEventListener('submit', async function(event) {
     event.preventDefault()
 
     setLoading(true)
@@ -234,7 +235,12 @@ export default function(formSelector, options) {
 
             // When using a meal voucher, we use Paygreen hosted page
             // https://developers.paygreen.fr/docs/how-to-use-paygreen#hosted-page
-            window.location.href = response.data.paygreen.paygreen_hosted_payment_url;
+            const url = response.data.paygreen.paygreen_hosted_payment_url;
+            if (!url) {
+              notification.error({ message: "Something went wrong" });
+              break
+            }
+            window.location.href = url
 
             break
 
@@ -315,7 +321,7 @@ export default function(formSelector, options) {
     document.querySelector('#checkout_payment_method').appendChild(el)
 
     render(
-      <PaymentMethodPicker methods={ methods } onSelect={ onSelect } />,
+      <PaymentMethodPicker methods={methods} onSelect={onSelect} />,
       el
     )
   }
