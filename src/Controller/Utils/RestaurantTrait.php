@@ -1853,21 +1853,23 @@ trait RestaurantTrait
                 'Order number',
                 'Completed at',
                 'Total amount',
-                'Edenred amount',
+                'Voucher amount',
                 'Platform fee',
+                'Payment method',
             ];
 
             $records = [];
             foreach ($hash[$exported] as $order) {
 
-                $edenredPayment = $order->getLastPaymentByMethod('EDENRED', PaymentInterface::STATE_COMPLETED);
+                $voucherPayment = $order->getLastPaymentByMethod(['EDENRED', 'CONECS', 'SWILE', 'RESTOFLASH'], PaymentInterface::STATE_COMPLETED);
 
                 $records[] = [
                     $order->getNumber(),
                     $order->getShippingTimeRange()->getLower()->format('Y-m-d'),
                     $numberFormatter->format($order->getTotal() / 100),
-                    $numberFormatter->format($edenredPayment->getAmount() / 100),
+                    $numberFormatter->format($voucherPayment->getAmount() / 100),
                     $numberFormatter->format($order->getFeeTotal() / 100),
+                    mb_ucfirst(mb_strtolower($voucherPayment->getMethod()->getCode())),
                 ];
             }
 

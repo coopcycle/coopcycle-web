@@ -1887,7 +1887,7 @@ class Order extends BaseOrder implements OrderInterface
     /**
      * {@inheritdoc}
      */
-    public function getLastPaymentByMethod(string $method, ?string $state = null): ?PaymentInterface
+    public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface
     {
         if ($this->payments->isEmpty()) {
             return null;
@@ -1900,7 +1900,14 @@ class Order extends BaseOrder implements OrderInterface
         $payments = new ArrayCollection(iterator_to_array($iterator));
 
         $payment = $payments->filter(function (PaymentInterface $payment) use ($method, $state): bool {
-            return (null === $state || $payment->getState() === $state) && $payment->getMethod()->getCode() === $method;
+            $__filter = null;
+            if (is_string($method)) {
+                $__filter = fn (PaymentInterface $payment) => $payment->getMethod()->getCode() === $method;
+            }
+            if (is_array($method)) {
+                $__filter = fn (PaymentInterface $payment) => in_array($payment->getMethod()->getCode(), $method);
+            }
+            return (null === $state || $payment->getState() === $state) && $__filter($payment);
         })->last();
 
         return $payment !== false ? $payment : null;
