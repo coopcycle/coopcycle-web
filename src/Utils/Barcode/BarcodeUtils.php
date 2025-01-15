@@ -76,17 +76,7 @@ class BarcodeUtils {
         $taskId = $package->getTask()->getId();
         $packageId = $package->getId();
 
-        return array_map(
-            fn(int $index) => self::parse(sprintf(
-                self::WITH_PACKAGE,
-                1, // TODO: Dynamic instance
-                Barcode::TYPE_TASK,
-                $taskId,
-                $packageId,
-                $index + $start + 1
-            )),
-            range(0, $quantity - 1)
-        );
+        return self::getBarcodesFromTaskAndPackageIds($taskId, $packageId, $quantity, $start);
     }
 
 
