@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Exception\PaygreenException;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
@@ -51,7 +52,7 @@ class PaygreenManager
 
         $response = $this->paygreenClient->capturePaymentOrder($payment->getPaygreenPaymentOrderId());
         if ($response->getStatusCode() !== 200) {
-            throw new \Exception('Could not capture payment');
+            throw new PaygreenException('Could not capture payment');
         }
 
         // We also store the transaction fee
@@ -136,7 +137,7 @@ class PaygreenManager
         $data = json_decode($response->getBody()->getContents(), true);
 
         if ($response->getStatusCode() !== 200) {
-            throw new \Exception($data['detail'] ?? $data['message']);
+            throw new PaygreenException($data['detail'] ?? $data['message']);
         }
 
         $payment->setPaygreenPaymentOrderId($data['data']['id']);
