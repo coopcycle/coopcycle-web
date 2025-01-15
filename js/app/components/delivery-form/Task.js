@@ -44,7 +44,6 @@ export default ({
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
 
-  console.log(index, values.tasks.length, task.type)
 
   useEffect(() => {
     const getPackages = async () => {

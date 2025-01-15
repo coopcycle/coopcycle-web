@@ -172,8 +172,6 @@ export default function ({ storeId, deliveryId }) {
         httpClient.get(storeURL),
         ]).then(values => {
           const [delivery, addresses, storeInfos] = values
-          delete delivery.response.dropoff
-          delete delivery.response.pickup
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
@@ -265,22 +263,21 @@ export default function ({ storeId, deliveryId }) {
 
             const getPrice = useCallback(() => {
             
-               // we have to remove Id from task unless the endpoint cannot calculate the price
-              const removeId = () => {
-                const tasksWithoutId = values.tasks.map(task => {
+               // we have to remove Id from task unless the endpoint cannot calculate the price (in edit mode)
+              
+                const tasksCopy = structuredClone(values.tasks)
+                const tasksWithoutId = tasksCopy.map(task => {
                   if (task["@id"]) {
                     delete task["@id"]
                   }
                   return task
                 })
-                return tasksWithoutId
-              }
-              
+                
               const infos = {
                 store: storeDeliveryInfos["@id"],
                 weight: values.tasks.find(task => task.type === "DROPOFF").weight,
                 packages: values.tasks.find(task => task.type === "DROPOFF").packages,
-                tasks: deliveryId ? removeId() : values.tasks,
+                tasks: tasksWithoutId 
               };
 
               const calculatePrice = async () => {
