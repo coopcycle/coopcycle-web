@@ -5,6 +5,7 @@ Feature: Multi-step deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -105,6 +106,7 @@ Feature: Multi-step deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -233,6 +235,7 @@ Feature: Multi-step deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -357,6 +360,7 @@ Feature: Multi-step deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"

@@ -81,6 +81,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -191,6 +192,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -302,6 +304,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -432,6 +435,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -526,6 +530,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1217,6 +1222,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1307,6 +1313,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1401,6 +1408,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1497,6 +1505,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1591,6 +1600,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the current time is "2020-04-02 11:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -1686,6 +1696,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1997,6 +2008,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the current time is "2022-05-05 12:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
