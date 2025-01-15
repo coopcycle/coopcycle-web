@@ -91,7 +91,6 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         ];
 
         $data['packages'] = [];
-        $data['weight'] = null;
 
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
             $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
