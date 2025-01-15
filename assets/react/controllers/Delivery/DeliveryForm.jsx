@@ -115,23 +115,6 @@ export default function ({ storeId, deliveryId }) {
       
       const taskErrors = {}
 
-      let doneAfterPickup
-
-      if (values.tasks[0].after) {
-        doneAfterPickup = values.tasks[0].after
-      } else if (values.tasks[0].timeSlot) {
-        const after = values.tasks[0].timeSlot.slice(0, 19 )
-        doneAfterPickup = after
-      }
-
-      if (values.tasks[i].type === "DROPOFF" && values.tasks[i].after) {
-        const doneAfterDropoff = values.tasks[i].after
-        const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
-        if (!isWellOrdered) {
-          taskErrors.before = t("DELIVERY_FORM_ERROR_HOUR")
-        }
-      }
-
       /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
 
       // if (!values.tasks[i].address.formattedTelephone) {

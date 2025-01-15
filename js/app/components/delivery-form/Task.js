@@ -90,9 +90,11 @@ export default ({
 
         <button className="task__button">
           <i
-            className={!showLess ? 'fa fa-minus-circle' : 'fa fa-plus-circle'}
+            className={!showLess ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
             title={
-              showLess ? 'Show less informations' : 'Show more informations'
+              showLess
+                ? t('DELIVERY_FORM_SHOW_MORE')
+                : t('DELIVERY_FORM_SHOW_LESS')
             }
             onClick={() => setShowLess(!showLess)}></i>
         </button>

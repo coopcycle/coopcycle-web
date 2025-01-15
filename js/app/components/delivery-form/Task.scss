@@ -3,14 +3,7 @@
     display : flex;
     gap: 1em;
     align-items: center;
-
-    &--pickup{
-      justify-content: center;
-    }
-    
-    &--dropoff{
-      justify-content: space-around;
-    }
+    justify-content: space-around;
   }
 
   &__button{
@@ -21,7 +14,7 @@
   &__body--hidden{
     display: none;
   }
-  
+
   &__footer--hidden{
     display:none
   }
