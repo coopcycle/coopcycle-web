@@ -8,6 +8,7 @@ import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
+import _ from 'lodash'
 
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
@@ -241,6 +242,8 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
+            console.log(values)
+
             const getPrice = useCallback(() => {
             
                // we have to remove Id from task unless the endpoint cannot calculate the price (in edit mode)
@@ -252,11 +255,35 @@ export default function ({ storeId, deliveryId }) {
                   }
                   return task
                 })
-                
+              
+              let packages = []
+
+              for (const task of values.tasks) {
+                if (task.packages && task.type ==="DROPOFF") {
+                  packages.push(...task.packages)
+                }
+              }
+              
+              const mergedPackages = _(packages)
+                .groupBy('type') 
+                .map((items, type) => ({
+                  type, 
+                  quantity: _.sumBy(items, 'quantity'), 
+                }))
+                .value()
+
+              let totalWeight = 0
+
+              for (const task of values.tasks) {
+                if (task.weight && task.type ==="DROPOFF") {
+                  totalWeight+= task.weight 
+                }
+              }
+                              
               const infos = {
                 store: storeDeliveryInfos["@id"],
-                weight: values.tasks.find(task => task.type === "DROPOFF").weight,
-                packages: values.tasks.find(task => task.type === "DROPOFF").packages,
+                weight: totalWeight,
+                packages: mergedPackages,
                 tasks: tasksWithoutId 
               };
 
