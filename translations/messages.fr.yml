@@ -1222,11 +1222,11 @@ restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réducti
   à partir d'un montant d'achat. Votre marge sera réduite du montant de la réduction.
   Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme.
 restaurant_promotion.items_total: À partir d'un montant d'achats
-restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des commandes
-  payées avec Edenred, en partie ou en totalité. Pour ces commandes, l'ensemble de
+restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble des commandes
+  payées en titres-restaurant, en partie ou en totalité. Pour ces commandes, l'ensemble de
   l'argent a été perçu par le restaurant. Vous devez donc envoyer une facture à chaque
   restaurant, pour réclamer les commissions dûes.
-restaurants.edenred_transactions.edenred_amount: Montant payé avec Edenred
+restaurants.meal_vouchers_transactions.amount: Montant payé en titres-restaurant
 restaurants.edenred_transactions.title: Transactions Edenred
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
@@ -1584,7 +1584,7 @@ basics.order_now: "Commander maintenant"
 restaurant.businessAccount.notAvilable: "Ce restaurant n'est pas inclus dans les restaurants de la configuration de votre entreprise. <br> Vous pouvez voir les restaurants disponibles pour votre entreprise <a href=\"%path%\">en cliquant ici</a>.\n"
 business_account.switch.order_with_business: "Commander avec mon entreprise"
 business_account.switch.ordering_with_business: "Commander avec mon entreprise"
-restaurants.edenred.add_restaurants: "Ajouter des restaurants"
+restaurants.edenred.add_restaurants: "Ajouter des restaurants Edenred"
 restaurants.edenred.add_list_title: "Liste des restaurants à envoyer à Edenred"
 restaurants.edenred.added_restaurants: "Restaurants ajoutés"
 restaurants.edenred.already_sent: "Les restaurants qui apparaissent barrés dans la liste sont ceux qui ont déjà été envoyés à Edenred pour incorporation. Veuillez <a href=\"%link%\">cliquer ici</a> pour vérifier leur statut."
@@ -1609,3 +1609,4 @@ form.task_export.colisactiv.label: Exporter au format ColivActiv
 form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées
 form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
 form.payment.edenred.refund_amount.help: Les remboursements partiels ne sont pas supportés par Edenred.
+restaurant.meal_vouchers_transactions.emitter: Émetteur

@@ -1,0 +1,9 @@
+{% set gateway = payment_gateway_resolver.resolveForOrder(order) %}
+
+{% if gateway == 'paygreen' %}
+{% if paygreen_environment == 'SANDBOX' %}
+<link href="https://sb-pgjs.paygreen.fr/latest/paygreen.min.css" type="text/css" rel="stylesheet" />
+{% else %}
+<link href="https://pgjs.paygreen.fr/latest/paygreen.min.css" type="text/css" rel="stylesheet" />
+{% endif %}
+{% endif %}

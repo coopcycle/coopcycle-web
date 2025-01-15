@@ -1016,7 +1016,7 @@ order.payment.card_number.help: Stripe <a href="https://stripe.com/docs/testing#
   target="_blank" tabindex="-1">test txartel-zenbaki</a> bat aurrezarri da. Ez da
   konturik kobratuko.
 restaurant.form.vytal_enabled.label: Gaitu Vytal gordailu-itzulpen sistema
-restaurants.edenred_transactions.edenred_amount: Edenred ordaindutako kopurua
+restaurants.meal_vouchers_transactions.amount: Edenred ordaindutako kopurua
 form.items_total_promotion.items_total.label: Goiko produktuen totala
 adminDashboard.api.help: Baimendu entregak periodikoki sortzen
 form.time_slot.preview_title: Denbora-tarte aurreikuspena
@@ -1118,7 +1118,7 @@ hub.disclaimer: Erosi hainbat dendetatik, eta dena banaketa bakarrean emango diz
 form.local_business.stripe_account.help: Konektatu Stripe kontu bat beste banku-kontu
   batetik dirua transferitzeko
 form.settings.autocomplete_provider.label: Iradokizun-hornitzailea
-restaurants.edenred_transactions.disclaimer: Orri honek Edenred-en bidez ordaindutako
+restaurants.meal_vouchers_transactions.disclaimer: Orri honek Edenred-en bidez ordaindutako
   eskaera guztiak zerrendatzen ditu, partzialki edo osorik. Eskaera honentzat, diru
   guztia jatetxeak batu du. Beraz, jatetxe bakoitzari faktura bat bidali behar diozu,
   ordaindu beharreko komisioak eskatzeko.
