@@ -53,7 +53,6 @@ export default {
 
     this.createPaymentFlowOnChangeListener = (resolve) => (event) => {
 
-      console.log(event.type, event.detail)
 
       if (!event?.detail?.method && event?.detail?.status === 'pending') {
         // We do not enable the submit button for now
@@ -68,7 +67,6 @@ export default {
     }
 
     // Placeholder function, will be overriden when createToken() is called
-    this.submitPaymentListener = (event) => console.log(event)
 
     this.createSubmitPaymentListener = (resolve, reject) => (event) => {
       switch (event.type) {
@@ -93,7 +91,6 @@ export default {
       ...options.paygreen
     }
 
-    console.log(options);
 
     return new Promise((resolve, reject) => {
 
