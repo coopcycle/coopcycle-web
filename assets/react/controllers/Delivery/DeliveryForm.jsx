@@ -87,7 +87,6 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-// as props we also have isNew to manage if it's a new delivery or an edit
 export default function ({ storeId, deliveryId }) {
   
   const httpClient = new window._auth.httpClient()
@@ -241,8 +240,6 @@ export default function ({ storeId, deliveryId }) {
           validateOnBlur={false}
         >
           {({ values, isSubmitting }) => {
-
-            console.log(values)
 
             const getPrice = useCallback(() => {
             
