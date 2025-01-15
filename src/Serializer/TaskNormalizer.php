@@ -90,10 +90,13 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             ]
         ];
 
+        $data['packages'] = [];
+        $data['weight'] = null;
+
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
             $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
             $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
-        } else if ($object->isPickup()) {
+        } elseif ($object->isPickup()) {
             // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
             $delivery = $object->getDelivery();
 
