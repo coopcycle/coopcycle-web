@@ -172,6 +172,8 @@ export default function ({ storeId, deliveryId }) {
         httpClient.get(storeURL),
         ]).then(values => {
           const [delivery, addresses, storeInfos] = values
+          delete delivery.response.dropoff
+          delete delivery.response.pickup
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
@@ -259,6 +261,8 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
+            console.log(values)
+
             const getPrice = useCallback(() => {
             
                // we have to remove Id from task unless the endpoint cannot calculate the price
@@ -310,43 +314,53 @@ export default function ({ storeId, deliveryId }) {
 
                   <FieldArray name="tasks">
                     {(arrayHelpers) => (
-                      <div className="new-order" >
-                        {values.tasks.map((task, index) => (
-                          <div className='new-order__item border p-4 mb-4' key={index}>
-                            <Task
-                              deliveryId={deliveryId}
-                              key={index}
-                              task={task}
-                              index={index}
-                              addresses={addresses}
-                              storeId={storeId}
-                              storeDeliveryInfos={storeDeliveryInfos}
-                            />
-                            {task.type === 'DROPOFF' && index > 1 ? (
-                              <Button
-                                onClick={() => arrayHelpers.remove(index)}
-                                type="button"
-                                className='mb-4'
-                              >
-                                {t("DELIVERY_FORM_REMOVE_DROPOFF")}
-                              </Button>
-                            ) : null}
+                      <div className="new-order">
+                       
+                        <div className="new-order__pickups">
+                          {values.tasks
+                            .filter((task) => task.type === 'PICKUP')
+                            .map((task) => {
+                              const originalIndex = values.tasks.findIndex(t => t === task);
+                              return (
+                                <div className='new-order__pickups__item' key={originalIndex}>
+                                  <Task
+                                    deliveryId={deliveryId}
+                                    key={originalIndex}
+                                    task={task}
+                                    index={originalIndex}
+                                    addresses={addresses}
+                                    storeId={storeId}
+                                    storeDeliveryInfos={storeDeliveryInfos}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </div>
 
-                            {task.type === 'DROPOFF' ?
-                              <div className='mb-4' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
-                                <Button
-                                  disabled={false}
-                                  onClick={() => {
-                                    arrayHelpers.push(dropoffSchema);
-                                  }}
-                                >
-                                  {t("DELIVERY_FORM_ADD_DROPOFF")}
-                                </Button>
-                              </div> : null}
-                          </div>
-                        ))}
-
+                        
+                        <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
+                          {values.tasks
+                            .filter((task) => task.type === 'DROPOFF')
+                            .map((task) => {
+                              const originalIndex = values.tasks.findIndex(t => t === task);
+                              return (
+                                <div className='new-order__dropoffs__item' key={originalIndex}>
+                                  <Task
+                                    deliveryId={deliveryId}
+                                    index={originalIndex}
+                                    addresses={addresses}
+                                    storeId={storeId}
+                                    storeDeliveryInfos={storeDeliveryInfos}
+                                    onAdd={arrayHelpers.push}
+                                    dropoffSchema={dropoffSchema}
+                                    onRemove={arrayHelpers.remove}
+                                    showRemoveButton={originalIndex > 1}
+                                    showAddButton={originalIndex === values.tasks.length -1}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
                     )}
                   </FieldArray>
