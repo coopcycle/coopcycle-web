@@ -144,7 +144,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
-          "type":"DROPOFF",
+          "type": "DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -169,6 +169,7 @@ Feature: Deliveries
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks": @array@,
         "trackingUrl": @string@
       }
       """
@@ -372,7 +373,8 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -410,12 +412,14 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks": @array@,
         "trackingUrl": @string@
       }
       """

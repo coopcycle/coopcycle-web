@@ -105,7 +105,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                     ->createQueryBuilder('t');
 
                 $query = $qb
-                    ->select('p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                    ->select('p.id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
@@ -128,18 +128,38 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                     ->getResult()[0]["1"];
             }
         } else {
+
             $qb =  $this->entityManager
                 ->getRepository(Task::class)
                 ->createQueryBuilder('t');
 
             $data['packages'] = $qb
-                ->select('p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                ->select('p.id', 'p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                 ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                 ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                 ->andWhere('t.id = :taskId')
                 ->setParameter('taskId', $object->getId())
                 ->getQuery()
                 ->getResult();
+        }
+
+        // Add labels
+
+        foreach ($data['packages'] as $i => $p) {
+
+            $data['packages'][$i]['labels'] = [];
+
+            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['id'], $p['quantity']);
+            foreach ($barcodes as $barcode) {
+                $labelUrl = $this->urlGenerator->generate(
+                    'task_label_pdf',
+                    ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
+                $data['packages'][$i]['labels'][] = $labelUrl;
+            }
+
+            unset($data['packages'][$i]['id']);
         }
 
         return $data;
