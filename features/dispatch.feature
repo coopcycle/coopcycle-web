@@ -170,8 +170,8 @@ Feature: Dispatch
         "images": @array@,
         "hasIncidents": @boolean@,
         "barcode": "@array@",
-        "co2Emissions": "@integer@",
-        "distanceFromPrevious": "@integer@"
+        "co2emitted": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 

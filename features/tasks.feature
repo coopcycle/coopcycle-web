@@ -54,8 +54,8 @@ Feature: Tasks
             "packages": [],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "co2Emissions": "@integer@",
-            "distanceFromPrevious": "@integer@"
+            "co2emitted": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -88,8 +88,8 @@ Feature: Tasks
             "packages":[],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "co2Emissions": "@integer@",
-            "distanceFromPrevious": "@integer@"
+            "co2emitted": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -122,8 +122,8 @@ Feature: Tasks
             "images":[],
             "next":null,
             "createdAt":"@string@.isDateTime()",
-            "co2Emissions": "@integer@",
-            "distanceFromPrevious": "@integer@"
+            "co2emitted": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -156,8 +156,8 @@ Feature: Tasks
             "images":[],
             "next":null,
             "createdAt":"@string@.isDateTime()",
-            "co2Emissions": "@integer@",
-            "distanceFromPrevious": "@integer@"
+            "co2emitted": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           }
         ],
         "hydra:view": {
@@ -656,8 +656,8 @@ Feature: Tasks
         "packages": [],
         "barcode": "@array@",
         "createdAt":"@string@.isDateTime()",
-        "co2Emissions": "@integer@",
-        "distanceFromPrevious": "@integer@"
+        "co2emitted": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1131,8 +1131,8 @@ Feature: Tasks
         "packages": [],
         "barcode": "@array@",
         "createdAt":"@string@.isDateTime()",
-        "co2Emissions": "@integer@",
-        "distanceFromPrevious": "@integer@"
+        "co2emitted": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1216,8 +1216,8 @@ Feature: Tasks
         "packages": [],
         "barcode": "@array@",
         "createdAt":"@string@.isDateTime()",
-        "co2Emissions": "@integer@",
-        "distanceFromPrevious": "@integer@"
+        "co2emitted": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1351,8 +1351,8 @@ Feature: Tasks
             "packages": [],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "co2Emissions": "@integer@",
-            "distanceFromPrevious": "@integer@"
+            "co2emitted": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -1385,8 +1385,8 @@ Feature: Tasks
             "packages": [],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "co2Emissions": "@integer@",
-            "distanceFromPrevious": "@integer@"
+            "co2emitted": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           }
         ],
         "hydra:totalItems":2,
