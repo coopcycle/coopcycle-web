@@ -88,7 +88,7 @@ export default ({
             : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
         </h3>
 
-        <button className="task__button">
+        <button type="button" className="task__button">
           <i
             className={!showLess ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
             title={
