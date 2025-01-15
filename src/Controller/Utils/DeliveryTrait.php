@@ -21,6 +21,25 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
+    public function deliveryActionBeta($id,
+    Request $request,
+    EntityManagerInterface $entityManager,
+    )
+    {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery, 'view');
+
+        return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
+            'delivery' => $delivery,
+            'store' => $delivery->getStore(),
+            'layout' => $request->attributes->get('layout'),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
+        ]));
+    }
+
     public function deliveryAction($id,
         Request $request,
         OrderFactory $orderFactory,

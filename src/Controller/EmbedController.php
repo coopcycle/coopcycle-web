@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -40,6 +41,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class EmbedController extends AbstractController
 {
     use AccessControlTrait;
+    use InjectAuthTrait;
     use DeliveryTrait;
 
     public function __construct(

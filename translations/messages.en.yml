@@ -1342,10 +1342,10 @@ restaurant_promotion.items_total.help: This allows you to apply a discount above
   of the discount. This will <strong>not diminish</strong> the fees perceived
   by the platform.
 adminDashboard.metrics.title: Metrics
-restaurants.edenred_transactions.disclaimer: This page lists all the orders paid with Edenred, in part or in full.
+restaurants.meal_vouchers_transactions.disclaimer: This page lists all the orders paid with meal vouchers, in part or in full.
   For these orders, all the money has been collected by the restaurant.
   You must therefore send an invoice to each restaurant, to claim the commissions due.
-restaurants.edenred_transactions.edenred_amount: Amount paid with Edenred
+restaurants.meal_vouchers_transactions.amount: Amount paid with Edenred
 restaurants.edenred_transactions.title: Edenred transactions
 form.product.alcohol.label: This product is an alcoholic beverage
 form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
@@ -1555,6 +1555,9 @@ payment_method:
   edenred: Edenred
   edenred+card: Edenred
   cash_on_delivery: Cash on delivery
+  conecs: Conecs
+  swile: Swile
+  restoflash: Restoflash
 registration.navigation.title: "Personal account creation"
 registration.info.title: "What is CoopCycle?"
 registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
@@ -1606,7 +1609,7 @@ form.settings.on_demand_delivery_product_name.help: "The name that will appear i
 form.settings.accounting_account.label: "Account code"
 form.settings.accounting_account.help: "The default account code to record on demand delivery orders in the accounting system."
 business_restaurant_group.form.invalid: "There are errors or missing information, please check all the sections of the configuration."
-restaurants.edenred.add_restaurants: Add restaurants
+restaurants.edenred.add_restaurants: Add Edenred restaurants
 restaurants.edenred.add_list_title: List of restaurants to send to Edenred
 restaurants.edenred.added_restaurants: Added restaurants
 restaurants.edenred.already_sent: "The restaurants that appear crossed out in the list are because\
@@ -1661,3 +1664,5 @@ loopeat.incident.unexpected_returns: Unexpected number of zero waste returns
 form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
 form.store.urbantz_hub_id: Urbantz Hub Id
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
+restaurant.form.use_paygreen.label: Use Paygreen for this shop
+restaurant.meal_vouchers_transactions.emitter: Emitter

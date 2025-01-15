@@ -155,7 +155,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $vehicle = self::VEHICLE_BIKE;
 
     /**
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     private $store;
 

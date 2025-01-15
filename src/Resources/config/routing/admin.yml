@@ -8,6 +8,14 @@ admin_delivery:
           back: admin_deliveries
   methods:  [ GET, POST ]
 
+
+admin_delivery_beta:
+  path: /admin/deliveries/{id}/beta
+  defaults:
+      _controller: AppBundle\Controller\AdminController::deliveryActionBeta
+      layout: 'admin.html.twig'
+  methods:  [ GET ]
+
 admin_order_receipt:
     path:     /admin/orders/{orderNumber}/receipt.pdf
     defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptAction }
@@ -615,6 +623,18 @@ admin_store_delivery_new:
             back: admin_deliveries
     methods:  [ GET, POST ]
 
+admin_store_delivery_new_beta:
+    path: /admin/stores/{id}/deliveries/new/beta
+    defaults:
+        _controller: AppBundle\Controller\AdminController::newStoreDeliveryReactFormAction
+        layout: 'admin.html.twig'
+        routes:
+            stores: admin_stores
+            store: admin_store
+            success: admin_store_deliveries
+            back: admin_deliveries
+    methods:  [ GET ]
+
 admin_store_delivery_download_images:
     path: /admin/stores/{storeId}/deliveries/{deliveryId}/images/download
     defaults:
@@ -750,3 +770,10 @@ admin_restaurant_image_from_url:
       restaurants: admin_restaurants
       restaurant: admin_restaurant
   methods: [ POST ]
+
+admin_restaurants_meal_voucher_transactions:
+    path: /admin/restaurants/meal-vouchers/transactions
+    defaults:
+        _controller: AppBundle\Controller\AdminController::mealVouchersTransactionsAction
+        layout: 'admin.html.twig'
+    methods: [ GET, POST ]

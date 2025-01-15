@@ -29,10 +29,6 @@ import { formatDistance, formatDuration } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
 
-const showVehicleMenu = useContextMenu({
-  id: 'vehicle-selectmenu'
-}).show
-
 const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
 
   if (item.startsWith('/api/tours')) {
@@ -125,6 +121,10 @@ const ProgressBarMemo = React.memo(({
   })
 
 export const TaskList = ({ username, distance, duration, taskListsLoading }) => {
+  const { show: showVehicleMenu } = useContextMenu({
+    id: 'vehicle-selectmenu'
+  })
+
   const dispatch = useDispatch()
   const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
 
@@ -134,9 +134,9 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
   const selectTrailerMenuId = `trailer-selectmenu-${username}`
-  const showTrailerMenu = useContextMenu({
+  const { show: showTrailerMenu } = useContextMenu({
     id: selectTrailerMenuId
-  }).show
+  })
 
   const visibleTasks = tasks.filter(task => {
     return _.includes(visibleTaskIds, task['@id'])
@@ -304,9 +304,5 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
     </div>
   )
 }
-
-
-
-
 
 export default TaskList

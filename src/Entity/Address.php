@@ -31,6 +31,10 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "patch"={
+ *       "method"="PATCH",
+ *       "access_control"="is_granted('edit', object)"
  *     }
  *   },
  *   subresourceOperations={
@@ -145,7 +149,7 @@ class Address extends BaseAddress
     /**
      * @param array $latLng
      * @SerializedName("latLng")
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     public function setLatLng(array $latLng)
     {
