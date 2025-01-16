@@ -142,23 +142,6 @@ export default ({
           <DateRangePicker format={format} index={index} isAdmin={isAdmin} />
         )}
 
-        {/* {areDefinedTimeSlots() && !deliveryId && isAdmin ? (
-          <SwitchTimeSlotFreePicker
-            storeId={storeId}
-            storeDeliveryInfos={storeDeliveryInfos}
-            index={index}
-            format={format}
-            deliveryId={deliveryId}
-          />
-        ) : areDefinedTimeSlots() && !isAdmin ? (
-          <TimeSlotPicker
-            storeId={storeId}
-            storeDeliveryInfos={storeDeliveryInfos}
-            index={index}
-          />
-        ) : (
-          <DateRangePicker format={format} index={index} isAdmin={isAdmin} />
-        )} */}
         <div className="mt-4 mb-4">
           <label
             htmlFor={`tasks[${index}].comments`}

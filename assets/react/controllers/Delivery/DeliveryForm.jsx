@@ -253,8 +253,6 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
-            console.log(values)
-
             const getPrice = useCallback(() => {
             
                // we have to remove Id from task unless the endpoint cannot calculate the price (in edit mode)
