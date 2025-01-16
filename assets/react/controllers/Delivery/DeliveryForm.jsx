@@ -8,6 +8,7 @@ import moment from 'moment'
 import { money } from '../../controllers/Incident/utils.js'
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
+import _ from 'lodash'
 
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
@@ -87,7 +88,6 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-// as props we also have isNew to manage if it's a new delivery or an edit
 export default function ({ storeId, deliveryId }) {
   
   const httpClient = new window._auth.httpClient()
@@ -114,23 +114,6 @@ export default function ({ storeId, deliveryId }) {
     for (let i = 0; i < values.tasks.length; i++) {
       
       const taskErrors = {}
-
-      let doneAfterPickup
-
-      if (values.tasks[0].after) {
-        doneAfterPickup = values.tasks[0].after
-      } else if (values.tasks[0].timeSlot) {
-        const after = values.tasks[0].timeSlot.slice(0, 19 )
-        doneAfterPickup = after
-      }
-
-      if (values.tasks[i].type === "DROPOFF" && values.tasks[i].after) {
-        const doneAfterDropoff = values.tasks[i].after
-        const isWellOrdered = moment(doneAfterPickup).isBefore(doneAfterDropoff)
-        if (!isWellOrdered) {
-          taskErrors.before = t("DELIVERY_FORM_ERROR_HOUR")
-        }
-      }
 
       /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
 
@@ -244,24 +227,46 @@ export default function ({ storeId, deliveryId }) {
     }
   }, [storeDeliveryInfos])
 
+
   const getPrice = (values) => {
-            
-    // we have to remove Id from task unless the endpoint cannot calculate the price
-    const removeId = () => {
-      const tasksWithoutId = values.tasks.map(task => {
+
+  const tasksCopy = structuredClone(values.tasks)
+  const tasksWithoutId = tasksCopy.map(task => {
         if (task["@id"]) {
           delete task["@id"]
         }
         return task
       })
-      return tasksWithoutId
+    
+    let packages = []
+
+    for (const task of values.tasks) {
+      if (task.packages && task.type ==="DROPOFF") {
+        packages.push(...task.packages)
+      }
+    }
+    
+    const mergedPackages = _(packages)
+      .groupBy('type') 
+      .map((items, type) => ({
+        type, 
+        quantity: _.sumBy(items, 'quantity'), 
+      }))
+      .value()
+
+    let totalWeight = 0
+
+    for (const task of values.tasks) {
+      if (task.weight && task.type ==="DROPOFF") {
+        totalWeight+= task.weight 
+      }
     }
     
     const infos = {
       store: storeDeliveryInfos["@id"],
-      weight: values.tasks.find(task => task.type === "DROPOFF").weight,
-      packages: values.tasks.find(task => task.type === "DROPOFF").packages,
-      tasks: deliveryId ? removeId() : values.tasks,
+      weight: totalWeight,
+      packages: mergedPackages,
+      tasks: tasksWithoutId,
     };
 
     const calculatePrice = async () => {
@@ -310,43 +315,53 @@ export default function ({ storeId, deliveryId }) {
 
                   <FieldArray name="tasks">
                     {(arrayHelpers) => (
-                      <div className="new-order" >
-                        {values.tasks.map((task, index) => (
-                          <div className='new-order__item border p-4 mb-4' key={index}>
-                            <Task
-                              deliveryId={deliveryId}
-                              key={index}
-                              task={task}
-                              index={index}
-                              addresses={addresses}
-                              storeId={storeId}
-                              storeDeliveryInfos={storeDeliveryInfos}
-                            />
-                            {task.type === 'DROPOFF' && index > 1 ? (
-                              <Button
-                                onClick={() => arrayHelpers.remove(index)}
-                                type="button"
-                                className='mb-4'
-                              >
-                                {t("DELIVERY_FORM_REMOVE_DROPOFF")}
-                              </Button>
-                            ) : null}
+                      <div className="new-order">
+                       
+                        <div className="new-order__pickups">
+                          {values.tasks
+                            .filter((task) => task.type === 'PICKUP')
+                            .map((task) => {
+                              const originalIndex = values.tasks.findIndex(t => t === task);
+                              return (
+                                <div className='new-order__pickups__item' key={originalIndex}>
+                                  <Task
+                                    deliveryId={deliveryId}
+                                    key={originalIndex}
+                                    task={task}
+                                    index={originalIndex}
+                                    addresses={addresses}
+                                    storeId={storeId}
+                                    storeDeliveryInfos={storeDeliveryInfos}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </div>
 
-                            {task.type === 'DROPOFF' ?
-                              <div className='mb-4' style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <p>{t("DELIVERY_FORM_MULTIDROPOFF")}</p>
-                                <Button
-                                  disabled={false}
-                                  onClick={() => {
-                                    arrayHelpers.push(dropoffSchema);
-                                  }}
-                                >
-                                  {t("DELIVERY_FORM_ADD_DROPOFF")}
-                                </Button>
-                              </div> : null}
-                          </div>
-                        ))}
-
+                        
+                        <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
+                          {values.tasks
+                            .filter((task) => task.type === 'DROPOFF')
+                            .map((task) => {
+                              const originalIndex = values.tasks.findIndex(t => t === task);
+                              return (
+                                <div className='new-order__dropoffs__item' key={originalIndex}>
+                                  <Task
+                                    deliveryId={deliveryId}
+                                    index={originalIndex}
+                                    addresses={addresses}
+                                    storeId={storeId}
+                                    storeDeliveryInfos={storeDeliveryInfos}
+                                    onAdd={arrayHelpers.push}
+                                    dropoffSchema={dropoffSchema}
+                                    onRemove={arrayHelpers.remove}
+                                    showRemoveButton={originalIndex > 1}
+                                    showAddButton={originalIndex === values.tasks.length -1}
+                                  />
+                                </div>
+                              );
+                            })}
+                        </div>
                       </div>
                     )}
                   </FieldArray>

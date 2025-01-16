@@ -101,11 +101,11 @@ const DateTimeRangePicker = ({ format, index }) => {
     if (afterValue) {
       const updatedSecondOptions = generateTimeSlots(afterValue)
       setSecondSelectOptions(updatedSecondOptions)
-    }
-
-    if (defaultAfterValue) {
-      const updatedSecondOptions = generateTimeSlots(defaultAfterValue)
-      setSecondSelectOptions(updatedSecondOptions)
+    } else {
+      if (defaultAfterValue) {
+        const updatedSecondOptions = generateTimeSlots(defaultAfterValue)
+        setSecondSelectOptions(updatedSecondOptions)
+      }
     }
   }, [afterValue, defaultAfterValue])
 
@@ -136,15 +136,6 @@ const DateTimeRangePicker = ({ format, index }) => {
       before: newBeforeHour.format('HH:mm'),
     })
 
-    // generate optios for the second picker (beforeValue)
-    const afterHour = moment({
-      h: newAfterHour.hours(),
-      m: newAfterHour.minutes(),
-    })
-    const updatedSecondOptions = generateTimeSlots(afterHour)
-    setSecondSelectOptions(updatedSecondOptions)
-
-    // set the form values for the delivery object
     setAfterValue(newAfterHour)
     setBeforeValue(newBeforeHour)
   }

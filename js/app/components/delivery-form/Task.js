@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from './AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
-import { Input } from 'antd'
+import { Input, Button } from 'antd'
 import DateRangePicker from './DateRangePicker'
 import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
@@ -18,11 +18,13 @@ export default ({
   index,
   storeDeliveryInfos,
   deliveryId,
+  onAdd,
+  dropoffSchema,
+  onRemove,
+  showRemoveButton,
+  showAddButton,
 }) => {
-
   const httpClient = new window._auth.httpClient()
-
-  const [packages, setPackages] = useState(null)
 
   const { t } = useTranslation()
 
@@ -30,6 +32,18 @@ export default ({
   const task = values.tasks[index]
 
   const format = 'LL'
+
+  const [packages, setPackages] = useState(null)
+  const [showLess, setShowLess] = useState(false)
+
+  useEffect(() => {
+    const shouldShowLess =
+      task.type === 'DROPOFF' &&
+      values.tasks.length > 2 &&
+      index !== values.tasks.length - 1
+    setShowLess(shouldShowLess)
+  }, [task.type, values.tasks.length, index])
+
 
   useEffect(() => {
     const getPackages = async () => {
@@ -56,8 +70,13 @@ export default ({
   }, [storeDeliveryInfos])
 
   return (
-    <div className="task">
-      <div className="task__header">
+    <div className="task border p-4 mb-4">
+      <div
+        className={
+          task.type === 'PICKUP'
+            ? 'task__header task__header--pickup'
+            : 'task__header task__header--dropoff'
+        }>
         {task.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
@@ -68,9 +87,21 @@ export default ({
             ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
             : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
         </h3>
+
+        <button type="button" className="task__button">
+          <i
+            className={!showLess ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
+            title={
+              showLess
+                ? t('DELIVERY_FORM_SHOW_MORE')
+                : t('DELIVERY_FORM_SHOW_LESS')
+            }
+            onClick={() => setShowLess(!showLess)}></i>
+        </button>
       </div>
 
-      <div className="task__body">
+      <div
+        className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
         <AddressBookNew addresses={addresses} index={index} />
 
         {task.type === 'DROPOFF' ? (
@@ -113,6 +144,36 @@ export default ({
           />
         </div>
       </div>
+      {task.type === 'DROPOFF' && (
+        <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
+          {showRemoveButton && (
+            <Button
+              onClick={() => onRemove(index)}
+              type="button"
+              className="mb-4">
+              {t('DELIVERY_FORM_REMOVE_DROPOFF')}
+            </Button>
+          )}
+          {showAddButton && (
+            <div
+              className="mb-4"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+              <Button
+                disabled={false}
+                onClick={() => {
+                  onAdd(dropoffSchema)
+                }}>
+                {t('DELIVERY_FORM_ADD_DROPOFF')}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

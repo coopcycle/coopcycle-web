@@ -623,6 +623,10 @@
         "DELIVERY_FORM_TOTAL_VAT": "TTC",
         "DELIVERY_FORM_TOTAL_EX_VAT": "HT",
         "DELIVERY_FORM_REMOVE_DROPOFF": "Retirer ce dépôt", 
-        "SWITCH_COMPLEX_DATEPICKER" : "Sélectionner une date sur plusieurs jours"
+        "SWITCH_COMPLEX_DATEPICKER" : "Sélectionner une date sur plusieurs jours",
+        "DELIVERY_FORM_SHOW_MORE" : "Voir plus",
+        "DELIVERY_FORM_SHOW_LESS" : "Voir moins",
+        "DELIVERY_PICKUP" : "Retrait", 
+        "DELIVERY_DROPOFF ": "Dépôt"
     }
 }
