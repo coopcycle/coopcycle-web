@@ -4,19 +4,15 @@ const { Option } = Select
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
-export default ({ index, deliveryId }) => {
+export default ({ index }) => {
   const { setFieldValue, errors, values } = useFormikContext()
 
-  const [numberValue, setNumberValue] = useState(null)
+  const [numberValue, setNumberValue] = useState(
+    values.tasks[index].weight / 1000,
+  )
   const [weightUnit, setWeightUnit] = useState('kg')
 
   const { t } = useTranslation()
-
-  useEffect(() => {
-    if (deliveryId) {
-      setNumberValue(+values.tasks[index].weight / 1000)
-    }
-  }, [deliveryId])
 
   useEffect(() => {
     if (numberValue !== null) {
@@ -27,7 +23,7 @@ export default ({ index, deliveryId }) => {
         calculatedWeight = Math.round(numberValue * 453.592)
       }
       setFieldValue(`tasks[${index}].weight`, calculatedWeight)
-    } 
+    }
   }, [numberValue, weightUnit, index])
 
   return (

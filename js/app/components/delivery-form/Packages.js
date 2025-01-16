@@ -5,40 +5,31 @@ import { useTranslation } from 'react-i18next'
 
 import './Packages.scss'
 
-export default ({ storeId, index, packages, deliveryId }) => {
+export default ({ index, packages, deliveryId }) => {
   const { setFieldValue, errors, values } = useFormikContext()
 
-  const [packagesType, setPackagesType] = useState([])
-  const [packagesPicked, setPackagesPicked] = useState([])
+  let picked = []
+
+  for (const p of packages) {
+    const newPackages = {
+      type: p.name,
+      quantity: 0,
+    }
+    picked.push(newPackages)
+  }
+
+  if (deliveryId) {
+    const packagesToEdit = values.tasks[index].packages
+    const newPackagesArray = picked.map(p => {
+      const match = packagesToEdit.find(item => item.type === p.type)
+      return match || p
+    })
+    picked = newPackagesArray
+  }
+
+  const [packagesPicked, setPackagesPicked] = useState(picked)
 
   const { t } = useTranslation()
-
-  useEffect(() => {
-    /** format the data in order to use them with the pickers */
-
-    const picked = []
-
-    for (const p of packages) {
-      const newPackages = {
-        type: p.name,
-        quantity: 0,
-      }
-      picked.push(newPackages)
-    }
-
-    setPackagesType(packages)
-
-    if (deliveryId) {
-      const packagesToEdit = values.tasks[index].packages
-      const newPackagesArray = picked.map(p => {
-        const match = packagesToEdit.find(item => item.type === p.type)
-        return match || p
-      })
-      setPackagesPicked(newPackagesArray)
-    } else {
-      setPackagesPicked(picked)
-    }
-  }, [storeId, packages, deliveryId])
 
   /** Insert the data in edit mode */
 
@@ -85,7 +76,7 @@ export default ({ storeId, index, packages, deliveryId }) => {
   return (
     <>
       <div className="mb-2 font-weight-bold">{t('DELIVERY_FORM_PACKAGES')}</div>
-      {packagesType.map(item => (
+      {packages.map(item => (
         <div key={item['@id']} className="packages-item mb-2">
           <div className="packages-item__quantity ">
             <Button
