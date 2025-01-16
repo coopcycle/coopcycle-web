@@ -54,7 +54,7 @@ Feature: Tasks
             "packages": [],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "emittedco2": "@integer@",
+            "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
           },
           {
@@ -88,7 +88,7 @@ Feature: Tasks
             "packages":[],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "emittedco2": "@integer@",
+            "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
           },
           {
@@ -122,7 +122,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "createdAt":"@string@.isDateTime()",
-            "emittedco2": "@integer@",
+            "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
           },
           {
@@ -156,7 +156,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "createdAt":"@string@.isDateTime()",
-            "emittedco2": "@integer@",
+            "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
           }
         ],
@@ -656,7 +656,7 @@ Feature: Tasks
         "packages": [],
         "barcode": "@array@",
         "createdAt":"@string@.isDateTime()",
-        "emittedco2": "@integer@",
+        "emittedCo2": "@integer@",
         "traveledDistanceMeter": "@integer@"
       }
       """
@@ -1131,7 +1131,7 @@ Feature: Tasks
         "packages": [],
         "barcode": "@array@",
         "createdAt":"@string@.isDateTime()",
-        "emittedco2": "@integer@",
+        "emittedCo2": "@integer@",
         "traveledDistanceMeter": "@integer@"
       }
       """
@@ -1216,7 +1216,7 @@ Feature: Tasks
         "packages": [],
         "barcode": "@array@",
         "createdAt":"@string@.isDateTime()",
-        "emittedco2": "@integer@",
+        "emittedCo2": "@integer@",
         "traveledDistanceMeter": "@integer@"
       }
       """
@@ -1351,7 +1351,7 @@ Feature: Tasks
             "packages": [],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "emittedco2": "@integer@",
+            "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
           },
           {
@@ -1385,7 +1385,7 @@ Feature: Tasks
             "packages": [],
             "barcode": "@array@",
             "createdAt":"@string@.isDateTime()",
-            "emittedco2": "@integer@",
+            "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
           }
         ],
