@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik'
 
 import './SwitchTimeSlotFreePicker.scss'
 
-export default ({ storeId, storeDeliveryInfos, index, format }) => {
+export default ({ storeId, storeDeliveryInfos, index, format, isAdmin }) => {
   const { t } = useTranslation()
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
@@ -41,7 +41,7 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
       ) : (
         <div className="daterange-picker-container">
           <div className="daterange-picker-container__picker">
-            <DateRangePicker format={format} index={index} />
+            <DateRangePicker format={format} index={index} isAdmin={isAdmin} />
           </div>
           <i
             className="daterange-picker-container__icon fa fa-calendar text-right"

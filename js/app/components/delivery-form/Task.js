@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from './AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
@@ -7,6 +7,7 @@ import DateRangePicker from './DateRangePicker'
 import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
+import TimeSlotPicker from './TimeSlotPicker'
 
 import './Task.scss'
 
@@ -23,12 +24,14 @@ export default ({
   onRemove,
   showRemoveButton,
   showAddButton,
+  isAdmin,
+  areDefinedTimeSlots,
 }) => {
   const httpClient = new window._auth.httpClient()
 
   const { t } = useTranslation()
 
-  const { values } = useFormikContext()
+  const { values, setFieldValue } = useFormikContext()
   const task = values.tasks[index]
 
   const format = 'LL'
@@ -43,7 +46,6 @@ export default ({
       index !== values.tasks.length - 1
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
-
 
   useEffect(() => {
     const getPackages = async () => {
@@ -61,13 +63,13 @@ export default ({
     getPackages()
   }, [storeId])
 
-  const areDefinedTimeSlots = useCallback(() => {
-    return (
-      storeDeliveryInfos &&
-      Array.isArray(storeDeliveryInfos.timeSlots) &&
-      storeDeliveryInfos.timeSlots.length > 0
-    )
-  }, [storeDeliveryInfos])
+  // we have to set after and before to null here - if not admin - unless we have timeslot values and after/before for stores
+  useEffect(() => {
+    if (areDefinedTimeSlots) {
+      setFieldValue(`tasks[${index}].after`, null)
+      setFieldValue(`tasks[${index}].before`, null)
+    }
+  }, [isAdmin, areDefinedTimeSlots])
 
   return (
     <div className="task border p-4 mb-4">
@@ -117,8 +119,30 @@ export default ({
             <TotalWeight index={index} deliveryId={deliveryId} />
           </div>
         ) : null}
+        {isAdmin ? (
+          areDefinedTimeSlots && !deliveryId ? (
+            <SwitchTimeSlotFreePicker
+              storeId={storeId}
+              storeDeliveryInfos={storeDeliveryInfos}
+              index={index}
+              format={format}
+              deliveryId={deliveryId}
+              isAdmin={isAdmin}
+            />
+          ) : (
+            <DateRangePicker format={format} index={index} isAdmin={isAdmin} />
+          )
+        ) : areDefinedTimeSlots ? (
+          <TimeSlotPicker
+            storeId={storeId}
+            storeDeliveryInfos={storeDeliveryInfos}
+            index={index}
+          />
+        ) : (
+          <DateRangePicker format={format} index={index} isAdmin={isAdmin} />
+        )}
 
-        {areDefinedTimeSlots() & !deliveryId ? (
+        {/* {areDefinedTimeSlots() && !deliveryId && isAdmin ? (
           <SwitchTimeSlotFreePicker
             storeId={storeId}
             storeDeliveryInfos={storeDeliveryInfos}
@@ -126,9 +150,15 @@ export default ({
             format={format}
             deliveryId={deliveryId}
           />
+        ) : areDefinedTimeSlots() && !isAdmin ? (
+          <TimeSlotPicker
+            storeId={storeId}
+            storeDeliveryInfos={storeDeliveryInfos}
+            index={index}
+          />
         ) : (
-          <DateRangePicker format={format} index={index} />
-        )}
+          <DateRangePicker format={format} index={index} isAdmin={isAdmin} />
+        )} */}
         <div className="mt-4 mb-4">
           <label
             htmlFor={`tasks[${index}].comments`}

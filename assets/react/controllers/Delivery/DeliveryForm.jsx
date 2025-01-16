@@ -89,6 +89,8 @@ const pickupSchema = {
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ storeId, deliveryId }) {
+
+  const isAdmin = true
   
   const httpClient = new window._auth.httpClient()
 
@@ -97,6 +99,7 @@ export default function ({ storeId, deliveryId }) {
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  const [areDefinedTimeSlots, setAreDefinedTimeSlots] = useState(false)
 
   const [initialValues, setInitialValues] = useState({
     tasks: [
@@ -173,7 +176,15 @@ export default function ({ storeId, deliveryId }) {
     }
   }, [deliveryId, storeId])
 
+  useEffect(() => {
+    const areDefinedTimeSlots = storeDeliveryInfos &&
+        Array.isArray(storeDeliveryInfos.timeSlots) &&
+      storeDeliveryInfos.timeSlots.length > 0
+    
+    setAreDefinedTimeSlots(areDefinedTimeSlots)
+  }, [storeDeliveryInfos])
 
+  
   const handleSubmit = useCallback(async (values) => {
     const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
     
@@ -335,6 +346,8 @@ export default function ({ storeId, deliveryId }) {
                                     addresses={addresses}
                                     storeId={storeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
+                                    isAdmin={isAdmin}
+                                    areDefinedTimeSlots={areDefinedTimeSlots}
                                   />
                                 </div>
                               );
@@ -359,7 +372,9 @@ export default function ({ storeId, deliveryId }) {
                                     dropoffSchema={dropoffSchema}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
-                                    showAddButton={originalIndex === values.tasks.length -1}
+                                    showAddButton={originalIndex === values.tasks.length - 1}
+                                    isAdmin={isAdmin}
+                                    areDefinedTimeSlots={areDefinedTimeSlots}
                                   />
                                 </div>
                               );

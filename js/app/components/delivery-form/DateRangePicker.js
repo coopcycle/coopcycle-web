@@ -51,7 +51,7 @@ function generateTimeSlots(afterHour = null) {
   })
 }
 
-const DateTimeRangePicker = ({ format, index }) => {
+const DateTimeRangePicker = ({ format, index, isAdmin }) => {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
 
@@ -242,12 +242,14 @@ const DateTimeRangePicker = ({ format, index }) => {
           ))}
         </Select>
       </div>
-      <a
-        className="text-secondary"
-        title={t('SWITCH_COMPLEX_DATEPICKER')}
-        onClick={() => setIsComplexPicker(!isComplexPicker)}>
-        {t('SWITCH_COMPLEX_DATEPICKER')}
-      </a>
+      {isAdmin && (
+        <a
+          className="text-secondary"
+          title={t('SWITCH_COMPLEX_DATEPICKER')}
+          onClick={() => setIsComplexPicker(!isComplexPicker)}>
+          {t('SWITCH_COMPLEX_DATEPICKER')}
+        </a>
+      )}
       {errors.tasks?.[index]?.before && (
         <div className="text-danger">{errors.tasks[index].before}</div>
       )}
