@@ -1140,7 +1140,7 @@ form.checkout_address.reusable_packaging_vytal_enabled.label: Chci používat ko
 form.product.alcohol.help: Toto políčko zaškrtněte pouze v případě, že se jedná o
   alkoholický nápoj, například láhev vína.
 form.product.alcohol.label: Tento výrobek je alkoholický nápoj
-restaurants.edenred_transactions.title: Transakce Edenred
+restaurants.meal_vouchers_transactions.title: Transakce Edenred
 restaurants.meal_vouchers_transactions.amount: Částka vyplacená společností Edenred
 restaurants.meal_vouchers_transactions.disclaimer: Na této stránce jsou uvedeny všechny
   objednávky, které byly částečně nebo zcela zaplaceny u společnosti Edenred. U těchto

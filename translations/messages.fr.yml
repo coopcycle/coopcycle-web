@@ -1227,7 +1227,7 @@ restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble d
   l'argent a été perçu par le restaurant. Vous devez donc envoyer une facture à chaque
   restaurant, pour réclamer les commissions dûes.
 restaurants.meal_vouchers_transactions.amount: Montant payé en titres-restaurant
-restaurants.edenred_transactions.title: Transactions Edenred
+restaurants.meal_vouchers_transactions.title: Transactions titres-restaurant
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.

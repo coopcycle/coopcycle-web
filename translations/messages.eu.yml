@@ -980,7 +980,7 @@ restaurant.form.section.vytal: Vytal
 form.checkout_address.reusable_packaging_vytal_enabled.label: Vytal kontenedoreak
   erabili nahi ditut
 form.product.alcohol.label: Produktu hau edari alkoholiko bat da
-restaurants.edenred_transactions.title: Edenred transakzioak
+restaurants.meal_vouchers_transactions.title: Edenred transakzioak
 adminDashboard.metrics.title: Estatistikak
 form.items_total_promotion.fixed_discount_amount.label: Ezarri beherapen kopuru hau
 restaurant.stats.view_detailed: Ikuspegi xehetua

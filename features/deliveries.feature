@@ -113,6 +113,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -142,6 +143,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -224,6 +226,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -253,6 +256,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -338,6 +342,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -375,6 +380,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -464,6 +470,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -493,6 +500,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -558,6 +566,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -587,6 +596,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -657,6 +667,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -686,6 +697,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",

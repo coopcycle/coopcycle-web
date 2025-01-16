@@ -2358,6 +2358,7 @@ Feature: Carts
             },
             "amount": @integer@
           }
-        ]
+        ],
+        "redirectUrl":@string@
       }
       """

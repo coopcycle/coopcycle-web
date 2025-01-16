@@ -1346,7 +1346,7 @@ restaurants.meal_vouchers_transactions.disclaimer: This page lists all the order
   For these orders, all the money has been collected by the restaurant.
   You must therefore send an invoice to each restaurant, to claim the commissions due.
 restaurants.meal_vouchers_transactions.amount: Amount paid with Edenred
-restaurants.edenred_transactions.title: Edenred transactions
+restaurants.meal_vouchers_transactions.title: Meal vouchers transactions
 form.product.alcohol.label: This product is an alcoholic beverage
 form.product.alcohol.help: Check this box only if this product is an alcoholic beverage, like a bottle of wine.
 form.checkout_address.reusable_packaging_vytal_enabled.label: I want to use Vytal containers

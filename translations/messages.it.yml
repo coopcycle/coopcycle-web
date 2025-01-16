@@ -1155,7 +1155,7 @@ form.checkout_address.reusable_packaging_vytal_enabled.label: Voglio utilizzare 
 form.product.alcohol.help: Marca questa casella solo se il prodotto è una bevanda
   alcolica, come una bottiglia di vino.
 form.product.alcohol.label: Questo prodotto è una bevanda alcolica
-restaurants.edenred_transactions.title: Transazioni Edenred
+restaurants.meal_vouchers_transactions.title: Transazioni Edenred
 restaurants.meal_vouchers_transactions.amount: Importo pagato con Edenred
 restaurants.meal_vouchers_transactions.disclaimer: Questa pagina mostra la lista di tutti
   gli ordini pagati con Edenred, in parte o completamente. Per questi ordini, tutto
