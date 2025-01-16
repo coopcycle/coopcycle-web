@@ -244,6 +244,47 @@ export default function ({ storeId, deliveryId }) {
     }
   }, [storeDeliveryInfos])
 
+  const getPrice = (values) => {
+            
+    // we have to remove Id from task unless the endpoint cannot calculate the price
+    const removeId = () => {
+      const tasksWithoutId = values.tasks.map(task => {
+        if (task["@id"]) {
+          delete task["@id"]
+        }
+        return task
+      })
+      return tasksWithoutId
+    }
+    
+    const infos = {
+      store: storeDeliveryInfos["@id"],
+      weight: values.tasks.find(task => task.type === "DROPOFF").weight,
+      packages: values.tasks.find(task => task.type === "DROPOFF").packages,
+      tasks: deliveryId ? removeId() : values.tasks,
+    };
+
+    const calculatePrice = async () => {
+      const url = `${baseURL}/api/retail_prices/calculate`
+      const { response, error } = await httpClient.post(url, infos)
+
+      if (error) {
+        setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+        setCalculatePrice(0)
+      }
+
+      if (response) {
+        setCalculatePrice(response)
+        setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+      }
+
+    }
+    if (values.tasks.every(task => task.address.streetAddress)) {
+      calculatePrice()
+    }
+
+  }
+
 
   return (
     isLoading ? 
@@ -259,53 +300,12 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
-            const getPrice = useCallback(() => {
-            
-               // we have to remove Id from task unless the endpoint cannot calculate the price
-              const removeId = () => {
-                const tasksWithoutId = values.tasks.map(task => {
-                  if (task["@id"]) {
-                    delete task["@id"]
-                  }
-                  return task
-                })
-                return tasksWithoutId
-              }
-              
-              const infos = {
-                store: storeDeliveryInfos["@id"],
-                weight: values.tasks.find(task => task.type === "DROPOFF").weight,
-                packages: values.tasks.find(task => task.type === "DROPOFF").packages,
-                tasks: deliveryId ? removeId() : values.tasks,
-              };
-
-              const calculatePrice = async () => {
-                const url = `${baseURL}/api/retail_prices/calculate`
-                const { response, error } = await httpClient.post(url, infos)
-
-                if (error) {
-                  setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-                  setCalculatePrice(0)
-                }
-
-                if (response) {
-                  setCalculatePrice(response)
-                  setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-                }
-
-              }
-              if (values.tasks.every(task => task.address.streetAddress)) {
-                calculatePrice()
-              }
-
-            }, [values.tasks, storeDeliveryInfos, deliveryId])
-
-            useEffect(() => {
-                getPrice()
-            }, [values.tasks, storeDeliveryInfos, deliveryId]);
-
             return (
-              <Form >
+              <Form
+                onChange={()=> {
+                  getPrice(values)
+                }}
+              >
                 <div className='delivery-form' >
 
                   <FieldArray name="tasks">
