@@ -194,7 +194,9 @@
         "DELIVERY_FORM_TOTAL_EX_VAT": "Ohne MwSt.",
         "DELIVERY_FORM_REMOVE_DROPOFF": "Diesen Abgabeort entfernen",
         "DELIVERY_FORM_SHOW_MORE" : "Mehr anzeigen",
-        "DELIVERY_FORM_SHOW_LESS" : "Weniger anzeigen"
+        "DELIVERY_FORM_SHOW_LESS" : "Weniger anzeigen",
+        "DELIVERY_PICKUP": "Abholung",
+        "DELIVERY_DROPOFF": "Lieferung"
     }
 
 }

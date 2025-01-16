@@ -463,6 +463,8 @@
         "DELIVERY_FORM_REMOVE_DROPOFF": "Eliminar esta entrega",
         "SWITCH_COMPLEX_DATEPICKER": "Seleccionar una fecha durante varios días",
         "DELIVERY_FORM_SHOW_MORE" : "Ver más",
-        "DELIVERY_FORM_SHOW_LESS" : "Ver menos"
+        "DELIVERY_FORM_SHOW_LESS" : "Ver menos",
+        "DELIVERY_PICKUP": "Recogida",
+        "DELIVERY_DROPOFF": "Entrega"
     }
 }

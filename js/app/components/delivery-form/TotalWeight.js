@@ -24,7 +24,7 @@ export default ({ index, deliveryId }) => {
       if (weightUnit === 'kg') {
         calculatedWeight = numberValue * 1000
       } else if (weightUnit === 'lbs') {
-        calculatedWeight = numberValue * 453.592
+        calculatedWeight = Math.round(numberValue * 453.592)
       }
       setFieldValue(`tasks[${index}].weight`, calculatedWeight)
     } 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
 import { useFormikContext } from 'formik'
+import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
 
@@ -9,6 +10,8 @@ const baseURL = location.protocol + '//' + location.host
 
 export default ({ storeId, storeDeliveryInfos, index }) => {
   const httpClient = new window._auth.httpClient()
+
+  const { t } = useTranslation()
 
   const { setFieldValue } = useFormikContext()
 
@@ -149,7 +152,9 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   return (
     <>
-      <div className="mb-2 font-weight-bold title-slot">Tranche horaire</div>
+      <div className="mb-2 font-weight-bold title-slot">
+        {t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}
+      </div>
       {defaultLabel && timeSlotsLabels ? (
         <Radio.Group
           className="timeslot__container mb-2"

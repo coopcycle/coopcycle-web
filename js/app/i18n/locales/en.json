@@ -630,6 +630,8 @@
         "DELIVERY_FORM_TOTAL_EX_VAT": "Excl. VAT",
         "DELIVERY_FORM_REMOVE_DROPOFF": "Remove this dropoff",
         "DELIVERY_FORM_SHOW_MORE" : "Show more",  
-        "DELIVERY_FORM_SHOW_LESS" : "Show less"
+        "DELIVERY_FORM_SHOW_LESS" : "Show less",
+        "DELIVERY_PICKUP": "Pickup",
+        "DELIVERY_DROPOFF": "Dropoff"
       }
 }

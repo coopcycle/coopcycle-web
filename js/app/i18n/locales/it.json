@@ -384,6 +384,8 @@
         "DELIVERY_FORM_TOTAL_EX_VAT": "IVA esclusa",
         "DELIVERY_FORM_REMOVE_DROPOFF": "Rimuovi questa consegna",
         "DELIVERY_FORM_SHOW_MORE" : "Vedi di più",
-        "DELIVERY_FORM_SHOW_LESS" : "Vedi di meno"
+        "DELIVERY_FORM_SHOW_LESS" : "Vedi di meno",
+        "DELIVERY_PICKUP": "Ritiro",
+        "DELIVERY_DROPOFF": "Consegna"
     }
 }
