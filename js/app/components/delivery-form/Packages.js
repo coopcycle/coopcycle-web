@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button, Input } from 'antd'
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -12,6 +12,8 @@ export default ({ storeId, index, packages, deliveryId }) => {
   const [packagesPicked, setPackagesPicked] = useState([])
 
   const { t } = useTranslation()
+
+  const inputRef = useRef()
 
   useEffect(() => {
     /** format the data in order to use them with the pickers */
@@ -49,15 +51,30 @@ export default ({ storeId, index, packages, deliveryId }) => {
     }
   }, [packagesPicked, setFieldValue, index])
 
-  const handlePlusButton = item => {
+  const triggerOnChangeEvent = (newValue) => {
+    // Trigger manually the onchange event for the input when pressing the button, as we expect it from the form.onChange handler
+    // https://stackoverflow.com/questions/23892547/what-is-the-best-way-to-trigger-change-or-input-event-in-react-js
+    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+      window.HTMLInputElement.prototype,
+      'value').set;
+    nativeInputValueSetter.call(inputRef.current.input, newValue);
+    const event = new Event('input', { bubbles: true });
+    inputRef.current.input.dispatchEvent(event);
+  }
+
+  const handlePlusButton = (item) => {
+
     const pack = packagesPicked.find(p => p.type === item.name)
     const index = packagesPicked.findIndex(p => p === pack)
     if (index !== -1) {
       const newPackagesPicked = [...packagesPicked]
+      const newQuantity = pack.quantity + 1
       newPackagesPicked[index] = {
         type: pack.type,
-        quantity: pack.quantity + 1,
+        quantity: newQuantity,
       }
+
+      triggerOnChangeEvent(newQuantity)
       setPackagesPicked(newPackagesPicked)
     }
   }
@@ -68,11 +85,14 @@ export default ({ storeId, index, packages, deliveryId }) => {
 
     if (index !== -1) {
       const newPackagesPicked = [...packagesPicked]
+      const newQuantity = pack.quantity > 0 ? pack.quantity - 1 : 0
       newPackagesPicked[index] = {
         type: pack.type,
-        quantity: pack.quantity > 0 ? pack.quantity - 1 : 0,
+        quantity: newQuantity,
       }
+
       setPackagesPicked(newPackagesPicked)
+      triggerOnChangeEvent(newQuantity)
     }
   }
 
@@ -100,6 +120,7 @@ export default ({ storeId, index, packages, deliveryId }) => {
               style={
                 gatPackageQuantity(item) !== 0 ? { fontWeight: '700' } : null
               }
+              ref={inputRef}
             />
 
             <Button
