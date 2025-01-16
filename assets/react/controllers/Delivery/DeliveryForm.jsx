@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import Task from '../../../../js/app/components/delivery-form/Task.js'
@@ -143,6 +143,10 @@ export default function ({ storeId, deliveryId }) {
     return Object.keys(errors.tasks).length > 0 ? errors : {}
   }
 
+  // Could not figure out why, but sometimes Formik "re-renders" even if the values are the same.
+  // so i store a ref to previous values to avoid re-calculating the price.
+  const previousValues = useRef(initialValues);
+
   useEffect(() => {
     const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
     const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
@@ -155,6 +159,7 @@ export default function ({ storeId, deliveryId }) {
         httpClient.get(storeURL),
         ]).then(values => {
           const [delivery, addresses, storeInfos] = values
+          previousValues.current = delivery.response
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
@@ -230,66 +235,71 @@ export default function ({ storeId, deliveryId }) {
 
   const getPrice = (values) => {
 
-  const tasksCopy = structuredClone(values.tasks)
-  const tasksWithoutId = tasksCopy.map(task => {
-        if (task["@id"]) {
-          delete task["@id"]
+    if (_.isEqual(previousValues.current, values)) {
+      return
+    }
+
+    previousValues.current = values
+
+    const tasksCopy = structuredClone(values.tasks)
+    const tasksWithoutId = tasksCopy.map(task => {
+          if (task["@id"]) {
+            delete task["@id"]
+          }
+          return task
+        })
+      
+      let packages = []
+
+      for (const task of values.tasks) {
+        if (task.packages && task.type ==="DROPOFF") {
+          packages.push(...task.packages)
         }
-        return task
-      })
-    
-    let packages = []
-
-    for (const task of values.tasks) {
-      if (task.packages && task.type ==="DROPOFF") {
-        packages.push(...task.packages)
       }
-    }
-    
-    const mergedPackages = _(packages)
-      .groupBy('type') 
-      .map((items, type) => ({
-        type, 
-        quantity: _.sumBy(items, 'quantity'), 
-      }))
-      .value()
+      
+      const mergedPackages = _(packages)
+        .groupBy('type') 
+        .map((items, type) => ({
+          type, 
+          quantity: _.sumBy(items, 'quantity'), 
+        }))
+        .value()
 
-    let totalWeight = 0
+      let totalWeight = 0
 
-    for (const task of values.tasks) {
-      if (task.weight && task.type ==="DROPOFF") {
-        totalWeight+= task.weight 
+      for (const task of values.tasks) {
+        if (task.weight && task.type ==="DROPOFF") {
+          totalWeight+= task.weight 
+        }
       }
-    }
-    
-    const infos = {
-      store: storeDeliveryInfos["@id"],
-      weight: totalWeight,
-      packages: mergedPackages,
-      tasks: tasksWithoutId,
-    };
+      
+      const infos = {
+        store: storeDeliveryInfos["@id"],
+        weight: totalWeight,
+        packages: mergedPackages,
+        tasks: tasksWithoutId,
+      };
 
-    const calculatePrice = async () => {
-      const url = `${baseURL}/api/retail_prices/calculate`
-      const { response, error } = await httpClient.post(url, infos)
+      const calculatePrice = async () => {
+        const url = `${baseURL}/api/retail_prices/calculate`
+        const { response, error } = await httpClient.post(url, infos)
 
-      if (error) {
-        setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-        setCalculatePrice(0)
+        if (error) {
+          setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+          setCalculatePrice(0)
+        }
+
+        if (response) {
+          setCalculatePrice(response)
+          setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+        }
+
       }
-
-      if (response) {
-        setCalculatePrice(response)
-        setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+      if (values.tasks.every(task => task.address.streetAddress)) {
+        calculatePrice()
       }
-
-    }
-    if (values.tasks.every(task => task.address.streetAddress)) {
-      calculatePrice()
-    }
 
   }
-
 
   return (
     isLoading ? 
@@ -305,12 +315,12 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
+            useEffect(() => {
+                getPrice(values)
+            }, [values]);
+
             return (
-              <Form
-                onChange={()=> {
-                  getPrice(values)
-                }}
-              >
+              <Form >
                 <div className='delivery-form' >
 
                   <FieldArray name="tasks">

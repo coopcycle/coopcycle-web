@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'antd'
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -29,8 +29,6 @@ export default ({ index, packages, deliveryId }) => {
 
   const [packagesPicked, setPackagesPicked] = useState(picked)
 
-  console.log('packagesPicked', packagesPicked)
-
   const { t } = useTranslation()
 
   /** Insert the data in edit mode */
@@ -41,17 +39,6 @@ export default ({ index, packages, deliveryId }) => {
       setFieldValue(`tasks[${index}].packages`, filteredPackages)
     }
   }, [packagesPicked, setFieldValue, index])
-
-  const triggerOnChangeEvent = (newValue) => {
-    // Trigger manually the onchange event for the input when pressing the button, as we expect it from the form.onChange handler
-    // https://stackoverflow.com/questions/23892547/what-is-the-best-way-to-trigger-change-or-input-event-in-react-js
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      'value').set;
-    nativeInputValueSetter.call(inputRef.current.input, newValue);
-    const event = new Event('input', { bubbles: true });
-    inputRef.current.input.dispatchEvent(event);
-  }
 
   const handlePlusButton = (item) => {
 
@@ -64,8 +51,6 @@ export default ({ index, packages, deliveryId }) => {
         type: pack.type,
         quantity: newQuantity,
       }
-
-      triggerOnChangeEvent(newQuantity)
       setPackagesPicked(newPackagesPicked)
     }
   }
@@ -82,9 +67,7 @@ export default ({ index, packages, deliveryId }) => {
         quantity: newQuantity,
       }
 
-      setPackagesPicked(newPackagesPicked)
-      triggerOnChangeEvent(newQuantity)
-    }
+      setPackagesPicked(newPackagesPicked)    }
   }
 
   /**Used to make the input a controlated field */
@@ -111,7 +94,6 @@ export default ({ index, packages, deliveryId }) => {
               style={
                 getPackagesItems(item) !== 0 ? { fontWeight: '700' } : null
               }
-              ref={inputRef}
               onChange={e => {
                 const packageIndex = packagesPicked.findIndex(
                   p => p.type === item.name,
@@ -121,7 +103,6 @@ export default ({ index, packages, deliveryId }) => {
                   type: item.name,
                   quantity: e.target.value,
                 }
-                console.log('new', newPackagesPicked)
                 setPackagesPicked(newPackagesPicked)
               }}
             />
