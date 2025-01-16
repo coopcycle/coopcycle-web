@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.26.0] - 2025-01-16
+
+### Added
+* Allow using Paygreen payment gateway and paying with meal vouchers.
+* Introduce revamped delivery form for admins.
+* Improve display of orders list.
+
 ## [3.24.2] - 2024-12-09
 
 ### Added
