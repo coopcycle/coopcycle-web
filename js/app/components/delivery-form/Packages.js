@@ -29,6 +29,8 @@ export default ({ index, packages, deliveryId }) => {
 
   const [packagesPicked, setPackagesPicked] = useState(picked)
 
+  console.log('packagesPicked', packagesPicked)
+
   const { t } = useTranslation()
 
   /** Insert the data in edit mode */
@@ -68,7 +70,7 @@ export default ({ index, packages, deliveryId }) => {
   }
 
   /**Used to make the input a controlated field */
-  const gatPackageQuantity = item => {
+  const getPackagesItems = item => {
     const sameTypePackage = packagesPicked.find(p => p.type === item.name)
     return sameTypePackage.quantity
   }
@@ -89,10 +91,22 @@ export default ({ index, packages, deliveryId }) => {
 
             <Input
               className="packages-item__quantity__input text-center"
-              value={gatPackageQuantity(item)}
+              value={getPackagesItems(item)}
               style={
-                gatPackageQuantity(item) !== 0 ? { fontWeight: '700' } : null
+                getPackagesItems(item) !== 0 ? { fontWeight: '700' } : null
               }
+              onChange={e => {
+                const packageIndex = packagesPicked.findIndex(
+                  p => p.type === item.name,
+                )
+                const newPackagesPicked = [...packagesPicked]
+                newPackagesPicked[packageIndex] = {
+                  type: item.name,
+                  quantity: e.target.value,
+                }
+                console.log('new', newPackagesPicked)
+                setPackagesPicked(newPackagesPicked)
+              }}
             />
 
             <Button

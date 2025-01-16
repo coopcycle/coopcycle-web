@@ -262,7 +262,7 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting, dirty }) => {
 
-            console.log(values)
+            console.log(values, dirty)
 
             useEffect(() => {
               const getPrice = () => {
