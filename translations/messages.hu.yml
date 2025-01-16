@@ -797,7 +797,7 @@ restaurants.meal_vouchers_transactions.disclaimer: 'Ez az oldal felsorolja az Ed
   az étterem az összes pénzt beszedte. Ezért minden egyes étteremnek számlát kell
   küldenie, hogy az esedékes jutalékokat visszaigényelje.'
 restaurants.meal_vouchers_transactions.amount: 'Edenreddel kifizetett összeg'
-restaurants.edenred_transactions.title: 'Edenred tranzakciók'
+restaurants.meal_vouchers_transactions.title: 'Edenred tranzakciók'
 form.product.alcohol.label: 'Ez a termék alkoholtartalmú ital'
 form.product.alcohol.help: 'Csak akkor jelöld be ezt a négyzetet, ha a termék alkoholos
   ital, például egy üveg bor.'
