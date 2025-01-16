@@ -3,10 +3,11 @@ import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
 import { useFormikContext } from 'formik'
 
+import './TimeSlotPicker.scss'
+
 const baseURL = location.protocol + '//' + location.host
 
 export default ({ storeId, storeDeliveryInfos, index }) => {
-
   const httpClient = new window._auth.httpClient()
 
   const { setFieldValue } = useFormikContext()
@@ -148,12 +149,11 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   return (
     <>
-      <div className="mb-2 font-weight-bold">Tranche horaire</div>
+      <div className="mb-2 font-weight-bold title-slot">Tranche horaire</div>
       {defaultLabel && timeSlotsLabels ? (
         <Radio.Group
-          className="mb-2"
-          defaultValue={defaultLabel.name}
-          style={{ display: 'flex' }}>
+          className="timeslot__container mb-2"
+          defaultValue={defaultLabel.name}>
           {timeSlotsLabels.map(label => (
             <Radio.Button
               key={label}
