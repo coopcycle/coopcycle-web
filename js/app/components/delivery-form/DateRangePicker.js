@@ -85,6 +85,11 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   const [isComplexPicker, setIsComplexPicker] = useState(false)
 
+  // This line is usefull in edit mode to directly show complex picker if delivery occurs during multiple days
+  const ShouldShowComplexPicker = moment(values.tasks[index].after).isBefore(
+    values.tasks[index].before,
+  )
+
   const [timeValues, setTimeValues] = useState(() => {
     const after = afterValue || defaultAfterValue
     const before = beforeValue || defaultBeforeValue
@@ -160,7 +165,7 @@ const DateTimeRangePicker = ({ format, index }) => {
     setBeforeValue(newValues[1])
   }
 
-  return isComplexPicker ? (
+  return isComplexPicker || ShouldShowComplexPicker ? (
     <>
       {task.type === 'DROPOFF' ? (
         <div className="mb-2 font-weight-bold">Heure de retrait </div>

@@ -25,6 +25,8 @@ export default ({
 }) => {
   const { t } = useTranslation()
 
+  console.log('packages', packages)
+
   const { values } = useFormikContext()
   const task = values.tasks[index]
 

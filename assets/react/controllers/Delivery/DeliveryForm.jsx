@@ -198,8 +198,15 @@ export default function ({ storeId, deliveryId }) {
         Promise.all([
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
+        httpClient.get(packagesURL)
         ]).then(values => {
-          const [addresses, storeInfos] = values
+          const [addresses, storeInfos, packages] = values
+          
+          const storePackages = packages.response['hydra:member']
+          if (storePackages.length > 0) {
+            setStorePackages(storePackages)
+          }
+
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
           setIsLoading(false)
