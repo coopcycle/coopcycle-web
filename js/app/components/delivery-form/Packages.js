@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Input } from 'antd'
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -38,7 +38,7 @@ export default ({ index, packages, deliveryId }) => {
     if (filteredPackages.length > 0) {
       setFieldValue(`tasks[${index}].packages`, filteredPackages)
     }
-  }, [packagesPicked, setFieldValue, index])
+  }, [packagesPicked])
 
   const handlePlusButton = item => {
     const pack = packagesPicked.find(p => p.type === item.name)
@@ -81,7 +81,9 @@ export default ({ index, packages, deliveryId }) => {
           <div className="packages-item__quantity ">
             <Button
               className="packages-item__quantity__button"
-              onClick={() => handleMinusButton(item)}>
+              onClick={() => {
+                handleMinusButton(item)
+              }}>
               -
             </Button>
 
@@ -96,7 +98,9 @@ export default ({ index, packages, deliveryId }) => {
             <Button
               className="packages-item__quantity__button"
               onClick={() => {
-                handlePlusButton(item)
+                {
+                  handlePlusButton(item)
+                }
               }}>
               +
             </Button>

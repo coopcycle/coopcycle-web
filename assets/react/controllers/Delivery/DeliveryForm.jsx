@@ -96,6 +96,7 @@ export default function ({ storeId, deliveryId }) {
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+  const [packages, setPackages] = useState([])
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
@@ -150,17 +151,25 @@ export default function ({ storeId, deliveryId }) {
     const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
     const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
     const storeURL = `${baseURL}/api/stores/${storeId}`
+    const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
 
     if (deliveryId) {
         Promise.all([
         httpClient.get(deliveryURL),
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
+        httpClient.get(packagesURL)
         ]).then(values => {
-          const [delivery, addresses, storeInfos] = values
-          setInitialValues(delivery.response)
+          const [delivery, addresses, storeInfos, packages] = values
+          setInitialValues({ tasks: delivery.response.tasks })
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
+          const listOfPackages = packages.response['hydra:member']
+          console.log("packages", packages)
+          console.log(listOfPackages)
+          if (listOfPackages?.length > 0) {
+          setPackages(listOfPackages)
+        }
           setIsLoading(false)
       })
     } else {
@@ -251,9 +260,12 @@ export default function ({ storeId, deliveryId }) {
           validateOnChange={false}
           validateOnBlur={false}
         >
-          {({ values, isSubmitting }) => {
+          {({ values, isSubmitting, dirty }) => {
 
-            const getPrice = useCallback(() => {
+            console.log(values)
+
+            useEffect(() => {
+              const getPrice = () => {
             
                // we have to remove Id from task unless the endpoint cannot calculate the price (in edit mode)
               
@@ -315,11 +327,11 @@ export default function ({ storeId, deliveryId }) {
                 calculatePrice()
               }
 
-            }, [values.tasks, storeDeliveryInfos, deliveryId])
-
-            useEffect(() => {
+            }
+              if (dirty) {
                 getPrice()
-            }, [values.tasks, storeDeliveryInfos, deliveryId]);
+              }
+            }, [values.tasks]);
 
             return (
               <Form >
@@ -373,6 +385,7 @@ export default function ({ storeId, deliveryId }) {
                                     showAddButton={originalIndex === values.tasks.length - 1}
                                     isAdmin={isAdmin}
                                     areDefinedTimeSlots={areDefinedTimeSlots}
+                                    packages={packages}
                                   />
                                 </div>
                               );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { InputNumber, Select } from 'antd'
 const { Option } = Select
 import { useFormikContext } from 'formik'
@@ -14,7 +14,7 @@ export default ({ index }) => {
 
   const { t } = useTranslation()
 
-  useEffect(() => {
+  const handleChange = (numberValue, weightUnit) => {
     if (numberValue !== null) {
       let calculatedWeight = 0
       if (weightUnit === 'kg') {
@@ -24,7 +24,7 @@ export default ({ index }) => {
       }
       setFieldValue(`tasks[${index}].weight`, calculatedWeight)
     }
-  }, [numberValue, weightUnit, index])
+  }
 
   return (
     <div className="mt-4 mb-4">
@@ -39,6 +39,7 @@ export default ({ index }) => {
           value={numberValue}
           onChange={value => {
             setNumberValue(value)
+            handleChange(value, weightUnit)
           }}
         />
         <Select

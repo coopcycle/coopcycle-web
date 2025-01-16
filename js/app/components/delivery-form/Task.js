@@ -11,8 +11,6 @@ import TimeSlotPicker from './TimeSlotPicker'
 
 import './Task.scss'
 
-const baseURL = location.protocol + '//' + location.host
-
 export default ({
   addresses,
   storeId,
@@ -26,9 +24,8 @@ export default ({
   showAddButton,
   isAdmin,
   areDefinedTimeSlots,
+  packages,
 }) => {
-  const httpClient = new window._auth.httpClient()
-
   const { t } = useTranslation()
 
   const { values, setFieldValue } = useFormikContext()
@@ -36,7 +33,6 @@ export default ({
 
   const format = 'LL'
 
-  const [packages, setPackages] = useState(null)
   const [showLess, setShowLess] = useState(false)
 
   useEffect(() => {
@@ -46,22 +42,6 @@ export default ({
       index !== values.tasks.length - 1
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
-
-  useEffect(() => {
-    const getPackages = async () => {
-      const url = `${baseURL}/api/stores/${storeId}/packages`
-
-      const { response } = await httpClient.get(url)
-
-      if (response) {
-        const packages = response['hydra:member']
-        if (packages?.length > 0) {
-          setPackages(packages)
-        }
-      }
-    }
-    getPackages()
-  }, [storeId])
 
   // we have to set after and before to null here - if not admin - unless we have timeslot values and after/before for stores
   useEffect(() => {
