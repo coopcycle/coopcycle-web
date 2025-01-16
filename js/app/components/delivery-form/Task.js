@@ -10,8 +10,6 @@ import TotalWeight from './TotalWeight'
 
 import './Task.scss'
 
-const baseURL = location.protocol + '//' + location.host
-
 export default ({
   addresses,
   storeId,
@@ -23,9 +21,8 @@ export default ({
   onRemove,
   showRemoveButton,
   showAddButton,
+  packages,
 }) => {
-  const httpClient = new window._auth.httpClient()
-
   const { t } = useTranslation()
 
   const { values } = useFormikContext()
@@ -33,7 +30,6 @@ export default ({
 
   const format = 'LL'
 
-  const [packages, setPackages] = useState(null)
   const [showLess, setShowLess] = useState(false)
 
   useEffect(() => {
@@ -43,23 +39,6 @@ export default ({
       index !== values.tasks.length - 1
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
-
-
-  useEffect(() => {
-    const getPackages = async () => {
-      const url = `${baseURL}/api/stores/${storeId}/packages`
-
-      const { response } = await httpClient.get(url)
-
-      if (response) {
-        const packages = response['hydra:member']
-        if (packages?.length > 0) {
-          setPackages(packages)
-        }
-      }
-    }
-    getPackages()
-  }, [storeId])
 
   const areDefinedTimeSlots = useCallback(() => {
     return (

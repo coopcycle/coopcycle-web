@@ -14,6 +14,8 @@ import _ from 'lodash'
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n'
 import { useTranslation } from 'react-i18next'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
 
 import "./DeliveryForm.scss"
 
@@ -50,6 +52,17 @@ const validatePhoneNumber = (telephone) => {
     return true
   }
 };
+
+function getFormattedValue(value) {
+  if (typeof value === 'string') {
+    const phoneNumber = parsePhoneNumberFromString(
+      value,
+      (getCountry() || 'fr').toUpperCase(),
+    )
+    return phoneNumber ? phoneNumber.formatNational() : value
+  }
+  return value
+}
 
 const dropoffSchema = {
   type: 'DROPOFF',
@@ -97,6 +110,7 @@ export default function ({ storeId, deliveryId }) {
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  const [storePackages, setStorePackages] = useState(null)
 
   const [initialValues, setInitialValues] = useState({
     tasks: [
@@ -151,15 +165,30 @@ export default function ({ storeId, deliveryId }) {
     const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
     const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
     const storeURL = `${baseURL}/api/stores/${storeId}`
+    const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
 
     if (deliveryId) {
         Promise.all([
         httpClient.get(deliveryURL),
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
+        httpClient.get(packagesURL)
         ]).then(values => {
-          const [delivery, addresses, storeInfos] = values
+          const [delivery, addresses, storeInfos, packages] = values
+
+          const storePackages = packages.response['hydra:member']
+
+          if (storePackages.length > 0) {
+            setStorePackages(storePackages)
+          }
+
+          delivery.response.tasks.forEach(task => {
+            const formattedTelephone = getFormattedValue(task.address.telephone)
+            task.address.formattedTelephone = formattedTelephone
+          })
+
           previousValues.current = delivery.response
+
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
@@ -342,6 +371,7 @@ export default function ({ storeId, deliveryId }) {
                                     addresses={addresses}
                                     storeId={storeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
+                                    packages={storePackages}
                                   />
                                 </div>
                               );
@@ -366,7 +396,8 @@ export default function ({ storeId, deliveryId }) {
                                     dropoffSchema={dropoffSchema}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
-                                    showAddButton={originalIndex === values.tasks.length -1}
+                                    showAddButton={originalIndex === values.tasks.length - 1}
+                                    packages={storePackages}
                                   />
                                 </div>
                               );
