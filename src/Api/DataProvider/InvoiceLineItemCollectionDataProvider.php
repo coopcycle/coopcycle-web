@@ -49,10 +49,10 @@ final class InvoiceLineItemCollectionDataProvider implements ContextAwareCollect
             if (
                 $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operationName, $context)
+                $extension->supportsResult($resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
             ) {
                 return $this->resultWithPreloadedEntities(
-                    $extension->getResult($qb, $resourceClass, $operationName, $context)
+                    $extension->getResult($qb, $resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
                 );
             }
         }
