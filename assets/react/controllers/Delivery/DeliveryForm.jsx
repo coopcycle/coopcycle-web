@@ -182,6 +182,10 @@ export default function ({ storeId, deliveryId }) {
             setStorePackages(storePackages)
           }
 
+          //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
+          delete delivery.response.dropoff
+          delete delivery.response.pickup
+
           delivery.response.tasks.forEach(task => {
             const formattedTelephone = getFormattedValue(task.address.telephone)
             task.address.formattedTelephone = formattedTelephone
@@ -192,7 +196,7 @@ export default function ({ storeId, deliveryId }) {
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
-          // setIsLoading(false)
+          setIsLoading(false)
       })
     } else {
         Promise.all([
@@ -352,6 +356,8 @@ export default function ({ storeId, deliveryId }) {
           validateOnBlur={false}
         >
           {({ values, isSubmitting }) => {
+
+            console.log(values)
 
             useEffect(() => {
                 getPrice(values)

@@ -83,12 +83,11 @@ const DateTimeRangePicker = ({ format, index }) => {
     setFieldValue(`tasks[${index}].before`, beforeValue.toISOString(true))
   }, [afterValue, beforeValue, index, setFieldValue])
 
-  const [isComplexPicker, setIsComplexPicker] = useState(false)
-
-  // This line is usefull in edit mode to directly show complex picker if delivery occurs during multiple days
-  const ShouldShowComplexPicker = moment(values.tasks[index].after).isBefore(
-    values.tasks[index].before,
-    'day',
+  const [isComplexPicker, setIsComplexPicker] = useState(
+    moment(values.tasks[index].after).isBefore(
+      values.tasks[index].before,
+      'day',
+    ),
   )
 
   const [timeValues, setTimeValues] = useState(() => {
@@ -166,7 +165,19 @@ const DateTimeRangePicker = ({ format, index }) => {
     setBeforeValue(newValues[1])
   }
 
-  return isComplexPicker || ShouldShowComplexPicker ? (
+  const handleSwitchToComplexPicker = () => {
+    if (isComplexPicker === true) {
+      const before = afterValue.clone().add(1, 'hours')
+      setBeforeValue(before)
+      setTimeValues(prevValues => ({
+        ...prevValues,
+        before: before.format('HH:mm'),
+      }))
+    }
+    setIsComplexPicker(!isComplexPicker)
+  }
+
+  return isComplexPicker ? (
     <>
       {task.type === 'DROPOFF' ? (
         <div className="mb-2 font-weight-bold">Heure de retrait </div>
@@ -193,7 +204,7 @@ const DateTimeRangePicker = ({ format, index }) => {
       <a
         className="text-secondary"
         title={t('SWITCH_COMPLEX_DATEPICKER')}
-        onClick={() => setIsComplexPicker(!isComplexPicker)}>
+        onClick={handleSwitchToComplexPicker}>
         {t('SWITCH_COMPLEX_DATEPICKER')}
       </a>
     </>
