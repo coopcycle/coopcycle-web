@@ -581,6 +581,7 @@ Feature: Urbantz
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/2",
@@ -610,6 +611,7 @@ Feature: Urbantz
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/4",
