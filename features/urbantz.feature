@@ -637,6 +637,7 @@ Feature: Urbantz
           "barcode": "@array@",
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """

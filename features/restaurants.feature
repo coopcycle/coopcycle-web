@@ -931,6 +931,7 @@ Feature: Manage restaurants
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"PICKUP",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -960,6 +961,7 @@ Feature: Manage restaurants
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"DROPOFF",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -984,6 +986,7 @@ Feature: Manage restaurants
               "barcode": "@array@",
               "createdAt":"@string@.isDateTime()"
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],

@@ -519,6 +519,7 @@ Feature: Dispatch
             "id":5,
             "@*@":"@*@"
          },
+         "tasks":@array@,
          "trackingUrl":@string@
       }
       """
@@ -549,7 +550,7 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
-         "tasks":"@array@",
+         "tasks":@array@,
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
@@ -681,7 +682,7 @@ Feature: Dispatch
           {
             "@id":"/api/tasks/8",
             "@type":"Task",
-            "type":"PICKUP",
+            "type":"DROPOFF",
             "id":8,
             "isAssigned":true,
             "assignedTo":"sarah",

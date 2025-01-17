@@ -528,7 +528,6 @@ Feature: Multi-step deliveries
           "@context": {"@*@": "@*@"},
           "@type": "OptimizationSuggestions",
           "@id": @string@,
-          "tasks":"@array@",
           "suggestions": [
             {
               "@context": {"@*@": "@*@"},

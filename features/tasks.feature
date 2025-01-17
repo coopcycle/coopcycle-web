@@ -1804,7 +1804,8 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "tasks":@array@
       }
       """
 
@@ -1857,6 +1858,7 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -1901,6 +1903,7 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """

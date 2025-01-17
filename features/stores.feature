@@ -349,6 +349,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           },
           {
@@ -360,6 +361,7 @@ Feature: Stores
               "@type":"Task",
               "id":@integer@,
               "status":@string@,
+              "type": "PICKUP",
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
@@ -372,6 +374,7 @@ Feature: Stores
               "@type":"Task",
               "id":@integer@,
               "status":@string@,
+              "type": "DROPOFF",
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
@@ -379,6 +382,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],
@@ -440,6 +444,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           },
           {
@@ -472,6 +477,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],
@@ -529,6 +535,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           },
           {
@@ -561,6 +568,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],

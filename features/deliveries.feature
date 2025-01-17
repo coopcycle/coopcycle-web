@@ -108,7 +108,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -136,7 +136,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -166,8 +166,8 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
-          "createdAt":"@string@.isDateTime()",
+          "barcode":{"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
       }
@@ -222,7 +222,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -250,7 +250,7 @@ Feature: Deliveries
           "comments": "2.00 kg",
           "weight": 2000,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -280,7 +280,7 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight": 2000,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -339,7 +339,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -375,7 +375,7 @@ Feature: Deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -413,7 +413,7 @@ Feature: Deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -468,7 +468,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -496,7 +496,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -526,7 +526,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -565,7 +565,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -593,7 +593,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -623,7 +623,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -667,7 +667,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -695,7 +695,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -725,7 +725,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -769,7 +769,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -797,7 +797,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -827,7 +827,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -871,7 +871,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -899,7 +899,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -929,7 +929,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -974,7 +974,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1002,7 +1002,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1032,7 +1032,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1077,7 +1077,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1105,7 +1105,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1135,7 +1135,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1180,7 +1180,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1208,7 +1208,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1238,7 +1238,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1273,7 +1273,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1301,7 +1301,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1331,7 +1331,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1397,7 +1397,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1427,7 +1427,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1468,7 +1468,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1496,7 +1496,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1526,7 +1526,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1565,7 +1565,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1593,7 +1593,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1623,7 +1623,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1663,7 +1663,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1691,7 +1691,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1721,7 +1721,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1756,7 +1756,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -1771,7 +1771,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1801,7 +1801,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1963,7 +1963,7 @@ Feature: Deliveries
         "@id": "/api/deliveries/1",
         "@type": "http://schema.org/ParcelDelivery",
         "id": @integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup": {
             "@id": "@string@.startsWith('/api/tasks')",
             "@type": "Task",
@@ -1992,7 +1992,7 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": "@array@"
+            "barcode": {"@*@":"@*@"}
         },
         "dropoff": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -2022,7 +2022,7 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": "@array@"
+            "barcode": {"@*@":"@*@"}
         },
         "trackingUrl": @string@
     }
@@ -2072,7 +2072,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -2100,7 +2100,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -2130,7 +2130,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
