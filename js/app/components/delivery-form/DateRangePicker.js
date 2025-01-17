@@ -88,6 +88,7 @@ const DateTimeRangePicker = ({ format, index }) => {
   // This line is usefull in edit mode to directly show complex picker if delivery occurs during multiple days
   const ShouldShowComplexPicker = moment(values.tasks[index].after).isBefore(
     values.tasks[index].before,
+    'day',
   )
 
   const [timeValues, setTimeValues] = useState(() => {

@@ -25,8 +25,6 @@ export default ({
 }) => {
   const { t } = useTranslation()
 
-  console.log('packages', packages)
-
   const { values } = useFormikContext()
   const task = values.tasks[index]
 
@@ -85,8 +83,20 @@ export default ({
         className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
         <AddressBookNew addresses={addresses} index={index} />
 
+        {areDefinedTimeSlots() & !deliveryId ? (
+          <SwitchTimeSlotFreePicker
+            storeId={storeId}
+            storeDeliveryInfos={storeDeliveryInfos}
+            index={index}
+            format={format}
+            deliveryId={deliveryId}
+          />
+        ) : (
+          <DateRangePicker format={format} index={index} />
+        )}
+
         {task.type === 'DROPOFF' ? (
-          <div>
+          <div className="mt-4">
             {packages ? (
               <Packages
                 storeId={storeId}
@@ -99,17 +109,6 @@ export default ({
           </div>
         ) : null}
 
-        {areDefinedTimeSlots() & !deliveryId ? (
-          <SwitchTimeSlotFreePicker
-            storeId={storeId}
-            storeDeliveryInfos={storeDeliveryInfos}
-            index={index}
-            format={format}
-            deliveryId={deliveryId}
-          />
-        ) : (
-          <DateRangePicker format={format} index={index} />
-        )}
         <div className="mt-4 mb-4">
           <label
             htmlFor={`tasks[${index}].comments`}

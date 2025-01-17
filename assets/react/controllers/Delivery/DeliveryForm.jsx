@@ -192,7 +192,7 @@ export default function ({ storeId, deliveryId }) {
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
-          setIsLoading(false)
+          // setIsLoading(false)
       })
     } else {
         Promise.all([
@@ -339,7 +339,9 @@ export default function ({ storeId, deliveryId }) {
 
   return (
     isLoading ? 
-      <Spinner/>
+      <div className="delivery-spinner">
+        <Spinner />
+      </div>
       :
       <ConfigProvider locale={antdLocale}>
         <Formik
