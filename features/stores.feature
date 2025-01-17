@@ -322,7 +322,7 @@ Feature: Stores
             "@id":"/api/deliveries/2",
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
-            "tasks":"@array@",
+            "tasks":@array@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",

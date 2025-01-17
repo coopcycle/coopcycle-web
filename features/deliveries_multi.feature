@@ -38,7 +38,7 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -66,7 +66,7 @@ Feature: Multi-step deliveries
           "comments": "1.50 kg",
           "weight":1500,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -96,7 +96,7 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -153,7 +153,7 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -189,7 +189,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -227,7 +227,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -280,7 +280,7 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -316,7 +316,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -354,7 +354,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -405,7 +405,7 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "tasks":"@array@",
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -441,7 +441,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -479,7 +479,7 @@ Feature: Multi-step deliveries
               "short_code": "AB"
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
