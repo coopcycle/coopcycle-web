@@ -1511,10 +1511,10 @@ services:
   AppBundle\Paygreen\EnvironmentFactory:
     arguments:
       $environment: '%env(PAYGREEN_ENVIRONMENT)%'
-    lazy: true
 
   Paygreen\Sdk\Payment\V3\Environment:
     factory: '@AppBundle\Paygreen\EnvironmentFactory'
+    lazy: true
 
   Paygreen\Sdk\Payment\V3\Client:
     arguments:
