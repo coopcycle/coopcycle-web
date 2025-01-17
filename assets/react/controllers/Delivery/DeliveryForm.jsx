@@ -359,8 +359,6 @@ export default function ({ storeId, deliveryId }) {
         >
           {({ values, isSubmitting }) => {
 
-            console.log(values)
-
             useEffect(() => {
                 getPrice(values)
             }, [values]);
