@@ -169,7 +169,7 @@ Feature: Dispatch
         "orgName": @string@,
         "images": @array@,
         "hasIncidents": @boolean@,
-        "barcode": "@array@"
+        "barcode": @array@
       }
       """
 

@@ -1430,6 +1430,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
