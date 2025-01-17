@@ -144,7 +144,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
-          "type": "DROPOFF",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
