@@ -169,7 +169,6 @@ Feature: Deliveries
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
-        "tasks": @array@,
         "trackingUrl": @string@
       }
       """
@@ -419,7 +418,6 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
-        "tasks": @array@,
         "trackingUrl": @string@
       }
       """
