@@ -120,6 +120,8 @@ export default function ({ storeId, deliveryId }) {
   })
   const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
 
+  const isAdmin = true
+
   const { t } = useTranslation()
   
   const validate = (values) => {
@@ -387,6 +389,7 @@ export default function ({ storeId, deliveryId }) {
                                     storeId={storeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     packages={storePackages}
+                                    isAdmin={isAdmin}
                                   />
                                 </div>
                               );
@@ -413,6 +416,7 @@ export default function ({ storeId, deliveryId }) {
                                     showRemoveButton={originalIndex > 1}
                                     showAddButton={originalIndex === values.tasks.length - 1}
                                     packages={storePackages}
+                                    isAdmin= {isAdmin}
                                   />
                                 </div>
                               );
@@ -465,7 +469,7 @@ export default function ({ storeId, deliveryId }) {
                       <Button
                         type="primary"
                         style={{ height: '2.5em' }}
-                        htmlType="submit" disabled={isSubmitting}>
+                        htmlType="submit" disabled={isSubmitting || deliveryId && isAdmin === false}>
                         {t("DELIVERY_FORM_SUBMIT")}
                       </Button>
                     </div>

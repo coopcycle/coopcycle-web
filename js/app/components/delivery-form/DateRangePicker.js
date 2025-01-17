@@ -165,7 +165,7 @@ const DateTimeRangePicker = ({ format, index }) => {
     setBeforeValue(newValues[1])
   }
 
-  const handleSwitchToComplexPicker = () => {
+  const handleSwitchComplexAndSimplePicker = () => {
     if (isComplexPicker === true) {
       const before = afterValue.clone().add(1, 'hours')
       setBeforeValue(before)
@@ -180,9 +180,13 @@ const DateTimeRangePicker = ({ format, index }) => {
   return isComplexPicker ? (
     <>
       {task.type === 'DROPOFF' ? (
-        <div className="mb-2 font-weight-bold">Heure de retrait </div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_DROPOFF_HOUR')}{' '}
+        </div>
       ) : (
-        <div className="mb-2 font-weight-bold">Heure de dépot</div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_PICKUP_HOUR')}
+        </div>
       )}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <DatePicker.RangePicker
@@ -204,16 +208,21 @@ const DateTimeRangePicker = ({ format, index }) => {
       <a
         className="text-secondary"
         title={t('SWITCH_COMPLEX_DATEPICKER')}
-        onClick={handleSwitchToComplexPicker}>
+        onClick={handleSwitchComplexAndSimplePicker}>
         {t('SWITCH_COMPLEX_DATEPICKER')}
       </a>
     </>
   ) : (
     <>
       {task.type === 'DROPOFF' ? (
-        <div className="mb-2 font-weight-bold">Heure de retrait </div>
+        <div className="mb-2 font-weight-bold">
+          {' '}
+          {t('DELIVERY_FORM_DROPOFF_HOUR')}{' '}
+        </div>
       ) : (
-        <div className="mb-2 font-weight-bold">Heure de dépot</div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_PICKUP_HOUR')}
+        </div>
       )}
       <div className="picker-container">
         <DatePicker

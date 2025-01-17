@@ -465,6 +465,8 @@
         "DELIVERY_FORM_SHOW_MORE" : "Ver más",
         "DELIVERY_FORM_SHOW_LESS" : "Ver menos",
         "DELIVERY_PICKUP": "Recogida",
-        "DELIVERY_DROPOFF": "Entrega"
+        "DELIVERY_DROPOFF": "Entrega",
+        "DELIVERY_FORM_PICKUP_HOUR": "Hora de recogida",
+        "DELIVERY_FORM_DROPOFF_HOUR": "Hora de entrega"
     }
 }

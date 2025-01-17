@@ -7,6 +7,8 @@ import DateRangePicker from './DateRangePicker'
 import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
+import Spinner from '../core/Spinner'
+import TimeSlotPicker from './TimeSlotPicker'
 
 import './Task.scss'
 
@@ -22,15 +24,30 @@ export default ({
   showRemoveButton,
   showAddButton,
   packages,
+  isAdmin,
 }) => {
   const { t } = useTranslation()
 
-  const { values } = useFormikContext()
+  const { values, setFieldValue } = useFormikContext()
   const task = values.tasks[index]
 
   const format = 'LL'
 
   const [showLess, setShowLess] = useState(false)
+  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
+
+  useEffect(() => {
+    if (
+      isTimeSlotSelect &&
+      storeDeliveryInfos.timeSlots?.length > 0 &&
+      !deliveryId
+    ) {
+      setFieldValue(`tasks[${index}].after`, null)
+      setFieldValue(`tasks[${index}].before`, null)
+    } else {
+      setFieldValue(`tasks[${index}].timeSlot`, null)
+    }
+  }, [isTimeSlotSelect, storeDeliveryInfos])
 
   useEffect(() => {
     const shouldShowLess =
@@ -83,16 +100,37 @@ export default ({
         className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
         <AddressBookNew addresses={addresses} index={index} />
 
-        {areDefinedTimeSlots() & !deliveryId ? (
-          <SwitchTimeSlotFreePicker
-            storeId={storeId}
-            storeDeliveryInfos={storeDeliveryInfos}
-            index={index}
-            format={format}
-            deliveryId={deliveryId}
-          />
+        {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
+        {isAdmin ? (
+          storeDeliveryInfos.timeSlots ? (
+            areDefinedTimeSlots() & !deliveryId ? (
+              <SwitchTimeSlotFreePicker
+                storeId={storeId}
+                storeDeliveryInfos={storeDeliveryInfos}
+                index={index}
+                format={format}
+                deliveryId={deliveryId}
+                isTimeSlotSelect={isTimeSlotSelect}
+                setIsTimeSlotSelect={setIsTimeSlotSelect}
+              />
+            ) : (
+              <DateRangePicker format={format} index={index} />
+            )
+          ) : (
+            <Spinner />
+          ) // case store
+        ) : storeDeliveryInfos.timeSlots ? (
+          areDefinedTimeSlots() & !deliveryId ? (
+            <TimeSlotPicker
+              storeId={storeId}
+              storeDeliveryInfos={storeDeliveryInfos}
+              index={index}
+            />
+          ) : (
+            <DateRangePicker format={format} index={index} />
+          )
         ) : (
-          <DateRangePicker format={format} index={index} />
+          <Spinner />
         )}
 
         {task.type === 'DROPOFF' ? (
