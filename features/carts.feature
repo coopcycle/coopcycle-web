@@ -2359,6 +2359,6 @@ Feature: Carts
             "amount": @integer@
           }
         ],
-        "redirectUrl":@string@
+        "redirectUrl":"@string@||@null@"
       }
       """
