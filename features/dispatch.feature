@@ -554,14 +554,14 @@ Feature: Dispatch
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
-            "type": "PICKUP"
+            "type": "PICKUP",
             "id":4,
             "@*@":"@*@"
          },
          "dropoff":{
             "@id":"/api/tasks/8",
             "@type":"Task",
-            "type": "DROPOFF"
+            "type": "DROPOFF",
             "id":8,
             "@*@":"@*@"
          },
