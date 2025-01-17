@@ -372,7 +372,8 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -410,7 +411,8 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},

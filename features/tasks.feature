@@ -2405,11 +2405,12 @@ Feature: Tasks
       {
          "packages":[
             {
-               "type":"SMALL",
-               "name":"SMALL",
-               "quantity":4,
-               "volume_per_package": 1,
-               "short_code": "AB"
+              "type":"SMALL",
+              "name":"SMALL",
+              "quantity":4,
+              "volume_per_package": 1,
+              "short_code": "AB",
+              "labels":@array@
             }
          ],
          "@*@": "@*@"

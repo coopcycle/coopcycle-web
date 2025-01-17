@@ -76,17 +76,7 @@ class BarcodeUtils {
         $taskId = $package->getTask()->getId();
         $packageId = $package->getId();
 
-        return array_map(
-            fn(int $index) => self::parse(sprintf(
-                self::WITH_PACKAGE,
-                1, // TODO: Dynamic instance
-                Barcode::TYPE_TASK,
-                $taskId,
-                $packageId,
-                $index + $start + 1
-            )),
-            range(0, $quantity - 1)
-        );
+        return self::getBarcodesFromTaskAndPackageIds($taskId, $packageId, $quantity, $start);
     }
 
 
@@ -101,5 +91,25 @@ class BarcodeUtils {
         }
 
         return hash('xxh3', sprintf("%s%s%s", self::$appName, self::$salt, $barcode));
+    }
+
+    /**
+     * Returns a list of barcodes for a package.
+     * May return multiple barcodes for the same package when quantity is > 1.
+     * @return Barcode[]
+     */
+    public static function getBarcodesFromTaskAndPackageIds(int $taskId, int $packageId, int $quantity = 1, int $start = 0): array
+    {
+        return array_map(
+            fn(int $index) => self::parse(sprintf(
+                self::WITH_PACKAGE,
+                1, // TODO: Dynamic instance
+                Barcode::TYPE_TASK,
+                $taskId,
+                $packageId,
+                $index + $start + 1
+            )),
+            range(0, $quantity - 1)
+        );
     }
 }
