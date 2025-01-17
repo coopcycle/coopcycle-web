@@ -30,22 +30,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $qb = $this->entityManager->getRepository(Order::class)->createQueryBuilder('o');
-        //Optimization: to avoid extra queries during Hydration preload bi-directional one-to-one relations
-        // https://stackoverflow.com/questions/12362901/doctrine2-one-to-one-relation-auto-loads-on-query/34353840#34353840
-        // https://github.com/doctrine/orm/issues/4389
-        $qb->addSelect([
-            'order_delivery',
-            'order_timeline',
-            'order_invitation',
-            'order_loopeat_credentials',
-            'order_loopeat_details'
-        ])
-            ->leftJoin('o.delivery', 'order_delivery')
-            ->leftJoin('o.timeline', 'order_timeline')
-            ->leftJoin('o.invitation', 'order_invitation')
-            ->leftJoin('o.loopeatCredentials', 'order_loopeat_credentials')
-            ->leftJoin('o.loopeatDetails', 'order_loopeat_details');
+        $qb = $this->entityManager->getRepository(Order::class)->createOpmizedQueryBuilder('o');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
