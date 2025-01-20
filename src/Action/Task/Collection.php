@@ -62,7 +62,7 @@ class Collection extends Base
         foreach($data as $task) {
             $input = $res[$task->getId()];
             $task->setPrefetchedPackagesAndWeight([
-                'packages' => json_decode($input['packages']),
+                'packages' => json_decode($input['packages'], true),
                 'weight' => $input['weight']]
             );
         }

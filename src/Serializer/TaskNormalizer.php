@@ -147,22 +147,22 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
         // Add labels
 
-        // foreach ($data['packages'] as $i => $p) {
+        foreach ($data['packages'] as $i => $p) {
 
-        //     $data['packages'][$i]['labels'] = [];
+            $data['packages'][$i]['labels'] = [];
 
-        //     $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['id'], $p['quantity']);
-        //     foreach ($barcodes as $barcode) {
-        //         $labelUrl = $this->urlGenerator->generate(
-        //             'task_label_pdf',
-        //             ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
-        //             UrlGeneratorInterface::ABSOLUTE_URL
-        //         );
-        //         $data['packages'][$i]['labels'][] = $labelUrl;
-        //     }
+            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['id'], $p['quantity']);
+            foreach ($barcodes as $barcode) {
+                $labelUrl = $this->urlGenerator->generate(
+                    'task_label_pdf',
+                    ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
+                $data['packages'][$i]['labels'][] = $labelUrl;
+            }
 
-        //     unset($data['packages'][$i]['id']);
-        // }
+            unset($data['packages'][$i]['id']);
+        }
 
         return $data;
     }
