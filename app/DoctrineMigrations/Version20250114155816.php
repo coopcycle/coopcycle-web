@@ -27,6 +27,8 @@ final class Version20250114155816 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
+        $this->addSql('ALTER TABLE task RENAME COLUMN emitted_co2 TO co2_emissions');
+        $this->addSql('ALTER TABLE task RENAME COLUMN traveled_distance_meter TO distance_from_previous');
 
     }
 }
