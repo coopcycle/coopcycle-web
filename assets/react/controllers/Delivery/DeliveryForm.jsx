@@ -101,7 +101,9 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function ({ storeId, deliveryId }) {
+export default function ({ storeId, deliveryId, order }) {
+
+  console.log(order)
 
   const httpClient = new window._auth.httpClient()
 
