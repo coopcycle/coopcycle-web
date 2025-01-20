@@ -47,6 +47,7 @@ export default () => {
   const [selectedOptions, setSelectedOptions] = useState([])
 
   console.log(selectedOptions)
+
   const handleChange = values => {
     const selectedOptions = []
 

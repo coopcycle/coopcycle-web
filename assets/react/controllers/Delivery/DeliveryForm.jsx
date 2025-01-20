@@ -103,8 +103,6 @@ const baseURL = location.protocol + '//' + location.host
 
 export default function ({ storeId, deliveryId, order }) {
 
-  console.log(order)
-
   const httpClient = new window._auth.httpClient()
 
   const [addresses, setAddresses] = useState([])
@@ -113,6 +111,17 @@ export default function ({ storeId, deliveryId, order }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   const [storePackages, setStorePackages] = useState(null)
+  const [deliveryPrice, setDeliveryPrice] = useState(null)
+  const [showTotalPrice, setShowTotalPrice] = useState(false)
+
+  console.log(showTotalPrice)
+
+  useEffect(() => {
+    if (order) {
+      const orderInfos = JSON.parse(order)
+      setDeliveryPrice({exVAT : +orderInfos.total, VAT: +orderInfos.total + +orderInfos.taxTotal,})
+    }
+  }, [order])
 
   const [initialValues, setInitialValues] = useState({
     tasks: [
@@ -343,6 +352,8 @@ export default function ({ storeId, deliveryId, order }) {
       }
       if (values.tasks.every(task => task.address.streetAddress)) {
         calculatePrice()
+        setShowTotalPrice(true)
+
       }
 
   }
@@ -435,8 +446,19 @@ export default function ({ storeId, deliveryId, order }) {
                         tasks={values.tasks}
                       />
                     </div>
+
+                    
                     <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-                      <div className='font-weight-bold mb-2'>{t("DELIVERY_FORM_TOTAL_PRICE")} </div>
+                      {deliveryId ?
+                        <div className='mb-4'>
+                          <div className='font-weight-bold mb-2'>Ancien prix</div>
+                          <div>{money(deliveryPrice.exVAT)} {t("DELIVERY_FORM_TOTAL_VAT")}</div>
+                          <div>{money(deliveryPrice.VAT)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}</div>
+                        </div> : null }
+                      
+                      {showTotalPrice || !deliveryId ? 
+                        <>
+                    <div className='font-weight-bold mb-2'>{deliveryId ? "Nouveau Prix" : t("DELIVERY_FORM_TOTAL_PRICE")} </div>
                       <div>
                         {calculatedPrice.amount
                           ?
@@ -463,7 +485,9 @@ export default function ({ storeId, deliveryId, order }) {
                         <div className="alert alert-danger mt-4" role="alert">
                           {priceError.priceErrorMessage}
                         </div>
-                        : null}
+                            : null}
+                        </> : null
+                        }
 
                     </div>
 
