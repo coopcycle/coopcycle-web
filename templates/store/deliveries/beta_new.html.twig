@@ -25,5 +25,17 @@
   {% set is_new = delivery.id is null %}
   {% set order = delivery.order is null ? null : delivery.order|serialize %}
 
-  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id, deliveryId: delivery.id, order: order }) }}></div>
+  {% if not is_new %}
+    {% set tracking_link = url('public_delivery', { hashid: delivery|hashid }) %}
+  {% else %}
+    {% set tracking_link = null %}
+  {% endif %}
+
+  <div {{ react_component('Delivery/DeliveryForm', { 
+    isNew: is_new,
+    storeId: store.id,
+    deliveryId: delivery.id,
+    order: order,
+    trackingLink: tracking_link
+    }) }}></div>
 {% endblock %}

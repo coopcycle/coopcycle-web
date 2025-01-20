@@ -26,6 +26,7 @@ export default ({
   showAddButton,
   packages,
   isAdmin,
+  tags,
 }) => {
   const { t } = useTranslation()
 
@@ -164,7 +165,7 @@ export default ({
         </div>
 
         <div className="mt-4 mb-4">
-          <Tags />
+          <Tags tags={tags} index={index} />
         </div>
       </div>
       {task.type === 'DROPOFF' && (

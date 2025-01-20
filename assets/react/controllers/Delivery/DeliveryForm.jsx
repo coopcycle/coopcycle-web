@@ -78,7 +78,8 @@ const dropoffSchema = {
     },
   updateInStoreAddresses: false,
   packages: [],
-  weight: 0
+  weight: 0,
+  tags: [],
   };
 
 const pickupSchema = {
@@ -96,12 +97,18 @@ const pickupSchema = {
   },
   saveInStoreAddresses: false,
   updateInStoreAddresses: false,
+  tags: [],
 }
 
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function ({ storeId, deliveryId, order }) {
+export default function ({ storeId, deliveryId, order, trackingLink }) {
+
+  // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
+  const isAdmin = true
+
+  console.log(trackingLink)
 
   const httpClient = new window._auth.httpClient()
 
@@ -111,15 +118,14 @@ export default function ({ storeId, deliveryId, order }) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   const [storePackages, setStorePackages] = useState(null)
+  const [tags, setTags] = useState([])
   const [deliveryPrice, setDeliveryPrice] = useState(null)
   const [showTotalPrice, setShowTotalPrice] = useState(false)
-
-  console.log(showTotalPrice)
 
   useEffect(() => {
     if (order) {
       const orderInfos = JSON.parse(order)
-      setDeliveryPrice({exVAT : +orderInfos.total, VAT: +orderInfos.total + +orderInfos.taxTotal,})
+      setDeliveryPrice({exVAT : +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,})
     }
   }, [order])
 
@@ -130,8 +136,6 @@ export default function ({ storeId, deliveryId, order }) {
     ]
   })
   const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
-
-  const isAdmin = true
 
   const { t } = useTranslation()
   
@@ -179,15 +183,17 @@ export default function ({ storeId, deliveryId, order }) {
     const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
     const storeURL = `${baseURL}/api/stores/${storeId}`
     const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
+    const tagsURL = `${baseURL}/api/tags`
 
     if (deliveryId) {
         Promise.all([
         httpClient.get(deliveryURL),
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
-        httpClient.get(packagesURL)
+        httpClient.get(packagesURL),
+        httpClient.get(tagsURL)
         ]).then(values => {
-          const [delivery, addresses, storeInfos, packages] = values
+          const [delivery, addresses, storeInfos, packages, tags] = values
 
           const storePackages = packages.response['hydra:member']
 
@@ -211,15 +217,17 @@ export default function ({ storeId, deliveryId, order }) {
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
+          setTags(tags)
           setIsLoading(false)
       })
     } else {
         Promise.all([
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
-        httpClient.get(packagesURL)
+        httpClient.get(packagesURL), 
+        httpClient.get(tagsURL)
         ]).then(values => {
-          const [addresses, storeInfos, packages] = values
+          const [addresses, storeInfos, packages, tags] = values
           
           const storePackages = packages.response['hydra:member']
           if (storePackages.length > 0) {
@@ -228,6 +236,7 @@ export default function ({ storeId, deliveryId, order }) {
 
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
+          setTags(tags.response['hydra:member'])
           setIsLoading(false)
       })
     }
@@ -374,6 +383,8 @@ export default function ({ storeId, deliveryId, order }) {
         >
           {({ values, isSubmitting }) => {
 
+            console.log(values)
+
             useEffect(() => {
                 getPrice(values)
             }, [values]);
@@ -403,6 +414,7 @@ export default function ({ storeId, deliveryId, order }) {
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     packages={storePackages}
                                     isAdmin={isAdmin}
+                                    tags={tags}
                                   />
                                 </div>
                               );
@@ -429,7 +441,8 @@ export default function ({ storeId, deliveryId, order }) {
                                     showRemoveButton={originalIndex > 1}
                                     showAddButton={originalIndex === values.tasks.length - 1}
                                     packages={storePackages}
-                                    isAdmin= {isAdmin}
+                                    isAdmin={isAdmin}
+                                    tags={tags}
                                   />
                                 </div>
                               );
