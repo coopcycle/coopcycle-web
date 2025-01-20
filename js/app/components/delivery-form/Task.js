@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
 import Spinner from '../core/Spinner'
 import TimeSlotPicker from './TimeSlotPicker'
+import Tags from './Tags'
 
 import './Task.scss'
 
@@ -160,6 +161,10 @@ export default ({
             rows={4}
             style={{ resize: 'none' }}
           />
+        </div>
+
+        <div className="mt-4 mb-4">
+          <Tags />
         </div>
       </div>
       {task.type === 'DROPOFF' && (

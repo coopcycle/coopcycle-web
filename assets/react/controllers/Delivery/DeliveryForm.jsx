@@ -102,7 +102,7 @@ const pickupSchema = {
 const baseURL = location.protocol + '//' + location.host
 
 export default function ({ storeId, deliveryId }) {
-  
+
   const httpClient = new window._auth.httpClient()
 
   const [addresses, setAddresses] = useState([])
