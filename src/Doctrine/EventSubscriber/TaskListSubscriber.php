@@ -34,7 +34,6 @@ class TaskListSubscriber implements EventSubscriber
         private readonly TranslatorInterface $translator,
         private readonly RoutingInterface $routing,
         private readonly TaskListRepository $taskListRepository,
-        private readonly EntityManagerInterface $em,
         private readonly LoggerInterface $logger
     )
     {
@@ -53,7 +52,7 @@ class TaskListSubscriber implements EventSubscriber
     {
         $coordinates = [];
         $tasks = [];
-        $vehicle = $taskList->getVehicle(); 
+        $vehicle = $taskList->getVehicle();
         
         if (!is_null($vehicle)) {
             $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
@@ -77,18 +76,6 @@ class TaskListSubscriber implements EventSubscriber
             $taskList->setDistance($this->routing->getDistance(...$coordinates));
             $taskList->setDuration($this->routing->getDuration(...$coordinates));
             $taskList->setPolyline($this->routing->getPolyline(...$coordinates));
-
-            if (!is_null($vehicle)) {
-                $route = $this->routing->route(...$coordinates)['routes'][0];
-                $legs = array_slice($route["legs"], 0, -1);
-                foreach ($legs as $index => $leg) {
-                    $task = $taskList->getTasks()[$index];
-                    $emissions = intval($vehicle->getCo2emissions() * $leg['distance'] / 1000);
-                    $task->setDistanceFromPrevious(intval($leg['distance'])); // in meter
-                    $task->setCo2Emissions($emissions);
-                    $this->em->getUnitOfWork()->recomputeSingleEntityChangeSet($this->em->getClassMetadata(Task::class), $task);
-                }
-            }
         }
     }
 

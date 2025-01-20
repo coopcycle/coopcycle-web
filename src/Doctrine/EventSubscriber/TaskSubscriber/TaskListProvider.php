@@ -19,14 +19,18 @@ class TaskListProvider
 
     public function getTaskList(Task $task, UserInterface $courier)
     {
-        $taskListRepository = $this->objectManager->getRepository(TaskList::class);
-
         // FIXME
         // 1. if task->assignedOn is set, we have explictly set the assignment date -> good, we get the proper TaskList
         // 2. if not use the doneBefore date as default, but in this case their might be problems with tasks spanning on multiple days
         // @see https://github.com/coopcycle/coopcycle-web/issues/874
         $date = null !== $task->getAssignedOn() ? $task->getAssignedOn() : $task->getDoneBefore();
 
+        return $this->getTaskListForUserAndDate($date, $courier);
+    }
+
+    public function getTaskListForUserAndDate(\DateTime $date, UserInterface $courier)
+    {
+        $taskListRepository = $this->objectManager->getRepository(TaskList::class);
         $taskListCacheKey = sprintf('%s-%s', $date->format('Y-m-d'), $courier->getUsername());
 
         if (!isset($this->taskListCache[$taskListCacheKey])) {

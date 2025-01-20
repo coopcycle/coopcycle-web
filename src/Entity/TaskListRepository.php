@@ -275,6 +275,29 @@ class TaskListRepository extends ServiceEntityRepository
         return $taskListDto;
     }
 
+    /**
+     * Find the most recent tasklist this task has been assigned in.
+     * 
+     * The task has been done in the context of this TaskList.
+     */
+    public function findLastTaskListByTask(Task $task) {
+        $taskList = $this->entityManager->createQueryBuilder()
+            ->select('tl')
+            ->from(TaskList::class, 'tl')
+            ->leftJoin('tl.items', 'item')
+            ->leftJoin('item.tour', 'tour')
+            ->leftJoin('tour.items', 'tourItem')
+            ->where('item.task = :task')
+            ->orWhere('tourItem.task = :task')
+            ->setParameter('task', $task)
+            ->orderBy('tl.date', 'desc')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        return $taskList;
+    }
+
     private function getPaymentMethod($paymentMethodsByOrderId, ?int $orderId): ?string
     {
         if (null === $orderId) {

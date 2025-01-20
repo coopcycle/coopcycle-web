@@ -169,6 +169,8 @@ Feature: Dispatch
         "orgName": @string@,
         "images": @array@,
         "hasIncidents": @boolean@,
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
         "barcode": @array@,
         "packages": @array@
       }

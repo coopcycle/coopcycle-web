@@ -64,7 +64,6 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('2018-03-03 13:00:00'))>
     doneBefore: <identity(new \DateTime('2018-03-03 13:30:00'))>
     comments: "addToProblem"
-    previous: "@task_4"
   task_6:
     address: "@address_3"
     doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>

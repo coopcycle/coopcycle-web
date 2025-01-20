@@ -490,14 +490,16 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $incidents;
 
     /**
-    * CO2 emissions from the previous task/warehouse to accomplish this task, in g
+    * CO2 emissions from the previous task/warehouse to accomplish this task
+    * @Groups({"task"})
     */
-    private $co2Emissions = 0;
+    private $emittedCo2 = 0;
 
     /**
     * Distance from previous task, in meter
+    * @Groups({"task"})
     */
-    private $distanceFromPrevious = 0;
+    private $traveledDistanceMeter = 0;
 
 
     public function __construct()
@@ -1362,48 +1364,48 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $barcodes;
     }
 
-    /**
-     * Get the value of co2Emissions
-     */
-    public function getCo2Emissions()
-    {
-        return $this->co2Emissions;
-    }
-
-    /**
-     * Set the value of co2Emissions
-     *
-     * @return  self
-     */
-    public function setCo2Emissions($co2Emissions)
-    {
-        $this->co2Emissions = $co2Emissions;
-
-        return $this;
-    }
-
-    /**
-     * Get the value of distanceFromPrevious
-     */
-    public function getDistanceFromPrevious()
-    {
-        return $this->distanceFromPrevious;
-    }
-
-    /**
-     * Set the value of distanceFromPrevious
-     *
-     * @return  self
-     */
-    public function setDistanceFromPrevious($distanceFromPrevious)
-    {
-        $this->distanceFromPrevious = $distanceFromPrevious;
-
-        return $this;
-    }
-
     public function getStore(): Store|null
     {
         return $this->getDelivery()?->getStore();
+    }
+
+    /**
+     * Get cO2 emissions from the previous task/warehouse to accomplish this task
+     */ 
+    public function getEmittedCo2()
+    {
+        return $this->emittedCo2;
+    }
+
+    /**
+     * Set cO2 emissions from the previous task/warehouse to accomplish this task
+     *
+     * @return  self
+     */ 
+    public function setEmittedCo2($emittedCo2)
+    {
+        $this->emittedCo2 = $emittedCo2;
+
+        return $this;
+    }
+
+    /**
+     * Get distance from previous task, in meter
+     */ 
+    public function getTraveledDistanceMeter()
+    {
+        return $this->traveledDistanceMeter;
+    }
+
+    /**
+     * Set distance from previous task, in meter
+     *
+     * @return  self
+     */ 
+    public function setTraveledDistanceMeter($traveledDistanceMeter)
+    {
+        $this->traveledDistanceMeter = $traveledDistanceMeter;
+
+        return $this;
     }
 }

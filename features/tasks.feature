@@ -52,8 +52,10 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages": [],
-            "barcode": @array@,
-            "createdAt":"@string@.isDateTime()"
+            "barcode": "@array@",
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -84,8 +86,10 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "barcode": @array@,
-            "createdAt":"@string@.isDateTime()"
+            "barcode": "@array@",
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -117,7 +121,9 @@ Feature: Tasks
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -149,7 +155,9 @@ Feature: Tasks
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           }
         ],
         "hydra:view": {
@@ -646,8 +654,10 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode": @array@,
-        "createdAt":"@string@.isDateTime()"
+        "barcode": "@array@",
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1119,8 +1129,10 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode": @array@,
-        "createdAt":"@string@.isDateTime()"
+        "barcode": "@array@",
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1202,8 +1214,10 @@ Feature: Tasks
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode": @array@,
-        "createdAt":"@string@.isDateTime()"
+        "barcode": "@array@",
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1335,6 +1349,8 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
             "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           },
@@ -1367,6 +1383,8 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
             "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           }

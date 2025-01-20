@@ -1,4 +1,4 @@
-#,"# order",orderCode,orderTotal,orderRevenue,type,address.name,address.streetAddress,address.latlng,address.description,afterDay,afterTime,beforeDay,beforeTime,status,co2_emissions,distance_from_previous,comments,event.DONE.notes,event.FAILED.notes,finishedAtDay,finishedAtTime,courier,tags,address.contactName,organization
+#,"# order",orderCode,orderTotal,orderRevenue,type,address.name,address.streetAddress,address.latlng,address.description,afterDay,afterTime,beforeDay,beforeTime,status,emitted_co2,traveled_distance_meter,comments,event.DONE.notes,event.FAILED.notes,finishedAtDay,finishedAtTime,courier,tags,address.contactName,organization
 1,,,0.00,0.00,DROPOFF,,"272, rue Saint Honoré 75001 Paris 1er","48.864577,2.333338",,02/03/2018,10:30:00,02/03/2018,11:00:00,TODO,0,0,,,,,,,,,
 2,,,0.00,0.00,DROPOFF,,"18, avenue Ledru-Rollin 75012 Paris 12ème","48.846656,2.369052",,02/03/2018,11:30:00,02/03/2018,12:00:00,TODO,0,0,#bob,,,,,,,,
 3,,,0.00,0.00,DROPOFF,,"18, avenue Ledru-Rollin 75012 Paris 12ème","48.846656,2.369052",,02/03/2018,12:00:00,02/03/2018,12:30:00,DONE,0,0,#bob,,,,,,,,

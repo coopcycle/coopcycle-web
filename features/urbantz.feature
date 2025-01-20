@@ -287,6 +287,7 @@ Feature: Urbantz
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     And the store with name "Acme" is associated with Urbantz hub "61289572c2b7aab94f380d76"

@@ -65,14 +65,12 @@ class DeliveryListener
 
     public function postPersist(Delivery $delivery)
     {
-        
         if ($delivery->getStore() && $delivery->getStore()->getDefaultCourier()) {
             $courier = $delivery->getStore()->getDefaultCourier();
             
             foreach ($delivery->getTasks() as $task) {
                 $taskList = $this->taskListProvider->getTaskList($task, $courier);
                 $taskList->appendTask($task);
-                $this->entityManager->persist($taskList);
             }
             
             $this->entityManager->flush();
