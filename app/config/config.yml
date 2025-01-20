@@ -71,6 +71,7 @@ parameters:
     business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
     transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
     billing_enabled: '%env(bool:BILLING_ENABLED)%'
+    loopeat_tote_bag_id: '%env(LOOPEAT_TOTE_BAG_ID)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.

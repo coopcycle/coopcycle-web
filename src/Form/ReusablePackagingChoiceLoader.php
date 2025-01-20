@@ -14,7 +14,8 @@ class ReusablePackagingChoiceLoader implements ChoiceLoaderInterface
     public function __construct(
         private LocalBusiness $restaurant,
         private LoopeatClient $loopeatClient,
-        private EntityManagerInterface $entityManager)
+        private EntityManagerInterface $entityManager,
+        private $loopeatToteBagId = null)
     {
     }
 
@@ -61,9 +62,16 @@ class ReusablePackagingChoiceLoader implements ChoiceLoaderInterface
             }
         }
 
-        $packagings = $this->restaurant->getReusablePackagings();
+        $packagings = array_filter($this->restaurant->getReusablePackagings()->toArray(), function (ReusablePackaging $p) {
+            $data = $p->getData();
+            if (!empty($this->loopeatToteBagId) && (int) $data['id'] === (int) $this->loopeatToteBagId) {
+                return false;
+            }
 
-        return new ArrayChoiceList($packagings, $value);
+            return true;
+        });
+
+        return new ArrayChoiceList(array_values($packagings), $value);
     }
 
     /**

@@ -720,7 +720,7 @@ trait RestaurantTrait
             'owner' => $restaurant,
             'with_reusable_packaging' =>
                 $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
-            'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
+            'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager, $this->getParameter('loopeat_tote_bag_id')),
             'options_loader' => function (ProductInterface $product) use ($restaurant) {
 
                 $opts = [];
