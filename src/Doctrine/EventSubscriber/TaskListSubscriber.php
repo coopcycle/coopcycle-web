@@ -48,12 +48,11 @@ class TaskListSubscriber implements EventSubscriber
         );
     }
 
-    private function calculate(TaskList $taskList, EntityManagerInterface $em)
+    private function calculate(TaskList $taskList)
     {
         $coordinates = [];
         $tasks = [];
         $vehicle = $taskList->getVehicle();
-        $uow = $em->getUnitOfWork();
         
         if (!is_null($vehicle)) {
             $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
@@ -83,10 +82,9 @@ class TaskListSubscriber implements EventSubscriber
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();
-        $em = $args->getObjectManager();
 
         if ($entity instanceof TaskList) {
-            $this->calculate($entity, $em);
+            $this->calculate($entity);
         }
     }
 
@@ -155,7 +153,7 @@ class TaskListSubscriber implements EventSubscriber
         foreach ($this->taskLists as $taskList) { // @phpstan-ignore-line
 
             $this->logger->debug('TaskList was modified, recalculating…');
-            $this->calculate($taskList, $em);
+            $this->calculate($taskList);
 
             if ($uow->isInIdentityMap($taskList)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskList::class), $taskList);
