@@ -1350,7 +1350,7 @@ Feature: Tasks
             "incidents": [],
             "packages": [],
             "emittedCo2": "@integer@",
-            "traveledDistanceMeter": "@integer@"
+            "traveledDistanceMeter": "@integer@",
             "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           },
@@ -1384,7 +1384,7 @@ Feature: Tasks
             "incidents": [],
             "packages": [],
             "emittedCo2": "@integer@",
-            "traveledDistanceMeter": "@integer@"
+            "traveledDistanceMeter": "@integer@",
             "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           }

@@ -1827,6 +1827,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
