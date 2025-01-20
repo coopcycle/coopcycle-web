@@ -164,7 +164,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             foreach ($data['packages'] as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p['type'], $delivery->getStore());
                 if ($package) {
-                    $task->addPackageWithQuantity($package, $p['quantity']);
+                    $task->setQuantityForPackage($package, $p['quantity']);
                 }
             }
         }

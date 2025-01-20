@@ -6,6 +6,7 @@ import axios from 'axios'
 
 import stripe from './stripe'
 import mercadopago from './mercadopago'
+import paygreen from './paygreen'
 import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
@@ -17,6 +18,9 @@ import {
 import { selectPersistedTimeRange } from '../order/timeRange/reduxSlice'
 import { checkTimeRange } from '../../utils/order/helpers'
 import { apiSlice } from '../../api/slice'
+import { notification } from 'antd'
+
+import './paygreen.scss'
 
 class CreditCard {
   constructor(config) {
@@ -71,6 +75,9 @@ export default function(formSelector, options) {
     switch (gatewayForCard) {
       case 'mercadopago':
         Object.assign(CreditCard.prototype, mercadopago)
+        break
+      case 'paygreen':
+        Object.assign(CreditCard.prototype, paygreen)
         break
       case 'stripe':
       default:
@@ -152,7 +159,7 @@ export default function(formSelector, options) {
     }
   }
 
-  form.addEventListener('submit', async function (event) {
+  form.addEventListener('submit', async function(event) {
     event.preventDefault()
 
     setLoading(true)
@@ -221,6 +228,22 @@ export default function(formSelector, options) {
         payments = response.data.payments
 
         switch (value) {
+
+          case 'restoflash':
+          case 'swile':
+          case 'conecs':
+
+            // When using a meal voucher, we use Paygreen hosted page
+            // https://developers.paygreen.fr/docs/how-to-use-paygreen#hosted-page
+            const url = response.data.paygreen.paygreen_hosted_payment_url;
+            if (!url) {
+              notification.error({ message: "Something went wrong" });
+              break
+            }
+            window.location.href = url
+
+            break
+
           case 'card':
           case 'edenred':
 
@@ -234,9 +257,9 @@ export default function(formSelector, options) {
 
             if (hasCard) {
               cc.mount(document.getElementById('card-element'), value, response.data, options)
-                .then(() => {
-                  document.getElementById('card-element').scrollIntoView()
-                  enableBtn(submitButton)
+                .then((shouldEnableBtn = true) => {
+                  document.getElementById('card-onmount-focus').scrollIntoView()
+                  shouldEnableBtn && enableBtn(submitButton)
                 })
                 .catch(e => {
                   document.getElementById('card-errors').textContent = e.message
@@ -298,7 +321,7 @@ export default function(formSelector, options) {
     document.querySelector('#checkout_payment_method').appendChild(el)
 
     render(
-      <PaymentMethodPicker methods={ methods } onSelect={ onSelect } />,
+      <PaymentMethodPicker methods={methods} onSelect={onSelect} />,
       el
     )
   }

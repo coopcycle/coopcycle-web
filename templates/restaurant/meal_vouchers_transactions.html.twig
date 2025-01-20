@@ -14,7 +14,7 @@
   <div class="alert alert-info">
     <i class="fa fa-info-circle mr-2"></i>
     <span>
-    {{ 'restaurants.edenred_transactions.disclaimer'|trans }}
+    {{ 'restaurants.meal_vouchers_transactions.disclaimer'|trans }}
     </span>
   </div>
   {% endif %}
@@ -22,7 +22,7 @@
   {% for restaurant in orders %}
 
     {% set total_amount = 0 %}
-    {% set edenred_amount = 0 %}
+    {% set meal_vouchers_amount = 0 %}
     {% set platform_fee = 0 %}
 
     <nav class="d-flex justify-content-between mb-4">
@@ -36,16 +36,16 @@
       <thead>
         <th>{{ 'order.export.heading.order_number'|trans }}</th>
         <th>{{ 'order.export.heading.completed_at'|trans }}</th>
+        <th>{{ 'restaurant.meal_vouchers_transactions.emitter'|trans }}</th>
         <th class="text-right">{{ 'order.export.heading.total_incl_tax'|trans }}</th>
-        <th class="text-right">{{ 'restaurants.edenred_transactions.edenred_amount'|trans }}</th>
+        <th class="text-right">{{ 'restaurants.meal_vouchers_transactions.amount'|trans }}</th>
         <th class="text-right">{{ 'order.export.heading.platform_fee'|trans }}</th>
       </thead>
       <tbody>
       {% for order in orders[restaurant] %}
-      {% set edenred_payment =
-        order.payments|filter(payment => payment.method.code == 'EDENRED' and payment.state == 'completed')|first %}
-      {% set is_captured =
-        edenred_payment.edenredAuthorizationId is not empty and edenred_payment.edenredCaptureId is not empty %}
+      {% set meal_voucher_payment =
+        order.payments|filter(payment => payment.method.code in payment_methods and payment.state == 'completed')|first %}
+      {% set is_captured = meal_voucher_payment.method.code == 'EDENRED' ? (meal_voucher_payment.edenredAuthorizationId is not empty and meal_voucher_payment.edenredCaptureId is not empty) : true %}
       <tr class="{{ not is_captured ? 'danger' : '' }}">
         <td>
           <span class="text-monospace">{{ order.number }}</span>
@@ -53,18 +53,21 @@
         <td>
           <span>{{ order.shippingTimeRange|time_range_for_humans_short }}</span>
         </td>
+        <td>
+          {{ meal_voucher_payment.method.code }}
+        </td>
         <td class="text-right">
           <span class="text-monospace">{{ order.total|price_format }}</span>
         </td>
         <td class="text-right">
-          <span class="text-monospace">{{ edenred_payment.amount|price_format }}</span>
+          <span class="text-monospace">{{ meal_voucher_payment.amount|price_format }}</span>
         </td>
         <td class="text-right">
           <span class="text-monospace">{{ order.feeTotal|price_format }}</span>
         </td>
       </tr>
       {% set total_amount   = (total_amount + order.total) %}
-      {% set edenred_amount = (edenred_amount + edenred_payment.amount) %}
+      {% set meal_vouchers_amount = (meal_vouchers_amount + meal_voucher_payment.amount) %}
       {% set platform_fee   = (platform_fee + order.feeTotal) %}
       {% endfor %}
       </tbody>
@@ -73,11 +76,12 @@
         <tr>
           <th></th>
           <th></th>
+          <th></th>
           <th class="text-right">
             <span class="text-monospace">{{ total_amount|price_format }}</span>
           </th>
           <th class="text-right">
-            <span class="text-monospace">{{ edenred_amount|price_format }}</span>
+            <span class="text-monospace">{{ meal_vouchers_amount|price_format }}</span>
           </th>
           <th class="text-right">
             <span class="text-monospace">{{ platform_fee|price_format }}</span>

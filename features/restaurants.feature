@@ -931,6 +931,7 @@ Feature: Manage restaurants
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"PICKUP",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -952,7 +953,7 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
               "packages": [],
-              "barcode": "@array@",
+              "barcode": @array@,
               "createdAt":"@string@.isDateTime()"
             },
             "dropoff":{
@@ -960,6 +961,7 @@ Feature: Manage restaurants
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"DROPOFF",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -981,9 +983,10 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
               "packages": [],
-              "barcode": "@array@",
+              "barcode": @array@,
               "createdAt":"@string@.isDateTime()"
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],

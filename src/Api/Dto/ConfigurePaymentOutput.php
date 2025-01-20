@@ -17,8 +17,28 @@ final class ConfigurePaymentOutput
      */
     public $payments;
 
+    /**
+     * @ApiProperty
+     * @Groups({"order_configure_payment"})
+     * @var string|null
+     */
+    public $redirectUrl;
+
     public function __construct(OrderInterface $order)
     {
         $this->payments = $order->getPayments();
+        $this->redirectUrl = $this->getRedirectUrl();
+    }
+
+    private function getRedirectUrl(): ?string
+    {
+        foreach ($this->payments as $payment) {
+            $paygreenHostedPaymentUrl = $payment->getPaygreenHostedPaymentUrl();
+            if (null !== $paygreenHostedPaymentUrl) {
+                return $paygreenHostedPaymentUrl;
+            }
+        }
+
+        return null;
     }
 }

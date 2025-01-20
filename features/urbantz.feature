@@ -582,6 +582,7 @@ Feature: Urbantz
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/2",
@@ -604,13 +605,14 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages":[],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/4",
@@ -633,9 +635,10 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """

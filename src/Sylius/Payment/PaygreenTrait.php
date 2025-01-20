@@ -36,4 +36,18 @@ trait PaygreenTrait
 
         return null;
     }
+
+    public function setPaygreenHostedPaymentUrl(string $hostedPaymentUrl)
+    {
+        $this->details = array_merge($this->details, ['paygreen_hosted_payment_url' => $hostedPaymentUrl]);
+    }
+
+    public function getPaygreenHostedPaymentUrl(): ?string
+    {
+        if (isset($this->details['paygreen_hosted_payment_url'])) {
+            return $this->details['paygreen_hosted_payment_url'];
+        }
+
+        return null;
+    }
 }

@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.x'
       - name: Setup PHP
@@ -28,7 +28,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install python-swiftclient python-keystoneclient
-          pip install awscli
+          pip install awscli==1.36
       - name: Compile SDK for production
         run: NODE_ENV=production npm run sdk:build
       - name: Compile assets for production

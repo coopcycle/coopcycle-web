@@ -184,6 +184,13 @@ class RestaurantType extends LocalBusinessType
                             'label' => 'restaurant.form.paygreen_shop_id.label',
                             'required' => false,
                         ]);
+                        $form->add('usePaygreen', CheckboxType::class, [
+                            'label' => 'restaurant.form.use_paygreen.label',
+                            'required' => false,
+                            'mapped' => false,
+                            'data' => 'paygreen' === $restaurant->getPaymentGateway(),
+                            'disabled' => empty($restaurant->getPaygreenShopId()),
+                        ]);
                     }
 
                     if (!$restaurant->isDeleted()) {
@@ -282,6 +289,11 @@ class RestaurantType extends LocalBusinessType
 
                 if (!$useDifferentBusinessAddress) {
                     $restaurant->setBusinessAddress(null);
+                }
+
+                if ($form->has('usePaygreen')) {
+                    $usePaygreen = $form->get('usePaygreen')->getData();
+                    $restaurant->setPaymentGateway($usePaygreen ? 'paygreen': 'stripe');
                 }
             }
         );

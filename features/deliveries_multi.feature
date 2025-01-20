@@ -39,10 +39,12 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type": "PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -65,13 +67,14 @@ Feature: Multi-step deliveries
           "comments": "1.50 kg",
           "weight":1500,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type": "DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -94,7 +97,7 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -152,10 +155,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -183,15 +188,17 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":@string@,
           "@type":"Task",
+          "type":"DROPOFF",
           "id":@integer@,
           "status":"TODO",
           "address":{
@@ -220,10 +227,11 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -277,10 +285,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -308,16 +318,18 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"/api/tasks/3",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -345,10 +357,11 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -400,10 +413,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -431,16 +446,18 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"/api/tasks/3",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -468,10 +485,11 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@

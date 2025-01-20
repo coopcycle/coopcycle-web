@@ -792,12 +792,12 @@ restaurant_promotion.items_total.help: 'Ez lehetővé teszi, hogy kedvezményt a
   egy meghatározott összeg felett. A haszonkulcsod csökkenni fog a kedvezmény összegével.
   Ez <strong>nem csökkenti</strong> a platform által észlelt díjakat.'
 adminDashboard.metrics.title: 'Mérések'
-restaurants.edenred_transactions.disclaimer: 'Ez az oldal felsorolja az Edenreddel
+restaurants.meal_vouchers_transactions.disclaimer: 'Ez az oldal felsorolja az Edenreddel
   részben vagy egészben kifizetett összes megrendelést. Ezeknél a megrendeléseknél
   az étterem az összes pénzt beszedte. Ezért minden egyes étteremnek számlát kell
   küldenie, hogy az esedékes jutalékokat visszaigényelje.'
-restaurants.edenred_transactions.edenred_amount: 'Edenreddel kifizetett összeg'
-restaurants.edenred_transactions.title: 'Edenred tranzakciók'
+restaurants.meal_vouchers_transactions.amount: 'Edenreddel kifizetett összeg'
+restaurants.meal_vouchers_transactions.title: 'Edenred tranzakciók'
 form.product.alcohol.label: 'Ez a termék alkoholtartalmú ital'
 form.product.alcohol.help: 'Csak akkor jelöld be ezt a négyzetet, ha a termék alkoholos
   ital, például egy üveg bor.'
