@@ -36,6 +36,7 @@ trait DeliveryTrait
 
         return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
             'delivery' => $delivery,
+            'order' => $delivery->getOrder(),
             'store' => $delivery->getStore(),
             'layout' => $request->attributes->get('layout'),
             'debug_pricing' => $request->query->getBoolean('debug', false),

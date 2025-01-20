@@ -17,12 +17,12 @@
 {% block content %}
 
   {% include 'delivery/_partials/navbar.html.twig' %}
-  
+
   {% block alerts %}
   {% endblock %}
 
-  
+
   {% set is_new = delivery.id is null %}
 
-  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id, deliveryId: delivery.id }) }}></div>
+  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id, deliveryId: delivery.id, order: order|serialize }) }}></div>
 {% endblock %}
