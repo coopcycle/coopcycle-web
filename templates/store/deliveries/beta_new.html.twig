@@ -23,6 +23,7 @@
 
 
   {% set is_new = delivery.id is null %}
+  {% set order = delivery.order is null ? null : delivery.order|serialize %}
 
-  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id, deliveryId: delivery.id, order: order|serialize }) }}></div>
+  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id, deliveryId: delivery.id, order: order }) }}></div>
 {% endblock %}
