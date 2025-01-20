@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Select, Tag } from 'antd'
-import { values } from 'lodash'
 
 const options = [
   {
@@ -48,13 +47,16 @@ export default () => {
   const [selectedOptions, setSelectedOptions] = useState([])
 
   console.log(selectedOptions)
+  const handleChange = values => {
+    const selectedOptions = []
 
-  const handleChange = value => {
-    const options = values.map(value => {
-      options.filter()
-    })
-    console.log(value)
+    for (const value of values) {
+      const foundOptions = options.find(option => option.value === value)
+      selectedOptions.push(foundOptions.label)
+    }
+    setSelectedOptions(selectedOptions)
   }
+
   return (
     <>
       <div className="tags__title block mb-2 font-weight-bold">Tags</div>
@@ -65,7 +67,7 @@ export default () => {
         style={{
           width: '100%',
         }}
-        onChange={handleChange}
+        onChange={value => handleChange(value)}
         optionLabelProp="label">
         {options.map(option => (
           <Select.Option
