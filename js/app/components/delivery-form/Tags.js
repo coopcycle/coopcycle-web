@@ -1,22 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Select, Tag } from 'antd'
+import { values } from 'lodash'
 
 const options = [
   {
     value: '#2db7f5',
     label: 'urgent',
+    backgroundColor: '#2db7f580',
   },
   {
-    value: '#f50',
+    value: '#eb4034',
     label: 'important',
+    backgroundColor: '#eb403480',
   },
   {
     value: '#87d068',
     label: 'rapide',
+    backgroundColor: '#87d06880',
   },
   {
     value: '#108ee9',
     label: 'eco',
+    backgroundColor: '#108ee980',
   },
 ]
 const tagRender = props => {
@@ -39,27 +44,46 @@ const tagRender = props => {
   )
 }
 
-export default () => (
-  <>
-    <div className="tags__title block mb-2 font-weight-bold">Tags</div>
-    <Select
-      mode="multiple"
-      showArrow
-      tagRender={tagRender}
-      // defaultValue={}
-      style={{
-        width: '100%',
-      }}
-      optionLabelProp="label">
-      {options.map(option => (
-        <Select.Option
-          key={option.value}
-          value={option.value}
-          label={option.label}
-          style={{ backgroundColor: option.value }}>
-          <div className={option.className}>{option.label}</div>
-        </Select.Option>
-      ))}
-    </Select>
-  </>
-)
+export default () => {
+  const [selectedOptions, setSelectedOptions] = useState([])
+
+  console.log(selectedOptions)
+
+  const handleChange = value => {
+    const options = values.map(value => {
+      options.filter()
+    })
+    console.log(value)
+  }
+  return (
+    <>
+      <div className="tags__title block mb-2 font-weight-bold">Tags</div>
+      <Select
+        mode="multiple"
+        showArrow
+        tagRender={tagRender}
+        style={{
+          width: '100%',
+        }}
+        onChange={handleChange}
+        optionLabelProp="label">
+        {options.map(option => (
+          <Select.Option
+            key={option.value}
+            value={option.value}
+            label={option.label}>
+            <div className="option__label">
+              <span
+                style={{
+                  backgroundColor: option.backgroundColor,
+                  padding: '0.5em',
+                }}>
+                {option.label}
+              </span>
+            </div>
+          </Select.Option>
+        ))}
+      </Select>
+    </>
+  )
+}

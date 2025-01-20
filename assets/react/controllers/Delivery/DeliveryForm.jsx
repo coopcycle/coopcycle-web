@@ -195,6 +195,8 @@ export default function ({ storeId, deliveryId, order }) {
             task.address.formattedTelephone = formattedTelephone
           })
 
+          console.log("response", delivery.response)
+
           previousValues.current = delivery.response
 
           setInitialValues(delivery.response)
