@@ -3,26 +3,40 @@
 namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * @ApiResource(
+ *   attributes={
+ *     "normalization_context"={"groups"={"tag"}}
+ *   },
+ *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
+ *       "pagination_enabled"=false,
+ *     },
+ *  })
+ */
 class Tag
 {
-    const ADDRESS_NEED_REVIEW_TAG = 'review-needed'; 
+    const ADDRESS_NEED_REVIEW_TAG = 'review-needed';
 
     protected $id;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "tag"})
      */
     protected $name;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "tag"})
      */
     private $slug;
 
     /**
-     * @Groups({"task"})
+     * @Groups({"task", "tag"})
      * @Assert\NotBlank()
      */
     private $color;
