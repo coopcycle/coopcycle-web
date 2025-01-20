@@ -16,9 +16,9 @@ class Collection extends Base
                 case
                     WHEN t_outer.delivery_id is not null and t_outer.type = 'PICKUP' THEN
                         (select json_agg(json_build_object(
-                            'id', 'name', packages_rows.name, 'type', packages_rows.name, 'quantity', packages_rows.quantity, 'volume_per_package', packages_rows.volume_units, 'short_code', packages_rows.short_code))
+                            'id', packages_rows.id, 'name', packages_rows.name, 'type', packages_rows.name, 'quantity', packages_rows.quantity, 'volume_per_package', packages_rows.volume_units, 'short_code', packages_rows.short_code))
                             FROM
-                                (select p.id, p.name AS name, p.average_volume_units AS volume_units, p.short_code as short_code, sum(tp.quantity) AS quantity
+                                (select p.id AS id, p.name AS name, p.average_volume_units AS volume_units, p.short_code as short_code, sum(tp.quantity) AS quantity
                                     from task t inner join task_package tp on tp.task_id = t.id
                                     inner join package p on tp.package_id = p.id
                                     where t.delivery_id = t_outer.delivery_id
@@ -26,9 +26,9 @@ class Collection extends Base
                                 ) packages_rows)
                     WHEN t_outer.type = 'DROPOFF' THEN
                         (select json_agg(json_build_object(
-                            'id', 'name', packages_rows.name, 'type', packages_rows.name, 'quantity', packages_rows.quantity, 'volume_per_package', packages_rows.volume_units, 'short_code', packages_rows.short_code))
+                            'id', packages_rows.id, 'name', packages_rows.name, 'type', packages_rows.name, 'quantity', packages_rows.quantity, 'volume_per_package', packages_rows.volume_units, 'short_code', packages_rows.short_code))
                             FROM
-                                (select p.id, p.name AS name, p.average_volume_units AS volume_units, p.short_code as short_code, sum(tp.quantity) AS quantity
+                                (select p.id AS id, p.name AS name, p.average_volume_units AS volume_units, p.short_code as short_code, sum(tp.quantity) AS quantity
                                     from task t inner join task_package tp on tp.task_id = t.id
                                     inner join package p on tp.package_id = p.id
                                     where t.id = t_outer.id
