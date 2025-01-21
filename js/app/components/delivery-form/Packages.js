@@ -18,6 +18,7 @@ export default ({ index, packages, deliveryId }) => {
     picked.push(newPackages)
   }
 
+  // format initial API values in the EDIT case
   if (deliveryId) {
     const packagesToEdit = values.tasks[index].packages
     const newPackagesArray = picked.map(p => {
@@ -31,8 +32,6 @@ export default ({ index, packages, deliveryId }) => {
 
   const { t } = useTranslation()
 
-  /** Insert the data in edit mode */
-
   useEffect(() => {
     const filteredPackages = packagesPicked.filter(p => p.quantity > 0)
     if (filteredPackages.length > 0) {
@@ -40,8 +39,7 @@ export default ({ index, packages, deliveryId }) => {
     }
   }, [packagesPicked, setFieldValue, index])
 
-  const handlePlusButton = (item) => {
-
+  const handlePlusButton = item => {
     const pack = packagesPicked.find(p => p.type === item.name)
     const index = packagesPicked.findIndex(p => p === pack)
     if (index !== -1) {
@@ -67,7 +65,8 @@ export default ({ index, packages, deliveryId }) => {
         quantity: newQuantity,
       }
 
-      setPackagesPicked(newPackagesPicked)    }
+      setPackagesPicked(newPackagesPicked)
+    }
   }
 
   /**Used to make the input a controlated field */

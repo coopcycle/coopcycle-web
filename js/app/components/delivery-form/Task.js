@@ -116,7 +116,11 @@ export default ({
                 setIsTimeSlotSelect={setIsTimeSlotSelect}
               />
             ) : (
-              <DateRangePicker format={format} index={index} />
+              <DateRangePicker
+                format={format}
+                index={index}
+                isAdmin={isAdmin}
+              />
             )
           ) : (
             <Spinner />

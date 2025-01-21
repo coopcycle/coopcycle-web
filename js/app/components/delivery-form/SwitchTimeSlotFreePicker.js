@@ -2,7 +2,6 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
-import { useFormikContext } from 'formik'
 
 import './SwitchTimeSlotFreePicker.scss'
 
@@ -15,8 +14,6 @@ export default ({
   setIsTimeSlotSelect,
 }) => {
   const { t } = useTranslation()
-
-  const { errors } = useFormikContext()
 
   return (
     <>
@@ -46,9 +43,6 @@ export default ({
             onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
             title={t('SWITCH_DATEPICKER')}></i>
         </div>
-      )}
-      {errors.tasks?.[index]?.before && (
-        <div className="text-danger">{errors.tasks[index].before}</div>
       )}
     </>
   )

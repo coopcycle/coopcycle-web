@@ -257,7 +257,7 @@ export default function AddressBook({ index, addresses }) {
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <h4 className="text-center">
-          {values.tasks[index].address.name} -{' '}
+          {values.tasks[index].address.name} -
           {values.tasks[index].address.streetAddress}
         </h4>
         <p>{t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER')}</p>

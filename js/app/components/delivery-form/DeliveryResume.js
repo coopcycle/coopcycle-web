@@ -15,11 +15,10 @@ export default ({ distance, tasks }) => {
   return (
     <div className="resume mb-4">
       <div className="resume__distance mt-2 mb-4">
-        {' '}
         <span className="font-weight-bold">
           {t('ADMIN_DASHBOARD_DISTANCE')}
-        </span>{' '}
-        : {distance} kms{' '}
+        </span>
+        : {distance} kms
       </div>
 
       <div className="resumer__tasks">
@@ -28,7 +27,7 @@ export default ({ distance, tasks }) => {
             <div>
               {task.type === 'PICKUP' ? (
                 <div className="resume__tasks__item__title mb-1 font-weight-bold">
-                  <i className="fa fa-arrow-up"></i> {t('DELIVERY_PICKUP')}{' '}
+                  <i className="fa fa-arrow-up"></i> {t('DELIVERY_PICKUP')}
                 </div>
               ) : (
                 <div className="resume__tasks__item__title mb-1 font-weight-bold">
