@@ -13,7 +13,6 @@ use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
@@ -22,8 +21,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         private readonly ProductVariantFactoryInterface $factory,
         private readonly ProductRepositoryInterface $productRepository,
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
-        private readonly SettingsManager $settingsManager,
-        private readonly TranslatorInterface $translator
+        private readonly SettingsManager $settingsManager
     )
     {
     }
