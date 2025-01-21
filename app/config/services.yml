@@ -1539,3 +1539,8 @@ services:
   AppBundle\Service\PaygreenManager:
     arguments:
       $country: '%country_iso%'
+
+  AppBundle\Serializer\CustomSerializationContextBuiler:
+    decorates: api_platform.serializer.context_builder
+    arguments:
+      $decorated: '@AppBundle\Serializer\CustomSerializationContextBuiler.inner'
