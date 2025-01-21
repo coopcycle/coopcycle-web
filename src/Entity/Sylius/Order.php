@@ -2030,12 +2030,14 @@ class Order extends BaseOrder implements OrderInterface
 
         $productVariant = $deliveryItem->getVariant();
 
-        if (str_starts_with($productVariant->getCode(), 'RBTRR-PRC-')) {
+        if ($pricingRulesSet = $productVariant->getPricingRuleSet()) {
+            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice(), $pricingRulesSet);
+        } else {
+            // Some productVariants created before $pricingRulesSet was introduced
+            // may have a price calculated based on a pricing rule set, but pricingRulesSet is null
+
             // custom price
             return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
-        } else {
-            // price based on the PricingRuleSet
-            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice());
         }
     }
 }

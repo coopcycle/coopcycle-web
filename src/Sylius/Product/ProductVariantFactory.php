@@ -5,6 +5,7 @@ namespace AppBundle\Sylius\Product;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PriceInterface;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Service\SettingsManager;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Model\ProductInterface;
@@ -81,13 +82,14 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant->setName($name);
 
+        $productVariant->setCode('CPCCL-ODDLVR-'.Uuid::uuid4()->toString());
+
         if ($price instanceof ArbitraryPrice) {
             if ($price->getVariantName()) {
                 $productVariant->setName($price->getVariantName());
             }
-            $productVariant->setCode('RBTRR-PRC-'.Uuid::uuid4()->toString());
-        } else {
-            $productVariant->setCode(Uuid::uuid4()->toString());
+        } else if ($price instanceof PricingRulesBasedPrice) {
+            $productVariant->setPricingRuleSet($price->getPricingRuleSet());
         }
 
         $productVariant->setPosition(1);

@@ -64,7 +64,8 @@ class PricingManager
         }
 
         if ($pricingStrategy instanceof UsePricingRules) {
-            $price = $this->deliveryManager->getPrice($delivery, $store->getPricingRuleSet());
+            $pricingRuleSet = $store->getPricingRuleSet();
+            $price = $this->deliveryManager->getPrice($delivery, $pricingRuleSet);
 
             if (null === $price) {
                 $this->logger->warning('Price could not be calculated');
@@ -72,7 +73,7 @@ class PricingManager
             }
 
             $price = (int) $price;
-            return new PricingRulesBasedPrice($price);
+            return new PricingRulesBasedPrice($price, $pricingRuleSet);
 
         } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
             return $pricingStrategy->getArbitraryPrice();

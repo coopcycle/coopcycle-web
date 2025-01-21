@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\BusinessRestaurantGroup;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -26,6 +27,11 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
      * @var BusinessRestaurantGroup
      */
     protected $businessRestaurantGroup;
+
+    /**
+     * @var ?PricingRuleSet
+     */
+    protected $pricingRuleSet;
 
     /**
      * {@inheritdoc}
@@ -182,5 +188,15 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
     public function isBusiness(): bool
     {
         return null !== $this->businessRestaurantGroup;
+    }
+
+    public function getPricingRuleSet(): ?PricingRuleSet
+    {
+        return $this->pricingRuleSet;
+    }
+
+    public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void
+    {
+        $this->pricingRuleSet = $pricingRuleSet;
     }
 }
