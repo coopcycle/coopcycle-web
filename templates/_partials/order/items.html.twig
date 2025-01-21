@@ -114,9 +114,8 @@
       <tr>
         <th>
           <span>{{ adjustment.label }}</span>
-          {% if order.isLoopeat() %}
-          <br>
-          <small class="font-weight-normal text-muted">
+          {% if adjustment.details.loopeat_processing_fee is defined and adjustment.details.loopeat_processing_fee == true %}
+          <small class="d-block font-weight-normal text-muted">
           {{ 'order.adjustment_type.reusable_packaging.loopeat.help'|trans }}
           </small>
           {% endif %}

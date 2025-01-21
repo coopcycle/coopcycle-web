@@ -324,6 +324,7 @@ services:
       $adjustmentFactory: "@sylius.factory.adjustment"
       $loopeatProcessingFee: "%env(LOOPEAT_PROCESSING_FEE)%"
       $loopeatProcessingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
+      $loopeatToteBagId: "%env(LOOPEAT_TOTE_BAG_ID)%"
     tags:
       - { name: sylius.order_processor, priority: 52 }
 

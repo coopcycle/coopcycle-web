@@ -7,6 +7,7 @@ use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
@@ -28,8 +29,10 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     public function __construct(
         private AdjustmentFactoryInterface $adjustmentFactory,
         private TranslatorInterface $translator,
+        private LoopeatClient $loopeatClient,
         private int $loopeatProcessingFee = 0,
-        private string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS)
+        private string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS,
+        private $loopeatToteBagId = null)
     {
         $this->loopeatProcessingFee = $loopeatProcessingFee;
 
@@ -111,7 +114,8 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                     AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                     $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
                     $this->loopeatProcessingFee,
-                    $neutral = false
+                    neutral: false,
+                    details: ['loopeat_processing_fee' => true]
                 ));
             }
         } else if ($totalAmount > 0) {
@@ -119,8 +123,22 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                 AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                 $this->translator->trans('order.adjustment_type.reusable_packaging'),
                 $totalAmount,
-                $neutral = false
+                neutral: false
             ));
+        }
+
+        if ($restaurant->isLoopeatEnabled() && !empty($this->loopeatToteBagId)) {
+            $formats = $this->loopeatClient->getFormats($restaurant);
+            foreach ($formats as $format) {
+                if ($format['id'] === (int) $this->loopeatToteBagId) {
+                    $order->addAdjustment($this->adjustmentFactory->createWithData(
+                        AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                        sprintf('%s − %s', $format['title'], $format['subtitle']),
+                        $format['cost_cents'],
+                        neutral: false
+                    ));
+                }
+            }
         }
     }
 
