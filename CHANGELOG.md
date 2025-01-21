@@ -12,6 +12,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Introduce revamped delivery form for admins.
 * Improve display of orders list.
 
+## [3.25.3] - 2025-01-11
+
+### Fixed
+* FIXED: Delivery price calculation when two packages have the same name
+* FIXED: (Food Tech) Allow a customer to verify and change phone number during checkout
+
+### Changed
+* CHANGED: Consistent Order creation for Store(s):
+
+### Removed
+* Removed: “Create orders” setting for Store(s). Now, for all stores, an order will be created for each Delivery, enabling tracking prices and collecting data for Invoices.
+    * If a store does not have a pricing rule, the price will be automatically set to 0. Consider setting up a pricing rule :wink:
+    * If a pricing rule is configured but the price can not be calculated, the order will still be created (with the price set to 0), and a new Incident will be created that allows the price to be set.
+
 ## [3.24.2] - 2024-12-09
 
 ### Added
