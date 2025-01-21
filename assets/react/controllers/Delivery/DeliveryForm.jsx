@@ -451,12 +451,21 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                   </FieldArray>
 
                   <div className="order-informations">
+
+                    {deliveryId && (
+                      <div className="order-informations__tracking alert alert-info">
+                        <a target="_blank" rel="noreferrer" href={trackingLink}>
+                          Lien de suivi
+                        </a>{'  '}
+                        <i className="fa fa-external-link"></i>
+                        <a href="#" className="pull-right"><i className="fa fa-clipboard" aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
+                      </div>
+                    )}
+
                     <div className="order-informations__map">
                       <Map
                         storeDeliveryInfos={storeDeliveryInfos}
                         tasks={values.tasks}
-                        deliveryId={deliveryId}
-                        trackingLink= {trackingLink}
                       />
                     </div>
 

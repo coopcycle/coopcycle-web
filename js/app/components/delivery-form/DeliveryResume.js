@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
 
-export default ({ distance, tasks, deliveryId, trackingLink }) => {
+export default ({ distance, tasks }) => {
   const [createdTasks, setCreatedTasks] = useState(null)
 
   const { t } = useTranslation()
@@ -21,14 +21,7 @@ export default ({ distance, tasks, deliveryId, trackingLink }) => {
         </span>{' '}
         : {distance} kms{' '}
       </div>
-      {deliveryId && (
-        <div className="alert alert-info">
-          <a target="_blank" rel="noreferrer" href={trackingLink}>
-            Lien de suivi
-          </a>{' '}
-          <i className="fa fa-external-link"></i>
-        </div>
-      )}
+
       <div className="resumer__tasks">
         {createdTasks?.map((task, index) => (
           <div key={index} className="resume__tasks__item mb-3">

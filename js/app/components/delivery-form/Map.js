@@ -63,7 +63,7 @@ const FitBoundsToMarkers = ({ positions, maxZoom = 17 }) => {
   }, [map, positions])
 }
 
-export default ({ storeDeliveryInfos, tasks, deliveryId, trackingLink }) => {
+export default ({ storeDeliveryInfos, tasks }) => {
   const [storeGeo, setStoreGeo] = useState(null)
   const [deliveryGeo, setDeliveryGeo] = useState([])
   const [deliveryRoute, setDeliveryRoute] = useState('')
@@ -142,12 +142,7 @@ export default ({ storeDeliveryInfos, tasks, deliveryId, trackingLink }) => {
               <FitBoundsToMarkers positions={storeGeo} />
             )}
           </MapContainer>
-          <DeliveryResume
-            distance={distance.kms}
-            tasks={tasks}
-            deliveryId={deliveryId}
-            trackingLink={trackingLink}
-          />
+          <DeliveryResume distance={distance.kms} tasks={tasks} />
         </>
       ) : (
         <Spinner />
