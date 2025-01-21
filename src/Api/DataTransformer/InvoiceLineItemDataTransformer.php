@@ -5,6 +5,7 @@ namespace AppBundle\Api\DataTransformer;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Task;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,7 +26,8 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
     {
         $order = $object;
 
-        $store = $order->getDelivery()?->getStore();
+        $delivery = $order->getDelivery();
+        $store = $delivery?->getStore();
 
         $request = $this->requestStack->getCurrentRequest();
         $requestId = $request->headers->get('X-Request-ID');
@@ -45,13 +47,35 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
 
         $orderDate = $order->getShippingTimeRange()?->getUpper() ?? $order->getCreatedAt();
 
-        if ($deliveryItem) {
-            $product = $deliveryItem->getVariant()->getProduct()->getName();
+        if ($delivery && $deliveryItem) {
+            $productVariant = $deliveryItem->getVariant();
+            $product = $productVariant->getProduct();
 
-            $description = sprintf('%s - %s - %s (%s)',
-                $product,
-                $deliveryItem->getVariant()->getName(),
-                Carbon::instance($orderDate)->locale($this->locale)->isoFormat('L'),
+            $descriptionParts = [];
+
+            $descriptionParts[] = $product->getName();
+            $descriptionParts[] = $productVariant->getName();
+
+            $pickupLabel = $this->translator->trans(sprintf('task.type.%s', Task::TYPE_PICKUP));
+            $dropoffLabel = $this->translator->trans(sprintf('task.type.%s', Task::TYPE_DROPOFF));
+
+            if (str_contains($productVariant->getName(), $pickupLabel) || str_contains($productVariant->getName(), $dropoffLabel)) {
+                // Added to avoid duplicate task information for orders created during beta testing in January 2025
+                // Could be removed after a few months
+            } else {
+                foreach ($delivery->getTasks() as $task) {
+                    $clientName = $task->getAddress()->getName();
+
+                    $descriptionParts[] = sprintf('%s: %s',
+                        $this->translator->trans(sprintf('task.type.%s', $task->getType())),
+                        $clientName ?: $task->getAddress()->getStreetAddress());
+                }
+            }
+
+            $descriptionParts[] = Carbon::instance($orderDate)->locale($this->locale)->isoFormat('L');
+
+            $description = sprintf('%s (%s)',
+                implode(' - ', $descriptionParts),
                 $this->translator->trans('adminDashboard.invoicing.line_item.order_number', [
                     '%number%' => $order->getNumber(),
                 ], 'messages')

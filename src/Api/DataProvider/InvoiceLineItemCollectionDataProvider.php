@@ -71,10 +71,12 @@ final class InvoiceLineItemCollectionDataProvider implements ContextAwareCollect
         $preloader->preload($orders, 'adjustments');
 
         $preloader->preload($orderItems, 'adjustments');
-        $productVariants = $preloader->preload($orderItems, 'variant');
+        $preloader->preload($orderItems, 'variant');
 
         $delivery = $preloader->preload($orders, 'delivery');
         $preloader->preload($delivery, 'store');
+        $taskCollectionItems = $preloader->preload($delivery, 'items');
+        $preloader->preload($taskCollectionItems, 'task');
 
         return $data;
     }
