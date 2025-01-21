@@ -388,6 +388,11 @@
         "DELIVERY_PICKUP": "Ritiro",
         "DELIVERY_DROPOFF": "Consegna",
         "DELIVERY_FORM_PICKUP_HOUR": "Ora di ritiro",
-        "DELIVERY_FORM_DROPOFF_HOUR": "Ora di consegna"
+        "DELIVERY_FORM_DROPOFF_HOUR": "Ora di consegna",
+        "DELIVERY_FORM_NEW_PRICE": "Nuovo prezzo",  
+        "DELIVERY_FORM_OLD_PRICE": "Prezzo precedente",  
+        "DELIVERY_FORM_TRACKING_LINK": "Link di tracciamento",  
+        "DELIVERY_FROM_TRACKING_LINK_COPY": "Copia link di tracciamento"
+
     }
 }

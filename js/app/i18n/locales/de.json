@@ -198,7 +198,12 @@
         "DELIVERY_PICKUP": "Abholung",
         "DELIVERY_DROPOFF": "Lieferung",
         "DELIVERY_FORM_PICKUP_HOUR": "Abholzeit",
-        "DELIVERY_FORM_DROPOFF_HOUR": "Lieferzeit"
+        "DELIVERY_FORM_DROPOFF_HOUR": "Lieferzeit",
+        "DELIVERY_FORM_NEW_PRICE": "Neuer Preis",  
+        "DELIVERY_FORM_OLD_PRICE": "Alter Preis",  
+        "DELIVERY_FORM_TRACKING_LINK": "Verfolgungslink",  
+        "DELIVERY_FROM_TRACKING_LINK_COPY": "Verfolgungslink kopieren"
+
     }
 
 }

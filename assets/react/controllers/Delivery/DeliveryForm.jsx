@@ -118,7 +118,6 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
   const [deliveryPrice, setDeliveryPrice] = useState(null)
-  const [showTotalPrice, setShowTotalPrice] = useState(false)
 
   useEffect(() => {
     if (order) {
@@ -361,8 +360,6 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
       }
       if (values.tasks.every(task => task.address.streetAddress)) {
         calculatePrice()
-        setShowTotalPrice(true)
-
       }
 
   }
@@ -455,10 +452,10 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                     {deliveryId && (
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
-                          Lien de suivi
+                         {t("DELIVERY_FORM_TRACKING_LINK")}
                         </a>{'  '}
                         <i className="fa fa-external-link"></i>
-                        <a href="#" className="pull-right"><i className="fa fa-clipboard" aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
+                        <a href="#" className="pull-right"><i className="fa fa-clipboard" title={t("DELIVERY_FROM_TRACKING_LINK_COPY") } aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
                       </div>
                     )}
 
@@ -472,14 +469,15 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                     <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
                       {deliveryId ?
                         <div className='mb-4'>
-                          <div className='font-weight-bold mb-2'>Ancien prix</div>
+                          <div className='font-weight-bold mb-2'>{ t("DELIVERY_FORM_OLD_PRICE")}</div>
                           <div>{money(deliveryPrice.exVAT)} {t("DELIVERY_FORM_TOTAL_VAT")}</div>
                           <div>{money(deliveryPrice.VAT)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}</div>
+                          <div className='mt-2 small'>Editing price is not already available in beta version.</div>
                         </div> : null }
                       
-                      {showTotalPrice || !deliveryId ? 
+                      {!deliveryId ? 
                         <>
-                    <div className='font-weight-bold mb-2'>{deliveryId ? "Nouveau Prix" : t("DELIVERY_FORM_TOTAL_PRICE")} </div>
+                    <div className='font-weight-bold mb-2'>{deliveryId ? t("DELIVERY_FORM_NEW_PRICE") : t("DELIVERY_FORM_TOTAL_PRICE")} </div>
                       <div>
                         {calculatedPrice.amount
                           ?
@@ -507,7 +505,8 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                           {priceError.priceErrorMessage}
                         </div>
                             : null}
-                        </> : null
+                        </> :
+                        null
                         }
 
                     </div>
