@@ -108,8 +108,6 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
   // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
   const isAdmin = true
 
-  console.log(trackingLink)
-
   const httpClient = new window._auth.httpClient()
 
   const [addresses, setAddresses] = useState([])
@@ -208,16 +206,18 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
           delivery.response.tasks.forEach(task => {
             const formattedTelephone = getFormattedValue(task.address.telephone)
             task.address.formattedTelephone = formattedTelephone
+            if (task.tags.length > 0) {
+              const tags = task.tags.map(tag => tag.name)
+              task.tags = tags
+            }
           })
-
-          console.log("response", delivery.response)
 
           previousValues.current = delivery.response
 
           setInitialValues(delivery.response)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
-          setTags(tags)
+          setTags(tags.response['hydra:member'])
           setIsLoading(false)
       })
     } else {
@@ -383,8 +383,6 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
         >
           {({ values, isSubmitting }) => {
 
-            console.log(values)
-
             useEffect(() => {
                 getPrice(values)
             }, [values]);
@@ -457,10 +455,11 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                       <Map
                         storeDeliveryInfos={storeDeliveryInfos}
                         tasks={values.tasks}
+                        deliveryId={deliveryId}
+                        trackingLink= {trackingLink}
                       />
                     </div>
 
-                    
                     <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
                       {deliveryId ?
                         <div className='mb-4'>

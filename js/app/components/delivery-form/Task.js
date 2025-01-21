@@ -9,9 +9,9 @@ import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
 import Spinner from '../core/Spinner'
 import TimeSlotPicker from './TimeSlotPicker'
-import Tags from './Tags'
 
 import './Task.scss'
+import TagsSelect from '../TagsSelect'
 
 export default ({
   addresses,
@@ -165,7 +165,15 @@ export default ({
         </div>
 
         <div className="mt-4 mb-4">
-          <Tags tags={tags} index={index} />
+          <div className="tags__title block mb-2 font-weight-bold">Tags</div>
+          <TagsSelect
+            tags={tags}
+            defaultValue={values.tasks[index].tags || []}
+            onChange={values => {
+              const tags = values.map(tag => tag.value)
+              setFieldValue(`tasks[${index}].tags`, tags)
+            }}
+          />
         </div>
       </div>
       {task.type === 'DROPOFF' && (
