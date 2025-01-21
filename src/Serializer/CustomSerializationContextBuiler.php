@@ -4,13 +4,11 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
 
 class CustomSerializationContextBuiler implements  SerializerContextBuilderInterface
 {
     public function __construct(
         private readonly SerializerContextBuilderInterface $decorated,
-        private readonly Security $security
     )
     { }
 
