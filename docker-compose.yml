@@ -272,6 +272,8 @@ services:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
       - 'node_modules_webpack:/srv/coopcycle/node_modules/'
+    profiles:
+      - devFrontend
 
   storybook:
     build:
@@ -286,6 +288,8 @@ services:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
       - 'node_modules_webpack:/srv/coopcycle/node_modules/'
+    profiles:
+      - devFrontend
 
   odoo-web:
     image: odoo:17.0
@@ -298,6 +302,8 @@ services:
       - PORT=5433
     volumes:
       - odoo-web-data:/var/lib/odoo
+    profiles:
+      - devOdoo
 
   odoo-db:
     image: postgres:15
@@ -310,6 +316,8 @@ services:
       - PGPORT=5433
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
+    profiles:
+      - devOdoo
 
 volumes:
   node_modules_webpack:
