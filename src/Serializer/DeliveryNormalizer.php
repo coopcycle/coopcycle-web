@@ -11,6 +11,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\TagManager;
 use AppBundle\Service\Tile38Helper;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -32,7 +33,9 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         private ManagerRegistry $doctrine,
         private UrlGeneratorInterface $urlGenerator,
         Hashids $hashids8,
-        private Tile38Helper $tile38Helper)
+        private Tile38Helper $tile38Helper,
+        private TagManager $tagManager
+    )
     {
         $this->hashids = $hashids8;
     }
@@ -155,6 +158,11 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['comments'])) {
             $task->setComments($data['comments']);
+        }
+
+        if (isset($data['tags'])) {
+            $task->setTags($data['tags']);
+            $this->tagManager->update($task);
         }
 
         if (isset($data['packages'])) {
