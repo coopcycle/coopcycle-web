@@ -43,7 +43,8 @@ class Client
         private UrlGeneratorInterface $urlGenerator,
         private CacheInterface $projectCache,
         private LoggerInterface $logger,
-        array $config = [])
+        array $config = [],
+        private $loopeatToteBagId = null)
     {
         if (isset($config['handler']) && $config['handler'] instanceof HandlerStack) {
             $stack = $config['handler'];
@@ -307,6 +308,14 @@ class Client
                 'act' => 'deliver',
             ];
         }, $order->getFormatsToDeliverForLoopeat());
+
+        if (!empty($this->loopeatToteBagId)) {
+            $deliver[] = [
+                'format_id' => (int) $this->loopeatToteBagId,
+                'quantity' => 1,
+                'act' => 'deliver',
+            ];
+        }
 
         $pickup = array_map(function ($format) {
             return [

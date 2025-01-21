@@ -135,6 +135,7 @@ services:
   AppBundle\LoopEat\Client:
     arguments:
       $config: { base_uri: "%loopeat_base_url%" }
+      $loopeatToteBagId: '%env(LOOPEAT_TOTE_BAG_ID)%'
     calls:
       - method: setLoopEatClientId
         arguments:
