@@ -265,7 +265,7 @@ interface OrderInterface extends
      *
      * @return PaymentInterface|null
      */
-    public function getLastPaymentByMethod(string $method, ?string $state = null): ?PaymentInterface;
+    public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
 
     public function isFoodtech(): bool;
 

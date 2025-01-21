@@ -43,6 +43,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "openapi_context"={
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       },
+ *       "input_formats"={"jsonld"={"application/ld+json"}},
  *       "security_post_denormalize"="is_granted('create', object)"
  *     },
  *     "check"={

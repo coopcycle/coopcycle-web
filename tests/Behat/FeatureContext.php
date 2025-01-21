@@ -22,6 +22,7 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Zone;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
@@ -553,7 +554,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theTaskWithCommentsMatchingAreAssignedTo($comments, $username)
     {
-        $user = $this->userManager->findUserByUsername($username);
+        $user = $this->doctrine->getRepository(User::class)->findOneBy(["username" => $username]);
+
         $qb = $this->doctrine
             ->getRepository(Task::class)
             ->createQueryBuilder('t')

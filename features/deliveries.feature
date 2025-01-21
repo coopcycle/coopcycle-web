@@ -81,6 +81,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -108,11 +109,13 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -134,7 +137,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -142,6 +145,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -163,7 +167,7 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -191,6 +195,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -219,11 +224,13 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -245,7 +252,7 @@ Feature: Deliveries
           "comments": "2.00 kg",
           "weight": 2000,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -253,6 +260,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -274,7 +282,7 @@ Feature: Deliveries
           "comments": "Beware of the dog\nShe bites",
           "weight": 2000,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -302,6 +310,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -333,11 +342,13 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -364,10 +375,11 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels": @array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -375,6 +387,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -401,10 +414,11 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels": @array@
             }
           ],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -432,6 +446,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -459,11 +474,13 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -485,7 +502,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -493,6 +510,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -514,7 +532,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -526,6 +544,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -553,11 +572,13 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -579,7 +600,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -587,6 +608,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -608,7 +630,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -652,11 +674,13 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"PICKUP",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -678,7 +702,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -686,6 +710,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -707,7 +732,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -751,10 +776,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -777,13 +804,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -806,7 +834,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -850,10 +878,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -876,13 +906,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -905,7 +936,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -950,9 +981,11 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
+          "type":"PICKUP",
           "id":@integer@,
           "status":"TODO",
           "address":{
@@ -976,13 +1009,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1005,7 +1039,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1050,10 +1084,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1076,13 +1112,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1105,7 +1142,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1150,9 +1187,11 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
+          "type":"PICKUP",
           "id":@integer@,
           "status":"TODO",
           "address":{
@@ -1176,12 +1215,13 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
+          "type":"DROPOFF",
           "id":@integer@,
           "status":"TODO",
           "address":{
@@ -1205,7 +1245,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1217,6 +1257,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1240,10 +1281,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1266,13 +1309,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1295,7 +1339,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1307,6 +1351,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1338,6 +1383,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1360,13 +1406,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1389,9 +1436,10 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -1401,6 +1449,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1430,10 +1479,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1456,13 +1507,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1485,7 +1537,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1497,6 +1549,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1524,10 +1577,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1550,7 +1605,7 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
@@ -1558,6 +1613,7 @@ Feature: Deliveries
           "@type":"Task",
           "id":@integer@,
           "status":"TODO",
+          "type":"DROPOFF",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -1579,7 +1635,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1591,6 +1647,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the current time is "2020-04-02 11:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -1619,10 +1676,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1645,13 +1704,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -1674,7 +1734,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1686,6 +1746,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1709,10 +1770,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"@string@.isDateTime()",
@@ -1722,13 +1785,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/2",
@@ -1751,7 +1815,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@
@@ -1763,6 +1827,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -1804,6 +1869,7 @@ Feature: Deliveries
       """
     Then the response status code should be 400
     And the response should be in JSON
+    Then print last JSON response
     And the JSON should match:
       """
       {
@@ -1812,6 +1878,11 @@ Feature: Deliveries
         "hydra:title":"An error occurred",
         "hydra:description":@string@,
         "violations":[
+          {
+            "propertyPath":"items",
+            "message":@string@,
+            "code":null
+          },
           {
             "propertyPath":"items",
             "message":@string@,
@@ -1913,10 +1984,12 @@ Feature: Deliveries
         "@id": "/api/deliveries/1",
         "@type": "http://schema.org/ParcelDelivery",
         "id": @integer@,
+        "tasks":@array@,
         "pickup": {
             "@id": "@string@.startsWith('/api/tasks')",
             "@type": "Task",
             "id": @integer@,
+            "type": "PICKUP",
             "status": "TODO",
             "address": {
                 "@id": "/api/addresses/1",
@@ -1940,12 +2013,13 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": "@array@"
+            "barcode": {"@*@":"@*@"}
         },
         "dropoff": {
             "@id": "@string@.startsWith('/api/tasks')",
             "@type": "Task",
             "id": @integer@,
+            "type": "DROPOFF",
             "status": "TODO",
             "address": {
                 "@id": "/api/addresses/4",
@@ -1969,7 +2043,7 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": "@array@"
+            "barcode": {"@*@":"@*@"}
         },
         "trackingUrl": @string@
     }
@@ -1991,6 +2065,7 @@ Feature: Deliveries
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the current time is "2022-05-05 12:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -2019,10 +2094,12 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -2045,13 +2122,14 @@ Feature: Deliveries
           "comments": "",
           "weight": null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -2074,7 +2152,7 @@ Feature: Deliveries
           "comments": "",
           "weight":null,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()"
         },
         "trackingUrl": @string@

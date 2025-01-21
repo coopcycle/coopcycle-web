@@ -53,7 +53,9 @@ Feature: Tasks
             "next":null,
             "packages": [],
             "barcode": "@array@",
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -85,7 +87,9 @@ Feature: Tasks
             "next":null,
             "packages":[],
             "barcode": "@array@",
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -111,13 +115,15 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
-            "barcode": "@array@",
+            "barcode": @array@,
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -143,13 +149,15 @@ Feature: Tasks
             "metadata":[],
             "weight":null,
             "packages": [],
-            "barcode": "@array@",
+            "barcode": @array@,
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           }
         ],
         "hydra:view": {
@@ -647,7 +655,9 @@ Feature: Tasks
         "incidents": [],
         "packages": [],
         "barcode": "@array@",
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1120,7 +1130,9 @@ Feature: Tasks
         "incidents": [],
         "packages": [],
         "barcode": "@array@",
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1203,7 +1215,9 @@ Feature: Tasks
         "incidents": [],
         "packages": [],
         "barcode": "@array@",
-        "createdAt":"@string@.isDateTime()"
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1335,7 +1349,9 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
-            "barcode": "@array@",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -1367,7 +1383,9 @@ Feature: Tasks
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
-            "barcode": "@array@",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           }
         ],
@@ -1782,6 +1800,7 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1794,6 +1813,7 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1802,7 +1822,8 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "tasks":@array@
       }
       """
 
@@ -1833,6 +1854,7 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1845,6 +1867,7 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1853,6 +1876,7 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -1878,6 +1902,7 @@ Feature: Tasks
           "@type":"Task",
           "id":@integer@,
           "status":"DONE",
+          "type":"PICKUP",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
           "doneBefore":"2019-11-12T18:30:00+01:00",
@@ -1890,6 +1915,7 @@ Feature: Tasks
           "@type":"Task",
           "id":@integer@,
           "status":"DONE",
+          "type":"DROPOFF",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
           "doneBefore":"2019-11-12T19:30:00+01:00",
@@ -1897,6 +1923,7 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -2396,11 +2423,12 @@ Feature: Tasks
       {
          "packages":[
             {
-               "type":"SMALL",
-               "name":"SMALL",
-               "quantity":4,
-               "volume_per_package": 1,
-               "short_code": "AB"
+              "type":"SMALL",
+              "name":"SMALL",
+              "quantity":4,
+              "volume_per_package": 1,
+              "short_code": "AB",
+              "labels":@array@
             }
          ],
          "@*@": "@*@"

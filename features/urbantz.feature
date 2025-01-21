@@ -287,6 +287,7 @@ Feature: Urbantz
       | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     And the store with name "Acme" is associated with Urbantz hub "61289572c2b7aab94f380d76"
@@ -581,6 +582,7 @@ Feature: Urbantz
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/2",
@@ -603,13 +605,14 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages":[],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
         "dropoff":{
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/4",
@@ -632,9 +635,10 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages": [],
-          "barcode": "@array@",
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """

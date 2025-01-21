@@ -2,13 +2,13 @@
   <thead>
     <th>#</th>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <th>{% trans %}order.list.customer{% endtrans %}</th>
+      <th>{% trans %}order.list.state{% endtrans %}</th>
+      <th>{% trans %}delivery.table.heading.owner{% endtrans %}</th>
     {% endif %}
-    <th>{% trans %}order.list.state{% endtrans %}</th>
     <th>{% trans %}order.list.summary{% endtrans %}</th>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
-    <th class="text-right">{% trans %}basics.platform_fees{% endtrans %}</th>
+      <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
+      <th class="text-right">{% trans %}basics.platform_fees{% endtrans %}</th>
     {% endif %}
     <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
     {% if with_receipt ?? true %}
@@ -42,21 +42,28 @@
       </a>
     </td>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <td width="10%">
-      {% if order.customer is not null %}
-        {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
+    <td width="5%">{% include '_partials/order/state.html.twig' %}</td>
+    <td>
+      {% if order.hasVendor() and not order.isMultiVendor() %}
+        {{ order.vendor.name }}
+      {% elseif order.delivery and order.delivery.store %}
+        {{ order.delivery.store.name }}
       {% endif %}
     </td>
     {% endif %}
-    <td width="5%">{% include '_partials/order/state.html.twig' %}</td>
-    <td>{% include '_partials/order/summary.html.twig' %}</td>
+    <td>
+      {% if order.customer is not null %}
+        {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
+      {% endif %}
+      {% include '_partials/order/summary.html.twig' %}
+    </td>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <td class="text-right">
+    <td width="8%" class="text-right">
       <span>{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</span>
     </td>
-    <td class="text-right">{{ order.getFeeTotal()|price_format }}</td>
+    <td width="8%" class="text-right">{{ order.getFeeTotal()|price_format }}</td>
     {% endif %}
-    <td class="text-right">
+    <td width="8%" class="text-right">
       <span>{{ order.total|price_format }}</span>
     </td>
     {% if with_receipt ?? true %}

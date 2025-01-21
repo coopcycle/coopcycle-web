@@ -169,7 +169,10 @@ Feature: Dispatch
         "orgName": @string@,
         "images": @array@,
         "hasIncidents": @boolean@,
-        "barcode": "@array@"
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
+        "barcode": @array@,
+        "packages": @array@
       }
       """
 
@@ -519,6 +522,7 @@ Feature: Dispatch
             "id":5,
             "@*@":"@*@"
          },
+         "tasks":@array@,
          "trackingUrl":@string@
       }
       """
@@ -549,15 +553,18 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
+         "tasks":@array@,
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
+            "type": "PICKUP",
             "id":4,
             "@*@":"@*@"
          },
          "dropoff":{
             "@id":"/api/tasks/8",
             "@type":"Task",
+            "type": "DROPOFF",
             "id":8,
             "@*@":"@*@"
          },
@@ -678,6 +685,7 @@ Feature: Dispatch
           {
             "@id":"/api/tasks/8",
             "@type":"Task",
+            "type":"DROPOFF",
             "id":8,
             "isAssigned":true,
             "assignedTo":"sarah",
@@ -686,6 +694,7 @@ Feature: Dispatch
           {
             "@id":"/api/tasks/9",
             "@type":"Task",
+            "type": "DROPOFF",
             "id":9,
             "isAssigned":true,
             "assignedTo":"sarah",

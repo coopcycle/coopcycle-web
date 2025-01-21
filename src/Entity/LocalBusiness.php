@@ -307,6 +307,8 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     protected bool $autoAcceptOrdersEnabled = false;
 
+    protected string $paymentGateway = 'stripe';
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -1215,5 +1217,15 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function getBillingMethod(): string
     {
         return $this->billingMethod;
+    }
+
+    public function setPaymentGateway(string $paymentGateway): void
+    {
+        $this->paymentGateway = $paymentGateway;
+    }
+
+    public function getPaymentGateway(): string
+    {
+        return $this->paymentGateway;
     }
 }

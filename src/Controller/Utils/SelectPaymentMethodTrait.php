@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -68,6 +69,8 @@ trait SelectPaymentMethodTrait
         )->first();
 
         $stripe = [];
+        $paygreen = [];
+
         if ($cardPayment) {
             $hashId = $hashids8->encode($cardPayment->getId());
             $stripe = [
@@ -78,9 +81,20 @@ trait SelectPaymentMethodTrait
             ];
         }
 
+        // For Paygreen
+        foreach ($order->getPayments() as $payment) {
+            $details = $payment->getDetails();
+            foreach ($details as $key => $value) {
+                if (str_starts_with($key, 'paygreen')) {
+                    $paygreen[$key] = $value;
+                }
+            }
+        }
+
         return new JsonResponse([
             'payments' => $normalizer->normalize($payments, 'json', ['groups' => ['payment']]),
             'stripe' => $stripe,
+            'paygreen' => $paygreen,
         ]);
     }
 }

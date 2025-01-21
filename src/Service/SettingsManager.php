@@ -228,13 +228,14 @@ class SettingsManager
     {
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
+        $supportsPaygreen = $this->configKeysAreNotEmpty('paygreen_public_key', 'paygreen_secret_key', 'paygreen_shop_id');
 
         if ($this->forceStripe) {
 
             return $supportsStripe;
         }
 
-        return $supportsStripe || $supportsMercadopago;
+        return $supportsStripe || $supportsMercadopago || $supportsPaygreen;
     }
 
     public function canSendSms()
@@ -347,5 +348,21 @@ class SettingsManager
         if ($setting !== null) {
             $this->doctrine->getManagerForClass($this->configEntityName)->remove($setting);
         }
+    }
+
+    private function configKeysAreNotEmpty(...$keys)
+    {
+        foreach ($keys as $key) {
+            try {
+                $value = $this->craueConfig->get($key);
+                if (empty($value)) {
+                    return false;
+                }
+            } catch (\RuntimeException $e) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

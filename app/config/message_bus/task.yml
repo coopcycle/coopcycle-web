@@ -23,6 +23,9 @@ services:
     arguments:
       - '@event_recorder'
       - '@translator'
+      - '@AppBundle\Entity\TaskListRepository'
+      - '@routing_service'
+      - '@logger'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\MarkAsDone
