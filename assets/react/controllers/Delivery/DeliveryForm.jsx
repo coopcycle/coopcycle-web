@@ -106,7 +106,7 @@ const baseURL = location.protocol + '//' + location.host
 export default function ({ storeId, deliveryId, order, trackingLink }) {
 
   // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
-  const isAdmin = false
+  const isAdmin = true
 
   const httpClient = new window._auth.httpClient()
 
