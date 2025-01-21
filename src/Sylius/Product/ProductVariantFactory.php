@@ -58,16 +58,6 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $nameParts = [];
 
-        foreach ($delivery->getTasks() as $task) {
-            $clientName = $task->getAddress()->getName();
-
-            $nameParts[] = sprintf('%s: %s',
-                $this->translator->trans(sprintf('task.type.%s', $task->getType())),
-                $clientName ?: $task->getAddress()->getStreetAddress());
-        }
-
-        $nameParts[] = $this->metersToKilometers($delivery->getDistance());
-
         if ($delivery->hasPackages()) {
             foreach ($delivery->getPackages() as $packageQuantity) {
                 $nameParts[] = sprintf('%d × %s', $packageQuantity->getQuantity(), $packageQuantity->getPackage()->getName());
@@ -77,6 +67,8 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         if ($delivery->getWeight()) {
             $nameParts[] = $this->gramsToKilos($delivery->getWeight());
         }
+
+        $nameParts[] = $this->metersToKilometers($delivery->getDistance());
 
         $name = implode(' - ', $nameParts);
 
