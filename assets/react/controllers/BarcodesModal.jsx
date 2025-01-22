@@ -112,8 +112,10 @@ export default function (props) {
 
   const [_items, setItems] = useState([]);
 
+  const { t } = useTranslation()
+
   const { showLabel, deliveryId } = {
-    showLabel: 'Show barcodes',
+    showLabel: t("SHOW_BARCODES"),
     deliveryId: null, 
     ...props,
   }
