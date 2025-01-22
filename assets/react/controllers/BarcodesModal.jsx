@@ -3,6 +3,8 @@ import { Modal, Card, Descriptions, Col, Row, Tooltip, Badge } from 'antd'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 
+const baseURL = location.protocol + '//' + location.host
+
 function _generateLabelURL(barcode, token) {
   return window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&token=' + token
 }
@@ -107,16 +109,47 @@ function TaskBarcode({ index, task }) {
 }
 
 export default function (props) {
-  const { items, showLabel } = {
+
+  const { items, showLabel, deliveryId } = {
     items: '[]',
     showLabel: 'Show barcodes',
+    deliveryId: null, 
     ...props,
   }
-  const _items = _(JSON.parse(items))
-    .sortBy('position')
-    .map(i => i.task)
+
+  console.log("delivery id", deliveryId)
+
+  const httpClient = new window._auth.httpClient()
+
+  const getDeliveryTasks = async () => {
+    const { response, error } = httpClient.get(`${baseURL}/api/deliveries/${deliveryId}?`)
+
+    if (error) {
+      return
+    }
+
+    if (response) {
+      console.log("response", response)
+    } 
+  }
+
+  getDeliveryTasks()
+  
+  let _items
+
+  if (typeof (items) === 'string') {
+    _items = _(JSON.parse(items))
+  } else {
+    _items = items
+  }
+
+  console.log("_items", _items)
+  
+  _items
+    // .sortBy('position')
+    // .map(i => i.task)
     .filter(i => i.type !== 'PICKUP')
-    .value()
+    // .value()
 
   const shouldOpenModal = _shouldOpenModal(_items)
   const [isOpen, setIsOpen] = useState(false)
