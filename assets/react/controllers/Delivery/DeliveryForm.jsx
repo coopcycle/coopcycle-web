@@ -104,7 +104,7 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function ({ storeId, deliveryId, order, trackingLink }) {
+export default function ({ storeId, deliveryId, order }) {
 
   // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
   const isAdmin = true
@@ -118,15 +118,7 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
-  
-
-  let deliveryPrice
-  if (order) {
-    const orderInfos = JSON.parse(order)
-    deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
-  }
-
-
+  const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({
     tasks: [
       pickupSchema,
@@ -134,6 +126,14 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
     ]
   })
   const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
+
+  let deliveryPrice
+
+  if (order) {
+    const orderInfos = JSON.parse(order)
+    deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
+  }
+
 
   const { t } = useTranslation()
   
@@ -211,10 +211,11 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
               task.tags = tags
             }
           })
-          console.log(delivery.response)
+          console.log("response", delivery.response)
           previousValues.current = delivery.response
 
           setInitialValues(delivery.response)
+          setTrackingLink(delivery.response.trackingUrl)
           setAddresses(addresses.response['hydra:member'])
           setStoreDeliveryInfos(storeInfos.response)
           setTags(tags.response['hydra:member'])
@@ -453,16 +454,16 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                   <div className="order-informations">
 
                     {deliveryId && (
-                      <>
+                  
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                          {t("DELIVERY_FORM_TRACKING_LINK")}
                         </a>{'  '}
                         <i className="fa fa-external-link"></i>
-                        <a href="#" className="pull-right"><i className="fa fa-clipboard" title={t("DELIVERY_FROM_TRACKING_LINK_COPY") } aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
+                        <a href="#" className="pull-right"><i className="fa fa-clipboard" title={t("DELIVERY_FROM_TRACKING_LINK_COPY")} aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
+                        <div className='mt-2'><BarcodesModal deliveryId={deliveryId} /></div>
                       </div>
-                        <BarcodesModal items={values.tasks} />
-                        </>
+                      
                     )}
 
                     <div className="order-informations__map">

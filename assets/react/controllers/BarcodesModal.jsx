@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Modal, Card, Descriptions, Col, Row, Tooltip, Badge } from 'antd'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -110,46 +110,34 @@ function TaskBarcode({ index, task }) {
 
 export default function (props) {
 
-  const { items, showLabel, deliveryId } = {
-    items: '[]',
+  const [_items, setItems] = useState([]);
+
+  const { showLabel, deliveryId } = {
     showLabel: 'Show barcodes',
     deliveryId: null, 
     ...props,
   }
 
-  console.log("delivery id", deliveryId)
-
   const httpClient = new window._auth.httpClient()
 
   const getDeliveryTasks = async () => {
-    const { response, error } = httpClient.get(`${baseURL}/api/deliveries/${deliveryId}?`)
+    const { response, error } = await httpClient.get(`${baseURL}/api/deliveries/${deliveryId}?groups=barcode,address,delivery`)
 
     if (error) {
       return
     }
 
     if (response) {
-      console.log("response", response)
+      return response.tasks
     } 
   }
-
-  getDeliveryTasks()
   
-  let _items
-
-  if (typeof (items) === 'string') {
-    _items = _(JSON.parse(items))
-  } else {
-    _items = items
-  }
-
-  console.log("_items", _items)
-  
-  _items
-    // .sortBy('position')
-    // .map(i => i.task)
-    .filter(i => i.type !== 'PICKUP')
-    // .value()
+  useEffect(() => {
+    getDeliveryTasks().then(items => {
+      const _items = items.filter(i => i.type !== 'PICKUP')
+      setItems(_items)
+    })
+  },[])
 
   const shouldOpenModal = _shouldOpenModal(_items)
   const [isOpen, setIsOpen] = useState(false)
