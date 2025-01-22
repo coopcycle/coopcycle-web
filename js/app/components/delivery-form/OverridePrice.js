@@ -1,6 +1,7 @@
 import React from 'react'
 import { Checkbox, Input, InputNumber } from 'antd'
 import { useFormikContext, Field } from 'formik'
+import { useTranslation } from 'react-i18next'
 import './OverridePrice.scss'
 
 const getCurrencyCode = () => {
@@ -10,11 +11,12 @@ const getCurrencyCode = () => {
 
 export default ({ setOverridePrice, overridePrice, setCalculatePrice }) => {
   const { setFieldValue } = useFormikContext()
+  const { t } = useTranslation()
 
   return (
     <div style={{ maxWidth: '100%' }} className="mt-4">
       <div>
-        Définir le prix manuellement
+        {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
         <Checkbox
           className="ml-4 mb-2"
           checked={overridePrice}
@@ -30,7 +32,7 @@ export default ({ setOverridePrice, overridePrice, setCalculatePrice }) => {
             <label
               className="override__form__variant-name___label font-weight-bold"
               htmlFor="variantName">
-              Nom du produit
+              {t('DELIVERY_FORM_PRODUCT_NAME')}
             </label>
             <div className="override__form__variant-name___input">
               <Field name={'variantName'}>
@@ -45,8 +47,7 @@ export default ({ setOverridePrice, overridePrice, setCalculatePrice }) => {
                 )}
               </Field>
               <div className="small text-muted">
-                Le nom qui apparaîtra dans le résumé de la commande et la
-                facture
+                {t('DELIVERY_FORM_NAME_INSTRUCTION')}
               </div>
             </div>
           </div>
@@ -54,7 +55,7 @@ export default ({ setOverridePrice, overridePrice, setCalculatePrice }) => {
             <label
               className="override__form__variant-price___label font-weight-bold"
               htmlFor="variantPrice">
-              Prix TCC
+              {t('DELIVERY_FORM_VAT_PRICE')}
             </label>
             <Field
               className="override__form__variant-price___input"
