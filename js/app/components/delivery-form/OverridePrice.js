@@ -51,7 +51,7 @@ export default ({
                   />
                 )}
               </Field>
-              <div className="override__form__text-muted text-muted">
+              <div className="small text-muted">
                 Le nom qui apparaîtra dans le résumé de la commande et la
                 facture
               </div>

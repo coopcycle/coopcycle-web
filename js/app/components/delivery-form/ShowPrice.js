@@ -33,18 +33,29 @@ export default ({
           <div>
             {money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
           </div>
-          <div className="mt-2 small">
-            Editing price is not already available in beta version.
-          </div>
+          {calculatedPrice.amount && overridePrice && (
+            <div className="mt-4 mb-4">
+              <div className="font-weight-bold mb-2">
+                {t('DELIVERY_FORM_NEW_PRICE')}
+              </div>
+              <div className="mt-2">
+                {money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}
+              </div>
+            </div>
+          )}
+          <OverridePrice
+            deliveryId={deliveryId}
+            setOverridePrice={setOverridePrice}
+            overridePrice={overridePrice}
+            setCalculatePrice={setCalculatePrice}
+          />
         </div>
       ) : null}
 
       {!deliveryId ? (
         <>
           <div className="font-weight-bold mb-2">
-            {deliveryId
-              ? t('DELIVERY_FORM_NEW_PRICE')
-              : t('DELIVERY_FORM_TOTAL_PRICE')}{' '}
+            {t('DELIVERY_FORM_TOTAL_PRICE')}
           </div>
           <div>
             {calculatedPrice.amount ? (
