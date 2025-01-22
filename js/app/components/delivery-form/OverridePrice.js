@@ -19,7 +19,7 @@ export default ({
   const { setFieldValue } = useFormikContext()
 
   return (
-    <div className="mt-4">
+    <div style={{ maxWidth: '100%' }} className="mt-4">
       <div>
         Définir le prix manuellement
         <Checkbox
