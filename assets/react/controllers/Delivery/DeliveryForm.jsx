@@ -19,6 +19,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 import BarcodesModal from '../BarcodesModal.jsx'
+import OverridePrice from '../../../../js/app/components/delivery-form/OverridePrice.js'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -503,7 +504,8 @@ export default function ({ storeId, deliveryId, order }) {
                               {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
                             </div>
                           </div>
-                        }
+                            }
+                          <OverridePrice/>
                       </div>
                       {priceError.isPriceError ?
                         <div className="alert alert-danger mt-4" role="alert">

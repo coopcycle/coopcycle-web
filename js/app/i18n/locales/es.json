@@ -471,6 +471,7 @@
         "DELIVERY_FORM_NEW_PRICE": "Nuevo precio",  
         "DELIVERY_FORM_OLD_PRICE": "Precio anterior",  
         "DELIVERY_FORM_TRACKING_LINK": "Enlace de seguimiento",  
-        "DELIVERY_FROM_TRACKING_LINK_COPY": "Copiar enlace de seguimiento"
+        "DELIVERY_FROM_TRACKING_LINK_COPY": "Copiar enlace de seguimiento",
+        "SHOW_BARCODES": "Ver los códigos de barras"
     }
 }
