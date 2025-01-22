@@ -113,6 +113,7 @@ export default function OrganizationsTable({
       pagination={{
         pageSize,
         total,
+        showSizeChanger: true,
       }}
       onChange={pagination => {
         reloadData(pagination.current, pagination.pageSize)

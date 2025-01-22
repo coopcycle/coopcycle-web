@@ -130,6 +130,7 @@ export default function OrdersTable({
       pagination={{
         pageSize,
         total,
+        showSizeChanger: true,
       }}
       onChange={pagination => {
         setCurrentPage(pagination.current)
