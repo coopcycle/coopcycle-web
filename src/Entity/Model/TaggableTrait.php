@@ -17,7 +17,7 @@ trait TaggableTrait
 
     /**
      * @SerializedName("tags")
-     * @Groups({"task", "order", "order_minimal"})
+     * @Groups({"task", "order", "order_minimal", "delivery"})
      */
     public function getTags(): array
     {

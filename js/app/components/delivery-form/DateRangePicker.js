@@ -51,7 +51,7 @@ function generateTimeSlots(afterHour = null) {
   })
 }
 
-const DateTimeRangePicker = ({ format, index }) => {
+const DateTimeRangePicker = ({ format, index, isAdmin }) => {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
 
@@ -69,21 +69,26 @@ const DateTimeRangePicker = ({ format, index }) => {
 
   /** we use internal state and then synchronize it with the form values */
   const [afterValue, setAfterValue] = useState(() => {
-    const formValue = values.tasks[index].afterValue
+    const formValue = values.tasks[index].after
     return formValue ? moment(formValue) : defaultAfterValue
   })
 
   const [beforeValue, setBeforeValue] = useState(() => {
-    const formValue = values.tasks[index].beforeValue
+    const formValue = values.tasks[index].before
     return formValue ? moment(formValue) : defaultBeforeValue
   })
 
   useEffect(() => {
-    setFieldValue(`tasks[${index}].doneAfter`, afterValue.toISOString(true))
-    setFieldValue(`tasks[${index}].doneBefore`, beforeValue.toISOString(true))
+    setFieldValue(`tasks[${index}].after`, afterValue.toISOString(true))
+    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString(true))
   }, [afterValue, beforeValue, index, setFieldValue])
 
-  const [isComplexPicker, setIsComplexPicker] = useState(false)
+  const [isComplexPicker, setIsComplexPicker] = useState(
+    moment(values.tasks[index].after).isBefore(
+      values.tasks[index].before,
+      'day',
+    ),
+  )
 
   const [timeValues, setTimeValues] = useState(() => {
     const after = afterValue || defaultAfterValue
@@ -101,9 +106,7 @@ const DateTimeRangePicker = ({ format, index }) => {
     if (afterValue) {
       const updatedSecondOptions = generateTimeSlots(afterValue)
       setSecondSelectOptions(updatedSecondOptions)
-    }
-
-    if (defaultAfterValue) {
+    } else if (defaultAfterValue) {
       const updatedSecondOptions = generateTimeSlots(defaultAfterValue)
       setSecondSelectOptions(updatedSecondOptions)
     }
@@ -131,21 +134,11 @@ const DateTimeRangePicker = ({ format, index }) => {
     const newAfterHour = moment(`${date} ${newValue}:00`)
     const newBeforeHour = newAfterHour.clone().add(60, 'minutes')
 
-    console.log(newAfterHour, newBeforeHour)
     setTimeValues({
       after: newAfterHour.format('HH:mm'),
       before: newBeforeHour.format('HH:mm'),
     })
 
-    // generate optios for the second picker (beforeValue)
-    const afterHour = moment({
-      h: newAfterHour.hours(),
-      m: newAfterHour.minutes(),
-    })
-    const updatedSecondOptions = generateTimeSlots(afterHour)
-    setSecondSelectOptions(updatedSecondOptions)
-
-    // set the form values for the delivery object
     setAfterValue(newAfterHour)
     setBeforeValue(newBeforeHour)
   }
@@ -170,12 +163,29 @@ const DateTimeRangePicker = ({ format, index }) => {
     setBeforeValue(newValues[1])
   }
 
+  // When we switch back to simple picker, we need to set back after and before at the same day
+  const handleSwitchComplexAndSimplePicker = () => {
+    if (isComplexPicker === true) {
+      const before = afterValue.clone().add(1, 'hours')
+      setBeforeValue(before)
+      setTimeValues(prevValues => ({
+        ...prevValues,
+        before: before.format('HH:mm'),
+      }))
+    }
+    setIsComplexPicker(!isComplexPicker)
+  }
+
   return isComplexPicker ? (
     <>
       {task.type === 'DROPOFF' ? (
-        <div className="mb-2 font-weight-bold">Heure de retrait </div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_DROPOFF_HOUR')}
+        </div>
       ) : (
-        <div className="mb-2 font-weight-bold">Heure de dépot</div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_PICKUP_HOUR')}
+        </div>
       )}
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <DatePicker.RangePicker
@@ -194,19 +204,25 @@ const DateTimeRangePicker = ({ format, index }) => {
         />
       </div>
 
-      <a
-        className="text-secondary"
-        title={t('SWITCH_COMPLEX_DATEPICKER')}
-        onClick={() => setIsComplexPicker(!isComplexPicker)}>
-        {t('SWITCH_COMPLEX_DATEPICKER')}
-      </a>
+      {isAdmin && (
+        <a
+          className="text-secondary"
+          title={t('SWITCH_COMPLEX_DATEPICKER')}
+          onClick={handleSwitchComplexAndSimplePicker}>
+          {t('SWITCH_COMPLEX_DATEPICKER')}
+        </a>
+      )}
     </>
   ) : (
     <>
       {task.type === 'DROPOFF' ? (
-        <div className="mb-2 font-weight-bold">Heure de retrait </div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_DROPOFF_HOUR')}
+        </div>
       ) : (
-        <div className="mb-2 font-weight-bold">Heure de dépot</div>
+        <div className="mb-2 font-weight-bold">
+          {t('DELIVERY_FORM_PICKUP_HOUR')}
+        </div>
       )}
       <div className="picker-container">
         <DatePicker
@@ -252,14 +268,16 @@ const DateTimeRangePicker = ({ format, index }) => {
           ))}
         </Select>
       </div>
-      <a
-        className="text-secondary"
-        title={t('SWITCH_COMPLEX_DATEPICKER')}
-        onClick={() => setIsComplexPicker(!isComplexPicker)}>
-        {t('SWITCH_COMPLEX_DATEPICKER')}
-      </a>
-      {errors.tasks?.[index]?.doneBefore && (
-        <div className="text-danger">{errors.tasks[index].doneBefore}</div>
+      {isAdmin && (
+        <a
+          className="text-secondary"
+          title={t('SWITCH_COMPLEX_DATEPICKER')}
+          onClick={() => setIsComplexPicker(!isComplexPicker)}>
+          {t('SWITCH_COMPLEX_DATEPICKER')}
+        </a>
+      )}
+      {errors.tasks?.[index]?.before && (
+        <div className="text-danger">{errors.tasks[index].before}</div>
       )}
     </>
   )

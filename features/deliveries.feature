@@ -138,7 +138,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode":{"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -168,7 +169,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode":{"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -253,7 +255,8 @@ Feature: Deliveries
           "weight": 2000,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -283,7 +286,8 @@ Feature: Deliveries
           "weight": 2000,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -380,7 +384,8 @@ Feature: Deliveries
             }
           ],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -419,7 +424,8 @@ Feature: Deliveries
             }
           ],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -503,7 +509,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -533,7 +540,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -601,7 +609,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -631,7 +640,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -703,7 +713,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -733,7 +744,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -805,7 +817,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -835,7 +848,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -907,7 +921,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -937,7 +952,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1010,7 +1026,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1040,7 +1057,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1113,7 +1131,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1143,7 +1162,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1216,7 +1236,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1246,7 +1267,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1310,7 +1332,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1340,7 +1363,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1407,7 +1431,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1437,7 +1462,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "tasks":@array@,
         "trackingUrl": @string@
@@ -1508,7 +1534,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1538,7 +1565,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1606,7 +1634,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1636,7 +1665,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1705,7 +1735,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1735,7 +1766,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1786,7 +1818,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1816,7 +1849,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -2013,7 +2047,8 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": {"@*@":"@*@"}
+            "barcode": {"@*@":"@*@"},
+            "tags": []
         },
         "dropoff": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -2043,7 +2078,8 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": {"@*@":"@*@"}
+            "barcode": {"@*@":"@*@"},
+            "tags": []
         },
         "trackingUrl": @string@
     }
@@ -2123,7 +2159,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2153,7 +2190,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -2182,3 +2220,191 @@ Feature: Deliveries
         "@type": "DeliveryImportQueue"
       }
       """
+
+  Scenario: Create delivery with tag and then update it with another tag
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 2000,
+          "tags": ["cold"]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"PICKUP",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "2.00 kg",
+          "weight": 2000,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"DROPOFF",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 2000,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}]
+        },
+        "trackingUrl": @string@
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1" with body:
+    """
+      {
+        "dropoff":{
+          "tags": ["cold", "mon-tag"]
+        }
+      }
+    """
+     Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"PICKUP",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "2.00 kg",
+          "weight": 2000,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"DROPOFF",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 2000,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}, {"name": "MON TAG", "slug": "mon-tag", "color": "#FF00B4"}]
+        },
+        "trackingUrl": @string@
+      }
+      """
+   

@@ -5,32 +5,38 @@ import { useTranslation } from 'react-i18next'
 
 import './Packages.scss'
 
-export default ({ storeId, index, packages }) => {
-  const { setFieldValue, errors } = useFormikContext()
+export default ({ index, packages, deliveryId }) => {
+  const { setFieldValue, errors, values } = useFormikContext()
 
-  const [packagesType, setPackagesType] = useState([])
-  const [packagesPicked, setPackagesPicked] = useState([])
+  let picked = []
+
+  for (const p of packages) {
+    const newPackages = {
+      type: p.name,
+      quantity: 0,
+    }
+    picked.push(newPackages)
+  }
+
+  // format initial API values in the EDIT case
+  if (deliveryId) {
+    const packagesToEdit = values.tasks[index].packages
+    const newPackagesArray = picked.map(p => {
+      const match = packagesToEdit.find(item => item.type === p.type)
+      return match || p
+    })
+    picked = newPackagesArray
+  }
+
+  const [packagesPicked, setPackagesPicked] = useState(picked)
 
   const { t } = useTranslation()
 
   useEffect(() => {
-    /** format the data in order to use them with the pickers.  */
-    const picked = []
-
-    for (const p of packages) {
-      const newPackages = {
-        type: p.name,
-        quantity: 0,
-      }
-      picked.push(newPackages)
+    const filteredPackages = packagesPicked.filter(p => p.quantity > 0)
+    if (filteredPackages.length > 0) {
+      setFieldValue(`tasks[${index}].packages`, filteredPackages)
     }
-
-    setPackagesType(packages)
-    setPackagesPicked(picked)
-  }, [storeId, packages])
-
-  useEffect(() => {
-    setFieldValue(`tasks[${index}].packages`, packagesPicked)
   }, [packagesPicked, setFieldValue, index])
 
   const handlePlusButton = item => {
@@ -38,9 +44,10 @@ export default ({ storeId, index, packages }) => {
     const index = packagesPicked.findIndex(p => p === pack)
     if (index !== -1) {
       const newPackagesPicked = [...packagesPicked]
+      const newQuantity = pack.quantity + 1
       newPackagesPicked[index] = {
         type: pack.type,
-        quantity: pack.quantity + 1,
+        quantity: newQuantity,
       }
       setPackagesPicked(newPackagesPicked)
     }
@@ -52,16 +59,18 @@ export default ({ storeId, index, packages }) => {
 
     if (index !== -1) {
       const newPackagesPicked = [...packagesPicked]
+      const newQuantity = pack.quantity > 0 ? pack.quantity - 1 : 0
       newPackagesPicked[index] = {
         type: pack.type,
-        quantity: pack.quantity > 0 ? pack.quantity - 1 : 0,
+        quantity: newQuantity,
       }
+
       setPackagesPicked(newPackagesPicked)
     }
   }
 
   /**Used to make the input a controlated field */
-  const gatPackageQuantity = item => {
+  const getPackagesItems = item => {
     const sameTypePackage = packagesPicked.find(p => p.type === item.name)
     return sameTypePackage.quantity
   }
@@ -69,7 +78,7 @@ export default ({ storeId, index, packages }) => {
   return (
     <>
       <div className="mb-2 font-weight-bold">{t('DELIVERY_FORM_PACKAGES')}</div>
-      {packagesType.map(item => (
+      {packages.map(item => (
         <div key={item['@id']} className="packages-item mb-2">
           <div className="packages-item__quantity ">
             <Button
@@ -80,10 +89,21 @@ export default ({ storeId, index, packages }) => {
 
             <Input
               className="packages-item__quantity__input text-center"
-              value={gatPackageQuantity(item)}
+              value={getPackagesItems(item)}
               style={
-                gatPackageQuantity(item) !== 0 ? { fontWeight: '700' } : null
+                getPackagesItems(item) !== 0 ? { fontWeight: '700' } : null
               }
+              onChange={e => {
+                const packageIndex = packagesPicked.findIndex(
+                  p => p.type === item.name,
+                )
+                const newPackagesPicked = [...packagesPicked]
+                newPackagesPicked[packageIndex] = {
+                  type: item.name,
+                  quantity: e.target.value,
+                }
+                setPackagesPicked(newPackagesPicked)
+              }}
             />
 
             <Button

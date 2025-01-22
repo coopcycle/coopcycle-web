@@ -398,6 +398,7 @@ trait StoreTrait
             $this->auth([
                 'layout' => $request->attributes->get('layout'),
                 'store' => $store,
+                'order' => null,
                 'delivery' => $delivery,
                 'stores_route' => $routes['stores'],
                 'store_route' => $routes['store'],
@@ -919,7 +920,7 @@ trait StoreTrait
         $entityManager->flush();
 
         // slugify to get a safe filename. it may return an empty string but we had a hash afterwards so it should be alright.
-        $filename = $slugify->slugify($uploadedFile->getClientOriginalName()); 
+        $filename = $slugify->slugify($uploadedFile->getClientOriginalName());
         $filename = substr($filename, 0, -4); // remove .csv extension in filename
         $filename = substr($filename, 0, 100); // limit the filename length
 

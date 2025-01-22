@@ -455,11 +455,22 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Por favor seleccione al menos una mercancía",
         "DELIVERY_FORM_ERROR_TELEPHONE": "Por favor ingrese un número de teléfono",
         "DELIVERY_FORM_ERROR_WEIGHT": "Por favor especifique un peso",
-        "DELIVERY_FORM_ERROR_HOUR": "La entrega debe ser antes de la recogida",
+        "DELIVERY_FORM_ERROR_HOUR": "La recogida debe ser antes de la entrega",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Recordar esta dirección",
         "DELIVERY_FORM_TOTAL_PRICE": "Precio total",
         "DELIVERY_FORM_TOTAL_VAT": "IVA incluido",
         "DELIVERY_FORM_TOTAL_EX_VAT": "Sin IVA",
-        "DELIVERY_FORM_REMOVE_DROPOFF": "Eliminar esta entrega"
+        "DELIVERY_FORM_REMOVE_DROPOFF": "Eliminar esta entrega",
+        "SWITCH_COMPLEX_DATEPICKER": "Seleccionar una fecha durante varios días",
+        "DELIVERY_FORM_SHOW_MORE" : "Ver más",
+        "DELIVERY_FORM_SHOW_LESS" : "Ver menos",
+        "DELIVERY_PICKUP": "Recogida",
+        "DELIVERY_DROPOFF": "Entrega",
+        "DELIVERY_FORM_PICKUP_HOUR": "Hora de recogida",
+        "DELIVERY_FORM_DROPOFF_HOUR": "Hora de entrega",
+        "DELIVERY_FORM_NEW_PRICE": "Nuevo precio",  
+        "DELIVERY_FORM_OLD_PRICE": "Precio anterior",  
+        "DELIVERY_FORM_TRACKING_LINK": "Enlace de seguimiento",  
+        "DELIVERY_FROM_TRACKING_LINK_COPY": "Copiar enlace de seguimiento"
     }
 }

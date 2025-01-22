@@ -51,3 +51,14 @@
 
 {% block alerts %}
 {% endblock %}
+
+{% block content %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    <div class="alert alert-info">
+      You can access the more-friendly, beta version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_delivery_beta', { id: delivery.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+ {{ parent() }}
+
+{% endblock %}

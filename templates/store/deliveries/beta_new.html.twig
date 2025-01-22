@@ -1,5 +1,8 @@
 {% extends layout %}
 
+
+{% set is_new = delivery.id is null %}
+
 {% block dashboard_subnav %}
   <div>
     <a href="{{ path(back_route) }}">
@@ -8,21 +11,62 @@
   </div>
 {% endblock %}
 
+
 {% block breadcrumb %}
-  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-  <li>{% trans %}orders.new{% endtrans %}</li>
+
+  {% if is_new %}
+    <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+    <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+    <li>{% trans %}orders.new{% endtrans %}</li>
+  {% else %}
+    {% if is_granted('ROLE_DISPATCHER') %}
+      {% set store = delivery.store %}
+
+      {% if store is not null %}
+        <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+        <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+      {% else %}
+        {#      TODO: display properly the restaurant(s) for foodtech orders #}
+      {% endif %}
+
+      {% set order = delivery.order %}
+      {% if order is not null %}
+        <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
+        <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
+        <li>{% trans %}basics.editing{% endtrans %}</li>
+      {% else %}
+        <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
+        <li>#{{ delivery.id }}</li>
+      {% endif %}
+    {% endif %}
+  {% endif %}
 {% endblock %}
 
 {% block content %}
 
   {% include 'delivery/_partials/navbar.html.twig' %}
-  
+
   {% block alerts %}
   {% endblock %}
 
-  
-  {% set is_new = delivery.id is null %}
+  {% set order = delivery.order is null ? null : delivery.order|serialize %}
 
-  <div {{ react_component('Delivery/DeliveryForm', { isNew: is_new, storeId: store.id }) }}></div>
+  {% if delivery.order is not empty %}
+    <h3 class="text-center">{{ 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.order.number }) }}</h3>
+  {% endif %}
+  
+
+  {% if not is_new %}
+    {% set tracking_link = url('public_delivery', { hashid: delivery|hashid }) %}
+  {% else %}
+    {% set tracking_link = null %}
+  {% endif %}
+
+  <div {{ react_component('Delivery/DeliveryForm', { 
+    isNew: is_new,
+    storeId: store.id,
+    deliveryId: delivery.id,
+    order: order,
+    trackingLink: tracking_link
+    }) }}></div>
 {% endblock %}

@@ -616,12 +616,23 @@
         "DELIVERY_FORM_ERROR_PACKAGES": "Veuillez sélectionner au moins une marchandise",
         "DELIVERY_FORM_ERROR_TELEPHONE": "Veuillez entrer un numéro de téléphone",
         "DELIVERY_FORM_ERROR_WEIGHT": "Veuillez spécifier un poids",
-        "DELIVERY_FORM_ERROR_HOUR": "Le dépôt doit être avant le retrait",
+        "DELIVERY_FORM_ERROR_HOUR": "Le retrait doit être avant le dépôt",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contact",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Se souvenir de cette adresse",
         "DELIVERY_FORM_TOTAL_PRICE": "Prix total",
         "DELIVERY_FORM_TOTAL_VAT": "TTC",
         "DELIVERY_FORM_TOTAL_EX_VAT": "HT",
-        "DELIVERY_FORM_REMOVE_DROPOFF": "Retirer ce dépôt"
+        "DELIVERY_FORM_REMOVE_DROPOFF": "Retirer ce dépôt", 
+        "SWITCH_COMPLEX_DATEPICKER" : "Sélectionner une date sur plusieurs jours",
+        "DELIVERY_FORM_SHOW_MORE" : "Voir plus",
+        "DELIVERY_FORM_SHOW_LESS" : "Voir moins",
+        "DELIVERY_PICKUP" : "Retrait", 
+        "DELIVERY_DROPOFF ": "Dépôt", 
+        "DELIVERY_FORM_PICKUP_HOUR" : "Heure de retrait", 
+        "DELIVERY_FORM_DROPOFF_HOUR" : "Heure de dépôt", 
+        "DELIVERY_FORM_NEW_PRICE" : "Nouveau prix",
+        "DELIVERY_FORM_OLD_PRICE" : "Ancien prix", 
+        "DELIVERY_FORM_TRACKING_LINK" : "Lien de suivi", 
+        "DELIVERY_FROM_TRACKING_LINK_COPY" : "Copier le lien de suivi"
     }
 }

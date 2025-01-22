@@ -2,44 +2,62 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from './AddressBookNew'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
-import { Input } from 'antd'
+import { Input, Button } from 'antd'
 import DateRangePicker from './DateRangePicker'
 import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
+import Spinner from '../core/Spinner'
+import TimeSlotPicker from './TimeSlotPicker'
 
 import './Task.scss'
+import TagsSelect from '../TagsSelect'
 
-const baseURL = location.protocol + '//' + location.host
-
-export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
-  
-  const httpClient = new window._auth.httpClient()
-
-  const [packages, setPackages] = useState(null)
-
+export default ({
+  addresses,
+  storeId,
+  index,
+  storeDeliveryInfos,
+  deliveryId,
+  onAdd,
+  dropoffSchema,
+  onRemove,
+  showRemoveButton,
+  showAddButton,
+  packages,
+  isAdmin,
+  tags,
+}) => {
   const { t } = useTranslation()
 
-  const { values } = useFormikContext()
+  const { values, setFieldValue } = useFormikContext()
   const task = values.tasks[index]
 
   const format = 'LL'
 
+  const [showLess, setShowLess] = useState(false)
+  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
+
   useEffect(() => {
-    const getPackages = async () => {
-      const url = `${baseURL}/api/stores/${storeId}/packages`
-
-      const { response } = await httpClient.get(url)
-
-      if (response) {
-        const packages = response['hydra:member']
-        if (packages?.length > 0) {
-          setPackages(packages)
-        }
-      }
+    if (
+      isTimeSlotSelect &&
+      storeDeliveryInfos.timeSlots?.length > 0 &&
+      !deliveryId
+    ) {
+      setFieldValue(`tasks[${index}].after`, null)
+      setFieldValue(`tasks[${index}].before`, null)
+    } else {
+      setFieldValue(`tasks[${index}].timeSlot`, null)
     }
-    getPackages()
-  }, [storeId])
+  }, [isTimeSlotSelect, storeDeliveryInfos])
+
+  useEffect(() => {
+    const shouldShowLess =
+      task.type === 'DROPOFF' &&
+      values.tasks.length > 2 &&
+      index !== values.tasks.length - 1
+    setShowLess(shouldShowLess)
+  }, [task.type, values.tasks.length, index])
 
   const areDefinedTimeSlots = useCallback(() => {
     return (
@@ -50,8 +68,13 @@ export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
   }, [storeDeliveryInfos])
 
   return (
-    <div className="task">
-      <div className="task__header">
+    <div className="task border p-4 mb-4">
+      <div
+        className={
+          task.type === 'PICKUP'
+            ? 'task__header task__header--pickup'
+            : 'task__header task__header--dropoff'
+        }>
         {task.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
@@ -62,30 +85,74 @@ export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
             ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
             : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
         </h3>
+
+        <button type="button" className="task__button">
+          <i
+            className={!showLess ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
+            title={
+              showLess
+                ? t('DELIVERY_FORM_SHOW_MORE')
+                : t('DELIVERY_FORM_SHOW_LESS')
+            }
+            onClick={() => setShowLess(!showLess)}></i>
+        </button>
       </div>
 
-      <div className="task__body">
+      <div
+        className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
         <AddressBookNew addresses={addresses} index={index} />
 
+        {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
+        {isAdmin ? (
+          storeDeliveryInfos.timeSlots ? (
+            areDefinedTimeSlots() & !deliveryId ? (
+              <SwitchTimeSlotFreePicker
+                storeId={storeId}
+                storeDeliveryInfos={storeDeliveryInfos}
+                index={index}
+                format={format}
+                deliveryId={deliveryId}
+                isTimeSlotSelect={isTimeSlotSelect}
+                setIsTimeSlotSelect={setIsTimeSlotSelect}
+              />
+            ) : (
+              <DateRangePicker
+                format={format}
+                index={index}
+                isAdmin={isAdmin}
+              />
+            )
+          ) : (
+            <Spinner />
+          ) // case store
+        ) : storeDeliveryInfos.timeSlots ? (
+          areDefinedTimeSlots() & !deliveryId ? (
+            <TimeSlotPicker
+              storeId={storeId}
+              storeDeliveryInfos={storeDeliveryInfos}
+              index={index}
+            />
+          ) : (
+            <DateRangePicker format={format} index={index} />
+          )
+        ) : (
+          <Spinner />
+        )}
+
         {task.type === 'DROPOFF' ? (
-          <div>
+          <div className="mt-4">
             {packages ? (
-              <Packages storeId={storeId} index={index} packages={packages} />
+              <Packages
+                storeId={storeId}
+                index={index}
+                packages={packages}
+                deliveryId={deliveryId}
+              />
             ) : null}
-            <TotalWeight index={index} />
+            <TotalWeight index={index} deliveryId={deliveryId} />
           </div>
         ) : null}
 
-        {areDefinedTimeSlots() ? (
-          <SwitchTimeSlotFreePicker
-            storeId={storeId}
-            storeDeliveryInfos={storeDeliveryInfos}
-            index={index}
-            format={format}
-          />
-        ) : (
-          <DateRangePicker format={format} index={index} />
-        )}
         <div className="mt-4 mb-4">
           <label
             htmlFor={`tasks[${index}].comments`}
@@ -100,7 +167,49 @@ export default ({ addresses, storeId, index, storeDeliveryInfos }) => {
             style={{ resize: 'none' }}
           />
         </div>
+
+        <div className="mt-4 mb-4">
+          <div className="tags__title block mb-2 font-weight-bold">Tags</div>
+          <TagsSelect
+            tags={tags}
+            defaultValue={values.tasks[index].tags || []}
+            onChange={values => {
+              const tags = values.map(tag => tag.value)
+              setFieldValue(`tasks[${index}].tags`, tags)
+            }}
+          />
+        </div>
       </div>
+      {task.type === 'DROPOFF' && (
+        <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
+          {showRemoveButton && (
+            <Button
+              onClick={() => onRemove(index)}
+              type="button"
+              className="mb-4">
+              {t('DELIVERY_FORM_REMOVE_DROPOFF')}
+            </Button>
+          )}
+          {showAddButton && (
+            <div
+              className="mb-4"
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+              <Button
+                disabled={false}
+                onClick={() => {
+                  onAdd(dropoffSchema)
+                }}>
+                {t('DELIVERY_FORM_ADD_DROPOFF')}
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

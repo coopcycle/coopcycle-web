@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
-import { useFormikContext } from 'formik'
 
 import './SwitchTimeSlotFreePicker.scss'
 
-export default ({ storeId, storeDeliveryInfos, index, format }) => {
+export default ({
+  storeId,
+  storeDeliveryInfos,
+  index,
+  format,
+  isTimeSlotSelect,
+  setIsTimeSlotSelect,
+}) => {
   const { t } = useTranslation()
-  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
-
-  const { setFieldValue, errors } = useFormikContext()
-
-  useEffect(() => {
-    if (isTimeSlotSelect && storeDeliveryInfos.timeSlots.length > 0) {
-      setFieldValue(`tasks[${index}].doneAfter`, null)
-      setFieldValue(`tasks[${index}].doneBefore`, null)
-    } else {
-      setFieldValue(`tasks[${index}].timeSlot`, null)
-    }
-  }, [isTimeSlotSelect])
 
   return (
     <>
@@ -49,9 +43,6 @@ export default ({ storeId, storeDeliveryInfos, index, format }) => {
             onClick={() => setIsTimeSlotSelect(!isTimeSlotSelect)}
             title={t('SWITCH_DATEPICKER')}></i>
         </div>
-      )}
-      {errors.tasks?.[index]?.doneBefore && (
-        <div className="text-danger">{errors.tasks[index].doneBefore}</div>
       )}
     </>
   )
