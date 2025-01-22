@@ -168,17 +168,19 @@ export default ({
           />
         </div>
 
-        <div className="mt-4 mb-4">
-          <div className="tags__title block mb-2 font-weight-bold">Tags</div>
-          <TagsSelect
-            tags={tags}
-            defaultValue={values.tasks[index].tags || []}
-            onChange={values => {
-              const tags = values.map(tag => tag.value)
-              setFieldValue(`tasks[${index}].tags`, tags)
-            }}
-          />
-        </div>
+        {isAdmin && (
+          <div className="mt-4 mb-4">
+            <div className="tags__title block mb-2 font-weight-bold">Tags</div>
+            <TagsSelect
+              tags={tags}
+              defaultValue={values.tasks[index].tags || []}
+              onChange={values => {
+                const tags = values.map(tag => tag.value)
+                setFieldValue(`tasks[${index}].tags`, tags)
+              }}
+            />
+          </div>
+        )}
       </div>
       {task.type === 'DROPOFF' && (
         <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
