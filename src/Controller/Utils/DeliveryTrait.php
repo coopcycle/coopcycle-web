@@ -21,11 +21,11 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    public function deliveryActionBeta($id,
-    Request $request,
-    EntityManagerInterface $entityManager,
-    )
-    {
+    public function deliveryActionBeta(
+        $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ) {
         $delivery = $entityManager
             ->getRepository(Delivery::class)
             ->find($id);
@@ -47,14 +47,14 @@ trait DeliveryTrait
         ]));
     }
 
-    public function deliveryAction($id,
+    public function deliveryAction(
+        $id,
         Request $request,
         OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
         OrderManager $orderManager,
         PricingManager $pricingManager,
-    )
-    {
+    ) {
         $delivery = $entityManager
             ->getRepository(Delivery::class)
             ->find($id);
@@ -109,13 +109,14 @@ trait DeliveryTrait
             return $this->redirectToRoute($routes['success']);
         }
 
-        return $this->render('delivery/item.html.twig', [
+        return $this->render('delivery/item.html.twig', $this->auth([
+            'delivery' => $delivery,
             'layout' => $request->attributes->get('layout'),
             'delivery' => $delivery,
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'back_route' => $routes['back'],
-        ]);
+        ]));
     }
 
     private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
