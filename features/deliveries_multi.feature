@@ -497,10 +497,10 @@ Feature: Multi-step deliveries
             }
           ],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
-        "trackingUrl": @string@,
-        "tags": []
+        "trackingUrl": @string@
       }
       """
 
