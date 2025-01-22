@@ -5,7 +5,7 @@ import Task from '../../../../js/app/components/delivery-form/Task.js'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import moment from 'moment'
-import { money } from '../../controllers/Incident/utils.js'
+
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
 import _ from 'lodash'
@@ -19,7 +19,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 import BarcodesModal from '../BarcodesModal.jsx'
-import OverridePrice from '../../../../js/app/components/delivery-form/OverridePrice.js'
+import ShowPrice from '../../../../js/app/components/delivery-form/ShowPrice.js'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -124,9 +124,10 @@ export default function ({ storeId, deliveryId, order }) {
     tasks: [
       pickupSchema,
       dropoffSchema,
-    ]
+    ],
   })
   const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
+  const [overridePrice, setOverridePrice] = useState(false)
 
   let deliveryPrice
 
@@ -212,6 +213,8 @@ export default function ({ storeId, deliveryId, order }) {
               task.tags = tags
             }
           })
+
+          delivery.response.overridePrice = false
           
           previousValues.current = delivery.response
 
@@ -383,9 +386,11 @@ export default function ({ storeId, deliveryId, order }) {
         >
           {({ values, isSubmitting }) => {
 
+            console.log(values)
+
             useEffect(() => {
-                getPrice(values)
-            }, [values]);
+                if(!overridePrice) getPrice(values)
+            }, [values, overridePrice]);
 
             return (
               <Form >
@@ -473,49 +478,15 @@ export default function ({ storeId, deliveryId, order }) {
                     </div>
 
                     <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-                      {deliveryPrice ?
-                        <div className='mb-4'>
-                          <div className='font-weight-bold mb-2'>{ t("DELIVERY_FORM_OLD_PRICE")}</div>
-                          <div>{money(deliveryPrice.exVAT)} {t("DELIVERY_FORM_TOTAL_VAT")}</div>
-                          <div>{money(deliveryPrice.VAT)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}</div>
-                          <div className='mt-2 small'>Editing price is not already available in beta version.</div>
-                        </div> : null }
-                      
-                      {!deliveryId ? 
-                        <>
-                    <div className='font-weight-bold mb-2'>{deliveryId ? t("DELIVERY_FORM_NEW_PRICE") : t("DELIVERY_FORM_TOTAL_PRICE")} </div>
-                      <div>
-                        {calculatedPrice.amount
-                          ?
-                          <div>
-                            <div className='mb-1'>
-                              {money(calculatedPrice.amount)} {t("DELIVERY_FORM_TOTAL_VAT")}
-                            </div>
-                            <div>
-                              {money(calculatedPrice.amount - calculatedPrice.tax.amount)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-                            </div>
-                          </div>
-                          :
-                          <div>
-                            <div className='mb-1'>
-                              {money(0)} {t("DELIVERY_FORM_TOTAL_VAT")}
-                            </div>
-                            <div>
-                              {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-                            </div>
-                          </div>
-                            }
-                          <OverridePrice/>
-                      </div>
-                      {priceError.isPriceError ?
-                        <div className="alert alert-danger mt-4" role="alert">
-                          {priceError.priceErrorMessage}
-                        </div>
-                            : null}
-                        </> :
-                        null
-                        }
-
+                      <ShowPrice
+                        deliveryId={deliveryId}
+                        deliveryPrice={deliveryPrice}
+                        calculatedPrice={calculatedPrice}
+                        setCalculatePrice={setCalculatePrice}
+                        priceError={priceError}
+                        setOverridePrice={setOverridePrice}
+                        overridePrice={overridePrice}
+                      />
                     </div>
 
                     <div className='order-informations__complete-order'>
