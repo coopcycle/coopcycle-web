@@ -138,7 +138,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode":{"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -168,7 +169,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode":{"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -253,7 +255,8 @@ Feature: Deliveries
           "weight": 2000,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -283,7 +286,8 @@ Feature: Deliveries
           "weight": 2000,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -380,7 +384,8 @@ Feature: Deliveries
             }
           ],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -419,7 +424,8 @@ Feature: Deliveries
             }
           ],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -503,7 +509,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -533,7 +540,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -601,7 +609,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -631,7 +640,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -703,7 +713,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -733,7 +744,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -805,7 +817,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -835,7 +848,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -907,7 +921,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -937,7 +952,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1010,7 +1026,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1040,7 +1057,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1113,7 +1131,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1143,7 +1162,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1216,7 +1236,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1246,7 +1267,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1310,7 +1332,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1340,7 +1363,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1407,7 +1431,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1437,7 +1462,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "tasks":@array@,
         "trackingUrl": @string@
@@ -1508,7 +1534,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1538,7 +1565,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1606,7 +1634,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1636,7 +1665,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1705,7 +1735,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1735,7 +1766,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -1786,7 +1818,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1816,7 +1849,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -2013,7 +2047,8 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": {"@*@":"@*@"}
+            "barcode": {"@*@":"@*@"},
+            "tags": []
         },
         "dropoff": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -2043,7 +2078,8 @@ Feature: Deliveries
             "doneAfter": "@string@.isDateTime()",
             "doneBefore": "@string@.isDateTime()",
             "packages": [],
-            "barcode": {"@*@":"@*@"}
+            "barcode": {"@*@":"@*@"},
+            "tags": []
         },
         "trackingUrl": @string@
     }
@@ -2123,7 +2159,8 @@ Feature: Deliveries
           "weight": null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2153,7 +2190,8 @@ Feature: Deliveries
           "weight":null,
           "packages": [],
           "barcode": {"@*@":"@*@"},
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
