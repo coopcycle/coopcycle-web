@@ -211,7 +211,7 @@ export default function ({ storeId, deliveryId, order }) {
               task.tags = tags
             }
           })
-          console.log("response", delivery.response)
+          
           previousValues.current = delivery.response
 
           setInitialValues(delivery.response)
@@ -381,8 +381,6 @@ export default function ({ storeId, deliveryId, order }) {
           validateOnBlur={false}
         >
           {({ values, isSubmitting }) => {
-
-            console.log(values)
 
             useEffect(() => {
                 getPrice(values)
