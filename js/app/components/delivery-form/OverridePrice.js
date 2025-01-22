@@ -25,7 +25,7 @@ export default ({ setOverridePrice, overridePrice, setCalculatePrice }) => {
       </div>
 
       {overridePrice && (
-        <div className="override__form pt-4 pb-2 mt-2 border-top">
+        <div className="override__form p-2 mt-2 border-top">
           <div className="override__form__variant-name">
             <label
               className="override__form__variant-name___label font-weight-bold"

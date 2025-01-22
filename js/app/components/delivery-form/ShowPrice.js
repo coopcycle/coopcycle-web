@@ -2,7 +2,6 @@ import React from 'react'
 import { money } from '../../../../assets/react/controllers/Incident/utils'
 import OverridePrice from './OverridePrice'
 import { useTranslation } from 'react-i18next'
-import { useFormikContext } from 'formik'
 
 export default ({
   deliveryId,
@@ -15,12 +14,10 @@ export default ({
 }) => {
   const { t } = useTranslation()
 
-  const { values } = useFormikContext()
-
   return (
     <>
       {deliveryPrice ? (
-        <div className="mb-4">
+        <div className="mb-3">
           <div className="font-weight-bold mb-2">
             {t('DELIVERY_FORM_OLD_PRICE')}
           </div>
@@ -51,7 +48,7 @@ export default ({
 
       {!deliveryId ? (
         <>
-          <div className="font-weight-bold mb-2">
+          <div className="font-weight-bold mb-3">
             {t('DELIVERY_FORM_TOTAL_PRICE')}
           </div>
           <div>

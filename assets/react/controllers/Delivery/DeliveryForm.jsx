@@ -447,7 +447,7 @@ export default function ({ storeId, deliveryId, order }) {
 
                     {deliveryId && (
                   
-                      <div className="order-informations__tracking alert alert-info">
+                      <div className="order-informations__tracking alert">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                          {t("DELIVERY_FORM_TRACKING_LINK")}
                         </a>{'  '}
@@ -465,7 +465,7 @@ export default function ({ storeId, deliveryId, order }) {
                       />
                     </div>
 
-                    <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
+                    <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
                       <ShowPrice
                         deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
