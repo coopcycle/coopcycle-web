@@ -3,7 +3,6 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Action\Incident\CreateIncident;
-use AppBundle\Action\Task\Incident as AppBundleIncident;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
@@ -23,12 +22,10 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\PriceFormatter;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Rule;
-use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -51,8 +48,7 @@ class PricingManager
         private readonly RequestStack $requestStack,
         private readonly CreateIncident $createIncident,
         private readonly TranslatorInterface $translator,
-        private readonly LoggerInterface $logger,
-        private readonly PriceFormatter $priceFormatter
+        private readonly LoggerInterface $logger
     )
     {
         $this->tokenStorage = $tokenStorage;
@@ -85,24 +81,6 @@ class PricingManager
             $this->logger->warning('Unsupported pricing config');
             return null;
         }
-    }
-
-    /**
-     * Create a incident to review the new delivery price
-     */
-    public function updateDeliveryPrice(Delivery $delivery): void
-    {
-
-        $price = $this->getDeliveryPrice($delivery, new UsePricingRules());
-        $incident = new Incident();
-        $incident->setFailureReasonCode('PRICE_REVIEW_NEEDED');
-        $incident->setTask($delivery->getPickup());
-        $incident->setTitle(sprintf("Price update for delivery %s", $delivery->getId()));
-        $incident->setDescription(sprintf("New auto-generated price: %s", $this->priceFormatter->formatWithSymbol($price->getValue())));
-
-        $this->entityManager->persist($incident);
-        $this->entityManager->flush();
-
     }
 
     /**
