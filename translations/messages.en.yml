@@ -84,6 +84,7 @@ adminDashboard.users.export.optins.marketting: Users who agree to receive promot
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
+adminDashboard.pricing.docs_path: /en/admin/deliveries/pricing/
 adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.duplicate: Duplicate
@@ -324,6 +325,7 @@ order.summary.heading: Order %number%
 order.total_excluding_tax: Total (excl. VAT)
 order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
+order.items_total_excluding_tax: Total products (excl. VAT)
 order.total_tax: VAT
 order.total_tax_by_rate: Total %name%
 order.preparation_expected_at: Preparation starting at %date%
@@ -375,6 +377,7 @@ order.adjustment_type.delivery: Delivery
 order.adjustment_type.platform_fees: CoopCycle fees
 order.adjustment_type.reusable_packaging: Packaging
 order.adjustment_type.tip: Tip
+order.adjustment_type.incident: Incident
 order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
@@ -884,6 +887,8 @@ recurrence_rule.legacy: Use dispatch dashboard to remove this rule
 meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
+admin.settings.foodtech: Food Tech
+admin.settings.on_demand_delivery: On Demand Delivery
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered to your home.
 index.our_restaurants: Our restaurants
@@ -924,6 +929,7 @@ embed.delivery.confirm_message: Your delivery order has been placed and you will
 pagination.previous: Previous
 pagination.next: Next
 basics.view: View
+basics.more: More
 basics.save: Save
 basics.next: Next
 basics.continue: Continue
@@ -1505,7 +1511,11 @@ form.store_type.failure_reason_set.label: "Failure Reasons"
 form.store_type.failure_reason_set.help: 'Select a list of <a href="%failure_reason_set%">failure reasons</a> to be used in this %entity%.'
 adminDashboard.incidents.title: Incidents
 adminDashboard.incidents.help: "Manage incidents."
+adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
+adminDashboard.invoicing.title: Invoicing [PREVIEW]
+adminDashboard.invoicing.help: "Prepare invoices"
+adminDashboard.invoicing.line_item.order_number: "Order #%number%"
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
 form.pricing_rule_set.options.label: Options
@@ -1594,6 +1604,10 @@ form.settings.company_legal_name.label: "Legal name of the company"
 form.settings.company_legal_name.help: "Please enter the full legal name of the company as it appears on its official documents."
 form.settings.company_legal_id.label: "Company registration number or EIN"
 form.settings.company_legal_id.help: "This number is usually available on the company's official documents, such as invoices or contracts."
+form.settings.on_demand_delivery_product_name.label: "Product name"
+form.settings.on_demand_delivery_product_name.help: "The name that will appear in the order summary and invoice"
+form.settings.accounting_account.label: "Account code"
+form.settings.accounting_account.help: "The default account code to record on demand delivery orders in the accounting system."
 business_restaurant_group.form.invalid: "There are errors or missing information, please check all the sections of the configuration."
 restaurants.edenred.add_restaurants: Add Edenred restaurants
 restaurants.edenred.add_list_title: List of restaurants to send to Edenred

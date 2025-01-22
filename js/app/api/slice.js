@@ -18,6 +18,30 @@ export const apiSlice = createApi({
         body: {},
       }),
     }),
+    getInvoiceLineItemsGroupedByOrganization: builder.query({
+      query: args => {
+        return {
+          url: `api/invoice_line_items/grouped_by_organization?${args.params.join(
+            '&',
+          )}`,
+          params: {
+            page: args.page,
+            itemsPerPage: args.pageSize,
+          },
+        }
+      },
+    }),
+    getInvoiceLineItems: builder.query({
+      query: args => {
+        return {
+          url: `api/invoice_line_items?${args.params.join('&')}`,
+          params: {
+            page: args.page,
+            itemsPerPage: args.pageSize,
+          },
+        }
+      },
+    }),
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
     }),
@@ -37,6 +61,8 @@ export const apiSlice = createApi({
 // Export the auto-generated hook for the query endpoints
 export const {
   useRecurrenceRulesGenerateOrdersMutation,
+  useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
+  useGetInvoiceLineItemsQuery,
   useGetOrderTimingQuery,
   useUpdateOrderMutation,
 } = apiSlice

@@ -269,5 +269,7 @@ interface OrderInterface extends
 
     public function isFoodtech(): bool;
 
+    public function getDeliveryItem(): ?OrderItemInterface;
+
     public function getDeliveryPrice(): PriceInterface;
 }

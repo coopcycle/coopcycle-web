@@ -264,11 +264,11 @@ context('Delivery (role: admin)', () => {
   it('create delivery for store without pricing', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Store_without_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Store_without_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
       .contains('Créer une livraison')
       .click()
 
@@ -321,11 +321,11 @@ context('Delivery (role: admin)', () => {
   it('create delivery for store with invalid pricing', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Store_with_invalid_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Store_with_invalid_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
       .contains('Créer une livraison')
       .click()
 

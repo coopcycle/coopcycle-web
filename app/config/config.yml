@@ -359,6 +359,9 @@ doctrine:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
 
 api_platform:
+    defaults:
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 100
     version: 1.0.0
     title: CoopCycle
     show_webby: false
@@ -754,6 +757,7 @@ fos_js_routing:
         - admin_form
         - admin_metrics
         - admin_order
+        - admin_order_edit
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel

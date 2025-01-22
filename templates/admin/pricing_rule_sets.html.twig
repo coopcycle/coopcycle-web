@@ -9,6 +9,10 @@
 <li>{% trans %}adminDashboard.pricing.title{% endtrans %}</li>
 {% endblock %}
 
+{% block docs %}
+  {% include '_partials/docs.html.twig' with { docsPath: 'adminDashboard.pricing.docs_path' } %}
+{% endblock %}
+
 {% block content %}
 <div class="text-right mb-4">
   <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
