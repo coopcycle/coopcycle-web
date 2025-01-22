@@ -68,7 +68,8 @@ Feature: Multi-step deliveries
           "weight":1500,
           "packages": [],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -98,7 +99,8 @@ Feature: Multi-step deliveries
           "weight":1500,
           "packages": [],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -193,7 +195,8 @@ Feature: Multi-step deliveries
             }
           ],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":@string@,
@@ -232,7 +235,8 @@ Feature: Multi-step deliveries
             }
           ],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -323,7 +327,8 @@ Feature: Multi-step deliveries
             }
           ],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -362,7 +367,8 @@ Feature: Multi-step deliveries
             }
           ],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -451,7 +457,8 @@ Feature: Multi-step deliveries
             }
           ],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -492,7 +499,8 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()"
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "tags": []
       }
       """
 
