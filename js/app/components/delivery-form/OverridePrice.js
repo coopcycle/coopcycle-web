@@ -8,14 +8,7 @@ const getCurrencyCode = () => {
   return currencyCode || 'EUR' // 'EUR' comme valeur par défaut si non défini
 }
 
-export default ({
-  deliveryId,
-  setOverridePrice,
-  overridePrice,
-  setCalculatePrice,
-}) => {
-  console.log(deliveryId)
-
+export default ({ setOverridePrice, overridePrice, setCalculatePrice }) => {
   const { setFieldValue } = useFormikContext()
 
   return (
@@ -70,10 +63,10 @@ export default ({
                 <InputNumber
                   id="variantPrice"
                   controls={false}
+                  value={field.value / 100}
                   prefix={getCurrencyCode()}
-                  {...field}
                   onChange={value => {
-                    setFieldValue('variantPrice', value)
+                    setFieldValue('variantPrice', value * 100)
                     setCalculatePrice({
                       amount: value * 100,
                       tax: { amount: 0 },

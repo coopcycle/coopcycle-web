@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import Task from '../../../../js/app/components/delivery-form/Task.js'
@@ -174,10 +174,6 @@ export default function ({ storeId, deliveryId, order }) {
     return Object.keys(errors.tasks).length > 0 ? errors : {}
   }
 
-  // Could not figure out why, but sometimes Formik "re-renders" even if the values are the same.
-  // so i store a ref to previous values to avoid re-calculating the price.
-  const previousValues = useRef(initialValues);
-
   useEffect(() => {
     const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}?groups=barcode,address,delivery`
     const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
@@ -216,8 +212,6 @@ export default function ({ storeId, deliveryId, order }) {
 
           delivery.response.overridePrice = false
           
-          previousValues.current = delivery.response
-
           setInitialValues(delivery.response)
           setTrackingLink(delivery.response.trackingUrl)
           setAddresses(addresses.response['hydra:member'])
@@ -304,12 +298,6 @@ export default function ({ storeId, deliveryId, order }) {
 
   const getPrice = (values) => {
 
-    if (_.isEqual(previousValues.current, values)) {
-      return
-    }
-
-    previousValues.current = values
-
     const tasksCopy = structuredClone(values.tasks)
     const tasksWithoutId = tasksCopy.map(task => {
           if (task["@id"]) {
@@ -389,8 +377,8 @@ export default function ({ storeId, deliveryId, order }) {
             console.log(values)
 
             useEffect(() => {
-                if(!overridePrice) getPrice(values)
-            }, [values, overridePrice]);
+                if(!overridePrice && !deliveryId) getPrice(values)
+            }, [values, overridePrice, deliveryId]);
 
             return (
               <Form >

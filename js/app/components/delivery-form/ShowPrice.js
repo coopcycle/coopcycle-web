@@ -17,9 +17,6 @@ export default ({
 
   const { values } = useFormikContext()
 
-  console.log(calculatedPrice)
-  if (values.variantPrice) console.log('variant Pricr', values.variantPrice)
-
   return (
     <>
       {deliveryPrice ? (
@@ -33,7 +30,7 @@ export default ({
           <div>
             {money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
           </div>
-          {calculatedPrice.amount && overridePrice && (
+          {calculatedPrice.amount > 0 && overridePrice && (
             <div className="mt-4 mb-4">
               <div className="font-weight-bold mb-2">
                 {t('DELIVERY_FORM_NEW_PRICE')}
@@ -81,7 +78,6 @@ export default ({
               </div>
             )}
             <OverridePrice
-              deliveryId={deliveryId}
               setOverridePrice={setOverridePrice}
               overridePrice={overridePrice}
               setCalculatePrice={setCalculatePrice}
