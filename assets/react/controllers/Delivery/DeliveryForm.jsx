@@ -18,6 +18,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 
 import "./DeliveryForm.scss"
+import BarcodesModal from '../BarcodesModal.jsx'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -117,14 +118,14 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
-  const [deliveryPrice, setDeliveryPrice] = useState(null)
+  
 
-  useEffect(() => {
-    if (order) {
-      const orderInfos = JSON.parse(order)
-      setDeliveryPrice({exVAT : +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,})
-    }
-  }, [order])
+  let deliveryPrice
+  if (order) {
+    const orderInfos = JSON.parse(order)
+    deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
+  }
+
 
   const [initialValues, setInitialValues] = useState({
     tasks: [
@@ -176,7 +177,7 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
   const previousValues = useRef(initialValues);
 
   useEffect(() => {
-    const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
+    const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}?groups=barcode,address,delivery`
     const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
     const storeURL = `${baseURL}/api/stores/${storeId}`
     const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
@@ -210,7 +211,7 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
               task.tags = tags
             }
           })
-
+          console.log(delivery.response)
           previousValues.current = delivery.response
 
           setInitialValues(delivery.response)
@@ -380,6 +381,8 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
         >
           {({ values, isSubmitting }) => {
 
+            console.log(values)
+
             useEffect(() => {
                 getPrice(values)
             }, [values]);
@@ -450,6 +453,7 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                   <div className="order-informations">
 
                     {deliveryId && (
+                      <>
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                          {t("DELIVERY_FORM_TRACKING_LINK")}
@@ -457,6 +461,8 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                         <i className="fa fa-external-link"></i>
                         <a href="#" className="pull-right"><i className="fa fa-clipboard" title={t("DELIVERY_FROM_TRACKING_LINK_COPY") } aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
                       </div>
+                        <BarcodesModal items={values.tasks} />
+                        </>
                     )}
 
                     <div className="order-informations__map">
@@ -467,7 +473,7 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                     </div>
 
                     <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-                      {deliveryId ?
+                      {deliveryPrice ?
                         <div className='mb-4'>
                           <div className='font-weight-bold mb-2'>{ t("DELIVERY_FORM_OLD_PRICE")}</div>
                           <div>{money(deliveryPrice.exVAT)} {t("DELIVERY_FORM_TOTAL_VAT")}</div>
