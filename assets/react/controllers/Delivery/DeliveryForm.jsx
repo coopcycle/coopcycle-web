@@ -472,7 +472,7 @@ export default function ({ storeId, deliveryId, order, trackingLink }) {
                           <div className='font-weight-bold mb-2'>{ t("DELIVERY_FORM_OLD_PRICE")}</div>
                           <div>{money(deliveryPrice.exVAT)} {t("DELIVERY_FORM_TOTAL_VAT")}</div>
                           <div>{money(deliveryPrice.VAT)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}</div>
-                          <div className='mt-2 small'>Editing price is not already available in beta version.</div>
+                          <div className='mt-2 text-danger'>Editing price is not yet available in beta version.</div>
                         </div> : null }
                       
                       {!deliveryId ? 
