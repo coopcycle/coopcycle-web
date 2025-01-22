@@ -49,7 +49,6 @@
           </p>
           <p>
           <div {{ react_component('BarcodesModal', {
-              items: delivery.items|serialize('json', {groups: ['task', 'task_collection', 'barcode', 'address']}),
               deliveryId : delivery.id
           }) }}>
           </div>
