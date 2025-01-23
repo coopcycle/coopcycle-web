@@ -32,10 +32,10 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
         $request = $this->requestStack->getCurrentRequest();
         $requestId = $request->headers->get('X-Request-ID');
 
-        $invoiceId = hash('sha256', sprintf('%s-%d',
+        $invoiceId = sprintf('%s-%s',
             $requestId,
-            $store?->getId() ?? 0
-        ));
+            substr(hash('sha256', $store?->getId() ?? 0), 0, 7)
+        );
 
         $invoiceDate = new \DateTime();
 
