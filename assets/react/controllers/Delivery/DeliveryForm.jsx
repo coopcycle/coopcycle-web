@@ -209,8 +209,6 @@ export default function ({ storeId, deliveryId, order }) {
               task.tags = tags
             }
           })
-
-          delivery.response.overridePrice = false
           
           setInitialValues(delivery.response)
           setTrackingLink(delivery.response.trackingUrl)

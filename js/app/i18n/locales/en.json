@@ -643,6 +643,7 @@
         "DELIVERY_FORM_PRODUCT_NAME": "Product name",
         "DELIVERY_FORM_NAME_INSTRUCTION": "The name that will appear in the order summary and invoice",
         "DELIVERY_FORM_VAT_PRICE": "Price including VAT",
-        "SHOW_BARCODES": "View barcodes"
+        "SHOW_BARCODES": "View barcodes",
+        "DELIVERY_FORM_EXVAT_PRICE" : "Price excluding VAT"
       }
 }

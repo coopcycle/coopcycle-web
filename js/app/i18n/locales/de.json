@@ -207,7 +207,8 @@
         "DELIVERY_FORM_SET_MANUALLY_PRICE": "Preis manuell festlegen",
         "DELIVERY_FORM_PRODUCT_NAME": "Produktname",
         "DELIVERY_FORM_NAME_INSTRUCTION": "Der Name, der in der Bestellübersicht und auf der Rechnung erscheint",
-        "DELIVERY_FORM_VAT_PRICE": "Preis inklusive MwSt."
+        "DELIVERY_FORM_VAT_PRICE": "Preis inklusive MwSt.",
+        "DELIVERY_FORM_EXVAT_PRICE" : "Preis ohne MwSt."
 
     }
 

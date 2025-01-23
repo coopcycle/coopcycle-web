@@ -476,6 +476,7 @@
         "DELIVERY_FORM_SET_MANUALLY_PRICE": "Establecer el precio manualmente",
         "DELIVERY_FORM_PRODUCT_NAME": "Nombre del producto",
         "DELIVERY_FORM_NAME_INSTRUCTION": "El nombre que aparecerá en el resumen del pedido y la factura",
-        "DELIVERY_FORM_VAT_PRICE": "Precio con IVA incluido"
+        "DELIVERY_FORM_VAT_PRICE": "Precio con IVA incluido",
+        "DELIVERY_FORM_EXVAT_PRICE" : "Precio sin IVA"
     }
 }

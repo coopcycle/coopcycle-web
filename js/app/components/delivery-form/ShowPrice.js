@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { money } from '../../../../assets/react/controllers/Incident/utils'
-import OverridePrice from './OverridePrice'
+import { Checkbox, Input } from 'antd'
+import { useFormikContext, Field } from 'formik'
 import { useTranslation } from 'react-i18next'
+import PriceVATConverter from './PriceVATConverter'
+import './ShowPrice.scss'
+
+const baseURL = location.protocol + '//' + location.host
 
 export default ({
   deliveryId,
@@ -13,6 +18,39 @@ export default ({
   setCalculatePrice,
 }) => {
   const { t } = useTranslation()
+  const { setFieldValue } = useFormikContext()
+
+  const [taxRate, setTaxRate] = useState(null)
+  const [prices, setPrices] = useState({ VAT: 0, exVAT: 0 })
+
+  useEffect(() => {
+    if (overridePrice && prices.VAT > 0) {
+      setFieldValue('variantIncVATPrice', prices.VAT * 100)
+    }
+  }, [prices])
+
+  const httpClient = new window._auth.httpClient()
+
+  useEffect(() => {
+    const getDeliveryTaxs = async () => {
+      const { response, error } = await httpClient.get(
+        `${baseURL}/api/tax_rates`,
+      )
+
+      if (error) {
+        return
+      }
+
+      if (response) {
+        const taxRates = await response['hydra:member']
+        setTaxRate(
+          taxRates.find(tax => tax.category === 'SERVICE') ||
+            taxRates.find(tax => tax.category === 'BASE_STANDARD'),
+        )
+      }
+    }
+    getDeliveryTaxs()
+  }, [])
 
   return (
     <>
@@ -37,12 +75,53 @@ export default ({
               </div>
             </div>
           )}
-          <OverridePrice
-            deliveryId={deliveryId}
-            setOverridePrice={setOverridePrice}
-            overridePrice={overridePrice}
-            setCalculatePrice={setCalculatePrice}
-          />
+
+          <div style={{ maxWidth: '100%' }} className="mt-4">
+            <div>
+              {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
+              <Checkbox
+                className="ml-4 mb-2"
+                checked={overridePrice}
+                onChange={e => {
+                  setOverridePrice(e.target.checked)
+                  setCalculatePrice(0)
+                }}></Checkbox>
+            </div>
+
+            {overridePrice && (
+              <div className="override__form p-2 mt-2 border-top">
+                <div className="override__form__variant-name">
+                  <label
+                    className="override__form__variant-name___label font-weight-bold"
+                    htmlFor="variantName">
+                    {t('DELIVERY_FORM_PRODUCT_NAME')}
+                  </label>
+                  <div className="override__form__variant-name___input">
+                    <Field name={'variantName'}>
+                      {({ field }) => (
+                        <Input
+                          id="variantName"
+                          {...field}
+                          onChange={e => {
+                            setFieldValue('variantName', e.target.value)
+                          }}
+                        />
+                      )}
+                    </Field>
+                    <div className="small text-muted">
+                      {t('DELIVERY_FORM_NAME_INSTRUCTION')}
+                    </div>
+                  </div>
+                </div>
+                <PriceVATConverter
+                  className="override__form__variant-price"
+                  setCalculatePrice={setCalculatePrice}
+                  amount={taxRate.amount}
+                  setPrices={setPrices}
+                />
+              </div>
+            )}
+          </div>
         </div>
       ) : null}
 
@@ -74,11 +153,52 @@ export default ({
                 </div>
               </div>
             )}
-            <OverridePrice
-              setOverridePrice={setOverridePrice}
-              overridePrice={overridePrice}
-              setCalculatePrice={setCalculatePrice}
-            />
+            <div style={{ maxWidth: '100%' }} className="mt-4">
+              <div>
+                {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
+                <Checkbox
+                  className="ml-4 mb-2"
+                  checked={overridePrice}
+                  onChange={e => {
+                    setOverridePrice(e.target.checked)
+                    setCalculatePrice(0)
+                  }}></Checkbox>
+              </div>
+
+              {overridePrice && (
+                <div className="override__form p-2 mt-2 border-top">
+                  <div className="override__form__variant-name">
+                    <label
+                      className="override__form__variant-name___label font-weight-bold"
+                      htmlFor="variantName">
+                      {t('DELIVERY_FORM_PRODUCT_NAME')}
+                    </label>
+                    <div className="override__form__variant-name___input">
+                      <Field name={'variantName'}>
+                        {({ field }) => (
+                          <Input
+                            id="variantName"
+                            {...field}
+                            onChange={e => {
+                              setFieldValue('variantName', e.target.value)
+                            }}
+                          />
+                        )}
+                      </Field>
+                      <div className="small text-muted">
+                        {t('DELIVERY_FORM_NAME_INSTRUCTION')}
+                      </div>
+                    </div>
+                  </div>
+                  <PriceVATConverter
+                    className="override__form__variant-price"
+                    setCalculatePrice={setCalculatePrice}
+                    amount={taxRate.amount}
+                    setPrices={setPrices}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           {priceError.isPriceError ? (
             <div className="alert alert-danger mt-4" role="alert">
