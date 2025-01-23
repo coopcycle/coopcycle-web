@@ -637,7 +637,7 @@
         "DELIVERY_FORM_SET_MANUALLY_PRICE" : "Définir le prix manuellement", 
         "DELIVERY_FORM_PRODUCT_NAME" : "Nom du produit",
         "DELIVERY_FORM_NAME_INSTRUCTION" : "Le nom qui apparaîtra dans le résumé de la commande et la facture",
-        "DELIVERY_FORM_VAT_PRICE" : "Prix TCC",
+        "DELIVERY_FORM_VAT_PRICE" : "Prix TTC",
         "DELIVERY_FORM_EXVAT_PRICE" : "Prix HT",
         "SHOW_BARCODES" : "Voir les codes-barres"
     }

@@ -51,8 +51,8 @@ export default ({ amount, setPrices }) => {
           value={values.exVAT}
           onChange={value => {
             const newValues = {
-              exVAT: (value / (amount + 1)).toFixed(2),
-              VAT: value,
+              exVAT: value,
+              VAT: (value * (amount + 1)).toFixed(2),
             }
             setValues(newValues)
             setPrices(newValues)

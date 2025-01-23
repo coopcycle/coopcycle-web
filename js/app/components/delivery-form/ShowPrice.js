@@ -20,14 +20,16 @@ export default ({
   const { t } = useTranslation()
   const { setFieldValue } = useFormikContext()
 
+  console.log('over', overridePrice)
+  console.log(calculatedPrice)
+
   const [taxRate, setTaxRate] = useState(null)
-  const [prices, setPrices] = useState({ VAT: 0, exVAT: 0 })
 
   useEffect(() => {
-    if (overridePrice && prices.VAT > 0) {
-      setFieldValue('variantIncVATPrice', prices.VAT * 100)
+    if (overridePrice && calculatedPrice.VAT > 0) {
+      setFieldValue('variantIncVATPrice', calculatedPrice.VAT * 100)
     }
-  }, [prices])
+  }, [calculatedPrice])
 
   const httpClient = new window._auth.httpClient()
 
@@ -65,13 +67,18 @@ export default ({
           <div>
             {money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
           </div>
-          {calculatedPrice.amount > 0 && overridePrice && (
-            <div className="mt-4 mb-4">
+          {overridePrice && (
+            <div className="mt-3 mb-3">
               <div className="font-weight-bold mb-2">
                 {t('DELIVERY_FORM_NEW_PRICE')}
               </div>
               <div className="mt-2">
-                {money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}
+                {money(calculatedPrice.VAT * 100 || 0)}
+                {t('DELIVERY_FORM_TOTAL_VAT')}
+              </div>
+              <div>
+                {money(calculatedPrice.exVAT * 100 || 0)}
+                {t('DELIVERY_FORM_TOTAL_EX_VAT')}
               </div>
             </div>
           )}
@@ -117,7 +124,7 @@ export default ({
                   className="override__form__variant-price"
                   setCalculatePrice={setCalculatePrice}
                   amount={taxRate.amount}
-                  setPrices={setPrices}
+                  setPrices={setCalculatePrice}
                 />
               </div>
             )}
@@ -131,7 +138,7 @@ export default ({
             {t('DELIVERY_FORM_TOTAL_PRICE')}
           </div>
           <div>
-            {calculatedPrice.amount ? (
+            {calculatedPrice.amount && !overridePrice ? (
               <div>
                 <div className="mb-1">
                   {money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}
@@ -142,6 +149,17 @@ export default ({
                     {t('DELIVERY_FORM_TOTAL_EX_VAT')}
                   </div>
                 )}
+              </div>
+            ) : overridePrice ? (
+              <div>
+                <div className="mt-2 mb-1">
+                  {money(calculatedPrice.VAT * 100 || 0)}{' '}
+                  {t('DELIVERY_FORM_TOTAL_VAT')}
+                </div>
+                <div>
+                  {money(calculatedPrice.exVAT * 100 || 0)}{' '}
+                  {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                </div>
               </div>
             ) : (
               <div>
@@ -194,7 +212,7 @@ export default ({
                     className="override__form__variant-price"
                     setCalculatePrice={setCalculatePrice}
                     amount={taxRate.amount}
-                    setPrices={setPrices}
+                    setPrices={setCalculatePrice}
                   />
                 </div>
               )}
