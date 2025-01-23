@@ -35,10 +35,12 @@ function downloadFile({ requestUrl, filename }) {
       return
     }
 
+    const requestId = result.meta.response.headers.get('X-Request-ID')
+
     const blob = new Blob([result.data], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.download = filename
+    link.download = `${filename}_${requestId.substring(0, 7)}.csv`
     link.href = url
     link.click()
 
