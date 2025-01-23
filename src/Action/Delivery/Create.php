@@ -4,7 +4,10 @@ namespace AppBundle\Action\Delivery;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Pricing\PricingManager;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Create
@@ -12,9 +15,8 @@ class Create
     public function __construct(
         private readonly PricingManager $pricingManager,
         private readonly ValidatorInterface $validator,
-    )
-    {
-    }
+        private readonly AuthorizationCheckerInterface $authorizationCheckerInterface
+    ) {}
 
     public function __invoke(Delivery $data)
     {
@@ -26,7 +28,17 @@ class Create
             throw new ValidationException($errors);
         }
 
-        $this->pricingManager->createOrder($data);
+        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && !is_null($data->getVariantIncVATPrice());
+
+        if ($useArbitraryPrice) {
+            $arbitraryPrice = new ArbitraryPrice('variant name', $data->getVariantIncVATPrice());
+            $this->pricingManager->createOrder(
+                $data,
+                ['pricingStrategy' => new UseArbitraryPrice($arbitraryPrice)]
+            );
+        } else {
+            $this->pricingManager->createOrder($data);
+        }
 
         return $data;
     }

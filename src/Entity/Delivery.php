@@ -162,9 +162,15 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     private $store;
 
+    /**
+     * @Groups({"delivery_create"})
+     */
+    private $variantIncVATPrice;
+
+
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
-        "in"=>"body",
+        "in" => "body",
         "schema" => [
             "type" => "object",
             "required" => ["dropoff"],
@@ -353,10 +359,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
                 $dropoff->setPrevious($pickup);
                 $this->addTask($dropoff);
             }
-
         } else {
 
-            [ $pickup, $dropoff ] = $tasks;
+            [$pickup, $dropoff] = $tasks;
 
             $pickup->setType(Task::TYPE_PICKUP);
             $pickup->setNext($dropoff);
@@ -428,7 +433,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function assignTo(User $user): void
     {
         $tasks = $this->getTasks();
-        array_walk($tasks,
+        array_walk(
+            $tasks,
             function (Task $task) use ($user) {
                 $task->assignTo($user);
             }
@@ -441,7 +447,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function unassign(): void
     {
         $tasks = $this->getTasks();
-        array_walk($tasks,
+        array_walk(
+            $tasks,
             function (Task $task) {
                 $task->unassign();
             }
@@ -621,12 +628,32 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $messages = array_merge(...array_map(function (Task $task) {
             return $task->getEdifactMessages()->toArray();
         }, $this->getTasks()));
-        usort($messages, fn ($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
+        usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
         return $messages;
     }
 
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitDelivery($this);
+    }
+
+    /**
+     * Get the value of variantIncVATPrice
+     */
+    public function getVariantIncVATPrice()
+    {
+        return $this->variantIncVATPrice;
+    }
+
+    /**
+     * Set the value of variantIncVATPrice
+     *
+     * @return  self
+     */
+    public function setVariantIncVATPrice($variantIncVATPrice)
+    {
+        $this->variantIncVATPrice = $variantIncVATPrice;
+
+        return $this;
     }
 }
