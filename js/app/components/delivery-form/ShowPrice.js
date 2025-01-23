@@ -27,9 +27,17 @@ export default ({
 
   useEffect(() => {
     if (overridePrice && calculatedPrice.VAT > 0) {
-      setFieldValue('variantIncVATPrice', calculatedPrice.VAT * 100)
+      setFieldValue(
+        'variantIncVATPrice',
+        (calculatedPrice.VAT * 100).toFixed(2),
+      )
     }
-  }, [calculatedPrice])
+
+    if (!overridePrice) {
+      setFieldValue('variantIncVATPrice', null)
+      setFieldValue('variantName', null)
+    }
+  }, [calculatedPrice, overridePrice])
 
   const httpClient = new window._auth.httpClient()
 
@@ -57,120 +65,71 @@ export default ({
   return (
     <>
       {deliveryPrice ? (
-        <div className="mb-3">
-          <div className="font-weight-bold mb-2">
-            {t('DELIVERY_FORM_OLD_PRICE')}
-          </div>
-          <div>
-            {money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}
-          </div>
-          <div>
-            {money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-          </div>
+        <>
           {overridePrice && (
-            <div className="mt-3 mb-3">
-              <div className="font-weight-bold mb-2">
-                {t('DELIVERY_FORM_NEW_PRICE')}
+            <div className="override__form p-2 mb-3">
+              <div className="override__form__variant-name">
+                <label
+                  className="override__form__variant-name___label font-weight-bold"
+                  htmlFor="variantName">
+                  {t('DELIVERY_FORM_PRODUCT_NAME')}
+                </label>
+                <div className="override__form__variant-name___input">
+                  <Field name={'variantName'}>
+                    {({ field }) => (
+                      <Input
+                        id="variantName"
+                        {...field}
+                        onChange={e => {
+                          setFieldValue('variantName', e.target.value)
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <div className="small text-muted">
+                    {t('DELIVERY_FORM_NAME_INSTRUCTION')}
+                  </div>
+                </div>
               </div>
-              <div className="mt-2">
-                {money(calculatedPrice.VAT * 100 || 0)}
-                {t('DELIVERY_FORM_TOTAL_VAT')}
-              </div>
-              <div>
-                {money(calculatedPrice.exVAT * 100 || 0)}
-                {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-              </div>
+              <PriceVATConverter
+                className="override__form__variant-price"
+                setCalculatePrice={setCalculatePrice}
+                amount={taxRate.amount}
+                setPrices={setCalculatePrice}
+              />
             </div>
           )}
 
-          <div style={{ maxWidth: '100%' }} className="mt-4">
+          <div className="mb-3 pl-2">
+            <div className="font-weight-bold mb-2">
+              {!overridePrice
+                ? t('DELIVERY_FORM_TOTAL_PRICE')
+                : t('DELIVERY_FORM_OLD_PRICE')}
+            </div>
             <div>
-              {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
-              <Checkbox
-                className="ml-4 mb-2"
-                checked={overridePrice}
-                onChange={e => {
-                  setOverridePrice(e.target.checked)
-                  setCalculatePrice(0)
-                }}></Checkbox>
+              {money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+            </div>
+            <div>
+              {money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}
             </div>
 
             {overridePrice && (
-              <div className="override__form p-2 mt-2 border-top">
-                <div className="override__form__variant-name">
-                  <label
-                    className="override__form__variant-name___label font-weight-bold"
-                    htmlFor="variantName">
-                    {t('DELIVERY_FORM_PRODUCT_NAME')}
-                  </label>
-                  <div className="override__form__variant-name___input">
-                    <Field name={'variantName'}>
-                      {({ field }) => (
-                        <Input
-                          id="variantName"
-                          {...field}
-                          onChange={e => {
-                            setFieldValue('variantName', e.target.value)
-                          }}
-                        />
-                      )}
-                    </Field>
-                    <div className="small text-muted">
-                      {t('DELIVERY_FORM_NAME_INSTRUCTION')}
-                    </div>
-                  </div>
+              <div className="mt-3 mb-3">
+                <div className="font-weight-bold mb-2 total__price">
+                  {t('DELIVERY_FORM_NEW_PRICE')}
                 </div>
-                <PriceVATConverter
-                  className="override__form__variant-price"
-                  setCalculatePrice={setCalculatePrice}
-                  amount={taxRate.amount}
-                  setPrices={setCalculatePrice}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      ) : null}
 
-      {!deliveryId ? (
-        <>
-          <div className="font-weight-bold mb-3">
-            {t('DELIVERY_FORM_TOTAL_PRICE')}
-          </div>
-          <div>
-            {calculatedPrice.amount && !overridePrice ? (
-              <div>
-                <div className="mb-1">
-                  {money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}
-                </div>
-                {!overridePrice && (
-                  <div>
-                    {money(calculatedPrice.amount - calculatedPrice.tax.amount)}{' '}
-                    {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                  </div>
-                )}
-              </div>
-            ) : overridePrice ? (
-              <div>
-                <div className="mt-2 mb-1">
-                  {money(calculatedPrice.VAT * 100 || 0)}{' '}
-                  {t('DELIVERY_FORM_TOTAL_VAT')}
-                </div>
-                <div>
+                <div className="mt-2">
                   {money(calculatedPrice.exVAT * 100 || 0)}{' '}
                   {t('DELIVERY_FORM_TOTAL_EX_VAT')}
                 </div>
-              </div>
-            ) : (
-              <div>
-                <div className="mb-1">
-                  {money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}
-                </div>
                 <div>
-                  {money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                  {money(calculatedPrice.VAT * 100 || 0)}{' '}
+                  {t('DELIVERY_FORM_TOTAL_VAT')}
                 </div>
               </div>
             )}
+
             <div style={{ maxWidth: '100%' }} className="mt-4">
               <div>
                 {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
@@ -182,47 +141,105 @@ export default ({
                     setCalculatePrice(0)
                   }}></Checkbox>
               </div>
-
-              {overridePrice && (
-                <div className="override__form p-2 mt-2 border-top">
-                  <div className="override__form__variant-name">
-                    <label
-                      className="override__form__variant-name___label font-weight-bold"
-                      htmlFor="variantName">
-                      {t('DELIVERY_FORM_PRODUCT_NAME')}
-                    </label>
-                    <div className="override__form__variant-name___input">
-                      <Field name={'variantName'}>
-                        {({ field }) => (
-                          <Input
-                            id="variantName"
-                            {...field}
-                            onChange={e => {
-                              setFieldValue('variantName', e.target.value)
-                            }}
-                          />
-                        )}
-                      </Field>
-                      <div className="small text-muted">
-                        {t('DELIVERY_FORM_NAME_INSTRUCTION')}
-                      </div>
-                    </div>
-                  </div>
-                  <PriceVATConverter
-                    className="override__form__variant-price"
-                    setCalculatePrice={setCalculatePrice}
-                    amount={taxRate.amount}
-                    setPrices={setCalculatePrice}
-                  />
-                </div>
-              )}
             </div>
           </div>
-          {priceError.isPriceError ? (
-            <div className="alert alert-danger mt-4" role="alert">
-              {priceError.priceErrorMessage}
+        </>
+      ) : null}
+
+      {!deliveryId ? (
+        <>
+          {overridePrice && (
+            <div className="override__form p-2 mb-3">
+              <div className="override__form__variant-name">
+                <label
+                  className="override__form__variant-name___label font-weight-bold"
+                  htmlFor="variantName">
+                  {t('DELIVERY_FORM_PRODUCT_NAME')}
+                </label>
+                <div className="override__form__variant-name___input">
+                  <Field name={'variantName'}>
+                    {({ field }) => (
+                      <Input
+                        id="variantName"
+                        {...field}
+                        onChange={e => {
+                          setFieldValue('variantName', e.target.value)
+                        }}
+                      />
+                    )}
+                  </Field>
+                  <div className="small text-muted">
+                    {t('DELIVERY_FORM_NAME_INSTRUCTION')}
+                  </div>
+                </div>
+              </div>
+              <PriceVATConverter
+                className="override__form__variant-price"
+                setCalculatePrice={setCalculatePrice}
+                amount={taxRate.amount}
+                setPrices={setCalculatePrice}
+              />
             </div>
-          ) : null}
+          )}
+
+          <div className="p-2">
+            <div className="font-weight-bold mb-3 total__price">
+              {t('DELIVERY_FORM_TOTAL_PRICE')}
+            </div>
+            <div>
+              {calculatedPrice.amount && !overridePrice ? (
+                <div>
+                  <div className="mb-1">
+                    {money(calculatedPrice.amount - calculatedPrice.tax.amount)}{' '}
+                    {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                  </div>
+                  {!overridePrice && (
+                    <div>
+                      {money(calculatedPrice.amount)}{' '}
+                      {t('DELIVERY_FORM_TOTAL_VAT')}
+                    </div>
+                  )}
+                </div>
+              ) : overridePrice ? (
+                <div>
+                  <div className="mt-2 mb-1">
+                    {money(calculatedPrice.exVAT * 100 || 0)}{' '}
+                    {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                  </div>
+                  <div>
+                    {money(calculatedPrice.VAT * 100 || 0)}{' '}
+                    {t('DELIVERY_FORM_TOTAL_VAT')}
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="mb-1">
+                    {money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                  </div>
+                  <div>
+                    {money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}
+                  </div>
+                </div>
+              )}
+              <div style={{ maxWidth: '100%' }} className="mt-4">
+                <div>
+                  {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
+                  <Checkbox
+                    className="ml-4 mb-2"
+                    checked={overridePrice}
+                    onChange={e => {
+                      setOverridePrice(e.target.checked)
+                      setCalculatePrice(0)
+                    }}></Checkbox>
+                </div>
+              </div>
+            </div>
+            {priceError.isPriceError ? (
+              <div className="alert alert-danger mt-4" role="alert">
+                {priceError.priceErrorMessage}
+              </div>
+            ) : null}
+          </div>
         </>
       ) : null}
     </>

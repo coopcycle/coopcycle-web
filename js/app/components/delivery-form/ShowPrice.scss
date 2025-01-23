@@ -9,7 +9,7 @@
   &__variant-price {
     display: flex;
     flex-direction: row;
-    align-items: flex-start; 
+    align-items: baseline; 
     width: 100%;
 
     &___label {
@@ -23,3 +23,8 @@
     }
   }
 }
+
+.total__price{
+  font-size: 1.2em;
+}
+

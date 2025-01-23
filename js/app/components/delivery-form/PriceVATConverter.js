@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { InputNumber } from 'antd'
 import { useTranslation } from 'react-i18next'
+import './PriceVATConverter.scss'
 
 const getCurrencySymbol = () => {
   const { currencySymbol } = document.body.dataset
@@ -14,30 +15,7 @@ export default ({ amount, setPrices }) => {
 
   return (
     <div className="row">
-      <div className="col-xs-6">
-        <label
-          className="variant-price-VAT___label font-weight-bold mr-3"
-          htmlFor="variantPriceVAT">
-          {t('DELIVERY_FORM_VAT_PRICE')}
-        </label>
-
-        <InputNumber
-          id="variantPriceVAT"
-          controls={false}
-          prefix={getCurrencySymbol()}
-          value={values.VAT}
-          onChange={value => {
-            const newValues = {
-              exVAT: (value / (amount + 1)).toFixed(2),
-              VAT: value,
-            }
-            setValues(newValues)
-            setPrices(newValues)
-          }}
-        />
-      </div>
-
-      <div className="col-xs-6">
+      <div className="col-xs-6 field">
         <label
           className="variant-price-exVAT___label font-weight-bold mr-3"
           htmlFor="variantPriceExVAT">
@@ -53,6 +31,29 @@ export default ({ amount, setPrices }) => {
             const newValues = {
               exVAT: value,
               VAT: (value * (amount + 1)).toFixed(2),
+            }
+            setValues(newValues)
+            setPrices(newValues)
+          }}
+        />
+      </div>
+
+      <div className="col-xs-6 field">
+        <label
+          className="variant-price-VAT___label font-weight-bold mr-3"
+          htmlFor="variantPriceVAT">
+          {t('DELIVERY_FORM_VAT_PRICE')}
+        </label>
+
+        <InputNumber
+          id="variantPriceVAT"
+          controls={false}
+          prefix={getCurrencySymbol()}
+          value={values.VAT}
+          onChange={value => {
+            const newValues = {
+              exVAT: (value / (amount + 1)).toFixed(2),
+              VAT: value,
             }
             setValues(newValues)
             setPrices(newValues)
