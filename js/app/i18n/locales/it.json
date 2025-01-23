@@ -398,6 +398,7 @@
         "DELIVERY_FORM_PRODUCT_NAME": "Nome del prodotto",
         "DELIVERY_FORM_NAME_INSTRUCTION": "Il nome che apparirà nel riepilogo dell'ordine e nella fattura",
         "DELIVERY_FORM_VAT_PRICE": "Prezzo IVA inclusa",
-        "DELIVERY_FORM_EXVAT_PRICE" : "Prezzo IVA esclusa"
+        "DELIVERY_FORM_EXVAT_PRICE" : "Prezzo IVA esclusa",
+        "DELIVERY_FORM_ERROR_VARIANT_NAME" : "Per favore, inserisci un nome del prodotto"
     }
 }

@@ -171,7 +171,12 @@ export default function ({ storeId, deliveryId, order }) {
       }
     }
 
-    return Object.keys(errors.tasks).length > 0 ? errors : {}
+
+    if (overridePrice && !values.variantName) {
+      errors.variantName = t("DELIVERY_FORM_ERROR_VARIANT_NAME")
+      }
+
+    return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
 
   useEffect(() => {
@@ -259,7 +264,9 @@ export default function ({ storeId, deliveryId, order }) {
       
       return await httpClient[method](url, {
         store: storeDeliveryInfos['@id'],
-        tasks: values.tasks
+        tasks: values.tasks,
+        variantIncVATPrice: values.variantIncVATPrice,
+        variantName: values.variantName
       });
     }
 

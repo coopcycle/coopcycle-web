@@ -639,6 +639,7 @@
         "DELIVERY_FORM_NAME_INSTRUCTION" : "Le nom qui apparaîtra dans le résumé de la commande et la facture",
         "DELIVERY_FORM_VAT_PRICE" : "Prix TTC",
         "DELIVERY_FORM_EXVAT_PRICE" : "Prix HT",
+        "DELIVERY_FORM_ERROR_VARIANT_NAME" : "Veuillez entrer un nom de produit",
         "SHOW_BARCODES" : "Voir les codes-barres"
     }
 }
