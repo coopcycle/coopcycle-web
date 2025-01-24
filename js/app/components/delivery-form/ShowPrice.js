@@ -146,13 +146,20 @@ export default ({
             )}
 
             {isAdmin && (
-              <div style={{ maxWidth: '100%' }} className="mt-4">
+              <div
+                style={{ maxWidth: '100%', cursor: 'pointer' }}
+                onClick={() => {
+                  setOverridePrice(!overridePrice)
+                  setCalculatePrice(0)
+                }}
+                className="mt-4">
                 <div>
-                  {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
+                  <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
                   <Checkbox
                     className="ml-4 mb-2"
                     checked={overridePrice}
                     onChange={e => {
+                      e.stopPropagation()
                       setOverridePrice(e.target.checked)
                       setCalculatePrice(0)
                     }}></Checkbox>
@@ -221,13 +228,20 @@ export default ({
               )}
 
               {isAdmin && (
-                <div style={{ maxWidth: '100%' }} className="mt-4">
+                <div
+                  style={{ maxWidth: '100%', cursor: 'pointer' }}
+                  onClick={() => {
+                    setOverridePrice(!overridePrice)
+                    setCalculatePrice(0)
+                  }}
+                  className="mt-4">
                   <div>
-                    {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
+                    <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
                     <Checkbox
                       className="ml-4 mb-2"
                       checked={overridePrice}
                       onChange={e => {
+                        e.stopPropagation()
                         setOverridePrice(e.target.checked)
                         setCalculatePrice(0)
                       }}></Checkbox>

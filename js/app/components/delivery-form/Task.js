@@ -74,7 +74,8 @@ export default ({
           task.type === 'PICKUP'
             ? 'task__header task__header--pickup'
             : 'task__header task__header--dropoff'
-        }>
+        }
+        onClick={() => setShowLess(!showLess)}>
         {task.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
@@ -93,8 +94,7 @@ export default ({
               showLess
                 ? t('DELIVERY_FORM_SHOW_MORE')
                 : t('DELIVERY_FORM_SHOW_LESS')
-            }
-            onClick={() => setShowLess(!showLess)}></i>
+            }></i>
         </button>
       </div>
 
