@@ -170,6 +170,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $owners;
 
+    /**
+     * @Groups({"store"})
+     */
     private $prefillPickupAddress = false;
 
     /**
@@ -209,12 +212,13 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     /**
      * The deliveries of this store will be linked by default to this rider
      * @var User
-    */
+     */
     private $defaultCourier;
 
     protected string $billingMethod = 'unit';
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
         $this->addresses = new ArrayCollection();
@@ -547,7 +551,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     public function getTimeSlots()
     {
-        return $this->timeSlots->map(fn (StoreTimeSlot $sts): TimeSlot => $sts->getTimeSlot());
+        return $this->timeSlots->map(fn(StoreTimeSlot $sts): TimeSlot => $sts->getTimeSlot());
     }
 
     public function setTimeSlots($timeSlots): void
@@ -612,7 +616,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return [];
     }
 
-   public function isTransporterEnabled(): bool
+    public function isTransporterEnabled(): bool
     {
         return !is_null($this->transporter);
     }
