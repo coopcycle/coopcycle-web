@@ -199,6 +199,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $packagesRequired = false;
 
+    /**
+     * @Groups({"store"})
+     */
     private $multiDropEnabled = false;
 
     /**
