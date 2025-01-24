@@ -272,4 +272,6 @@ interface OrderInterface extends
     public function getDeliveryItem(): ?OrderItemInterface;
 
     public function getDeliveryPrice(): PriceInterface;
+
+    public function getExports(): Collection;
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping"
+  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\Sylius\ExportCommand" table="sylius_export_command">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY" />
+    </id>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create" />
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update" />
+    </field>
+    <field name="requestId" type="string" column="request_id" />
+    <many-to-one field="createdBy" target-entity="AppBundle\Entity\User" />
+    <one-to-many field="orders" target-entity="AppBundle\Entity\Sylius\OrderExport"
+      mapped-by="exportCommand" orphan-removal="true">
+      <cascade>
+        <cascade-persist />
+      </cascade>
+    </one-to-many>
+  </entity>
+</doctrine-mapping>

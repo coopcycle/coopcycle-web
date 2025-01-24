@@ -585,6 +585,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected ?RecurrenceRule $subscription = null;
 
+    protected Collection $exports;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -607,6 +609,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->promotions = new ArrayCollection();
         $this->vendors = new ArrayCollection();
         $this->bookmarks = new ArrayCollection();
+        $this->exports = new ArrayCollection();
     }
 
     /**
@@ -2039,5 +2042,10 @@ class Order extends BaseOrder implements OrderInterface
             // custom price
             return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
         }
+    }
+
+    public function getExports(): Collection
+    {
+        return $this->exports;
     }
 }
