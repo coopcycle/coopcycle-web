@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
@@ -500,6 +501,7 @@ use Webmozart\Assert\Assert as WMAssert;
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
  * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
+ * @ApiFilter(ExistsFilter::class, properties={"exports"})
  * @ApiFilter(OrderStoreFilter::class)
  *
  * @AssertOrder(groups={"Default"})

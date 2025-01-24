@@ -11,6 +11,7 @@ import { usePrevious } from '../../../../dashboard/redux/utils'
 export default function OrdersTable({
   ordersStates,
   dateRange,
+  onlyNotInvoiced,
   storeId,
   reloadKey,
 }) {
@@ -35,8 +36,9 @@ export default function OrdersTable({
         dateRange[1].format('YYYY-MM-DD'),
       ],
       state: ordersStates,
+      onlyNotInvoiced: onlyNotInvoiced,
     })
-  }, [ordersStates, dateRange, storeId])
+  }, [ordersStates, dateRange, onlyNotInvoiced, storeId])
 
   const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
     params,
@@ -72,7 +74,7 @@ export default function OrdersTable({
       })),
       total: data['hydra:totalItems'],
     }
-  }, [data])
+  }, [data, t])
 
   const columns = [
     {

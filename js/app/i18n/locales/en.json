@@ -200,6 +200,8 @@
         "ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE": "Period",
         "ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE_SIMPLE": "Select month",
         "ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE_COMPLEX": "Select custom period",
+        "ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS": "Status",
+        "ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS_NOT_INVOICED": "Only not invoiced",
         "ADMIN_ORDERS_TO_INVOICE_REFRESH": "Refresh",
         "ADMIN_ORDERS_TO_INVOICE_DOWNLOAD": "Download",
         "ADMIN_ORDERS_TO_INVOICE_ORGANIZATION_LABEL": "Organization (number of orders)",

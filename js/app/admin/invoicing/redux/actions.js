@@ -1,6 +1,6 @@
 import { baseQueryWithReauth } from '../../../api/baseQuery'
 
-export function prepareParams({ store, dateRange, state }) {
+export function prepareParams({ store, dateRange, state, onlyNotInvoiced }) {
   let params = []
 
   if (store && store.length > 0) {
@@ -13,6 +13,10 @@ export function prepareParams({ store, dateRange, state }) {
 
   params.push(`date[after]=${dateRange[0]}`)
   params.push(`date[before]=${dateRange[1]}`)
+
+  if (onlyNotInvoiced) {
+    params.push('exists[exports]=false')
+  }
 
   return params
 }
