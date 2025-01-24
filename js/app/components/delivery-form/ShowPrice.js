@@ -61,7 +61,7 @@ export default ({
   isAdmin,
 }) => {
   const { t } = useTranslation()
-  const { setFieldValue, errors } = useFormikContext()
+  const { setFieldValue } = useFormikContext()
 
   const [taxRate, setTaxRate] = useState(null)
 

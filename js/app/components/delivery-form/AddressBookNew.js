@@ -123,7 +123,7 @@ export default function AddressBook({ index, addresses }) {
             }
             options={addresses.map(address => ({
               value: address.streetAddress,
-              label: address.streetAddress,
+              label: `${address.name} - ${address.streetAddress}`,
               key: address['@id'],
               id: address['@id'],
             }))}
