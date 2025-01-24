@@ -1,15 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
-import Task from '../../../../js/app/components/delivery-form/Task.js'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import moment from 'moment'
 
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
-import _ from 'lodash'
-
+import BarcodesModal from '../BarcodesModal.jsx'
+import ShowPrice from '../../../../js/app/components/delivery-form/ShowPrice.js'
+import Task from '../../../../js/app/components/delivery-form/Task.js'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n'
@@ -18,8 +18,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 
 import "./DeliveryForm.scss"
-import BarcodesModal from '../BarcodesModal.jsx'
-import ShowPrice from '../../../../js/app/components/delivery-form/ShowPrice.js'
+
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -128,6 +127,7 @@ export default function ({ storeId, deliveryId, order }) {
   })
   const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
   const [overridePrice, setOverridePrice] = useState(false)
+  const [priceLoading, setPriceLoading] = useState(false)
 
   let deliveryPrice
 
@@ -136,6 +136,7 @@ export default function ({ storeId, deliveryId, order }) {
     deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
   }
 
+  console.log(storeDeliveryInfos)
 
   const { t } = useTranslation()
   
@@ -303,6 +304,8 @@ export default function ({ storeId, deliveryId, order }) {
 
   const getPrice = (values) => {
 
+    setPriceLoading(true)
+
     const tasksCopy = structuredClone(values.tasks)
     const tasksWithoutId = tasksCopy.map(task => {
           if (task["@id"]) {
@@ -311,34 +314,8 @@ export default function ({ storeId, deliveryId, order }) {
           return task
         })
       
-      let packages = []
-
-      for (const task of values.tasks) {
-        if (task.packages && task.type ==="DROPOFF") {
-          packages.push(...task.packages)
-        }
-      }
-      
-      const mergedPackages = _(packages)
-        .groupBy('type') 
-        .map((items, type) => ({
-          type, 
-          quantity: _.sumBy(items, 'quantity'), 
-        }))
-        .value()
-
-      let totalWeight = 0
-
-      for (const task of values.tasks) {
-        if (task.weight && task.type ==="DROPOFF") {
-          totalWeight+= task.weight 
-        }
-      }
-      
       const infos = {
         store: storeDeliveryInfos["@id"],
-        weight: totalWeight,
-        packages: mergedPackages,
         tasks: tasksWithoutId,
       };
 
@@ -349,11 +326,13 @@ export default function ({ storeId, deliveryId, order }) {
         if (error) {
           setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
           setCalculatePrice(0)
+          setPriceLoading(false)
         }
 
         if (response) {
           setCalculatePrice(response)
           setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+          setPriceLoading(false)
         }
 
       }
@@ -383,7 +362,7 @@ export default function ({ storeId, deliveryId, order }) {
 
             useEffect(() => {
                 if(!overridePrice && !deliveryId) getPrice(values)
-            }, [values, overridePrice, deliveryId]);
+            }, [values.tasks, overridePrice, deliveryId]);
 
             return (
               <Form >
@@ -480,6 +459,7 @@ export default function ({ storeId, deliveryId, order }) {
                         priceError={priceError}
                         setOverridePrice={setOverridePrice}
                         overridePrice={overridePrice}
+                        priceLoading={priceLoading}
                       />
                     </div>
 

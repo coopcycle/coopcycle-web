@@ -4,6 +4,7 @@ import { Checkbox, Input } from 'antd'
 import { useFormikContext, Field } from 'formik'
 import { useTranslation } from 'react-i18next'
 import PriceVATConverter from './PriceVATConverter'
+import Spinner from '../core/Spinner'
 import './ShowPrice.scss'
 
 const baseURL = location.protocol + '//' + location.host
@@ -59,6 +60,7 @@ export default ({
   overridePrice,
   setCalculatePrice,
   isAdmin,
+  priceLoading,
 }) => {
   const { t } = useTranslation()
   const { setFieldValue } = useFormikContext()
@@ -177,15 +179,23 @@ export default ({
             <div>
               {calculatedPrice.amount && !overridePrice ? (
                 <div>
-                  <div className="mb-1">
-                    {money(calculatedPrice.amount - calculatedPrice.tax.amount)}{' '}
-                    {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                  </div>
-                  {!overridePrice && (
-                    <div>
-                      {money(calculatedPrice.amount)}{' '}
-                      {t('DELIVERY_FORM_TOTAL_VAT')}
-                    </div>
+                  {priceLoading ? (
+                    <Spinner />
+                  ) : (
+                    <>
+                      <div className="mb-1">
+                        {money(
+                          calculatedPrice.amount - calculatedPrice.tax.amount,
+                        )}{' '}
+                        {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                      </div>
+                      {!overridePrice && (
+                        <div>
+                          {money(calculatedPrice.amount)}{' '}
+                          {t('DELIVERY_FORM_TOTAL_VAT')}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               ) : overridePrice ? (
