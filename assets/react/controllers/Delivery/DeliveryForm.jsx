@@ -472,6 +472,7 @@ export default function ({ storeId, deliveryId, order }) {
 
                     <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
                       <ShowPrice
+                        isAdmin={isAdmin}
                         deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
                         calculatedPrice={calculatedPrice}
