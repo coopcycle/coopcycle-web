@@ -100,7 +100,11 @@ export default ({
 
       <div
         className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
-        <AddressBookNew addresses={addresses} index={index} />
+        <AddressBookNew
+          addresses={addresses}
+          index={index}
+          storeDeliveryInfos={storeDeliveryInfos}
+        />
 
         {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
         {isAdmin ? (

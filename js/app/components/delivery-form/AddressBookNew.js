@@ -1,5 +1,5 @@
 import './AddressBookNew.scss'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, Select, Checkbox, Button } from 'antd'
 import AddressAutosuggest from '../AddressAutosuggest'
 import Modal from 'react-modal'
@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next'
 import { useFormikContext, Field } from 'formik'
 import { getCountry } from '../../i18n'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-
 
 function getFormattedValue(value) {
   if (typeof value === 'string') {
@@ -36,7 +35,7 @@ function getUnformattedValue(value) {
   return value ?? ''
 }
 
-export default function AddressBook({ index, addresses }) {
+export default function AddressBook({ index, addresses, storeDeliveryInfos }) {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
   const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
@@ -74,7 +73,16 @@ export default function AddressBook({ index, addresses }) {
       contactName: selectedAddress.contactName || '',
     })
     setSelectValue(value)
+
+    useEffect(() => {
+      if (storeDeliveryInfos.address) {
+        setSelectValue(storeDeliveryInfos.address.streetAddress)
+        // handleAddressSelected(storeDeliveryInfos.address.streetAddress)
+      }
+    }, [storeDeliveryInfos.address])
   }
+
+  console.log(storeDeliveryInfos)
 
   /** The value used by the input is formatedTelephone, as we need to send telephone with international area code
    * We also need to set the value to null if input is empty because React treats it as empty string and it causes validation errors from the back
