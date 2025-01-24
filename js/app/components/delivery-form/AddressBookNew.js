@@ -73,16 +73,13 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos }) {
       contactName: selectedAddress.contactName || '',
     })
     setSelectValue(value)
-
-    useEffect(() => {
-      if (storeDeliveryInfos.address) {
-        setSelectValue(storeDeliveryInfos.address.streetAddress)
-        // handleAddressSelected(storeDeliveryInfos.address.streetAddress)
-      }
-    }, [storeDeliveryInfos.address])
   }
 
-  console.log(storeDeliveryInfos)
+  useEffect(() => {
+    if (storeDeliveryInfos.address && storeDeliveryInfos.prefillPickupAddress) {
+      handleAddressSelected(storeDeliveryInfos.address.streetAddress)
+    }
+  }, [storeDeliveryInfos.address, storeDeliveryInfos.prefillPickupAddress])
 
   /** The value used by the input is formatedTelephone, as we need to send telephone with international area code
    * We also need to set the value to null if input is empty because React treats it as empty string and it causes validation errors from the back
@@ -204,7 +201,6 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos }) {
         <div className="col-sm-12">
           <AddressAutosuggest
             address={values.tasks[index].address || ''}
-            addresses={addresses}
             required={true}
             reportValidity={true}
             preciseOnly={true}
