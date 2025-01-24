@@ -129,6 +129,8 @@ export default function ({ storeId, deliveryId, order }) {
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
+  console.log(storeDeliveryInfos)
+
   let deliveryPrice
 
   if (order) {
@@ -410,11 +412,8 @@ export default function ({ storeId, deliveryId, order }) {
                                     addresses={addresses}
                                     storeId={storeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
-                                    onAdd={arrayHelpers.push}
-                                    dropoffSchema={dropoffSchema}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
-                                    showAddButton={originalIndex === values.tasks.length - 1}
                                     packages={storePackages}
                                     isAdmin={isAdmin}
                                     tags={tags}
@@ -422,6 +421,18 @@ export default function ({ storeId, deliveryId, order }) {
                                 </div>
                               );
                             })}
+                          
+                          {storeDeliveryInfos.multiDropEnabled ? <div
+                            className="new-order__dropoffs__add p-4 border mb-4">
+                            <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+                            <Button
+                              disabled={false}
+                              onClick={() => {
+                                arrayHelpers.push(dropoffSchema)
+                                }}>
+                              {t('DELIVERY_FORM_ADD_DROPOFF')}
+                            </Button>
+                          </div> : null}
                         </div>
                       </div>
                     )}

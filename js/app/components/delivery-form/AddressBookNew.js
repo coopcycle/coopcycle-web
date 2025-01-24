@@ -198,7 +198,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos }) {
         </div>
       </div>
       <div className="row">
-        <div className="col-sm-12">
+        <div className="address__autosuggest col-sm-12">
           <AddressAutosuggest
             address={values.tasks[index].address || ''}
             required={true}

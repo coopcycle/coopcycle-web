@@ -19,11 +19,8 @@ export default ({
   index,
   storeDeliveryInfos,
   deliveryId,
-  onAdd,
-  dropoffSchema,
   onRemove,
   showRemoveButton,
-  showAddButton,
   packages,
   isAdmin,
   tags,
@@ -195,24 +192,6 @@ export default ({
               className="mb-4">
               {t('DELIVERY_FORM_REMOVE_DROPOFF')}
             </Button>
-          )}
-          {showAddButton && (
-            <div
-              className="mb-4"
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
-              <Button
-                disabled={false}
-                onClick={() => {
-                  onAdd(dropoffSchema)
-                }}>
-                {t('DELIVERY_FORM_ADD_DROPOFF')}
-              </Button>
-            </div>
           )}
         </div>
       )}
