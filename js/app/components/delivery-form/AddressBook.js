@@ -1,12 +1,13 @@
-import './AddressBookNew.scss'
 import React, { useEffect, useState } from 'react'
 import { Input, Select, Checkbox, Button } from 'antd'
-import AddressAutosuggest from '../AddressAutosuggest'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import { useFormikContext, Field } from 'formik'
 import { getCountry } from '../../i18n'
+import AddressAutosuggest from '../AddressAutosuggest'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+
+import './AddressBook.scss'
 
 function getFormattedValue(value) {
   if (typeof value === 'string') {

@@ -129,7 +129,7 @@ export default function ({ storeId, deliveryId, order }) {
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
-  console.log(storeDeliveryInfos)
+ 
 
   let deliveryPrice
 
@@ -137,8 +137,6 @@ export default function ({ storeId, deliveryId, order }) {
     const orderInfos = JSON.parse(order)
     deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
   }
-
-  console.log(storeDeliveryInfos)
 
   const { t } = useTranslation()
   
@@ -359,8 +357,6 @@ export default function ({ storeId, deliveryId, order }) {
           validateOnBlur={false}
         >
           {({ values, isSubmitting }) => {
-
-            console.log(values)
 
             useEffect(() => {
                 if(!overridePrice && !deliveryId) getPrice(values)
