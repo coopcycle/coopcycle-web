@@ -55,6 +55,14 @@ export default function OrdersTable({
       dataSource: data['hydra:member'].map(order => ({
         rowKey: order['@id'],
         orderId: order.orderId,
+        exports:
+          order.exports.length > 0
+            ? t('ADMIN_ORDERS_TO_INVOICE_EXPORTED') +
+              ' ' +
+              order.exports
+                .map(requestId => requestId.substring(0, 7))
+                .join(', ')
+            : t('ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED'),
         number: order.orderNumber,
         date: order.date ? moment(order.date).format('l') : '?',
         description: order.description,
@@ -71,6 +79,11 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL'),
       dataIndex: 'number',
       key: 'number',
+    },
+    {
+      title: t('ADMIN_ORDERS_TO_INVOICE_EXPORTS_LABEL'),
+      dataIndex: 'exports',
+      key: 'exports',
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_DATE_LABEL'),
