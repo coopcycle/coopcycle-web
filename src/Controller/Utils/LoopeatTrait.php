@@ -24,6 +24,7 @@ trait LoopeatTrait {
                 'Loopeat.orderNumber',
                 'Loopeat.orderDate',
                 'Loopeat.customerEmail',
+                'Loopeat.deliveredBy',
                 'Loopeat.packagingFee'
             ],
         ];
