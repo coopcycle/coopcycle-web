@@ -1286,4 +1286,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
+
+    /**
+     * @Given the store with name :storeName has a default courier with username :username
+     */
+    public function theStoreWithNameHasADefaultCourierWithUsername($storeName, $username)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+        $user = $this->userManager->findUserByUsername($username);
+
+        $store->setDefaultCourier($user);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
 }

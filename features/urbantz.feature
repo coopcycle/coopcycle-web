@@ -606,7 +606,8 @@ Feature: Urbantz
           "weight":1082,
           "packages":[],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags":@array@
         },
         "dropoff":{
           "@id":@string@,
@@ -636,7 +637,8 @@ Feature: Urbantz
           "weight":1082,
           "packages": [],
           "barcode": @array@,
-          "createdAt":"@string@.isDateTime()"
+          "createdAt":"@string@.isDateTime()",
+          "tags":@array@
         },
         "tasks":@array@,
         "trackingUrl": @string@

@@ -1408,4 +1408,15 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
+    public function isZeroWaste(): bool
+    {
+        if ($delivery = $this->getDelivery()) {
+            if ($order = $delivery->getOrder()) {
+                return $order->isZeroWaste();
+            }
+        }
+
+        return false;
+    }
 }

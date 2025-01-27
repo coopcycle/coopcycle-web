@@ -1903,7 +1903,6 @@ Feature: Deliveries
       """
     Then the response status code should be 400
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
       """
       {
@@ -1912,11 +1911,6 @@ Feature: Deliveries
         "hydra:title":"An error occurred",
         "hydra:description":@string@,
         "violations":[
-          {
-            "propertyPath":"items",
-            "message":@string@,
-            "code":null
-          },
           {
             "propertyPath":"items",
             "message":@string@,
@@ -2332,7 +2326,7 @@ Feature: Deliveries
         }
       }
     """
-     Then the response status code should be 200
+    Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
@@ -2408,3 +2402,47 @@ Feature: Deliveries
       }
       """
    
+
+  Scenario: Create delivery with default courier
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_COURIER"
+    And the store with name "Acme" has a default courier with username "bob"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "isAssigned": true,
+        "assignedTo": "bob",
+        "@*@": "@*@"
+      }
+      """
