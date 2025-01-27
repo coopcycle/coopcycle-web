@@ -46,6 +46,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
             KernelEvents::REQUEST => [
+                ['setStore', EventPriorities::POST_DESERIALIZE],
                 ['setDefaults', EventPriorities::POST_DESERIALIZE],
             ],
             KernelEvents::VIEW => [
@@ -58,6 +59,25 @@ final class DeliverySubscriber implements EventSubscriberInterface
     private function matchRoute(Request $request)
     {
         return in_array($request->attributes->get('_route'), self::$matchingRoutes);
+    }
+
+    public function setStore(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        $store = $this->storeExtractor->extractStore();
+
+        if (null === $store) {
+            return;
+        }
+
+        $delivery = $request->attributes->get('data');
+
+        $delivery->setStore($store);
     }
 
     public function setDefaults(RequestEvent $event)
