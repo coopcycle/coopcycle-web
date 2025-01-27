@@ -3,7 +3,7 @@ cube(`Loopeat`, {
   SELECT
       r.name AS restaurant_name,
       o.number AS order_number,
-      LOWER(o.shipping_time_range) AS order_date,
+      (LOWER(o.shipping_time_range) + (UPPER(o.shipping_time_range) - LOWER(o.shipping_time_range)) / 2) AS order_date,
       c.email_canonical AS customer_email,
       u.username AS delivered_by,
       SUM(COALESCE(rpa.amount, 0)) AS packaging_fee
