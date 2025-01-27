@@ -110,11 +110,9 @@ class DeliveryManager
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
         $store = $delivery->getStore();
-        $storeFromToken = $this->storeExtractor->extractStore();
 
-        if (!is_null($storeFromToken)) {
-            $store = $storeFromToken;
-            $delivery->setStore($storeFromToken);
+        if (null === $store = $delivery->getStore()) {
+            $store = $this->storeExtractor->extractStore();
         }
 
         // If no pickup address is specified, use the store address

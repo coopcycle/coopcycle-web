@@ -676,6 +676,7 @@ services:
       $foodtechEnabled: "%foodtech_enabled%"
       $b2bEnabled: "%b2b_enabled%"
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $projectDir: "%kernel.project_dir%"
 
   AppBundle\Service\EmailManager:
     arguments:
