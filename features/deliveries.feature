@@ -1915,11 +1915,6 @@ Feature: Deliveries
             "propertyPath":"items",
             "message":@string@,
             "code":null
-          },
-          {
-            "propertyPath":"items",
-            "message":@string@,
-            "code":null
           }
         ]
       }
