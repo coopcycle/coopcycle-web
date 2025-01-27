@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Utils\Settings;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Craue\ConfigBundle\CacheAdapter\CacheAdapterInterface as CraueCache;
@@ -9,7 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
-use AppBundle\Payment\GatewayResolver;
+use Symfony\Component\Process\Process;
 
 class SettingsManager
 {
@@ -61,6 +62,7 @@ class SettingsManager
         bool $foodtechEnabled,
         bool $b2bEnabled,
         GatewayResolver $gatewayResolver,
+        string $projectDir,
         $forceStripe = false)
     {
         $this->craueConfig = $craueConfig;
@@ -72,6 +74,7 @@ class SettingsManager
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
         $this->gatewayResolver = $gatewayResolver;
+        $this->projectDir = $projectDir;
         $this->forceStripe = $forceStripe;
     }
 
@@ -364,5 +367,21 @@ class SettingsManager
         }
 
         return true;
+    }
+
+    public function getVersion(): string
+    {
+        // TODO Add caching
+        // https://stackoverflow.com/questions/2324195/how-to-get-tags-on-current-commit
+        $process = new Process(['git', 'tag', '--points-at', 'HEAD'], $this->projectDir);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            return 'dev-master';
+        }
+
+        $version = $process->getOutput();
+
+        return $version;
     }
 }

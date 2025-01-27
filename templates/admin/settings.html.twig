@@ -17,10 +17,28 @@
 {% block content %}
 
 <div class="alert alert-info">
-  <i class="fa fa-globe"></i>  {% trans %}form.settings.date_time{% endtrans %}
-  <span class="pull-right">
-    <span>{{ 'now'|format_datetime('none', 'short') }} {{ timezone }}</span>
-  </span>
+  <table class="w-100">
+    <tbody>
+      <tr>
+        <td>
+          <i class="fa fa-code-fork mr-2"></i>
+          <span>{% trans %}form.settings.version{% endtrans %}</span>
+        </td>
+        <td class="text-right">
+          <span class="text-monospace">{{ coopcycle_version() }}</span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <i class="fa fa-globe mr-2"></i>
+          <span>{% trans %}form.settings.date_time{% endtrans %}</span>
+        </td>
+        <td class="text-right">
+           <span class="mr-2">{{ 'now'|format_datetime('none', 'short') }}</span><span>{{ timezone }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 {{ form_start(form) }}
