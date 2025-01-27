@@ -5,7 +5,7 @@ cube(`Loopeat`, {
       o.number AS order_number,
       LOWER(o.shipping_time_range) AS order_date,
       c.email_canonical AS customer_email,
-      rpa.amount AS packaging_fee
+      SUM(rpa.amount) AS packaging_fee
   FROM ${OrderItem.sql()} i
   JOIN sylius_product_variant v ON i.variant_id = v.id
   JOIN sylius_product p on v.product_id = p.id
@@ -13,7 +13,7 @@ cube(`Loopeat`, {
   JOIN sylius_customer c on o.customer_id = c.id
   JOIN ${OrderVendor.sql()} sov ON o.id = sov.order_id
   JOIN ${Restaurant.sql()} r ON sov.restaurant_id = r.id
-  JOIN ${ReusablePackagingAdjustment.sql()} rpa ON o.id = rpa.order_id
+  JOIN ${Adjustment.sql()} rpa ON o.id = rpa.order_id AND rpa.type = 'reusable_packaging'
   WHERE
       o.state = 'fulfilled'
   AND o.reusable_packaging_enabled = 't'
