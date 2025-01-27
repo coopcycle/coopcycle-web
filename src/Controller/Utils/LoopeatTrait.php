@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use Carbon\Carbon;
 use League\Csv\Writer as CsvWriter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +15,8 @@ trait LoopeatTrait {
     public function zeroWasteTransactionsAction(Request $request, CubeJsTokenFactory $tokenFactory, HttpClientInterface $cubejsClient)
     {
         $this->denyAccessUnlessGranted('ROLE_LOOPEAT');
+
+        $month = $request->query->get('month', date('Y-m'));
 
         $query = [
             'measures' => [],
@@ -27,6 +30,16 @@ trait LoopeatTrait {
                 'Loopeat.deliveredBy',
                 'Loopeat.packagingFee'
             ],
+            'filters' => [
+                [
+                    'member' => 'Loopeat.orderDate',
+                    'operator' => 'inDateRange',
+                    'values' => [
+                        Carbon::parse($month)->startOfMonth()->format('Y-m-d'),
+                        Carbon::parse($month)->endOfMonth()->format('Y-m-d')
+                    ]
+                ]
+            ]
         ];
 
         $cubeJsToken = $tokenFactory->createToken();
@@ -68,6 +81,7 @@ trait LoopeatTrait {
         return $this->render('profile/loopeat.html.twig', [
             'cube_token' => $cubeJsToken,
             'query' => $query,
+            'month' => $month,
         ]);
     }
 }
