@@ -91,7 +91,8 @@ class SettingsManagerTest extends TestCase
             $country,
             $foodtechEnable = true,
             $b2bEnabled = false,
-            new GatewayResolver('fr')
+            new GatewayResolver('fr'),
+            '/path/to/project_dir'
         );
 
         $this->assertEquals($expected, $settingsManager->canSendSms());

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae1b431bb5c0cf12a60d8204697c560a",
+    "content-hash": "1c09bd8a83c55d73a673905f48bcb768",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -21948,6 +21948,60 @@
                 "source": "https://github.com/winzou/StateMachineBundle/tree/0.6.0"
             },
             "time": "2021-12-21T14:23:04+00:00"
+        },
+        {
+            "name": "z4kn4fein/php-semver",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/z4kn4fein/php-semver.git",
+                "reference": "049a1d81e92235c8b3c9ab30a96fcbaa929a266d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/z4kn4fein/php-semver/zipball/049a1d81e92235c8b3c9ab30a96fcbaa929a266d",
+                "reference": "049a1d81e92235c8b3c9ab30a96fcbaa929a266d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "phpstan/phpstan": "^1.0",
+                "phpunit/phpunit": "^10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "z4kn4fein\\SemVer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Peter Csajtai",
+                    "email": "peter.csajtai@outlook.com"
+                }
+            ],
+            "description": "Semantic Versioning library for PHP. It implements the full semantic version 2.0.0 specification and provides ability to parse, compare, and increment semantic versions along with validation against constraints.",
+            "homepage": "https://github.com/z4kn4fein/php-semver",
+            "keywords": [
+                "comparison",
+                "semantic",
+                "semver",
+                "validation",
+                "version",
+                "versioning"
+            ],
+            "support": {
+                "issues": "https://github.com/z4kn4fein/php-semver/issues",
+                "source": "https://github.com/z4kn4fein/php-semver/tree/v3.0.0"
+            },
+            "time": "2024-04-01T16:17:27+00:00"
         }
     ],
     "packages-dev": [
@@ -24560,18 +24614,18 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "behatch/contexts": 20,
-        "coopcycle/transporter": 20,
-        "drupal/core-vendor-hardening": 20,
         "league/geotools": 0,
+        "drupal/core-vendor-hardening": 20,
         "nucleos/profile-bundle": 20,
-        "shahonseven/php-color-hash": 20
+        "shahonseven/php-color-hash": 20,
+        "coopcycle/transporter": 20,
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

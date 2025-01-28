@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
@@ -500,6 +501,7 @@ use Webmozart\Assert\Assert as WMAssert;
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
  * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
+ * @ApiFilter(ExistsFilter::class, properties={"exports"})
  * @ApiFilter(OrderStoreFilter::class)
  *
  * @AssertOrder(groups={"Default"})
@@ -585,6 +587,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected ?RecurrenceRule $subscription = null;
 
+    protected Collection $exports;
+
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
         "properties" => [
@@ -607,6 +611,7 @@ class Order extends BaseOrder implements OrderInterface
         $this->promotions = new ArrayCollection();
         $this->vendors = new ArrayCollection();
         $this->bookmarks = new ArrayCollection();
+        $this->exports = new ArrayCollection();
     }
 
     /**
@@ -2045,5 +2050,10 @@ class Order extends BaseOrder implements OrderInterface
             // custom price
             return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
         }
+    }
+
+    public function getExports(): Collection
+    {
+        return $this->exports;
     }
 }

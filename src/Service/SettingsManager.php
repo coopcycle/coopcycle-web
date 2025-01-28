@@ -10,6 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Process\Process;
 
 class SettingsManager
@@ -372,6 +373,27 @@ class SettingsManager
     public function getVersion(): string
     {
         // TODO Add caching
+
+        // If there is a REVISION file in project dir containing a SHA1, trust it
+        $revisionFile = $this->projectDir . '/REVISION';
+        if (file_exists($revisionFile)) {
+
+            $sha1 = trim(file_get_contents($revisionFile));
+
+            $process = new Process(['git', 'ls-remote', '--tags', 'https://github.com/coopcycle/coopcycle-web.git']);
+            $process->run();
+
+            if ($process->isSuccessful()) {
+                $lines = explode("\n", $process->getOutput());
+                foreach ($lines as $line) {
+                    $pattern = sprintf('#^%s[ \t]+refs\/tags\/(v[0-9\.]+)$#', $sha1);
+                    if (1 === preg_match($pattern, $line, $matches)) {
+                        return trim($matches[1]);
+                    }
+                }
+            }
+        }
+
         // https://stackoverflow.com/questions/2324195/how-to-get-tags-on-current-commit
         $process = new Process(['git', 'tag', '--points-at', 'HEAD'], $this->projectDir);
         $process->run();

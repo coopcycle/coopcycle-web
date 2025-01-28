@@ -11,6 +11,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\RuntimeExtensionInterface;
+use z4kn4fein\SemVer\Version;
 
 class SettingResolver implements RuntimeExtensionInterface
 {
@@ -96,5 +97,12 @@ class SettingResolver implements RuntimeExtensionInterface
     public function getVersion(): string
     {
         return $this->settingsManager->getVersion();
+    }
+
+    public function getGithubReleaseLink(): string
+    {
+        $version = Version::parse(str_replace('v', '', $this->settingsManager->getVersion()));
+
+        return sprintf('https://github.com/coopcycle/coopcycle-web/releases/tag/v%s.%s.0', $version->getMajor(), $version->getMinor());
     }
 }

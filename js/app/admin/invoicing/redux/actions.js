@@ -1,6 +1,6 @@
 import { baseQueryWithReauth } from '../../../api/baseQuery'
 
-export function prepareParams({ store, dateRange, state }) {
+export function prepareParams({ store, dateRange, state, onlyNotInvoiced }) {
   let params = []
 
   if (store && store.length > 0) {
@@ -13,6 +13,10 @@ export function prepareParams({ store, dateRange, state }) {
 
   params.push(`date[after]=${dateRange[0]}`)
   params.push(`date[before]=${dateRange[1]}`)
+
+  if (onlyNotInvoiced) {
+    params.push('exists[exports]=false')
+  }
 
   return params
 }
@@ -35,10 +39,12 @@ function downloadFile({ requestUrl, filename }) {
       return
     }
 
+    const requestId = result.meta.response.headers.get('X-Request-ID')
+
     const blob = new Blob([result.data], { type: 'text/plain' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
-    link.download = filename
+    link.download = `${filename}_${requestId.substring(0, 7)}.csv`
     link.href = url
     link.click()
 

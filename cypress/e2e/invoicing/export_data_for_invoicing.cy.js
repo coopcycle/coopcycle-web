@@ -14,8 +14,10 @@ context('Invoicing (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  it('prepare data for invoicing', function () {
+  it('show data for invoicing using custom date picker', function () {
     cy.visit('/admin/invoicing')
+
+    cy.get('[data-testid="invoicing.toggleRangePicker"]').click()
 
     // Choose 1 month
     cy.get('.ant-picker-input-active > input').click()
