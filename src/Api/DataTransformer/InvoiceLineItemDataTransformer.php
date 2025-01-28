@@ -32,10 +32,10 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
         $request = $this->requestStack->getCurrentRequest();
         $requestId = $request->headers->get('X-Request-ID');
 
-        $invoiceId = hash('sha256', sprintf('%s-%d',
+        $invoiceId = sprintf('%s-%s',
             $requestId,
-            $store?->getId() ?? 0
-        ));
+            substr(hash('sha256', $store?->getId() ?? 0), 0, 7)
+        );
 
         $invoiceDate = new \DateTime();
 
@@ -86,6 +86,8 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $description = preg_replace('/[\x{2600}-\x{27FF}\x{10000}-\x{10FFFF}]/u', '', $description);
         }
 
+        $exports = $order->getExports()->map(fn($export) => $export->getExportCommand())->toArray();
+
         return new InvoiceLineItem(
             $invoiceId,
             $invoiceDate,
@@ -99,7 +101,8 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $description,
             $order->getTotal() - $order->getTaxTotal(),
             $order->getTaxTotal(),
-            $order->getTotal()
+            $order->getTotal(),
+            $exports
         );
     }
 

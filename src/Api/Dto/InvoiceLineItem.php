@@ -41,6 +41,9 @@ class InvoiceLineItem
     #[Groups(["default_invoice_line_item"])]
     public readonly int $total;
 
+    #[Groups(["default_invoice_line_item"])]
+    public readonly array $exports;
+
     public function __construct(
         string $invoiceId,
         \DateTime $invoiceDate,
@@ -54,7 +57,8 @@ class InvoiceLineItem
         string $description,
         int $subTotal,
         int $tax,
-        int $total
+        int $total,
+        array $exports,
     )
     {
         $this->invoiceId = $invoiceId;
@@ -70,6 +74,7 @@ class InvoiceLineItem
         $this->subTotal = $subTotal;
         $this->tax = $tax;
         $this->total = $total;
+        $this->exports = $exports;
     }
 
     // The only reason to have separate methods

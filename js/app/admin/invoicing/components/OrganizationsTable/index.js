@@ -11,6 +11,7 @@ import OrdersTable from '../OrdersTable'
 export default function OrganizationsTable({
   ordersStates,
   dateRange,
+  onlyNotInvoiced,
   reloadKey,
   setSelectedStoreIds,
 }) {
@@ -35,8 +36,9 @@ export default function OrganizationsTable({
         dateRange[1].format('YYYY-MM-DD'),
       ],
       state: ordersStates,
+      onlyNotInvoiced: onlyNotInvoiced,
     })
-  }, [ordersStates, dateRange])
+  }, [ordersStates, dateRange, onlyNotInvoiced])
 
   const { dataSource, total } = useMemo(() => {
     if (!data) {
@@ -127,6 +129,7 @@ export default function OrganizationsTable({
             <OrdersTable
               ordersStates={ordersStates}
               dateRange={dateRange}
+              onlyNotInvoiced={onlyNotInvoiced}
               storeId={record.storeId}
               reloadKey={reloadKey}
             />

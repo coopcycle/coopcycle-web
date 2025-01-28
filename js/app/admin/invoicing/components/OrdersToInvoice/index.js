@@ -7,12 +7,14 @@ import { prepareParams } from '../../redux/actions'
 import ExportModalContent from '../ExportModalContent'
 import OrganizationsTable from '../OrganizationsTable'
 import RangePicker from './RangePicker'
+import { Checkbox } from 'antd'
 
 const ordersStates = ['new', 'accepted', 'fulfilled']
 
 export default () => {
   const [selectedStoreIds, setSelectedStoreIds] = useState([])
   const [dateRange, setDateRange] = useState(null)
+  const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false)
 
   const [reloadKey, setReloadKey] = useState(0)
 
@@ -36,8 +38,9 @@ export default () => {
         dateRange[1].format('YYYY-MM-DD'),
       ],
       state: ordersStates,
+      onlyNotInvoiced: onlyNotInvoiced,
     })
-  }, [selectedStoreIds, dateRange])
+  }, [selectedStoreIds, dateRange, onlyNotInvoiced])
 
   return (
     // marginTop: 48px: h5 marginTop (10px) + 38px
@@ -46,6 +49,14 @@ export default () => {
       <div className="d-flex" style={{ marginTop: '12px', gap: '24px' }}>
         {t('ADMIN_DASHBOARD_NAV_FILTERS')}:
         <RangePicker setDateRange={setDateRange} />
+        <div className="d-flex flex-column">
+          {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS')}
+          <Checkbox
+            checked={onlyNotInvoiced}
+            onChange={() => setOnlyNotInvoiced(!onlyNotInvoiced)}>
+            {t('ADMIN_ORDERS_TO_INVOICE_FILTER_STATUS_NOT_INVOICED')}
+          </Checkbox>
+        </div>
         <div className="d-flex flex-column">
           {/*invisible text is used to align the Refresh button*/}
           <span style={{ visibility: 'hidden' }}>{'invisible text'}</span>
@@ -62,6 +73,7 @@ export default () => {
       <OrganizationsTable
         ordersStates={ordersStates}
         dateRange={dateRange}
+        onlyNotInvoiced={onlyNotInvoiced}
         reloadKey={reloadKey}
         setSelectedStoreIds={setSelectedStoreIds}
       />

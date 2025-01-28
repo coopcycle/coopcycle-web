@@ -25,7 +25,7 @@ export default ({ dateRange, params, setModalOpen }) => {
   const download = () => {
     const filename = `orders_${dateRange[0].format(
       'YYYY-MM-DD',
-    )}_${dateRange[1].format('YYYY-MM-DD')}.csv`
+    )}_${dateRange[1].format('YYYY-MM-DD')}`
 
     switch (destination) {
       case DESTINATIONS.standard:
