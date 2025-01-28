@@ -106,157 +106,163 @@ export default ({
 
   return (
     <>
-      {deliveryPrice ? (
-        <>
-          {overridePrice && (
-            <OverridePriceForm
-              setCalculatePrice={setCalculatePrice}
-              taxRate={taxRate}
-            />
-          )}
-
-          <div className="mb-3 pl-2">
-            <div className="font-weight-bold mb-2 total__price">
-              {!overridePrice
-                ? t('DELIVERY_FORM_TOTAL_PRICE')
-                : t('DELIVERY_FORM_OLD_PRICE')}
-            </div>
-            <div>
-              {money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-            </div>
-            <div>
-              {money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}
-            </div>
-
-            {overridePrice && (
-              <div className="mt-3 mb-3">
-                <div className="font-weight-bold mb-2 total__price">
-                  {t('DELIVERY_FORM_NEW_PRICE')}
-                </div>
-
-                <div className="mt-2">
-                  {money(calculatedPrice.exVAT * 100 || 0)}{' '}
-                  {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                </div>
-                <div>
-                  {money(calculatedPrice.VAT * 100 || 0)}{' '}
-                  {t('DELIVERY_FORM_TOTAL_VAT')}
-                </div>
+      {
+        deliveryId ?
+          <>
+            <div className="mb-3 pl-2">
+              <div className="font-weight-bold mb-2 total__price">
+                {!overridePrice
+                  ? t('DELIVERY_FORM_TOTAL_PRICE')
+                  : t('DELIVERY_FORM_OLD_PRICE')}
               </div>
-            )}
-
-            {isAdmin && (
-              <div
-                style={{ maxWidth: '100%', cursor: 'pointer' }}
-                onClick={() => {
-                  setOverridePrice(!overridePrice)
-                  setCalculatePrice(0)
-                }}
-                className="mt-4">
-                <div>
-                  <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
-                  <Checkbox
-                    className="ml-4 mb-2"
-                    checked={overridePrice}
-                    onChange={e => {
-                      e.stopPropagation()
-                      setOverridePrice(e.target.checked)
-                      setCalculatePrice(0)
-                    }}></Checkbox>
-                </div>
+              <div>
+                {overridePrice ?
+                  <s>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
+                  <span>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
+                }
               </div>
-            )}
-          </div>
-        </>
-      ) : null}
+              <div>
+                {overridePrice ?
+                  <s>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
+                  <span>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
+                }
+              </div>
 
-      {!deliveryId ? (
-        <>
-          {overridePrice && (
-            <OverridePriceForm
-              setCalculatePrice={setCalculatePrice}
-              taxRate={taxRate}
-            />
-          )}
+              {overridePrice && (
+                <div className="mt-3 mb-3">
+                  <div className="font-weight-bold mb-2 total__price">
+                    {t('DELIVERY_FORM_NEW_PRICE')}
+                  </div>
 
-          <div className="p-2 mb-3">
-            <div className="font-weight-bold mb-3 total__price">
-              {t('DELIVERY_FORM_TOTAL_PRICE')}
-            </div>
-            <div>
-              {calculatedPrice.amount && !overridePrice ? (
-                <div>
-                  {priceLoading ? (
-                    <Spinner />
-                  ) : (
-                    <>
-                      <div className="mb-1">
-                        {money(
-                          calculatedPrice.amount - calculatedPrice.tax.amount,
-                        )}{' '}
-                        {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                      </div>
-                      {!overridePrice && (
-                        <div>
-                          {money(calculatedPrice.amount)}{' '}
-                          {t('DELIVERY_FORM_TOTAL_VAT')}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-              ) : overridePrice ? (
-                <div>
-                  <div className="mt-2 mb-1">
-                    {money(calculatedPrice.exVAT * 100 || 0)}{' '}
+                  <div className="mt-2">
+                    {money(calculatedPrice.exVAT * 100 || 0)}
                     {t('DELIVERY_FORM_TOTAL_EX_VAT')}
                   </div>
                   <div>
-                    {money(calculatedPrice.VAT * 100 || 0)}{' '}
+                    {money(calculatedPrice.VAT * 100 || 0)}
                     {t('DELIVERY_FORM_TOTAL_VAT')}
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="mb-1">
-                    {money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                  </div>
-                  <div>
-                    {money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}
                   </div>
                 </div>
               )}
 
               {isAdmin && (
-                <div
-                  style={{ maxWidth: '100%', cursor: 'pointer' }}
-                  onClick={() => {
-                    setOverridePrice(!overridePrice)
-                    setCalculatePrice(0)
-                  }}
-                  className="mt-4">
-                  <div>
-                    <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
-                    <Checkbox
-                      className="ml-4 mb-2"
-                      checked={overridePrice}
-                      onChange={e => {
-                        e.stopPropagation()
-                        setOverridePrice(e.target.checked)
-                        setCalculatePrice(0)
-                      }}></Checkbox>
+                <>
+                  <div
+                    style={{ maxWidth: '100%', cursor: 'pointer' }}
+                    onClick={() => {
+                      setOverridePrice(!overridePrice)
+                      setCalculatePrice(0)
+                    }}
+                    className="mt-4">
+                    <div>
+                      <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
+                      <Checkbox
+                        className="ml-4 mb-2"
+                        checked={overridePrice}
+                        onChange={e => {
+                          e.stopPropagation()
+                          setOverridePrice(e.target.checked)
+                          setCalculatePrice(0)
+                        }}></Checkbox>
+                    </div>
                   </div>
-                </div>
+                  {overridePrice && (
+                    <OverridePriceForm
+                      setCalculatePrice={setCalculatePrice}
+                      taxRate={taxRate}
+                    />
+                  )}
+                </>
               )}
             </div>
-            {priceError.isPriceError ? (
-              <div className="alert alert-danger mt-4" role="alert">
-                {priceError.priceErrorMessage}
+          </>
+        : 
+          <>
+            {overridePrice && (
+              <OverridePriceForm
+                setCalculatePrice={setCalculatePrice}
+                taxRate={taxRate}
+              />
+            )}
+
+            <div className="p-2 mb-3">
+              <div className="font-weight-bold mb-3 total__price">
+                {t('DELIVERY_FORM_TOTAL_PRICE')}
               </div>
-            ) : null}
-          </div>
-        </>
-      ) : null}
+              <div>
+                {calculatedPrice.amount && !overridePrice ? (
+                  <div>
+                    {priceLoading ? (
+                      <Spinner />
+                    ) : (
+                      <>
+                        <div className="mb-1">
+                          {money(
+                            calculatedPrice.amount - calculatedPrice.tax.amount,
+                          )}{' '}
+                          {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                        </div>
+                        {!overridePrice && (
+                          <div>
+                            {money(calculatedPrice.amount)}{' '}
+                            {t('DELIVERY_FORM_TOTAL_VAT')}
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                ) : overridePrice ? (
+                  <div>
+                    <div className="mt-2 mb-1">
+                      {money(calculatedPrice.exVAT * 100 || 0)}{' '}
+                      {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                    </div>
+                    <div>
+                      {money(calculatedPrice.VAT * 100 || 0)}{' '}
+                      {t('DELIVERY_FORM_TOTAL_VAT')}
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="mb-1">
+                      {money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                    </div>
+                    <div>
+                      {money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}
+                    </div>
+                  </div>
+                )}
+
+                {isAdmin && (
+                  <div
+                    style={{ maxWidth: '100%', cursor: 'pointer' }}
+                    onClick={() => {
+                      setOverridePrice(!overridePrice)
+                      setCalculatePrice(0)
+                    }}
+                    className="mt-4">
+                    <div>
+                      <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
+                      <Checkbox
+                        className="ml-4 mb-2"
+                        checked={overridePrice}
+                        onChange={e => {
+                          e.stopPropagation()
+                          setOverridePrice(e.target.checked)
+                          setCalculatePrice(0)
+                        }}></Checkbox>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {priceError.isPriceError ? (
+                <div className="alert alert-danger mt-4" role="alert">
+                  {priceError.priceErrorMessage}
+                </div>
+              ) : null}
+            </div>
+          </>
+      }
     </>
   )
 }
