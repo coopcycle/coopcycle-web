@@ -303,8 +303,6 @@ export default function ({ storeId, deliveryId, order }) {
 
   const getPrice = (values) => {
 
-    setPriceLoading(true)
-
     const tasksCopy = structuredClone(values.tasks)
     const tasksWithoutId = tasksCopy.map(task => {
           if (task["@id"]) {
@@ -319,22 +317,26 @@ export default function ({ storeId, deliveryId, order }) {
       };
 
       const calculatePrice = async () => {
+
+        setPriceLoading(true)
+
         const url = `${baseURL}/api/retail_prices/calculate`
         const { response, error } = await httpClient.post(url, infos)
 
         if (error) {
           setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
           setCalculatePrice(0)
-          setPriceLoading(false)
         }
 
         if (response) {
           setCalculatePrice(response)
           setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-          setPriceLoading(false)
         }
 
+        setPriceLoading(false)
+
       }
+      
       if (values.tasks.every(task => task.address.streetAddress)) {
         calculatePrice()
       }
