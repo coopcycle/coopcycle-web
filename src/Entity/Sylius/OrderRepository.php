@@ -25,6 +25,36 @@ class OrderRepository extends BaseOrderRepository
 
     private ?DeliveryRepository $deliveryRepository;
 
+    /**
+     * Use this method if you plan to hydrate the results into the Order entity
+     *
+     * @param $alias
+     * @param $indexBy
+     * @return QueryBuilder
+     */
+    public function createOpmizedQueryBuilder($alias, $indexBy = null)
+    {
+        $qb = parent::createQueryBuilder($alias, $indexBy);
+
+        //Optimization: to avoid extra queries during Hydration preload bi-directional one-to-one relations
+        // https://stackoverflow.com/questions/12362901/doctrine2-one-to-one-relation-auto-loads-on-query/34353840#34353840
+        // https://github.com/doctrine/orm/issues/4389
+        $qb->addSelect([
+            'order_delivery',
+            'order_timeline',
+            'order_invitation',
+            'order_loopeat_credentials',
+            'order_loopeat_details'
+        ])
+            ->leftJoin('o.delivery', 'order_delivery')
+            ->leftJoin('o.timeline', 'order_timeline')
+            ->leftJoin('o.invitation', 'order_invitation')
+            ->leftJoin('o.loopeatCredentials', 'order_loopeat_credentials')
+            ->leftJoin('o.loopeatDetails', 'order_loopeat_details');
+
+        return $qb;
+    }
+
     // This method is called by Dependency Injection
     public function setDeliveryRepository(?DeliveryRepository $deliveryRepository): void
     {

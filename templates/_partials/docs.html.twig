@@ -1,0 +1,12 @@
+{% if url is not defined %}
+  {% if docsPath is defined %}
+    {% set url = 'https://docs.coopcycle.org' ~  docsPath|trans %}
+  {% endif %}
+{% endif %}
+
+{% if url is defined %}
+  <a href="{{ url }}" target="_blank"
+     rel="noopener noreferrer">{{ 'docs.label'|trans }} <i
+      class="fa fa-external-link"></i></a>
+{% endif %}
+

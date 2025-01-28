@@ -44,7 +44,7 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -52,7 +52,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages": [],
-            "barcode": "@array@",
+            "barcode": @array@,
             "createdAt":"@string@.isDateTime()",
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
@@ -78,7 +78,7 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -86,7 +86,7 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "barcode": "@array@",
+            "barcode": @array@,
             "createdAt":"@string@.isDateTime()",
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@"
@@ -112,7 +112,7 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "packages": [],
             "barcode": @array@,
@@ -146,7 +146,7 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "packages": [],
             "barcode": @array@,
@@ -649,15 +649,15 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": [],
+        "metadata":@array@,
         "weight":null,
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode": "@array@",
+        "barcode":@array@,
         "createdAt":"@string@.isDateTime()",
-        "emittedCo2": "@integer@",
-        "traveledDistanceMeter": "@integer@"
+        "emittedCo2":@integer@,
+        "traveledDistanceMeter":@integer@
       }
       """
 
@@ -1124,12 +1124,12 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": [],
+        "metadata":@array@,
         "weight": 800,
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode": "@array@",
+        "barcode": @array@,
         "createdAt":"@string@.isDateTime()",
         "emittedCo2": "@integer@",
         "traveledDistanceMeter": "@integer@"
@@ -1209,12 +1209,12 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": [],
+        "metadata":@array@,
         "weight":null,
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "barcode": "@array@",
+        "barcode": @array@,
         "createdAt":"@string@.isDateTime()",
         "emittedCo2": "@integer@",
         "traveledDistanceMeter": "@integer@"
@@ -1343,7 +1343,8 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":{
               "foo":"bar",
-              "baz":"bat"
+              "baz":"bat",
+              "zero_waste":false
             },
             "weight":null,
             "hasIncidents": false,
@@ -1378,7 +1379,7 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":{"zero_waste":false},
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -1807,7 +1808,8 @@ Feature: Tasks
           "doneBefore":"2019-11-12T18:30:00+01:00",
           "comments":"",
           "after":"2019-11-12T18:00:00+01:00",
-          "before":"2019-11-12T18:30:00+01:00"
+          "before":"2019-11-12T18:30:00+01:00",
+          "tags": []
         },
         "dropoff":{
           "@id":@string@,
@@ -1820,7 +1822,8 @@ Feature: Tasks
           "doneBefore":"2019-11-12T19:30:00+01:00",
           "comments":"",
           "after":"2019-11-12T19:00:00+01:00",
-          "before":"2019-11-12T19:30:00+01:00"
+          "before":"2019-11-12T19:30:00+01:00",
+          "tags": []
         },
         "trackingUrl": @string@,
         "tasks":@array@

@@ -92,4 +92,9 @@ class SettingResolver implements RuntimeExtensionInterface
 
         return $messages;
     }
+
+    public function getVersion(): string
+    {
+        return $this->settingsManager->getVersion();
+    }
 }

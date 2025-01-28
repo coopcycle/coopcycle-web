@@ -18,6 +18,8 @@ use Webmozart\Assert\Assert;
 
 final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInterface
 {
+    private ?TaxCategoryInterface $taxCategory = null;
+
     public function __construct(
         private AdjustmentFactoryInterface $adjustmentFactory,
         private TaxRateResolverInterface $taxRateResolver,
@@ -25,7 +27,8 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
         private SettingsManager $settingsManager,
         private TaxCategoryRepositoryInterface $taxCategoryRepository,
         private TranslatorInterface $translator,
-        private string $state)
+        private string $state
+    )
     {
     }
 
@@ -52,11 +55,10 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
         }
 
         foreach ($order->getItems() as $orderItem) {
-
             $taxCategory = $orderItem->getVariant()->getTaxCategory();
 
             $adjustments = array_map(
-                fn($rate) => $this->createAdjustmentWithRate($orderItem, $rate),
+                fn($rate) => $this->createAdjustmentWithRate($orderItem->getTotal(), $rate),
                 $this->taxRateResolver->resolveAll($orderItem->getVariant())->toArray()
             );
 
@@ -73,28 +75,25 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
             ])
         );
 
-        foreach ($order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT) as $adjustment) {
+        $taxableAdjustments = array_merge(
+            $order->getAdjustments(AdjustmentInterface::DELIVERY_ADJUSTMENT)->toArray(), //Food Tech orders only
+            $order->getAdjustments(AdjustmentInterface::INCIDENT_ADJUSTMENT)->toArray()
+        );
 
+        foreach ($taxableAdjustments as $adjustment) {
             $taxRate = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
-
-            $taxAdjustment = $this->adjustmentFactory->createWithData(
-                AdjustmentInterface::TAX_ADJUSTMENT,
-                $this->translator->trans($taxRate->getName(), [], 'taxation'),
-                (int) $this->calculator->calculate($adjustment->getAmount(), $taxRate),
-                $neutral = $taxRate->isIncludedInPrice()
-            );
-            $taxAdjustment->setOriginCode($taxRate->getCode());
+            $taxAdjustment = $this->createAdjustmentWithRate($adjustment->getAmount(), $taxRate);
 
             $order->addAdjustment($taxAdjustment);
         }
     }
 
-    private function createAdjustmentWithRate($orderItem, $taxRate)
+    private function createAdjustmentWithRate($base, $taxRate)
     {
         $taxAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::TAX_ADJUSTMENT,
             $this->translator->trans($taxRate->getName(), [], 'taxation'),
-            (int) $this->calculator->calculate($orderItem->getTotal(), $taxRate),
+            (int) $this->calculator->calculate($base, $taxRate),
             $neutral = $taxRate->isIncludedInPrice()
         );
         $taxAdjustment->setOriginCode($taxRate->getCode());

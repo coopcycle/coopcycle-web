@@ -388,13 +388,13 @@ class AdminController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/item.html.twig', [
+        return $this->render('order/item.html.twig', $this->auth([
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
-        ]);
+        ]));
     }
 
     public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
@@ -1612,6 +1612,7 @@ class AdminController extends AbstractController
             'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
         ]);
     }
+
     /**
      * @Route("/admin/embed", name="admin_embed")
      */
@@ -2991,5 +2992,15 @@ class AdminController extends AbstractController
         return $this->render('admin/cube.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/invoicing", name="admin_invoicing")
+     */
+    public function invoicingAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/invoicing.html.twig', $this->auth([]));
     }
 }

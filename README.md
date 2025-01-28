@@ -99,8 +99,16 @@ cp .env.dist .env
 
 #### Start the Docker containers
 
+Minimum configuration:
+
 ```sh
 docker compose up
+```
+
+With additional tools:
+
+```sh
+docker compose --profile devFrontend --profile devOdoo up
 ```
 
 At this step, the platform should be up & running, but the database is still empty.

@@ -1234,8 +1234,8 @@ form.product.alcohol.help: Cochez cette case seulement si ce produit est une boi
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
-order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent le lavage,
-  le réapprovisionnement des restaurants et l’achat des sacs en tissu réutilisables
+order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent la course
+  pour rapporter les boîtes au dépôt, le lavage des boîtes et l’achat des sacs en tissu réutilisables
 promotion_rule.is_items_total_above: Le total des produits est supérieur à %amount%
 form.store_type.multi_drop_enabled.label: Activer les dépôts multiples
 form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un
@@ -1317,13 +1317,13 @@ security.login.remember_me: Se souvenir de moi
 loopeat.how_it_works.title: |
   Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
 loopeat.how_it_works.step_1.title: Je m'inscris
-loopeat.how_it_works.step_1.text: Inscrivez-vous sur %name% lors de la finalisation de votre commande.
-loopeat.how_it_works.step_2.title: Je paie ma 1ère consigne
-loopeat.how_it_works.step_2.text: Créditez votre cagnotte pour emprunter vos premières boîtes consignées.
-loopeat.how_it_works.step_3.title: Je commande
-loopeat.how_it_works.step_3.text: Faites-vous livrer en boites consignées.
+loopeat.how_it_works.step_1.text: sur « %name% » et j'alimente ma cagnotte (UNE SEULE FOIS)
+loopeat.how_it_works.step_2.title: Je commande
+loopeat.how_it_works.step_2.text: et je me fais livrer en boîtes consignées
+loopeat.how_it_works.step_3.title: Je me régale
+loopeat.how_it_works.step_3.text: sans jeter d'emballage
 loopeat.how_it_works.step_4.title: Je rends mes boîtes
-loopeat.how_it_works.step_4.text: Restituez vos boîtes lors de votre prochaine commande et récupérez la consigne sur votre cagnotte.
+loopeat.how_it_works.step_4.text: chez un partenaire « %name% » ou à la prochaine livraison
 stores.filters.input.placeholder: "Recherche par adresse, nom ou #id"
 basics.filter: "Filtrer"
 stores.search.results_for: 'Résultats pour la recherche <mark>%query%</mark>'

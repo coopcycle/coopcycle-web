@@ -164,6 +164,10 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             unset($data['packages'][$i]['id']);
         }
 
+        if (isset($data['metadata']) && is_array($data['metadata'])) {
+            $data['metadata']['zero_waste'] = $object->isZeroWaste();
+        }
+
         return $data;
     }
 

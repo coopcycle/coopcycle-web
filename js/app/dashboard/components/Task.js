@@ -37,6 +37,14 @@ const TaskComments = ({ task }) => {
   }
 }
 
+const TaskZeroWaste = ({ task }) => {
+  if (task.metadata?.zero_waste) {
+    return <i className="fa fa-recycle ml-2"></i>;
+  }
+
+  return null;
+}
+
 const TaskCaption = ({ task }) => {
 
   const { t } = useTranslation()
@@ -293,6 +301,7 @@ class Task extends React.Component {
             before={ task.before }
             date={ date } />
           <TaskComments task={ task } />
+          <TaskZeroWaste task={ task } />
           { showWeightAndVolumeUnit ?
             (
               <div className="text-muted">

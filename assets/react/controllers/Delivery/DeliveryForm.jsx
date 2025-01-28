@@ -130,10 +130,9 @@ export default function ({ storeId, deliveryId, order }) {
   const [priceLoading, setPriceLoading] = useState(false)
 
  
-
   let deliveryPrice
 
-  if (order) {
+  if (deliveryId && order) {
     const orderInfos = JSON.parse(order)
     deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
   }
@@ -438,7 +437,7 @@ export default function ({ storeId, deliveryId, order }) {
 
                     {deliveryId && (
                   
-                      <div className="order-informations__tracking alert">
+                      <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                          {t("DELIVERY_FORM_TRACKING_LINK")}
                         </a>{'  '}

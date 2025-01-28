@@ -9,7 +9,6 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
-use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
@@ -97,7 +96,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "put"={
  *        "method"="PUT",
- *        "controller"=EditDelivery::class,
  *        "security"="is_granted('edit', object)"
  *     },
  *     "pick"={

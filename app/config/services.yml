@@ -17,6 +17,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $locale: "%env(COOPCYCLE_LOCALE)%"
 
   AppBundle\Action\:
     resource: '../../src/Action/*'
@@ -37,6 +39,13 @@ services:
   AppBundle\Controller\:
     resource: '../../src/Controller'
     tags: ['controller.service_arguments']
+
+  AppBundle\Api\DataTransformer\:
+    resource: '../../src/Api/DataTransformer/*'
+
+  AppBundle\Api\Filter\:
+    resource: '../../src/Api/Filter/*'
+    tags: ['api_platform.filter']
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
@@ -421,7 +430,6 @@ services:
     arguments:
       - "@coopcycle.sylius.factory.product_variant.inner"
       - "@sylius.repository.product"
-      - "@sylius.repository.product_variant"
       - "@sylius.repository.tax_category"
       - "@coopcycle.settings_manager"
       - "@translator"
@@ -639,21 +647,6 @@ services:
     public: true
     class: AppBundle\Service\Routing\OsrmWithFallback
 
-  AppBundle\Filter\OrderDateFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\DateFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\UserRoleFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\TaskFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\AssignedFilter:
-    tags: [ 'api_platform.filter' ]
-
   AppBundle\Api\Filter\DeliveryOrderFilter:
     autowire: false
     autoconfigure: false
@@ -683,6 +676,7 @@ services:
       $foodtechEnabled: "%foodtech_enabled%"
       $b2bEnabled: "%b2b_enabled%"
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $projectDir: "%kernel.project_dir%"
 
   AppBundle\Service\EmailManager:
     arguments:
@@ -953,6 +947,18 @@ services:
     tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
     autoconfigure: false
 
+  AppBundle\Api\DataProvider\InvoiceLineItemGroupedByOrganizationCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Api\DataProvider\InvoiceLineItemCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'
@@ -1007,19 +1013,6 @@ services:
   AppBundle\Security\OrderAccessTokenManager: ~
 
   AppBundle\Mjml\MjmlServerRenderer: ~
-
-  AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\StoreAddAddressDataTransformer: ~
-  AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
-  AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
-  AppBundle\Api\DataTransformer\EdenredCredentialsInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\ConfigurePaymentInputDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
