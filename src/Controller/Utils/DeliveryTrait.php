@@ -112,7 +112,6 @@ trait DeliveryTrait
         return $this->render('delivery/item.html.twig', $this->auth([
             'delivery' => $delivery,
             'layout' => $request->attributes->get('layout'),
-            'delivery' => $delivery,
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'back_route' => $routes['back'],
