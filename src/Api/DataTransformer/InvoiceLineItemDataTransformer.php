@@ -86,7 +86,7 @@ class InvoiceLineItemDataTransformer implements DataTransformerInterface
             $description = preg_replace('/[\x{2600}-\x{27FF}\x{10000}-\x{10FFFF}]/u', '', $description);
         }
 
-        $exports = $order->getExports()->map(fn($export) => $export->getExportCommand()->getRequestId())->toArray();
+        $exports = $order->getExports()->map(fn($export) => $export->getExportCommand())->toArray();
 
         return new InvoiceLineItem(
             $invoiceId,

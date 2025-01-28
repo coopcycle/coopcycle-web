@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Table } from 'antd'
+import { Table, Tag, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 
@@ -57,14 +57,7 @@ export default function OrdersTable({
       dataSource: data['hydra:member'].map(order => ({
         rowKey: order['@id'],
         orderId: order.orderId,
-        exports:
-          order.exports.length > 0
-            ? t('ADMIN_ORDERS_TO_INVOICE_EXPORTED') +
-              ' ' +
-              order.exports
-                .map(requestId => requestId.substring(0, 7))
-                .join(', ')
-            : t('ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED'),
+        fileExports: order.exports,
         number: order.orderNumber,
         date: order.date ? moment(order.date).format('l') : '?',
         description: order.description,
@@ -74,7 +67,7 @@ export default function OrdersTable({
       })),
       total: data['hydra:totalItems'],
     }
-  }, [data, t])
+  }, [data])
 
   const columns = [
     {
@@ -86,6 +79,28 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_EXPORTS_LABEL'),
       dataIndex: 'exports',
       key: 'exports',
+      render: (_, { fileExports }) => {
+        if (fileExports.length === 0) {
+          return <Tag>{t('ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED')}</Tag>
+        } else {
+          return (
+            <>
+              {t('ADMIN_ORDERS_TO_INVOICE_EXPORTED')}
+              {fileExports.map(fileExport => {
+                return (
+                  <Tooltip
+                    key={fileExport.requestId}
+                    title={moment(fileExport.createdAt).format('llll')}>
+                    <Tag color={'green'}>
+                      {fileExport.requestId.substring(0, 7)}
+                    </Tag>
+                  </Tooltip>
+                )
+              })}
+            </>
+          )
+        }
+      },
     },
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_DATE_LABEL'),
