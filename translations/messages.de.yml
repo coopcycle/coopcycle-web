@@ -85,7 +85,7 @@ form.resend_confirmation_email.submit.label: E-Mail erneut senden
 roles.ROLE_COURIER: Kurier
 roles.ROLE_RESTAURANT: Restaurant
 basics.name: Name
-form.payment.refund_amount.label: Menge
+form.payment.refund_amount.label: Rückerstattungsmenge
 embed.delivery.contact_heading: Kontakt
 embed.delivery.specify_billing_address: Geben Sie eine Rechnungsadresse an
 embed.delivery.billing_address: Rechnungsadresse
@@ -111,7 +111,7 @@ form.delivery_embed.telephone.label: Telefonnummer
 form.menu_editor.products_panel.title: Produkten
 basics.edit: Bearbeiten
 basics.editing: Bearbeitung
-basics.created_at: Erstellt am
+basics.created_at: Erstellt am %date%
 base.footer.legal: Impressum
 base.footer.terms: Allgemeine Geschäftsbedingungen
 adminDashboard.title: Dispatch
@@ -128,7 +128,7 @@ adminDashboard.dashboard.displayByGroups: Anzeigen nach Gruppen
 adminDashboard.dashboard.displayAll: Alle anzeigen
 adminDashboard.deliveries.type: Art
 adminDashboard.deliveries.dueDate: Fälligkeitsdatum
-adminDashboard.embed.title: Externe Anzeige
+adminDashboard.embed.title: Formulare
 embed.delivery.title: Formular für Auftragserstellung
 embed.delivery.configure_pricing_rule_set: Sie müssen zuerst eine Preisregel konfigurieren,
   um sie anzuwenden
@@ -195,7 +195,7 @@ restaurant.disabledWarning: "Dieses Restaurant ist nicht aktiv, sodass Besucher 
 restaurant.closedWarningWithDelay: Bestellen Sie jetzt für später. Bestellen Sie mindestens
   %delay% im Voraus.
 restaurant.temporaryClosedWarning: Dieses Restaurant ist bis zum <strong>%date%</strong>
-  geschlossen. Sie können jedoch für später bestellen!
+  geschlossen.
 restaurant.noMenuWarning: "Dieses Restaurant hat zur Zeit kein Menü\n"
 restaurant.form.enabled.tooltip: "Wenn deaktiviert, ist eine Restaurant nicht auf\
   \ der Website sichtbar. Es kann nicht in den Suchergebnissen gelistet werden und\
@@ -211,7 +211,13 @@ restaurant.deliveryPerimeterExpression.title: Lieferradius
 restaurant.deliveryPerimeterExpression.help: Definieren Sie den maximalen Lieferradius.
   Sie können diesen in Kilometern oder als Zone festlegen
 restaurant.ordersRateLimiter.title: Verwaltung der Bestellgrenzen
-restaurant.ordersRateLimiter.help: Die Funktion zur Bestellbegrenzung ermöglicht es Ihnen, die Anzahl der Bestellungen zu steuern, die Sie in einem bestimmten Zeitraum annehmen können. Durch Festlegen einer Begrenzung vermeiden Sie, mehr Bestellungen zu erhalten, als Sie bewältigen können. Sie müssen lediglich die maximale Anzahl von Bestellungen und die Dauer des Zeitraums angeben. Zusätzliche Bestellungen werden automatisch auf den nächsten Zeitraum verschoben. Diese Funktion hilft Ihnen, Ihre Produktionskapazität besser zu verwalten und Verzögerungen und Fehler zu vermeiden.
+restaurant.ordersRateLimiter.help: Die Funktion zur Bestellbegrenzung ermöglicht es
+  Ihnen, die Anzahl der Bestellungen zu steuern, die Sie in einem bestimmten Zeitraum
+  annehmen können. Durch Festlegen einer Begrenzung vermeiden Sie, mehr Bestellungen
+  zu erhalten, als Sie bewältigen können. Sie müssen lediglich die maximale Anzahl
+  von Bestellungen und die Dauer des Zeitraums angeben. Zusätzliche Bestellungen werden
+  automatisch auf den nächsten Zeitraum verschoben. Diese Funktion hilft Ihnen, Ihre
+  Produktionskapazität besser zu verwalten und Verzögerungen und Fehler zu vermeiden.
 restaurant.contract.minimumCartAmount.label: Mindestbestellwert
 restaurant.contract.flatDeliveryPrice.label: Liefergebühr Kunde + Liefergebühr Resto
 restaurant.contract.flatDeliveryPrice.help: Der Betrag wird nicht im Warenkorb angezeigt
@@ -370,14 +376,15 @@ form.store_type.time_slot.label: Zeitraum
 form.store_type.package_set.label: Paketset
 form.store_type.defaultCourier.label: Standardkurier
 form.store_type.defaultCourier.placeholder: Keiner
-form.store_type.defaultCourier.help: Bestellungen für diesen Laden werden automatisch diesem Kurier zugewiesen
+form.store_type.defaultCourier.help: Bestellungen für diesen Laden werden automatisch
+  diesem Kurier zugewiesen
 form.delivery.vehicle.placeholder: Wähle Fahrzeugtyp aus
 form.delivery.vehicle.label: Fahrzeug order Cargobike?
 form.delivery.distance.label: Entfernung
 form.delivery.duration.label: Zeitdauer
 form.delivery.package.label: Verpackung
 form.delivery.packages.label: Verpackungen
-form.order.accept.label: Bestätigen
+form.order.accept.label: Akzeptieren
 form.order.accept.help: Sobald Du die Bestellung angenommen hast, wird der Kunde per
   E-Mail benachrichtigt.
 form.order.fulfill.label: Erledigen
@@ -493,11 +500,12 @@ form.package.description.label: Beschreibung für den Kunden
 form.package.average_volume_units.label: Durchschnittliche Volumeneinheiten (VU)
 form.package.max_volume_units.label: Maximale Volumeneinheiten (VU)
 form.package.average_estimation: Geschätzt auf 75 % des Maximums, wenn nicht festgelegt
-form.package.max_volume_units: Dieser Wert wird verwendet, um die Preise basierend auf dem Volumen zu berechnen
+form.package.max_volume_units: Dieser Wert wird verwendet, um die Preise basierend
+  auf dem Volumen zu berechnen
 form.package.average_weight.label: Durchschnittsgewicht (kg)
 form.package.max_weight.label: Maximalgewicht (kg)
 form.package.shortCode.label: 2-Buchstaben-Code
-form.package.enter_details:  Details ein-/ausblenden
+form.package.enter_details: Details ein-/ausblenden
 form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name
 form.time_slot_choice.end_time.label: Endzeit
@@ -516,7 +524,8 @@ index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
 stores.deliveries.task_unassigned: Nicht zugeteilt
 stores.manage: Verwalten
 stores.deliveries.bookmarks: Gespeicherte Bestellungen
-stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite, um sie später leichter zu finden
+stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite,
+  um sie später leichter zu finden
 roles.ROLE_STORE.help: 'Laden-Besitzer*in: zugeordnete Läden verwalten, Sendungen
   verwalten, ...'
 roles.ROLE_RESTAURANT.help: 'Restaurant-Besitzer*in: zugeordnete Restaurants verwalten,
@@ -648,7 +657,7 @@ form.menu_editor.help: "Benutzen Sie den Editor um Menü-Elemente zu gestalten\n
   <br>\nVergessen Sie nicht, unten auf die Schaltfläche «Änderungen speichern» zu\
   \ klicken\n"
 form.product.reusable_packaging_unit.label: Einheitsnummer
-form.menu_taxon.add_child.label: Fügen Sie einen neuen Abschnitt hinzu
+form.menu_taxon.add_child.label: Fügen Sie einen neue Kategorie hinzu
 form.product.reusable_packaging_enabled.label: Aktivieren Sie wiederverwendbare Verpackung
   für dieses Produkt
 form.product_option.values.help: Sie müssen eine Liste an Werte für diese Option festlegen
@@ -704,6 +713,7 @@ checkout.breadcrumb.confirm: Bestätigung
 products.on_demand_delivery.name: Lieferung auf Anfrage
 security.login.remember_me: An mich erinnern
 delivery.failure_reason:
+<<<<<<< HEAD
   default:
     damaged: "Beschädigt"
     lost: "Verloren"
@@ -724,12 +734,48 @@ delivery.failure_reason:
     packaging_problems: "Probleme der Verpackung"
     holiday_closure: "Ferienverlängerung"
     closed_store: "Geschäft geschlossen"
+=======
+  damaged: "Beschädigt"
+  lost: "Verloren"
+  late: "Verspätete Lieferung"
+  incorrect_address: "Falsche Adresse"
+  customer_refused: "Kunde hat die Lieferung verweigert"
+  item_missing: "Fehlendes Element"
+  incorrect_item: "Falsches Element geliefert"
+  bad_weather: "Schlechtes Wetter"
+  vehicle_breakdown: "Fahrzeugausfall"
+  traffic_delays: "Verkehrsverzögerungen"
+  routing_problems: "Routing-Probleme"
+  customs_issues: "Zollprobleme"
+  inventory_shortage: "Inventurmangel"
+  address_unreachable: "Nicht erreichbare Adresse"
+  insufficient_funds: "Unzureichende Mittel"
+  data_entry_error: "Datenfehler"
+  packaging_problems: "Probleme der Verpackung"
+  holiday_closure: "Ferienverlängerung"
+  closed_store: "Geschäft geschlossen"
+  default:
+    late: Verspätete Zustellung
+    damaged: Beschädigt
+    lost: Verloren
+    incorrect_address: Falsche Adresse
+    customer_refused: Kunde hat Lieferung abgewiesen
+    item_missing: Fehlender Artikel
+    incorrect_item: Falscher Artikel geliefert
+    bad_weather: Schlechte Wetterbedingungen
+    vehicle_breakdown: Fahrzeugschaden
+    traffic_delays: Verkehrsverzögerung
+    routing_problems: Navigationsprobleme
+    address_unreachable: Adresse nicht erreichbar
+>>>>>>> weblate/master
 adminDashboard.failureSet.title: "Fehlergründe"
-adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen fehlschlagen können."
+adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen\
+  \ fehlschlagen können."
 adminDashboard.failureSet.nofailureSet: "Keine Fehlergründe"
 adminDashboard.failureSet.createNew: "Neuen Grund erstellen"
 adminDashboard.failureSet.settings: "Einstellungen"
-adminDashboard.failureSet.cant_delete_failure_reason_used: "Dieser Grund kann nicht gelöscht werden, da er in Geschäften verwendet wird."
+adminDashboard.failureSet.cant_delete_failure_reason_used: "Dieser Grund kann nicht\
+  \ gelöscht werden, da er in Geschäften verwendet wird."
 form.failure_reason_set.name.label: Name
 form.failure_reason.code.label: Code
 form.failure_reason.description.label: Beschreibung
@@ -737,7 +783,8 @@ basics.manage: Verwalten
 basics.settings: Einstellungen
 form.store_type.failure_reason_set.label: "Fehlergründe"
 profile.delete_my_account: "Mein Konto löschen"
-profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung zu bestätigen"
+profile.type_username_to_confirm: "Gib deinen Benutzernamen ein, um die Kontolöschung\
+  \ zu bestätigen"
 delivery.state:
   pending: 'Ausstehend, Abholbereit'
   in_delivery: 'Abgeholt, in Lieferung'
@@ -747,3 +794,330 @@ delivery.state:
 basics.address: Adresse
 warehouses.breadcrumb: Lagerhäuser
 warehouses.breadcrumb.help: Lagerhäuser definieren
+base.footer.companyRegister: Werde ein Partner
+base.footer.RegisterMyRestaurant: Mein Restaurant eintragen
+button.suggest.submitted.label: Zur Startseite
+adminDashboard.users.export.optins.title: Wähle aus, was du exportieren möchtest
+admin.deliveries.to_be_confirmed.alert: Es müssen noch Lieferungen bestätigt werden.
+  Klick auf das "Lieferungen" Icon in der rechten Spalte.
+localBusiness.form.use_different_business_address.label: Nutze eine andere Geschäftsadresse
+adminDashboard.shops.title: Läden
+adminDashboard.users.confirmDeleteUser: Möchtest du den Benutzer %email% wirklich
+  löschen?
+adminDashboard.users.userHasBeenDeleted: Nutzer wurde gelöscht.
+adminDashboard.users.registered_at: Registriert
+adminDashboard.users.last_order: Letzte Bestellung
+adminDashboard.users.orders_count: Anzahl der Bestellungen
+base.footer.privacy: Datenschutz
+adminDashboard.orders.noOrders: Keine Bestellungen vorhanden
+adminDashboard.users.export.optins.newsletter: Nutzer mit Einwilligung für den Newsletter
+adminDashboard.users.export.optins.marketting: Nutzer mit Einwilligung für Werbung
+adminDashboard.pricing.duplicate: Duplikat
+adminDashboard.pricing.copyOf: Kopie von %rule_set_name%
+localBusiness.form.business_address.label: Geschäftsadresse
+restaurants.pre_order: Vorbestellung
+restaurant.closedOpensTodayLaterWarning: Dieses Restaurant ist derzeit geschlossen,
+  öffnet aber um <strong>%time%</strong>.
+homepage.form.title: Brauchen Sie etwas geliefert?
+form.vehicle.volume_units.label: Volumen Einheiten
+form.time_slot.preview_title: Vorschau Zeitfenster
+adminDashboard.pricing.help: Legen Sie Regeln fest um die Lieferpreise zu kalkulieren
+activity.task.cancelled: "@%owner% hat Aufgabe #task/%aggregate_id% storniert\n"
+activity.order.picked: "@%owner% hat den Auftrag #order/%aggregate_id% abgeholt\n"
+activity.order.cancelled: "Auftrag #order/#%aggregate_id% storniert\n"
+basics.view: Ansicht
+pagination.previous: Vorherige
+basics.save: Speichern
+authentication.sign_in: Anmelden
+authentication.already_registered: Bereits registriert?
+deliveries.section.past: Zurückliegend
+task.receipt.received_by: Das Paket wurde von <strong>%name%</strong> empfangen
+order.export.heading.packaging_fee: Verpackung
+order.export.heading.delivery_fee: Liefergebühr
+order.export.heading.platform_fee: Plattformgebühr
+order.export.heading.refund_total: Rückerstattungen
+order.export.heading.stripe_fee: Stripe Gebühr
+users.couriers: Kuriere
+form.price_with_tax.tax_excl.label: Preis (ohne MwSt.)
+basics.allow_edit: erlaube Bearbeitung
+form.package_with_quantity.package.placeholder: Wähle einen Verpackungstyp
+basics.kilos: Kilo
+form:
+  restaurant:
+    name:
+      label: Restaurantname
+    contact_referent:
+      label: Kontaktperson für das Restaurant
+error.404: Seite nicht gefunden.
+form.billing_method.percentage: Prozentsatz der Auftragssumme
+basics.send_invitation: Einladung senden
+task.receipt.message: Wir haben Ihr Paket an <strong>%address%</strong> am <strong>%date%</strong>
+  zugestellt
+notifications.messenger_approaching: Hallo %customer%! Unser:e Fahrer:in %messenger%
+  ist bald bei dir.
+order.export.heading.net_revenue: Nettoumsatz
+notifications.tasks_changed: Aufgaben für %date% geändert!
+sms.with_tracking: "Hallo,\nunser:e Fahrer:in ist auf dem Weg zu %address%.\nVerfolgen\
+  \ unter %link%\n"
+info.deposit_refund: Jeder Eintrag und der Liste unten repräsentiert einen Verpackungstyp
+  (klein, groß, ...). Wenn die Verpackungen einmal angelegt wurden, kannst du sie
+  für jedes Produkt konfigurieren.
+form.receipt.billing_address.help: Wenn benötigt, alternative Rechnungsadresse hier
+  eingeben
+form.product_tax_category_choice.placeholder: Wähle eine Steuerkategorie
+form.time_slot.same_day_cutoff.help: 'Beispiel: Wenn 11:00 gewählt ist, wird die Auswahl
+  für den selben Tag nicht nach 11:00 angezeigt'
+restaurant.contract.takeAwayFeeRate.help: Die Prozente auf die Gesamtsumme der Produkte
+  werden von der Plattform einbehalten
+profile.dashboard_suggest: Auf der Suche die Bestellungen und Lieferungen zu verwalten?
+  <a href="%link%">Hier geht's zum neuen Dashboard</a> ✨
+profile.fullName: Vor- und Zuname
+adminDashboard.hubs.help: Hubs erlauben dir Shops zu einer gemeinsamen Abholadresse
+  zu gruppieren, z.B. ein Markt.
+order.payer.email: E-Mail
+adminDashboard.package_sets.help: Warentypen für den Transport konfigurieren
+order.notes: Anmerkungen des Kunden
+form.store_type.time_slot.placeholder: Wähle ein Zeitfernster aus
+restaurant_promotion.items_total.help: Damit können Sie ab einem bestimmten Betrag
+  einen Rabatt gewähren, der Ihre Marge um den Betrag des Rabatts verringert. Die
+  von der Plattform erhobenen Gebühren werden dadurch <strong>nicht gemindert </strong>.
+form.store_type.multi_drop_enabled.label: Erlaube mehrere Lieferadressen
+form.vehicle.max_weight.label: Maximales Gewicht (kg)
+form.address.company_name.label: Firmenname
+form.integration.maxWeight.label: Maximal erlaubtes Gewicht (kg)
+form.store_type.packages_required.label: Erfordert Anzahl der Pakete
+form.integration.maxLength.label: Maximal erlaubte Länge (cm)
+tasks.mark_as_done.has_previous: 'Aufgabe #%failed_task% kann nicht abgeschlossen
+  werden. Zunächst muss #%previous_task% abgeschlossen werden.'
+form.pricing_rule_set.strategy.help: Die Regeln werden von oben nach unten ausgewertet.
+  Je nach gewählter Berechnungsmethode entscheidet entweder die erste übereinstimmende
+  Regel über den Preis, oder der Preis wird durch Addition aller übereinstimmenden
+  Regeln berechnet.
+form.delivery_embed.vehicle.disclaimer: Wir liefern per Lastenfahrrad Sendungen, die
+  größer als 50x40x20cm und/oder über 6kg sind.
+form.registration.terms.and.conditions.help: Mit Auswahl der Box akzeptieren Sie unsere
+  r <a href="%terms_url%">Bedingungen und Konditionen</a>.
+activity.task.created: "@%owner% erstellte Aufgabe #task/%aggregate_id%\n"
+adminDashboard.incidents.title: Vorfälle
+adminDashboard.incidents.createNew: Erstelle einen neuen Vorfall
+activity.task.assigned: "@%owner% wies Aufgabe #task/%aggregate_id% zu\n"
+form.settings.notifications.order.updated: Auftrag aktualisiert
+activity.task.failed: "@%owner% konnte Aufgabe #task/%aggregate_id% nicht erledigen\n"
+form.settings.notifications.task.failed: Aufgabe fehlgeschlagen
+activity.order.dropped: "@%owner% hat den Auftrag #order/%aggregate_id% geliefert\n"
+form.settings.notifications.task.cancelled: Aufgabe storniert
+activity.order.fulfilled: "Auftrag #order/#%aggregate_id% abgeschlossen\n"
+basics.continue: Weiter
+order.export.heading.restaurant_name: Restaurant
+form.settings.notifications.help: Wenn Sie die Benachrichtigungen für die unten aufgeführten
+  Ereignisse deaktivieren, erhalten die Administratoren weder E-Mails noch Benachrichtigungen
+  in der oberen Leiste.
+registration.company.billing.address: Rechnungsadresse
+basics.send_invitation.confirm: Deine Einladung wurde verschickt. Du kannst nun die
+  Einstellungen für den neuen Nutzer setzen.
+registration.confirm.invitation.link.title: Nutze den Link unten, um deine Kolleg:innen
+  einzuladen
+basics.send_invitation.invitated_user_after_password_confirmation: Dein Account wurde
+  erstellt. Bitte prüfe deine <a target="_blank" href="%restaurantEditUrl%">persönlichen
+  Informationen</a>
+form.settings.company_legal_name.label: Vollständiger Firmenname
+time_slot.human_readable: '%day% zwischen %start% und %end%'
+form.settings.company_legal_name.help: Bitte hier den offiziellen Firmennamen eintragen,
+  wie er auf offiziellen Dokumenten erscheint.
+time_range: zwischen %start% und %end%
+form.settings.company_legal_id.label: Registernummer
+time_range.same_day: '[Heute] [%range%]'
+business_restaurant_group.form.invalid: Es gibt noch Fehler oder fehlende Infos, bitte
+  alle Bereiche der Konfiguration überprüfen.
+delivery.import.success_message: Die Datei wurde erfolgreich verarbeitet, %count%
+  Lieferungen wurden erstellt
+restaurants.edenred.add_restaurants: Restaurant hinzufügen
+activity.task.rescheduled: "@%owner% hat Aufgabe #task/%aggregate_id% umgeplant\n"
+registration.link.to.login: Zum Login hier klicken.
+form.billing_method.help: Gewählte Zahlungsmethode
+form.product_option_value.value.label: Wert
+form.items_total_promotion.items_total.label: obige Posten insgesamt
+form.items_total_promotion.fixed_discount_amount.label: Rabatt anwenden
+order.export.empty: Keine Bestellungen zum Export vorhanden
+basics.show: Anzeigen
+basics.hide: Verstecken
+order.payer.title: Kundeninformation
+order.payer.identificationNumber: Ausweisnummer
+form.store_type.weight_required.label: Erfordert Gewichtsangabe
+form.store_type.package_set.placeholder: Wähle eine Verpackungsart
+order.export.heading.order_number: Bestellnummer
+basics.add: Hinzufügen
+basics.delete: Löschen
+basics.cancel: Abbrechen
+basics.open: Öffnen
+basics.tomorrow: Morgen
+basics.price: Preis
+basics.tax_category: MwSt
+basics.description: Beschreibung
+basics.today: Heute
+basics.updated_at: Aktualisiert am %date%
+basics.total_including_tax: Inklusive MwSt
+restaurant.list.refunds: Rückerstattungen
+profile.businessAccount: Firmenaccount
+profile.orders: Aufträge
+profile.configuration: Konfiguration
+order.state.started: In Vorbereitung
+order.state.ready: Fertig
+cart.title: Warenkorb
+form.payment.state.label: Land
+form.payment.refund_comment.label: Kommentare
+form.payment.refund_comment.help: Bitte beschreibe was passiert ist
+form.delivery.confirm.label: Bestätige
+form.address.company.business_reference.label: Kontaktperson der Firma
+form.address.company.collaborator_number.label: Anzahl der Angestellten
+form.company.make_the_request.label: Sende Anfrage
+form.pricing_rule_set.strategy.label: Berechnungsmethode
+form.pricing_rule_set.strategy.find.label: Die erste Regel die passt
+form.pricing_rule_set.strategy.map.label: Alle passenden Regeln
+form.registration.terms.and.conditions.label: Ich akzeptiere die Bedingungen und Konditionen
+form.registration.privacy.policy.label: Ich habe die Datenschutzhinweise gelesen
+form.registration.privacy.policy.help: Mit Auswahl der Box bestätigen Sie, die  <a
+  href="%privacy_url%">Datenschutzhinweise</a> gelesen zu haben.
+form.registration.optin.newsletter.label: Ich möchte den %brand_name% Newsletter.
+form.registration.optin.marketing.label: Ich bin mit gelegentlicher Werbung einverstanden.
+form.checkout_address.notes.label: Notiz ans Restaurant
+activity.task.unassigned: "@%owner% entfernte Zuweisung Aufgabe #task/%aggregate_id%\n"
+activity.task.started: "@%owner% begann Aufgabe #task/%aggregate_id%\n"
+activity.task.done: "@%owner% erledigte Aufgabe #task/%aggregate_id%\n"
+activity.order.created: "Auftrag #order/%aggregate_id% wurde von @%owner% erstellt\n"
+activity.order.accepted: "Auftrag #order/%aggregate_id% wurde angenommen\n"
+activity.order.refused: "Auftrag #order/%aggregate_id% wurde zurückgewiesen\n"
+basics.are_you_sure: Sicher?
+basics.no_entries: Noch kein Element vorhanden
+basics.date_range: Von %start% bis %end%
+basics.platform_fees: Plattformgebühren
+basics.net_income: Nettoeinkommen
+basics.configure: Konfiguriere
+basics.select_all: Alle auswählen
+basics.delete_selected: Lösche Auswahl
+profile.password.change: Ändere dein Passwort
+authentication.forgot_password: Passwort vergessen?
+authentication.not_registered_yet: Noch nicht registriert?
+authentication.create_account: Erstelle einen Account
+authentication.unsubscribe: Sie können sich jederzeit ganz einfach über die Abmeldelinks
+  in jeder unserer E-Mails abmelden
+authentication.choose_password: Wähle dein Passwort
+maintenance.text: Wartungsmodus - Wir sind bald zurück
+time_range.next_day: '[Morgen] [%range%]'
+time_range.last_day: '[Gestern] [%range%]'
+deliveries.sort.newest: Neueste zuerst
+deliveries.sort.oldest: Älteste zuerst
+deliveries.filter.clear: Zeige alle
+deliveries.section.upcoming: Anstehend
+task.receipt.attached_images: Beigefügte Bilder
+task.receipt.reference: 'Referenz: <strong>%ref%</strong>'
+basics.hours: '%count% Stunde|%count% Stunden'
+basics.days: '%count% Tag|%count% Tage'
+basics.weeks: '%count% Woche|%count% Wochen'
+basics.yes: Ja
+basics.no: Nein
+order.export.heading.fulfillment_method: Auftragsabwicklung
+order.export.heading.completed_at: Abgeschlossen um
+order.export.heading.tip: Trinkgeld
+order.export.heading.total_incl_tax: Gesamt (inklusive MwSt)
+order.export.heading.completed_by: Abgeschlossen von
+users.sort.alphabetically: alphabetisch
+users.sort.newest: kürzlich Registrierung
+sms.simple: "Hallo,\nunser:e Fahrer:in ist auf dem Weg zu %address%.\n"
+basics.close: schließen
+fulfillment_method.delivery: Lieferung
+fulfillment_method.collection: Sammlung
+form.price_with_tax.tax_incl.label: Preis (mit MwSt.)
+form.receipt.billing_address.label: Rechnungsadresse
+promotion_rule.is_customer: Kunde ist %username%
+order.refund.total_amount: Die Bestellung wurde mit einem Betrag von %amount% erstattet
+spreadsheet.download_example: Beispiel-Tabelle herunterladen
+nav.about_us: Über uns
+basics.tax_incl: MwSt. inkl.
+basics.tax_excl: ohne MwSt.
+refund.list.amount: Erstattungsbetrag
+refund.list.comments: Kommentare
+refund.list.refunded_at: Erstattet an
+form.time_slot.choices.error.empty: Die Auswahlliste darf nicht leer sein
+loopeat.how_it_works.step_1.title: Ich registriere mich
+loopeat.how_it_works.step_3.title: Ich bestelle
+loopeat.how_it_works.step_4.title: Ich gebe meine Behälter zurück
+loopeat.how_it_works.step_3.text: Zustellung in wiederverwendbarem Behälter.
+loopeat.how_it_works.step_2.text: Pfandbetrag für die wiederverwendbaren Behälter
+  hinterlegen.
+basics.search: Suche
+basics.enabled: aktiviert
+form.fulfillment_method.pre_ordering_allowed.label: Erlaube Vorbestellungen
+form.fulfillment_method.pre_ordering_allowed.help: Wenn deaktiviert können Kunden
+  nur am selben Tag Bestellungen aufgeben.
+notifications.delivery_created: Eine Lieferung mit Abholung am %date% wurde erstellt
+notifications.tasks_changed_today: Deine heutigen Aufgaben wurden aktualisiert
+notifications.tap_to_open: Tippe zum Öffnen
+stores.address_book: Adressbuch
+store.form.section.settings: Einstellungen
+adminDashboard.hubs.createNew: Erstelle einen neuen Hub
+form.business_account.manager.email_sent.help: Eine Einladungs-E-Mail zu CoopCycle
+  wurde verschickt. <a href="#">Klicken</a>um erneut zu versenden.
+form.business_account.save_and_send_invitation.label: Speichern und Einladung senden
+form.business_acount.send_invitation.confirm: Einladungs-E-Mail zu CoopCycle wurde
+  verschickt
+form.business_acount.resend_invitation.confirm: Einladungs-E-Mail zu CoocCycle wurde
+  erneut verschickt
+adminDashboard.embed.help: Erstelle Formulare um Lieferungen zu bestellen
+adminDashboard.time_slots.help: Setze Zeitfenster
+adminDashboard.zones.help: Lege geographische Gebiete fest
+adminDashboard.tags.help: Weise Tags und Farben zu Aufgaben zu
+form.adress_book.remember_address: Adresse speichern
+restaurant.list.tags.zerowaste: Null Abfall
+homepage.zerowaste: Entdecke unsere abfallfreien Restaurants!
+restaurant.stats.view_simple: Einfache Ansicht
+restaurant.stats.view_detailed: Detaillierte Ansicht
+restaurants.mode.list: Zeige als Liste
+restaurants.mode.map: Zeige als Karte
+form.store_type.multi_drop_enabled.help: Dies erlaubt Nutzern mehrere Lieferadressen
+  für eine Lieferung anzulegen
+form.store_type.time_slots.label: Zeitfenster
+form.store_type.time_slots.set_as_default: Als Standard Zeitfenster festlegen
+vehicles.breadcrumb: Fahrzeuge
+vehicles.breadcrumb.help: Definiere die Fahrzeugflotte
+form.integration.maxHeight.label: Maximal erlaubte Höhe (cm)
+form.integration.maxWidth.label: Maximal erlaubte Breite (cm)
+adminDashboard.incidents.help: Vorfälle verwalten.
+form.pricing_rule_set.options.label: Optionen
+form.pricing_rule_set.options.map_all_tasks.label: Auf alle Aufgaben anwenden
+form.settings.notifications.title: Benachrichtigungen
+form.settings.notifications.order.fulfilled: Auftrag erfüllt
+form.settings.notifications.order.created: Auftrag erstellt
+form.settings.notifications.order.accepted: Auftrag angenommen
+form.settings.notifications.order.refused: Auftrag abgewiesen
+form.settings.notifications.order.delayed: Auftrag verzögert
+form.settings.notifications.order.cancelled: Auftrag storniert
+form.settings.notifications.order.picked: Auftrag abgeholt
+form.settings.notifications.task.created: Aufgabe erstellt
+form.settings.notifications.task.assigned: Aufgabe zugewiesen
+form.settings.notifications.task.unassigned: Aufgabe nicht zugewiesen
+form.settings.notifications.task.started: Aufgabe begonnen
+form.settings.notifications.task.done: Aufgabe abgeschlossen
+form.settings.notifications.task.rescheduled: Aufgabe verschoben
+registration.info.title: Was ist CoopCycle?
+registration.alert.text: Sie wurden von %invitedBy% eingeladen einen Account für %brandName%
+  zu erstellen.
+registration.company.address.different.for.billing: Alternative Adresse für Rechnungen
+registration.step.company.name: Firmenname
+registration.step.company.legal_name: Vollständiger Firmenname
+registration.step.company.vat_number: Umsatzsteuer-ID
+registration.step.invitation.copy.link: Kopiere den Link unten und schicke Ihn an
+  deine Kolleg:innen
+registration.step.invitation.copy.button: Link kopieren
+registration.step.invitation.link.copied: kopiert
+error.return_to_homepage: Zurück zur Startseite
+deliveries.imports: Importierte Dateien
+deliveries.importing: Die Datei %filename% wird importiert.
+deliveries.imports.created_at: Erstellt am
+form.settings.company_legal_id.help: Diese Nummer findet sich in offiziellen Dokumenten
+  des Unternehmens wie Rechnungen oder Impressum
+registration.email.taken.loggin.warning_message: Passwort eingeben um einzuloggen.
+basics.order_now: Jetzt bestellen
+form.billing_method.label: Zahlungsmethode
+form.billing_method.unit: Pro Einheit
+order.export.heading.billing_method: Zahlungsmethode

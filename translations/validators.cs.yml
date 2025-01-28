@@ -40,3 +40,18 @@ restaurant.contract.notValid: Zadejte podmínky smlouvy o dodávce (vyžaduje op
 restaurant.name.notBlank: Zadejte název své restaurace
 restaurant.telephone.notBlank: Zadejte své telefonní číslo
 restaurant.openingHours.notBlank: Vyberte alespoň jeden otevřený plán
+delivery.check.outOfBounds: Váš požadavek je mimo přijatelnou oblast nebo je příliš
+  daleko
+googlemaps.api_key.invalid: Klíč Google Maps API není platný. %error%
+spreadsheet.missing_columns: Musíte zadat sloupec " %column% " nebo " %other_column%
+  "
+order.adjustments.unexpectedCount: Neočekávaný počet úprav "%type%"
+dabba.insufficient_wallet: Ve vaší peněžence Dabba chybí %amount%
+loopeat.insufficient_stock: Nedostatečné množství opakovaně použitelných obalů pro
+  " %name% "
+spreadsheet.missing_column: Musíte zadat sloupec " %column% "
+spreadsheet.alternative_columns: Musíte zadat sloupec " %column% " nebo " %other_column%
+  ", ne oba
+spreadsheet.csv_encoding: Soubory CSV musí být kódovány v UTF-8
+siret.invalid: Neplatné číslo SIRET
+siret.head_office: Musíte uvést číslo SIRET provozovny, nikoliv sídla.
