@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-import { DatePicker } from 'antd'
 
 import Button from '../../../../components/core/Button'
 import { prepareParams } from '../../redux/actions'
 import ExportModalContent from '../ExportModalContent'
 import OrganizationsTable from '../OrganizationsTable'
+import RangePicker from './RangePicker'
 
 const ordersStates = ['new', 'accepted', 'fulfilled']
 
@@ -45,11 +45,10 @@ export default () => {
       <h5>{t('ADMIN_ORDERS_TO_INVOICE_TITLE')}</h5>
       <div className="d-flex" style={{ marginTop: '12px', gap: '24px' }}>
         {t('ADMIN_DASHBOARD_NAV_FILTERS')}:
+        <RangePicker setDateRange={setDateRange} />
         <div className="d-flex flex-column">
-          {t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE')}
-          <DatePicker.RangePicker onChange={setDateRange} />
-        </div>
-        <div className="d-flex flex-column justify-content-end">
+          {/*invisible text is used to align the Refresh button*/}
+          <span style={{ visibility: 'hidden' }}>{'invisible text'}</span>
           <Button
             testID="invoicing.refresh"
             primary
