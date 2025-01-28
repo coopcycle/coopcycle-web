@@ -9,9 +9,11 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryPriceInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
@@ -96,7 +98,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "put"={
  *        "method"="PUT",
- *        "security"="is_granted('edit', object)"
+ *        "controller"=EditDelivery::class,
+ *        "security"="is_granted('edit', object)",
+ *        "denormalization_context"={"groups"={"delivery_create"}}
  *     },
  *     "pick"={
  *        "method"="PUT",
@@ -161,10 +165,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $store;
 
     /**
+     * @var DeliveryPriceInput
      * @Groups({"delivery_create"})
      */
-    private $variantIncVATPrice;
-
+    private $deliveryPriceInput;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
@@ -636,21 +640,21 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     }
 
     /**
-     * Get the value of variantIncVATPrice
+     * Get the value of deliveryPriceInput
      */
-    public function getVariantIncVATPrice()
+    public function getDeliveryPriceInput(): ?DeliveryPriceInput
     {
-        return $this->variantIncVATPrice;
+        return $this->deliveryPriceInput;
     }
 
     /**
-     * Set the value of variantIncVATPrice
+     * Set the value of deliveryPriceInput
      *
      * @return  self
      */
-    public function setVariantIncVATPrice($variantIncVATPrice)
+    public function setDeliveryPriceInput($deliveryPriceInput)
     {
-        $this->variantIncVATPrice = $variantIncVATPrice;
+        $this->deliveryPriceInput = $deliveryPriceInput;
 
         return $this;
     }

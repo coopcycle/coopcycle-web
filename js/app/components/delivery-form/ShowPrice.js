@@ -44,7 +44,7 @@ const OverridePriceForm = ({ setCalculatePrice, taxRate }) => {
       </div>
       <PriceVATConverter
         className="override__form__variant-price"
-        amount={taxRate.amount}
+        taxRate={taxRate.amount}
         setPrices={setCalculatePrice}
       />
     </div>
@@ -71,7 +71,7 @@ export default ({
     if (overridePrice && calculatedPrice.VAT > 0) {
       setFieldValue(
         'variantIncVATPrice',
-        (calculatedPrice.VAT * 100).toFixed(2),
+        Math.round(calculatedPrice.VAT * 100),
       )
     }
 

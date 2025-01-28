@@ -265,8 +265,10 @@ export default function ({ storeId, deliveryId, order }) {
       return await httpClient[method](url, {
         store: storeDeliveryInfos['@id'],
         tasks: values.tasks,
-        variantIncVATPrice: values.variantIncVATPrice,
-        variantName: values.variantName
+        deliveryPriceInput: {
+          priceIncVATcents: values.variantIncVATPrice,
+          variantName: values.variantName
+        }
       });
     }
 
