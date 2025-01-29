@@ -6,6 +6,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
+use PhpUnitsOfMeasure\PhysicalQuantity\Mass;
 
 trait PackagesTrait
 {
@@ -47,8 +48,8 @@ trait PackagesTrait
                     $p->setAverageVolumeUnits(1);
                     $p->setMaxVolumeUnits(1);
                     $p->setColor('#FFFFFF');
-                    $p->setAverageWeight(1000);
-                    $p->setMaxWeight(1000);
+                    $p->setAverageWeight($this->convertWeight($package['weight']));
+                    $p->setMaxWeight($this->convertWeight($package['weight']));
                     $p->setShortCode(strtoupper(substr($packageName, 0 ,2)));
 
                     $this->entityManager->persist($p);
@@ -68,5 +69,12 @@ trait PackagesTrait
         }
 
         return sprintf('%s x %s x %s, %s', ...$params);
+    }
+
+    private function convertWeight(array $data): int|float
+    {
+        $mass = new Mass($data['value'], $data['unit']);
+
+        return $mass->toUnit('g');
     }
 }
