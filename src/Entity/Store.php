@@ -213,6 +213,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     protected string $billingMethod = 'unit';
 
+    protected ?string $storeGLN = null;
+
     public function __construct() {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
@@ -656,4 +658,16 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->billingMethod;
     }
+
+    public function setStoreGLN(?string $storeGLN): void
+    {
+        $this->storeGLN = $storeGLN;
+    }
+
+    public function getStoreGLN(): ?string
+    {
+        return $this->storeGLN;
+    }
+
+
 }

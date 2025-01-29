@@ -35,6 +35,7 @@
         <option name="default">unit</option>
       </options>
     </field>
+    <field name="storeGLN" type="string" column="store_gln" nullable="true"/>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

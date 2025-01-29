@@ -30,6 +30,9 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
 class SettingsType extends AbstractType
 {
+
+    private bool $standtrackEnabled;
+
     public function __construct(
         private readonly SettingsManager $settingsManager,
         private readonly PhoneNumberUtil $phoneNumberUtil,
@@ -38,8 +41,11 @@ class SettingsType extends AbstractType
         private readonly string $country,
         private readonly bool $isDemo,
         private readonly bool $googleEnabled,
-        private readonly bool $cashEnabled)
+        private readonly bool $cashEnabled,
+        ?string $standtrackEnabled
+    )
     {
+        $this->standtrackEnabled = !empty($standtrackEnabled);
     }
 
     private function createPlaceholder($value)
@@ -109,7 +115,14 @@ class SettingsType extends AbstractType
                 'required' => false,
                 'label' => 'form.settings.accounting_account.label',
                 'help' => 'form.settings.accounting_account.help',
-            ]);;
+            ]);
+
+        if ($this->standtrackEnabled) {
+            $builder->add('company_gln', TextType::class, [
+                'required' => false,
+                'label' => 'form.settings.company_gln.label'
+            ]);
+        }
 
         $onDemandDeliveryProduct = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
         if ($onDemandDeliveryProduct) {
