@@ -277,18 +277,35 @@ Feature: Woopit
       """
       {
         "deliveryId":"yXJPEP30xgja",
+        "parcels": [
+          {
+            "id": @string@
+          },
+          {
+            "id": @string@
+          }
+        ],
         "labels": [
           {
               "id": "@string@",
               "type": "url",
               "mode": "pdf",
-              "value": "@string@"
+              "value": "@string@",
+              "parcelId": "@string@"
           },
           {
               "id": "@string@",
               "type": "url",
               "mode": "pdf",
-              "value": "@string@"
+              "value": "@string@",
+              "parcelId": "@string@"
+          },
+          {
+              "id": "@string@",
+              "type": "url",
+              "mode": "pdf",
+              "value": "@string@",
+              "parcelId": "@string@"
           }
         ]
       }
