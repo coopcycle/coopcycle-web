@@ -24,6 +24,7 @@ class SettingsManager
     private $b2bEnabled;
     private $doctrine;
     private $gatewayResolver;
+    private $projectDir;
     private $forceStripe;
 
     private $secretSettings = [
