@@ -49,7 +49,7 @@ trait PackagesTrait
                     $p->setColor('#FFFFFF');
                     $p->setAverageWeight(1000);
                     $p->setMaxWeight(1000);
-                    $p->setShortCode('AA');
+                    $p->setShortCode(strtoupper(substr($packageName, 0 ,2)));
 
                     $this->entityManager->persist($p);
                     $this->entityManager->flush();
