@@ -116,14 +116,14 @@ export default ({
             </div>
             <div>
               {overridePrice ?
-                <s>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
-                <span>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
+                <s>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
+                <span>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
               }
             </div>
             <div>
               {overridePrice ?
-                <s>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
-                <span>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
+                <s>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
+                <span data-testid="tax-included-previous">{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
               }
             </div>
 
@@ -136,7 +136,7 @@ export default ({
                 <span>
                   {money(calculatedPrice.exVAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
                 </span><br />
-                <span>
+                <span data-testid="tax-included">
                   {money(calculatedPrice.VAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_VAT')}
                 </span>
               </div>
@@ -154,7 +154,7 @@ export default ({
                   calculatedPrice.amount ? 
                     <>
                       <span>{money(calculatedPrice.amount - calculatedPrice.tax.amount,)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br />
-                      <span>{money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
+                      <span data-testid="tax-included">{money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
                     </> :
                     <>
                       <span>{money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br/>

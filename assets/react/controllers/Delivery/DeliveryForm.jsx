@@ -263,15 +263,23 @@ export default function ({ storeId, deliveryId, order }) {
     const createOrEditADelivery = async (deliveryId) => {
       const url = getUrl(deliveryId);
       const method = deliveryId ? 'put' : 'post';
-      
-      return await httpClient[method](url, {
+
+      let data = {
         store: storeDeliveryInfos['@id'],
-        tasks: values.tasks,
-        deliveryPriceInput: {
-          priceIncVATcents: values.variantIncVATPrice,
-          variantName: values.variantName
+        tasks: values.tasks
+      }
+
+      if (values.variantIncVATPrice && values.variantName) {
+        data = {
+          ...data,
+          deliveryPriceInput: {
+            priceIncVATcents: values.variantIncVATPrice,
+            variantName: values.variantName
+          }
         }
-      });
+      }
+      
+      return await httpClient[method](url, data);
     }
 
     const {response, error} = await createOrEditADelivery(deliveryId)
@@ -479,7 +487,8 @@ export default function ({ storeId, deliveryId, order }) {
                       <Button
                         type="primary"
                         style={{ height: '2.5em' }}
-                        htmlType="submit" disabled={isSubmitting || deliveryId && isAdmin === false}>
+                        htmlType="submit"
+                        disabled={isSubmitting || deliveryId && isAdmin === false}>
                         {t("DELIVERY_FORM_SUBMIT")}
                       </Button>
                     </div>

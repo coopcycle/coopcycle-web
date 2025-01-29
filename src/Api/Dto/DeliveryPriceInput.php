@@ -7,13 +7,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class DeliveryPriceInput
 {
     /**
-     * @var int
+     * @var ?int
      * @Groups({"delivery_create"})
      */
     private $priceIncVATcents;
 
     /**
-     * @var string
+     * @var ?string
      * @Groups({"delivery_create"})
      */
     private $variantName;
@@ -21,7 +21,7 @@ class DeliveryPriceInput
     /**
      * Get the value of priceIncVATcents
      */
-    public function getPriceIncVATcents(): int
+    public function getPriceIncVATcents(): ?int
     {
         return $this->priceIncVATcents;
     }
@@ -29,7 +29,7 @@ class DeliveryPriceInput
     /**
      * Set the value of priceIncVATcents
      */
-    public function setPriceIncVATcents(int $priceIncVATcents): self
+    public function setPriceIncVATcents(?int $priceIncVATcents): self
     {
         $this->priceIncVATcents = $priceIncVATcents;
 
@@ -39,7 +39,7 @@ class DeliveryPriceInput
     /**
      * Get the value of variantName
      */
-    public function getVariantName(): string
+    public function getVariantName(): ?string
     {
         return $this->variantName;
     }
@@ -47,7 +47,7 @@ class DeliveryPriceInput
     /**
      * Set the value of variantName
      */
-    public function setVariantName(string $variantName): self
+    public function setVariantName(?string $variantName): self
     {
         $this->variantName = $variantName;
 

@@ -64,8 +64,10 @@ export default ({
     )
   }, [storeDeliveryInfos])
 
+  
+
   return (
-    <div className="task border p-4 mb-4">
+    <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
       <div
         className={
           task.type === 'PICKUP'
