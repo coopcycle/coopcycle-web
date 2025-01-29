@@ -20,16 +20,13 @@ class DeliveryRequest
 {
     use CreateDeliveryTrait;
 
-    private $deliveryManager;
-    private $geocoder;
-
     public function __construct(
-        DeliveryManager $deliveryManager,
-        Geocoder $geocoder,
-        Hashids $hashids12,
-        EntityManagerInterface $entityManager,
-        PhoneNumberUtil $phoneNumberUtil,
-        ValidatorInterface $checkDeliveryValidator,
+        private DeliveryManager $deliveryManager,
+        private Geocoder $geocoder,
+        private Hashids $hashids12,
+        private EntityManagerInterface $entityManager,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private ValidatorInterface $checkDeliveryValidator,
         private UrlGeneratorInterface $urlGenerator)
     {
         $this->deliveryManager = $deliveryManager;
