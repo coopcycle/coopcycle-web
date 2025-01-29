@@ -25,8 +25,8 @@ class StandtrackClient {
 
         $this->client = $client ?? new Client([
             'base_uri' => $baseUri ?? self::BASE_URI,
+            'query' => [ 'token' => $this->tokenId ],
             'headers' => [
-                'Authorization' => sprintf('Bearer %s', $this->tokenId),
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ]
@@ -43,7 +43,7 @@ class StandtrackClient {
     {
         try {
             $response = $this->client->request('POST', '/Events/M030', [
-                'json' => $event->toArray($this->senderGln)
+                'json' => ["header" => $event->toArray($this->senderGln)]
             ]);
 
             return $this->handleResponse($response);
