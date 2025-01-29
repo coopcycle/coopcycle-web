@@ -1,36 +1,24 @@
 <?php
 namespace AppBundle\Integration\Standtrack;
 
+use DateTime;
 use DateTimeInterface;
 
 
 class DeliveryEvent
 {
-    private EventType $eventType;
-    private string $shipmentNumber;
-    private array $iubCodes;
-    private ?string $receiverGln;
-    private ?\DateTimeInterface $eventDateTime;
-    private ?IncidentType $incidentType;
 
     /**
      * @param array<int,mixed> $iubCodes
      */
     public function __construct(
-        EventType $eventType,
-        string $shipmentNumber,
-        array $iubCodes,
-        ?string $receiverGln = null,
-        ?\DateTimeInterface $eventDateTime = null,
-        ?IncidentType $incidentType = null
-    ) {
-        $this->eventType = $eventType;
-        $this->shipmentNumber = $shipmentNumber;
-        $this->iubCodes = $iubCodes;
-        $this->receiverGln = $receiverGln;
-        $this->eventDateTime = $eventDateTime ?? new \DateTime();
-        $this->incidentType = $incidentType;
-    }
+        private readonly EventType $eventType,
+        private readonly string $shipmentNumber,
+        private readonly array $iubCodes,
+        private readonly ?string $receiverGln = null,
+        private readonly ?\DateTimeInterface $eventDateTime = new DateTime(),
+        private readonly ?IncidentType $incidentType = null
+    ) { }
 
     /**
      * @return array<string,mixed>
@@ -38,14 +26,14 @@ class DeliveryEvent
     public function toArray(string $senderGln): array
     {
         $payload = [
-            'M03001' => $this->eventType,
+            'M03001' => strval($this->eventType->value), // Standtrack expects a string
             'M03002' => $this->shipmentNumber,
             'M03003' => $senderGln,
             'M03008' => $this->eventDateTime->format('Ymd'),
             'M03009' => $this->eventDateTime->format('Hi'),
             'iuBs' => array_map(
                 fn(string $iubCode) => [
-                    'M03010' => $iubCode,
+                    'M03010' => strval($iubCode), // Standtrack expects a string
                     'M03011' => 'OK'
                 ],
                 $this->iubCodes

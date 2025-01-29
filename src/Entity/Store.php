@@ -669,5 +669,4 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this->storeGLN;
     }
 
-
 }

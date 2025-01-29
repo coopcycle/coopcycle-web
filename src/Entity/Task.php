@@ -1364,6 +1364,15 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $barcodes;
     }
 
+    public function getBarcode(): string
+    {
+        $barcode = collect($this->getMetadata())->get('barcode');
+        if (is_null($barcode)) {
+            return BarcodeUtils::getRawBarcodeFromTask($this);
+        }
+        return $barcode;
+    }
+
     public function getStore(): Store|null
     {
         return $this->getDelivery()?->getStore();
@@ -1371,7 +1380,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * Get cO2 emissions from the previous task/warehouse to accomplish this task
-     */ 
+     */
     public function getEmittedCo2()
     {
         return $this->emittedCo2;
@@ -1381,7 +1390,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * Set cO2 emissions from the previous task/warehouse to accomplish this task
      *
      * @return  self
-     */ 
+     */
     public function setEmittedCo2($emittedCo2)
     {
         $this->emittedCo2 = $emittedCo2;
@@ -1391,7 +1400,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     /**
      * Get distance from previous task, in meter
-     */ 
+     */
     public function getTraveledDistanceMeter()
     {
         return $this->traveledDistanceMeter;
@@ -1401,7 +1410,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * Set distance from previous task, in meter
      *
      * @return  self
-     */ 
+     */
     public function setTraveledDistanceMeter($traveledDistanceMeter)
     {
         $this->traveledDistanceMeter = $traveledDistanceMeter;
@@ -1418,5 +1427,22 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         }
 
         return false;
+    }
+
+    public function getIUB(): ?int
+    {
+        $iub_code = collect($this->getMetadata())->get('iub_code');
+        if (is_null($iub_code)) {
+            return null;
+        }
+        return intval($iub_code);
+    }
+
+    public function setIUB(?int $iub_code): self
+    {
+        $metadata = $this->getMetadata();
+        $metadata['iub_code'] = $iub_code;
+        $this->setMetadata($metadata);
+        return $this;
     }
 }

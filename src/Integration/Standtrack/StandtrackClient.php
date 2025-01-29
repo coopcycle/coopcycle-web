@@ -2,30 +2,28 @@
 
 namespace AppBundle\Integration\Standtrack;
 
+use AppBundle\Service\SettingsManager;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Response;
 
 class StandtrackClient {
-   private const BASE_URI = 'https://www.standtrack.com/api';
+   private const BASE_URI = 'https://www.standtrack.com/api/';
 
     private ClientInterface $client;
-    private string $tokenId;
-    private string $senderGln;
+    private string $companyGLN;
 
     public function __construct(
-        string $tokenId,
-        string $senderGln,
+        private readonly string $standtrackApiKey,
+        SettingsManager $settingsManager,
         ?ClientInterface $client = null,
         ?string $baseUri = null
     ) {
-        $this->tokenId = $tokenId;
-        $this->senderGln = $senderGln;
-
+        $this->companyGLN = $settingsManager->get('company_gln');
         $this->client = $client ?? new Client([
             'base_uri' => $baseUri ?? self::BASE_URI,
-            'query' => [ 'token' => $this->tokenId ],
+            'query' => [ 'token' => $this->standtrackApiKey ],
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
@@ -42,12 +40,13 @@ class StandtrackClient {
     public function sendDeliveryEvent(DeliveryEvent $event): array
     {
         try {
-            $response = $this->client->request('POST', '/Events/M030', [
-                'json' => ["header" => $event->toArray($this->senderGln)]
+            $response = $this->client->request('POST', 'Events/M030', [
+                'json' => ["header" => $event->toArray($this->companyGLN)]
             ]);
 
             return $this->handleResponse($response);
         } catch (GuzzleException $e) {
+            dump($e->getResponse()->getBody()->getContents());
             throw new StandtrackException(
                 'Failed to send delivery event: ' . $e->getMessage(),
                 $e->getCode(),
