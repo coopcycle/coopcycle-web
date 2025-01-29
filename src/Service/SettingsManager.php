@@ -402,7 +402,11 @@ class SettingsManager
             return 'dev-master';
         }
 
-        $version = $process->getOutput();
+        $version = trim($process->getOutput());
+
+        if (empty($version)) {
+            return 'dev-master';
+        }
 
         return $version;
     }

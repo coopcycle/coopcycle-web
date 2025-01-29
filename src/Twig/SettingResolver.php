@@ -101,7 +101,13 @@ class SettingResolver implements RuntimeExtensionInterface
 
     public function getGithubReleaseLink(): string
     {
-        $version = Version::parse(str_replace('v', '', $this->settingsManager->getVersion()));
+        $versionString = $this->settingsManager->getVersion();
+
+        if ('dev-master' === $versionString) {
+            return 'https://github.com/coopcycle/coopcycle-web/releases';
+        }
+
+        $version = Version::parse(str_replace('v', '', $versionString));
 
         return sprintf('https://github.com/coopcycle/coopcycle-web/releases/tag/v%s.%s.0', $version->getMajor(), $version->getMinor());
     }
