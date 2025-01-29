@@ -713,7 +713,6 @@ checkout.breadcrumb.confirm: Bestätigung
 products.on_demand_delivery.name: Lieferung auf Anfrage
 security.login.remember_me: An mich erinnern
 delivery.failure_reason:
-<<<<<<< HEAD
   default:
     damaged: "Beschädigt"
     lost: "Verloren"
@@ -734,40 +733,6 @@ delivery.failure_reason:
     packaging_problems: "Probleme der Verpackung"
     holiday_closure: "Ferienverlängerung"
     closed_store: "Geschäft geschlossen"
-=======
-  damaged: "Beschädigt"
-  lost: "Verloren"
-  late: "Verspätete Lieferung"
-  incorrect_address: "Falsche Adresse"
-  customer_refused: "Kunde hat die Lieferung verweigert"
-  item_missing: "Fehlendes Element"
-  incorrect_item: "Falsches Element geliefert"
-  bad_weather: "Schlechtes Wetter"
-  vehicle_breakdown: "Fahrzeugausfall"
-  traffic_delays: "Verkehrsverzögerungen"
-  routing_problems: "Routing-Probleme"
-  customs_issues: "Zollprobleme"
-  inventory_shortage: "Inventurmangel"
-  address_unreachable: "Nicht erreichbare Adresse"
-  insufficient_funds: "Unzureichende Mittel"
-  data_entry_error: "Datenfehler"
-  packaging_problems: "Probleme der Verpackung"
-  holiday_closure: "Ferienverlängerung"
-  closed_store: "Geschäft geschlossen"
-  default:
-    late: Verspätete Zustellung
-    damaged: Beschädigt
-    lost: Verloren
-    incorrect_address: Falsche Adresse
-    customer_refused: Kunde hat Lieferung abgewiesen
-    item_missing: Fehlender Artikel
-    incorrect_item: Falscher Artikel geliefert
-    bad_weather: Schlechte Wetterbedingungen
-    vehicle_breakdown: Fahrzeugschaden
-    traffic_delays: Verkehrsverzögerung
-    routing_problems: Navigationsprobleme
-    address_unreachable: Adresse nicht erreichbar
->>>>>>> weblate/master
 adminDashboard.failureSet.title: "Fehlergründe"
 adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen\
   \ fehlschlagen können."
