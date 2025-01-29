@@ -642,20 +642,8 @@ Feature: Woopit
       """
       {
         "deliveryId":"yXJPEP30xgja",
-        "labels": [
-          {
-              "id": "@string@",
-              "type": "url",
-              "mode": "pdf",
-              "value": "@string@"
-          },
-          {
-              "id": "@string@",
-              "type": "url",
-              "mode": "pdf",
-              "value": "@string@"
-          }
-        ]
+        "parcels": @array@,
+        "labels": @array@
       }
       """
     When I add "Content-Type" header equal to "application/json"
@@ -886,20 +874,8 @@ Feature: Woopit
       """
       {
         "deliveryId":"yXJPEP30xgja",
-        "labels": [
-          {
-              "id": "@string@",
-              "type": "url",
-              "mode": "pdf",
-              "value": "@string@"
-          },
-          {
-              "id": "@string@",
-              "type": "url",
-              "mode": "pdf",
-              "value": "@string@"
-          }
-        ]
+        "parcels": @array@,
+        "labels": @array@
       }
       """
     When I add "Content-Type" header equal to "application/json"
