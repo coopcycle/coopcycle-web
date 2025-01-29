@@ -322,7 +322,7 @@
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Mover {{count}} tareas al día siguiente",
         "CASH_ON_DELIVERY_DISCLAIMER": "El pago se realizará contra reembolso. Por favor, prepare la cantidad exacta y asegúrese de tenerla a mano.",
         "PRICE_RANGE_EDITOR": {
-            "ABOVE": "arriba de",
+            "ABOVE": "Arriba de",
             "FOR_EVERY": "Por cada",
             "PER_PACKAGE_STARTING": "Comenzado a partir de",
             "PER_PACKAGE": "Por paquete",
@@ -332,7 +332,7 @@
             "PER_PACKAGE_DEL_DISCOUNT": "Quitar descuento",
             "PER_PACKAGE_ADD_DISCOUNT": "Agregar descuento"
         },
-        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrar reglas recurrentes",
+        "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Mostrar pedidos recurrentes",
         "RECURRENCE_RULE_ADD": "Agregar regla de recurrencia",
         "RECURRENCE_RULE_DAYS_REQUIRED": "Por favor, elija al menos un día",
         "SUBSCRIPTION_CANCELLED": "Suscripción cancelada",
