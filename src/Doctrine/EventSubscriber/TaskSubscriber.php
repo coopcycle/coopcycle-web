@@ -40,8 +40,7 @@ class TaskSubscriber implements EventSubscriber
         LoggerInterface $logger,
         private Geocoder $geocoder,
         private OrderManager $orderManager
-    )
-    {
+    ) {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
         $this->processor = $processor;
@@ -155,7 +154,7 @@ class TaskSubscriber implements EventSubscriber
      * @param array $tasksToUpdate
      * @param \SplObjectStorage $createdAddresses
      */
-    private function handleAddressesChangesForTasks(/* UnitOfWork */ $uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
+    private function handleAddressesChangesForTasks(/* UnitOfWork */$uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
     {
         $isAddress = function ($entity) {
             return $entity instanceof Address;
@@ -186,11 +185,8 @@ class TaskSubscriber implements EventSubscriber
                             ];
                         }
                     }
-
                 }
-
             }
-
         }
     }
 
@@ -210,7 +206,7 @@ class TaskSubscriber implements EventSubscriber
                 continue;
             }
 
-            [ $oldValue, $newValue ] = $changeset['status'];
+            [$oldValue, $newValue] = $changeset['status'];
 
             if ($newValue === Task::STATUS_CANCELLED) {
 
@@ -233,7 +229,7 @@ class TaskSubscriber implements EventSubscriber
                     }
                 }
 
-                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED) {
+                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
                     $this->orderManager->cancel($order, 'All tasks were cancelled');
                     $em->flush();
                 }
