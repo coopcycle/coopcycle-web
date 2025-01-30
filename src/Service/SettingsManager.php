@@ -25,7 +25,6 @@ class SettingsManager
     private $doctrine;
     private $gatewayResolver;
     private $projectDir;
-    private $forceStripe;
 
     private $secretSettings = [
         'stripe_test_publishable_key',
@@ -64,8 +63,7 @@ class SettingsManager
         bool $foodtechEnabled,
         bool $b2bEnabled,
         GatewayResolver $gatewayResolver,
-        string $projectDir,
-        $forceStripe = false)
+        string $projectDir)
     {
         $this->craueConfig = $craueConfig;
         $this->craueCache = $craueCache;
@@ -77,7 +75,6 @@ class SettingsManager
         $this->b2bEnabled = $b2bEnabled;
         $this->gatewayResolver = $gatewayResolver;
         $this->projectDir = $projectDir;
-        $this->forceStripe = $forceStripe;
     }
 
     public function isSecret($name)
@@ -234,11 +231,6 @@ class SettingsManager
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
         $supportsPaygreen = $this->configKeysAreNotEmpty('paygreen_public_key', 'paygreen_secret_key', 'paygreen_shop_id');
-
-        if ($this->forceStripe) {
-
-            return $supportsStripe;
-        }
 
         return $supportsStripe || $supportsMercadopago || $supportsPaygreen;
     }
