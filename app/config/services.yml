@@ -1181,7 +1181,6 @@ services:
         - mx
         - cl
         - co
-      $forceStripe: "%env(bool:FORCE_STRIPE)%"
       $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
 
   AppBundle\Payment\Gateway\Stripe: ~
