@@ -88,14 +88,11 @@ class PackageSet
      */
     public function getPackages()
     {
-        $filtered = $this->packages->filter(
+        return $this->packages->filter(
             function ($package) {
                 return !$package->isDeleted();
             }
         );
-
-        // reset index after filtering
-        return array_values($filtered->toArray());
     }
 
     /**
