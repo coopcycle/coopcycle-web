@@ -14,6 +14,8 @@ services:
     arguments:
       $eventRecorder: '@event_recorder'
       $taskStateMachine: '@state_machine.task'
+      $logger: '@logger'
+      $standtrackClient: '@AppBundle\Integration\Standtrack\StandtrackClient'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Start
