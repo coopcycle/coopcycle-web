@@ -106,7 +106,6 @@ class TaskType extends AbstractType
                     'multiple' => false,
                     'data' => $options['with_time_slot'],
                 ]);
-
             // https://symfony.com/doc/5.4/form/dynamic_form_modification.html#form-events-submitted-data
             $builder->get('switchTimeSlot')->addEventListener(
                 FormEvents::POST_SUBMIT,
@@ -125,6 +124,13 @@ class TaskType extends AbstractType
                         ->add('timeSlot', TimeSlotChoiceType::class, $timeSlotOptions);
                 }
             );
+        }
+
+        if ($options['with_barcode']) {
+            $builder->add('barcode', TextType::class, [
+                'label' => 'form.task.barcode.label',
+                'required' => false
+            ]);
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
@@ -374,6 +380,7 @@ class TaskType extends AbstractType
             'with_weight' => true,
             'with_weight_required' => false,
             'with_position' => false,
+            'with_barcode' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

@@ -1364,13 +1364,21 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $barcodes;
     }
 
-    public function getBarcode(): string
+    public function getBarcode(bool $fallback_to_internal = false): ?string
     {
         $barcode = collect($this->getMetadata())->get('barcode');
-        if (is_null($barcode)) {
+        if ($this->type === self::TYPE_PICKUP) {
+            return null;
+        }
+        if (is_null($barcode) && $fallback_to_internal) {
             return BarcodeUtils::getRawBarcodeFromTask($this);
         }
         return $barcode;
+    }
+
+    public function setBarcode(string $barcode): void
+    {
+        $this->metadata['barcode'] = $barcode;
     }
 
     public function getStore(): Store|null

@@ -1670,3 +1670,4 @@ form.settings.version: Version
 store.form.storeGLN.label: Store GLN
 store.form.storeGLN.help: Find the GLN number on <a href="https://www.gs1.org/services/verified-by-gs1" target="_blank">GS1 website</a>
 form.settings.company_gln.label: Company GLN
+form.task.barcode.label: Barcode

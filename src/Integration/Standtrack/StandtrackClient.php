@@ -46,7 +46,6 @@ class StandtrackClient {
 
             return $this->handleResponse($response);
         } catch (GuzzleException $e) {
-            dump($e->getResponse()->getBody()->getContents());
             throw new StandtrackException(
                 'Failed to send delivery event: ' . $e->getMessage(),
                 $e->getCode(),
