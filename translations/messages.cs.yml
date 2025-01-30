@@ -1004,14 +1004,14 @@ form.customize.custom_banner.label: Vlastní banner
 form.local_business.mercadopago.connect_button.text: Připojit na Mercado Pago
 form.settings.mercadopago.redirect_uri.help: 'Při konfiguraci aplikace použijte následující
   identifikátor URI přesměrování: <code>%redirect_uri%</code>'
-form.settings.mercadopago.app_id.help: Chcete-li získat ID aplikace, musíte <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">
+form.settings.mercadopago.app_id.help: Chcete-li získat ID aplikace, musíte <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">
   vytvořit aplikaci </a>.
 form.settings.mercadopago.app_id.label: Application ID
-form.settings.mercadopago.access_token.help: Získejte <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.access_token.help: Získejte <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank"> přístupový token </a>
 form.settings.mercadopago.access_token.label: Přístupový token
 form.settings.mercadopago.title: Mercado Pago
-form.settings.mercadopago.publishable_key.help: Získejte <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.publishable_key.help: Získejte <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank"> klíč k publikování </a>
 form.settings.mercadopago.publishable_key.label: Publikovatelný klíč
 form.company.make_the_request.label: Poslat žádost

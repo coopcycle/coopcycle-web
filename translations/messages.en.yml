@@ -666,13 +666,13 @@ form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to u
 form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need
   to configure « live » keys first.
 form.settings.mercadopago.publishable_key.label: Publishable key
-form.settings.mercadopago.publishable_key.help: "Get the <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.publishable_key.help: "Get the <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">publishable key</a>"
 form.settings.mercadopago.access_token.label: Access token
-form.settings.mercadopago.access_token.help: "Get the <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.access_token.help: "Get the <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">access token</a>"
 form.settings.mercadopago.app_id.label: Application ID
-form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">create
+form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com/developers/panel/app">create
   an application</a> to obtain your application ID.
 form.settings.mercadopago.redirect_uri.help: "When configuring your app, use the following\
   \ redirect URI: <code>%redirect_uri%</code>"
