@@ -39,3 +39,9 @@
   {{ parent() }}
 {% endif %}
 {% endblock %}
+
+{% block _settings_mercadopago_prefer_mercadopago_row %}
+  {% set color = 'info' %}
+  {% set icon = 'check-circle' %}
+  {{ block('switch_alert') }}
+{% endblock %}
