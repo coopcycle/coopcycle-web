@@ -108,7 +108,7 @@ class DeliveryType extends AbstractType
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
                     'with_position' => true,
-                    'with_barcode' => !empty($store->getStoreGLN()), // or transporter enabled
+                    'with_barcode' => null !== $store ? !empty($store->getStoreGLN()) : false, // or transporter enabled
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
