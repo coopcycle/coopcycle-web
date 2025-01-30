@@ -2,11 +2,13 @@
 
 namespace AppBundle\Form\PaymentGateway;
 
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
@@ -58,7 +60,22 @@ class MercadopagoType extends BaseType
                     'autocomplete' => 'new-password'
                 ]
             ])
+            ->add('prefer_mercadopago', CheckboxType::class, [
+                'required' => false,
+                'label' => 'form.settings.mercadopago.prefer_mercadopago.label',
+            ])
             ;
+
+        $builder->get('prefer_mercadopago')
+            ->addModelTransformer(new CallbackTransformer(
+                function ($originalValue) {
+                    return filter_var($originalValue, FILTER_VALIDATE_BOOLEAN);
+                },
+                function ($submittedValue) {
+                    return $submittedValue ? '1' : '0';
+                }
+            ))
+        ;
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 

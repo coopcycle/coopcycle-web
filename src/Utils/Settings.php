@@ -105,6 +105,8 @@ class Settings
      */
     public $mercadopago_live_publishable_key;
 
+    public $prefer_mercadopago;
+
     /**
      * @Assert\Regex("/^APP_USR-[A-Za-z0-9-]+/")
      */
