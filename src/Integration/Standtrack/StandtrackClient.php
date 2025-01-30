@@ -20,7 +20,7 @@ class StandtrackClient {
         ?ClientInterface $client = null,
         ?string $baseUri = null
     ) {
-        $this->companyGLN = $settingsManager->get('company_gln');
+        $this->companyGLN = $settingsManager->get('company_gln') ?? '';
         $this->client = $client ?? new Client([
             'base_uri' => $baseUri ?? self::BASE_URI,
             'query' => [ 'token' => $this->standtrackApiKey ],
