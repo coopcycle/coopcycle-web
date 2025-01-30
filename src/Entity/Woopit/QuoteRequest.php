@@ -145,6 +145,11 @@ class QuoteRequest
     /**
      * @Groups({"woopit_delivery_output"})
      */
+    public $parcels = [];
+
+    /**
+     * @Groups({"woopit_delivery_output"})
+     */
     public $labels = [];
 
     /**
