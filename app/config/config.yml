@@ -278,8 +278,6 @@ twig:
         loopeat_processing_fee: '%env(int:LOOPEAT_PROCESSING_FEE)%'
         loopeat_processing_fee_behavior: '%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
-        standtrack_api_key: '%env(STANDTRACK_API_KEY)%'
-        standtrack_iub_range: '%env(STANDTRACK_IUB_RANGE)%'
 
     exception_controller: null
 
