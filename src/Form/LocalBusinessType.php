@@ -39,6 +39,7 @@ abstract class LocalBusinessType extends AbstractType
     protected bool $transportersEnabled;
     protected array $transportersConfig;
     protected bool $billingEnabled;
+    protected bool $standtrackEnabled;
 
     public function __construct(
         AuthorizationCheckerInterface $authorizationChecker,
@@ -54,6 +55,7 @@ abstract class LocalBusinessType extends AbstractType
         bool $cashOnDeliveryOptinEnabled = false,
         array $transportersConfig = [],
         bool $billingEnabled = false,
+        ?string $standtrackEnabled = null
     )
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -68,6 +70,7 @@ abstract class LocalBusinessType extends AbstractType
         $this->transportersEnabled = !empty($transportersConfig);
         $this->transportersConfig = $transportersConfig;
         $this->billingEnabled = $billingEnabled;
+        $this->standtrackEnabled = !empty($standtrackEnabled);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -103,19 +106,13 @@ abstract class LocalBusinessType extends AbstractType
             ]);
         }
 
-        foreach ($options['additional_properties'] as $key => $constraints) {
-
-            $additionalPropertyOptions = [
+        foreach ($options['additional_properties'] as $key => $opts) {
+            $builder->add($key, TextType::class, array_merge($opts, [
                 'required' => false,
                 'mapped' => false,
                 'label' => sprintf('form.local_business.iso_code.%s.%s', $this->country, $key),
                 'trim' => true,
-            ];
-            if (!empty($constraints)) {
-                $additionalPropertyOptions['constraints'] = $constraints;
-            }
-
-            $builder->add($key, TextType::class, $additionalPropertyOptions);
+            ]));
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
@@ -173,8 +170,12 @@ abstract class LocalBusinessType extends AbstractType
         switch ($this->country) {
             case 'fr':
                 $additionalProperties['siret'] = [
-                    new Assert\Luhn(message: 'siret.invalid'),
-                    new AssertSiret(),
+                    'constraints' => [
+                        new Assert\Luhn(message: 'siret.invalid'),
+                        new AssertSiret(),
+                    ],
+                    'help' => sprintf('form.local_business.iso_code.%s.siret.help', $this->country),
+                    'help_html' => true,
                 ];
                 $additionalProperties['vat_number'] = [];
                 $additionalProperties['rcs_number'] = [];

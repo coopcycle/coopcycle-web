@@ -13,8 +13,8 @@ use Psr\Log\LoggerInterface;
 
 class TaggableSubscriber implements EventSubscriber
 {
-    private $tagManager;
-    private $logger;
+    private TagManager $tagManager;
+    private LoggerInterface $logger;
 
     private $added;
     private $removed;

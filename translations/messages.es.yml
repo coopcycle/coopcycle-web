@@ -304,6 +304,10 @@ form.store_type.create_orders.label: Crear pedidos
 form.delivery.vehicle.VEHICLE_BIKE: Bicicleta
 form.delivery.vehicle.VEHICLE_CARGO_BIKE: Bicicleta de carga
 form.store_type.pricing_rule_set.placeholder: Escoge una tarifa
+form.store_type.pricing_rule_set.warning: Sin tarificación,
+  el precio de entrega no se puede calcular ni rastrear para la facturación.
+  Además, la contribución basada en el monto del pedido no estará disponible.
+form.store_type.pricing_rule_set.warning.list: La tarificación no está configurada
 form.store_type.setAsDefault.label: Establecer como dirección predeterminada
 form.store_type.defaultAddress.label: Dirección predeterminada
 form.delivery.vehicle.placeholder: Escoge un vehículo
@@ -319,6 +323,8 @@ form.delivery.duration.label: Duración
 form.delivery.store.label: Tienda
 form.delivery.store.placeholder: Busca una tienda…
 form.delivery.price.label: Precio
+form.delivery.price.missing: Contáctenos para más detalles
+form.delivery.price.missing.incident: "Pedido #%number%: No se pudo calcular el precio de entrega. Por favor, ingréselo manualmente y verifique la tarificación."
 form.order.accept.label: Aceptar
 form.order.accept.help: Una vez que haya aceptado el pedido, el cliente será notificado
   por correo electrónico.
@@ -339,6 +345,7 @@ form.address.addressLocality.label: Ciudad
 form.address.postalCode.label: Código postal
 form.address.description.label: Instrucciones para la entrega
 form.address.description.placeholder: 2ª puerta a la izquierda…
+pricing_rule_set.new: Nueva tarifa
 form.pricing_rule_set.name.label: Nombre
 form.pricing_rule_set.rules.label: Reglas
 form.pricing_rule.price.label: Precio
@@ -367,7 +374,7 @@ form.settings.stripe_secret_key.help: "Crea una cuenta Stripe para obtener tu <a
   https://stripe.com/docs/dashboard#api-keys\">clave secreta</a>\n"
 form.settings.stripe_connect_client_id.label: Identificador de Stripe Connect
 form.settings.stripe_connect_client_id.help: "Puedes encontrar tu identificador en\
-  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">la página\
+  \ <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">la página\
   \ de parámetros</a>\n"
 form.settings.latlng.label: Coordinadas geográficas
 form.settings.latlng.help: "Especifica la latitud y longitud por defecto del mapa.\
@@ -432,7 +439,7 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: Utilizar el modo
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: Estás utilizando el
   modo « live ».<br>Si quiere pasar en modo « test », el mantenimiento se activará
   automáticamente.
-form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">números
+form.settings.mercadopago_testmode.help: 'En modo « test », debe usar <a href="%url%">números
   de tarjetas de prueba</a> para pagar. <strong>No se intercambiará dinero.</strong> '
 form.settings.mercadopago_enable_livemode.help: Para activar el modo « live », primero
   necesita configurar las credenciales « live ».
@@ -551,6 +558,14 @@ stores.addresses: Direcciones
 stores.deliveries.bookmarks: Pedidos guardados
 stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega
   para encontrarlos fácilmente más tarde
+stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega para encontrarlos fácilmente más tarde
+stores.recurrence_rules: Reglas de recurrencia
+stores.recurrence_rules.empty_message: Cuando se cree un pedido recurrente, las reglas de recurrencia aparecerán aquí
+recurrence_rules.table.repeat: Repetir
+recurrence_rules.table.generate_orders: Generar tareas/pedidos
+recurrence_rules.table.created_at: Regla creada
+recurrence_rule.legacy: Utilice el panel de despacho para eliminar esta regla
+recurrence_rule.price.missing: No se pudo calcular el precio de entrega. Por favor, verifique la tarificación.
 meta.title: Plataforma de logística para cooperativas
 admin.settings.missing_mandatory_settings: "Algunos ajustes obligatorios no han sido\
   \ configurados.\nVes a la <a href=\"%settings_url%\">página de ajustes</a> para\
@@ -581,6 +596,7 @@ pagination.next: Siguiente
 basics.save: Guardar
 basics.add: Añadir
 basics.edit: Modificar
+basics.editing: Editando
 basics.delete: Eliminar
 basics.powered_by: Impulsado por <a href="https://coopcycle.org">CoopCycle</a>
 basics.cancel: Cancelar
@@ -690,10 +706,9 @@ adminDashboard.tags.confirm_delete: "¿Estás seguro de eliminar esta etiqueta? 
 adminDashboard.time_slots.title: Franja horaria
 delivery.tracking_link: Enlace de seguimiento
 delivery.with_id: 'Entrega #%id%'
-subscriptions.title: Abonnements
-subscription.title: 'Abonnement #%id%'
-subscription.generated_order: Cette commande a été générée par un abonnement
-subscription.view: Voir l'abonnement
+subscription.title: 'Regla de recurrencia #%id%'
+subscription.generated_order: 'Este pedido fue generado por una regla de recurrencia'
+subscription.view: 'Ver regla de recurrencia'
 help.title: Ayuda
 help.home: Casa
 restaurant.stats.order_number: Número de pedido
@@ -976,7 +991,7 @@ form.reusable_packaging.on_hand.label: Cantidad
 form.deposit_refund_settings.deposit_refund_optin.label: El sistema de reembolso es
   opcional
 form.new_order.variant_name.label: Nombre del producto
-form.new_order.variant_price.label: Precio
+form.new_order.variant_price.label: Precio incl. IVA
 index.our_shops: Tiendas locales
 index.view_all_shops: Ver todas las tiendas
 activity.task.started: "@%owner% comenzó tarea #task/%aggregate_id%\n"
@@ -1310,9 +1325,9 @@ form.checkout_address.reusable_packaging_vytal_enabled.label: Quiero usar conten
 form.product.alcohol.help: Marca esta opción únicamente si este producto es una bebida
   alcohólica, como una botella de vino.
 form.product.alcohol.label: Este producto es una bebida alcohólica
-restaurants.edenred_transactions.title: Transacciones Edenred
-restaurants.edenred_transactions.edenred_amount: Cantidad pagada con Edenred
-restaurants.edenred_transactions.disclaimer: Esta página muestra todos los pedidos
+restaurants.meal_vouchers_transactions.title: Transacciones Edenred
+restaurants.meal_vouchers_transactions.amount: Cantidad pagada con Edenred
+restaurants.meal_vouchers_transactions.disclaimer: Esta página muestra todos los pedidos
   pagados con Edenred, parcial o totalmente. Para estos pedidos, todo el dinero fue
   recolectado por el comercio. Por lo tanto, debe mandar una factura a cada comercio
   para reclamar las comisiones pendientes de pago.
@@ -1360,25 +1375,6 @@ import.unsuccessful.rows: "Se encontraron errores y no fue posible crear entrega
   \ para las filas: %rows%."
 security.login.remember_me: Recordar
 delivery.failure_reason:
-  damaged: "Dañado"
-  lost: "Perdido"
-  late: "Entrega retrasada"
-  incorrect_address: "Dirección incorrecta"
-  customer_refused: "Cliente rechazó la entrega"
-  item_missing: "Artículo faltante"
-  incorrect_item: "Artículo incorrecto"
-  bad_weather: "Condiciones climáticas adversas"
-  vehicle_breakdown: "Avería del vehículo"
-  traffic_delays: "Retrasos por tráfico"
-  routing_problems: "Problemas de enrutamiento"
-  customs_issues: "Problemas aduaneros"
-  inventory_shortage: "Escasez de inventario"
-  address_unreachable: "Dirección inaccesible"
-  insufficient_funds: "Fondos insuficientes"
-  data_entry_error: "Error en la entrada de datos"
-  packaging_problems: "Problemas de embalaje"
-  holiday_closure: "Cierre por vacaciones"
-  closed_store: "Tienda cerrada"
   transporter:
     state:
       raq: Dejado en recepción
@@ -1411,27 +1407,25 @@ delivery.failure_reason:
       lna: Entregar a una dirección diferente
       spd: Contrareembolso rechazado
   default:
-    vehicle_breakdown: Avería de vehículo
-    insufficient_funds: Insuficiencia de fondos
-    packaging_problems: Problemas de embalaje
-    damaged: Dañado
-    lost: Perdido
-    late: Entrega tardía
-    incorrect_address: Dirección incorrecta
-    customer_refused: El cliente rechazó la entrega
-    incorrect_item: Artículo incorrecto entregado
-    item_missing: Artículo perdido
-    bad_weather: Condiciones meteorológicas adversas
-    traffic_delays: Retrasos en el tráfico
-    routing_problems: Problemas de enrutamiento
-    customs_issues: Despacho de aduanas
-    inventory_shortage: Falta de existencias
-    address_unreachable: Dirección no localizada
-    data_entry_error: Error en la entrada de datos
-    holiday_closure: Cerrado por vacaciones
-    closed_store: Local cerrado
-    address_review_needed: Revisión de dirección necesaria
-    not_at_home: Destinatario ausente
+    damaged: "Dañado"
+    lost: "Perdido"
+    late: "Entrega retrasada"
+    incorrect_address: "Dirección incorrecta"
+    customer_refused: "Cliente rechazó la entrega"
+    item_missing: "Artículo faltante"
+    incorrect_item: "Artículo incorrecto"
+    bad_weather: "Condiciones climáticas adversas"
+    vehicle_breakdown: "Avería del vehículo"
+    traffic_delays: "Retrasos por tráfico"
+    routing_problems: "Problemas de enrutamiento"
+    customs_issues: "Problemas aduaneros"
+    inventory_shortage: "Escasez de inventario"
+    address_unreachable: "Dirección inaccesible"
+    insufficient_funds: "Fondos insuficientes"
+    data_entry_error: "Error en la entrada de datos"
+    packaging_problems: "Problemas de embalaje"
+    holiday_closure: "Cierre por vacaciones"
+    closed_store: "Tienda cerrada"
 adminDashboard.failureSet.title: "Motivos de Fallo"
 adminDashboard.failureSet.help: "Establezca los motivos por los cuales sus entregas\
   \ pueden fallar."
@@ -1518,6 +1512,8 @@ registration.step.invitation.link.copied: "Copiado"
 deliveries.imports: Ficheros importados
 deliveries.importing: El fichero %filename% va a ser importado.
 deliveries.imports.created_at: Creado el
+deliveries.imports.see_file: Ver archivo
+deliveries.imports.see_errored_file: Detalles de los errores
 business.account.settings.link: Asociar a mi cuenta
 form.business_restaurant_group.restaurants_with_menu: Restaurantes con menú
 form.business_restaurant_group.restaurant: Restaurante

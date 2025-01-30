@@ -7,7 +7,6 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
-use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
@@ -17,6 +16,7 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
@@ -38,16 +38,16 @@ class SyncTransportersCommandTest extends KernelTestCase {
     EDI;
 
     const PARTIAL_REPORT_EDI_SAMPLE = <<<EDI
-    UNB+UNOC:1+Coopcycle Testing Inc.:22+DBSchenker Testing Inc.:22+
-    NAD+MR+4447190000:5+Coopcycle Testing Inc.'
-    NAD+MS+0000011:5+DBSchenker Testing Inc.'
+    UNB+UNOC:1+4447190000:22+0000011:22+
+    NAD+MR+4447190000:5++Coopcycle Testing Inc.'
+    NAD+MS+0000011:5++DBSchenker Testing Inc.'
     UNS+D'
     RFF+UNC+JOY0123456789'
     RSJ+MS+AAR+CFM'
     RSJ+MS+MLV+CFM'
     RSJ+MS+LIV+CFM'
-    NAD+MR+4447190000:5+Coopcycle Testing Inc.'
-    NAD+MS+0000011:5+DBSchenker Testing Inc.'
+    NAD+MR+4447190000:5++Coopcycle Testing Inc.'
+    NAD+MS+0000011:5++DBSchenker Testing Inc.'
     UNS+D'
     RFF+UNC+JOY0123456789'
     RSJ+MS+LIV+CFM'
@@ -57,6 +57,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
     protected EntityManagerInterface $entityManager;
     protected TaskManager $taskManager;
+    protected LoggerInterface $logger;
     protected LoaderInterface $fixturesLoader;
     protected Filesystem $syncDBSchenkerFs;
     protected Filesystem $syncInBMVFs;
@@ -78,6 +79,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
+        $this->logger = self::$container->get(LoggerInterface::class);
         $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncOutBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -142,9 +144,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
     protected function initCommand(): Command
     {
         return new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $this->params->reveal(),
             $this->settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -180,9 +184,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -221,9 +227,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -262,9 +270,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -303,9 +313,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs
@@ -340,9 +352,11 @@ class SyncTransportersCommandTest extends KernelTestCase {
             ]);
 
         $command = new SyncTransportersCommand(
+            'test',
             $this->entityManager,
             $params->reveal(),
             $settingManager->reveal(),
+            $this->logger,
             self::$container->get(ImportFromPoint::class),
             self::$container->get(ReportFromCC::class),
             $this->edifactFs

@@ -7,6 +7,7 @@ use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Api\Dto\MyTaskListDto;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Api\Filter\DateFilter;
@@ -28,7 +29,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')",
  *       "openapi_context"={
- *         "summary"="Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks."
+ *         "summary"="Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses."
  *       },
  *       "normalization_context"={"groups"={"task_list", "task_collection", "task", "delivery", "address"}}
  *     },
@@ -67,6 +68,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *       "method"="GET",
  *       "path"="/me/tasks/{date}",
  *       "controller"=MyTasksController::class,
+ *       "output"=MyTaskListDto::class,
  *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
  *       "read"=false,
  *       "write"=false,
@@ -259,6 +261,17 @@ class TaskList implements TaskCollectionInterface
         $item->setParent($this);
     }
 
+    public function appendTask(Task $task) {
+        $item = new Item();
+        $item->setTask($task);
+        $item->setPosition($this->getItems()->count());
+        $this->addItem($item);
+
+        $task->assignTo($this->getCourier(), $this->getDate());
+
+        return $this;
+    }
+
      /**
      * Clear the assigned items
      */
@@ -293,7 +306,7 @@ class TaskList implements TaskCollectionInterface
     /**
      * Get the value of vehicle
      *
-     * @return  Vehicle
+     * @return Vehicle|void
      */
     public function getVehicle()
     {

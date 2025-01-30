@@ -8,7 +8,6 @@ import { createSelector } from 'reselect'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
-import { diff } from 'deep-object-diff'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
@@ -22,7 +21,7 @@ import {
   selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { storeSlice } from './redux/storeSlice'
-import { suggestionsSlice, showSuggestions, acceptSuggestions } from './redux/suggestionsSlice'
+import { suggestionsSlice, showSuggestions, acceptSuggestions, rejectSuggestions } from './redux/suggestionsSlice'
 import TagsSelect from '../components/TagsSelect'
 import SuggestionModal from './components/SuggestionModal'
 
@@ -106,10 +105,18 @@ function createAddressWidget(el, cb) {
 
   new AddressBook(document.querySelector(`#${el.id}_address`), {
     allowSearchSavedAddresses: true,
-    existingAddressControl: document.querySelector(`#${el.id}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${el.id}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${el.id}_address_isNewAddress`),
-    duplicateAddressControl: document.querySelector(`#${el.id}_address_duplicateAddress`),
+    existingAddressControl: document.querySelector(
+      `#${el.id}_address_existingAddress`,
+    ), // sert à lui passer les adresses enregistées,
+    newAddressControl: document.querySelector(
+      `#${el.id}_address_newAddress_streetAddress`,
+    ), // champ pour saisir une adresse
+    isNewAddressControl: document.querySelector(
+      `#${el.id}_address_isNewAddress`, // sert à bind la nouvelle adresse entrée
+    ),
+    duplicateAddressControl: document.querySelector(
+      `#${el.id}_address_duplicateAddress`,
+    ),
     // Fields containing address details
     nameControl: document.querySelector(`#${el.id}_address_name`),
     telephoneControl: document.querySelector(`#${el.id}_address_telephone`),
@@ -121,7 +128,6 @@ function createAddressWidget(el, cb) {
       }
     },
     onChange: address => {
-
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
         hideRememberAddress(el)
       } else {
@@ -131,7 +137,7 @@ function createAddressWidget(el, cb) {
       reduxStore.dispatch({
         type: 'SET_ADDRESS',
         taskIndex: domIndex(el),
-        value: address
+        value: address,
       })
     },
     onClear: () => {
@@ -140,7 +146,7 @@ function createAddressWidget(el, cb) {
         type: 'CLEAR_ADDRESS',
         taskIndex: domIndex(el),
       })
-    }
+    },
   })
 }
 
@@ -448,11 +454,11 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
 
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault()
-      taskEl.remove()
       reduxStore.dispatch({
         type: 'REMOVE_DROPOFF',
         taskIndex: domIndex(taskEl),
       })
+      taskEl.remove()
       // We want at least one dropoff
       if (collectionHolder.children.length === 2) {
         document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
@@ -499,28 +505,11 @@ function createOnTasksChanged(onChange) {
     const state = getState()
 
     if (prevState.tasks !== state.tasks) {
-
-      const firstTaskWithAddressDiff =
-        _.find(diff(prevState.tasks, state.tasks), t => t?.address && t?.address?.geo)
-      const shouldLoadSuggestions = !!firstTaskWithAddressDiff
-
-      onChange(state, shouldLoadSuggestions)
+      onChange(state)
     }
 
     return result
   }
-}
-
-// Reorder tasks in the DOM when suggestion is accepted
-const reorderTasks = () => (next) => (action) => {
-
-  const result = next(action)
-
-  if (acceptSuggestions.match(action) && action.payload.length > 0) {
-    reorder(action.payload[0].order)
-  }
-
-  return result
 }
 
 export default function(name, options) {
@@ -531,6 +520,23 @@ export default function(name, options) {
 
   const onChange = options.onChange.bind(form)
   const onReady = options.onReady.bind(form)
+  const onSubmit = options.onSubmit.bind(form)
+
+  const handleSuggestionsAfterSubmit = () => (next) => (action) => {
+
+    const result = next(action)
+
+    if (acceptSuggestions.match(action) && action.payload.length > 0) {
+        // Reorder tasks in the DOM when suggestion is accepted
+      reorder(action.payload[0].order)
+    }
+
+    if (acceptSuggestions.match(action) || rejectSuggestions.match(action)) {
+      el.submit()
+    }
+
+    return result
+  }
 
   if (el) {
 
@@ -576,7 +582,7 @@ export default function(name, options) {
       },
       preloadedState,
       middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([createOnTasksChanged(onChange), reorderTasks]),
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange), handleSuggestionsAfterSubmit]),
     })
 
     onReady(preloadedState)
@@ -589,6 +595,8 @@ export default function(name, options) {
 
     el.addEventListener('submit', (e) => {
 
+      e.preventDefault()
+
       const hasInvalidInput = _.find(taskForms, taskEl => {
 
         const type = taskEl.getAttribute('id').replace(name + '_', '')
@@ -598,7 +606,7 @@ export default function(name, options) {
           return false
         }
 
-        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"]`);
+        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"][data-is-address-picker="true"]`);
         const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
         const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
         const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
@@ -619,6 +627,9 @@ export default function(name, options) {
           rule: recurrenceRule
         })
       }
+
+      onSubmit(el, reduxStore.getState())
+      return false
 
     }, false)
 

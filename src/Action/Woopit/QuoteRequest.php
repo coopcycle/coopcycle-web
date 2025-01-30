@@ -45,7 +45,7 @@ class QuoteRequest
                 "reasons" => [
                     "REFUSED_EXCEPTION"
                 ],
-                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+                "comment" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
             ], 202);
         }
 
@@ -70,6 +70,14 @@ class QuoteRequest
 
         $data->price = $price;
         $data->priceDetails = $this->priceHelper->fromTaxIncludedAmount($price);
+
+        $numberFormatter = \NumberFormatter::create('fr', \NumberFormatter::DECIMAL);
+        $numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+        $numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
+        $data->priceDetails = array_map(function ($value) use ($numberFormatter) {
+            return is_int($value) ? (float) $numberFormatter->format($value / 100, \NumberFormatter::TYPE_DOUBLE) : $value;
+        }, $data->priceDetails);
 
         return $data;
     }

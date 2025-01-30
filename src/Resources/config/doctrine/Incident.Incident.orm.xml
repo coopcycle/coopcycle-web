@@ -9,6 +9,7 @@
     <field name="priority" type="integer" column="priority" />
     <field name="failureReasonCode" type="string" column="failure_reason_code" length="32" nullable="true" />
     <field name="description" type="string" column="description" length="65535" nullable="true" />
+    <field name="metadata" type="json" column="metadata"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
       </field>

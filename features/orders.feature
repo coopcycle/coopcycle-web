@@ -140,7 +140,8 @@ Feature: Orders
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -159,7 +160,8 @@ Feature: Orders
         },
         "streetAddress":"1, rue de Rivoli",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "items":[
         {
@@ -236,7 +238,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -310,7 +313,8 @@ Feature: Orders
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -329,7 +333,8 @@ Feature: Orders
         },
         "streetAddress":"1, rue de Rivoli",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "items":[
         {
@@ -406,7 +411,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -627,7 +633,8 @@ Feature: Orders
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "telephone":"+33612345678",
         "isOpen":false,
@@ -646,7 +653,8 @@ Feature: Orders
         },
         "streetAddress":"190 Rue de Rivoli, Paris",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "items":[
         {
@@ -699,7 +707,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -786,7 +795,8 @@ Feature: Orders
             },
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
-            "telephone": null
+            "telephone": null,
+            "description": null
           },
           "telephone":"+33612345678",
           "isOpen":true,
@@ -804,7 +814,8 @@ Feature: Orders
           },
           "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "items":[
           {
@@ -856,7 +867,8 @@ Feature: Orders
         "hasReceipt":@boolean@,
         "invitation":null,
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -925,7 +937,8 @@ Feature: Orders
         },
         "streetAddress":"1, rue de Rivoli",
         "telephone":null,
-        "name":null
+        "name":null,
+        "description": null
       },
       "items":[
         {
@@ -1008,7 +1021,8 @@ Feature: Orders
       "assignedTo":null,
       "invitation":null,
       "events":@array@,
-      "paymentGateway":@string@
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -1234,7 +1248,8 @@ Feature: Orders
         "assignedTo":null,
         "invitation":null,
         "events":@array@,
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1413,13 +1428,12 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 
@@ -1553,13 +1567,12 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 

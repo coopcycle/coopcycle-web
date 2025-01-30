@@ -1,8 +1,5 @@
 describe('Dispatch; dispatcher; onboarding', () => {
   beforeEach(() => {
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
   })
 
   // It's not possible for an admin to send an invite to an existing user (and doesn't make sense to do so), so we only support/test the case where the user has to create a new account

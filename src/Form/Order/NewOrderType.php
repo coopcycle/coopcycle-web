@@ -36,9 +36,11 @@ class NewOrderType extends DeliveryType
             'with_dropoff_doorstep' => true,
             'with_remember_address' => true,
             'with_address_props' => true,
+            'with_price_preview' => true,
             'with_arbitrary_price' => true,
             'with_bookmark' => true,
-            'with_recurrence' => true
+            'with_recurrence' => true,
+            'asap_timing' => true,
         ]);
     }
 }

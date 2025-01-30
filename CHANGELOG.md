@@ -5,6 +5,87 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.26.0] - 2025-01-16
+
+### Added
+* Allow using Paygreen payment gateway and paying with meal vouchers.
+* Introduce revamped delivery form for admins.
+* Improve display of orders list.
+
+## [3.25.3] - 2025-01-11
+
+### Fixed
+* FIXED: Delivery price calculation when two packages have the same name
+* FIXED: (Food Tech) Allow a customer to verify and change phone number during checkout
+
+### Changed
+* CHANGED: Consistent Order creation for Store(s):
+
+### Removed
+* Removed: “Create orders” setting for Store(s). Now, for all stores, an order will be created for each Delivery, enabling tracking prices and collecting data for Invoices.
+    * If a store does not have a pricing rule, the price will be automatically set to 0. Consider setting up a pricing rule :wink:
+    * If a pricing rule is configured but the price can not be calculated, the order will still be created (with the price set to 0), and a new Incident will be created that allows the price to be set.
+
+## [3.24.2] - 2024-12-09
+
+### Added
+* Local Commerce and Last Mile: Barcodes Added to the Following Screens:
+  Dispatch Task Modal;
+  Dispatch & Local Commerce Deliveries Lists;
+  Dispatch & Local Commerce Delivery Details Screen
+* Local Commerce and Last Mile: Show bike+trailer capacity on assigned tour
+* Admin: Show to (admin) user that the prices set are VAT included
+* Dispatch: allow to select tasks with SHIFT/MAJ key in unassigned tasks column
+* Dispatch: allow to unselect all with ESC
+
+### Fixed
+* Food Tech: Use the most recent phone number for a returning customer during a guest checkout
+* Food Tech: Error 500 when exporting edenred/payment data
+* Local Commerce and Last Mile: Hide some store admin settings that were visible to the store owner
+* Local Commerce and Last Mile: The recurrence rule is displayed with the wrong date/time (but the newly created order is correct)
+* Local Commerce and Last Mile: When using “automatically assign to this rider” option in a store, the pickup and the dropoff may be assigned in the wrong order
+* Local Commerce and Last Mile: Set correctly rider capacity when adding a trailer to the rider
+* Dispatch: apply correctly the timerange filter when a rider filter is active
+
+## [3.23.0] - 2024-11-26
+
+### Added
+* New API endpoint to import delivery asynchronously
+  `POST /api/deliveries/import_async`
+
+
+### Fixed
+* Fix mercadopago payment
+* Fix date picker in store config page not displaying correctly
+
+## [3.21.0] - 2024-11-19
+
+### Added
+
+* Add incidents amounts in orders export (`incident_adjustments` field)
+* Add a page to display and edit orders recurrence rule for a store (link on the store left navbar)
+* Show human-readable filename in "Deliveries > Import" list
+* Add the ability to download barcodes per task or per package on delivery page (app barcode scanning coming next)
+* Add the ability to configure the Urbantz Hub ID tied to a store
+* Add an API endpoint to programatically send order/deliveries CSV file to import for a store
+* Add the ability to set metadata in order/deliveries CSV file import
+* Add more titles on platform pages to show different titles on browser tabs
+
+### Fixed
+
+* Fix for "automatic recurrent rules may create orders twice"
+* Disable partial refunds for Edenred payment (not supported by Edenred)
+* Properly show Edenred as payment method in payment exports
+* Fix for transporter import when adresses are badly formatted
+
+## [3.16.0] - 2024-10-09
+
+### Fixed
+* The delivery order form is now navigatable with TAB key
+* Multi-dropoff reorder suggestions show only on delivery form submit
+* You can select with TAB or ENTER key from the address autossugest dropdown
+* Phone number and contact name are now optional for admins in the delivery order form
+
 ## [3.15.0] - 2024-10-07
 
 ### Fixed

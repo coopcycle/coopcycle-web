@@ -10,10 +10,6 @@ context('Dispatch', () => {
 
       cy.exec(cmd)
 
-      cy.window().then((win) => {
-        win.sessionStorage.clear()
-      })
-
       cy.intercept('POST', '/api/tasks').as('postTask')
       cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')
 

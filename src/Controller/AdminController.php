@@ -91,6 +91,7 @@ use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use Carbon\Carbon;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -387,13 +388,13 @@ class AdminController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/service.html.twig', [
+        return $this->render('order/item.html.twig', $this->auth([
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
-        ]);
+        ]));
     }
 
     public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
@@ -776,7 +777,8 @@ class AdminController extends AbstractController
         Hashids $hashids8,
         Filesystem $deliveryImportsFilesystem,
         MessageBusInterface $messageBus,
-        CentrifugoClient $centrifugoClient
+        CentrifugoClient $centrifugoClient,
+        SlugifyInterface $slugify
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -795,7 +797,8 @@ class AdminController extends AbstractController
                 entityManager: $this->entityManager,
                 filesystem: $deliveryImportsFilesystem,
                 hashids: $hashids8,
-                routeTo: 'admin_deliveries'
+                routeTo: 'admin_deliveries',
+                slugify: $slugify
             );
         }
 
@@ -1609,6 +1612,7 @@ class AdminController extends AbstractController
             'can_enable_mercadopago_livemode' => $canEnableMercadopagoLivemode,
         ]);
     }
+
     /**
      * @Route("/admin/embed", name="admin_embed")
      */
@@ -2443,7 +2447,7 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $this->createOrderForDelivery($orderFactory, $delivery, new ArbitraryPrice($variantName, $variantPrice));
+            $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 
@@ -2990,4 +2994,13 @@ class AdminController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/admin/invoicing", name="admin_invoicing")
+     */
+    public function invoicingAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
 }

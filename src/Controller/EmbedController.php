@@ -2,12 +2,13 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryFormSubmission;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Checkout\CheckoutPayment;
@@ -29,11 +30,8 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -42,18 +40,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class EmbedController extends AbstractController
 {
+    use AccessControlTrait;
+    use InjectAuthTrait;
     use DeliveryTrait;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        RepositoryInterface $customerRepository,
-        FactoryInterface $customerFactory,
-        TranslatorInterface $translator)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly RepositoryInterface $customerRepository,
+        private readonly FactoryInterface $customerFactory,
+        private readonly TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
-        $this->customerRepository = $customerRepository;
-        $this->customerFactory = $customerFactory;
-        $this->translator = $translator;
     }
 
     protected function getDeliveryRoutes()
@@ -154,7 +150,6 @@ class EmbedController extends AbstractController
      */
     public function deliveryStartAction($hashid, Request $request,
         DeliveryManager $deliveryManager,
-        CanonicalizerInterface $canonicalizer,
         EntityManagerInterface $entityManager)
     {
         if ($this->container->has('profiler')) {
@@ -167,15 +162,16 @@ class EmbedController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            try {
+            $delivery = $form->getData();
 
-                $delivery = $form->getData();
+            $price = $deliveryManager->getPrice($delivery, $this->getPricingRuleSet($request));
 
-                $price = $this->getDeliveryPrice(
-                    $delivery,
-                    $this->getPricingRuleSet($request),
-                    $deliveryManager
-                );
+            if (null === $price) {
+
+                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+
+            } else  {
 
                 $submission = new DeliveryFormSubmission();
                 $submission->setDeliveryForm($this->getDeliveryForm($request));
@@ -192,11 +188,7 @@ class EmbedController extends AbstractController
                     'data' => $hashids->encode($submission->getId()),
                 ]);
 
-            } catch (NoRuleMatchedException $e) {
-                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                $form->addError(new FormError($message));
             }
-
         }
 
         return $this->render('embed/delivery/start.html.twig', [
@@ -209,7 +201,6 @@ class EmbedController extends AbstractController
      * @Route("/forms/{hashid}/summary", name="embed_delivery_summary")
      */
     public function deliverySummaryAction($hashid, Request $request,
-        DeliveryManager $deliveryManager,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
         OrderFactory $orderFactory,
@@ -342,7 +333,7 @@ class EmbedController extends AbstractController
             $telephone = $form->get('telephone')->getData();
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $customer, $attach = false);
+            $order    = $orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price), $customer, false);
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [

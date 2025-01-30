@@ -1,8 +1,5 @@
 describe('Platform catering; employee; onboarding', () => {
   beforeEach(() => {
-    cy.window().then(win => {
-      win.sessionStorage.clear()
-    })
   })
 
   it('should onboard an employee with a new user account', () => {

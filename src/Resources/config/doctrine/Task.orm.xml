@@ -21,6 +21,8 @@
     </field>
     <field name="metadata" type="json" column="metadata" nullable="true"/>
     <field name="weight" type="integer" column="weight" nullable="true"/>
+    <field name="emittedCo2" type="integer" column="emitted_co2" default="0" />
+    <field name="traveledDistanceMeter" type="integer" column="traveled_distance_meter" default="0" />
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
@@ -108,6 +110,9 @@
         <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
       <entity-listener class="AppBundle\LoopEat\TaskListener">
+        <lifecycle-callback type="prePersist" method="prePersist"/>
+      </entity-listener>
+      <entity-listener class="AppBundle\Integration\Standtrack\StandtrackTaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
       </entity-listener>
     </entity-listeners>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d640d340bb1cca8921098cce28686402",
+    "content-hash": "1c09bd8a83c55d73a673905f48bcb768",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1463,12 +1463,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "43a0bee9416c8aeb9ce73c54a3307e15b2a8201f"
+                "reference": "4eecfa5af75df5c4f4eadb024ad3fdd81e51d73a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/43a0bee9416c8aeb9ce73c54a3307e15b2a8201f",
-                "reference": "43a0bee9416c8aeb9ce73c54a3307e15b2a8201f",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/4eecfa5af75df5c4f4eadb024ad3fdd81e51d73a",
+                "reference": "4eecfa5af75df5c4f4eadb024ad3fdd81e51d73a",
                 "shasum": ""
             },
             "require": {
@@ -1498,7 +1498,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2024-07-04T11:45:00+00:00"
+            "time": "2024-10-09T04:08:11+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -3096,16 +3096,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "2.19.5",
+            "version": "2.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/orm.git",
-                "reference": "94986af28452da42a46a4489d1c958a2e5d710e5"
+                "reference": "e3cabade99ebccc6ba078884c1c5f250866a494e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/orm/zipball/94986af28452da42a46a4489d1c958a2e5d710e5",
-                "reference": "94986af28452da42a46a4489d1c958a2e5d710e5",
+                "url": "https://api.github.com/repos/doctrine/orm/zipball/e3cabade99ebccc6ba078884c1c5f250866a494e",
+                "reference": "e3cabade99ebccc6ba078884c1c5f250866a494e",
                 "shasum": ""
             },
             "require": {
@@ -3134,14 +3134,15 @@
                 "doctrine/annotations": "^1.13 || ^2",
                 "doctrine/coding-standard": "^9.0.2 || ^12.0",
                 "phpbench/phpbench": "^0.16.10 || ^1.0",
-                "phpstan/phpstan": "~1.4.10 || 1.10.59",
+                "phpstan/extension-installer": "~1.1.0 || ^1.4",
+                "phpstan/phpstan": "~1.4.10 || 2.0.3",
+                "phpstan/phpstan-deprecation-rules": "^1 || ^2",
                 "phpunit/phpunit": "^7.5 || ^8.5 || ^9.6",
                 "psr/log": "^1 || ^2 || ^3",
                 "squizlabs/php_codesniffer": "3.7.2",
                 "symfony/cache": "^4.4 || ^5.4 || ^6.4 || ^7.0",
                 "symfony/var-exporter": "^4.4 || ^5.4 || ^6.2 || ^7.0",
-                "symfony/yaml": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0",
-                "vimeo/psalm": "4.30.0 || 5.22.2"
+                "symfony/yaml": "^3.4 || ^4.0 || ^5.0 || ^6.0 || ^7.0"
             },
             "suggest": {
                 "ext-dom": "Provides support for XSD validation for XML mapping files",
@@ -3191,9 +3192,9 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/orm/issues",
-                "source": "https://github.com/doctrine/orm/tree/2.19.5"
+                "source": "https://github.com/doctrine/orm/tree/2.20.1"
             },
-            "time": "2024-04-30T06:49:54+00:00"
+            "time": "2024-12-19T06:48:36+00:00"
         },
         {
             "name": "doctrine/persistence",
@@ -9976,42 +9977,30 @@
         },
         {
             "name": "mercadopago/dx-php",
-            "version": "2.6.0",
+            "version": "3.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mercadopago/sdk-php.git",
-                "reference": "be9cf1cb29f1a78f9dc15f5548f47af6a9a897e4"
+                "reference": "b03c3c789c7d4fedfcf7d54cf57993e77c95aabb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/be9cf1cb29f1a78f9dc15f5548f47af6a9a897e4",
-                "reference": "be9cf1cb29f1a78f9dc15f5548f47af6a9a897e4",
+                "url": "https://api.github.com/repos/mercadopago/sdk-php/zipball/b03c3c789c7d4fedfcf7d54cf57993e77c95aabb",
+                "reference": "b03c3c789c7d4fedfcf7d54cf57993e77c95aabb",
                 "shasum": ""
             },
             "require": {
-                "doctrine/annotations": "^1.8",
-                "doctrine/common": "^2.6 || ^3.0",
-                "php": ">=7.1.0"
+                "php": ">=8.2"
             },
             "require-dev": {
-                "doctrine/orm": "^2.3",
-                "phpmd/phpmd": "@stable",
-                "phpunit/phpunit": "^7",
-                "sebastian/phpcpd": "*",
-                "squizlabs/php_codesniffer": "2.8.1",
-                "symfony/yaml": "~2.5",
-                "vlucas/phpdotenv": "^2.5"
+                "friendsofphp/php-cs-fixer": "^3.22",
+                "phpunit/phpunit": "^10.2",
+                "squizlabs/php_codesniffer": "3.*"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "MercadoPago\\": [
-                        "src/MercadoPago/",
-                        "tests/",
-                        "src/MercadoPago/Generic/",
-                        "src/MercadoPago/Entities/",
-                        "src/MercadoPago/Entities/Shared/"
-                    ]
+                    "MercadoPago\\": "src/MercadoPago"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -10021,9 +10010,9 @@
             "description": "Mercado Pago PHP SDK",
             "homepage": "https://github.com/mercadopago/sdk-php",
             "support": {
-                "source": "https://github.com/mercadopago/sdk-php/tree/2.6.0"
+                "source": "https://github.com/mercadopago/sdk-php/tree/3.0.8"
             },
-            "time": "2023-08-03T17:33:17+00:00"
+            "time": "2024-09-03T12:26:16+00:00"
         },
         {
             "name": "moneyphp/money",
@@ -11835,12 +11824,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-generator.git",
-                "reference": "67ff6943d656d8bd5910aaa47d5c9e45f5a9091a"
+                "reference": "b2b3b93201bcc21eab0d8a07a5f3321cbf56499e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/67ff6943d656d8bd5910aaa47d5c9e45f5a9091a",
-                "reference": "67ff6943d656d8bd5910aaa47d5c9e45f5a9091a",
+                "url": "https://api.github.com/repos/coopcycle/edifact-generator/zipball/b2b3b93201bcc21eab0d8a07a5f3321cbf56499e",
+                "reference": "b2b3b93201bcc21eab0d8a07a5f3321cbf56499e",
                 "shasum": ""
             },
             "require-dev": {
@@ -11880,7 +11869,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-generator/tree/master"
             },
-            "time": "2024-04-12T16:11:11+00:00"
+            "time": "2024-10-09T01:47:46+00:00"
         },
         {
             "name": "php-edifact/edifact-mapping",
@@ -13138,6 +13127,93 @@
                 "source": "https://github.com/phpstan/phpdoc-parser/tree/1.30.1"
             },
             "time": "2024-09-07T20:13:05+00:00"
+        },
+        {
+            "name": "picqer/php-barcode-generator",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/picqer/php-barcode-generator.git",
+                "reference": "4cec18909dffd86e14beb69b1040f2520c2e1bb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/picqer/php-barcode-generator/zipball/4cec18909dffd86e14beb69b1040f2520c2e1bb1",
+                "reference": "4cec18909dffd86e14beb69b1040f2520c2e1bb1",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^9.5"
+            },
+            "suggest": {
+                "ext-bcmath": "Barcode IMB (Intelligent Mail Barcode) needs bcmath extension",
+                "ext-gd": "For JPG and PNG generators, GD or Imagick is required",
+                "ext-imagick": "For JPG and PNG generators, GD or Imagick is required"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Picqer\\Barcode\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Nicola Asuni",
+                    "email": "info@tecnick.com",
+                    "homepage": "http://nicolaasuni.tecnick.com"
+                },
+                {
+                    "name": "Casper Bakker",
+                    "email": "info@picqer.com",
+                    "homepage": "https://picqer.com"
+                }
+            ],
+            "description": "An easy to use, non-bloated, barcode generator in PHP. Creates SVG, PNG, JPG and HTML images from the most used 1D barcode standards.",
+            "homepage": "https://github.com/picqer/php-barcode-generator",
+            "keywords": [
+                "CODABAR",
+                "Code11",
+                "Code93",
+                "EAN13",
+                "KIX",
+                "KIXCODE",
+                "MSI",
+                "POSTNET",
+                "Pharma",
+                "Standard 2 of 5",
+                "barcode",
+                "barcode generator",
+                "code128",
+                "code39",
+                "ean",
+                "html",
+                "jpeg",
+                "jpg",
+                "php",
+                "png",
+                "svg",
+                "upc"
+            ],
+            "support": {
+                "issues": "https://github.com/picqer/php-barcode-generator/issues",
+                "source": "https://github.com/picqer/php-barcode-generator/tree/v2.4.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/casperbakker",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-09-16T08:58:52+00:00"
         },
         {
             "name": "ppshobi/psonic",
@@ -14834,6 +14910,59 @@
                 "source": "https://github.com/alexsegura/php-color-hash/tree/fix-hsl"
             },
             "time": "2022-02-07T12:03:26+00:00"
+        },
+        {
+            "name": "shipmonk/doctrine-entity-preloader",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shipmonk-rnd/doctrine-entity-preloader.git",
+                "reference": "fee403764ee909472604cb2b800c282e3813104c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shipmonk-rnd/doctrine-entity-preloader/zipball/fee403764ee909472604cb2b800c282e3813104c",
+                "reference": "fee403764ee909472604cb2b800c282e3813104c",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/orm": "^2.19.7 || ^3.2",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "doctrine/collections": "^2.2",
+                "doctrine/dbal": "^3.9 || ^4.0",
+                "doctrine/persistence": "^3.3",
+                "editorconfig-checker/editorconfig-checker": "^10.6.0",
+                "ergebnis/composer-normalize": "^2.42.0",
+                "nette/utils": "^4",
+                "phpstan/phpstan": "^1.10.67",
+                "phpstan/phpstan-phpunit": "^1.3.16",
+                "phpstan/phpstan-strict-rules": "^1.5.5",
+                "phpunit/phpunit": "^10.5",
+                "psr/log": "^3",
+                "shipmonk/composer-dependency-analyser": "^1.5",
+                "shipmonk/name-collision-detector": "^2.1.1",
+                "shipmonk/phpstan-rules": "^3.2",
+                "slevomat/coding-standard": "^8.15.0",
+                "symfony/cache": "^6 || ^7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ShipMonk\\DoctrineEntityPreloader\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Efficient & easy to use solution to n+1 problem in Doctrine ORM",
+            "support": {
+                "issues": "https://github.com/shipmonk-rnd/doctrine-entity-preloader/issues",
+                "source": "https://github.com/shipmonk-rnd/doctrine-entity-preloader/tree/1.0.0"
+            },
+            "time": "2024-10-14T09:43:47+00:00"
         },
         {
             "name": "simple-bus/message-bus",
@@ -21819,6 +21948,60 @@
                 "source": "https://github.com/winzou/StateMachineBundle/tree/0.6.0"
             },
             "time": "2021-12-21T14:23:04+00:00"
+        },
+        {
+            "name": "z4kn4fein/php-semver",
+            "version": "v3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/z4kn4fein/php-semver.git",
+                "reference": "049a1d81e92235c8b3c9ab30a96fcbaa929a266d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/z4kn4fein/php-semver/zipball/049a1d81e92235c8b3c9ab30a96fcbaa929a266d",
+                "reference": "049a1d81e92235c8b3c9ab30a96fcbaa929a266d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "phpstan/phpstan": "^1.0",
+                "phpunit/phpunit": "^10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "z4kn4fein\\SemVer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Peter Csajtai",
+                    "email": "peter.csajtai@outlook.com"
+                }
+            ],
+            "description": "Semantic Versioning library for PHP. It implements the full semantic version 2.0.0 specification and provides ability to parse, compare, and increment semantic versions along with validation against constraints.",
+            "homepage": "https://github.com/z4kn4fein/php-semver",
+            "keywords": [
+                "comparison",
+                "semantic",
+                "semver",
+                "validation",
+                "version",
+                "versioning"
+            ],
+            "support": {
+                "issues": "https://github.com/z4kn4fein/php-semver/issues",
+                "source": "https://github.com/z4kn4fein/php-semver/tree/v3.0.0"
+            },
+            "time": "2024-04-01T16:17:27+00:00"
         }
     ],
     "packages-dev": [
@@ -24444,5 +24627,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

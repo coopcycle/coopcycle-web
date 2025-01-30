@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Utils\Settings;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Craue\ConfigBundle\CacheAdapter\CacheAdapterInterface as CraueCache;
@@ -9,7 +10,8 @@ use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
-use AppBundle\Payment\GatewayResolver;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
 
 class SettingsManager
 {
@@ -22,6 +24,7 @@ class SettingsManager
     private $b2bEnabled;
     private $doctrine;
     private $gatewayResolver;
+    private $projectDir;
     private $forceStripe;
 
     private $secretSettings = [
@@ -61,6 +64,7 @@ class SettingsManager
         bool $foodtechEnabled,
         bool $b2bEnabled,
         GatewayResolver $gatewayResolver,
+        string $projectDir,
         $forceStripe = false)
     {
         $this->craueConfig = $craueConfig;
@@ -72,6 +76,7 @@ class SettingsManager
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
         $this->gatewayResolver = $gatewayResolver;
+        $this->projectDir = $projectDir;
         $this->forceStripe = $forceStripe;
     }
 
@@ -228,13 +233,14 @@ class SettingsManager
     {
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
+        $supportsPaygreen = $this->configKeysAreNotEmpty('paygreen_public_key', 'paygreen_secret_key', 'paygreen_shop_id');
 
         if ($this->forceStripe) {
 
             return $supportsStripe;
         }
 
-        return $supportsStripe || $supportsMercadopago;
+        return $supportsStripe || $supportsMercadopago || $supportsPaygreen;
     }
 
     public function canSendSms()
@@ -347,5 +353,62 @@ class SettingsManager
         if ($setting !== null) {
             $this->doctrine->getManagerForClass($this->configEntityName)->remove($setting);
         }
+    }
+
+    private function configKeysAreNotEmpty(...$keys)
+    {
+        foreach ($keys as $key) {
+            try {
+                $value = $this->craueConfig->get($key);
+                if (empty($value)) {
+                    return false;
+                }
+            } catch (\RuntimeException $e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getVersion(): string
+    {
+        // TODO Add caching
+
+        // If there is a REVISION file in project dir containing a SHA1, trust it
+        $revisionFile = $this->projectDir . '/REVISION';
+        if (file_exists($revisionFile)) {
+
+            $sha1 = trim(file_get_contents($revisionFile));
+
+            $process = new Process(['git', 'ls-remote', '--tags', 'https://github.com/coopcycle/coopcycle-web.git']);
+            $process->run();
+
+            if ($process->isSuccessful()) {
+                $lines = explode("\n", $process->getOutput());
+                foreach ($lines as $line) {
+                    $pattern = sprintf('#^%s[ \t]+refs\/tags\/(v[0-9\.]+)$#', $sha1);
+                    if (1 === preg_match($pattern, $line, $matches)) {
+                        return trim($matches[1]);
+                    }
+                }
+            }
+        }
+
+        // https://stackoverflow.com/questions/2324195/how-to-get-tags-on-current-commit
+        $process = new Process(['git', 'tag', '--points-at', 'HEAD'], $this->projectDir);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            return 'dev-master';
+        }
+
+        $version = trim($process->getOutput());
+
+        if (empty($version)) {
+            return 'dev-master';
+        }
+
+        return $version;
     }
 }

@@ -44,7 +44,7 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -52,7 +52,10 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages": [],
-            "createdAt":"@string@.isDateTime()"
+            "barcode": @array@,
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -75,7 +78,7 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -83,7 +86,10 @@ Feature: Tasks
             "images":[],
             "next":null,
             "packages":[],
-            "createdAt":"@string@.isDateTime()"
+            "barcode": @array@,
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -106,15 +112,18 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "packages": [],
+            "barcode": @array@,
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           },
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -137,16 +146,18 @@ Feature: Tasks
             "doorstep":@boolean@,
             "ref":null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":@array@,
             "weight":null,
             "packages": [],
+            "barcode": @array@,
             "hasIncidents": false,
             "incidents": [],
             "orgName":"",
             "images":[],
             "next":null,
-            "packages":[],
-            "createdAt":"@string@.isDateTime()"
+            "createdAt":"@string@.isDateTime()",
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@"
           }
         ],
         "hydra:view": {
@@ -204,82 +215,6 @@ Feature: Tasks
         "@id":"@string@.startsWith('/api/task_lists/')",
         "id": "@integer@",
         "@type":"TaskList",
-        "hydra:member":[
-          {
-            "@id":"@string@.startsWith('/api/tasks')",
-            "@context": "/api/contexts/Task",
-            "@type":"Task",
-            "id":@integer@,
-            "type":"DROPOFF",
-            "status":"TODO",
-            "address":{
-              "streetAddress": "@string@",
-              "@type":"http://schema.org/Place",
-              "geo":{
-                "@type":"GeoCoordinates",
-                "latitude":48.846656,
-                "longitude":2.369052
-              },
-              "@*@":"@*@"
-            },
-            "after":"@string@.isDateTime().startsWith('2018-03-02T11:30:00')",
-            "before":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
-            "doneAfter":"@string@.isDateTime().startsWith('2018-03-02T11:30:00')",
-            "doneBefore":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
-            "comments":"#bob",
-            "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
-            "previous":null,
-            "group":{"@*@":"@*@"},
-            "tags":@array@,
-            "doorstep":@boolean@,
-            "ref":null,
-            "recurrenceRule":null,
-            "metadata":[],
-            "weight":null,
-            "hasIncidents": false,
-            "incidents": [],
-            "orgName":"",
-            "images":[],
-            "next":null,
-            "packages":[],
-            "createdAt":"@string@.isDateTime()"
-          },
-          {
-            "@id":"@string@.startsWith('/api/tasks')",
-            "@context": "/api/contexts/Task",
-            "@type":"Task",
-            "id":@integer@,
-            "type":"DROPOFF",
-            "status":"DONE",
-            "address":{"@*@":"@*@"},
-            "after":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
-            "before":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
-            "doneAfter":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
-            "doneBefore":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
-            "comments":"#bob",
-            "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
-            "previous":null,
-            "group":null,
-            "tags":@array@,
-            "doorstep":@boolean@,
-            "ref":null,
-            "recurrenceRule":null,
-            "metadata":[],
-            "weight":null,
-            "hasIncidents": false,
-            "incidents": [],
-            "orgName":"",
-            "images":[],
-            "next":null,
-            "packages":[],
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
-        "hydra:totalItems":2,
         "items":[
           {
             "@id":"@string@.startsWith('/api/tasks')",
@@ -295,20 +230,14 @@ Feature: Tasks
             "doneBefore":"@string@.isDateTime().startsWith('2018-03-02T12:00:00')",
             "comments":"#bob",
             "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
             "previous":null,
-            "group":{"@*@":"@*@"},
             "tags":@array@,
             "doorstep":@boolean@,
-            "ref":null,
-            "recurrenceRule":null,
-            "metadata":[],
+            "metadata": {
+            },
             "weight":null,
             "hasIncidents": false,
-            "incidents": [],
             "orgName":"",
-            "images":[],
             "next":null,
             "packages":[],
             "createdAt":"@string@.isDateTime()"
@@ -327,20 +256,14 @@ Feature: Tasks
             "doneBefore":"@string@.isDateTime().startsWith('2018-03-02T12:30:00')",
             "comments":"#bob",
             "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "assignedTo":"bob",
             "previous":null,
-            "group":null,
             "tags":@array@,
             "doorstep":@boolean@,
-            "ref":null,
-            "recurrenceRule":null,
-            "metadata":[],
+            "metadata": {
+            },
             "weight":null,
             "hasIncidents": false,
-            "incidents": [],
             "orgName":"",
-            "images":[],
             "next":null,
             "packages":[],
             "createdAt":"@string@.isDateTime()"
@@ -352,9 +275,7 @@ Feature: Tasks
         "date":"2018-03-02",
         "username":"bob",
         "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()",
-        "vehicle": null,
-        "trailer": null
+        "updatedAt":"@string@.isDateTime()"
       }
       """
 
@@ -380,8 +301,6 @@ Feature: Tasks
         "@id":"@string@.startsWith('/api/task_lists')",
         "id": "@integer@",
         "@type":"TaskList",
-        "hydra:member":[],
-        "hydra:totalItems":0,
         "items":[],
         "distance":@integer@,
         "duration":@integer@,
@@ -389,9 +308,7 @@ Feature: Tasks
         "date":"2020-03-02",
         "username":"bob",
         "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()",
-        "vehicle": null,
-        "trailer": null
+        "updatedAt":"@string@.isDateTime()"
       }
       """
 
@@ -732,12 +649,15 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": [],
+        "metadata":@array@,
         "weight":null,
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "barcode":@array@,
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2":@integer@,
+        "traveledDistanceMeter":@integer@
       }
       """
 
@@ -865,7 +785,7 @@ Feature: Tasks
       }
       """
 
-  Scenario: Mark task as failed with failure reason via incidents endpoint
+  Scenario: Report incident
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | tasks.yml           |
@@ -875,67 +795,90 @@ Feature: Tasks
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
     And the tasks with comments matching "#bob" are assigned to "bob"
-    When the user "bob" sends a "GET" request to "/api/tasks/2"
-    Then the response status code should be 200
-    And the response should be in JSON
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "PUT" request to "/api/tasks/2/incidents" with body:
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
       """
       {
-        "reason": "DAMAGED",
-        "notes": "PACKAGE WET"
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
       }
       """
-    Then the response status code should be 200
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
-        "@type":"Task",
-        "id":2,
-        "type":"DROPOFF",
-        "status":"TODO",
-        "address":@...@,
-        "after":"2018-03-02T11:30:00+01:00",
-        "before":"2018-03-02T12:00:00+01:00",
-        "doneAfter":"2018-03-02T11:30:00+01:00",
-        "doneBefore":"2018-03-02T12:00:00+01:00",
-        "comments":@string@,
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Endommagé",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"DAMAGED",
+        "description":"PACKAGE WET",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/1",
+        "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
-        "isAssigned":true,
-        "assignedTo":"bob",
-        "previous":null,
-        "group":null,
-        "hasIncidents": true,
-        "tags":@array@
+        "tags":[],
+        "metadata": []
       }
       """
-    And the user "bob" sends a "GET" request to "/api/tasks/2/events"
-    Then the response status code should be 200
+
+  Scenario: Report incident (with metadata)
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {"foo":"bar"},
+          {"baz":"bat"}
+        ]
+      }
+      """
+    Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
-        "@type":"hydra:Collection",
-        "hydra:member":[
-          "@...@",
-          {
-            "@id":"@string@.startsWith('/api/task_events')",
-            "@type":"TaskEvent",
-            "name":"task:incident-reported",
-            "data":{"reason":"DAMAGED","notes":"PACKAGE WET"},
-            "createdAt":"@string@.isDateTime()"
-          }
-        ],
-        "hydra:totalItems":3,
-        "hydra:search":{
-          "@*@":"@*@"
-        }
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Endommagé",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"DAMAGED",
+        "description":"PACKAGE WET",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/1",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {"foo":"bar"},
+          {"baz":"bat"}
+        ]
       }
       """
 
@@ -1181,12 +1124,15 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": [],
+        "metadata":@array@,
         "weight": 800,
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "barcode": @array@,
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1263,12 +1209,15 @@ Feature: Tasks
         "orgName": "",
         "ref":null,
         "recurrenceRule": null,
-        "metadata": [],
+        "metadata":@array@,
         "weight":null,
         "hasIncidents": false,
         "incidents": [],
         "packages": [],
-        "createdAt":"@string@.isDateTime()"
+        "barcode": @array@,
+        "createdAt":"@string@.isDateTime()",
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@"
       }
       """
 
@@ -1394,12 +1343,16 @@ Feature: Tasks
             "recurrenceRule":null,
             "metadata":{
               "foo":"bar",
-              "baz":"bat"
+              "baz":"bat",
+              "zero_waste":false
             },
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           },
           {
@@ -1426,11 +1379,14 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":[],
+            "metadata":{"zero_waste":false},
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
             "packages": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "barcode": @array@,
             "createdAt":"@string@.isDateTime()"
           }
         ],
@@ -1845,27 +1801,32 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
           "doneBefore":"2019-11-12T18:30:00+01:00",
           "comments":"",
           "after":"2019-11-12T18:00:00+01:00",
-          "before":"2019-11-12T18:30:00+01:00"
+          "before":"2019-11-12T18:30:00+01:00",
+          "tags": []
         },
         "dropoff":{
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
           "doneBefore":"2019-11-12T19:30:00+01:00",
           "comments":"",
           "after":"2019-11-12T19:00:00+01:00",
-          "before":"2019-11-12T19:30:00+01:00"
+          "before":"2019-11-12T19:30:00+01:00",
+          "tags": []
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "tasks":@array@
       }
       """
 
@@ -1896,6 +1857,7 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"DONE",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
@@ -1908,6 +1870,7 @@ Feature: Tasks
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
@@ -1916,6 +1879,7 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -1941,6 +1905,7 @@ Feature: Tasks
           "@type":"Task",
           "id":@integer@,
           "status":"DONE",
+          "type":"PICKUP",
           "address":@...@,
           "doneAfter":"2019-11-12T18:00:00+01:00",
           "doneBefore":"2019-11-12T18:30:00+01:00",
@@ -1953,6 +1918,7 @@ Feature: Tasks
           "@type":"Task",
           "id":@integer@,
           "status":"DONE",
+          "type":"DROPOFF",
           "address":@...@,
           "doneAfter":"2019-11-12T19:00:00+01:00",
           "doneBefore":"2019-11-12T19:30:00+01:00",
@@ -1960,6 +1926,7 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00"
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -2459,11 +2426,12 @@ Feature: Tasks
       {
          "packages":[
             {
-               "type":"SMALL",
-               "name":"SMALL",
-               "quantity":4,
-               "volume_per_package": 1,
-               "short_code": "AB"
+              "type":"SMALL",
+              "name":"SMALL",
+              "quantity":4,
+              "volume_per_package": 1,
+              "short_code": "AB",
+              "labels":@array@
             }
          ],
          "@*@": "@*@"
@@ -2725,7 +2693,7 @@ Feature: Tasks
       }
       """
 
-  Scenario: Retrieve failure reasons
+  Scenario: Retrieve custom failure reasons
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
       | tasks.yml            |
@@ -2740,6 +2708,8 @@ Feature: Tasks
     And the task with id "2" belongs to organization with name "Acme"
     And the store with name "Acme" has failure reason set "Default"
     When the user "bob" sends a "GET" request to "/api/tasks/2/failure_reasons"
+    Then the response status code should be 200
+    And the response should be in JSON
     And the JSON should match:
       """
       {
@@ -2768,6 +2738,36 @@ Feature: Tasks
           "hydra:template":"/api/tasks/2/failure_reasons{?date,assigned,organization}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve default failure reasons
+    Given the fixtures files are loaded:
+      | sylius_channels.yml  |
+      | tasks.yml            |
+      | stores_with_orgs.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the task with id "2" belongs to organization with name "Acme"
+    And the store with name "Acme" has failure reason set "Default"
+    When the user "bob" sends a "GET" request to "/api/tasks/2/failure_reasons"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":@array@,
+        "hydra:totalItems":22,
+        "hydra:search":{
+          "@*@":"@*@"
         }
       }
       """

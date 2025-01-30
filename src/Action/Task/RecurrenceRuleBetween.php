@@ -9,19 +9,15 @@ use Doctrine\ORM\EntityManagerInterface;
 use Recurr\Transformer\ArrayTransformer;
 use Recurr\Transformer\Constraint\BetweenConstraint;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class RecurrenceRuleBetween
 {
     public function __construct(
-        DenormalizerInterface $denormalizer,
-        EntityManagerInterface $entityManager,
-        PricingManager $pricingManager)
+        private readonly DenormalizerInterface $denormalizer,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PricingManager $pricingManager)
     {
-        $this->denormalizer = $denormalizer;
-        $this->entityManager = $entityManager;
-        $this->pricingManager = $pricingManager;
     }
 
     public function __invoke($data, Request $request)

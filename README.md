@@ -99,8 +99,16 @@ cp .env.dist .env
 
 #### Start the Docker containers
 
+Minimum configuration:
+
 ```sh
 docker compose up
+```
+
+With additional tools:
+
+```sh
+docker compose --profile devFrontend --profile devOdoo up
 ```
 
 At this step, the platform should be up & running, but the database is still empty.
@@ -199,6 +207,7 @@ Installation:
 
 ```sh
 npm install -g cypress@x.x.x @cypress/webpack-preprocessor@x.x.x @cypress/react18@x.x.x
+docker compose exec -T php bin/console typesense:create --env=test # install typesense for test env
 ```
 
 Launch php container on his own in the test env:

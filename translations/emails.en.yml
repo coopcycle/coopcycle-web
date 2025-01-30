@@ -118,11 +118,14 @@ order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error proce
 order.payment_failed.return_to_order: Return to order
 
 order.loopeat.accepted: |
-  <p>You have chosen the zero waste option, congratulations!</p>
-  <p>Remember to return the lunchbox(es) and the fabric bag to the courier during your next meal delivery.</p>
-  <p>Thanks to you, we are changing the world, one meal at a time.</p>
-  <p>Spread the word, every action counts!</p>
-  <p>Enjoy your meal! LoopEat</p>
+  <p>Congratulations on your zero-waste order with our partner « %name% ».</p>
+  <p>You can return your reusable boxes free of charge to our network of partners (list on your « %name% » account) or ask your courier to do it for you on your next order.</p>
+  <p>Don't forget to return the totebag!</p>
+
+order.loopeat.accepted.with_fee: |
+  <p>Congratulations on your zero-waste order with our partner « %name% ».</p>
+  <p>You can return your reusable boxes free of charge to our network of partners (list on your « %name% » account) or ask your courier to do it for you on your next order (%amount% fee).</p>
+  <p>Don't forget to return the totebag!</p>
 
 task.pickup.done.subject: 'The delivery #%id% has been picked'
 task.pickup.done.body: |

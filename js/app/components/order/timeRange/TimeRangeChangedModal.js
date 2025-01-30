@@ -24,6 +24,7 @@ import TimeSlotPicker from '../TimeSlotPicker'
 import DatePicker from '../DatePicker'
 import Button from '../../core/Button'
 import Alert from '../../core/Alert'
+import { useDatadog } from '../../../hooks/useDatadog'
 import { useMatomo } from '../../../hooks/useMatomo'
 
 function useChooseRestaurant() {
@@ -183,12 +184,14 @@ export default function TimeRangeChangedModal() {
   const isModalOpen = useSelector(selectIsTimeRangeChangedModalOpen)
 
   const { t } = useTranslation()
+  const { logger } = useDatadog()
   const { trackEvent } = useMatomo()
 
   return (
     <Modal
       isOpen={isModalOpen}
       onAfterOpen={() => {
+        logger.info('TimeRangeChangedModal opened')
         trackEvent('Checkout', 'openTimeRangeChangedModal')
       }}
       contentLabel={t('CART_CHANGE_TIME_MODAL_LABEL')}

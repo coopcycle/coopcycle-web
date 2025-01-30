@@ -326,12 +326,14 @@ Feature: Task recurrence rules
           {
             "@id":"/api/tasks/1",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "barcode": @array@
           },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "barcode": @array@
           }
         ],
         "hydra:totalItems":2
@@ -341,6 +343,9 @@ Feature: Task recurrence rules
   Scenario: Apply recurrence rule creates delivery
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -368,17 +373,20 @@ Feature: Task recurrence rules
             "@id":"/api/tasks/1",
             "@type":"Task",
             "packages": [],
-            "weight": null
+            "weight": null,
+            "barcode": @array@
             },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "barcode": @array@
             },
           {
             "@id":"/api/tasks/3",
             "@type":"Task",
-            "packages": []
+            "packages": [],
+            "barcode": @array@
             }
         ],
         "hydra:totalItems":3

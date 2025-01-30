@@ -10,7 +10,8 @@ import {
   loadOrganizations,
   loadVehicles,
   loadTrailers,
-  loadWarehouses
+  loadWarehouses,
+  selectTasksByIds
 } from '../redux/actions'
 import { UnassignedTasks } from './UnassignedTasks'
 import { UnassignedTours } from './UnassignedTours'
@@ -20,6 +21,8 @@ import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
 import { selectCouriers, selectSplitDirection, selectAreToursEnabled } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 import VehicleSelectMenu from './context-menus/VehicleSelectMenu'
+import { useRecurrenceRulesGenerateOrdersMutation } from '../../api/slice'
+import { selectSelectedDate } from '../../../shared/src/logistics/redux'
 
 
 const DashboardApp = ({ loadingAnim }) => {
@@ -29,6 +32,9 @@ const DashboardApp = ({ loadingAnim }) => {
   const toursEnabled = useSelector(selectAreToursEnabled)
   const couriersList = useSelector(selectCouriers)
   const splitDirection = useSelector(selectSplitDirection)
+  const date = useSelector(selectSelectedDate)
+
+  const [generateOrders, { isUninitialized, isLoading: isGeneratingOrdersForRecurrenceRules }] = useRecurrenceRulesGenerateOrdersMutation()
 
   const splitRef = useRef(),
     splitCollapseAction = () => {
@@ -42,7 +48,7 @@ const DashboardApp = ({ loadingAnim }) => {
     }
 
   const children = [
-    <UnassignedTasks key="split_unassigned" />,
+    <UnassignedTasks key="split_unassigned" isGeneratingOrdersForRecurrenceRules={ isGeneratingOrdersForRecurrenceRules } />,
     <UnassignedTours key="split_unassigned_tours" splitCollapseAction={ splitCollapseAction } />,
     <TaskLists key="split_task_lists" couriersList={ couriersList } />
   ]
@@ -63,8 +69,24 @@ const DashboardApp = ({ loadingAnim }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isUninitialized) {
+      return
+    }
+
+    if (date.isBefore(new Date(), 'day')) {
+      return
+    }
+
+    generateOrders(date)
+  }, [date]);
+
+  const unselectAll = () => {
+    dispatch(selectTasksByIds([]))
+  }
+
   return (
-    <div className="dashboard__aside-container">
+    <div className="dashboard__aside-container" onKeyDown={ (e) => e.keyCode === 27 && unselectAll() }>
       <DragDropContext
         // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md
         onDragStart={ (result) => dispatch(handleDragStart(result)) }

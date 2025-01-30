@@ -29,6 +29,7 @@ use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
@@ -41,6 +42,7 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -236,6 +238,12 @@ class OrderController extends AbstractController
                 $order->setCustomer($customer);
             }
 
+            // Reset phone number (important when a Saved address is used)
+            // The latest phone number will be set later by EnhanceShippingAddress
+            if ($shippingAddress = $order->getShippingAddress()) {
+                $shippingAddress->setTelephone(null);
+            }
+            
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 
@@ -382,11 +390,11 @@ class OrderController extends AbstractController
                 'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
             ];
 
-            if ($form->has('paymentMethod')) {
-                $data['mercadopagoPaymentMethod'] = $form->get('paymentMethod')->getData();
-            }
-            if ($form->has('installments')) {
-                $data['mercadopagoInstallments'] = $form->get('installments')->getData();
+            // Used by Mercado Pago
+            foreach (['paymentMethod', 'installments', 'issuer', 'payerEmail'] as $key) {
+                if ($form->has($key)) {
+                    $data[sprintf('mercadopago%s', ucfirst($key))] = $form->get($key)->getData();
+                }
             }
 
             $orderManager->checkout($order, $data);
@@ -461,7 +469,8 @@ class OrderController extends AbstractController
         PaymentContext $paymentContext,
         OrderProcessorInterface $orderPaymentProcessor,
         Hashids $hashids16,
-        Hashids $hashids8)
+        Hashids $hashids8,
+        StateMachineFactoryInterface $stateMachineFactory)
     {
         $decoded = $hashids16->decode($hashid);
 
@@ -476,7 +485,9 @@ class OrderController extends AbstractController
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
-        if (!in_array($order->getState(), [OrderInterface::STATE_CART, OrderInterface::STATE_NEW])) {
+        $stateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $isExpectedState = $stateMachine->can(OrderTransitions::TRANSITION_CREATE) || $stateMachine->can(OrderTransitions::TRANSITION_FULFILL);
+        if (!$isExpectedState) {
             throw new BadRequestHttpException(sprintf('Order #%d is not in an expected state', $id));
         }
 

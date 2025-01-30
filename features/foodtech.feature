@@ -16,6 +16,7 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders"
     Then the response status code should be 403
 
+  @debug
   Scenario: Retrieve restaurant orders
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
@@ -93,7 +94,8 @@ Feature: Food Tech
             "hasReceipt":@boolean@,
             "invitation": "@string@||@null@",
             "events":@array@,
-            "paymentGateway":@string@
+            "paymentGateway":@string@,
+            "hasEdenredCredentials":@boolean@
           }
         ],
         "hydra:totalItems":1,
@@ -103,16 +105,9 @@ Feature: Food Tech
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/restaurants/1/orders{?date}",
+          "hydra:template":@string@,
           "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            }
-          ]
+          "hydra:mapping":@array@
         }
       }
       """

@@ -5,6 +5,7 @@ namespace AppBundle\Utils;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Refund;
@@ -33,9 +34,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class RestaurantStats implements \Countable
 {
     private $result;
-    private $translator;
-    private $withVendorName;
-    private $withMessenger;
+    private $ids;
 
     private $columnTotals = [];
     private $taxTotals = [];
@@ -45,34 +44,26 @@ class RestaurantStats implements \Countable
 
     private $numberFormatter;
 
-    private bool $nonProfitsEnabled;
-    private bool $withBillingMethod;
-
     const MAX_RESULTS = 50;
 
+    private $serviceTaxRateCode;
+
+    private $messengers;
+
     public function __construct(
-        EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
         \DateTime $start,
         \DateTime $end,
         ?LocalBusiness $restaurant,
-        PaginatorInterface $paginator,
+        private readonly PaginatorInterface $paginator,
         string $locale,
-        TranslatorInterface $translator,
-        TaxesHelper $taxesHelper,
-        bool $withVendorName = false,
-        bool $withMessenger = false,
-        bool $nonProfitsEnabled = false,
-        bool $withBillingMethod = false)
+        private readonly TranslatorInterface $translator,
+        private readonly TaxesHelper $taxesHelper,
+        private readonly bool $withVendorName = false,
+        private readonly bool $withMessenger = false,
+        private readonly bool $nonProfitsEnabled = false,
+        private readonly bool $withBillingMethod = false)
     {
-        $this->entityManager = $entityManager;
-
-        $this->paginator = $paginator;
-        $this->translator = $translator;
-        $this->taxesHelper = $taxesHelper;
-        $this->withVendorName = $withVendorName;
-        $this->withMessenger = $withMessenger;
-        $this->nonProfitsEnabled = $nonProfitsEnabled;
-        $this->withBillingMethod = $withBillingMethod;
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
@@ -318,15 +309,38 @@ class RestaurantStats implements \Countable
             ->andWhere(
                 $qb->expr()->in('o.id', ':ids')
             )
+            ->andWhere(
+                $qb->expr()->in('p.state', ':payment_states')
+            )
             ->setParameter('ids', $this->ids)
+            ->setParameter('payment_states', [ PaymentInterface::STATE_COMPLETED, PaymentInterface::STATE_REFUNDED])
             ;
 
         $paymentMethods = $qb->getQuery()->getArrayResult();
-        $paymentMethods = array_column($paymentMethods, 'code', 'order_id');
+        $paymentMethods = array_reduce($paymentMethods, function ($carry, $item) {
+            if (!isset($carry[$item['order_id']])) {
+                $carry[$item['order_id']] = [];
+            }
+            $carry[$item['order_id']][] = $item['code'];
+
+            return $carry;
+        }, []);
 
         $this->result = array_map(function ($order) use ($paymentMethods) {
 
-            $order->paymentMethod = $paymentMethods[$order->id] ?? null;
+            $codes = $paymentMethods[$order->id] ?? [];
+
+            // Even if the order was partially paid with Edenred,
+            // we only show one payment method.
+            $code = array_reduce($codes, function ($carry, $item) {
+                if ('EDENRED' === $carry || 'EDENRED' === $item) {
+                    return 'EDENRED';
+                }
+
+                return $item;
+            }, null);
+
+            $order->paymentMethod = $code;
 
             return $order;
 
@@ -586,6 +600,8 @@ class RestaurantStats implements \Countable
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
         $headings[] = 'net_revenue';
+        $headings[] = 'incident_adjustments';
+        $headings[] = 'incidents';
         if ($this->nonProfitsEnabled) {
             $headings[] = 'nonprofit';
         }
@@ -673,6 +689,10 @@ class RestaurantStats implements \Countable
                 return $order->getNonprofit();
             case 'payment_method':
                 return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
+            case 'incident_adjustments':
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::INCIDENT_ADJUSTMENT), !$formatted);
+            case 'incidents':
+                return implode('\n', $order->getIncidents());
             case 'billing_method':
                 return $order->billingMethod ?? 'unit';
             case 'applied_billing':
@@ -767,15 +787,24 @@ class RestaurantStats implements \Countable
 
         $rsm->addRootEntityFromClassMetadata(Order::class, 'o');
         $rsm->addJoinedEntityResult(OrderVendor::class, 'v', 'o', 'vendors');
+        // Add this line to map the incident_titles scalar result
+        $rsm->addScalarResult('incident_titles', 'incident_titles');
 
-        $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
+        $sql = 'SELECT ' . $rsm->generateSelectClause() . ',
+            (
+            SELECT string_agg(DISTINCT i.title, E\'\n\')
+            FROM delivery d
+            JOIN task t ON t.delivery_id = d.id
+            JOIN incident i ON i.task_id = t.id
+            WHERE d.order_id = o.id
+            ) as incident_titles '
             . 'FROM sylius_order o '
             . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
             . 'LEFT JOIN sylius_order_event evt ON (o.id = evt.aggregate_id AND type = :event_type) '
             . 'WHERE '
             . 'evt.created_at BETWEEN :start AND :end '
             . 'AND o.state = :state'
-            ;
+        ;
 
         if (null !== $restaurant) {
             $sql .= ' AND v.restaurant_id = :restaurant';
@@ -794,7 +823,17 @@ class RestaurantStats implements \Countable
 
         $result = $query->getArrayResult();
 
-        $orders = array_map(fn ($data) => OrderView::create($data, $restaurant), $result);
+        // Modify the mapping to handle the mixed result (entities + scalar)
+        $orders = array_map(function ($data) use ($restaurant) {
+            // Extract the order entity and incident_titles from the mixed result
+            $orderData = $data[0]; // The first element contains the Order entity data
+            $incidentTitles = $data['incident_titles']; // Get the scalar result
+
+            // Add incident_titles to the order data
+            $orderData['incident_titles'] = $incidentTitles;
+
+            return OrderView::create($orderData, $restaurant);
+        }, $result);
 
         return $orders;
     }

@@ -110,6 +110,7 @@ form.settings.phone_number.label: Telefonnummer
 form.delivery_embed.telephone.label: Telefonnummer
 form.menu_editor.products_panel.title: Produkten
 basics.edit: Bearbeiten
+basics.editing: Bearbeitung
 basics.created_at: Erstellt am %date%
 base.footer.legal: Impressum
 base.footer.terms: Allgemeine Geschäftsbedingungen
@@ -395,10 +396,9 @@ adminDashboard.pledges.title: Anregungen
 adminDashboard.time_slots.title: Zeitfenster
 delivery.tracking_link: Sendungsverfolgung
 delivery.with_id: 'Versand #%id%'
-subscriptions.title: Abonnements
-subscription.title: 'Abonnement #%id%'
-subscription.generated_order: Diese Bestellung wurde durch ein Abonnement generiert
-subscription.view: Abonnement anzeigen
+subscription.title: 'Wiederholungsregel #%id%'
+subscription.generated_order: 'Diese Bestellung wurde durch eine Wiederholungsregel erstellt'
+subscription.view: 'Wiederholungsregel anzeigen'
 profile.username: Benutzername
 form.order.refund_modal.title: Rückzahlung
 form.payment.refund_amount.help: Der von Dir angegebene Betrag wird dem Kunden zurückerstattet
@@ -415,7 +415,7 @@ form.settings.latlng.help: "Bestimme die standardmäßigen Längen- und Breiteng
   \ Du erhältst sie auf <a href=\"https://www.latlong.net/\">latlong.net</a>\n"
 form.settings.latlng.label: Geo-Koordinaten
 form.settings.stripe_connect_client_id.help: "Den Identifier erhältst Du auf der <a\
-  \ href=\"https://dashboard.stripe.com/account/applications/settings\">Einstellungen-Seite</a>\
+  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">Einstellungen-Seite</a>\
   \ von Stripe Connect\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect Identifier
 form.settings.stripe_secret_key.help: "Erstelle ein Stripe-Konto um die <a href=\"\
@@ -478,12 +478,18 @@ stores.pricing_rule_set: Preisermittlung
 stores.users: Benutzer*in
 stores.createNewDelivery: Neue Lieferung anlegen
 stores.settings: Einstellungen
+stores.recurrence_rules: Wiederholungsregeln
+stores.recurrence_rules.empty_message: Wenn eine wiederkehrende Bestellung erstellt wird, erscheinen die Wiederholungsregeln hier
+recurrence_rules.table.repeat: Wiederholen
+recurrence_rules.table.generate_orders: Aufgaben/Bestellungen generieren
+recurrence_rules.table.created_at: Regel erstellt
+recurrence_rule.legacy: Verwenden Sie das Dispositions-Dashboard, um diese Regel zu entfernen
 user.profile.givenName: Vorname
 user.profile.familyName: Nachname
 roles.ROLE_USER: Benutzer*in
 product_option.strategy.free: Frei
 promotion_coupon.used.label: Anzahl der Vewendungen
-form.new_order.variant_price.label: Preis
+form.new_order.variant_price.label: Preis inkl. MwSt.
 form.new_order.variant_name.label: Name des Produkts
 form.reusable_packaging.price.label: Preis
 form.reusable_packaging.is_tracked.label: Tracking aktiviert
@@ -707,38 +713,26 @@ checkout.breadcrumb.confirm: Bestätigung
 products.on_demand_delivery.name: Lieferung auf Anfrage
 security.login.remember_me: An mich erinnern
 delivery.failure_reason:
-  damaged: "Beschädigt"
-  lost: "Verloren"
-  late: "Verspätete Lieferung"
-  incorrect_address: "Falsche Adresse"
-  customer_refused: "Kunde hat die Lieferung verweigert"
-  item_missing: "Fehlendes Element"
-  incorrect_item: "Falsches Element geliefert"
-  bad_weather: "Schlechtes Wetter"
-  vehicle_breakdown: "Fahrzeugausfall"
-  traffic_delays: "Verkehrsverzögerungen"
-  routing_problems: "Routing-Probleme"
-  customs_issues: "Zollprobleme"
-  inventory_shortage: "Inventurmangel"
-  address_unreachable: "Nicht erreichbare Adresse"
-  insufficient_funds: "Unzureichende Mittel"
-  data_entry_error: "Datenfehler"
-  packaging_problems: "Probleme der Verpackung"
-  holiday_closure: "Ferienverlängerung"
-  closed_store: "Geschäft geschlossen"
   default:
-    late: Verspätete Zustellung
-    damaged: Beschädigt
-    lost: Verloren
-    incorrect_address: Falsche Adresse
-    customer_refused: Kunde hat Lieferung abgewiesen
-    item_missing: Fehlender Artikel
-    incorrect_item: Falscher Artikel geliefert
-    bad_weather: Schlechte Wetterbedingungen
-    vehicle_breakdown: Fahrzeugschaden
-    traffic_delays: Verkehrsverzögerung
-    routing_problems: Navigationsprobleme
-    address_unreachable: Adresse nicht erreichbar
+    damaged: "Beschädigt"
+    lost: "Verloren"
+    late: "Verspätete Lieferung"
+    incorrect_address: "Falsche Adresse"
+    customer_refused: "Kunde hat die Lieferung verweigert"
+    item_missing: "Fehlendes Element"
+    incorrect_item: "Falsches Element geliefert"
+    bad_weather: "Schlechtes Wetter"
+    vehicle_breakdown: "Fahrzeugausfall"
+    traffic_delays: "Verkehrsverzögerungen"
+    routing_problems: "Routing-Probleme"
+    customs_issues: "Zollprobleme"
+    inventory_shortage: "Inventurmangel"
+    address_unreachable: "Nicht erreichbare Adresse"
+    insufficient_funds: "Unzureichende Mittel"
+    data_entry_error: "Datenfehler"
+    packaging_problems: "Probleme der Verpackung"
+    holiday_closure: "Ferienverlängerung"
+    closed_store: "Geschäft geschlossen"
 adminDashboard.failureSet.title: "Fehlergründe"
 adminDashboard.failureSet.help: "Legen Sie die Gründe fest, warum Ihre Lieferungen\
   \ fehlschlagen können."

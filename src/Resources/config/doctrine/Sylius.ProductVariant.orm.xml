@@ -18,5 +18,6 @@
         <join-column name="business_restaurant_group_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
+    <many-to-one field="pricingRuleSet" target-entity="AppBundle\Entity\Delivery\PricingRuleSet" />
   </entity>
 </doctrine-mapping>

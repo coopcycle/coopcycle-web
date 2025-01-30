@@ -13,6 +13,10 @@ framework:
 # parameters:
 #     nucleos_profile.registration.confirmation.enabled: true
 
+doctrine:
+  dbal:
+    profiling_collect_backtrace: true
+
 web_profiler:
     toolbar: true
     intercept_redirects: false

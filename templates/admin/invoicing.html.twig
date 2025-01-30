@@ -1,0 +1,17 @@
+{% extends "deliveries.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.invoicing.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li>{{ 'adminDashboard.invoicing.title'|trans }}</li>
+{% endblock %}
+
+{% block docs %}
+  {% include '_partials/docs.html.twig' with { url: 'https://docs.google.com/document/d/1KqlJve8gdv4hoNyrfS4ge6G7Nl7khWmgULzcntP6opk/edit?usp=sharing' } %}
+{% endblock %}
+
+{% block content %}
+  <div id="invoicing" {{ react_component('admin/invoicing/page') }}></div>
+{% endblock %}

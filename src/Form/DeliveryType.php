@@ -35,9 +35,9 @@ class DeliveryType extends AbstractType
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected string $country,
         protected string $locale,
-        private readonly OrderManager $orderManager)
-    {
-    }
+        private readonly OrderManager $orderManager,
+    )
+    { }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -57,11 +57,16 @@ class DeliveryType extends AbstractType
             $form = $event->getForm();
             $delivery = $event->getData();
 
+            /** @var ?Store $store */
             $store = $delivery->getStore();
+
+            $isNew = null === $delivery->getId();
+            // other order types are foodtech and b2c deliveries (via Order form: https://docs.coopcycle.org/en/admin/deliveries/externaldisplay/)
+            $isStoreDeliveryOrder = $store !== null;
 
             // When this is a new delivery,
             // set defaults for pickup/dropoff date
-            if (null === $delivery->getId()) {
+            if ($isNew && true === $options['asap_timing']) {
 
                 $now = Carbon::now();
 
@@ -103,6 +108,7 @@ class DeliveryType extends AbstractType
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
                     'with_position' => true,
+                    'with_barcode' => !empty($store->getStoreGLN()), // or transporter enabled
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -110,8 +116,10 @@ class DeliveryType extends AbstractType
             ]);
 
             $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
+            // customers/stores owners are not allowed to edit existing deliveries
+            $isEditEnabled = ($isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_DISPATCHER')) || $isNew;
 
-            if ($isMultiDropEnabled) {
+            if ($isMultiDropEnabled && $isEditEnabled) {
                 $form->add('addTask', ButtonType::class, [
                     'label' => 'basics.add',
                     'attr' => [
@@ -120,9 +128,25 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
+            if ($options['with_price_preview']) {
+                $form->add('pricePreview', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ]);
+            }
+
             // Allow admins to define an arbitrary price
-            if (true === $options['with_arbitrary_price'] &&
+            if (true === $options['with_arbitrary_price'] && $isStoreDeliveryOrder &&
                 $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+
+                // If the current price was calculated using pricing rules, display it as a hint
+                if (null !== $options['pricing_rules_based_price']) {
+                    $form->add('pricingRulesBasedPrice', HiddenType::class, [
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $options['pricing_rules_based_price']->getValue(),
+                    ]);
+                }
 
                 $arbitraryPrice = $options['arbitrary_price'];
 
@@ -147,9 +171,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            $isDeliveryOrder = null !== $store && $store->getCreateOrders();
-            
-            if ($options['with_bookmark'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($options['with_bookmark'] && $isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('bookmark', CheckboxType::class, [
                     'label' => 'form.delivery.bookmark.label',
                     'mapped' => false,
@@ -158,7 +180,7 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
-            if ($options['with_recurrence'] && $isDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            if ($options['with_recurrence'] && $isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
                 $form->add('recurrence', HiddenType::class, [
                     'required' => false,
                     'mapped' => false,
@@ -225,8 +247,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slot']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slot']) {
             return $options['with_time_slot'];
         }
 
@@ -251,8 +276,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slots']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slots']) {
             return $options['with_time_slots'];
         }
 
@@ -286,19 +314,24 @@ class DeliveryType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
+            'redirect_to_enabled' => true,
             'with_vehicle' => false,
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_doorstep' => false,
+            'use_time_slots' => true,
             'with_time_slot' => null,
             'with_time_slots' => null,
             'with_package_set' => null,
             'with_remember_address' => false,
             'with_address_props' => false,
+            'with_price_preview' => false,
+            'pricing_rules_based_price' => null,
             'with_arbitrary_price' => false,
             'arbitrary_price' => null,
             'with_bookmark' => false,
             'with_recurrence' => false,
+            'asap_timing' => false, // When true, the tasks after/before dates are automatically updated (only relevant when placing a new order)
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

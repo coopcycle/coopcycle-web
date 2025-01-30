@@ -25,6 +25,7 @@ export default ({initialValues, onSubmit, vehicles, closeModal}) => {
   initialValues = {
     ...initialValues,
     maxWeight: initialValues.maxWeight ? initialValues.maxWeight / 1000 : null,
+    compatibleVehicles: initialValues.compatibleVehicles ? initialValues.compatibleVehicles : [],
   }
 
   const validate = (values) => {

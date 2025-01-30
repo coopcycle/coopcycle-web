@@ -17,6 +17,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $locale: "%env(COOPCYCLE_LOCALE)%"
 
   AppBundle\Action\:
     resource: '../../src/Action/*'
@@ -37,6 +39,13 @@ services:
   AppBundle\Controller\:
     resource: '../../src/Controller'
     tags: ['controller.service_arguments']
+
+  AppBundle\Api\DataTransformer\:
+    resource: '../../src/Api/DataTransformer/*'
+
+  AppBundle\Api\Filter\:
+    resource: '../../src/Api/Filter/*'
+    tags: ['api_platform.filter']
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
@@ -148,6 +157,9 @@ services:
   AppBundle\LoopEat\Context: ~
 
   AppBundle\LoopEat\ContextInitializer:
+    arguments:
+      $processingFee: "%env(int:LOOPEAT_PROCESSING_FEE)%"
+      $processingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -418,7 +430,6 @@ services:
     arguments:
       - "@coopcycle.sylius.factory.product_variant.inner"
       - "@sylius.repository.product"
-      - "@sylius.repository.product_variant"
       - "@sylius.repository.tax_category"
       - "@coopcycle.settings_manager"
       - "@translator"
@@ -565,6 +576,10 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
+  AppBundle\Integration\Standtrack\StandtrackTaskListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
   AppBundle\EventListener\Edifact\TaskChangedNotifier:
     tags:
       -
@@ -626,6 +641,8 @@ services:
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
+  AppBundle\Entity\TaskListRepository: ~
+
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
 
   AppBundle\Service\Routing\Osrm: ~
@@ -633,21 +650,6 @@ services:
   routing_service:
     public: true
     class: AppBundle\Service\Routing\OsrmWithFallback
-
-  AppBundle\Filter\OrderDateFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\DateFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\UserRoleFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\TaskFilter:
-    tags: [ 'api_platform.filter' ]
-
-  AppBundle\Api\Filter\AssignedFilter:
-    tags: [ 'api_platform.filter' ]
 
   AppBundle\Api\Filter\DeliveryOrderFilter:
     autowire: false
@@ -678,6 +680,7 @@ services:
       $foodtechEnabled: "%foodtech_enabled%"
       $b2bEnabled: "%b2b_enabled%"
       $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $projectDir: "%kernel.project_dir%"
 
   AppBundle\Service\EmailManager:
     arguments:
@@ -819,6 +822,13 @@ services:
     public: true
     arguments:
       $edifactFs: '@edi_messages_filesystem'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+
+
+  AppBundle\Command\StandtrackIUBRangeSetupCommand:
+    public: true
+    arguments:
+      $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Action\Register:
     public: true
@@ -865,6 +875,7 @@ services:
     public: true
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+      $edenredEnabled: '%env(bool:EDENRED_ENABLED)%'
 
   AppBundle\Action\Order\Centrifugo:
     public: true
@@ -875,6 +886,8 @@ services:
     public: true
     arguments:
       $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Action\GoogleSignIn:
     public: true
@@ -892,6 +905,14 @@ services:
     arguments:
       $country: "%country_iso%"
       $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Incident\LoopeatFailureReasonsResolver: ~
+
+  AppBundle\Action\Task\FailureReasons:
+    public: true
+    arguments:
+      $failureReasonsResolvers:
+        - '@AppBundle\Incident\LoopeatFailureReasonsResolver'
 
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
@@ -935,6 +956,18 @@ services:
   AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
     tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
     autoconfigure: false
+
+  AppBundle\Api\DataProvider\InvoiceLineItemGroupedByOrganizationCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Api\DataProvider\InvoiceLineItemCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
 
   AppBundle\Utils\RestaurantFilter:
     arguments:
@@ -990,16 +1023,6 @@ services:
   AppBundle\Security\OrderAccessTokenManager: ~
 
   AppBundle\Mjml\MjmlServerRenderer: ~
-
-  AppBundle\Api\DataTransformer\DeliveryInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\PricingRuleEvaluateInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\RestaurantInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\RemotePushTokenInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\UrbantzWebhookInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\TourInputDataTransformer: ~
-  AppBundle\Api\DataTransformer\UpdateLoopeatFormatsDataTransformer: ~
-  AppBundle\Api\DataTransformer\UpdateLoopeatReturnsDataTransformer: ~
 
   AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
     arguments:
@@ -1164,6 +1187,7 @@ services:
   AppBundle\Payment\Gateway\Stripe: ~
   AppBundle\Payment\Gateway\Edenred: ~
   AppBundle\Payment\Gateway\MercadoPago: ~
+  AppBundle\Payment\Gateway\Paygreen: ~
 
   AppBundle\Payment\Gateway:
     arguments:
@@ -1171,6 +1195,7 @@ services:
         stripe: '@AppBundle\Payment\Gateway\Stripe'
         edenred: '@AppBundle\Payment\Gateway\Edenred'
         mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
+        paygreen: '@AppBundle\Payment\Gateway\Paygreen'
 
   AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
@@ -1202,6 +1227,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\StoreVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\AddressVoter:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\UserVoter:
@@ -1280,7 +1308,16 @@ services:
 
   AppBundle\Spreadsheet\DeliveryDataExporter: ~
   AppBundle\Spreadsheet\DV4CULDataExporter: ~
-  AppBundle\Spreadsheet\ColisActivDataExporter: ~
+
+  colisactiv:
+    class: AppBundle\Spreadsheet\ColisActivDataExporter
+    arguments:
+      $includeAllTasks: false
+
+  colisactiv_all:
+    class: AppBundle\Spreadsheet\ColisActivDataExporter
+    arguments:
+      $includeAllTasks: true
 
   AppBundle\Edenred\Authentication:
     arguments:
@@ -1480,6 +1517,7 @@ services:
 
   Paygreen\Sdk\Payment\V3\Environment:
     factory: '@AppBundle\Paygreen\EnvironmentFactory'
+    lazy: true
 
   Paygreen\Sdk\Payment\V3\Client:
     arguments:
@@ -1487,3 +1525,30 @@ services:
       - '@Paygreen\Sdk\Payment\V3\Environment'
 
   AppBundle\Sylius\Payment\Context: ~
+
+  AppBundle\Entity\Delivery\FailureReasonRegistry: ~
+
+  Picqer\Barcode\BarcodeGeneratorSVG: ~
+
+  AppBundle\Utils\Barcode\BarcodeUtils: ~
+
+  AppBundle\EventSubscriber\BarcodeUtilsSubscriber:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+      $salt: '%env(APP_SECRET)%'
+    tags:
+      - { name: kernel.event_subscriber }
+
+  AppBundle\Service\PaygreenManager:
+    arguments:
+      $country: '%country_iso%'
+
+  AppBundle\Serializer\CustomSerializationContextBuiler:
+    decorates: api_platform.serializer.context_builder
+    arguments:
+      $decorated: '@AppBundle\Serializer\CustomSerializationContextBuiler.inner'
+
+  AppBundle\Integration\Standtrack\StandtrackClient:
+    arguments:
+      $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
+

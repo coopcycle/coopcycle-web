@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 
 /**
@@ -37,8 +38,9 @@ class AddressBookType extends AbstractType
     public function __construct(
         IriConverterInterface $iriConverter,
         SerializerInterface $serializer,
-        PhoneNumberUtil $phoneNumberUtil,
-        string $country)
+        private PhoneNumberUtil $phoneNumberUtil,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private string $country)
     {
         $this->iriConverter = $iriConverter;
         $this->serializer = $serializer;
@@ -107,11 +109,11 @@ class AddressBookType extends AbstractType
                     'mapped' => false,
                 ])
                 ->add('telephone', TextType::class, [
-                    'required' => true,
+                    'required' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
                     'mapped' => false,
                 ])
                 ->add('contactName', TextType::class, [
-                    'required' => true,
+                    'required' => $this->authorizationChecker->isGranted('ROLE_DISPATCHER') ? false : true,
                     'mapped' => false,
                 ]);
         }
@@ -131,24 +133,29 @@ class AddressBookType extends AbstractType
 
             if (null !== $address) {
 
-                $addresses = $options['with_addresses'];
-                if (!is_array($addresses)) {
-                    if (is_callable([ $addresses, 'toArray' ])) {
-                        $addresses = $addresses->toArray();
+                $addressBook = $options['with_addresses'];
+                if (!is_array($addressBook)) {
+                    if (is_callable([ $addressBook, 'toArray' ])) {
+                        $addressBook = $addressBook->toArray();
                     }
                 }
 
                 // If the address is not part of the address book, add it
                 // FIXME It's not 100% satisfying, because the address does not belong to the address book
-                if (!in_array($address, $addresses, true)) {
+                if (!in_array($address, $addressBook, true)) {
                     $config = $form->get('existingAddress')->getConfig();
                     $options = $config->getOptions();
-                    $options['choices'] = array_merge($addresses, [ $address ]);
+                    $options['choices'] = array_merge($addressBook, [ $address ]);
 
                     $form->add('existingAddress', get_class($config->getType()->getInnerType()), $options);
                 }
 
-                $form->get('existingAddress')->setData($address);
+                if (null !== $address->getId()) {
+                    $form->get('existingAddress')->setData($address);
+                } else {
+                    $form->get('newAddress')->setData($address);
+                    $form->get('isNewAddress')->setData(true);
+                }
             } else {
                 $form->get('isNewAddress')->setData(true);
             }

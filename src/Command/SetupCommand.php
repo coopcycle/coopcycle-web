@@ -64,6 +64,7 @@ class SetupCommand extends Command
         'HUF',
         'COP',
         'GHS',
+        'CHF',
     ];
 
     private array $locales;
@@ -239,6 +240,21 @@ class SetupCommand extends Command
                 'code' => 'CASH_ON_DELIVERY',
                 'name' => 'Cash on delivery',
                 'countries' => ['mx','ar'],
+            ],
+            [
+                'code' => 'RESTOFLASH',
+                'name' => 'Restoflash',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'CONECS',
+                'name' => 'Conecs',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'SWILE',
+                'name' => 'Swile',
+                'countries' => ['fr'],
             ],
         ];
 

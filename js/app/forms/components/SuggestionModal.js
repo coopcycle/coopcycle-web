@@ -41,13 +41,13 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
           </Timeline>
         </div>
       </div>
-      <div>
+      <div className="text-center">
         <div className="mb-2">{ t('DELIVERY_OPTIMIZATION_SUGGESTION_CONFIRM') }</div>
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex align-items-center justify-content-center">
           <button className="btn btn-default" type="button" onClick={ onClickNo }>
             { t('DELIVERY_OPTIMIZATION_SUGGESTION_NO') }
           </button>
-          <button className="btn btn-primary mr-1" type="button" onClick={ () => onClickYes(suggestions) }>
+          <button className="btn btn-primary ml-4" type="button" onClick={ () => onClickYes(suggestions) }>
             { t('DELIVERY_OPTIMIZATION_SUGGESTION_YES') }
           </button>
         </div>

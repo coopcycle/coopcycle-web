@@ -122,7 +122,8 @@ Feature: Stores
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
-          "name":null
+          "name":null,
+          "description": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -161,7 +162,8 @@ Feature: Stores
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
-          "name":null
+          "name":null,
+          "description": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -320,9 +322,11 @@ Feature: Stores
             "@id":"/api/deliveries/2",
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
+            "tasks":@array@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
+              "type": "PICKUP",
               "id":@integer@,
               "status":@string@,
               "address":@...@,
@@ -335,6 +339,7 @@ Feature: Stores
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
+              "type": "DROPOFF",
               "id":@integer@,
               "status":@string@,
               "address":@...@,
@@ -344,6 +349,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           },
           {
@@ -355,6 +361,7 @@ Feature: Stores
               "@type":"Task",
               "id":@integer@,
               "status":@string@,
+              "type": "PICKUP",
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
@@ -367,6 +374,7 @@ Feature: Stores
               "@type":"Task",
               "id":@integer@,
               "status":@string@,
+              "type": "DROPOFF",
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
@@ -374,6 +382,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],
@@ -413,6 +422,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"PICKUP",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -425,6 +435,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"DROPOFF",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -433,6 +444,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           },
           {
@@ -443,6 +455,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"PICKUP",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -455,6 +468,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"DROPOFF",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -463,6 +477,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],
@@ -498,6 +513,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"PICKUP",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -510,6 +526,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"DROPOFF",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -518,6 +535,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T20:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           },
           {
@@ -528,6 +546,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"PICKUP",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -540,6 +559,7 @@ Feature: Stores
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
               "id":@integer@,
+              "type":"DROPOFF",
               "status":@string@,
               "address":@...@,
               "doneAfter":"@string@.isDateTime()",
@@ -548,6 +568,7 @@ Feature: Stores
               "doneBefore":"2019-11-12T19:30:00+01:00",
               "comments": ""
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],
@@ -590,7 +611,8 @@ Feature: Stores
             },
             "streetAddress":"18 Rue des Batignolles",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           }
         ],
         "hydra:totalItems":1,
@@ -598,6 +620,63 @@ Feature: Stores
           "@id":"/api/stores/2/addresses?type=dropoff",
           "@type":"hydra:PartialCollectionView"
         }
+      }
+      """
+
+  Scenario: Add an adress to store saved addresses as admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | deliveries.yml      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/stores/2/addresses" with body:
+    """
+      {
+        "contactName":null,
+        "geo":{
+          "latitude":48.8317573,
+          "longitude":2.326347
+        },
+        "streetAddress":"10 rue Mouton Duvernet, Paris",
+        "telephone":null,
+        "name":null,
+        "description": null
+      }
+    """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Address",
+        "@id":"/api/stores/2/addresses",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          { "@*@": "@*@"},
+          {
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "contactName":null,
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":48.8317573,
+              "longitude":2.326347
+            },
+            "streetAddress":"10 rue Mouton Duvernet, Paris",
+            "telephone":null,
+            "name":null,
+            "description": null
+          }
+        ],
+        "hydra:totalItems":2
       }
       """
 

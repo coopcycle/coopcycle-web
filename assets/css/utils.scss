@@ -73,7 +73,11 @@
   font-weight: 600 !important;
 }
 
-.cursor--grabbing {
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-grabbing {
   cursor: grabbing;
 }
 
@@ -81,4 +85,10 @@
 li > a.text-danger // very specific selector for bootstrap dropdown
 {
   color: $red;
+}
+
+.no-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }

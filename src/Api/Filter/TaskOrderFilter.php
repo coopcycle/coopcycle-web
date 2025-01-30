@@ -28,6 +28,7 @@ final class TaskOrderFilter extends AbstractContextAwareFilter
             ->addSelect(sprintf('CASE WHEN o.type = :%s THEN 1 ELSE 0 END AS HIDDEN %s', $parameterName,$fieldName))
             ->orderBy('o.doneBefore', 'ASC')
             ->addOrderBy($fieldName, 'ASC')
+            ->addOrderBy('o.id', 'ASC')
             ->setParameter($parameterName, Task::TYPE_DROPOFF);
     }
 

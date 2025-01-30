@@ -104,6 +104,8 @@ class RecurrenceRule
      */
     private $store;
 
+    private bool $generateOrders = false;
+
     /**
      * @return int
      */
@@ -219,4 +221,15 @@ class RecurrenceRule
     {
         return $this->isDeleted();
     }
+
+    public function isGenerateOrders(): bool
+    {
+        return $this->generateOrders;
+    }
+
+    public function setGenerateOrders(bool $generateOrders): void
+    {
+        $this->generateOrders = $generateOrders;
+    }
+
 }

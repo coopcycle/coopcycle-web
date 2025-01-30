@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\Package" table="package">
+  <entity repository-class="AppBundle\Entity\PackageRepository" name="AppBundle\Entity\Package" table="package">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
@@ -28,5 +28,8 @@
     </field>
     <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
     <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
+    <unique-constraints>
+      <unique-constraint name="package_name_uniq_per_package_set" columns="name,package_set_id"/>
+    </unique-constraints>
   </entity>
 </doctrine-mapping>

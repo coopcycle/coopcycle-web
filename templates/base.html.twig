@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="{{ app.request.locale }}">
   <head>
+    {# SEO attributes are configured via SeoListener service #}
+    {% block prepare_title %}
+      {# Use this block to customise base page title set by SeoListener service #}
+    {% endblock %}
     {{ sonata_seo_title() }}
     {{ sonata_seo_link_canonical() }}
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -85,16 +89,8 @@
       {% include "footer.html.twig" %}
       {% endif %}
     {% endblock %}
-    {% if app.environment == "prod" %}
-      <script
-        src="https://browser.sentry-cdn.com/6.2.4/bundle.min.js"
-        integrity="sha384-b3mYy/x0ZxlqU5OjYvVD7RczftJVOXmpHSmrcqpL4c+kBSXWEnRL2Puv9eMjYmDq"
-        crossorigin="anonymous"
-      ></script>
-      <script>
-        Sentry.init({ dsn: '{{ sentry_public_dsn }}' });
-      </script>
-    {% endif %}
+
+    {% include '_partials/monitoring.html.twig' %}
 
     <div id="cpccl_settings"
       data-latlng="{{ coopcycle_setting('latlng')|json_encode|e('html_attr') }}"></div>

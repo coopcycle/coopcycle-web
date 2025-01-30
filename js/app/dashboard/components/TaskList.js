@@ -16,7 +16,7 @@ import { selectExpandedTaskListPanelsIds, selectLastOptimResult, selectOptimLoad
 import Tour from './Tour'
 import { getDroppableListStyle } from '../utils'
 import ProgressBar from './ProgressBar'
-import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight, selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskListByUsername, selectTaskListTasksByUsername, selectTaskListVolumeUnits, selectTaskListWeight, selectTrailerById, selectVehicleById } from '../../../shared/src/logistics/redux/selectors'
 import PolylineIcon from './icons/PolylineIcon'
 import {default as VehicleIcon} from './icons/Vehicle'
 import {default as TrailerIcon} from './icons/Trailer'
@@ -29,14 +29,10 @@ import { formatDistance, formatDuration } from '../redux/utils'
 
 moment.locale($('html').attr('lang'))
 
-const showVehicleMenu = useContextMenu({
-  id: 'vehicle-selectmenu'
-}).show
-
-const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList }) => {
+const TaskOrTour = ({ item, draggableIndex, unassignTasksFromTaskList, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
 
   if (item.startsWith('/api/tours')) {
-    return (<Tour tourId={ item } draggableIndex={ draggableIndex } />)
+    return (<Tour tourId={ item } draggableIndex={ draggableIndex } vehicleMaxWeight={ vehicleMaxWeight } vehicleMaxVolumeUnits={ vehicleMaxVolumeUnits } />)
   } else {
     return (<Task taskId={ item } draggableIndex={ draggableIndex } onRemove={ item => unassignTasksFromTaskList(item) } />)
   }
@@ -62,6 +58,8 @@ class InnerList extends React.Component {
         item={ item }
         draggableIndex={ index }
         unassignTasksFromTaskList={ this.props.unassignTasksFromTaskList }
+        vehicleMaxWeight={this.props.vehicleMaxWeight}
+        vehicleMaxVolumeUnits={this.props.vehicleMaxVolumeUnits}
       />)
   }
 }
@@ -123,6 +121,10 @@ const ProgressBarMemo = React.memo(({
   })
 
 export const TaskList = ({ username, distance, duration, taskListsLoading }) => {
+  const { show: showVehicleMenu } = useContextMenu({
+    id: 'vehicle-selectmenu'
+  })
+
   const dispatch = useDispatch()
   const unassignTasksFromTaskList = (username => tasks => dispatch(unassignTasks(username, tasks)))(username)
 
@@ -132,9 +134,9 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
   const visibleTaskIds = useSelector(selectVisibleTaskIds)
 
   const selectTrailerMenuId = `trailer-selectmenu-${username}`
-  const showTrailerMenu = useContextMenu({
+  const { show: showTrailerMenu } = useContextMenu({
     id: selectTrailerMenuId
-  }).show
+  })
 
   const visibleTasks = tasks.filter(task => {
     return _.includes(visibleTaskIds, task['@id'])
@@ -155,6 +157,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
   const incidentReported = _.filter(visibleTasks, t => t.hasIncidents)
 
   const vehicle = useSelector(state => selectVehicleById(state, taskList.vehicle))
+  const trailer = useSelector(state => selectTrailerById(state, taskList.trailer))
   const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
   const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
 
@@ -199,8 +202,8 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
           distance={distance}
           weight={weight}
           volumeUnits={volumeUnits}
-          vehicleMaxWeight={vehicle?.maxWeight}
-          vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits}
+          vehicleMaxWeight={vehicle?.maxWeight + trailer?.maxWeight}
+          vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits + trailer?.maxVolumeUnits}
         />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
@@ -287,7 +290,10 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
               <InnerList
                 items={ items }
                 unassignTasksFromTaskList={ unassignTasksFromTaskList }
-                username={ username } />
+                username={ username }
+                vehicleMaxWeight={vehicle?.maxWeight + trailer?.maxWeight}
+                vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits + trailer?.maxVolumeUnits}
+              />
               { provided.placeholder }
             </div>
           )}
@@ -298,9 +304,5 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
     </div>
   )
 }
-
-
-
-
 
 export default TaskList

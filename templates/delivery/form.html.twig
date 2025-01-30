@@ -15,10 +15,11 @@
 {% block content %}
 
   {% set is_new = delivery.id is null %}
+  {% set is_store_delivery_order = delivery.store is not empty %}
 
   {{ form_start(form, { attr: {
     'data-store': delivery.store is not empty ? delivery.store|get_iri_from_item : null,
-    'data-subscription': subscription is defined and subscription is not empty ? subscription|coopcycle_normalize('AppBundle\\Entity\\Task\\RecurrenceRule', ['task_recurrence_rule'], 'json')|json_encode : null,
+    'data-subscription': recurrenceRule is defined and recurrenceRule is not empty ? recurrenceRule|coopcycle_normalize('AppBundle\\Entity\\Task\\RecurrenceRule', ['task_recurrence_rule'], 'json')|json_encode : null,
     'data-user-admin': is_granted('ROLE_ADMIN')
   } }) }}
 
@@ -43,10 +44,17 @@
 
         {% if not is_new %}
         <div class="alert alert-info">
-          <a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>
+          <p><a href="{{ url('public_delivery', { hashid: delivery|hashid }) }}" target="_blank" id="tracking_link">{% trans %}delivery.tracking_link{% endtrans %} <i class="fa fa-external-link"></i></a>
           <a href="#" class="pull-right" id="copy" data-clipboard-target="#tracking_link"><i class="fa fa-clipboard" aria-hidden="true"></i></a>
+          </p>
+          <p>
+          <div {{ react_component('BarcodesModal', {
+              deliveryId : delivery.id
+          }) }}>
+          </div>
         </div>
         {% endif %}
+
         <div class="embed-responsive embed-responsive-16by9">
           <div class="embed-responsive-item" id="map"></div>
           <div class="map-distance-overlay">
@@ -58,6 +66,59 @@
             </span>
           </div>
         </div>
+
+        {% if form.pricePreview is defined %}
+        <hr>
+        <div id="delivery-price" class="mb-4 mb-md-0">
+
+          <div class="delivery-price">
+            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+            <span class="delivery-price-value" id="delivery_price">
+            <span>
+              <span data-tax="included">{{ 0|price_format }}</span>
+              <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
+            </span>
+            <span class="text-muted">
+              <span data-tax="excluded">{{ 0|price_format }}</span>
+              <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
+            </span>
+          </span>
+          </div>
+
+          <div class="text-center text-danger">
+            <small id="delivery_price_error" class="delivery-price-error"></small>
+          </div>
+
+          {% if debug_pricing is defined and debug_pricing %}
+            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
+            <ul class="list-group" id="pricing-rules-debug">
+              {% for pricing_rule in pricing_rules %}
+                <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
+                  <span>{{ pricing_rule.expression }}</span>
+                  <span class="pull-right">
+                <i class="fa fa-spinner fa-spin hidden"></i>
+              </span>
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+        </div>
+        {% endif %}
+
+        {% if form.pricingRulesBasedPrice is defined %}
+        <hr>
+        <div class="delivery-price">
+          <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
+          <span class="delivery-price-value">
+          <span>
+            <span data-tax="included">{{ form.pricingRulesBasedPrice.vars.data|price_format }}</span>
+            <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
+          </span>
+          </span>
+        </div>
+        {% endif %}
+
         {% if form.arbitraryPrice is defined %}
           <hr>
           {{ form_row(form.arbitraryPrice) }}
@@ -86,50 +147,15 @@
 
   <div class="d-md-flex d-lg-flex d-xl-flex flex-row mb-4">
     <div class="col-md-7">
-      {% if delivery.id is empty and delivery.store is not empty and delivery.store.createOrders %}
-        <div id="delivery-price" class="mb-4 mb-md-0">
-
-          <div class="delivery-price">
-            <span class="delivery-price-label">{% trans %}form.delivery.price.label{% endtrans %}</span>
-            <span class="delivery-price-value" id="delivery_price">
-              <span>
-                <span data-tax="included">{{ 0|price_format }}</span>
-                <span class="ml-2">{{ 'basics.tax_incl'|trans }}</span>
-              </span>
-              <span class="text-muted">
-                <span data-tax="excluded">{{ 0|price_format }}</span>
-                <span class="ml-2">{{ 'basics.tax_excl'|trans }}</span>
-              </span>
-            </span>
-          </div>
-
-          <div class="text-center text-danger">
-            <small id="delivery_price_error" class="delivery-price-error"></small>
-          </div>
-
-          {% if debug_pricing is defined and debug_pricing %}
-            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
-            <ul class="list-group" id="pricing-rules-debug">
-            {% for pricing_rule in pricing_rules %}
-              <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
-                <span>{{ pricing_rule.expression }}</span>
-                <span class="pull-right">
-                  <i class="fa fa-spinner fa-spin hidden"></i>
-                </span>
-              </li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-
-        </div>
-      {% endif %}
     </div>
     <div class="col-md-5 delivery__form__buttons">
-      <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
-        <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
-        {% trans %}basics.save{% endtrans %}
-      </button>
-      {% if is_granted('ROLE_ADMIN') and not is_new and delivery.store is not empty and delivery.order is not empty %}
+      {% if is_new or (is_store_delivery_order and is_granted('ROLE_DISPATCHER'))  %}
+        <button id="delivery-submit" type="submit" class="btn btn-block btn-lg btn-primary">
+          <i class="fa fa-spinner fa-spin hidden" id="loader"></i>
+          {% trans %}basics.save{% endtrans %}
+        </button>
+      {% endif %}
+      {% if is_granted('ROLE_DISPATCHER') and not is_new and is_store_delivery_order and delivery.order is not empty %}
         <a href="{{ path('admin_store_delivery_new',
           { id: delivery.store.id, frmrdr: delivery.order|hashid(16) }
         ) }}" class="btn btn-block btn-lg btn-secondary">

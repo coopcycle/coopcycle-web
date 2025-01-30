@@ -76,7 +76,8 @@ Feature: Manage restaurants
             },
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "state":"normal",
           "openingHoursSpecification":[
@@ -161,7 +162,8 @@ Feature: Manage restaurants
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "telephone":"+33612345678",
       "image":@string@,
@@ -242,7 +244,8 @@ Feature: Manage restaurants
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "telephone":"+33612345678",
       "image":@string@,
@@ -928,6 +931,7 @@ Feature: Manage restaurants
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"PICKUP",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -949,13 +953,16 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
               "packages": [],
-              "createdAt":"@string@.isDateTime()"
+              "barcode": @array@,
+              "createdAt":"@string@.isDateTime()",
+              "tags": []
             },
             "dropoff":{
               "@id":@string@,
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"DROPOFF",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -977,8 +984,11 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
               "packages": [],
-              "createdAt":"@string@.isDateTime()"
+              "barcode": @array@,
+              "createdAt":"@string@.isDateTime()",
+              "tags": []
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],

@@ -7,9 +7,18 @@ use AppBundle\Entity\Model\TaggableTrait;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
+/**
+ * @ApiResource(
+ *   attributes={
+ *     "normalization_context"={"groups"={"package"}}
+ *   },
+ * )
+ */
 class Package implements TaggableInterface
 {
     use Timestampable;
@@ -19,10 +28,20 @@ class Package implements TaggableInterface
     protected $id;
 
     /**
-     * @Assert\NotBlank
-     * @Groups({"store_with_packages", "store_packages"})
+     * @Groups({"store_with_packages", "package", "store_packages"})
      */
     protected $name;
+
+
+    /**
+     * @Groups({"package"})
+     */
+    protected $volumeUnits;
+
+
+    /**
+     * @Groups({"package"})
+     */
     protected $packageSet;
     protected $slug;
 
@@ -65,6 +84,10 @@ class Package implements TaggableInterface
     public function getName()
     {
         return $this->name;
+    }
+
+    public static function getPackageName(Package $package) {
+        return $package->getName();
     }
 
     /**

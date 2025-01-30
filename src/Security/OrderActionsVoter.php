@@ -42,14 +42,10 @@ class OrderActionsVoter extends Voter
         self::VIEW_PUBLIC,
     ];
 
-    private $authorizationChecker;
-
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
-        TokenStoreExtractor $tokenExtractor)
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly TokenStoreExtractor $tokenExtractor)
     {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenExtractor = $tokenExtractor;
     }
 
     protected function supports($attribute, $subject)

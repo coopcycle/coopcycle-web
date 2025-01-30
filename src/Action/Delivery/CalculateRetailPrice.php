@@ -18,25 +18,18 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class CalculateRetailPrice implements TaxableInterface
 {
-	public function __construct(
-        DeliveryManager $deliveryManager,
-        CurrencyContextInterface $currencyContext,
-        SettingsManager $settingsManager,
-        TokenStoreExtractor $storeExtractor,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        TaxRateResolverInterface $taxRateResolver,
-        CalculatorInterface $calculator,
-        string $state)
-    {
-        $this->deliveryManager = $deliveryManager;
-        $this->currencyContext = $currencyContext;
-        $this->settingsManager = $settingsManager;
-        $this->storeExtractor = $storeExtractor;
+    private ?TaxCategoryInterface $taxCategory = null;
 
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->calculator = $calculator;
-        $this->state = $state;
+	public function __construct(
+        private readonly DeliveryManager $deliveryManager,
+        private readonly CurrencyContextInterface $currencyContext,
+        private readonly SettingsManager $settingsManager,
+        private readonly TokenStoreExtractor $storeExtractor,
+        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private readonly TaxRateResolverInterface $taxRateResolver,
+        private readonly CalculatorInterface $calculator,
+        private readonly string $state)
+    {
     }
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void

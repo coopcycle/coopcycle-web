@@ -77,6 +77,12 @@ class CheckoutHandler
                     if (isset($data['mercadopagoInstallments'])) {
                         $payment->setMercadopagoInstallments($data['mercadopagoInstallments']);
                     }
+                    if (isset($data['mercadopagoIssuer'])) {
+                        $payment->setMercadopagoIssuer($data['mercadopagoIssuer']);
+                    }
+                    if (isset($data['mercadopagoPayerEmail'])) {
+                        $payment->setMercadopagoPayerEmail($data['mercadopagoPayerEmail']);
+                    }
                 }
             }
 

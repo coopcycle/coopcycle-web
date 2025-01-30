@@ -22,6 +22,7 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\User;
 use AppBundle\Entity\Zone;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
@@ -553,7 +554,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theTaskWithCommentsMatchingAreAssignedTo($comments, $username)
     {
-        $user = $this->userManager->findUserByUsername($username);
+        $user = $this->doctrine->getRepository(User::class)->findOneBy(["username" => $username]);
+
         $qb = $this->doctrine
             ->getRepository(Task::class)
             ->createQueryBuilder('t')
@@ -1242,7 +1244,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theStoreWithNameHasOrderCreationEnabled($storeName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
-        $store->setCreateOrders(true);
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
@@ -1282,6 +1283,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
 
         $store->setFailureReasonSet($failureReasonSet);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given the store with name :storeName has a default courier with username :username
+     */
+    public function theStoreWithNameHasADefaultCourierWithUsername($storeName, $username)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+        $user = $this->userManager->findUserByUsername($username);
+
+        $store->setDefaultCourier($user);
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }

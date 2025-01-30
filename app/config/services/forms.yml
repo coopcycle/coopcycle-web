@@ -64,11 +64,11 @@ services:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
-  AppBundle\Form\Order\OneOffOrderType:
+  AppBundle\Form\Order\ExistingOrderType:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
-  AppBundle\Form\Order\SubscriptionType:
+  AppBundle\Form\Order\ExistingRecurrenceRuleType:
     parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
@@ -99,6 +99,7 @@ services:
       $isDemo: '%is_demo%'
       $googleEnabled: '%env(bool:GOOGLE_ENABLED)%'
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+      $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
@@ -119,6 +120,7 @@ services:
       $country: '%country_iso%'
       $transportersConfig: '%transporters_config%'
       $billingEnabled: '%billing_enabled%'
+      $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:
@@ -162,6 +164,10 @@ services:
     class: AppBundle\Form\Extension\PromotionCouponTypeExtension
     tags:
       - { name: form.type_extension, extended_type: Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType }
+
+  AppBundle\Form\Extension\RedirectToRefererType:
+    tags:
+      - { name: 'form.type_extension', extended_type: Symfony\Component\Form\Extension\Core\Type\FormType }
 
   sylius.form.type.promotion_rule.premium_customer_configuration:
     class: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
@@ -276,7 +282,8 @@ services:
       $exporters:
         default: '@AppBundle\Spreadsheet\DeliveryDataExporter'
         dv4cul: '@AppBundle\Spreadsheet\DV4CULDataExporter'
-        colisactiv: '@AppBundle\Spreadsheet\ColisActivDataExporter'
+        colisactiv: '@colisactiv'
+        colisactiv_all: '@colisactiv_all'
     tags: [ form.type ]
 
   AppBundle\Form\Order\AdhocOrderType:

@@ -123,6 +123,11 @@
         <option name="default">unit</option>
       </options>
     </field>
+    <field name="paymentGateway" type="string" column="payment_gateway" nullable="false">
+      <options>
+        <option name="default">stripe</option>
+      </options>
+    </field>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>

@@ -10,11 +10,9 @@ use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 class PushNotificationHandler implements MessageHandlerInterface
 {
     public function __construct(
-        RemotePushNotificationManager $remotePushNotificationManager,
-        UserManagerInterface $userManager)
+        private readonly RemotePushNotificationManager $remotePushNotificationManager,
+        private readonly UserManagerInterface $userManager)
     {
-        $this->remotePushNotificationManager = $remotePushNotificationManager;
-        $this->userManager = $userManager;
     }
 
     public function __invoke(PushNotification $message)

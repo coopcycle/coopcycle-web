@@ -4,14 +4,13 @@ namespace AppBundle\Action\Task;
 
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\User;
+use AppBundle\Utils\Barcode\BarcodeUtils;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 trait AssignTrait
 {
-    protected $userManager;
-
-    protected function assign(Task $task, $payload)
+    protected function assign(Task $task, $payload, ?Request $request = null)
     {
         $user = $this->getUser();
         if (isset($payload['username'])) {
@@ -25,7 +24,11 @@ trait AssignTrait
             }
         }
 
-        if (!$this->getUser()->hasRole('ROLE_ADMIN') && $task->isAssigned()) {
+
+        if (
+            $task->isAssigned() &&
+            !($this->authorization->isGranted('ROLE_DISPATCHER') || $this->isTokenActionValid($task, $request))
+        ) {
 
             throw new BadRequestHttpException(sprintf('Task #%d is already assigned to "%s"',
                 $task->getId(), $task->getAssignedCourier()->getUsername()));
@@ -36,8 +39,21 @@ trait AssignTrait
             return $task; // Do nothing
         }
 
-        $task->assignTo($user);
+        if (!is_null($task->getDelivery())) {
+            $task->getDelivery()->assignTo($user);
+        } else {
+            $task->assignTo($user);
+        }
 
         return $task;
+    }
+
+    private function isTokenActionValid(Task $task, ?Request $request): bool
+    {
+        if (is_null($request)) {
+            return false;
+        }
+        return $request->headers->get('X-Token-Action') ===
+            hash('xxh3', BarcodeUtils::getToken(sprintf("/api/tasks/%d", $task->getId())));
     }
 }

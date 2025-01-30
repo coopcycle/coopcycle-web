@@ -454,3 +454,10 @@ dashboard_restaurant_image_from_url:
             restaurants: dashboard_restaurants
             restaurant: dashboard_restaurant
     methods: [ POST ]
+
+profile_loopeat:
+    path:     /profile/loopeat
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::zeroWasteTransactionsAction
+        layout: 'profile.html.twig'
+    methods:  [ GET ]

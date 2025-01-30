@@ -83,7 +83,7 @@ monolog:
         timing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
-            level: debug
+            level: info
             max_files: 7
             channels: [timing]
         checkout:
@@ -150,13 +150,25 @@ monolog:
         # include all info or higher messages from all channels except the channels excluded in channels
         upload_info:
             type: filter
-            channels: [ "!php", "!cache", "!security", "!request" ]
+            channels: [
+              "!php",
+              "!cache",
+              "!security",
+              "!messenger",
+              "!request"
+            ]
             min_level: info
             handler: logs_to_upload
         # still upload warning and higher messages from the excluded channels
         upload_warning:
             type: filter
-            channels: [ php, cache, security, request ]
+            channels: [
+              php,
+              cache,
+              security,
+              messenger,
+              request
+            ]
             min_level: warning
             handler: logs_to_upload
 

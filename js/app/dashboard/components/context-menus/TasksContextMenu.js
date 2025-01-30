@@ -57,10 +57,6 @@ export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 
-const { hideAll } = useContextMenu({
-  id: 'task-contextmenu',
-})
-
 const useAssignAction = function() {
   const dispatch = useDispatch()
   const date = useSelector(selectSelectedDate)
@@ -210,6 +206,10 @@ const DynamicMenu = () => {
   const assignSelectedTasks = (username) => assign(username, selectedTasks)
 
   const actions = getAvailableActionsForTasks(selectedTasks, unassignedTasks, linkedTasksIds, selectedTasksBelongsToTour)
+
+  const { hideAll } = useContextMenu({
+    id: 'task-contextmenu',
+  })
 
   const dispatch = useDispatch()
 

@@ -8,7 +8,7 @@ export const apiSlice = createApi({
   // The "endpoints" represent operations and requests for this server
   // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
-    subscriptionGenerateOrders: builder.mutation({
+    recurrenceRulesGenerateOrders: builder.mutation({
       query: date => ({
         url: 'api/recurrence_rules/generate_orders',
         params: {
@@ -17,6 +17,30 @@ export const apiSlice = createApi({
         method: 'POST',
         body: {},
       }),
+    }),
+    getInvoiceLineItemsGroupedByOrganization: builder.query({
+      query: args => {
+        return {
+          url: `api/invoice_line_items/grouped_by_organization?${args.params.join(
+            '&',
+          )}`,
+          params: {
+            page: args.page,
+            itemsPerPage: args.pageSize,
+          },
+        }
+      },
+    }),
+    getInvoiceLineItems: builder.query({
+      query: args => {
+        return {
+          url: `api/invoice_line_items?${args.params.join('&')}`,
+          params: {
+            page: args.page,
+            itemsPerPage: args.pageSize,
+          },
+        }
+      },
     }),
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
@@ -36,7 +60,9 @@ export const apiSlice = createApi({
 
 // Export the auto-generated hook for the query endpoints
 export const {
-  useSubscriptionGenerateOrdersMutation,
+  useRecurrenceRulesGenerateOrdersMutation,
+  useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
+  useGetInvoiceLineItemsQuery,
   useGetOrderTimingQuery,
   useUpdateOrderMutation,
 } = apiSlice

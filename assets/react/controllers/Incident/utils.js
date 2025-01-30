@@ -1,15 +1,12 @@
+import {
+  money as _money,
+  weight as _weight,
+} from '../../../../js/app/utils/format'
+
 export function money(amount) {
-  const { coutry, currencyCode } = document.body.dataset;
-  return new Intl.NumberFormat(coutry, {
-    style: "currency",
-    currency: currencyCode,
-  }).format(amount / 100);
+  return _money(amount)
 }
 
 export function weight(amount) {
-  const { coutry } = document.body.dataset;
-  return new Intl.NumberFormat(coutry, {
-    style: "unit",
-    unit: "kilogram",
-  }).format(amount / 1000);
+  return _weight(amount)
 }

@@ -14,6 +14,8 @@ services:
     arguments:
       $eventRecorder: '@event_recorder'
       $taskStateMachine: '@state_machine.task'
+      $logger: '@logger'
+      $standtrackClient: '@AppBundle\Integration\Standtrack\StandtrackClient'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Start
@@ -23,6 +25,10 @@ services:
     arguments:
       - '@event_recorder'
       - '@translator'
+      - '@AppBundle\Entity\TaskListRepository'
+      - '@routing_service'
+      - '@logger'
+      - '@AppBundle\Integration\Standtrack\StandtrackClient'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\MarkAsDone
@@ -97,6 +103,15 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Incident
 
+  coopcycle.domain.task.handler.scan:
+    class: AppBundle\Domain\Task\Handler\ScanBarcodeHandler
+    arguments:
+      - '@doctrine.orm.default_entity_manager'
+      - '@event_recorder'
+      - '@logger'
+    tags:
+      - name: command_handler
+        handles: AppBundle\Domain\Task\Command\ScanBarcode
   #
   # Reactors
   #
@@ -191,3 +206,12 @@ services:
         subscribes_to: task:done
       - name: event_subscriber
         subscribes_to: task:failed
+
+  coopcycle.domain.task.reactor.notify_loopeat:
+    class: AppBundle\Domain\Task\Reactor\NotifyLoopeat
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+      - '@monolog.logger.loopeat'
+    tags:
+      - name: event_subscriber
+        subscribes_to: task:incident-reported

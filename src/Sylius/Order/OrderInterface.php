@@ -9,6 +9,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\OrderEvent;
+use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Vendor;
 use AppBundle\LoopEat\LoopeatAwareInterface;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
@@ -264,5 +265,13 @@ interface OrderInterface extends
      *
      * @return PaymentInterface|null
      */
-    public function getLastPaymentByMethod(string $method, ?string $state = null): ?PaymentInterface;
+    public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
+
+    public function isFoodtech(): bool;
+
+    public function getDeliveryItem(): ?OrderItemInterface;
+
+    public function getDeliveryPrice(): PriceInterface;
+
+    public function getExports(): Collection;
 }

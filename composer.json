@@ -100,7 +100,7 @@
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3.2.1",
-        "mercadopago/dx-php": "^2.4.1",
+        "mercadopago/dx-php": "^3.0.8",
         "egulias/email-validator": "^3.0",
         "twilio/sdk": "^6.10",
         "friendsofsymfony/rest-bundle": "^3.0",
@@ -149,7 +149,10 @@
         "league/flysystem-sftp-v3": "^3.0",
         "paygreen/paygreen-php": "*",
         "flow-php/parquet": "^0.9.2",
-        "flow-php/filesystem": "^0.9.2"
+        "flow-php/filesystem": "^0.9.2",
+        "picqer/php-barcode-generator": "^2.4",
+        "shipmonk/doctrine-entity-preloader": "^1.0",
+        "z4kn4fein/php-semver": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",

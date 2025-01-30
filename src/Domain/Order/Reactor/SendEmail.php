@@ -24,22 +24,14 @@ use Symfony\Component\Mime\Address;
 
 class SendEmail
 {
-    private $emailManager;
-    private $settingsManager;
-    private $eventBus;
 
     public function __construct(
-        EmailManager $emailManager,
-        SettingsManager $settingsManager,
-        MessageBus $eventBus,
-        MessageBusInterface $messageBus,
-        NotificationPreferences $notificationPreferences)
+        private readonly EmailManager $emailManager,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageBus $eventBus,
+        private readonly MessageBusInterface $messageBus,
+        private readonly NotificationPreferences $notificationPreferences)
     {
-        $this->emailManager = $emailManager;
-        $this->settingsManager = $settingsManager;
-        $this->eventBus = $eventBus;
-        $this->messageBus = $messageBus;
-        $this->notificationPreferences = $notificationPreferences;
     }
 
     public function __invoke(Event $event)

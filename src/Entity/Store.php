@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Store\AddAddress;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
@@ -13,6 +14,7 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -26,6 +28,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
 use AppBundle\Action\Store\Packages as Packages;
+
 
 /**
  * A retail good store.
@@ -73,7 +76,14 @@ use AppBundle\Action\Store\Packages as Packages;
  *       "controller"=Packages::class,
  *       "normalization_context"={"groups"={"store_packages"}},
  *       "security"="is_granted('edit', object)"
- *     }
+ *     },
+ *     "add_address"={
+ *       "method"="POST",
+ *       "path"="/stores/{id}/addresses",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=Address::class,
+ *       "controller"=AddAddress::class
+ *     },
  *   },
  *   subresourceOperations={
  *     "deliveries_get_subresource"={
@@ -161,8 +171,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $prefillPickupAddress = false;
 
-    private $createOrders = false;
-
     /**
      * @ApiSubresource
      */
@@ -204,6 +212,12 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     private $defaultCourier;
 
     protected string $billingMethod = 'unit';
+
+    /**
+     * The GLN of the store used for field M03004
+     * @var string|null
+     */
+    protected ?string $storeGLN = null;
 
     public function __construct() {
         $this->deliveries = new ArrayCollection();
@@ -392,20 +406,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setPrefillPickupAddress($prefillPickupAddress)
     {
         $this->prefillPickupAddress = $prefillPickupAddress;
-
-        return $this;
-    }
-
-    public function getCreateOrders()
-    {
-        return $this->createOrders;
-    }
-    /**
-     * @param mixed $createOrders
-     */
-    public function setCreateOrders($createOrders)
-    {
-        $this->createOrders = $createOrders;
 
         return $this;
     }
@@ -662,4 +662,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->billingMethod;
     }
+
+    public function setStoreGLN(?string $storeGLN): void
+    {
+        $this->storeGLN = $storeGLN;
+    }
+
+    public function getStoreGLN(): ?string
+    {
+        return $this->storeGLN;
+    }
+
 }

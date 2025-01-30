@@ -6,6 +6,7 @@ use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Edenred\Client as EdenredPayment;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Symfony\Component\Form\AbstractType;
@@ -24,6 +25,7 @@ class CheckoutPaymentType extends AbstractType
         private EdenredAuthentication $edenredAuthentication,
         private EdenredPayment $edenredPayment,
         private SettingsManager $settingsManager,
+        private PaygreenManager $paygreenManager,
         private bool $cashEnabled)
     { }
 
@@ -42,6 +44,12 @@ class CheckoutPaymentType extends AbstractType
                 ])
                 ->add('installments', HiddenType::class, [
                     'mapped' => false,
+                ])
+                ->add('issuer', HiddenType::class, [
+                    'mapped' => false,
+                ])
+                ->add('payerEmail', HiddenType::class, [
+                    'mapped' => false,
                 ]);
         }
 
@@ -54,11 +62,14 @@ class CheckoutPaymentType extends AbstractType
             $choices = [];
 
             if ($this->settingsManager->supportsCardPayments()) {
+                // Card payment is supposedly always supported if gateway is configured, even for Paygreen
                 $choices['Credit card'] = 'card';
             }
 
+            $hasValidEdenredCredentials = false;
             if ($order->supportsEdenred()) {
-                if ($order->getCustomer()->hasEdenredCredentials()) {
+                $hasValidEdenredCredentials = $this->edenredPayment->hasValidCredentials($order->getCustomer());
+                if ($hasValidEdenredCredentials) {
                     $edenredAmount = $this->edenredPayment->getMaxAmount($order);
                     if ($edenredAmount > 0) {
                         $choices['Edenred'] = 'edenred';
@@ -70,6 +81,19 @@ class CheckoutPaymentType extends AbstractType
                 }
             }
 
+            if (!$order->isMultiVendor() && 'paygreen' === $this->resolver->resolveForOrder($order)) {
+                $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
+                if (in_array('restoflash', $paygreenPlatforms)) {
+                    $choices['Restoflash'] = 'restoflash';
+                }
+                if (in_array('conecs', $paygreenPlatforms)) {
+                    $choices['Conecs'] = 'conecs';
+                }
+                if (in_array('swile', $paygreenPlatforms)) {
+                    $choices['Swile'] = 'swile';
+                }
+            }
+
             if ($this->cashEnabled || $order->supportsCashOnDelivery()) {
                 $choices['Cash on delivery'] = 'cash_on_delivery';
             }
@@ -78,7 +102,7 @@ class CheckoutPaymentType extends AbstractType
                 ->add('method', ChoiceType::class, [
                     'label' => count($choices) > 1 ? 'form.checkout_payment.method.label' : false,
                     'choices' => $choices,
-                    'choice_attr' => function($choice, $key, $value) use ($order) {
+                    'choice_attr' => function($choice, $key, $value) use ($order, $hasValidEdenredCredentials) {
 
                         if (null !== $order->getCustomer()) {
 
@@ -87,7 +111,7 @@ class CheckoutPaymentType extends AbstractType
                             switch ($value) {
                                 case 'edenred':
                                     return [
-                                        'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
+                                        'data-edenred-is-connected' => $hasValidEdenredCredentials,
                                         'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)
                                     ];
                             }

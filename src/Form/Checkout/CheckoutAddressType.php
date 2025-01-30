@@ -33,31 +33,17 @@ use Symfony\Component\Form\AbstractType;
 
 class CheckoutAddressType extends AbstractType
 {
-    private $translator;
-    private $priceFormatter;
-    private $loopeatContext;
-    private $requestStack;
-
     public function __construct(
-        TranslatorInterface $translator,
-        PriceFormatter $priceFormatter,
-        LoopEatContext $loopeatContext,
-        LoopEatContextInitializer $loopeatContextInitializer,
-        RequestStack $requestStack,
-        DabbaClient $dabbaClient,
-        DabbaContext $dabbaContext,
-        bool $nonProfitsEnabled,
-        string $enBoitLePlatUrl)
+        private readonly TranslatorInterface $translator,
+        private readonly PriceFormatter $priceFormatter,
+        private readonly LoopEatContext $loopeatContext,
+        private readonly LoopEatContextInitializer $loopeatContextInitializer,
+        private readonly RequestStack $requestStack,
+        private readonly DabbaClient $dabbaClient,
+        private readonly DabbaContext $dabbaContext,
+        private readonly bool $nonProfitsEnabled,
+        private readonly string $enBoitLePlatUrl)
     {
-        $this->translator = $translator;
-        $this->priceFormatter = $priceFormatter;
-        $this->loopeatContext = $loopeatContext;
-        $this->loopeatContextInitializer = $loopeatContextInitializer;
-        $this->requestStack = $requestStack;
-        $this->dabbaClient = $dabbaClient;
-        $this->dabbaContext = $dabbaContext;
-        $this->nonProfitsEnabled = $nonProfitsEnabled;
-        $this->enBoitLePlatUrl = $enBoitLePlatUrl;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

@@ -3,9 +3,6 @@ context('Address search', () => {
 
     cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
-    cy.window().then((win) => {
-      win.sessionStorage.clear()
-    })
   })
 
   it('search address with useless address details', () => {

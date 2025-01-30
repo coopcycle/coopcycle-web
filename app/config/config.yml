@@ -239,7 +239,10 @@ twig:
         - '@VichUploader/Form/fields.html.twig'
     globals:
         is_demo: "%is_demo%"
+        instance_name: "%env(COOPCYCLE_APP_NAME)%"
         sentry_public_dsn: "%sentry_public_dsn%"
+        datadog_client_token: "%env(COOPCYCLE_DATADOG_CLIENT_TOKEN)%"
+        datadog_application_id: "%env(COOPCYCLE_DATADOG_APPLICATION_ID)%"
         country_iso: "%country_iso%"
         region_iso: "%region_iso%"
         cart_provider: '@AppBundle\Service\CartProviderService'
@@ -272,12 +275,15 @@ twig:
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
         odoo_url: '%env(ODOO_URL)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
+        loopeat_processing_fee: '%env(int:LOOPEAT_PROCESSING_FEE)%'
+        loopeat_processing_fee_behavior: '%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%'
+        paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
     exception_controller: null
 
 monolog:
   # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
-  channels: [ 'domain_event', 'checkout', 'database', 'push_notification', 'real_time_message' ]
+  channels: [ 'domain_event', 'checkout', 'database', 'push_notification', 'real_time_message', 'transporter' ]
 
 # Doctrine Configuration
 doctrine:
@@ -304,13 +310,15 @@ doctrine:
             numrange: string
             tsrange: string
 
+        # Tells Doctrine what database features are supported
+        # Make sure that your production database uses this version or higher.
         # If you don't define this option and you haven't created your database yet,
         # you may get PDOException errors because Doctrine will try to guess
         # the database server version automatically and none is available.
         # http://symfony.com/doc/current/reference/configuration/doctrine.html
         # Should be fixed in next Doctrine version
         # https://github.com/doctrine/dbal/pull/2671
-        server_version: 9.4
+        server_version: '13'
 
         # Add a schema filter to avoid having PostGIS tables tiger.* & topology.* in migrations diff
         # https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html#manual-tables
@@ -351,6 +359,9 @@ doctrine:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
 
 api_platform:
+    defaults:
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 100
     version: 1.0.0
     title: CoopCycle
     show_webby: false
@@ -746,6 +757,7 @@ fos_js_routing:
         - admin_form
         - admin_metrics
         - admin_order
+        - admin_order_edit
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel
@@ -763,6 +775,7 @@ fos_js_routing:
         - admin_task_receipt
         - admin_users_search
         - admin_user_edit
+        - admin_vehicles
         - order_continue
         - profile_jwt
         - profile_notifications
@@ -825,6 +838,7 @@ fos_js_routing:
         - api_vehicles_patch_item
         - api_trailers_patch_item
         - api_trailers_set_vehicles_item
+        - task_label_pdf
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'

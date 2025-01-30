@@ -138,6 +138,11 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
+    <one-to-many field="exports" target-entity="AppBundle\Entity\Sylius\OrderExport" mapped-by="order" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
     <many-to-one field="subscription" target-entity="AppBundle\Entity\Task\RecurrenceRule">
       <join-columns>
         <join-column name="subscription_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />

@@ -16,7 +16,7 @@ abstract class BaseExportCommand extends Command {
 
     use LockableTrait;
 
-    public function __construct(protected MessageBusInterface $messageBus)
+    public function __construct(protected string $appName, protected MessageBusInterface $messageBus)
     {
         parent::__construct();
     }
@@ -61,7 +61,8 @@ abstract class BaseExportCommand extends Command {
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$this->lock()) {
+        $lockName = sprintf('%s_%s', $this->appName, $this->getName());
+        if (!$this->lock($lockName)) {
             $output->writeln('The command is already running in another process.');
             return Command::FAILURE;
         }
@@ -99,7 +100,10 @@ abstract class BaseExportCommand extends Command {
                         $input->getOption('s3-access-key'),
                         $input->getOption('s3-secret-key')
                     );
+                    break;
 
+                case 'file':
+                    file_put_contents($options['path'], $export);
                     break;
             }
         }
@@ -133,6 +137,10 @@ abstract class BaseExportCommand extends Command {
                         'bucket' => $parsed['bucket'],
                         'key' => $parsed['path']
                     ]
+                ];
+            case 'file':
+                return [
+                    'file', [ 'path' => $parsed['path'] ]
                 ];
             default:
                 throw new \Exception('Unsupported scheme');

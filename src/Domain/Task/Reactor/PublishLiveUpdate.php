@@ -25,7 +25,7 @@ class PublishLiveUpdate
         // legacy event and new version of event
         // see https://github.com/coopcycle/coopcycle-app/issues/1803
         if ($event instanceof TaskListUpdated) {
-            $user = $event->getTaskList()->getCourier();
+            $user = $event->getCourier();
             $this->liveUpdates->toUsers([ $user ], $event);
         } else if ($event instanceof TaskListUpdatedv2) { // can be safely broadcasted both to riders and admins
             $this->liveUpdates->toAdmins($event);

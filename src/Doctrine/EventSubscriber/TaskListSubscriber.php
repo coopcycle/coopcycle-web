@@ -2,19 +2,18 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\Entity\TaskCollection;
-use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\TaskList;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\TaskListRepository;
 use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -27,25 +26,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskListSubscriber implements EventSubscriber
 {
-    private $eventBus;
-    private $messageBus;
-    private $translator;
-    private $routing;
-    private $logger;
     private $taskLists = [];
 
     public function __construct(
-        MessageBus $eventBus,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
-        RoutingInterface $routing,
-        LoggerInterface $logger)
+        private readonly MessageBus $eventBus,
+        private readonly MessageBusInterface $messageBus,
+        private readonly TranslatorInterface $translator,
+        private readonly RoutingInterface $routing,
+        private readonly TaskListRepository $taskListRepository,
+        private readonly LoggerInterface $logger
+    )
     {
-        $this->eventBus = $eventBus;
-        $this->messageBus = $messageBus;
-        $this->translator = $translator;
-        $this->routing = $routing;
-        $this->logger = $logger;
     }
 
     public function getSubscribedEvents()
@@ -60,8 +51,21 @@ class TaskListSubscriber implements EventSubscriber
     private function calculate(TaskList $taskList)
     {
         $coordinates = [];
+        $tasks = [];
+        $vehicle = $taskList->getVehicle();
+        
+        if (!is_null($vehicle)) {
+            $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
+        }
+
         foreach ($taskList->getTasks() as $task) {
+            $tasks[] = $task;
             $coordinates[] = $task->getAddress()->getGeo();
+        }
+
+        // going back to the warehouse
+        if (!is_null($vehicle)) {
+            $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
         }
 
         if (count($coordinates) <= 1) {
@@ -84,12 +88,22 @@ class TaskListSubscriber implements EventSubscriber
         }
     }
 
+    public function addTaskList(TaskList $taskList) {
+        // WARNING
+        // Do not use in_array() or array_search()
+        // It causes error "Nesting level too deep - recursive dependency?"
+        $oid = spl_object_hash($taskList);
+        if (!isset($this->taskLists[$oid])) {
+            $this->taskLists[$oid] = $taskList;
+        }
+    }
+
     /**
      * Performs TaskCollection calculations when items have been modified.
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-        $this->taskLists = [];
+        $this->taskLists = []; // reset properly the taskLists at each call, the listener may keep the array content between requests
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -104,7 +118,6 @@ class TaskListSubscriber implements EventSubscriber
             return $entity instanceof Item;
         });
 
-        $taskLists = [];
         foreach ($taskListItems as $taskListItem) {
 
             $taskList = $taskListItem->getParent();
@@ -116,16 +129,28 @@ class TaskListSubscriber implements EventSubscriber
                 $taskList = $oldValue;
             }
 
-            // WARNING
-            // Do not use in_array() or array_search()
-            // It causes error "Nesting level too deep - recursive dependency?"
-            $oid = spl_object_hash($taskList);
-            if (!isset($taskLists[$oid])) {
-                $taskLists[$oid] = $taskList;
+            $this->addTaskList($taskList);
+        }
+
+        $taskListsInChangeSet = array_filter($entities, function ($entity) {
+            return $entity instanceof TaskList;
+        });
+
+        foreach ($taskListsInChangeSet as $taskList) {
+            $entityChangeSet = $uow->getEntityChangeSet($taskList);
+
+            if(!isset($entityChangeSet['vehicle'])) {
+                continue;
+            }
+
+            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed 
+
+            if ($oldValue !== $newValue) {
+                $this->addTaskList($taskList);
             }
         }
 
-        foreach ($taskLists as $taskList) {
+        foreach ($this->taskLists as $taskList) { // @phpstan-ignore-line
 
             $this->logger->debug('TaskList was modified, recalculating…');
             $this->calculate($taskList);
@@ -133,8 +158,6 @@ class TaskListSubscriber implements EventSubscriber
             if ($uow->isInIdentityMap($taskList)) {
                 $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(TaskList::class), $taskList);
             }
-
-            $this->taskLists[] = $taskList;
         }
     }
 
@@ -151,7 +174,8 @@ class TaskListSubscriber implements EventSubscriber
 
             // legacy event and new version of event
             // see https://github.com/coopcycle/coopcycle-app/issues/1803
-            $this->eventBus->handle(new TaskListUpdated($taskList));
+            $myTaskListDto = $this->taskListRepository->findMyTaskListAsDto($taskList->getCourier(), $taskList->getDate());
+            $this->eventBus->handle(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
             $this->eventBus->handle(new TaskListUpdatedv2($taskList));
 
             $date = $taskList->getDate();

@@ -1,5 +1,7 @@
 include:
-  - base.yml
+  - setup.yml
+  - admin_user.yml
+  - addresses.yml
 
 AppBundle\Entity\User:
   jane:

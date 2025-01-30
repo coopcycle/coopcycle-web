@@ -16,10 +16,10 @@ class DeleteClosingRuleVoter extends Voter
     // these strings are just invented: you can use anything
     const DELETE = 'delete';
 
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker, EntityManagerInterface $objectManager)
+    public function __construct(
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly EntityManagerInterface $objectManager)
     {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->objectManager = $objectManager;
     }
 
     protected function supports($attribute, $subject)

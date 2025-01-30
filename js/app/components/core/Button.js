@@ -11,9 +11,12 @@ export default ({
   success,
   danger,
   link,
+  block,
+  testID
 }) => {
   return (
     <button
+      data-testid={testID}
       onClick={onClick}
       className={classNames({
         btn: true,
@@ -21,6 +24,7 @@ export default ({
         'btn-success': success,
         'btn-danger': danger,
         'btn-link': link,
+        'btn-block': block,
       })}
       disabled={loading}>
       {loading ? (

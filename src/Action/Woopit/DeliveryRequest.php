@@ -8,10 +8,12 @@ use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DeliveryRequest
@@ -27,7 +29,8 @@ class DeliveryRequest
         Hashids $hashids12,
         EntityManagerInterface $entityManager,
         PhoneNumberUtil $phoneNumberUtil,
-        ValidatorInterface $checkDeliveryValidator)
+        ValidatorInterface $checkDeliveryValidator,
+        private UrlGeneratorInterface $urlGenerator)
     {
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
@@ -49,7 +52,7 @@ class DeliveryRequest
                 "reasons" => [
                     "REFUSED_EXCEPTION"
                 ],
-                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+                "comment" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
             ], 202);
         }
 
@@ -93,6 +96,22 @@ class DeliveryRequest
 
         $data->deliveryObject = $delivery;
         $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
+
+        $pickup = $delivery->getPickup();
+
+        // TODO Add label only for pickup
+        foreach ($delivery->getTasks() as $task) {
+
+            $barcode = BarcodeUtils::getRawBarcodeFromTask($task);
+            $barcodeToken = BarcodeUtils::getToken($barcode);
+
+            $data->labels[] = [
+                'id' => sprintf('lbl_%s', $this->hashids12->encode($task->getId())),
+                'type' => 'url',
+                'mode' => 'pdf',
+                'value' => $this->urlGenerator->generate('task_label_pdf', ['code' => $barcode, 'token' => $barcodeToken], UrlGeneratorInterface::ABSOLUTE_URL)
+            ];
+        }
 
         return $data;
     }

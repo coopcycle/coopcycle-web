@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Entity\User;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
@@ -34,6 +36,7 @@ class StoreType extends LocalBusinessType
                     'class' => PricingRuleSet::class,
                     'choice_label' => 'name',
                     'query_builder' => new OrderByNameQueryBuilder(),
+                    'required' => false,
                 ))
                 ->add('packageSet', EntityType::class, array(
                     'label' => 'form.store_type.package_set.label',
@@ -44,10 +47,6 @@ class StoreType extends LocalBusinessType
                 ))
                 ->add('prefillPickupAddress', CheckboxType::class, [
                     'label' => 'form.store_type.prefill_pickup_address.label',
-                    'required' => false,
-                ])
-                ->add('createOrders', CheckboxType::class, [
-                    'label' => 'form.store_type.create_orders.label',
                     'required' => false,
                 ])
                 ->add('weightRequired', CheckboxType::class, [
@@ -101,6 +100,17 @@ class StoreType extends LocalBusinessType
             }
         }
 
+        //TODO(r0xsh): add check if StandTrack is enabled
+        if ($this->standtrackEnabled) {
+            $builder->add('storeGLN', TextType::class, [
+                'required' => false,
+                'label' => 'store.form.storeGLN.label',
+                'help' => 'store.form.storeGLN.help',
+                'help_html' => true
+            ]);
+        }
+
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $store = $event->getData();
@@ -128,6 +138,16 @@ class StoreType extends LocalBusinessType
                 'help' => 'form.store_type.defaultCourier.help',
                 'required' => false,
             ]);
+
+            if (null !== $store && null !== $store->getId()) {
+                $urbantzHub = $this->entityManager->getRepository(UrbantzHub::class)->findOneBy(['store' => $store]);
+                $form->add('urbantzHubId', TextType::class, [
+                    'label' => 'form.store.urbantz_hub_id',
+                    'mapped' => false,
+                    'data' => null !== $urbantzHub ? $urbantzHub->getHub() : '',
+                    'required' => false,
+                ]);
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -138,6 +158,26 @@ class StoreType extends LocalBusinessType
             if (null === $store->getId()) {
                 $defaultAddress = $store->getAddress();
                 $store->addAddress($defaultAddress);
+            }
+
+            if ($form->has('urbantzHubId')) {
+
+                $hub = $form->get('urbantzHubId')->getData();
+
+                $urbantzHub = $this->entityManager->getRepository(UrbantzHub::class)->findOneBy(['store' => $store]);
+
+                if (empty($hub)) {
+                    if (null !== $urbantzHub) {
+                        $this->entityManager->remove($urbantzHub);
+                    }
+                } else {
+                    if (null === $urbantzHub) {
+                        $urbantzHub = new UrbantzHub();
+                        $urbantzHub->setStore($store);
+                    }
+                    $urbantzHub->setHub($hub);
+                    $this->entityManager->persist($urbantzHub);
+                }
             }
         });
     }

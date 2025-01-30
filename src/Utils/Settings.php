@@ -78,6 +78,8 @@ class Settings
 
     public $subject_to_vat;
 
+    public $accounting_account;
+
     /**
      * @Assert\NotBlank(groups={"Default", "mandatory"})
      */
@@ -119,6 +121,8 @@ class Settings
     public $company_legal_name;
 
     public $company_legal_id;
+
+    public $company_gln;
 
     /**
      * @AssertGoogleApiKey()

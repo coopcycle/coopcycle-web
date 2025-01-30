@@ -6,11 +6,11 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\InjectAuthTrait;
+use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
@@ -33,7 +33,6 @@ use Doctrine\ORM\EntityRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
@@ -48,7 +47,6 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -65,6 +63,7 @@ class ProfileController extends AbstractController
     use OrderTrait;
     use UserTrait;
     use InjectAuthTrait;
+    use LoopeatTrait;
 
     public function __construct(
         protected OrderRepositoryInterface $orderRepository,
@@ -231,7 +230,7 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/service.html.twig', [
+        return $this->render('order/item.html.twig', [
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
@@ -517,68 +516,6 @@ class ProfileController extends AbstractController
         } catch (RoutingException $e) {}
 
         throw $this->createNotFoundException();
-    }
-
-    /**
-     * @Route("/profile/loopeat", name="profile_loopeat")
-     */
-    public function loopeatAction(Request $request, CubeJsTokenFactory $tokenFactory, HttpClientInterface $cubejsClient)
-    {
-        $this->denyAccessUnlessGranted('ROLE_LOOPEAT');
-
-        $query = [
-            'measures' => [],
-            'timeDimensions' => [],
-            'order' => [['Loopeat.orderDate','desc']],
-            'dimensions' => [
-                'Loopeat.restaurantName',
-                'Loopeat.orderNumber',
-                'Loopeat.orderDate',
-                'Loopeat.customerEmail',
-                'Loopeat.packagingFee'
-            ],
-        ];
-
-        $cubeJsToken = $tokenFactory->createToken();
-
-        if ($request->isMethod('POST')) {
-
-            $response = $cubejsClient->request('POST', 'load', [
-                'headers' => [
-                    'Authorization' => $cubeJsToken,
-                    'Content-Type' => 'application/json',
-                ],
-                'body' => json_encode(['query' => $query])
-            ]);
-
-            // Need to invoke a method on the Response,
-            // to actually throw the Exception here
-            // https://github.com/symfony/symfony/issues/34281
-            // https://symfony.com/doc/5.4/http_client.html#handling-exceptions
-            $content = $response->getContent();
-
-            $resultSet = json_decode($content, true);
-
-            $csv = CsvWriter::createFromString('');
-            $csv->insertOne(array_keys($resultSet['data'][0]));
-            $csv->insertAll($resultSet['data']);
-
-            $response = new Response($csv->getContent());
-            $response->headers->add(['Content-Type' => 'text/csv']);
-            $response->headers->add([
-                'Content-Disposition' => $response->headers->makeDisposition(
-                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    'loopeat.csv'
-                )
-            ]);
-
-            return $response;
-        }
-
-        return $this->render('profile/loopeat.html.twig', [
-            'cube_token' => $cubeJsToken,
-            'query' => $query,
-        ]);
     }
 
     /**

@@ -11,7 +11,6 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
@@ -19,7 +18,7 @@ use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\Order\NewOrderType;
-use AppBundle\Form\Order\SubscriptionType;
+use AppBundle\Form\Order\ExistingRecurrenceRuleType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
@@ -29,9 +28,9 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
+use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
@@ -44,10 +43,10 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -282,11 +281,8 @@ trait StoreTrait
     }
 
     public function newStoreDeliveryAction($id, Request $request,
-        DeliveryManager $deliveryManager,
         PricingManager $pricingManager,
         OrderManager $orderManager,
-        OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
         LoggerInterface $logger)
@@ -326,51 +322,39 @@ trait StoreTrait
 
             $delivery = $form->getData();
 
-            if ($arbitraryPrice = $this->getArbitraryPrice($form)) {
-                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                    $entityManager, $orderNumberAssigner);
+            $priceForOrder = null;
 
-                $order = $delivery->getOrder();
-                $this->handleBookmark($orderManager, $form, $order);
-                $this->handleNewSubscription($pricingManager, $logger, $store, $form, $delivery, $order, new UseArbitraryPrice($arbitraryPrice));
-
-                $entityManager->flush();
-
-                return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-            } elseif ($store->getCreateOrders()) {
-
-                try {
-
-                    $price = $this->getDeliveryPrice($delivery, $store->getPricingRuleSet(), $deliveryManager);
-                    $order = $this->createOrderForDelivery($orderFactory, $delivery, new PricingRulesBasedPrice($price), $this->getUser()->getCustomer());
-                    $entityManager->persist($order);
-
-                    $this->handleRememberAddress($store, $form);
-                    $this->handleBookmark($orderManager, $form, $order);
-
-                    $entityManager->flush();
-
-                    // We need to persist the order before calling onDemand,
-                    // because an auto increment is needed to generate a number
-                    $orderManager->onDemand($order);
-
-                    $this->handleNewSubscription($pricingManager, $logger, $store, $form, $delivery, $order);
-
-                    $entityManager->flush();
-
-                    return $this->redirectToRoute($routes['success'], ['id' => $id]);
-
-                } catch (NoRuleMatchedException $e) {
-                    $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                    $form->addError(new FormError($message));
-                }
-
+            if ($this->isGranted('ROLE_ADMIN') && $arbitraryPrice = $this->getArbitraryPrice($form)) {
+                $priceForOrder = new UseArbitraryPrice($arbitraryPrice);
             } else {
+                $priceForOrder = new UsePricingRules();
+            }
+
+            $order = null;
+            try {
+                $order = $pricingManager->createOrder($delivery, [
+                    'pricingStrategy' => $priceForOrder,
+                    // Force an admin to fix the pricing rules
+                    // maybe it would be a better UX to create an incident instead
+                    'throwException' => $this->isGranted('ROLE_ADMIN')
+                ]);
+
+            } catch (NoRuleMatchedException $e) {
+                $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+            }
+
+            if (null !== $order) {
 
                 $this->handleRememberAddress($store, $form);
+                $this->handleBookmark($orderManager, $form, $order);
 
-                $entityManager->persist($delivery);
+                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
+
+                if ($this->isGranted('ROLE_ADMIN')) {
+                    $order->setState(OrderInterface::STATE_ACCEPTED);
+                }
+
                 $entityManager->flush();
 
                 // TODO Add flash message
@@ -391,6 +375,38 @@ trait StoreTrait
         ]);
     }
 
+    public function newStoreDeliveryReactFormAction($id,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
+        $routes = $request->attributes->get('routes');
+
+        $store = $entityManager
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store, 'edit_delivery');
+
+        $delivery = null;
+
+        if (null === $delivery) {
+            $delivery = $store->createDelivery();
+        }
+
+        return $this->render(
+            'store/deliveries/beta_new.html.twig',
+            $this->auth([
+                'layout' => $request->attributes->get('layout'),
+                'store' => $store,
+                'order' => null,
+                'delivery' => $delivery,
+                'stores_route' => $routes['stores'],
+                'store_route' => $routes['store'],
+                'back_route' => $routes['back'],
+                'show_left_menu' => true,
+        ]));
+    }
+
     private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager)
     {
         $hashid = $request->query->get('frmrdr');
@@ -409,34 +425,40 @@ trait StoreTrait
         return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
-    public function subscriptionAction($storeId, $subscriptionId,
+    public function recurrenceRuleAction($storeId,
+        $recurrenceRuleId,
         Request $request,
+        DeliveryManager $deliveryManager,
         PricingManager $pricingManager,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
     )
     {
-        $subscription = $entityManager
+        $recurrenceRule = $entityManager
             ->getRepository(RecurrenceRule::class)
-            ->find($subscriptionId);
+            ->find($recurrenceRuleId);
 
-        $store = $subscription->getStore();
+        $store = $recurrenceRule->getStore();
 
         // Currently the route is only accessible by ROLE_DISPATCHER,
         // so this check is not doing much, but it would be useful
         // if we decide to open the route to store owners
         $this->denyAccessUnlessGranted('view', $store);
 
-        $tempDelivery = $pricingManager->createDeliveryFromSubscription($subscription, Carbon::now()->format('Y-m-d'), false);
+        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
+        // but as we have to provide it, we set it to tomorrow
+        // to make sure that tasks' after/before dates are in the future
+        $startDate = Carbon::now()->addDay()->format('Y-m-d');
+        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
 
         $routes = $request->attributes->get('routes');
 
         $arbitraryPrice = null;
-        if ($arbitraryPriceTemplate = $subscription->getArbitraryPriceTemplate()) {
+        if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
             $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
         }
 
-        $form = $this->createForm(SubscriptionType::class, $tempDelivery, [
+        $form = $this->createForm(ExistingRecurrenceRuleType::class, $tempDelivery, [
             'arbitrary_price' => $arbitraryPrice,
         ]);
 
@@ -445,23 +467,29 @@ trait StoreTrait
 
             $tempDelivery = $form->getData();
 
-            $arbitraryPrice = $this->getArbitraryPrice($form);
-            $rule = $this->getRecurrenceRule($form, $logger);
+            if ($this->isGranted('ROLE_ADMIN')) {
+                $arbitraryPrice = $this->getArbitraryPrice($form);
+            } else {
+                $arbitraryPrice = null;
+            }
 
-            if (null !== $rule) {
-                $pricingManager->updateSubscription($subscription, $tempDelivery, $rule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+            $recurrRule = $this->getRecurrRule($form, $logger);
+
+            if (null !== $recurrRule) {
+                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $recurrRule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
                 $this->handleRememberAddress($store, $form);
                 $entityManager->flush();
             } else {
-                $pricingManager->cancelSubscription($subscription, $tempDelivery);
+                $pricingManager->cancelRecurrenceRule($recurrenceRule, $tempDelivery);
             }
 
-            return $this->redirectToRoute($routes['success']);
+            $redirectUri = $form->has('__redirect_to') ? $form->get('__redirect_to')->getData() : null;
+            return $redirectUri ? $this->redirect($redirectUri) : $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
         }
 
         return $this->render('store/subscriptions/item.html.twig', [
             'layout' => $request->attributes->get('layout'),
-            'subscription' => $subscription,
+            'recurrenceRule' => $recurrenceRule,
             'delivery' => $tempDelivery,
             'form' => $form->createView(),
         ]);
@@ -496,7 +524,7 @@ trait StoreTrait
         $orderManager->setBookmark($order, $isBookmarked);
     }
 
-    private function handleNewSubscription(
+    private function handleNewRecurrenceRule(
         PricingManager $pricingManager,
         LoggerInterface $logger,
         Store $store,
@@ -509,45 +537,24 @@ trait StoreTrait
             return;
         }
 
-        $recurrenceRule = $this->getRecurrenceRule($form, $logger);
+        $recurrRule = $this->getRecurrRule($form, $logger);
 
-        if (null === $recurrenceRule) {
+        if (null === $recurrRule) {
             return;
         }
 
-        $subscription = $pricingManager->createSubscription($store, $delivery, $recurrenceRule, $pricingStrategy);
+        $recurrenceRule = $pricingManager->createRecurrenceRule($store, $delivery, $recurrRule, $pricingStrategy);
 
-        if (null !== $subscription) {
-            $order->setSubscription($subscription);
+        if (null !== $recurrenceRule) {
+            $order->setSubscription($recurrenceRule);
 
             foreach ($delivery->getTasks() as $task) {
-                $task->setRecurrenceRule($subscription);
+                $task->setRecurrenceRule($recurrenceRule);
             }
         }
     }
 
-    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
-    {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            return null;
-        }
-
-        if (!$form->has('arbitraryPrice')) {
-            return null;
-        }
-
-        if (true !== $form->get('arbitraryPrice')->getData()) {
-            return null;
-        }
-
-        $variantPrice = $form->get('variantPrice')->getData();
-        $variantName = $form->get('variantName')->getData();
-
-        return new ArbitraryPrice($variantName, $variantPrice);
-    }
-
-
-    private function getRecurrenceRule(FormInterface $form, LoggerInterface $logger): ?Rule
+    private function getRecurrRule(FormInterface $form, LoggerInterface $logger): ?Rule
     {
         if (!$form->has('recurrence')) {
             return null;
@@ -599,7 +606,9 @@ trait StoreTrait
         MessageBusInterface $messageBus,
         EntityManagerInterface $entityManager,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem)
+        Filesystem $deliveryImportsFilesystem,
+        SlugifyInterface $slugify,
+    )
     {
         $store = $this->getDoctrine()
             ->getRepository(Store::class)
@@ -622,7 +631,8 @@ trait StoreTrait
                 messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids: $hashids8,
-                filesystem: $deliveryImportsFilesystem
+                filesystem: $deliveryImportsFilesystem,
+                slugify: $slugify
             );
         }
 
@@ -697,7 +707,7 @@ trait StoreTrait
         ]);
     }
 
-    public function storeDeliveriesBookmarksAction($id, Request $request,
+    public function storeSavedOrdersAction($id, Request $request,
         EntityManagerInterface $entityManager,
         OrderRepository $orderRepository)
     {
@@ -715,13 +725,78 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('store/deliveries_bookmarks.html.twig', [
+        return $this->render('store/orders_saved.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'bookmarks' => $orderRepository->findBookmarked($store, $this->getUser()),
             'routes' => $this->getDeliveryRoutes(),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
+            'store_addresses_route' => $routes['store_addresses'],
+        ]);
+    }
+
+    public function storeRecurrenceRulesAction($id, Request $request,
+        EntityManagerInterface $entityManager,
+        DeliveryManager $deliveryManager,
+        PricingManager $pricingManager
+    )
+    {
+        $store = $entityManager
+            ->getRepository(Store::class)
+            ->find($id);
+
+        $this->accessControl($store, 'view');
+
+        $routes = $request->attributes->get('routes');
+
+        $data = [];
+        $this->entityManager->getFilters()->enable('soft_deleteable');
+        $recurrenceRules = $this->entityManager->getRepository(RecurrenceRule::class)->findBy(
+            array('store' => $store),
+            array('createdAt' => 'DESC')
+        );
+
+        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
+        // but as we have to provide it, we set it to tomorrow
+        // to make sure that tasks' after/before dates are in the future
+        $startDate = Carbon::now()->addDay()->format('Y-m-d');
+
+        foreach ($recurrenceRules as $rule) {
+            $templateOrder = null;
+            $isInvalidPricing = false;
+            try {
+                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
+            } catch (NoRuleMatchedException $e) {
+                $isInvalidPricing = true;
+            }
+            $templateDelivery = $templateOrder ? $templateOrder->getDelivery() : $deliveryManager->createDeliveryFromRecurrenceRule($rule, $startDate, false);
+            $templateTasks = $templateDelivery ? $templateDelivery->getTasks() : $deliveryManager->createTasksFromRecurrenceRule($rule, $startDate, false);
+
+            $isLegacy = (null === $templateDelivery); // consider rules created from Dispatch dashboard that cannot be used to create a valid delivery as legacy
+
+            $data[] = [
+                'recurrenceRule' => $rule,
+                'templateTasks' => $templateTasks,
+                'templateDelivery' => $templateDelivery, // might be null if we cannot create a valid delivery (could be the case for some recurrence rules created from Dispatch dashboard)
+                'templateOrder' => $templateOrder, // might be null if we cannot calculate the price
+                'isInvalidPricing' => $isInvalidPricing,
+                'generateOrders' => !$isLegacy && $rule->isGenerateOrders(), //in the future that will be configurable
+                'isLegacy' => $isLegacy,
+            ];
+        }
+        $this->entityManager->getFilters()->disable('soft_deleteable');
+
+        return $this->render('store/recurrence_rules.html.twig', [
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'recurrence_rules' => $data,
+            'routes' => [
+                'view' => $routes['store_recurrence_rule'],
+            ],
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'store_addresses_route' => $routes['store_addresses'],
         ]);
     }
 
@@ -831,8 +906,11 @@ trait StoreTrait
         Hashids $hashids,
         Filesystem $filesystem,
         MessageBusInterface $messageBus,
+        SlugifyInterface $slugify,
         string $routeTo)
     {
+
+        /** @var UploadedFile $uploadedFile */
         $uploadedFile = $form->get('file')->getData();
 
         $queue = new DeliveryImportQueue();
@@ -841,7 +919,17 @@ trait StoreTrait
         $entityManager->persist($queue);
         $entityManager->flush();
 
-        $filename = sprintf('%s.%s', $hashids->encode($queue->getId()), $uploadedFile->guessExtension());
+        // slugify to get a safe filename. it may return an empty string but we had a hash afterwards so it should be alright.
+        $filename = $slugify->slugify($uploadedFile->getClientOriginalName());
+        $filename = substr($filename, 0, -4); // remove .csv extension in filename
+        $filename = substr($filename, 0, 100); // limit the filename length
+
+        $filename = sprintf(
+            '%s_%s.%s',
+            $filename,
+            $hashids->encode($queue->getId()),
+            $uploadedFile->guessExtension()
+        );
 
         try {
 

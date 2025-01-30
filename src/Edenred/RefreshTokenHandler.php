@@ -4,6 +4,7 @@ namespace AppBundle\Edenred;
 
 use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Utils;
 use Psr\Http\Message\RequestInterface;
@@ -80,6 +81,15 @@ class RefreshTokenHandler
                                         'Authorization' => sprintf('Bearer %s', $data['access_token'])
                                     ]
                                 ]);
+
+                                return $handler($request, $options);
+
+                            } catch (BadResponseException $e) {
+
+                                $this->logger->error('Refresh token has expired, clearing credentials');
+
+                                $this->entityManager->remove($options['oauth_credentials']);
+                                $this->entityManager->flush();
 
                                 return $handler($request, $options);
 

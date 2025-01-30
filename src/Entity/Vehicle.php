@@ -94,6 +94,12 @@ class Vehicle
 
     /**
     * @Groups({"vehicle", "vehicle_create"})
+    * @Assert\Type("integer")
+    */
+    protected $co2emissions;
+
+    /**
+    * @Groups({"vehicle", "vehicle_create"})
     * @Assert\NotBlank
     * @Assert\Type(Warehouse::class)]
     */
@@ -274,4 +280,24 @@ class Vehicle
         return $this->compatibleTrailers->clear();
     }
 
+
+    /**
+     * Get the value of co2emissions
+     */ 
+    public function getCo2emissions()
+    {
+        return $this->co2emissions;
+    }
+
+    /**
+     * Set the value of co2emissions
+     *
+     * @return  self
+     */ 
+    public function setCo2emissions($co2emissions)
+    {
+        $this->co2emissions = $co2emissions;
+
+        return $this;
+    }
 }

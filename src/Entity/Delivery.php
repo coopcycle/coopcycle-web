@@ -9,6 +9,7 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
@@ -41,6 +42,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "openapi_context"={
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       },
+ *       "input_formats"={"jsonld"={"application/ld+json"}},
  *       "security_post_denormalize"="is_granted('create', object)"
  *     },
  *     "check"={
@@ -77,6 +79,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *         "summary"="Suggests optimizations for a delivery",
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       }
+ *     },
+ *     "deliveries_import_async"={
+ *       "method"="POST",
+ *       "path"="/deliveries/import_async",
+ *       "deserialize"=false,
+ *       "input_formats"={"csv"={"text/csv"}},
+ *       "controller"= BulkAsyncDelivery::class,
+ *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')"
  *     },
  *   },
  *   itemOperations={
@@ -146,7 +156,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $vehicle = self::VEHICLE_BIKE;
 
     /**
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     private $store;
 
@@ -294,6 +304,25 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return new self();
     }
 
+    public static function canCreateWithTasks(Task ...$tasks): bool
+    {
+        if (count($tasks) < 2) {
+            return false;
+        }
+
+        // the first task must be a pickup
+        if (!$tasks[0]->isPickup()) {
+            return false;
+        }
+
+        // the last task must be a dropoff
+        if (!$tasks[count($tasks) - 1]->isDropoff()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function createWithTasks(Task ...$tasks)
     {
         $delivery = self::create();
@@ -389,6 +418,32 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function isAssigned()
     {
         return $this->getPickup()->isAssigned() && $this->getDropoff()->isAssigned();
+    }
+
+    /**
+     * Assigns the courier to all tasks in the delivery
+     */
+    public function assignTo(User $user): void
+    {
+        $tasks = $this->getTasks();
+        array_walk($tasks,
+            function (Task $task) use ($user) {
+                $task->assignTo($user);
+            }
+        );
+    }
+
+    /**
+     * Unassigns the courier from all tasks in the delivery
+     */
+    public function unassign(): void
+    {
+        $tasks = $this->getTasks();
+        array_walk($tasks,
+            function (Task $task) {
+                $task->unassign();
+            }
+        );
     }
 
     public function isCompleted()

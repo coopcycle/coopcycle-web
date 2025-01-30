@@ -63,19 +63,18 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
         $this->updateQueueStatus($queue, DeliveryImportQueue::STATUS_STARTED);
 
-        $result = $this->spreadsheetParser->parse($tempnam);
+        $result = $this->spreadsheetParser->parse($tempnam, $message->getOptions());
 
         foreach ($result->getData() as $rowNumber => $delivery) {
 
             // Validate data
             $violations = $this->validator->validate($delivery);
             if (count($violations) > 0) {
-
                 foreach ($violations as $violation) {
                     if ($violation->getInvalidValue() instanceof \Stringable) {
-                        $errorMessage = sprintf('%s: %s', $violation->getMessage(), (string) $violation->getInvalidValue());
+                        $errorMessage = sprintf('%s %s: %s', $violation->getPropertyPath(), $violation->getMessage(), (string) $violation->getInvalidValue());
                     } else {
-                        $errorMessage = $violation->getMessage();
+                        $errorMessage = sprintf('%s %s', $violation->getPropertyPath(), $violation->getMessage());
                     }
                     $result->addErrorToRow($rowNumber, $errorMessage);
                 }
@@ -90,7 +89,7 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
             try {
                 $this->pricingManager->createOrder($delivery, [
-                    'throwException' => true,
+                    'throwException' => true
                 ]);
             } catch (NoRuleMatchedException $e) {
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');

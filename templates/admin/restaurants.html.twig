@@ -1,5 +1,9 @@
 {% extends "admin.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.shops.title'|trans) }}
+{% endblock %}
+
 {% form_theme pledge_form 'bootstrap_3_layout.html.twig' %}
 
 {% block breadcrumb %}
@@ -57,8 +61,8 @@
           </li>
           <li role="separator" class="divider"></li>
           <li>
-            <a href="{{ path('admin_restaurants_edenred') }}">
-              {{ 'restaurants.edenred_transactions.title'|trans }}
+            <a href="{{ path('admin_restaurants_meal_voucher_transactions') }}">
+              {{ 'restaurants.meal_vouchers_transactions.title'|trans }}
             </a>
           </li>
           {% if nonprofits_enabled %}

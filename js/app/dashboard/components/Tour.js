@@ -95,7 +95,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
 }
 
 
-const Tour = ({ tourId, draggableIndex }) => {
+const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits }) => {
 
   const tour = useSelector(state => selectTourById(state, tourId))
 
@@ -129,10 +129,10 @@ const Tour = ({ tourId, draggableIndex }) => {
                     <a role="button" className="ml-2 flex-grow-1 text-truncate">
                       { tour.name } <span className="badge" style={{backgroundColor: color}}>{ tour.items.length }</span>
                     </a>
-                    <i className="fa fa-arrows cursor--grabbing mr-2"></i>
+                    <i className="fa fa-arrows cursor-grabbing mr-2"></i>
                   </RenderEditNameForm>
               </h4>
-              <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits}/>
+              <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits} vehicleMaxWeight={vehicleMaxWeight} vehicleMaxVolumeUnits={vehicleMaxVolumeUnits}/>
             </div>
             <div className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
               { tour.items.length > 0 ?

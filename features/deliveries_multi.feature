@@ -3,6 +3,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -36,10 +39,12 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type": "PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -52,7 +57,8 @@ Feature: Multi-step deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -61,12 +67,15 @@ Feature: Multi-step deliveries
           "comments": "1.50 kg",
           "weight":1500,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type": "DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -79,7 +88,8 @@ Feature: Multi-step deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -88,7 +98,9 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": [],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -97,6 +109,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with pickup & dropoff + packages with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -142,10 +157,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -158,7 +175,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"4 × XL\n3.00 kg",
           "weight":3000,
@@ -172,14 +190,18 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":@string@,
           "@type":"Task",
+          "type":"DROPOFF",
           "id":@integer@,
           "status":"TODO",
           "address":{
@@ -193,7 +215,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -207,10 +230,13 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -219,6 +245,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with multiple pickups & 1 dropoff + packages with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -260,10 +289,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -276,7 +307,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"2 × XL\n1.50 kg",
           "weight":1500,
@@ -290,15 +322,19 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"/api/tasks/3",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -311,7 +347,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -325,10 +362,13 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }
@@ -337,6 +377,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with multiple pickups & 1 dropoff, without time slot for pickups
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -376,10 +419,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -392,7 +437,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"2 × XL\n1.50 kg",
           "weight":1500,
@@ -406,15 +452,19 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "dropoff":{
           "@id":"/api/tasks/3",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -427,7 +477,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -441,10 +492,13 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB"
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
-          "createdAt":"@string@.isDateTime()"
+          "barcode": @array@,
+          "createdAt":"@string@.isDateTime()",
+          "tags": []
         },
         "trackingUrl": @string@
       }

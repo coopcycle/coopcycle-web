@@ -96,7 +96,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -175,7 +176,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -254,7 +256,8 @@ Feature: Carts
         },
         "fulfillmentMethod": "delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -318,7 +321,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -385,7 +389,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -446,7 +451,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -514,7 +520,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -575,7 +582,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -683,7 +691,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -791,7 +800,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -899,7 +909,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1575,7 +1586,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1649,7 +1661,8 @@ Feature: Carts
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1701,7 +1714,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1736,7 +1750,8 @@ Feature: Carts
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1788,7 +1803,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1823,7 +1839,8 @@ Feature: Carts
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1875,7 +1892,8 @@ Feature: Carts
         },
         "fulfillmentMethod":"delivery",
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1978,7 +1996,8 @@ Feature: Carts
           "incident":[]
         },
         "invitation": "@string@||@null@",
-        "paymentGateway":@string@
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -2281,3 +2300,65 @@ Feature: Carts
       """
     Then the response status code should be 400
     And the response should be in JSON
+
+  Scenario: Select Edenred payment method
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/orders/1/payment" with body:
+      """
+      {
+        "paymentMethod": "edenred"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": {"@*@": "@*@"},
+        "@type": "ConfigurePaymentOutput",
+        "@id": "@string@",
+        "payments": [
+          {
+            "@context": {"@*@": "@*@"},
+            "@type": "@string@",
+            "@id": "@string@",
+            "method": {
+              "@context": {"@*@": "@*@"},
+              "@type": "@string@",
+              "@id": "@string@",
+              "code": "CARD"
+            },
+            "amount": @integer@
+          },
+          {
+            "@context": {"@*@": "@*@"},
+            "@type": "@string@",
+            "@id": "@string@",
+            "method": {
+              "@context": {"@*@": "@*@"},
+              "@type": "@string@",
+              "@id": "@string@",
+              "code": "EDENRED"
+            },
+            "amount": @integer@
+          }
+        ],
+        "redirectUrl":"@string@||@null@"
+      }
+      """

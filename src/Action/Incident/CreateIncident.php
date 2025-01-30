@@ -3,42 +3,38 @@
 namespace AppBundle\Action\Incident;
 
 use AppBundle\Entity\Delivery\FailureReason;
+use AppBundle\Entity\Delivery\FailureReasonRegistry;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Yaml\Parser as YamlParser;
-use Symfony\Component\Yaml\Yaml;
 
 class CreateIncident
 {
+    private const DEFAULT_TITLE = 'N/A';
 
     public function __construct(
         private EntityManagerInterface $em,
-        private TranslatorInterface $translator,
-        private TaskManager $taskManager
+        private TaskManager $taskManager,
+        private FailureReasonRegistry $failureReasonRegistry
     )
     { }
 
-    private function loadFailureReasonsConfig(): array
+    public function findDescriptionByCode(string $code = null): ?string
     {
-        $path = realpath(__DIR__ . '/../../Resources/config/failure_reasons.yml');
-        $parser = new YamlParser();
-        return $parser->parseFile($path, Yaml::PARSE_CONSTANT)['failure_reasons']['default'];
-    }
+        if (null === $code) {
+            return self::DEFAULT_TITLE;
+        }
 
-    public function findDescriptionByCode(string $code): ?string
-    {
-        $defaults = $this->loadFailureReasonsConfig();
+        $defaults = $this->failureReasonRegistry->getFailureReasons();
         $defaults = array_reduce($defaults, function($carry, $failure_reason) {
             $carry[$failure_reason['code']] = $failure_reason;
             return $carry;
         }, []);
 
-        if (in_array($code, array_keys($defaults))) {
-            return $this->translator->trans($defaults[$code]['description']);
+        if (array_key_exists($code, $defaults)) {
+            return $defaults[$code]['description'];
         }
 
         $failure_reason = $this->em->getRepository(FailureReason::class)->findOneBy(['code' => $code]);
@@ -46,27 +42,32 @@ class CreateIncident
             return $failure_reason->getDescription();
         }
 
-        return null;
+        // FIXME The title field is actually NOT NULL in database
+        return self::DEFAULT_TITLE;
     }
 
-    public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
+    public function __invoke(Incident $data, ?UserInterface $user, Request $request): Incident
     {
+        $title = trim($data->getTitle() ?? '');
 
-        if (is_null($data->getTitle())) {
+        if (empty($title)) {
             $data->setTitle($this->findDescriptionByCode($data->getFailureReasonCode()));
         }
 
-        $data->setCreatedBy($user);
+        if (null !== $user) {
+            $data->setCreatedBy($user);
+        }
         $this->em->persist($data);
         $this->em->flush();
 
         $this->taskManager->incident(
             $data->getTask(),
-            $data->getFailureReasonCode(),
-            $data->getDescription(),
+            $data->getFailureReasonCode() ?? '',
+            $data->getTitle(),
             [
                 'incident_id' => $data->getId()
-            ]
+            ],
+            $data
         );
 
         return $data;

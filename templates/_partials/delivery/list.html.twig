@@ -45,30 +45,7 @@
       </td>
       {% endif %}
       <td width="40%">
-        <ul class="list-unstyled">
-          {% for task in delivery.getTasks() %}
-          <li>
-            <small>
-              <span class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
-              <span>
-                {% if task.isCancelled() %}<del>{% endif %}
-                  {{ task.address.streetAddress }}
-                {% if task.isCancelled() %}</del>{% endif %}
-              </span>
-            </small>
-          </li>
-          {% endfor %}
-        </ul>
-        {% set details = [ delivery.distance|meters_to_kilometers ] %}
-        {% if delivery.weight is not empty %}
-          {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
-        {% endif %}
-        {% if delivery.hasPackages() %}
-          {% for package_quantity in delivery.packages %}
-            {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
-          {% endfor %}
-        {% endif %}
-        <small>{{ details|join(' - ') }}</small>
+        {% include '_partials/delivery/summary.html.twig' with { delivery: delivery } %}
       </td>
       {% set deliveryState = delivery.computeState() %}
       <td>
@@ -107,7 +84,7 @@
         {% if delivery.order is defined and delivery.order is not empty %}
           <span class="d-flex justify-content-between align-items-center">
             <span class="text-muted">{% trans %}order.total_excluding_tax{% endtrans %}</span>
-            <span class="text-monospace">{{ (delivery.order.itemsTotal - delivery.order.itemsTaxTotal)|price_format }}</span>
+            <span class="text-monospace">{{ (delivery.order.total - delivery.order.taxTotal)|price_format }}</span>
           </span>
           <span class="d-flex justify-content-between align-items-center">
             <span class="text-muted">{% trans %}order.total_including_tax{% endtrans %}</span>
@@ -129,6 +106,9 @@
       </td>
       <td class="text-right">
         <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+        <div {{ react_component('BarcodesModal', {
+          deliveryId: delivery.id
+          }) }}></div>
       </td>
     </tr>
   {% endfor %}
