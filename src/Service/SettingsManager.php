@@ -43,7 +43,6 @@ class SettingsManager
         'google_api_key_custom',
         'paygreen_public_key',
         'paygreen_secret_key',
-        'company_gln',
     ];
 
     private static $boolean = [

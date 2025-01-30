@@ -213,6 +213,10 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     protected string $billingMethod = 'unit';
 
+    /**
+     * The GLN of the store used for field M03004
+     * @var string|null
+     */
     protected ?string $storeGLN = null;
 
     public function __construct() {
