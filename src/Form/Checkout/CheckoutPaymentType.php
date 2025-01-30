@@ -21,7 +21,7 @@ use Webmozart\Assert\Assert;
 class CheckoutPaymentType extends AbstractType
 {
     public function __construct(
-        private GatewayResolver $resolver,
+        private GatewayResolver $gatewayResolver,
         private EdenredAuthentication $edenredAuthentication,
         private EdenredPayment $edenredPayment,
         private SettingsManager $settingsManager,
@@ -35,23 +35,6 @@ class CheckoutPaymentType extends AbstractType
 
         $builder
             ->add('stripePayment', StripePaymentType::class, ['label' => false]);
-
-        // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
-        if ('mercadopago' === $this->resolver->resolve()) {
-            $builder
-                ->add('paymentMethod', HiddenType::class, [
-                    'mapped' => false,
-                ])
-                ->add('installments', HiddenType::class, [
-                    'mapped' => false,
-                ])
-                ->add('issuer', HiddenType::class, [
-                    'mapped' => false,
-                ])
-                ->add('payerEmail', HiddenType::class, [
-                    'mapped' => false,
-                ]);
-        }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
@@ -81,17 +64,37 @@ class CheckoutPaymentType extends AbstractType
                 }
             }
 
-            if (!$order->isMultiVendor() && 'paygreen' === $this->resolver->resolveForOrder($order)) {
-                $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
-                if (in_array('restoflash', $paygreenPlatforms)) {
-                    $choices['Restoflash'] = 'restoflash';
-                }
-                if (in_array('conecs', $paygreenPlatforms)) {
-                    $choices['Conecs'] = 'conecs';
-                }
-                if (in_array('swile', $paygreenPlatforms)) {
-                    $choices['Swile'] = 'swile';
-                }
+            switch ($this->gatewayResolver->resolveForOrder($order)) {
+                case 'paygreen':
+                    if (!$order->isMultiVendor()) {
+                        $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
+                        if (in_array('restoflash', $paygreenPlatforms)) {
+                            $choices['Restoflash'] = 'restoflash';
+                        }
+                        if (in_array('conecs', $paygreenPlatforms)) {
+                            $choices['Conecs'] = 'conecs';
+                        }
+                        if (in_array('swile', $paygreenPlatforms)) {
+                            $choices['Swile'] = 'swile';
+                        }
+                    }
+                    break;
+                case 'mercadopago':
+                    // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
+                    $form
+                        ->add('paymentMethod', HiddenType::class, [
+                            'mapped' => false,
+                        ])
+                        ->add('installments', HiddenType::class, [
+                            'mapped' => false,
+                        ])
+                        ->add('issuer', HiddenType::class, [
+                            'mapped' => false,
+                        ])
+                        ->add('payerEmail', HiddenType::class, [
+                            'mapped' => false,
+                        ]);
+                    break;
             }
 
             if ($this->cashEnabled || $order->supportsCashOnDelivery()) {
