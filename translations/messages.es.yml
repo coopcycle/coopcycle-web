@@ -558,7 +558,6 @@ stores.addresses: Direcciones
 stores.deliveries.bookmarks: Pedidos guardados
 stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega
   para encontrarlos fácilmente más tarde
-stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega para encontrarlos fácilmente más tarde
 stores.recurrence_rules: Reglas de recurrencia
 stores.recurrence_rules.empty_message: Cuando se cree un pedido recurrente, las reglas de recurrencia aparecerán aquí
 recurrence_rules.table.repeat: Repetir
