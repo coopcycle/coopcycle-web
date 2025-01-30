@@ -100,6 +100,17 @@ class StoreType extends LocalBusinessType
             }
         }
 
+        //TODO(r0xsh): add check if StandTrack is enabled
+        if ($this->standtrackEnabled) {
+            $builder->add('storeGLN', TextType::class, [
+                'required' => false,
+                'label' => 'store.form.storeGLN.label',
+                'help' => 'store.form.storeGLN.help',
+                'help_html' => true
+            ]);
+        }
+
+
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $form = $event->getForm();
             $store = $event->getData();

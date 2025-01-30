@@ -9,6 +9,7 @@ use AppBundle\Entity\TaskListRepository;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
+use AppBundle\Integration\Standtrack\StandtrackClient;
 use AppBundle\Service\RoutingInterface;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
@@ -22,12 +23,14 @@ class MarkAsDoneHandler
         private TranslatorInterface $translator,
         private TaskListRepository $taskListRepository,
         private readonly RoutingInterface $routing,
-        private LoggerInterface $logger
+        private LoggerInterface $logger,
+        private StandtrackClient $standtrackClient
     )
     {}
 
     public function __invoke(MarkAsDone $command)
     {
+        /** @var Task $task */
         $task = $command->getTask();
 
         // TODO Use StateMachine?
@@ -50,6 +53,15 @@ class MarkAsDoneHandler
         }
 
         $this->eventRecorder->record(new Event\TaskDone($task, $command->getNotes()));
+
+        //TODO: Make this async
+        if (!empty($task->getIUB())) {
+            try {
+                $this->standtrackClient->markDelivered($task->getBarcode(), $task->getIUB());
+            } catch (\Exception $e) {
+                $this->logger->error(sprintf('Failed to mark task[id=%d] as delivered on Standtrack: %s', $task->getId(), $e->getMessage()));
+            }
+        }
 
         $task->setStatus(Task::STATUS_DONE);
 
