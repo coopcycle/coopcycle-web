@@ -2,7 +2,6 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Payment\GatewayResolver;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
