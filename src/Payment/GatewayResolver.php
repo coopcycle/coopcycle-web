@@ -7,26 +7,14 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 
 class GatewayResolver
 {
-    private $country;
-    private $mercadopagoCountries;
-    private $forceStripe;
-
-    public function __construct(string $country,
-        $mercadopagoCountries = [],
-        $forceStripe = false,
+    public function __construct(
+        private string $country,
+        private array $mercadopagoCountries = [],
         private bool $paygreenEnabled = false)
-    {
-        $this->country = $country;
-        $this->mercadopagoCountries = $mercadopagoCountries;
-        $this->forceStripe = $forceStripe;
-    }
+    {}
 
     public function resolveForCountry($country)
     {
-        if ($this->forceStripe) {
-            return 'stripe';
-        }
-
         if (in_array($country, $this->mercadopagoCountries)) {
             return 'mercadopago';
         }
@@ -50,11 +38,17 @@ class GatewayResolver
 
     public function supports($gateway): bool
     {
-        if ($gateway === 'paygreen') {
-            return $this->paygreenEnabled;
+        switch ($gateway) {
+            case 'paygreen':
+                return $this->paygreenEnabled;
+            case 'mercadopago':
+                return in_array($this->country, $this->mercadopagoCountries);
+            case 'stripe':
+                // FIXME Stripe is not supported everywhere
+                return true;
         }
 
-        return $gateway === $this->resolveForCountry($this->country);
+        return false;
     }
 
     public function resolveForPayment(PaymentInterface $payment)
