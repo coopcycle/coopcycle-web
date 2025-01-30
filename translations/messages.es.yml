@@ -450,7 +450,7 @@ form.settings.mercadopago.access_token.label: Token de acceso
 form.settings.mercadopago.access_token.help: "Obtenga el <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
   \ target=\"_blank\">token de acceso</a>"
 form.settings.mercadopago.app_id.label: ID de Aplicación
-form.settings.mercadopago.app_id.help: Necesita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear
+form.settings.mercadopago.app_id.help: Necesita <a href="https://www.mercadopago.com.%country%/developers/panel/app">crear
   una aplicación</a> para obtener su ID de Aplicación.
 form.settings.mercadopago.redirect_uri.help: "Cuando configure su app, use la siguiente\
   \ URI de redirección: <code>%redirect_uri%</code>"

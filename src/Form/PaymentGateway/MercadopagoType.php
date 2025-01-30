@@ -9,9 +9,15 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class MercadopagoType extends BaseType
 {
+    public function __construct(string $country)
+    {
+        $this->country = $country;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
@@ -48,7 +54,7 @@ class MercadopagoType extends BaseType
             ->add('mercadopago_app_id', TextType::class, [
                 'required' => false,
                 'label' => 'form.settings.mercadopago.app_id.label',
-                'help' => 'form.settings.mercadopago.app_id.help',
+                'help' => new TranslatableMessage('form.settings.mercadopago.app_id.help', ['%country%' => $this->country]),
                 'help_html' => true
             ])
             ->add('mercadopago_client_secret', PasswordType::class, [
