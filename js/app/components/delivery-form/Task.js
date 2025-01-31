@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useFormikContext, Field } from 'formik'
-import AddressBookNew from './AddressBookNew'
+import AddressBookNew from './AddressBook'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input, Button } from 'antd'
 import DateRangePicker from './DateRangePicker'
@@ -19,11 +19,8 @@ export default ({
   index,
   storeDeliveryInfos,
   deliveryId,
-  onAdd,
-  dropoffSchema,
   onRemove,
   showRemoveButton,
-  showAddButton,
   packages,
   isAdmin,
   tags,
@@ -67,14 +64,17 @@ export default ({
     )
   }, [storeDeliveryInfos])
 
+  
+
   return (
-    <div className="task border p-4 mb-4">
+    <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
       <div
         className={
           task.type === 'PICKUP'
             ? 'task__header task__header--pickup'
             : 'task__header task__header--dropoff'
-        }>
+        }
+        onClick={() => setShowLess(!showLess)}>
         {task.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
@@ -93,14 +93,17 @@ export default ({
               showLess
                 ? t('DELIVERY_FORM_SHOW_MORE')
                 : t('DELIVERY_FORM_SHOW_LESS')
-            }
-            onClick={() => setShowLess(!showLess)}></i>
+            }></i>
         </button>
       </div>
 
       <div
         className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
-        <AddressBookNew addresses={addresses} index={index} />
+        <AddressBookNew
+          addresses={addresses}
+          index={index}
+          storeDeliveryInfos={storeDeliveryInfos}
+        />
 
         {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
         {isAdmin ? (
@@ -168,17 +171,19 @@ export default ({
           />
         </div>
 
-        <div className="mt-4 mb-4">
-          <div className="tags__title block mb-2 font-weight-bold">Tags</div>
-          <TagsSelect
-            tags={tags}
-            defaultValue={values.tasks[index].tags || []}
-            onChange={values => {
-              const tags = values.map(tag => tag.value)
-              setFieldValue(`tasks[${index}].tags`, tags)
-            }}
-          />
-        </div>
+        {isAdmin && (
+          <div className="mt-4 mb-4">
+            <div className="tags__title block mb-2 font-weight-bold">Tags</div>
+            <TagsSelect
+              tags={tags}
+              defaultValue={values.tasks[index].tags || []}
+              onChange={values => {
+                const tags = values.map(tag => tag.value)
+                setFieldValue(`tasks[${index}].tags`, tags)
+              }}
+            />
+          </div>
+        )}
       </div>
       {task.type === 'DROPOFF' && (
         <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
@@ -189,24 +194,6 @@ export default ({
               className="mb-4">
               {t('DELIVERY_FORM_REMOVE_DROPOFF')}
             </Button>
-          )}
-          {showAddButton && (
-            <div
-              className="mb-4"
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
-              <Button
-                disabled={false}
-                onClick={() => {
-                  onAdd(dropoffSchema)
-                }}>
-                {t('DELIVERY_FORM_ADD_DROPOFF')}
-              </Button>
-            </div>
           )}
         </div>
       )}

@@ -33,6 +33,7 @@ export default ({ index }) => {
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <InputNumber
+          name={`tasks[${index}].weight`}
           style={{ width: '80%' }}
           min={0}
           placeholder={t('DELIVERY_FORM_WEIGHT')}

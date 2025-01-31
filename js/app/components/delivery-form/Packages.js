@@ -33,10 +33,11 @@ export default ({ index, packages, deliveryId }) => {
   const { t } = useTranslation()
 
   useEffect(() => {
-    const filteredPackages = packagesPicked.filter(p => p.quantity > 0)
-    if (filteredPackages.length > 0) {
-      setFieldValue(`tasks[${index}].packages`, filteredPackages)
-    }
+    // const filteredPackages = packagesPicked.filter(p => p.quantity > 0)
+    // if (filteredPackages.length > 0) {
+    //   setFieldValue(`tasks[${index}].packages`, filteredPackages)
+    // }
+    setFieldValue(`tasks[${index}].packages`, packagesPicked)
   }, [packagesPicked, setFieldValue, index])
 
   const handlePlusButton = item => {

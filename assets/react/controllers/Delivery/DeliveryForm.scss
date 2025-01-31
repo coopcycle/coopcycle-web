@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   gap: 2em;
   padding: 2em;
+  
 }
 
 .new-order {
@@ -16,6 +17,12 @@
   &__pickups, &__dropoffs {
     width: 47%;
   }
+
+  &__dropoffs__add{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .delivery-form {
@@ -26,7 +33,17 @@
   align-self: start;
   position: sticky;
   top:0;
-  min-width: 30%;
+  width: 30%;
+
+  &__tracking{
+    background-color: #f3f2f2f8;
+    border-color: #dbdada;
+    color: #23527C;
+  }
+
+  &__complete-order button{
+    background-color: #337AB7;
+  }
 }
 
 

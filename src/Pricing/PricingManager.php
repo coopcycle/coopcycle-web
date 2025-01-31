@@ -49,8 +49,7 @@ class PricingManager
         private readonly CreateIncident $createIncident,
         private readonly TranslatorInterface $translator,
         private readonly LoggerInterface $logger
-    )
-    {
+    ) {
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -74,10 +73,8 @@ class PricingManager
 
             $price = (int) $price;
             return new PricingRulesBasedPrice($price, $pricingRuleSet);
-
         } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
             return $pricingStrategy->getArbitraryPrice();
-
         } else {
             $this->logger->warning('Unsupported pricing config');
             return null;
@@ -99,7 +96,7 @@ class PricingManager
             // If set to false, a price of 0 will be set and an incident will be created
             'throwException' => false,
         ];
-        $optionalArgs+= $defaults;
+        $optionalArgs += $defaults;
 
         $pricingStrategy = $optionalArgs['pricingStrategy'];
         $persist = $optionalArgs['persist'];
@@ -183,7 +180,7 @@ class PricingManager
         }
 
         // Keep the original objects untouched, creating new ones instead
-        $newTasks = array_map(function($task){
+        $newTasks = array_map(function ($task) {
             return $task->duplicate();
         }, $previousDelivery->getTasks());
 
@@ -261,7 +258,7 @@ class PricingManager
         $recurrenceRule->setGenerateOrders(true); // make configurable in #4716
 
         $tasks = $this->normalizer->normalize($delivery->getTasks(), 'jsonld', ['groups' => ['task_create']]);
-        $tasks = array_map(function($task) {
+        $tasks = array_map(function ($task) {
             unset($task['@id']);
 
             // Keep only the time part of the date in the template
@@ -285,7 +282,7 @@ class PricingManager
 
             if (isset($task['tags'])) {
                 $task['tags'] = array_map(
-                    fn ($tag) => $tag['slug'],
+                    fn($tag) => $tag['slug'],
                     $task['tags']
                 );
             }

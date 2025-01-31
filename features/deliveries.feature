@@ -2446,3 +2446,53 @@ Feature: Deliveries
         "@*@": "@*@"
       }
       """
+
+  Scenario: Create delivery with given price and variant as an admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+    """
+    {
+      "store": "/api/stores/1",
+      "pickup": {
+        "address": "24, Rue de la Paix",
+        "doneBefore": "tomorrow 13:00"
+      },
+      "dropoff": {
+        "address": "48, Rue de Rivoli",
+        "doneBefore": "tomorrow 13:30"
+      },
+      "deliveryPriceInput": {
+        "priceIncVATcents": 1200,
+        "variantName": "my custom variant"
+      }
+    }
+    """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/orders/1"
+        Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "deliveryPrice": {
+            "variantName": "my custom variant",
+            "value": 1200,
+            "@*@": "@*@"
+        },
+        "@*@": "@*@"
+      }
+      """

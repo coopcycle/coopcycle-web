@@ -5,12 +5,11 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class CustomSerializationContextBuiler implements  SerializerContextBuilderInterface
+class CustomSerializationContextBuiler implements SerializerContextBuilderInterface
 {
     public function __construct(
         private readonly SerializerContextBuilderInterface $decorated,
-    )
-    { }
+    ) {}
 
     public function createFromRequest(Request $request, bool $normalization, ?array $extractedAttributes = null): array
     {

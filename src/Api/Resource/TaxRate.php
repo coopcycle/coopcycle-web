@@ -49,11 +49,16 @@ final class TaxRate
 
     public function __construct(BaseTaxRate $taxRate, string $name, array $alternatives = [])
     {
+        var_dump($taxRate->getCode());
         $this->id = $taxRate->getCode();
         $this->code = $taxRate->getCode();
         $this->amount = $taxRate->getAmount();
         $this->name = $name;
         $this->category = $taxRate->getCategory()->getCode();
         $this->alternatives = $alternatives;
+    }
+
+    public function getId() {
+        return $this->id;
     }
 }

@@ -9,9 +9,11 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryPriceInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
@@ -96,7 +98,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "put"={
  *        "method"="PUT",
- *        "security"="is_granted('edit', object)"
+ *        "controller"=EditDelivery::class,
+ *        "security"="is_granted('edit', object)",
+ *        "denormalization_context"={"groups"={"delivery_create"}}
  *     },
  *     "pick"={
  *        "method"="PUT",
@@ -160,9 +164,15 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     private $store;
 
+    /**
+     * @var DeliveryPriceInput
+     * @Groups({"delivery_create"})
+     */
+    private $deliveryPriceInput;
+
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
-        "in"=>"body",
+        "in" => "body",
         "schema" => [
             "type" => "object",
             "required" => ["dropoff"],
@@ -351,10 +361,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
                 $dropoff->setPrevious($pickup);
                 $this->addTask($dropoff);
             }
-
         } else {
 
-            [ $pickup, $dropoff ] = $tasks;
+            [$pickup, $dropoff] = $tasks;
 
             $pickup->setType(Task::TYPE_PICKUP);
             $pickup->setNext($dropoff);
@@ -426,7 +435,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function assignTo(User $user): void
     {
         $tasks = $this->getTasks();
-        array_walk($tasks,
+        array_walk(
+            $tasks,
             function (Task $task) use ($user) {
                 $task->assignTo($user);
             }
@@ -439,7 +449,8 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function unassign(): void
     {
         $tasks = $this->getTasks();
-        array_walk($tasks,
+        array_walk(
+            $tasks,
             function (Task $task) {
                 $task->unassign();
             }
@@ -619,12 +630,32 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $messages = array_merge(...array_map(function (Task $task) {
             return $task->getEdifactMessages()->toArray();
         }, $this->getTasks()));
-        usort($messages, fn ($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
+        usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
         return $messages;
     }
 
     public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
     {
         $visitor->visitDelivery($this);
+    }
+
+    /**
+     * Get the value of deliveryPriceInput
+     */
+    public function getDeliveryPriceInput(): ?DeliveryPriceInput
+    {
+        return $this->deliveryPriceInput;
+    }
+
+    /**
+     * Set the value of deliveryPriceInput
+     *
+     * @return  self
+     */
+    public function setDeliveryPriceInput($deliveryPriceInput)
+    {
+        $this->deliveryPriceInput = $deliveryPriceInput;
+
+        return $this;
     }
 }

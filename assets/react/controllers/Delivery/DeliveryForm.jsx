@@ -1,15 +1,15 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
-import Task from '../../../../js/app/components/delivery-form/Task.js'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
 import moment from 'moment'
-import { money } from '../../controllers/Incident/utils.js'
+
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
-import _ from 'lodash'
-
+import BarcodesModal from '../BarcodesModal.jsx'
+import ShowPrice from '../../../../js/app/components/delivery-form/ShowPrice.js'
+import Task from '../../../../js/app/components/delivery-form/Task.js'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n'
@@ -18,8 +18,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 
 import "./DeliveryForm.scss"
-import BarcodesModal from '../BarcodesModal.jsx'
-import OverridePrice from '../../../../js/app/components/delivery-form/OverridePrice.js'
+
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -107,6 +106,8 @@ const baseURL = location.protocol + '//' + location.host
 
 export default function ({ storeId, deliveryId, order }) {
 
+  console.log(order)
+
   // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
   const isAdmin = true
 
@@ -124,17 +125,19 @@ export default function ({ storeId, deliveryId, order }) {
     tasks: [
       pickupSchema,
       dropoffSchema,
-    ]
+    ],
   })
   const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
+  const [overridePrice, setOverridePrice] = useState(false)
+  const [priceLoading, setPriceLoading] = useState(false)
 
+ 
   let deliveryPrice
 
-  if (order) {
+  if (deliveryId && order) {
     const orderInfos = JSON.parse(order)
     deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
   }
-
 
   const { t } = useTranslation()
   
@@ -170,12 +173,13 @@ export default function ({ storeId, deliveryId, order }) {
       }
     }
 
-    return Object.keys(errors.tasks).length > 0 ? errors : {}
-  }
 
-  // Could not figure out why, but sometimes Formik "re-renders" even if the values are the same.
-  // so i store a ref to previous values to avoid re-calculating the price.
-  const previousValues = useRef(initialValues);
+    if (overridePrice && !values.variantName) {
+      errors.variantName = t("DELIVERY_FORM_ERROR_VARIANT_NAME")
+      }
+
+    return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
+  }
 
   useEffect(() => {
     const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}?groups=barcode,address,delivery`
@@ -213,8 +217,6 @@ export default function ({ storeId, deliveryId, order }) {
             }
           })
           
-          previousValues.current = delivery.response
-
           setInitialValues(delivery.response)
           setTrackingLink(delivery.response.trackingUrl)
           setAddresses(addresses.response['hydra:member'])
@@ -261,11 +263,23 @@ export default function ({ storeId, deliveryId, order }) {
     const createOrEditADelivery = async (deliveryId) => {
       const url = getUrl(deliveryId);
       const method = deliveryId ? 'put' : 'post';
-      
-      return await httpClient[method](url, {
+
+      let data = {
         store: storeDeliveryInfos['@id'],
         tasks: values.tasks
-      });
+      }
+
+      if (values.variantIncVATPrice && values.variantName) {
+        data = {
+          ...data,
+          deliveryPriceInput: {
+            priceIncVATcents: values.variantIncVATPrice,
+            variantName: values.variantName
+          }
+        }
+      }
+      
+      return await httpClient[method](url, data);
     }
 
     const {response, error} = await createOrEditADelivery(deliveryId)
@@ -301,12 +315,6 @@ export default function ({ storeId, deliveryId, order }) {
 
   const getPrice = (values) => {
 
-    if (_.isEqual(previousValues.current, values)) {
-      return
-    }
-
-    previousValues.current = values
-
     const tasksCopy = structuredClone(values.tasks)
     const tasksWithoutId = tasksCopy.map(task => {
           if (task["@id"]) {
@@ -315,38 +323,15 @@ export default function ({ storeId, deliveryId, order }) {
           return task
         })
       
-      let packages = []
-
-      for (const task of values.tasks) {
-        if (task.packages && task.type ==="DROPOFF") {
-          packages.push(...task.packages)
-        }
-      }
-      
-      const mergedPackages = _(packages)
-        .groupBy('type') 
-        .map((items, type) => ({
-          type, 
-          quantity: _.sumBy(items, 'quantity'), 
-        }))
-        .value()
-
-      let totalWeight = 0
-
-      for (const task of values.tasks) {
-        if (task.weight && task.type ==="DROPOFF") {
-          totalWeight+= task.weight 
-        }
-      }
-      
       const infos = {
         store: storeDeliveryInfos["@id"],
-        weight: totalWeight,
-        packages: mergedPackages,
         tasks: tasksWithoutId,
       };
 
       const calculatePrice = async () => {
+
+        setPriceLoading(true)
+
         const url = `${baseURL}/api/retail_prices/calculate`
         const { response, error } = await httpClient.post(url, infos)
 
@@ -360,7 +345,10 @@ export default function ({ storeId, deliveryId, order }) {
           setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
         }
 
+        setPriceLoading(false)
+
       }
+      
       if (values.tasks.every(task => task.address.streetAddress)) {
         calculatePrice()
       }
@@ -384,8 +372,8 @@ export default function ({ storeId, deliveryId, order }) {
           {({ values, isSubmitting }) => {
 
             useEffect(() => {
-                getPrice(values)
-            }, [values]);
+                if(!overridePrice && !deliveryId) getPrice(values)
+            }, [values.tasks, overridePrice, deliveryId]);
 
             return (
               <Form >
@@ -433,11 +421,8 @@ export default function ({ storeId, deliveryId, order }) {
                                     addresses={addresses}
                                     storeId={storeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
-                                    onAdd={arrayHelpers.push}
-                                    dropoffSchema={dropoffSchema}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
-                                    showAddButton={originalIndex === values.tasks.length - 1}
                                     packages={storePackages}
                                     isAdmin={isAdmin}
                                     tags={tags}
@@ -445,6 +430,18 @@ export default function ({ storeId, deliveryId, order }) {
                                 </div>
                               );
                             })}
+                          
+                          {storeDeliveryInfos.multiDropEnabled ? <div
+                            className="new-order__dropoffs__add p-4 border mb-4">
+                            <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+                            <Button
+                              disabled={false}
+                              onClick={() => {
+                                arrayHelpers.push(dropoffSchema)
+                                }}>
+                              {t('DELIVERY_FORM_ADD_DROPOFF')}
+                            </Button>
+                          </div> : null}
                         </div>
                       </div>
                     )}
@@ -472,57 +469,26 @@ export default function ({ storeId, deliveryId, order }) {
                       />
                     </div>
 
-                    <div className='order-informations__total-price border-top border-bottom pt-3 pb-3 mb-4'>
-                      {deliveryPrice ?
-                        <div className='mb-4'>
-                          <div className='font-weight-bold mb-2'>{ t("DELIVERY_FORM_OLD_PRICE")}</div>
-                          <div>{money(deliveryPrice.exVAT)} {t("DELIVERY_FORM_TOTAL_VAT")}</div>
-                          <div>{money(deliveryPrice.VAT)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}</div>
-                          <div className='mt-2 text-danger'>Editing price is not yet available in beta version.</div>
-                        </div> : null }
-                      
-                      {!deliveryId ? 
-                        <>
-                    <div className='font-weight-bold mb-2'>{deliveryId ? t("DELIVERY_FORM_NEW_PRICE") : t("DELIVERY_FORM_TOTAL_PRICE")} </div>
-                      <div>
-                        {calculatedPrice.amount
-                          ?
-                          <div>
-                            <div className='mb-1'>
-                              {money(calculatedPrice.amount)} {t("DELIVERY_FORM_TOTAL_VAT")}
-                            </div>
-                            <div>
-                              {money(calculatedPrice.amount - calculatedPrice.tax.amount)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-                            </div>
-                          </div>
-                          :
-                          <div>
-                            <div className='mb-1'>
-                              {money(0)} {t("DELIVERY_FORM_TOTAL_VAT")}
-                            </div>
-                            <div>
-                              {money(0)} {t("DELIVERY_FORM_TOTAL_EX_VAT")}
-                            </div>
-                          </div>
-                            }
-                          <OverridePrice/>
-                      </div>
-                      {priceError.isPriceError ?
-                        <div className="alert alert-danger mt-4" role="alert">
-                          {priceError.priceErrorMessage}
-                        </div>
-                            : null}
-                        </> :
-                        null
-                        }
-
+                    <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
+                      <ShowPrice
+                        isAdmin={isAdmin}
+                        deliveryId={deliveryId}
+                        deliveryPrice={deliveryPrice}
+                        calculatedPrice={calculatedPrice}
+                        setCalculatePrice={setCalculatePrice}
+                        priceError={priceError}
+                        setOverridePrice={setOverridePrice}
+                        overridePrice={overridePrice}
+                        priceLoading={priceLoading}
+                      />
                     </div>
 
                     <div className='order-informations__complete-order'>
                       <Button
                         type="primary"
                         style={{ height: '2.5em' }}
-                        htmlType="submit" disabled={isSubmitting || deliveryId && isAdmin === false}>
+                        htmlType="submit"
+                        disabled={isSubmitting || deliveryId && isAdmin === false}>
                         {t("DELIVERY_FORM_SUBMIT")}
                       </Button>
                     </div>

@@ -8,7 +8,7 @@
 
   &__icon{
     cursor: pointer;
-    color: #24537D;
+    color: #337AB7;
     width: 5%;
     line-height: 35px,
   }
@@ -17,7 +17,7 @@
 .daterange-picker-container{
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
 
     &__picker{
     width: 95%
@@ -25,7 +25,8 @@
 
   &__icon{
     cursor: pointer;
-    color: #24537D;
+    color: #337AB7;
     width: 5%;
+    line-height: 32px;;
   }
 }

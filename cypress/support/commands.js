@@ -126,6 +126,30 @@ Cypress.Commands.add('newPickupAddress',
     cy.get('#delivery_tasks_0_address_contactName__display').type(contactName)
   })
 
+  Cypress.Commands.add('betaEnterAddressAtPosition',
+    (taskFormIndex, addressSearch, addressMatch,
+      businessName, telephone, contactName, comments) => {
+
+      cy.searchAddress(
+        `[data-testid-form=task-${taskFormIndex}]`,
+        addressSearch,
+        addressMatch,
+      )
+  
+      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
+      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
+
+      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
+      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
+
+      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
+      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+
+      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
+      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
+  
+    })
+
 Cypress.Commands.add('chooseSavedPickupAddress',
   (index) => {
     cy.get('#rc_select_0').click()

@@ -27,9 +27,7 @@ class OrderFactory implements FactoryInterface
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private readonly OrderModifierInterface $orderModifier,
         private readonly LoggerInterface $logger
-    )
-    {
-    }
+    ) {}
 
     /**
      * {@inheritdoc}
