@@ -86,7 +86,7 @@ export default ({
   useEffect(() => {
     const getDeliveryTaxs = async () => {
       const { response, error } = await httpClient.get(
-        `${baseURL}/api/tax_rates`,
+        `${baseURL}/api/tax_rates`
       )
 
       if (error) {
@@ -183,6 +183,7 @@ export default ({
                 <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
                 <Checkbox
                   className="ml-4 mb-1"
+                  name="delivery.override_price"
                   checked={overridePrice}
                   onChange={e => {
                     e.stopPropagation()
