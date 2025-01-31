@@ -14,16 +14,16 @@ use AppBundle\Payment\GatewayResolver;
 class IsActivableRestaurantValidator extends ConstraintValidator
 {
     private $settingsManager;
-    private $resolver;
+    private $gatewayResolver;
     private $cashEnabled;
     private $stripeConnectRequired;
 
-    public function __construct(SettingsManager $settingsManager, GatewayResolver $resolver,
+    public function __construct(SettingsManager $settingsManager, GatewayResolver $gatewayResolver,
         bool $cashEnabled,
         bool $stripeConnectRequired = true)
     {
         $this->settingsManager = $settingsManager;
-        $this->resolver = $resolver;
+        $this->gatewayResolver = $gatewayResolver;
         $this->cashEnabled = $cashEnabled;
         $this->stripeConnectRequired = $stripeConnectRequired;
     }
@@ -84,25 +84,47 @@ class IsActivableRestaurantValidator extends ConstraintValidator
             }
 
             if (!$this->cashEnabled) {
-                $gateway = $this->resolver->resolve();
-                switch ($gateway) {
-                    case 'mercadopago':
-                        $mercadopagoAccount = $object->getMercadopagoAccount();
-                        if (null === $mercadopagoAccount) {
-                            $this->context->buildViolation($constraint->mercadopagoAccountMessage)
-                                ->atPath('mercadopagoAccounts')
+
+                foreach (['mercadopago', 'paygreen', 'stripe'] as $gateway) {
+
+                    $supportsAtLeastOneGateway = false;
+                    $violations = [];
+
+                    if ($this->gatewayResolver->supports($gateway)) {
+                        switch ($gateway) {
+                            case 'mercadopago':
+                                $mercadopagoAccount = $object->getMercadopagoAccount();
+                                if (null === $mercadopagoAccount) {
+                                    $violations['mercadopagoAccounts'] = $constraint->mercadopagoAccountMessage;
+                                } else {
+                                    $supportsAtLeastOneGateway = true;
+                                }
+                                break;
+                            case 'paygreen':
+                                if (!$object->supportsPaygreen()) {
+                                    $violations['paygreenShopId'] = $constraint->paygreenShopIdMessage;
+                                } else {
+                                    $supportsAtLeastOneGateway = true;
+                                }
+                                break;
+                            case 'stripe':
+                                $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
+                                if ($this->stripeConnectRequired && null === $stripeAccount) {
+                                    $violations['stripeAccounts'] = $constraint->stripeAccountMessage;
+                                } else {
+                                    $supportsAtLeastOneGateway = true;
+                                }
+                                break;
+                        }
+                    }
+
+                    if (!$supportsAtLeastOneGateway) {
+                        foreach ($violations as $path => $message) {
+                            $this->context->buildViolation($message)
+                                ->atPath($path)
                                 ->addViolation();
                         }
-                        break;
-                    case 'stripe':
-                    default:
-                        $stripeAccount = $object->getStripeAccount($this->settingsManager->isStripeLivemode());
-                        if ($this->stripeConnectRequired && null === $stripeAccount) {
-                            $this->context->buildViolation($constraint->stripeAccountMessage)
-                                ->atPath('stripeAccounts')
-                                ->addViolation();
-                        }
-                        break;
+                    }
                 }
             }
         }

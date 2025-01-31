@@ -17,6 +17,7 @@ class IsActivableRestaurant extends Constraint
     public $stripeAccountMessage = 'restaurant.stripeAccount.notSet';
     public $mercadopagoAccountMessage = 'restaurant.mercadopagoAccount.notSet';
     public $menuMessage = 'restaurant.menu.notSet';
+    public $paygreenShopIdMessage = 'restaurant.paygreenShopId.notSet';
 
     public function validatedBy()
     {
