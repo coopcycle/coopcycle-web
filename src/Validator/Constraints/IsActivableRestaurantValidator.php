@@ -85,6 +85,8 @@ class IsActivableRestaurantValidator extends ConstraintValidator
 
             if (!$this->cashEnabled) {
                 $gateway = $this->resolver->resolve();
+                // TODO
+                // Change impl so that it check that AT LEAST one payment gateway is configured
                 switch ($gateway) {
                     case 'mercadopago':
                         $mercadopagoAccount = $object->getMercadopagoAccount();
