@@ -167,6 +167,7 @@ class TaskListRepository extends ServiceEntityRepository
             ->leftJoin('productVariant.product', 'product')
             ->leftJoin('product.reusablePackagings', 'reusablePackaging')
             ->where('o.id IN (:orderIds)')
+            ->andWhere('o.reusablePackagingEnabled = TRUE')
             ->andWhere('product.reusablePackagingEnabled = TRUE')
             ->setParameter('orderIds', $orderIds) // using IN might cause problems with large number of items
             ->groupBy('o.id')

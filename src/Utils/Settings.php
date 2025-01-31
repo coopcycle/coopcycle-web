@@ -122,6 +122,8 @@ class Settings
 
     public $company_legal_id;
 
+    public $company_gln;
+
     /**
      * @AssertGoogleApiKey()
      */

@@ -1960,6 +1960,10 @@ class Order extends BaseOrder implements OrderInterface
 
     public function isZeroWaste(): bool
     {
+        if (!$this->isReusablePackagingEnabled()) {
+            return false;
+        }
+
         foreach ($this->getItems() as $item) {
 
             $product = $item->getVariant()->getProduct();

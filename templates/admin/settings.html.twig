@@ -205,6 +205,13 @@
 
   <hr>
 
+  <h4>Lastmile</h4>
+  {% if form.company_gln is defined %}
+    {{ form_row(form.company_gln) }}
+  {% endif %}
+
+  <hr>
+
   {{ form_rest(form) }}
 
   <button type="submit" class="btn btn-block btn-primary">{{ 'basics.save'|trans }}</button>

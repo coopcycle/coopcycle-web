@@ -16,15 +16,12 @@ class QuoteRequest
 {
     use CreateDeliveryTrait;
 
-    private $deliveryManager;
-    private $geocoder;
-
     public function __construct(
-        DeliveryManager $deliveryManager,
-        Geocoder $geocoder,
-        PriceHelper $priceHelper,
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $checkDeliveryValidator)
+        private DeliveryManager $deliveryManager,
+        private Geocoder $geocoder,
+        private PriceHelper $priceHelper,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $checkDeliveryValidator)
     {
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;

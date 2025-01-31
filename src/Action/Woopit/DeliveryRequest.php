@@ -20,16 +20,13 @@ class DeliveryRequest
 {
     use CreateDeliveryTrait;
 
-    private $deliveryManager;
-    private $geocoder;
-
     public function __construct(
-        DeliveryManager $deliveryManager,
-        Geocoder $geocoder,
-        Hashids $hashids12,
-        EntityManagerInterface $entityManager,
-        PhoneNumberUtil $phoneNumberUtil,
-        ValidatorInterface $checkDeliveryValidator,
+        private DeliveryManager $deliveryManager,
+        private Geocoder $geocoder,
+        private Hashids $hashids12,
+        private EntityManagerInterface $entityManager,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private ValidatorInterface $checkDeliveryValidator,
         private UrlGeneratorInterface $urlGenerator)
     {
         $this->deliveryManager = $deliveryManager;
@@ -97,20 +94,29 @@ class DeliveryRequest
         $data->deliveryObject = $delivery;
         $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
 
-        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
 
-        // TODO Add label only for pickup
-        foreach ($delivery->getTasks() as $task) {
+        foreach ($dropoff->getPackages() as $package) {
 
-            $barcode = BarcodeUtils::getRawBarcodeFromTask($task);
-            $barcodeToken = BarcodeUtils::getToken($barcode);
+            $parcelId = sprintf('pkg_%s', $this->hashids12->encode($package->getId()));
 
-            $data->labels[] = [
-                'id' => sprintf('lbl_%s', $this->hashids12->encode($task->getId())),
-                'type' => 'url',
-                'mode' => 'pdf',
-                'value' => $this->urlGenerator->generate('task_label_pdf', ['code' => $barcode, 'token' => $barcodeToken], UrlGeneratorInterface::ABSOLUTE_URL)
+            $data->parcels[] = [
+                'id' => $parcelId,
             ];
+
+            $barcodes = BarcodeUtils::getBarcodesFromPackage($package);
+            foreach ($barcodes as $i => $barcode) {
+
+                $barcodeToken = BarcodeUtils::getToken($barcode);
+
+                $data->labels[] = [
+                    'id' => sprintf('lbl_%s', $this->hashids12->encode($dropoff->getId(), $package->getId(), $i)),
+                    'type' => 'url',
+                    'mode' => 'pdf',
+                    'value' => $this->urlGenerator->generate('task_label_pdf', ['code' => $barcode, 'token' => $barcodeToken], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'parcelId' => $parcelId,
+                ];
+            }
         }
 
         return $data;

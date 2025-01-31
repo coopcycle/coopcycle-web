@@ -39,8 +39,10 @@ task.before.mustBeGreaterThanAfter: La franja horaria no es válida
 time_range_jump.next_day: Ya no es posible hacer un pedido para hoy
 
 spreadsheet.missing_column: Debe definir una columna « %column% »
-spreadsheet.missing_columns: Debe definir una columna « %column% » o una columna « %other_column% »
-spreadsheet.alternative_columns: Debe definir una columna « %column% » o una columna « %other_column% », pero no ambas
+spreadsheet.missing_columns: Debe definir una columna « %column% » o una columna «
+  %other_column% »
+spreadsheet.alternative_columns: Debe definir una columna « %column% » o una columna
+  « %other_column% », pero no ambas
 spreadsheet.csv_encoding: Los archivos CSV deben estar codificados en UTF-8
 
 order.fulfillment_methods.empty: Este establecimiento no esta disponible en estos
@@ -64,3 +66,12 @@ order.shippingTimeRange.notAvailable: No esta disponible en estos momentos
 pricing_rule.expression.syntax_error: Error de sintax en la expresión "%expression%"
 store.multi_drop.conflict: No se puede tener activado crear pedidos y permitido entregas
   multiples a la misma vez
+order.adjustments.unexpectedCount: Número inesperado de "%type%" ajustes
+siret.head_office: Debe facilitar un número SIRET de establecimiento, no de sede social.
+delivery.check.outOfBounds: Su solicitud está fuera de la zona aceptada o demasiado
+  lejos
+dabba.insufficient_wallet: Tu cartera Dabba ha desaparecido %amount%
+googlemaps.api_key.invalid: El Google Maps API Key no es válido. %error%
+loopeat.insufficient_stock: Cantidad insuficiente de envases reutilizables parar «
+  %name% »
+siret.invalid: Numero SIRET invalido

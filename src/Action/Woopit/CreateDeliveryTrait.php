@@ -20,7 +20,7 @@ trait CreateDeliveryTrait
         $pickup = $this->createTask($data->picking, Task::TYPE_PICKUP);
         $dropoff = $this->createTask($data->delivery, Task::TYPE_DROPOFF);
 
-        $this->parseAndApplyPackages($data, $pickup);
+        $this->parseAndApplyPackages($data, $dropoff);
 
         $delivery = Delivery::createWithTasks($pickup, $dropoff);
 

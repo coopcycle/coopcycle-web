@@ -35,9 +35,9 @@ class DeliveryType extends AbstractType
         protected AuthorizationCheckerInterface $authorizationChecker,
         protected string $country,
         protected string $locale,
-        private readonly OrderManager $orderManager)
-    {
-    }
+        private readonly OrderManager $orderManager,
+    )
+    { }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -57,6 +57,7 @@ class DeliveryType extends AbstractType
             $form = $event->getForm();
             $delivery = $event->getData();
 
+            /** @var ?Store $store */
             $store = $delivery->getStore();
 
             $isNew = null === $delivery->getId();
@@ -107,6 +108,7 @@ class DeliveryType extends AbstractType
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
                     'with_position' => true,
+                    'with_barcode' => null !== $store ? !empty($store->getStoreGLN()) : false, // or transporter enabled
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
