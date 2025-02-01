@@ -58,8 +58,17 @@ class ApiRequestResponseProcessor
         $record['extra']['method'] = $request->getMethod();
         $record['extra']['request_uri'] = $request->getRequestUri();
         $record['extra']['status_code'] = $response->getStatusCode();
+
         $record['extra']['request_headers'] = (string) $requestHeaders;
         $record['extra']['request_body'] = $requestBody;
+
+        $record['extra']['requests'] = [
+            [
+                'controller' => $request->attributes->get('_controller'),
+                'route' => $request->attributes->get('_route'),
+            ]
+        ];
+
         $record['extra']['response_headers'] = (string) $response->headers;
         $record['extra']['response_body'] = $responseBody;
 
