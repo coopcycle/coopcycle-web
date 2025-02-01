@@ -5,42 +5,31 @@ namespace AppBundle\Messenger;
 use AppBundle\Log\MessengerRequestIdProcessor;
 use AppBundle\Messenger\Stamp\RequestIdStamp;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
-use Symfony\Component\Messenger\Middleware\StackInterface;
-use Symfony\Component\Messenger\Stamp\ConsumedByWorkerStamp;
+use Symfony\Component\Messenger\Stamp\StampInterface;
 
-class RequestIdMiddleware implements MiddlewareInterface
+class RequestIdMiddleware extends StampMiddleware
 {
-    private ?RequestIdStamp $currentRequestIdStamp = null;
-
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly MessengerRequestIdProcessor $messengerRequestIdProcessor
-    ) {
+        MessengerRequestIdProcessor $stampProcessor,
+    )
+    {
+        parent::__construct($stampProcessor);
     }
 
-    public function handle(Envelope $envelope, StackInterface $stack): Envelope
+    protected function getStampFqcn(): string
     {
-        if ($stamp = $envelope->last(RequestIdStamp::class)) {
-            $this->messengerRequestIdProcessor->setStamp($stamp);
-            $this->currentRequestIdStamp = $stamp;
+        return RequestIdStamp::class;
+    }
 
-            try {
-                return $stack->next()->handle($envelope, $stack);
-            } finally {
-                $this->messengerRequestIdProcessor->setStamp(null);
-                $this->currentRequestIdStamp = null;
-            }
-        }
-
+    protected function createStamp(): ?StampInterface
+    {
         $request = $this->requestStack->getCurrentRequest();
-        if (! $envelope->last(ConsumedByWorkerStamp::class) && $request && $request->headers->has('X-Request-ID')) {
-            $envelope = $envelope->with(new RequestIdStamp($request->headers->get('X-Request-ID')));
-        } elseif (! $envelope->last(ConsumedByWorkerStamp::class) && $this->currentRequestIdStamp !== null) {
-            $envelope = $envelope->with($this->currentRequestIdStamp);
-        }
 
-        return $stack->next()->handle($envelope, $stack);
+        if ($request && $request->headers->has('X-Request-ID')) {
+            return new RequestIdStamp($request->headers->get('X-Request-ID'));
+        } else {
+            return null;
+        }
     }
 }

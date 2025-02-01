@@ -6,19 +6,14 @@ use AppBundle\Messenger\Stamp\RequestIdStamp;
 use Monolog\Attribute\AsMonologProcessor;
 
 #[AsMonologProcessor]
-class MessengerRequestIdProcessor
+class MessengerRequestIdProcessor extends MessengerStampProcessor
 {
-    private ?string $requestId = null;
-
-    public function setStamp(?RequestIdStamp $stamp): void
-    {
-        $this->requestId = $stamp?->getRequestId();
-    }
-
     public function __invoke(array $record): array
     {
-        if ($this->requestId !== null) {
-            $record['extra']['request_id'] = $this->requestId;
+        $stamp = $this->getStamp();
+
+        if ($stamp instanceof RequestIdStamp) {
+            $record['extra']['request_id'] = $stamp->getValue();
         }
 
         return $record;
