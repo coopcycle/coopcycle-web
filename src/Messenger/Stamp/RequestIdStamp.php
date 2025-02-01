@@ -7,12 +7,13 @@ use Symfony\Component\Messenger\Stamp\StampInterface;
 class RequestIdStamp implements StampInterface
 {
     public function __construct(
-        private string $requestId
-    ) {
+        private readonly string $value
+    )
+    {
     }
 
-    public function getRequestId(): string
+    public function getValue(): string
     {
-        return $this->requestId;
+        return $this->value;
     }
 }
