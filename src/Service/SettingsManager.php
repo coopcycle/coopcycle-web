@@ -85,6 +85,8 @@ class SettingsManager
     public function get($name)
     {
         switch ($name) {
+            // TODO
+            // Deprecate this, resolve the payment gateway when retrieving order payment details
             case 'payment_gateway':
                 return $this->gatewayResolver->resolve();
             case 'stripe_publishable_key':
