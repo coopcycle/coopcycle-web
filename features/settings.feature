@@ -22,7 +22,6 @@ Feature: Settings
         "country":"fr",
         "locale":"fr",
         "stripe_publishable_key":"pk_1234567890",
-        "payment_gateway":"stripe",
         "mercadopago_publishable_key":"TEST_123456",
         "latlng":"48.856613,2.352222",
         "currency_code":"eur",

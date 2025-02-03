@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Payment\GatewayResolver;
 use AppBundle\Utils\Settings;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Craue\ConfigBundle\CacheAdapter\CacheAdapterInterface as CraueCache;
@@ -62,7 +61,6 @@ class SettingsManager
         string $country,
         bool $foodtechEnabled,
         bool $b2bEnabled,
-        GatewayResolver $gatewayResolver,
         string $projectDir)
     {
         $this->craueConfig = $craueConfig;
@@ -73,7 +71,6 @@ class SettingsManager
         $this->country = $country;
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
-        $this->gatewayResolver = $gatewayResolver;
         $this->projectDir = $projectDir;
     }
 
@@ -85,8 +82,6 @@ class SettingsManager
     public function get($name)
     {
         switch ($name) {
-            case 'payment_gateway':
-                return $this->gatewayResolver->resolve();
             case 'stripe_publishable_key':
                 $name = $this->isStripeLivemode() ? 'stripe_live_publishable_key' : 'stripe_test_publishable_key';
                 break;
