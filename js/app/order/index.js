@@ -175,6 +175,8 @@ $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var hasDabbaCredentials = $(this).data('dabbaCredentials') === true;
   var dabbaAuthorizeUrl = $(this).data('dabbaAuthorizeUrl') + `&expected_wallet=${expectedWallet}`;
 
+  window._paq.push(['trackEvent', 'Checkout', (isChecked ? 'zeroWasteEnable' : 'zeroWasteDisable')]);
+
   if (isVytal) {
 
     $('#modal-vytal').modal('show');
