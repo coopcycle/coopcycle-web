@@ -627,7 +627,7 @@
         "DELIVERY_FORM_SHOW_MORE" : "Voir plus",
         "DELIVERY_FORM_SHOW_LESS" : "Voir moins",
         "DELIVERY_PICKUP" : "Retrait", 
-        "DELIVERY_DROPOFF ": "Dépôt", 
+        "DELIVERY_DROPOFF": "Dépôt", 
         "DELIVERY_FORM_PICKUP_HOUR" : "Heure de retrait", 
         "DELIVERY_FORM_DROPOFF_HOUR" : "Heure de dépôt", 
         "DELIVERY_FORM_NEW_PRICE" : "Nouveau prix",
