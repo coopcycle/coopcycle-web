@@ -2,7 +2,7 @@ import Inputmask from 'inputmask'
 import numbro from 'numbro'
 import _ from 'lodash'
 import React from 'react'
-import { createPortal, render } from 'react-dom'
+import { createPortal } from 'react-dom'
 import Modal from 'react-modal'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
@@ -122,7 +122,7 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
   const containersCount = JSON.parse(e.relatedTarget.dataset.containersCount)
   const oauthUrl = e.relatedTarget.dataset.oauthUrl
 
-  render(<LoopeatModal
+  createRoot(this.querySelector('.modal-body [data-widget="loopeat-returns"]')).render(<LoopeatModal
     customerContainers={ customerContainers }
     formats={ formats }
     formatsToDeliver={ formatsToDeliver }
@@ -139,7 +139,7 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
     }}
     onSubmit={ () => {
       document.querySelector('form[name="loopeat_returns"]').submit()
-    }} />, this.querySelector('.modal-body [data-widget="loopeat-returns"]'))
+    }} />)
 });
 
 $('#dabba-add-credit').on('click', function(e) {
