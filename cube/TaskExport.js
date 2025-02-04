@@ -1,6 +1,6 @@
 const { securityContext } = COMPILE_CONTEXT
 
-const partitionPath = ({instance, year, month}) => {
+const partitionPath = ({ instance, year, month }) => {
   const _ = (name, value) => value ? `${name}=${value}` : "*"
   return `${_("instance", instance)}/${_("year", year)}/${_("month", month)}`
 }
@@ -22,6 +22,10 @@ cube(`TaskExport`, {
     },
     type: {
       sql: `type`,
+      type: `string`
+    },
+    status: {
+      sql: `status`,
       type: `string`
     },
     instance: {
