@@ -84,7 +84,7 @@ adminDashboard.users.export.optins.marketting: Users who agree to receive promot
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
-adminDashboard.pricing.docs_path: /en/admin/deliveries/pricing/
+adminDashboard.pricing.docs_path: /en/web/admin/deliveries/pricing/
 adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.duplicate: Duplicate
@@ -1514,6 +1514,7 @@ adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
 adminDashboard.invoicing.title: Invoicing [PREVIEW]
+adminDashboard.invoicing.docs_path: /en/web/admin/deliveries/invoicing/
 adminDashboard.invoicing.help: "Prepare invoices"
 adminDashboard.invoicing.line_item.order_number: "Order #%number%"
 profile.delete_my_account: "Delete my account"
