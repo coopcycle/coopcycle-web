@@ -17,7 +17,6 @@ adminDashboard.dashboard.import: Importar
 adminDashboard.dashboard.export: Exportar
 adminDashboard.dashboard.importTasks: Importar tareas
 adminDashboard.dashboard.exportTasks: Exportar tareas
-adminDashboard.dashboard.filters: Filtros
 adminDashboard.dashboard.deleteTaskGroup: Eliminar grupo de tareas
 adminDashboard.dashboard.displayByGroups: Mostrar por grupo
 adminDashboard.dashboard.displayAll: Mostrar todas
@@ -180,7 +179,6 @@ restaurant.product_options.help: "Esta sección le permite configurar elementos 
   \ puede definir una lista de valores\n"
 restaurant.product_options.list.values: Valores
 restaurant.form.uploadImage: Subir una imagen
-restaurant.form.add: Añadir
 profile.addresses.breadcrumb: Direcciones
 profile.addresses.empty: ¡Aún no hay direcciones guardadas!
 profile.orders.empty: ¡No existe ningún pedido!
@@ -1200,7 +1198,6 @@ basics.search: Buscar…
 form.hub.restaurants.label: Lista de comercios
 index.view_all_merchants: Ver todos los comercios
 order.list.summary.hub.text: Pedir en el local %name%
-form.fulfillment_method.options.round.label: Intervalo aproximado
 promotion_action.fixed_discount: '%amount% de descuento'
 promotion_action.delivery_percentage_discount: '%percentage% de descuento en los gastos
   de envío'
