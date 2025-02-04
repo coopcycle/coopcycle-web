@@ -142,6 +142,10 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
     }} />)
 });
 
+$('#modal-loopeat-howitworks').on('shown.bs.modal', function() {
+  window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
+});
+
 $('#dabba-add-credit').on('click', function(e) {
   e.preventDefault();
 

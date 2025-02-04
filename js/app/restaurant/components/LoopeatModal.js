@@ -34,7 +34,8 @@ const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
       overlayClassName="ReactModal__Overlay--cart"
       className="ReactModal__Content--enter-address"
       htmlOpenClassName="ReactModal__Html--open"
-      bodyOpenClassName="ReactModal__Body--open">
+      bodyOpenClassName="ReactModal__Body--open"
+      onAfterOpen={ () =>  window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteDisclaimer']) }>
       <div>
         <p className="mb-4">
         <PopupText />
