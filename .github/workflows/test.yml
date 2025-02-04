@@ -88,7 +88,7 @@ jobs:
         run: docker compose exec -T php vendor/bin/behat -f progress
       - name: Upload Symfony logs on failure
         if: ${{ failure() }}
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep INFO > symfony_logs.log
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log > symfony_logs.log
       - name: Upload Symfony logs artifact
         if: ${{ failure() }}
         uses: actions/upload-artifact@v4
