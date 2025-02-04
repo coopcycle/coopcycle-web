@@ -199,14 +199,13 @@
 
   <hr>
 
-  <h4>{% trans %}admin.settings.on_demand_delivery{% endtrans %}</h4>
+  <h4>{% trans %}admin.settings.package_delivery{% endtrans %}</h4>
 
   {{ form_row(form.on_demand_delivery_product_name) }}
 
-  <hr>
-
-  <h4>Lastmile</h4>
   {% if form.company_gln is defined %}
+    <hr>
+
     {{ form_row(form.company_gln) }}
   {% endif %}
 
