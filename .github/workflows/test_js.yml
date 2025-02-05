@@ -17,6 +17,6 @@ jobs:
           timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v2
       - name: Run CoopCycle Web
-        uses: .github/actions/run-coopcycle-web
+        uses: ./.github/actions/run-coopcycle-web
       - name: Run Jest
         run: docker compose exec -T webpack npm run jest

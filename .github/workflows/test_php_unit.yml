@@ -17,7 +17,7 @@ jobs:
           timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v2
       - name: Run CoopCycle Web
-        uses: .github/actions/run-coopcycle-web
+        uses: ./.github/actions/run-coopcycle-web
       - name: Run PHPUnit
         run: |
           cp phpunit.xml.dist phpunit.xml

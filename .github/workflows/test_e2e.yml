@@ -22,7 +22,7 @@ jobs:
           timezoneLinux: "Europe/Paris"
       - uses: actions/checkout@v2
       - name: Run CoopCycle Web
-        uses: .github/actions/run-coopcycle-web
+        uses: ./.github/actions/run-coopcycle-web
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
       - name: Run Cypress
