@@ -4,8 +4,10 @@ runs:
   using: "composite"
   steps:
   - name: Show Symfony logs
+    shell: bash
     run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep -v DEBUG
   - name: Upload Symfony logs
+    shell: bash
     run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log > symfony_logs.log
   - name: Upload Symfony logs artifact
     uses: actions/upload-artifact@v4

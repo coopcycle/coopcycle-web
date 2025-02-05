@@ -18,6 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run CoopCycle Web
         uses: ./.github/actions/run-coopcycle-web
+        timeout-minutes: 5
       - name: Run Behat
         run: docker compose exec -T php vendor/bin/behat -f progress
       - name: Show and upload Symfony test logs on failure
