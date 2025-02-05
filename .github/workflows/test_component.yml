@@ -1,0 +1,30 @@
+name: Test
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  COMPONENT:
+    name: Run component tests with Cypress
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        country: [fr]
+    env:
+      GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
+      COOPCYCLE_COUNTRY: ${{ matrix.country }}
+      COOPCYCLE_LOCALE: ${{ matrix.country }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          component: true
+          spec: cypress/component/**/*.cy.js
+      - name: Upload images for failed tests
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
