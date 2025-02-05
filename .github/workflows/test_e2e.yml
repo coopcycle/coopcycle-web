@@ -44,4 +44,4 @@ jobs:
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
       - name: Show and upload Symfony test logs on failure
         if: failure()
-        uses: .github/actions/upload-test-logs
+        uses: ./.github/actions/upload-test-logs
