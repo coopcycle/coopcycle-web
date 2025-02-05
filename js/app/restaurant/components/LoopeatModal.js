@@ -12,14 +12,14 @@ const PopupText = () => {
 
   if (LoopeatContext.processingFee > 0 && LoopeatContext.processingFeeBehavior === 'on_returns') {
     return (
-      <span>{ t('CART_ZERO_WASTE_POPUP_TEXT_WITH_FEE', {
+      <div dangerouslySetInnerHTML={{ __html: t('CART_ZERO_WASTE_POPUP_TEXT_WITH_FEE', {
         name: LoopeatContext.name,
-        amount: (LoopeatContext.processingFee / 100).formatMoney() }) }
-      </span>
+        amount: (LoopeatContext.processingFee / 100).formatMoney() }) }}>
+      </div>
     )
   }
 
-  return <span>{ t('CART_ZERO_WASTE_POPUP_TEXT', { name: LoopeatContext.name }) }</span>
+  return <div dangerouslySetInnerHTML={{ __html: t('CART_ZERO_WASTE_POPUP_TEXT', { name: LoopeatContext.name }) }}></div>
 }
 
 const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
@@ -37,9 +37,9 @@ const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
       bodyOpenClassName="ReactModal__Body--open"
       onAfterOpen={ () =>  window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteDisclaimer']) }>
       <div>
-        <p className="mb-4">
-        <PopupText />
-        </p>
+        <div className="mb-4">
+          <PopupText />
+        </div>
         <div className="d-flex align-items-center justify-content-between">
           <a href={ LoopeatContext.customerAppUrl } target="_blank" rel="noreferrer">{ t('LEARN_MORE') }</a>
           <button type="button" className="btn btn-primary" onClick={ enableReusablePackaging }>{ t('I_UNDERSTAND') }</button>
