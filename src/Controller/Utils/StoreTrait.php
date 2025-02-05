@@ -693,7 +693,7 @@ trait StoreTrait
             ]
         );
 
-        return $this->render('store/deliveries.html.twig', [
+        return $this->render('store/deliveries.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'deliveries' => $deliveries,
@@ -704,7 +704,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'delivery_import_form' => $deliveryImportForm->createView(),
-        ]);
+        ]));
     }
 
     public function storeSavedOrdersAction($id, Request $request,
@@ -725,7 +725,7 @@ trait StoreTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('store/orders_saved.html.twig', [
+        return $this->render('store/orders_saved.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'bookmarks' => $orderRepository->findBookmarked($store, $this->getUser()),
@@ -733,7 +733,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'store_addresses_route' => $routes['store_addresses'],
-        ]);
+        ]));
     }
 
     public function storeRecurrenceRulesAction($id, Request $request,
