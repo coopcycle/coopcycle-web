@@ -43,6 +43,15 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-      - name: Show and upload Symfony test logs on failure
+      - name: Show Symfony warnings on failure
         if: failure()
-        uses: ./.github/actions/upload-test-logs
+        uses: ./.github/actions/show-symfony-warnings
+      - name: Copy Symfony logs
+        if: failure()
+        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log > symfony_logs.log
+      - name: Upload Symfony logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: symfony-logs
+          path: symfony_logs.log
