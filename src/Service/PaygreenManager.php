@@ -126,11 +126,11 @@ class PaygreenManager
         $paymentOrder->setCancelUrl($this->getCallbackUrl($order, 'paygreen_cancel'));
         $paymentOrder->setEligibleAmounts($this->getEligibleAmounts($order));
 
-        // platforms is required when fees is set
-        // Impossible to process fees on Payment Orders setup with non-wallet platforms.
-        // You must only specify a platform with a wallet behavior (e.g. bank_card)
-        // $paymentOrder->setPlatforms(['bank_card']);
-        // $paymentOrder->setFees($order->getFeeTotal());
+        // We can set platforms fees *ONLY* when the order is paid 100% by credit card
+        if ('CARD' === $payment->getMethod()->getCode()) {
+            $paymentOrder->setPlatforms(['bank_card']); // Avoid error "platforms is required when fees is set"
+            $paymentOrder->setFees($order->getFeeTotal());
+        }
 
         $response = $this->paygreenClient->createPaymentOrder($paymentOrder);
 
