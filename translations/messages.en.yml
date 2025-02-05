@@ -888,7 +888,7 @@ meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
 admin.settings.foodtech: Food Tech
-admin.settings.on_demand_delivery: On Demand Delivery
+admin.settings.package_delivery: Package Delivery
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered to your home.
 index.our_restaurants: Our restaurants
