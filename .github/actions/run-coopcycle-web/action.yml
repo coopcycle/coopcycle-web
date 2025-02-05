@@ -3,11 +3,6 @@ name: Run CoopCycle Web
 runs:
   using: "composite"
   steps:
-  - name: Set timezone
-    uses: szenius/set-timezone@v2.0
-    with:
-      timezoneLinux: "Europe/Paris"
-  - uses: actions/checkout@v2
   - name: Create .env file
     run: cp .env.dist .env
   - name: Pull Docker images

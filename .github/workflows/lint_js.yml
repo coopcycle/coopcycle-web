@@ -1,4 +1,4 @@
-name: Test
+name: Lint
 on: push
 env:
   APP_ENV: test
