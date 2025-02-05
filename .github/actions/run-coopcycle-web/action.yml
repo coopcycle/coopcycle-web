@@ -1,0 +1,43 @@
+name: Run CoopCycle Web
+
+runs:
+  using: "composite"
+  steps:
+  - name: Create .env file
+    shell: bash
+    run: cp .env.dist .env
+  - name: Pull Docker images
+    shell: bash
+    run: docker compose pull --ignore-pull-failures
+  - name: Prepare OSRM data
+    shell: bash
+    run: |
+      docker compose run -T --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
+      docker compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
+      docker compose run -T --rm osrm osrm-partition /data/data.osrm
+      docker compose run -T --rm osrm osrm-customize /data/data.osrm
+    # Cypress GitHub Action uses npm ci, and it causes a "permission denied" error,
+    # because it tries to remove the node_modules/ folder, which is mounted with root:root
+    # We create the node_modules/ folder *BEFORE* starting the containers,
+    # so that it can be removed without problems.
+  - name: Create node_modules directory
+    shell: bash
+    run: mkdir node_modules
+  - name: Start Docker containers
+    shell: bash
+    run: docker compose up -d
+  - name: Wait for PHP-FPM
+    shell: bash
+    run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
+  - name: Wait webpack
+    shell: bash
+    run: until [ -f "web/build/entrypoints.json" ]; do sleep 5; done
+  - name: Create database
+    shell: bash
+    run: docker compose exec -T php bin/console doctrine:schema:create --env=test
+  - name: Create typesense collections
+    shell: bash
+    run: docker compose exec -T php bin/console typesense:create --env=test
+  - name: Validate database schema
+    shell: bash
+    run: docker compose exec -T php bin/console doctrine:schema:validate --env=test --skip-sync

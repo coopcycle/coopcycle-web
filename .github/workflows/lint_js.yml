@@ -1,0 +1,17 @@
+name: Lint JS
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  LINT_JS:
+    name: Lint JS
+    runs-on: ubuntu-latest
+    env:
+      CYPRESS_INSTALL_BINARY: '0'
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install JS dependencies
+        run: npm ci
+      - name: Run ESLint
+        run: node_modules/.bin/eslint --quiet js/app/

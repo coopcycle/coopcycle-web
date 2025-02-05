@@ -1,0 +1,8 @@
+name: Show Symfony warnings
+
+runs:
+  using: "composite"
+  steps:
+  - name: Show warnings for the test environment
+    shell: bash
+    run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep -v -e DEBUG -e INFO

@@ -1,0 +1,29 @@
+name: Test Behat
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  BEHAT:
+    name: Run Behat tests
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+    steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
+      - uses: actions/checkout@v2
+      - name: Run CoopCycle Web
+        uses: ./.github/actions/run-coopcycle-web
+        timeout-minutes: 5
+      - name: Run Behat
+        run: docker compose exec -T php vendor/bin/behat -f progress
+      - name: Show Symfony warnings on failure
+        if: failure()
+        uses: ./.github/actions/show-symfony-warnings
+      - name: Upload Symfony logs on failure
+        if: failure()
+        uses: ./.github/actions/upload-symfony-logs
