@@ -16,37 +16,8 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-      - name: Set timezone
-        uses: szenius/set-timezone@v2.0
-        with:
-          timezoneLinux: "Europe/Paris"
-      - uses: actions/checkout@v2
-      - name: Create .env file
-        run: cp .env.dist .env
-      - name: Pull Docker images
-        run: docker compose pull --ignore-pull-failures
-      - name: Prepare OSRM data
-        run: |
-          docker compose run -T --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
-          docker compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
-          docker compose run -T --rm osrm osrm-partition /data/data.osrm
-          docker compose run -T --rm osrm osrm-customize /data/data.osrm
-      # Cypress GitHub Action uses npm ci, and it causes a "permission denied" error,
-      # because it tries to remove the node_modules/ folder, which is mounted with root:root
-      # We create the node_modules/ folder *BEFORE* starting the containers,
-      # so that it can be removed without problems.
-      - name: Create node_modules directory
-        run: mkdir node_modules
-      - name: Start Docker containers
-        run: docker compose up -d
-      - name: Wait for PHP-FPM
-        run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
-      - name: Wait webpack
-        run: until [ -f "web/build/entrypoints.json" ]; do sleep 5; done
-      - name: Create database
-        run: docker compose exec -T php bin/console doctrine:schema:create --env=test
-      - name: Create typesense collections
-        run: docker compose exec -T php bin/console typesense:create --env=test
+      - name: Run CoopCycle Web
+        uses: .github/actions/run-coopcycle-web
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
       - name: Run Cypress
@@ -66,6 +37,6 @@ jobs:
           name: cypress-screenshots
           path: cypress/screenshots
           if-no-files-found: ignore # 'warn' or 'error' are also available, defaults to `warn`
-      - name: Show Symfony logs on failure
+      - name: Show and upload Symfony test logs on failure
         if: failure()
-        run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log | grep -v DEBUG
+        uses: .github/actions/upload-test-logs

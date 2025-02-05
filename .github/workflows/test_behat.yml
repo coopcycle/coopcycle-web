@@ -1,0 +1,20 @@
+name: Test
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  BASE:
+    name: Run Behat tests
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+    steps:
+      - name: Run CoopCycle Web
+        uses: .github/actions/run-coopcycle-web
+      - name: Run Behat
+        run: docker compose exec -T php vendor/bin/behat -f progress
+      - name: Show and upload Symfony test logs on failure
+        if: failure()
+        uses: .github/actions/upload-test-logs
