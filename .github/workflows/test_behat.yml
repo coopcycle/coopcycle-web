@@ -1,4 +1,4 @@
-name: Test
+name: Test Behat
 on: push
 env:
   APP_ENV: test
