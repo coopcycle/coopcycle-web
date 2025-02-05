@@ -85,11 +85,10 @@ class IsActivableRestaurantValidator extends ConstraintValidator
 
             if (!$this->cashEnabled) {
 
+                $supportsAtLeastOneGateway = false;
+                $violations = [];
+
                 foreach (['mercadopago', 'paygreen', 'stripe'] as $gateway) {
-
-                    $supportsAtLeastOneGateway = false;
-                    $violations = [];
-
                     if ($this->gatewayResolver->supports($gateway)) {
                         switch ($gateway) {
                             case 'mercadopago':
@@ -117,13 +116,13 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                                 break;
                         }
                     }
+                }
 
-                    if (!$supportsAtLeastOneGateway) {
-                        foreach ($violations as $path => $message) {
-                            $this->context->buildViolation($message)
-                                ->atPath($path)
-                                ->addViolation();
-                        }
+                if (!$supportsAtLeastOneGateway) {
+                    foreach ($violations as $path => $message) {
+                        $this->context->buildViolation($message)
+                            ->atPath($path)
+                            ->addViolation();
                     }
                 }
             }
