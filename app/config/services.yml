@@ -1416,7 +1416,7 @@ services:
     class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
     arguments: [
       '@woopit.http_client',
-      'https://connect.%env(WOOPIT_HOST)%/api/oauth/token',
+      '%env(WOOPIT_AUTHENTICATION_API_URL)%',
       '%env(WOOPIT_CLIENT_ID)%',
       '%env(WOOPIT_CLIENT_SECRET)%'
     ]
