@@ -224,6 +224,7 @@ class TaskSubscriber implements EventSubscriber
                     continue;
                 }
 
+                // if all tasks of a delivery are cancelled, cancel the linked order
                 $tasks = $delivery->getTasks();
                 $cancelOrder = true;
                 foreach ($tasks as $task) {
@@ -233,7 +234,8 @@ class TaskSubscriber implements EventSubscriber
                     }
                 }
 
-                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED) {
+                // do not cancel order if order is "refused"
+                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
                     $this->orderManager->cancel($order, 'All tasks were cancelled');
                     $em->flush();
                 }
