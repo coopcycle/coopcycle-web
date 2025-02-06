@@ -5,6 +5,7 @@ namespace AppBundle\Validator\Constraints;
 use AppBundle\Entity\Task;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Component\HttpClient\Exception\ServerException;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -46,8 +47,10 @@ class SiretValidator extends ConstraintValidator
 
             $this->context->buildViolation($data['header']['message'])
                 ->addViolation();
-        }
 
+        } catch (ServerException $e) {
+            // Die in silence
+        }
     }
 
     /**
