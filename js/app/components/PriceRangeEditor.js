@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { getCurrencySymbol } from '../i18n'
 import { useTranslation } from 'react-i18next'
 
@@ -75,22 +75,30 @@ export default ({ defaultValue, onChange }) => {
 
   const stepEl = useRef(null)
   const thresholdEl = useRef(null)
+  const initialLoad = useRef(true)
+
+  useEffect(() => {
+    if (!initialLoad.current) {
+      onChange({
+        attribute,
+        price: price,
+        step,
+        threshold,
+      })
+    } else {
+      initialLoad.current = false
+    }
+  }, [price, threshold, attribute, step])
 
   return (
     <div>
       <label className="mr-2">
         <input type="number" size="4"
           defaultValue={ price / 100 } min="0" step=".001"
-          className="form-control d-inline-block"
+          className="form-control d-inline-block no-number-input-arrow"
           style={{ width: '80px' }}
           onChange={ e => {
             setPrice(e.target.value * 100)
-            onChange({
-              attribute,
-              price: e.target.value * 100,
-              step,
-              threshold,
-            })
           }} />
         <span className="ml-2">{ getCurrencySymbol() }</span>
       </label>
@@ -102,12 +110,6 @@ export default ({ defaultValue, onChange }) => {
           style={{ width: '80px' }}
           onChange={ e => {
             setStep(multiplyIfNeeded(e.target.value, unit))
-            onChange({
-              attribute,
-              price,
-              step: multiplyIfNeeded(e.target.value, unit),
-              threshold: multiplyIfNeeded(thresholdEl.current.value, e.target.value),
-            })
           }} />
         <select
           className="form-control d-inline-block align-top ml-2"
@@ -116,12 +118,16 @@ export default ({ defaultValue, onChange }) => {
           onChange={ e => {
             setUnit(e.target.value)
             setAttribute(unitToAttribute(e.target.value))
-            onChange({
-              attribute: unitToAttribute(e.target.value),
-              price,
-              step: multiplyIfNeeded(stepEl.current.value, e.target.value),
-              threshold: multiplyIfNeeded(thresholdEl.current.value, e.target.value),
-            })
+
+            const newUnit = e.target.value
+
+            if (newUnit === 'vu') {
+              setStep(step / 1000)
+              setThreshold(threshold / 1000)
+            } else {
+              setStep(step * 1000)
+              setThreshold(threshold * 1000)
+            }
           }}>
           <option value="km">km</option>
           <option value="kg">kg</option>
@@ -136,12 +142,6 @@ export default ({ defaultValue, onChange }) => {
           style={{ width: '80px' }}
           onChange={ e => {
             setThreshold(multiplyIfNeeded(e.target.value, unit))
-            onChange({
-              attribute,
-              price,
-              step,
-              threshold: multiplyIfNeeded(e.target.value, unit),
-            })
           }} />
         <span className="ml-2">
           <UnitLabel unit={ unit } />
