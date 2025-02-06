@@ -21,6 +21,8 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Zone;
@@ -1298,5 +1300,27 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $store->setDefaultCourier($user);
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given the order with id :orderId has Loopeat credentials
+     */
+    public function theOrderWithIdHasLoopeatCredentials($orderId)
+    {
+        $order = $this->doctrine->getRepository(Order::class)->find($orderId);
+        $order->setLoopeatAccessToken(base64_encode(random_bytes(16)));
+        $order->setLoopeatRefreshToken(base64_encode(random_bytes(16)));
+
+        $this->doctrine->getManagerForClass(Order::class)->flush();
+    }
+
+    /**
+     * @Then the customer with id :customerId should have Loopeat credentials
+     */
+    public function theCustomerWithIdShouldHaveLoopeatCredentials($customerId)
+    {
+        $customer = $this->doctrine->getRepository(Customer::class)->find($customerId);
+
+        Assert::assertTrue($customer->hasLoopEatCredentials());
     }
 }

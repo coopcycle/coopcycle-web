@@ -1759,9 +1759,7 @@ class Order extends BaseOrder implements OrderInterface
     public function setLoopeatAccessToken($accessToken)
     {
         if (null === $this->loopeatCredentials) {
-
             $this->loopeatCredentials = new OrderCredentials();
-            $this->loopeatCredentials->setOrder($this);
         }
 
         $this->loopeatCredentials->setLoopeatAccessToken($accessToken);
@@ -1780,9 +1778,7 @@ class Order extends BaseOrder implements OrderInterface
     public function setLoopeatRefreshToken($refreshToken)
     {
         if (null === $this->loopeatCredentials) {
-
             $this->loopeatCredentials = new OrderCredentials();
-            $this->loopeatCredentials->setOrder($this);
         }
 
         $this->loopeatCredentials->setLoopeatRefreshToken($refreshToken);
@@ -1796,11 +1792,9 @@ class Order extends BaseOrder implements OrderInterface
     public function clearLoopEatCredentials()
     {
         if (null === $this->loopeatCredentials) {
-
             return;
         }
 
-        $this->loopeatCredentials->setOrder(null);
         $this->loopeatCredentials = null;
     }
 

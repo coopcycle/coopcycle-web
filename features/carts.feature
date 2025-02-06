@@ -2362,3 +2362,68 @@ Feature: Carts
         "redirectUrl":"@string@||@null@"
       }
       """
+
+  @debug
+  Scenario: Assign cart to guest customer moves Loopeat credentials
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "guest_checkout_enabled" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/carts/session" with body:
+      """
+      {
+        "restaurant": "/api/restaurants/1"
+      }
+      """
+    Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "token":@string@,
+        "cart":{
+          "@context":"/api/contexts/Order",
+          "@id":"/api/orders/1",
+          "@type":"http://schema.org/Order",
+          "customer":null,
+          "restaurant":"/api/restaurants/1",
+          "@*@":"@*@"
+        }
+      }
+      """
+    Given the order with id "1" has Loopeat credentials
+    Given the client is authenticated with last response token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send an authenticated "PUT" request to "/api/orders/1/assign" with body:
+      """
+      {
+        "guest": true,
+        "email": "guest@coopcycle.org",
+        "telephone": "+33193166989"
+      }
+      """
+    Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":"/api/customers/1",
+        "restaurant":"/api/restaurants/1",
+        "@*@":"@*@"
+      }
+      """
+    And the customer with id "1" should have Loopeat credentials

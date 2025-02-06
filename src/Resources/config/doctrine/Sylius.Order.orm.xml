@@ -125,7 +125,7 @@
         <cascade-all/>
       </cascade>
     </one-to-one>
-    <one-to-one field="loopeatCredentials" target-entity="AppBundle\Entity\LoopEat\OrderCredentials" mapped-by="order" orphan-removal="true">
+    <one-to-one field="loopeatCredentials" target-entity="AppBundle\Entity\LoopEat\OrderCredentials" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
