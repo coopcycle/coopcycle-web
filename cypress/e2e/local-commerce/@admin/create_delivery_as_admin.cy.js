@@ -1,15 +1,6 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-    'bin/console coopcycle:setup --env=test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
-
     cmd =
       'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
     if (prefix) {
@@ -560,10 +551,10 @@ context('Delivery (role: admin)', () => {
       'match',
       /\/admin\/orders\/[0-9]+$/,
     )
-    cy.get('[name="variantName"]')
+    cy.get('[data-testid="name"]')
       .contains('Test product')
 
-    cy.get('#variantPriceVAT')
+    cy.get('[data-testid="total"]')
       .contains('€72.00')
   })
 })
