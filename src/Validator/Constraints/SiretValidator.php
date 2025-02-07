@@ -3,6 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Task;
+use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Component\HttpClient\Exception\ServerException;
@@ -12,7 +13,9 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class SiretValidator extends ConstraintValidator
 {
-    public function __construct(private HttpClientInterface $inseeClient)
+    public function __construct(
+        private HttpClientInterface $inseeClient,
+        private LoggerInterface $logger)
     {}
 
     public function validate($value, Constraint $constraint)
@@ -38,7 +41,7 @@ class SiretValidator extends ConstraintValidator
                 ->addViolation();
 
         } catch (ServerException $e) {
-            // Die in silence
+            $this->logger->error($e->getResponse()->getContent(throw: false));
         }
     }
 }
