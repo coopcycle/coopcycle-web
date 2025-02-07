@@ -3,7 +3,6 @@
 namespace AppBundle\Validator\Constraints;
 
 use AppBundle\LoopEat\Client as LoopEatClient;
-use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;

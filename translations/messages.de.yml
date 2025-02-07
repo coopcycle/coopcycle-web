@@ -7,7 +7,6 @@ adminDashboard.configuration: Einstellungen
 adminDashboard.dashboard.title: Dashboard
 adminDashboard.dashboard.import: Importieren
 adminDashboard.dashboard.export: Exportieren
-adminDashboard.dashboard.filters: Filter
 adminDashboard.deliveries.title: Lieferungen
 adminDashboard.deliveries.courier: Kurier
 adminDashboard.deliveries.address: Adresse
@@ -120,7 +119,6 @@ adminDashboard.tooltip.deliveries: Organisiere Lieferungen
 adminDashboard.tooltip.stores: Verwalte Läden
 adminDashboard.tooltip.restaurants: Verwalte Restaurants
 adminDashboard.tooltip.users: Verwalte Benutzerkonten
-adminDashboard.dashboard.importErrors: Importiere Fehler
 adminDashboard.dashboard.importTasks: Importiere Aufträge
 adminDashboard.dashboard.exportTasks: Exportiere Aufträge
 adminDashboard.dashboard.deleteTaskGroup: Lösche Auftragsgruppe

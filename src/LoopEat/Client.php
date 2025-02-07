@@ -323,14 +323,13 @@ class Client
 
             $currentRestaurant = $this->currentRestaurant($restaurant);
 
-            // Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
-            Assert::isInstanceOf($order->getCustomer(), OAuthCredentialsInterface::class);
+            Assert::isInstanceOf($order, OAuthCredentialsInterface::class);
 
             $response = $this->client->request('POST', sprintf('/api/v1/partners/restaurants/%s/orders', $currentRestaurant['id']), [
                 'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $order->getCustomer()->getLoopeatAccessToken())
+                    'Authorization' => sprintf('Bearer %s', $order->getLoopeatAccessToken())
                 ],
-                'oauth_credentials' => $order->getCustomer(),
+                'oauth_credentials' => $order,
                 'json' => [
                     'order' => [
                         'external_id' => $order->getId(),

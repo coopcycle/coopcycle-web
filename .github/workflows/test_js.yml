@@ -1,0 +1,23 @@
+name: Test JS
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  JS:
+    name: Run JS tests
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+    steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
+      - uses: actions/checkout@v2
+      - name: Run CoopCycle Web
+        uses: ./.github/actions/run-coopcycle-web
+        timeout-minutes: 5
+      - name: Run Jest
+        run: docker compose exec -T webpack npm run jest

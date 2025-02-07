@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
@@ -26,6 +26,10 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
 
   const returnsTotalAmount = getReturnsTotalAmount(returns, formats)
   const missing = requiredAmount - (creditsCountCents + returnsTotalAmount)
+
+  useEffect(() => {
+    window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteManage']);
+  }, [])
 
   return (
     <div className="p-4">

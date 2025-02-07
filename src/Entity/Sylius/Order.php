@@ -56,7 +56,6 @@ use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
-use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -628,15 +627,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
-
-        if (null !== $customer && $this->hasLoopEatCredentials()) {
-
-            WMAssert::isInstanceOf($this->customer, LoopeatOAuthCredentialsInterface::class);
-
-            $this->customer->setLoopeatAccessToken($this->loopeatCredentials->getLoopeatAccessToken());
-            $this->customer->setLoopeatRefreshToken($this->loopeatCredentials->getLoopeatRefreshToken());
-            $this->clearLoopEatCredentials();
-        }
     }
 
     public function getTaxTotal(): int
@@ -1748,16 +1738,18 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getLoopeatAccessToken()
     {
-        if (null === $this->loopeatCredentials) {
+        $ownToken = $this->loopeatCredentials?->getLoopeatAccessToken();
+        $customerToken = $this->customer?->getLoopeatAccessToken();
 
-            return null;
-        }
-
-        return $this->loopeatCredentials->getLoopeatAccessToken();
+        return $customerToken ?? $ownToken;
     }
 
     public function setLoopeatAccessToken($accessToken)
     {
+        if (null !== $this->customer) {
+            $this->customer->setLoopeatAccessToken($accessToken);
+        }
+
         if (null === $this->loopeatCredentials) {
 
             $this->loopeatCredentials = new OrderCredentials();
@@ -1769,16 +1761,18 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getLoopeatRefreshToken()
     {
-        if (null === $this->loopeatCredentials) {
+        $ownToken = $this->loopeatCredentials?->getLoopeatRefreshToken();
+        $customerToken = $this->customer?->getLoopeatRefreshToken();
 
-            return null;
-        }
-
-        return $this->loopeatCredentials->getLoopeatRefreshToken();
+        return $customerToken ?? $ownToken;
     }
 
     public function setLoopeatRefreshToken($refreshToken)
     {
+        if (null !== $this->customer) {
+            $this->customer->setLoopeatRefreshToken($refreshToken);
+        }
+
         if (null === $this->loopeatCredentials) {
 
             $this->loopeatCredentials = new OrderCredentials();

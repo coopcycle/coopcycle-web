@@ -32,7 +32,7 @@ if (rootElement) {
     }
 
     const data = {
-      labels: resultSet.categories().map((c) => moment(c.category).format('L')),
+      labels: resultSet.categories().map((c) => moment(c.x).format('L')),
       datasets: resultSet.series().map((s, index) => ({
         label: s.title,
         data: s.series.map((r) => r.value),

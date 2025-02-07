@@ -60,11 +60,6 @@ class ClientTest extends TestCase
     {
     	$restaurant = new Restaurant();
 
-    	$customer = $this->prophesize(CustomerInterface::class);
-    	$customer
-    		->getLoopeatAccessToken()
-    		->willReturn('123456abcdef');
-
         $order = $this->prophesize(OrderInterface::class);
 
         $order
@@ -76,8 +71,8 @@ class ClientTest extends TestCase
         	->willReturn($restaurant);
 
         $order
-        	->getCustomer()
-        	->willReturn($customer->reveal());
+            ->getLoopeatAccessToken()
+            ->willReturn('123456abcdef');
 
         $order
         	->getFormatsToDeliverForLoopeat()

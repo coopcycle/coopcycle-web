@@ -534,26 +534,6 @@ class OrderController extends AbstractController
 
         // TODO Check if order is in expected state (new or superior)
 
-        $loopeatAccessTokenKey =
-            sprintf('loopeat.order.%d.access_token', $id);
-        $loopeatRefreshTokenKey =
-            sprintf('loopeat.order.%d.refresh_token', $id);
-
-        if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
-
-            $order->getCustomer()->setLoopeatAccessToken(
-                $session->get($loopeatAccessTokenKey)
-            );
-            $order->getCustomer()->setLoopeatRefreshToken(
-                $session->get($loopeatRefreshTokenKey)
-            );
-
-            $this->objectManager->flush();
-
-            $session->remove($loopeatAccessTokenKey);
-            $session->remove($loopeatRefreshTokenKey);
-        }
-
         $dabbaAccessTokenKey =
             sprintf('dabba.order.%d.access_token', $id);
         $dabbaRefreshTokenKey =

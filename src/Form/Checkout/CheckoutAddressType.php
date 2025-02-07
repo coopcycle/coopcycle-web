@@ -7,7 +7,6 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
-use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Dabba\Client as DabbaClient;
 use AppBundle\Dabba\Context as DabbaContext;
 use AppBundle\Dabba\GuestCheckoutAwareAdapter as DabbaAdapter;
