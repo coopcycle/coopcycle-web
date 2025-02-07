@@ -13,7 +13,6 @@ use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
-use AppBundle\Api\Dto\DeliveryPriceInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
@@ -21,6 +20,7 @@ use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
@@ -165,10 +165,10 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $store;
 
     /**
-     * @var DeliveryPriceInput
+     * @var ArbitraryPrice
      * @Groups({"delivery_create"})
      */
-    private $deliveryPriceInput;
+    private $arbitraryPrice;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
@@ -640,21 +640,27 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     }
 
     /**
-     * Get the value of deliveryPriceInput
+     * Get the value of arbitraryPrice
      */
-    public function getDeliveryPriceInput(): ?DeliveryPriceInput
+    public function hasArbitraryPrice(): bool
     {
-        return $this->deliveryPriceInput;
+        return !is_null($this->arbitraryPrice);
     }
 
     /**
-     * Set the value of deliveryPriceInput
-     *
-     * @return  self
+     * Get the value of arbitraryPrice
      */
-    public function setDeliveryPriceInput($deliveryPriceInput)
+    public function getArbitraryPrice(): ?ArbitraryPrice
     {
-        $this->deliveryPriceInput = $deliveryPriceInput;
+        return $this->arbitraryPrice;
+    }
+
+    /**
+     * Set the value of arbitraryPrice
+     */
+    public function setArbitraryPrice(ArbitraryPrice $arbitraryPrice): self
+    {
+        $this->arbitraryPrice = $arbitraryPrice;
 
         return $this;
     }

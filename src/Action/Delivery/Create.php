@@ -28,12 +28,12 @@ class Create
             throw new ValidationException($errors);
         }
 
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && !is_null($data->getDeliveryPriceInput());
+        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && $data->hasArbitraryPrice();
 
         if ($useArbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(
-                $data->getDeliveryPriceInput()->getVariantName(),
-                $data->getDeliveryPriceInput()->getPriceIncVATcents()
+                $data->getArbitraryPrice()->getVariantName(),
+                $data->getArbitraryPrice()->getValue()
             );
             $this->pricingManager->createOrder(
                 $data,

@@ -2447,7 +2447,7 @@ Feature: Deliveries
       }
       """
 
-  Scenario: Create delivery with given price and variant as an admin
+  Scenario: Create delivery with given price and variant as an admin then edit it with a new price
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_products.yml |
@@ -2473,8 +2473,8 @@ Feature: Deliveries
         "address": "48, Rue de Rivoli",
         "doneBefore": "tomorrow 13:30"
       },
-      "deliveryPriceInput": {
-        "priceIncVATcents": 1200,
+      "arbitraryPrice": {
+        "variantPrice": 1200,
         "variantName": "my custom variant"
       }
     }
@@ -2483,16 +2483,208 @@ Feature: Deliveries
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/orders/1"
-        Then the response status code should be 200
+    Then the response status code should be 200    
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "deliveryPrice": {
-            "variantName": "my custom variant",
-            "value": 1200,
-            "@*@": "@*@"
+        "@context": "/api/contexts/Order",
+        "@id": "/api/orders/1",
+        "@type": "http://schema.org/Order",
+        "customer": null,
+        "shippingAddress": {
+            "@id": "/api/addresses/4",
+            "@type": "http://schema.org/Place",
+            "description": null,
+            "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 50.636137,
+                "longitude": 3.092335
+            },
+            "streetAddress": "48 Rue de Rivoli, 59800 Lille",
+            "telephone": null,
+            "name": null
         },
+        "events": [
+            {
+                "@type": "OrderEvent",
+                "@id": "@string@",
+                "type": "order:created",
+                "data": [],
+                "createdAt": "@string@.isDateTime()"
+            },
+            {
+                "@type": "OrderEvent",
+                "@id": "@string@",
+                "type": "order:state_changed",
+                "data": {
+                    "newState": "new",
+                    "triggeredByEvent": {
+                        "name": "order:created",
+                        "data": []
+                    }
+                },
+                "createdAt": "@string@.isDateTime()"
+            }
+        ],
+        "id": 1,
+        "items": [
+            {
+                "@id": "/api/orders/1/items/1",
+                "@type": "OrderItem",
+                "id": 1,
+                "quantity": 1,
+                "unitPrice": 1200,
+                "total": 1200,
+                "adjustments": {
+                    "tax": [
+                        {
+                            "id": "@string@",
+                            "label": "TVA 0%",
+                            "amount": 0
+                        }
+                    ]
+                },
+                "name": "On demand delivery",
+                "variantName": "my custom variant",
+                "vendor": null,
+                "player": {
+                    "@id": "/api/customers/1",
+                    "@type": "Customer",
+                    "email": "bob@coopcycle.org",
+                    "phoneNumber": null,
+                    "tags": [],
+                    "telephone": null,
+                    "username": "bob",
+                    "fullName": ""
+                }
+            }
+        ],
+        "itemsTotal": 1200,
+        "total": 1200,
+        "state": "new",
+        "paymentMethod": "CARD",
+        "assignedTo": null,
+        "adjustments": {
+            "delivery": [],
+            "delivery_promotion": [],
+            "order_promotion": [],
+            "reusable_packaging": [],
+            "tax": [],
+            "tip": [],
+            "incident": []
+        },
+        "paymentGateway": "stripe",
         "@*@": "@*@"
       }
       """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+    """
+      {
+        "arbitraryPrice": {
+          "variantPrice": 2000,
+          "variantName": "my new product name"
+        }
+      }
+    """
+    Then the response status code should be 200
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/orders/1"
+    Then the response status code should be 200    
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context": "/api/contexts/Order",
+      "@id": "/api/orders/1",
+      "@type": "http://schema.org/Order",
+      "customer": null,
+      "shippingAddress": {
+          "@id": "/api/addresses/4",
+          "@type": "http://schema.org/Place",
+          "description": null,
+          "geo": {
+              "@type": "GeoCoordinates",
+              "latitude": 50.636137,
+              "longitude": 3.092335
+          },
+          "streetAddress": "48 Rue de Rivoli, 59800 Lille",
+          "telephone": null,
+          "name": null
+      },
+      "events": [
+          {
+              "@type": "OrderEvent",
+              "@id": "@string@",
+              "type": "order:created",
+              "data": [],
+              "createdAt": "@string@.isDateTime()"
+          },
+          {
+              "@type": "OrderEvent",
+              "@id": "@string@",
+              "type": "order:state_changed",
+              "data": {
+                  "newState": "new",
+                  "triggeredByEvent": {
+                      "name": "order:created",
+                      "data": []
+                  }
+              },
+              "createdAt": "@string@.isDateTime()"
+          }
+      ],
+      "id": 1,
+      "items": [
+          {
+              "@id": "/api/orders/1/items/2",
+              "@type": "OrderItem",
+              "id": 2,
+              "quantity": 1,
+              "unitPrice": 2000,
+              "total": 2000,
+              "adjustments": {
+                  "tax": [
+                      {
+                          "id": "@string@",
+                          "label": "TVA 0%",
+                          "amount": 0
+                      }
+                  ]
+              },
+              "name": "On demand delivery",
+              "variantName": "my new product name",
+              "vendor": null,
+              "player": {
+                  "@id": "/api/customers/1",
+                  "@type": "Customer",
+                  "email": "bob@coopcycle.org",
+                  "phoneNumber": null,
+                  "tags": [],
+                  "telephone": null,
+                  "username": "bob",
+                  "fullName": ""
+              }
+          }
+      ],
+      "itemsTotal": 2000,
+      "total": 2000,
+      "state": "new",
+      "paymentMethod": "CARD",
+      "assignedTo": null,
+      "adjustments": {
+          "delivery": [],
+          "delivery_promotion": [],
+          "order_promotion": [],
+          "reusable_packaging": [],
+          "tax": [],
+          "tip": [],
+          "incident": []
+      },
+      "paymentGateway": "stripe",
+      "@*@": "@*@"
+    }
+    """

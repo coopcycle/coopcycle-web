@@ -2026,10 +2026,6 @@ class Order extends BaseOrder implements OrderInterface
         }
     }
 
-    /**
-     * @SerializedName("deliveryPrice")
-     * @Groups({"order"})
-     */
     public function getDeliveryPrice(): PriceInterface
     {
         if ($this->isFoodtech()) {

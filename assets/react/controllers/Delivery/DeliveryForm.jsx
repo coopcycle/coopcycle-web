@@ -272,8 +272,8 @@ export default function ({ storeId, deliveryId, order }) {
       if (values.variantIncVATPrice && values.variantName) {
         data = {
           ...data,
-          deliveryPriceInput: {
-            priceIncVATcents: values.variantIncVATPrice,
+          arbitraryPrice: {
+            variantPrice: values.variantIncVATPrice,
             variantName: values.variantName
           }
         }

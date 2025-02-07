@@ -28,12 +28,12 @@ class Edit
         }
 
         $order = $data->getOrder();
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && !is_null($data->getDeliveryPriceInput());
+        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && $data->hasArbitraryPrice();
 
         if ($useArbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(
-                $data->getDeliveryPriceInput()->getVariantName(),
-                $data->getDeliveryPriceInput()->getPriceIncVATcents()
+                $data->getArbitraryPrice()->getVariantName(),
+                $data->getArbitraryPrice()->getValue()
             );
 
             if (null === $order) {

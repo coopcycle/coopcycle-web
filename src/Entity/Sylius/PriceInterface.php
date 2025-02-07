@@ -14,5 +14,5 @@ interface PriceInterface
     /**
      * @Groups({"order"})
      */
-    public function getValue(): int;
+    public function getValue(): ?int;
 }
