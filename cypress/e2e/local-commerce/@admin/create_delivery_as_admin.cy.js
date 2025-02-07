@@ -677,11 +677,25 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    cy.wait(1000)
+    // TODO : check for proper redirect when implemented
+    // cy.location('pathname', { timeout: 10000 }).should(
+    //   'match',
+    //   /\/admin\/stores\/[0-9]+\/deliveries$/,
+    // )
 
-    cy.get('.alert-danger', { timeout: 10000 }).eq(1).should(
-      'contain',
-      "Le prix de la course n'a pas pu être calculé.",
-    )  
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
+
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€0.00/)
+      .should('exist')
   })
 })

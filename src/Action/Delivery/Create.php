@@ -49,9 +49,7 @@ class Create
             try {
                 $this->pricingManager->createOrder($data, [
                     'pricingStrategy' => $priceForOrder,
-                    // Force an admin to fix the pricing rules
-                    // maybe it would be a better UX to create an incident instead
-                    'throwException' => $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN')
+                    'throwException' => false
                 ]);
     
             } catch (NoRuleMatchedException $e) {
