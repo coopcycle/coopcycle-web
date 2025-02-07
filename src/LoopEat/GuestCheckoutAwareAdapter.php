@@ -3,7 +3,6 @@
 namespace AppBundle\LoopEat;
 
 use AppBundle\Sylius\Order\OrderInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
 {
