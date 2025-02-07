@@ -207,7 +207,7 @@ framework:
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             woopit.http_client:
-                base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
+                base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
             dabba.client:
                 base_uri: "%env(DABBA_BASE_URL)%/"
             umap.client:
@@ -225,7 +225,9 @@ framework:
                 query:
                     api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
             insee.client:
-                base_uri: "https://api.insee.fr/"
+                base_uri: "https://api.insee.fr/api-sirene/3.11/"
+                headers:
+                    X-INSEE-Api-Key-Integration: '%env(INSEE_PORTAIL_API_KEY)%'
 
 # Twig Configuration
 twig:
