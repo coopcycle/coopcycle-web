@@ -674,5 +674,14 @@ context('Delivery (role: admin)', () => {
       'contain',
       "Le prix de la course n'a pas pu être calculé.",
     )
+
+    cy.get('button[type="submit"]').click()
+
+    cy.wait(1000)
+
+    cy.get('.alert-danger', { timeout: 10000 }).eq(1).should(
+      'contain',
+      "Le prix de la course n'a pas pu être calculé.",
+    )  
   })
 })

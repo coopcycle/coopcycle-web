@@ -18,6 +18,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 
 import "./DeliveryForm.scss"
+import _ from 'lodash'
 
 
 /** used in case of phone validation */
