@@ -142,6 +142,7 @@ framework:
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
                     - 'AppBundle\Messenger\RequestIdMiddleware'
+                    - 'AppBundle\Messenger\RouteMiddleware'
                     # each time a message is handled, the Doctrine connection
                     # is "pinged" and reconnected if it's closed. Useful
                     # if your workers run for a long time and the database
