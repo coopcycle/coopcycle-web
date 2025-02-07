@@ -165,7 +165,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $store;
 
     /**
-     * @var ArbitraryPrice
+     * @var ?ArbitraryPrice
      * @Groups({"delivery_create"})
      */
     private $arbitraryPrice;
