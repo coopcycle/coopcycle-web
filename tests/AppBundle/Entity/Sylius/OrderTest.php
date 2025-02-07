@@ -6,6 +6,7 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -175,5 +176,30 @@ class OrderTest extends TestCase
         ];
 
         $this->assertEquals($expectedFormats, $order->getFormatsToDeliverForLoopeat());
+    }
+
+    public function testLoopeatCredentialsAreResolvedFromCustomer()
+    {
+        $order = new Order();
+        $customer = new Customer();
+
+        $order->setCustomer($customer);
+
+        $customer->setLoopeatAccessToken('123456');
+        $customer->setLoopeatRefreshToken('654321');
+
+        $this->assertEquals('123456', $order->getLoopeatAccessToken());
+        $this->assertEquals('654321', $order->getLoopeatRefreshToken());
+    }
+
+    public function testLoopeatCredentialsAreResolvedFromOrder()
+    {
+        $order = new Order();
+
+        $order->setLoopeatAccessToken('123456');
+        $order->setLoopeatRefreshToken('654321');
+
+        $this->assertEquals('123456', $order->getLoopeatAccessToken());
+        $this->assertEquals('654321', $order->getLoopeatRefreshToken());
     }
 }

@@ -1738,20 +1738,10 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getLoopeatAccessToken()
     {
-        if (null === $this->loopeatCredentials) {
+        $ownToken = $this->loopeatCredentials?->getLoopeatAccessToken();
+        $customerToken = $this->customer?->getLoopeatAccessToken();
 
-            return null;
-        }
-
-        $accessToken = $this->loopeatCredentials->getLoopeatAccessToken();
-
-        // Guest checkout
-        if (null !== $accessToken) {
-
-            return $accessToken;
-        }
-
-        return $this->customer->getLoopeatAccessToken();
+        return $customerToken ?? $ownToken;
     }
 
     public function setLoopeatAccessToken($accessToken)
@@ -1771,20 +1761,10 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getLoopeatRefreshToken()
     {
-        if (null === $this->loopeatCredentials) {
+        $ownToken = $this->loopeatCredentials?->getLoopeatRefreshToken();
+        $customerToken = $this->customer?->getLoopeatRefreshToken();
 
-            return null;
-        }
-
-        $refreshToken = $this->loopeatCredentials->getLoopeatRefreshToken();
-
-        // Guest checkout
-        if (null !== $refreshToken) {
-
-            return $refreshToken;
-        }
-
-        return $this->customer->getLoopeatRefreshToken();
+        return $customerToken ?? $ownToken;
     }
 
     public function setLoopeatRefreshToken($refreshToken)
