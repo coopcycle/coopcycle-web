@@ -556,10 +556,10 @@ form.local_business.mercadopago_account.success: 'MercadoPago kontua ondo konekt
   da'
 form.local_business.mercadopago.connect_button.text: 'Konektatu MercadoPago-rekin'
 form.settings.mercadopago.publishable_key.label: 'Argitaratze-gakoa'
-form.settings.mercadopago.publishable_key.help: "Lortu <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.publishable_key.help: "Lortu <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">argitaratze gakoa</a>"
 form.settings.mercadopago.access_token.label: 'Sarbide tokena'
-form.settings.mercadopago.access_token.help: "Lortu <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.access_token.help: "Lortu <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">sarbide tokena</a>"
 form.settings.mercadopago.app_id.label: 'Aplikazio IDa'
 form.menu_item.name.label: 'Izena'
@@ -1195,7 +1195,7 @@ guest_checkout.user_with_same_email_exists: Helbide elektroniko berdina duen kon
   bat dago jada. Mesedez, hasi saioa aurrera jarraitzeko, edo erabili beste e-posta
   bat eskaera egiteko kontua sortu gabe.
 homepage.zerowaste: Ezagutu gure hondakinik gabeko jatetxeak!
-form.settings.mercadopago.app_id.help: <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">Aplikazio
+form.settings.mercadopago.app_id.help: <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">Aplikazio
   bat sortu</a> behar duzu zure aplikazio IDa lortzeko.
 embed.delivery.confirm_message: Zure banaketa eskaera sortu da eta laster e-posta
   bat jasoko duzu laburpenarekin. Zure eskaera egiaztatu eta berrespen e-posta bat

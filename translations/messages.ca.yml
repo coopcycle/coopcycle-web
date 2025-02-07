@@ -1099,15 +1099,15 @@ form.menu_editor.name.help: Això només us permet distingir els menús. Això n
   al client.
 form.settings.mercadopago.redirect_uri.help: 'Quan configuri la seva app, utilitzi
   la següent URL de redirecció: <code>%redirect_uri%</code>'
-form.settings.mercadopago.app_id.help: Necessita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear
+form.settings.mercadopago.app_id.help: Necessita <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">crear
   una aplicació</a> para obtenir la seva ID.
 form.settings.mercadopago.app_id.label: ID de l'aplicació
-form.settings.mercadopago.access_token.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.access_token.help: Obtenir la <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank">fitxa d'accés</a>
 form.settings.mercadopago.access_token.label: Fitxa d'accés
 form.settings.mercadopago_enable_livemode.help: Per activar el mode « live », primer
   necessites configurar les claus del mode « live ».
-form.settings.mercadopago.publishable_key.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.publishable_key.help: Obtenir la <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank">clau per publicar</a>
 form.mercadopago_livemode.disable.label: Utilitzar Mercado Pago en mode « test »
 form.local_business.mercadopago_account.success: El compte de Mercado Pago s'ha connectat

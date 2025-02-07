@@ -453,6 +453,9 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         return $this->stripeCustomerId;
     }
 
+    /**
+     * @param string|null $stripeCustomerId
+     */
     public function setStripeCustomerId($stripeCustomerId)
     {
         $this->stripeCustomerId = $stripeCustomerId;

@@ -1069,13 +1069,13 @@ form.credit_note.type.label: Tipo di sconto
 form.credit_note.user_search.label: User
 form.settings.mercadopago.redirect_uri.help: "Nel configurare l'app, usa il seguente\
   \ URI di reindirizzamento: <code>%redirect_uri%</code>"
-form.settings.mercadopago.app_id.help: E' necessario <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">creare
+form.settings.mercadopago.app_id.help: E' necessario <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">creare
   un applicazione</a> per ottenere il proprio ID d'applicazione.
 form.settings.mercadopago.app_id.label: ID dell'applicazione
-form.settings.mercadopago.access_token.help: Ottieni il <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.access_token.help: Ottieni il <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank">token di accesso</a>
 form.settings.mercadopago.access_token.label: Token di accesso
-form.settings.mercadopago.publishable_key.help: Ottieni la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.publishable_key.help: Ottieni la <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank">chiave di pubblicazione</a>
 form.settings.mercadopago.publishable_key.label: Chiave di pubblicazione
 form.settings.mercadopago_enable_livemode.help: Per attivare la modalità « live »,

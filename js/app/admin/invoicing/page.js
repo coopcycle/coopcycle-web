@@ -5,6 +5,8 @@ import { accountSlice } from '../../entities/account/reduxSlice'
 import OrdersToInvoice from './components/OrdersToInvoice'
 import { TopNav } from '../../components/TopNav'
 import { useTranslation } from 'react-i18next'
+import { antdLocale } from '../../i18n'
+import { ConfigProvider } from 'antd'
 
 const buildInitialState = () => {
   return {
@@ -19,8 +21,10 @@ export default () => {
 
   return (
     <Provider store={store}>
-      <TopNav>{t('ADMIN_INVOICING_TITLE')}</TopNav>
-      <OrdersToInvoice />
+      <ConfigProvider locale={antdLocale}>
+        <TopNav>{t('ADMIN_INVOICING_TITLE')}</TopNav>
+        <OrdersToInvoice />
+      </ConfigProvider>
     </Provider>
   )
 }

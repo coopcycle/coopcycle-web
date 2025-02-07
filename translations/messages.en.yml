@@ -84,7 +84,7 @@ adminDashboard.users.export.optins.marketting: Users who agree to receive promot
 form.user.quotes_allowed.label: Allow this user to request a quote
 adminDashboard.settings.title: Settings
 adminDashboard.pricing.title: Pricing
-adminDashboard.pricing.docs_path: /en/admin/deliveries/pricing/
+adminDashboard.pricing.docs_path: /en/web/admin/deliveries/pricing/
 adminDashboard.pricing.manage: Manage
 adminDashboard.pricing.settings: Settings
 adminDashboard.pricing.duplicate: Duplicate
@@ -666,13 +666,13 @@ form.settings.mercadopago_testmode.help: 'In « test » mode, you will have to u
 form.settings.mercadopago_enable_livemode.help: To enable « live » mode, you need
   to configure « live » keys first.
 form.settings.mercadopago.publishable_key.label: Publishable key
-form.settings.mercadopago.publishable_key.help: "Get the <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.publishable_key.help: "Get the <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">publishable key</a>"
 form.settings.mercadopago.access_token.label: Access token
-form.settings.mercadopago.access_token.help: "Get the <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.access_token.help: "Get the <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">access token</a>"
 form.settings.mercadopago.app_id.label: Application ID
-form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">create
+form.settings.mercadopago.app_id.help: You need to <a href="https://www.mercadopago.com/developers/panel/app">create
   an application</a> to obtain your application ID.
 form.settings.mercadopago.redirect_uri.help: "When configuring your app, use the following\
   \ redirect URI: <code>%redirect_uri%</code>"
@@ -888,7 +888,7 @@ meta.title: Delivery platform for worker-owned business
 admin.settings.missing_mandatory_settings: "Mandatory settings are missing.\nGo to\
   \ <a href=\"%settings_url%\">settings page</a> to configure them.\n"
 admin.settings.foodtech: Food Tech
-admin.settings.on_demand_delivery: On Demand Delivery
+admin.settings.package_delivery: Package Delivery
 index.map.tip: Use the map below to find restaurants
 index.banner: Delicious meals delivered to your home.
 index.our_restaurants: Our restaurants
@@ -1514,6 +1514,7 @@ adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
 adminDashboard.invoicing.title: Invoicing [PREVIEW]
+adminDashboard.invoicing.docs_path: /en/web/admin/deliveries/invoicing/
 adminDashboard.invoicing.help: "Prepare invoices"
 adminDashboard.invoicing.line_item.order_number: "Order #%number%"
 profile.delete_my_account: "Delete my account"

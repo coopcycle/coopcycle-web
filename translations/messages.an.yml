@@ -606,13 +606,13 @@ form.settings.mercadopago_testmode.help: 'En modo «test», ha d''usar <a href="
 form.settings.mercadopago_enable_livemode.help: 'Pa activar lo modo «live», primero
   necesita configurar las credencials «live».'
 form.settings.mercadopago.publishable_key.label: 'Clau de publicación'
-form.settings.mercadopago.publishable_key.help: "Obtienga la <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.publishable_key.help: "Obtienga la <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">clau de publicación</a>"
 form.settings.mercadopago.access_token.label: 'Token d''acceso'
-form.settings.mercadopago.access_token.help: "Obtienga lo <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.access_token.help: "Obtienga lo <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">token d'acceso</a>"
 form.settings.mercadopago.app_id.label: 'ID d''Aplicación'
-form.settings.mercadopago.app_id.help: 'Necesita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">creyar
+form.settings.mercadopago.app_id.help: 'Necesita <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">creyar
   una aplicación</a> pa obtener lo suyo ID d''Aplicación.'
 form.settings.mercadopago.redirect_uri.help: "Quan configure la suyo app, use la siguient\
   \ URI de redirección: <code>%redirect_uri%</code>"

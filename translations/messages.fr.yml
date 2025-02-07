@@ -1610,3 +1610,12 @@ form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant to
 form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
 form.payment.edenred.refund_amount.help: Les remboursements partiels ne sont pas supportés par Edenred.
 restaurant.meal_vouchers_transactions.emitter: Émetteur
+order.items_total_excluding_tax: Total des produits (hors TVA)
+basics.more: Plus
+adminDashboard.invoicing.title: Facturation [APERÇU]
+adminDashboard.invoicing.help: "Préparer les factures"
+adminDashboard.invoicing.line_item.order_number: "Commande #%number%"
+form.settings.on_demand_delivery_product_name.label: "Nom du produit"
+form.settings.on_demand_delivery_product_name.help: "Le nom qui apparaîtra dans le récapitulatif de commande et la facture"
+form.settings.accounting_account.label: "Code comptable"
+form.settings.accounting_account.help: "Le code comptable par défaut pour enregistrer les commandes de livraison à la demande dans le système comptable."

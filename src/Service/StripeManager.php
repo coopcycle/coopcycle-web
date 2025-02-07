@@ -175,7 +175,22 @@ class StripeManager
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
         );
 
-        return Stripe\PaymentIntent::create($payload, $stripeOptions);
+        try {
+            return Stripe\PaymentIntent::create($payload, $stripeOptions);
+        } catch (Stripe\Exception\InvalidRequestException $e) {
+            // Do not die on error "No such customer"
+            // Clear the stored customer, and retry
+            if (Stripe\ErrorObject::CODE_RESOURCE_MISSING === $e->getStripeCode() && 'customer' === $e->getStripeParam()) {
+                if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
+                    $order->getCustomer()->getUser()->setStripeCustomerId(null);
+
+                    return $this->createIntent($payment, $savePaymentMethod);
+                }
+            }
+
+            throw $e;
+        }
+
     }
 
     /**
@@ -367,7 +382,7 @@ class StripeManager
      * @see https://stripe.com/docs/connect/cloning-customers-across-accounts
      * @see https://stripe.com/docs/payments/payment-methods/connect#cloning-payment-methods
      *
-     * We clone the PaymentMethod in the connected account and then we use the clonned payment method id
+     * We clone the PaymentMethod in the connected account and then we use the cloned payment method id
      * when we create the PaymentIntent to create the direct charge in the connected account.
      *
      * @return Stripe\PaymentMethod
