@@ -624,7 +624,7 @@ context('Delivery (role: admin)', () => {
       .should('exist')
   })
 
-  it.only('[beta form] create delivery for store with invalid pricing', function () {
+  it('[beta form] create delivery for store with invalid pricing', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
