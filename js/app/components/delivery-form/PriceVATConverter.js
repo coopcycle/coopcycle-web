@@ -9,7 +9,7 @@ const getCurrencySymbol = () => {
 }
 
 export default ({ taxRate, setPrices }) => {
-  const [values, setValues] = useState({ VAT: 0, exVAT: 0 })
+  const [values, setValues] = useState({ VAT: null, exVAT: null })
 
   const { t } = useTranslation()
 
@@ -27,12 +27,12 @@ export default ({ taxRate, setPrices }) => {
           controls={false}
           prefix={getCurrencySymbol()}
           value={values.exVAT}
+          placeholder={0}
           onChange={value => {
             const newValues = {
               exVAT: value,
               VAT: Math.round((value * 100) * (taxRate + 1)) / 100,
             }
-            console.log(newValues)
             setValues(newValues)
             setPrices(newValues)
           }}
@@ -51,6 +51,7 @@ export default ({ taxRate, setPrices }) => {
           controls={false}
           prefix={getCurrencySymbol()}
           value={values.VAT}
+          placeholder={0}
           onChange={value => {
             const newValues = {
               exVAT: Math.round((value * 100) / (taxRate + 1)) / 100,
