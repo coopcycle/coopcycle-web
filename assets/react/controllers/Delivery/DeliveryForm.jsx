@@ -313,47 +313,50 @@ export default function ({ storeId, deliveryId, order }) {
   }, [storeDeliveryInfos])
 
 
-  const getPrice = (values) => {
+  const getPrice = _.debounce(
+    (values) => {
 
-    const tasksCopy = structuredClone(values.tasks)
-    const tasksWithoutId = tasksCopy.map(task => {
-          if (task["@id"]) {
-            delete task["@id"]
+      const tasksCopy = structuredClone(values.tasks)
+      const tasksWithoutId = tasksCopy.map(task => {
+            if (task["@id"]) {
+              delete task["@id"]
+            }
+            return task
+          })
+        
+        const infos = {
+          store: storeDeliveryInfos["@id"],
+          tasks: tasksWithoutId,
+        };
+
+        const calculatePrice = async () => {
+
+          setPriceLoading(true)
+
+          const url = `${baseURL}/api/retail_prices/calculate`
+          const { response, error } = await httpClient.post(url, infos)
+
+          if (error) {
+            setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+            setCalculatePrice(0)
           }
-          return task
-        })
-      
-      const infos = {
-        store: storeDeliveryInfos["@id"],
-        tasks: tasksWithoutId,
-      };
 
-      const calculatePrice = async () => {
+          if (response) {
+            setCalculatePrice(response)
+            setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+          }
 
-        setPriceLoading(true)
+          setPriceLoading(false)
 
-        const url = `${baseURL}/api/retail_prices/calculate`
-        const { response, error } = await httpClient.post(url, infos)
-
-        if (error) {
-          setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-          setCalculatePrice(0)
+        }
+        
+        if (values.tasks.every(task => task.address.streetAddress)) {
+          calculatePrice()
         }
 
-        if (response) {
-          setCalculatePrice(response)
-          setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-        }
-
-        setPriceLoading(false)
-
-      }
-      
-      if (values.tasks.every(task => task.address.streetAddress)) {
-        calculatePrice()
-      }
-
-  }
+    },
+    1000
+  )
 
   return (
     isLoading ? 

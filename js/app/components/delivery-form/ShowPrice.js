@@ -148,6 +148,11 @@ export default ({
               {t('DELIVERY_FORM_TOTAL_PRICE')}
             </div>
             {
+              priceError.isPriceError ? (
+                <div className="alert alert-danger" role="alert">
+                  {priceError.priceErrorMessage}
+                </div>
+              ) :
               !overridePrice ?
                 priceLoading ? 
                   <Spinner /> :
@@ -162,11 +167,6 @@ export default ({
                     </>
                 : null
             }
-            {priceError.isPriceError ? (
-              <div className="alert alert-danger" role="alert">
-                {priceError.priceErrorMessage}
-              </div>
-            ) : null}
           </>
         }
 
