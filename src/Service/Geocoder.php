@@ -128,9 +128,14 @@ class Geocoder
                 ->withBounds($bounds);
         }
 
-        $results = $this->getGeocoder()->geocodeQuery(
-            $query
-        );
+        $results = [];
+        try {
+            $results = $this->getGeocoder()->geocodeQuery(
+                $query
+            );
+        } catch(\Exception $e) {
+            $this->logger->error(sprintf('Geocoder: %s', $e->getMessage()));
+        }
 
         if (count($results) > 0) {
             $result = $results->first();
