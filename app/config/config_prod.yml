@@ -144,6 +144,12 @@ monolog:
             level: info
             max_files: 7
             channels: [edenred]
+        transporter:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/transporter.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [ transporter ]
         console:
             type:  console
 
