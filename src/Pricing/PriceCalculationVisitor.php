@@ -25,7 +25,10 @@ class PriceCalculationVisitor
 
             foreach ($this->ruleSet->getRules() as $rule) {
                 if ($rule->matches($delivery, $this->expressionLanguage)) {
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()));
+                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
+                            'strategy' => $this->ruleSet->getStrategy(),
+                        ]
+                    );
                     $this->matchedRules[] = $rule;
                     $this->price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
                     break;
@@ -33,7 +36,9 @@ class PriceCalculationVisitor
             }
 
             if (count($this->matchedRules) === 0) {
-                $this->logger->info(sprintf('No rule matched, strategy: "%s"', $this->ruleSet->getStrategy()));
+                $this->logger->info(sprintf('No rule matched'), [
+                    'strategy' => $this->ruleSet->getStrategy(),
+                ]);
             }
 
             return;
@@ -52,14 +57,19 @@ class PriceCalculationVisitor
                         $this->matchedRules[] = $rule;
                         $this->price += $price;
 
-                        $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
+                        $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price), [
+                            'strategy' => $this->ruleSet->getStrategy(),
+                            'object' => 'delivery',
+                        ]);
                     }
                 }
             }
         }
 
         if (count($this->matchedRules) === 0) {
-            $this->logger->info(sprintf('No rule matched, strategy: "%s"', $this->ruleSet->getStrategy()));
+            $this->logger->info(sprintf('No rule matched'), [
+                'strategy' => $this->ruleSet->getStrategy(),
+            ]);
         }
     }
 
@@ -72,7 +82,10 @@ class PriceCalculationVisitor
                 $this->matchedRules[] = $rule;
                 $this->price += $price;
 
-                $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price));
+                $this->logger->info(sprintf('Matched rule "%s", adding %d to price', $rule->getExpression(), $price), [
+                    'strategy' => $this->ruleSet->getStrategy(),
+                    'object' => 'task',
+                ]);
             }
         }
     }
