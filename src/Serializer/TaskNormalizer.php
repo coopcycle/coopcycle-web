@@ -107,11 +107,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                     ->createQueryBuilder('t');
 
                 $query = $qb
-                    ->select('p.id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                    ->select('p.id', 'tp.id as task_package_id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
+                    ->groupBy('p.id', 'tp.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
                     ->setParameter('deliveryId', $deliveryId)
                     ->getQuery();
 
@@ -136,7 +136,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 ->createQueryBuilder('t');
 
             $data['packages'] = $qb
-                ->select('p.id', 'p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                ->select('p.id', 'tp.id as task_package_id', 'p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                 ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                 ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                 ->andWhere('t.id = :taskId')
@@ -146,12 +146,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         // Add labels
-
         foreach ($data['packages'] as $i => $p) {
 
             $data['packages'][$i]['labels'] = [];
 
-            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['id'], $p['quantity']);
+            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['task_package_id'], $p['quantity']);
             foreach ($barcodes as $barcode) {
                 $labelUrl = $this->urlGenerator->generate(
                     'task_label_pdf',
@@ -162,6 +161,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
 
             unset($data['packages'][$i]['id']);
+            unset($data['packages'][$i]['task_package_id']);
         }
 
         if (isset($data['metadata']) && is_array($data['metadata'])) {

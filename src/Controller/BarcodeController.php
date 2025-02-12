@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Task\Package;
 use AppBundle\Service\TaskManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Doctrine\Persistence\ManagerRegistry;
@@ -198,11 +199,10 @@ class BarcodeController extends AbstractController
 
         $package = null;
         if ($barcode->isContainsPackages()) {
-            $package = $ressource->getPackages()
-                ->filter(fn($p) => $p->getId() === $barcode->getPackageTaskId())
-                ->first()
-                ?->getPackage()
-                ?->getName();
+            //NOTE: Dont rely on lazy loading
+            $package = $this->getDoctrine()
+                ->getRepository(Package::class)
+                ->find($barcode->getPackageTaskId())?->getPackage()?->getName();
         }
 
 
