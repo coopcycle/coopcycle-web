@@ -42,7 +42,7 @@ class ExportTasksCommand extends BaseExportCommand
      */
     private function formatRow(array $row): array
     {
-        $__s = fn (string $s): ?string => trim($s) ?: null;
+        $__s = fn (?string $s): ?string => trim($s) ?: null;
         $__dt = fn (string $d, string $t): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('j/n/Y H:i:s', sprintf('%s %s', $d, $t)) ?: null;
         $__m = fn (string $m): int => intval(floatval(str_replace(',', '.', $m)) * 100);
 

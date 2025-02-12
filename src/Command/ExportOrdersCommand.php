@@ -48,7 +48,7 @@ class ExportOrdersCommand extends BaseExportCommand
             throw new \Exception('Invalid row, expected 28 columns');
         }
 
-        $__s = fn (string $s): ?string => trim($s) ?: null;
+        $__s = fn (?string $s): ?string => trim($s) ?: null;
         $__d = fn (string $d): ?\DateTimeInterface => \DateTimeImmutable::createFromFormat('Y-m-d H:i', $d) ?: null;
         $__m = fn (string $m): int => intval(floatval(str_replace(',', '.', $m)) * 100);
 
