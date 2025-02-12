@@ -9,7 +9,8 @@ class ExportOrders {
         private \DateTime $to,
         private bool $withMessenger = false,
         private ?string $locale = null,
-        private bool $withBillingMethod = false
+        private bool $withBillingMethod = false,
+        private bool $includeTaxes = true
     )
     { }
 
@@ -36,5 +37,10 @@ class ExportOrders {
     public function isWithBillingMethod(): bool
     {
         return $this->withBillingMethod;
+    }
+
+    public function isIncludeTaxes(): bool
+    {
+        return $this->includeTaxes;
     }
 }

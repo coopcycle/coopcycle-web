@@ -40,7 +40,7 @@ class RestaurantStats implements \Countable
     private $taxTotals = [];
     private $itemsTotalExclTaxTotals = [];
     private $taxColumns = [];
-    private $productTaxColumns;
+    private $productTaxColumns = [];
 
     private $numberFormatter;
 
@@ -62,7 +62,9 @@ class RestaurantStats implements \Countable
         private readonly bool $withVendorName = false,
         private readonly bool $withMessenger = false,
         private readonly bool $nonProfitsEnabled = false,
-        private readonly bool $withBillingMethod = false)
+        private readonly bool $withBillingMethod = false,
+        private readonly bool $includeTaxes = true
+    )
     {
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
@@ -347,6 +349,7 @@ class RestaurantStats implements \Countable
         }, $this->result);
     }
 
+    //DEADCODE: NON_PROFIT
     private function addNonprofits()
     {
         if (count($this->ids) === 0) {
@@ -578,15 +581,19 @@ class RestaurantStats implements \Countable
         $headings[] = 'order_number';
         $headings[] = 'fulfillment_method';
         $headings[] = 'completed_at';
-        foreach ($this->productTaxColumns as $code) {
-            $headings[] = $code;
+        if ($this->includeTaxes) {
+            foreach ($this->productTaxColumns as $code) {
+                $headings[] = $code;
+            }
         }
         $headings[] = 'total_products_excl_tax';
-        foreach ($this->taxColumns as $code) {
-            if ($code === $this->serviceTaxRateCode) {
-                continue;
+        if ($this->includeTaxes) {
+            foreach ($this->taxColumns as $code) {
+                if ($code === $this->serviceTaxRateCode) {
+                    continue;
+                }
+                $headings[] = $code;
             }
-            $headings[] = $code;
         }
         $headings[] = 'total_products_incl_tax';
         $headings[] = 'delivery_fee';

@@ -30,7 +30,8 @@ class ExportOrdersCommand extends BaseExportCommand
             $end,
             true,
             'en',
-            withBillingMethod: true
+            withBillingMethod: true,
+            includeTaxes: false
         ));
 
         /** @var HandledStamp $handledStamp */

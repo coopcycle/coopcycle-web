@@ -38,7 +38,8 @@ class ExportOrdersHandler implements MessageHandlerInterface
             true,
             $message->isWithMessenger(),
             $this->container->getParameter('nonprofits_enabled'),
-            $message->isWithBillingMethod()
+            $message->isWithBillingMethod(),
+            $message->isIncludeTaxes()
         );
 
         if ($stats->count() === 0) {
