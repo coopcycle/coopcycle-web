@@ -90,9 +90,9 @@
           </div>
 
           {% if debug_pricing is defined and debug_pricing %}
-            {% set pricing_rules = delivery.store.pricingRuleSet.rules %}
-            <ul class="list-group" id="pricing-rules-debug">
-              {% for pricing_rule in pricing_rules %}
+            {% set pricingRuleSet = delivery.store.pricingRuleSet %}
+            <ul class="list-group" id="pricing-rules-debug" data-strategy="{{ pricingRuleSet.strategy }}">
+              {% for pricing_rule in pricingRuleSet.rules %}
                 <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
                   <span>{{ pricing_rule.expression }}</span>
                   <span class="pull-right">

@@ -32,11 +32,11 @@ function asyncFunc(item, payload, token) {
   })
 }
 
-function workMyCollection(items, payload, token) {
+function workMyCollection(strategy, items, payload, token) {
   return items.reduce((promise, current) => {
     return promise
       .then((previous) => {
-        if (previous && previous.result === true) {
+        if (strategy === 'find' && previous && previous.result === true) {
           return Promise.resolve(previous)
         }
 
@@ -76,7 +76,8 @@ function createPricingPromise(delivery, token, $container) {
 }
 
 class PricePreview {
-  constructor(uris) {
+  constructor(strategy, uris) {
+    this.strategy = strategy
     this.uris = uris
     this.token = null
   }
@@ -109,7 +110,7 @@ class PricePreview {
 
     return this.getToken().then((token) => {
       const pricingPromise = createPricingPromise(delivery, token, $container)
-      const debugPromise = workMyCollection(this.uris, delivery, token)
+      const debugPromise = workMyCollection(this.strategy, this.uris, delivery, token)
 
       return Promise
         .all([ pricingPromise, debugPromise ])
@@ -141,6 +142,8 @@ class PricePreview {
 
 export default function(el) {
 
+  const strategy =  $(el).find('#pricing-rules-debug').data('strategy')
+
   const uris = $(el).find('ul li').map(function() {
     return {
       pricingRule: $(this).data('pricing-rule'),
@@ -148,5 +151,5 @@ export default function(el) {
     }
   }).toArray()
 
-  return new PricePreview(uris)
+  return new PricePreview(strategy, uris)
 }
