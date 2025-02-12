@@ -152,7 +152,7 @@ class SyncTransportersCommand extends Command {
         try {
             $this->setup($transporterName);
         } catch (Exception $e) {
-            $this->transporterLogger->critical(
+            $this->transporterLogger->warning(
                 sprintf('Failed to setup transporter %s: %s', $this->transporter, $e->getMessage()),
                 ['transporter' => $this->transporter]
             );
@@ -164,7 +164,7 @@ class SyncTransportersCommand extends Command {
 
         $config = $this->params->get('transporters_config');
         if (!($config[$this->transporter]['enabled'] ?? false)) {
-            $this->transporterLogger->critical(
+            $this->transporterLogger->warning(
                 sprintf('%s is not configured or enabled', $this->transporter),
                 ['transporter' => $this->transporter]
             );
