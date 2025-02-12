@@ -107,11 +107,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                     ->createQueryBuilder('t');
 
                 $query = $qb
-                    ->select('p.id', 'tp.id as task_package_id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                    ->select('p.id', 'MAX(tp.id) as task_package_id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
                     ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
                     ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
                     ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.id', 'tp.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
+                    ->groupBy('p.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
                     ->setParameter('deliveryId', $deliveryId)
                     ->getQuery();
 
