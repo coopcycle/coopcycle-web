@@ -40,43 +40,44 @@ const placeToAddress = (place, value) => {
   }
 }
 
-let location
 let autocompleteService
 let geocoderService
 let latLngBounds
+let sessionToken
 
-const autocompleteOptions = {
-  types: ['address'],
-}
 
 export const onSuggestionsFetchRequested = function({ value }) {
 
   // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service
-  autocompleteService.getPlacePredictions({
-    ...autocompleteOptions,
+  autocompleteService.fetchAutocompleteSuggestions({
+    sessionToken: sessionToken,
     // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service?hl=en#AutocompletionRequest.locationRestriction
     locationRestriction: latLngBounds,
+    includedPrimaryTypes: ['street_address'],
     input: value,
-  }, (predictions, status) => {
+  }).then(({suggestions}) => {
 
-    if (status === window.google.maps.places.PlacesServiceStatus.OK && Array.isArray(predictions)) {
+    Promise.all(
+      suggestions.map(suggestion => {
+        console.log(suggestion.placePrediction)
+        console.log(suggestion.placePrediction.description)
+        return suggestion.placePrediction.toPlace().fetchFields({fields: ["formattedAddress"]})})
+    )
+      .then(places => {
+        const placesAsSuggestions = places.map((result, idx) => ({
+          type: 'prediction',
+          value: result.place.formattedAddress,
+          id: result.place.id,
+          description: result.place.formattedAddress,
+          index: idx,
+          google: result.place,
+          // *WARNING*
+          // At this step, we DON'T have the lat/lng
+          // It will be obtained when selecting the suggestion
+        }))
 
-      const predictionsAsSuggestions = predictions.map((result, idx) => ({
-        type: 'prediction',
-        value: result.description,
-        id: result.place_id,
-        description: result.description,
-        index: idx,
-        google: result,
-        // *WARNING*
-        // At this step, we DON'T have the lat/lng
-        // It will be obtained when selecting the suggestion
-      }))
-
-      this._autocompleteCallback(predictionsAsSuggestions, value)
-
-    }
-
+        this._autocompleteCallback(placesAsSuggestions, value)
+      })
   })
 
 }
@@ -109,9 +110,9 @@ export function onSuggestionSelected(event, { suggestion }) {
     return
   }
 
-  geocoderService.geocode({ placeId: suggestion.google.place_id }, (results, status) => {
+  geocoderService.geocode({ placeId: suggestion.google.id }, (results, status) => {
     if (status === window.google.maps.GeocoderStatus.OK && results.length === 1) {
-
+      
       const place = results[0]
       const lat = place.geometry.location.lat()
       const lng = place.geometry.location.lng()
@@ -155,23 +156,28 @@ export const geocode = function (text) {
   })
 }
 
-export const configure = function (options) {
 
-  if (!autocompleteService && !geocoderService && !location) {
+export const configure = async function (options) {
 
-    autocompleteService = new window.google.maps.places.AutocompleteService()
-    geocoderService     = new window.google.maps.Geocoder()
+  if (!autocompleteService && !geocoderService) {
 
-    const [ lat, lng ] = options.location.split(',').map(parseFloat)
+    const [coreLib, placesLib, geocodingLib] = await Promise.all([
+      google.maps.importLibrary("core"),
+      google.maps.importLibrary("places"),
+      google.maps.importLibrary("geocoding")
+    ])
+
+    autocompleteService = placesLib.AutocompleteSuggestion
+    geocoderService = new geocodingLib.Geocoder();
+
+    sessionToken = new google.maps.places.AutocompleteSessionToken();
+
     const [ swLat, swLng, neLat, neLng ] = options.latLngBounds.split(',').map(coord => parseFloat(coord))
 
-    // https://developers.google.com/maps/documentation/javascript/reference/coordinates?hl=en#LatLngBounds
-    latLngBounds = new window.google.maps.LatLngBounds(
-      new window.google.maps.LatLng(swLat, swLng),
-      new window.google.maps.LatLng(neLat, neLng)
+    // https://developers-dot-devsite-v2-prod.appspot.com/maps/documentation/javascript/reference/coordinates?hl=fr#LatLngBounds
+    latLngBounds = new coreLib.LatLngBounds(
+      new coreLib.LatLng(swLat, swLng),
+      new coreLib.LatLng(neLat, neLng)
     )
-
-    location = new window.google.maps.LatLng(lat, lng)
   }
-
 }
