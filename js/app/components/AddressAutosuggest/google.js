@@ -40,7 +40,6 @@ const placeToAddress = (place, value) => {
   }
 }
 
-let location
 let autocompleteService
 let geocoderService
 let latLngBounds
@@ -162,7 +161,6 @@ export const configure = function (options) {
     autocompleteService = new window.google.maps.places.AutocompleteService()
     geocoderService     = new window.google.maps.Geocoder()
 
-    const [ lat, lng ] = options.location.split(',').map(parseFloat)
     const [ swLat, swLng, neLat, neLng ] = options.latLngBounds.split(',').map(coord => parseFloat(coord))
 
     // https://developers.google.com/maps/documentation/javascript/reference/coordinates?hl=en#LatLngBounds
@@ -170,8 +168,6 @@ export const configure = function (options) {
       new window.google.maps.LatLng(swLat, swLng),
       new window.google.maps.LatLng(neLat, neLng)
     )
-
-    location = new window.google.maps.LatLng(lat, lng)
   }
 
 }
