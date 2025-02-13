@@ -1,8 +1,10 @@
 import React from 'react'
 import _ from 'lodash'
 import ngeohash from 'ngeohash'
+import { v4 as uuidv4 } from 'uuid';
 
 import PoweredByGoogle from './powered_by_google_on_white_hdpi.png'
+import axios from 'axios'
 
 const placeToAddress = (place, value) => {
 
@@ -40,6 +42,9 @@ const placeToAddress = (place, value) => {
   }
 }
 
+let isNewPlacesApi // indicates if "Places (new)" is set up
+let googleApiKey
+let sessionToken
 let autocompleteService
 let geocoderService
 let latLngBounds
@@ -49,35 +54,67 @@ const autocompleteOptions = {
 }
 
 export const onSuggestionsFetchRequested = function({ value }) {
-
-  // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service
-  autocompleteService.getPlacePredictions({
-    ...autocompleteOptions,
-    // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service?hl=en#AutocompletionRequest.locationRestriction
-    locationRestriction: latLngBounds,
-    input: value,
-  }, (predictions, status) => {
-
-    if (status === window.google.maps.places.PlacesServiceStatus.OK && Array.isArray(predictions)) {
-
-      const predictionsAsSuggestions = predictions.map((result, idx) => ({
-        type: 'prediction',
-        value: result.description,
-        id: result.place_id,
-        description: result.description,
-        index: idx,
-        google: result,
-        // *WARNING*
-        // At this step, we DON'T have the lat/lng
-        // It will be obtained when selecting the suggestion
-      }))
+  
+  if (isNewPlacesApi) {
+    sessionToken = uuidv4()
+    axios.post(
+      'https://places.googleapis.com/v1/places:autocomplete',
+      {
+        input: value,
+        sessionToken: sessionToken,
+        locationRestriction: {"rectangle" : latLngBounds.toJSON()},
+        includedPrimaryTypes: ['street_address']
+      },
+      {headers: {"X-Goog-Api-Key": googleApiKey}}
+    ).then(async resp => {
+      const { suggestions } = resp.data
+      const predictionsAsSuggestions = suggestions.map((suggestion, idx) => {
+        let prediction = suggestion.placePrediction
+        return {
+          type: 'prediction',
+          value: prediction.text.text,
+          id: prediction.placeId,
+          description: prediction.text.text,
+          index: idx,
+          google: prediction,
+          // *WARNING*
+          // At this step, we DON'T have the lat/lng
+          // It will be obtained when selecting the suggestion
+        }
+      })
 
       this._autocompleteCallback(predictionsAsSuggestions, value)
 
-    }
+    })
+  } else {
+    // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service
+    autocompleteService.getPlacePredictions({
+      ...autocompleteOptions,
+      // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service?hl=en#AutocompletionRequest.locationRestriction
+      locationRestriction: latLngBounds,
+      input: value,
+    }, (predictions, status) => {
 
-  })
+      if (status === window.google.maps.places.PlacesServiceStatus.OK && Array.isArray(predictions)) {
 
+        const predictionsAsSuggestions = predictions.map((result, idx) => ({
+          type: 'prediction',
+          value: result.description,
+          id: result.place_id,
+          description: result.description,
+          index: idx,
+          google: result,
+          // *WARNING*
+          // At this step, we DON'T have the lat/lng
+          // It will be obtained when selecting the suggestion
+        }))
+
+        this._autocompleteCallback(predictionsAsSuggestions, value)
+
+      }
+
+    })
+  }
 }
 
 export function onSuggestionSelected(event, { suggestion }) {
@@ -156,18 +193,32 @@ export const geocode = function (text) {
 
 export const configure = function (options) {
 
-  if (!autocompleteService && !geocoderService && !location) {
-
-    autocompleteService = new window.google.maps.places.AutocompleteService()
-    geocoderService     = new window.google.maps.Geocoder()
-
-    const [ swLat, swLng, neLat, neLng ] = options.latLngBounds.split(',').map(coord => parseFloat(coord))
-
-    // https://developers.google.com/maps/documentation/javascript/reference/coordinates?hl=en#LatLngBounds
-    latLngBounds = new window.google.maps.LatLngBounds(
-      new window.google.maps.LatLng(swLat, swLng),
-      new window.google.maps.LatLng(neLat, neLng)
-    )
+  if (autocompleteService || geocoderService) {
+    return
   }
 
+  const [ swLat, swLng, neLat, neLng ] = options.latLngBounds.split(',').map(coord => parseFloat(coord))
+  
+  geocoderService = new window.google.maps.Geocoder()
+
+  googleApiKey = document.getElementById('google').dataset.apiKey
+
+  // https://developers.google.com/maps/documentation/javascript/reference/coordinates?hl=en#LatLngBounds
+  latLngBounds = new window.google.maps.LatLngBounds(
+    new window.google.maps.LatLng(swLat, swLng),
+    new window.google.maps.LatLng(neLat, neLng)
+  )
+
+  axios.post(
+    'https://places.googleapis.com/v1/places:autocomplete',
+    {},
+    {headers: { "X-Goog-Api-Key": `${googleApiKey}`}}
+  ).catch(resp => {
+    if (resp.status === 403) {
+      isNewPlacesApi = false
+      autocompleteService = new window.google.maps.places.AutocompleteService()
+    } else {
+      isNewPlacesApi = true
+    }
+  })
 }

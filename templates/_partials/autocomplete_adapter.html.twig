@@ -10,7 +10,10 @@
 {% elseif adapter == 'google' %}
 <div id="google"
   data-location="{{ coopcycle_setting('latlng')|e('html_attr') }}"
-  data-lat-lng-bounds="{{ coopcycle_lat_lng_bounds() }}"></div>
+  data-lat-lng-bounds="{{ coopcycle_lat_lng_bounds() }}"
+  data-api-key="{{ coopcycle_setting('google_api_key_custom') }}"
+  >
+</div>
 {% else %}
 <div id="geocode-earth" data-api-key="{{ geocode_earth_api_key }}"
   data-boundary-circle-latlon="{{ coopcycle_setting('latlng')|e('html_attr') }}"></div>
