@@ -1,44 +1,102 @@
-const { securityContext } = COMPILE_CONTEXT
-
-const partitionPath = ({ instance, year, month }) => {
-  const _ = (name, value) => value ? `${name}=${value}` : "*"
-  return `${_("instance", instance)}/${_("year", year)}/${_("month", month)}`
-}
-
-const resolvePath = ({ s3_path }) => s3_path && s3_path.replace(/^\/|\/$/g, '').replace('%type%', 'tasks')
-
+const { securityContext: { instance: tenant_instance } } = COMPILE_CONTEXT
 cube(`TaskExport`, {
-  sql: `SELECT * FROM read_parquet('s3://${resolvePath(securityContext)}/${partitionPath(securityContext)}/*.parquet', hive_partitioning = true)`,
+  data_source: `clickhouse`,
+  sql: tenant_instance
+    ? `SELECT * FROM default.tasks WHERE instance = '${tenant_instance}'`
+    : `SELECT * FROM default.tasks`,
 
-  refresh_key: {
-    every: "1 second"
+  joins: {
+    OrderExport: {
+      relationship: `many_to_one`,
+      sql: `${CUBE.order_code} = ${OrderExport.order_code} AND ${CUBE.instance} = ${OrderExport.instance}`
+    }
   },
 
   dimensions: {
+    id: {
+      sql: `id`,
+      type: `number`,
+    },
+
     order_code: {
       sql: `order_code`,
       type: `string`,
       primary_key: true
     },
+
     type: {
       sql: `type`,
       type: `string`
     },
+
+    address: {
+      sql: `address`,
+      type: `string`
+    },
+
     status: {
       sql: `status`,
       type: `string`
     },
+
+    courier: {
+      sql: `courier`,
+      type: `string`
+    },
+
+    organization: {
+      sql: `organization`,
+      type: `string`
+    },
+
     instance: {
       sql: `instance`,
       type: `string`
     },
+
+    month: {
+      sql: `month`,
+      type: `string`
+    },
+
+    year: {
+      sql: `year`,
+      type: `string`
+    },
+
+    after: {
+      sql: `after`,
+      type: `time`
+    },
+
+    before: {
+      sql: `before`,
+      type: `time`
+    },
+
+    finished: {
+      sql: `finished`,
+      type: `time`
+    }
   },
 
   measures: {
     count: {
-      type: 'count'
+      sql: `*`,
+      type: `count`,
+    },
+
+    count_distinct: {
+      sql: `DISTINCT ${CUBE}.id`,
+      type: `count`
+    },
+
+    order_total: {
+      sql: `order_total`,
+      type: `sum`
     }
   },
 
-  dataSource: "duckdb"
+  pre_aggregations: {}
 });
+
