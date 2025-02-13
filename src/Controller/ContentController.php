@@ -114,6 +114,19 @@ class ContentController extends AbstractController
     }
 
     /**
+     * @Route("/privacy-mobile", name="privacy-mobile")
+     */
+    public function privacyMobileAction(Request $request, Filesystem $assetsFilesystem)
+    {
+
+        $text = $this->localizeRemoteFile($request, 'privacy-mobile');
+
+        return $this->render('content/markdown.html.twig', [
+            'text' => $text
+        ]);
+    }
+
+    /**
      * @Route("/covid-19", name="covid_19")
      */
     public function covid19Action(TranslatorInterface $translator)
