@@ -56,13 +56,26 @@ const autocompleteOptions = {
 export const onSuggestionsFetchRequested = function({ value }) {
   
   if (isNewPlacesApi) {
-    sessionToken = uuidv4()
+    if (!sessionToken) {
+      sessionToken = uuidv4()
+    }
+    
     axios.post(
       'https://places.googleapis.com/v1/places:autocomplete',
       {
         input: value,
         sessionToken: sessionToken,
-        locationRestriction: {"rectangle" : latLngBounds.toJSON()},
+        // locationRestriction: {"rectangle" : latLngBounds.toJSON()},
+        locationRestriction: { "rectangle": {
+          "low" : {
+            "latitude": latLngBounds.getSouthWest().lat(),
+            "longitude": latLngBounds.getSouthWest().lng()
+          },
+          "high" : {
+            "latitude": latLngBounds.getNorthEast().lat(),
+            "longitude": latLngBounds.getNorthEast().lng()
+          },
+        }},
         includedPrimaryTypes: ['street_address']
       },
       {headers: {"X-Goog-Api-Key": googleApiKey}}
@@ -145,7 +158,11 @@ export function onSuggestionSelected(event, { suggestion }) {
     return
   }
 
-  geocoderService.geocode({ placeId: suggestion.google.place_id }, (results, status) => {
+  sessionToken = null
+
+  const placeId = isNewPlacesApi ? suggestion.google.placeId : suggestion.google.place_id
+
+  geocoderService.geocode({ placeId: placeId }, (results, status) => {
     if (status === window.google.maps.GeocoderStatus.OK && results.length === 1) {
 
       const place = results[0]
@@ -158,8 +175,9 @@ export function onSuggestionSelected(event, { suggestion }) {
         ...placeToAddress(place, this.state.value),
         geohash,
       }
-
       this.props.onAddressSelected(this.state.value, address, suggestion.type)
+    } else {
+      console.error("[Google adapter] placeId was not geocoded on address selection")
     }
   })
 }
