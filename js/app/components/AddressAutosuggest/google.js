@@ -56,28 +56,19 @@ export const onSuggestionsFetchRequested = function({ value }) {
     includedPrimaryTypes: ['street_address'],
     input: value,
   }).then(({suggestions}) => {
-
-    Promise.all(
-      suggestions.map(suggestion => {
-        console.log(suggestion.placePrediction)
-        console.log(suggestion.placePrediction.description)
-        return suggestion.placePrediction.toPlace().fetchFields({fields: ["formattedAddress"]})})
-    )
-      .then(places => {
-        const placesAsSuggestions = places.map((result, idx) => ({
-          type: 'prediction',
-          value: result.place.formattedAddress,
-          id: result.place.id,
-          description: result.place.formattedAddress,
-          index: idx,
-          google: result.place,
-          // *WARNING*
-          // At this step, we DON'T have the lat/lng
-          // It will be obtained when selecting the suggestion
-        }))
+      const placesAsSuggestions = suggestions.map((result, idx) => ({
+        type: 'prediction',
+        value: result.placePrediction.text.text,
+        id: result.placePrediction.placeId,
+        description: result.placePrediction.text.text,
+        index: idx,
+        google: result.placePrediction,
+        // *WARNING*
+        // At this step, we DON'T have the lat/lng
+        // It will be obtained when selecting the suggestion
+      }))
 
         this._autocompleteCallback(placesAsSuggestions, value)
-      })
   })
 
 }
@@ -110,7 +101,7 @@ export function onSuggestionSelected(event, { suggestion }) {
     return
   }
 
-  geocoderService.geocode({ placeId: suggestion.google.id }, (results, status) => {
+  geocoderService.geocode({ placeId: suggestion.google.placeId }, (results, status) => {
     if (status === window.google.maps.GeocoderStatus.OK && results.length === 1) {
       
       const place = results[0]
