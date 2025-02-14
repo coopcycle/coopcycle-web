@@ -236,8 +236,9 @@ export const configure = function (options) {
     'https://places.googleapis.com/v1/places:autocomplete',
     {},
     {headers: { "X-Goog-Api-Key": `${googleApiKey}`}}
-  ).catch(resp => {
-    if (resp.status === 403) {
+  )
+  .catch(error => {
+    if (error.response.status === 403) {
       isNewPlacesApi = false
       autocompleteService = new window.google.maps.places.AutocompleteService()
     } else {
