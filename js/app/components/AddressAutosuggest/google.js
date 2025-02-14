@@ -65,7 +65,6 @@ export const onSuggestionsFetchRequested = function({ value }) {
       {
         input: value,
         sessionToken: sessionToken,
-        // locationRestriction: {"rectangle" : latLngBounds.toJSON()},
         locationRestriction: { "rectangle": {
           "low" : {
             "latitude": latLngBounds.getSouthWest().lat(),
