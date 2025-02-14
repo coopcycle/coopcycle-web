@@ -10,6 +10,7 @@
 include:
   - settings.yml
   - sylius_channels.yml
+  - sylius_currency.yml
   - payment_methods.yml
   - sylius_taxation.yml
   - sylius_on_demand_delivery_product.yml
