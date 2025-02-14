@@ -80,21 +80,27 @@ export const onSuggestionsFetchRequested = function({ value }) {
       {headers: {"X-Goog-Api-Key": googleApiKey}}
     ).then(async resp => {
       const { suggestions } = resp.data
-      const predictionsAsSuggestions = suggestions.map((suggestion, idx) => {
-        let prediction = suggestion.placePrediction
-        return {
-          type: 'prediction',
-          value: prediction.text.text,
-          id: prediction.placeId,
-          description: prediction.text.text,
-          index: idx,
-          google: prediction,
-          // *WARNING*
-          // At this step, we DON'T have the lat/lng
-          // It will be obtained when selecting the suggestion
-        }
-      })
+      let predictionsAsSuggestions
 
+      // if no suggestions are found, the API returns nothing
+      if (!suggestions) {
+        predictionsAsSuggestions = []
+      } else {
+        predictionsAsSuggestions = suggestions.map((suggestion, idx) => {
+          let prediction = suggestion.placePrediction
+          return {
+            type: 'prediction',
+            value: prediction.text.text,
+            id: prediction.placeId,
+            description: prediction.text.text,
+            index: idx,
+            google: prediction,
+            // *WARNING*
+            // At this step, we DON'T have the lat/lng
+            // It will be obtained when selecting the suggestion
+          }
+        })
+      }
       this._autocompleteCallback(predictionsAsSuggestions, value)
 
     })
