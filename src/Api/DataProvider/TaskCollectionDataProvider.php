@@ -30,7 +30,7 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $qb = $this->entityManager->getRepository(Task::class)->createQueryBuilder('o'); // alias 'o' is used by paginator
-        
+
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection(
