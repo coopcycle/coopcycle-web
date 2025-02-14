@@ -3,7 +3,7 @@ context('Invoicing (role: admin)', () => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
     let cmd =
-      'bin/console coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/on_demand_delivery_orders.yml --env test'
+      'bin/console coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/package_delivery_orders.yml --env test'
     if (prefix) {
       cmd = `${prefix} ${cmd}`
     }
