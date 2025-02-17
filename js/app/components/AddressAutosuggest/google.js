@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import PoweredByGoogle from './powered_by_google_on_white_hdpi.png'
 import axios from 'axios'
+import { localeDetector } from '../../i18n';
 
 const placeToAddress = (place, value) => {
 
@@ -75,7 +76,8 @@ export const onSuggestionsFetchRequested = function({ value }) {
             "longitude": latLngBounds.getNorthEast().lng()
           },
         }},
-        includedPrimaryTypes: ['street_address']
+        includedPrimaryTypes: ['street_address'],
+        languageCode: localeDetector()
       },
       {headers: {"X-Goog-Api-Key": googleApiKey}}
     ).then(async resp => {
