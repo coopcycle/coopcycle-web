@@ -107,8 +107,6 @@ const baseURL = location.protocol + '//' + location.host
 
 export default function ({ storeId, deliveryId, order }) {
 
-  console.log(order)
-
   // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
   const isAdmin = true
 
@@ -173,11 +171,6 @@ export default function ({ storeId, deliveryId, order }) {
         errors.tasks[i] = taskErrors
       }
     }
-
-
-    if (overridePrice && !values.variantName) {
-      errors.variantName = t("DELIVERY_FORM_ERROR_VARIANT_NAME")
-      }
 
     return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
