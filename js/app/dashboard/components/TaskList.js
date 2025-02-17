@@ -160,6 +160,8 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
   const trailer = useSelector(state => selectTrailerById(state, taskList.trailer))
   const weight = useSelector(state => selectTaskListWeight(state, {username: username}))
   const volumeUnits = useSelector(state => selectTaskListVolumeUnits(state, {username: username}))
+  const maxCarriableWeight = vehicle?.maxWeight + (trailer?.maxWeight || 0)
+  const maxCarriableVolume = vehicle?.maxVolumeUnits + (trailer?.maxVolumeUnits || 0)
 
   const optimLoading = useSelector(selectOptimLoading)
   const lastOptimResult = useSelector(selectLastOptimResult)
@@ -202,8 +204,8 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
           distance={distance}
           weight={weight}
           volumeUnits={volumeUnits}
-          vehicleMaxWeight={vehicle?.maxWeight + trailer?.maxWeight}
-          vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits + trailer?.maxVolumeUnits}
+          vehicleMaxWeight={maxCarriableWeight}
+          vehicleMaxVolumeUnits={maxCarriableVolume}
         />
       </div>
       <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
@@ -291,8 +293,8 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
                 items={ items }
                 unassignTasksFromTaskList={ unassignTasksFromTaskList }
                 username={ username }
-                vehicleMaxWeight={vehicle?.maxWeight + trailer?.maxWeight}
-                vehicleMaxVolumeUnits={vehicle?.maxVolumeUnits + trailer?.maxVolumeUnits}
+                vehicleMaxWeight={maxCarriableWeight}
+                vehicleMaxVolumeUnits={maxCarriableVolume}
               />
               { provided.placeholder }
             </div>
