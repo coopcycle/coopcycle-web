@@ -116,18 +116,20 @@ export default ({ defaultValue, onChange }) => {
           style={{ width: '70px' }}
           defaultValue={ attributeToUnit(attribute) }
           onChange={ e => {
-            setUnit(e.target.value)
             setAttribute(unitToAttribute(e.target.value))
 
             const newUnit = e.target.value
+            const prevUnit = unit
 
-            if (newUnit === 'vu') {
+            if (newUnit === 'vu' && prevUnit !== 'vu') {
               setStep(step / 1000)
               setThreshold(threshold / 1000)
-            } else {
+            } else if (newUnit !== 'vu' && prevUnit === 'vu') {
               setStep(step * 1000)
               setThreshold(threshold * 1000)
             }
+
+            setUnit(e.target.value)
           }}>
           <option value="km">km</option>
           <option value="kg">kg</option>
