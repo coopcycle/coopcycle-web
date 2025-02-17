@@ -28,7 +28,7 @@ class Edit
         }
 
         $order = $data->getOrder();
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && $data->hasArbitraryPrice();
+        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data->hasArbitraryPrice();
 
         if ($useArbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(

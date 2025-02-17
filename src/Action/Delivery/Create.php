@@ -33,7 +33,7 @@ class Create
             throw new ValidationException($errors);
         }
 
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_ADMIN') && $data->hasArbitraryPrice();
+        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data->hasArbitraryPrice();
 
         if ($useArbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(
@@ -46,16 +46,10 @@ class Create
             );
         } else {
             $priceForOrder = new UsePricingRules();
-            try {
-                $this->pricingManager->createOrder($data, [
-                    'pricingStrategy' => $priceForOrder,
-                    'throwException' => false
-                ]);
-    
-            } catch (NoRuleMatchedException $e) {
-                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                throw new BadRequestHttpException($message);
-            }
+            $this->pricingManager->createOrder($data, [
+                'pricingStrategy' => $priceForOrder,
+
+            ]);
         }
 
         return $data;
