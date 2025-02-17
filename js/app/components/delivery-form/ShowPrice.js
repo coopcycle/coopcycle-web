@@ -59,7 +59,7 @@ export default ({
   setOverridePrice,
   overridePrice,
   setCalculatePrice,
-  isAdmin,
+  isDispatcher,
   priceLoading,
 }) => {
   const { t } = useTranslation()
@@ -169,7 +169,7 @@ export default ({
           </>
         }
 
-        {isAdmin && (
+        {isDispatcher && (
           <div className="mt-2">
             <div
               style={{ maxWidth: '100%', cursor: 'pointer' }}

@@ -22,7 +22,7 @@ export default ({
   onRemove,
   showRemoveButton,
   packages,
-  isAdmin,
+  isDispatcher,
   tags,
 }) => {
   const { t } = useTranslation()
@@ -106,7 +106,7 @@ export default ({
         />
 
         {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
-        {isAdmin ? (
+        {isDispatcher ? (
           storeDeliveryInfos.timeSlots ? (
             areDefinedTimeSlots() & !deliveryId ? (
               <SwitchTimeSlotFreePicker
@@ -122,7 +122,7 @@ export default ({
               <DateRangePicker
                 format={format}
                 index={index}
-                isAdmin={isAdmin}
+                isDispatcher={isDispatcher}
               />
             )
           ) : (
@@ -171,7 +171,7 @@ export default ({
           />
         </div>
 
-        {isAdmin && (
+        {isDispatcher && (
           <div className="mt-4 mb-4">
             <div className="tags__title block mb-2 font-weight-bold">Tags</div>
             <TagsSelect

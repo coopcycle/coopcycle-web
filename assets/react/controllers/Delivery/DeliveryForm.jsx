@@ -108,7 +108,7 @@ const baseURL = location.protocol + '//' + location.host
 export default function ({ storeId, deliveryId, order }) {
 
   // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
-  const isAdmin = true
+  const isDispatcher = true
 
   const httpClient = new window._auth.httpClient()
 
@@ -396,7 +396,7 @@ export default function ({ storeId, deliveryId, order }) {
                                     storeId={storeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     packages={storePackages}
-                                    isAdmin={isAdmin}
+                                    isDispatcher={isDispatcher}
                                     tags={tags}
                                   />
                                 </div>
@@ -421,7 +421,7 @@ export default function ({ storeId, deliveryId, order }) {
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
                                     packages={storePackages}
-                                    isAdmin={isAdmin}
+                                    isDispatcher={isDispatcher}
                                     tags={tags}
                                   />
                                 </div>
@@ -468,7 +468,7 @@ export default function ({ storeId, deliveryId, order }) {
 
                     <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
                       <ShowPrice
-                        isAdmin={isAdmin}
+                        isDispatcher={isDispatcher}
                         deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
                         calculatedPrice={calculatedPrice}
@@ -480,15 +480,17 @@ export default function ({ storeId, deliveryId, order }) {
                       />
                     </div>
 
-                    <div className='order-informations__complete-order'>
-                      <Button
-                        type="primary"
-                        style={{ height: '2.5em' }}
-                        htmlType="submit"
-                        disabled={isSubmitting || deliveryId && isAdmin === false || priceLoading}>
-                        {t("DELIVERY_FORM_SUBMIT")}
-                      </Button>
-                    </div>
+                    { deliveryId && isDispatcher === false ?
+                      <div className='order-informations__complete-order'>
+                        <Button
+                          type="primary"
+                          style={{ height: '2.5em' }}
+                          htmlType="submit"
+                          disabled={isSubmitting || priceLoading}>
+                          {t("DELIVERY_FORM_SUBMIT")}
+                        </Button>
+                      </div> : null
+                    }
 
                     {error.isError ?
                       <div className="alert alert-danger mt-4" role="alert">
