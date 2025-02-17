@@ -485,7 +485,7 @@ export default function ({ storeId, deliveryId, order }) {
                         type="primary"
                         style={{ height: '2.5em' }}
                         htmlType="submit"
-                        disabled={isSubmitting || deliveryId && isAdmin === false}>
+                        disabled={isSubmitting || deliveryId && isAdmin === false || priceLoading}>
                         {t("DELIVERY_FORM_SUBMIT")}
                       </Button>
                     </div>
