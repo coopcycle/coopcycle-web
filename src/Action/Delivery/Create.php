@@ -3,16 +3,13 @@
 namespace AppBundle\Action\Delivery;
 
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
-use AppBundle\Api\Exception\BadRequestHttpException;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
-use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Pricing\PricingManager;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Create
 {
@@ -20,7 +17,6 @@ class Create
         private readonly PricingManager $pricingManager,
         private readonly ValidatorInterface $validator,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
-        private readonly TranslatorInterface $translator
     ) {}
 
     public function __invoke(Delivery $data)
