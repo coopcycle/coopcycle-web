@@ -18,7 +18,7 @@ export default ({
   storeId,
   index,
   storeDeliveryInfos,
-  deliveryId,
+  isEdit,
   onRemove,
   showRemoveButton,
   packages,
@@ -39,7 +39,7 @@ export default ({
     if (
       isTimeSlotSelect &&
       storeDeliveryInfos.timeSlots?.length > 0 &&
-      !deliveryId
+      !isEdit
     ) {
       setFieldValue(`tasks[${index}].after`, null)
       setFieldValue(`tasks[${index}].before`, null)
@@ -63,8 +63,6 @@ export default ({
       storeDeliveryInfos.timeSlots.length > 0
     )
   }, [storeDeliveryInfos])
-
-  
 
   return (
     <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
@@ -103,18 +101,18 @@ export default ({
           addresses={addresses}
           index={index}
           storeDeliveryInfos={storeDeliveryInfos}
+          shallPrefillAddress={Boolean(task.type === 'PICKUP' && !isEdit && storeDeliveryInfos.prefillPickupAddress)}
         />
 
         {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
         {isDispatcher ? (
           storeDeliveryInfos.timeSlots ? (
-            areDefinedTimeSlots() & !deliveryId ? (
+            areDefinedTimeSlots() & !isEdit ? (
               <SwitchTimeSlotFreePicker
                 storeId={storeId}
                 storeDeliveryInfos={storeDeliveryInfos}
                 index={index}
                 format={format}
-                deliveryId={deliveryId}
                 isTimeSlotSelect={isTimeSlotSelect}
                 setIsTimeSlotSelect={setIsTimeSlotSelect}
               />
@@ -129,7 +127,7 @@ export default ({
             <Spinner />
           ) // case store
         ) : storeDeliveryInfos.timeSlots ? (
-          areDefinedTimeSlots() & !deliveryId ? (
+          areDefinedTimeSlots() & !isEdit ? (
             <TimeSlotPicker
               storeId={storeId}
               storeDeliveryInfos={storeDeliveryInfos}
@@ -149,10 +147,10 @@ export default ({
                 storeId={storeId}
                 index={index}
                 packages={packages}
-                deliveryId={deliveryId}
+                isEdit={isEdit}
               />
             ) : null}
-            <TotalWeight index={index} deliveryId={deliveryId} />
+            <TotalWeight index={index} />
           </div>
         ) : null}
 

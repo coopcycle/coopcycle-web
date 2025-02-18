@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import './Packages.scss'
 
-export default ({ index, packages, deliveryId }) => {
+export default ({ index, packages, isEdit }) => {
   const { setFieldValue, errors, values } = useFormikContext()
 
   let picked = []
@@ -19,7 +19,7 @@ export default ({ index, packages, deliveryId }) => {
   }
 
   // format initial API values in the EDIT case
-  if (deliveryId) {
+  if (isEdit) {
     const packagesToEdit = values.tasks[index].packages
     const newPackagesArray = picked.map(p => {
       const match = packagesToEdit.find(item => item.type === p.type)

@@ -36,7 +36,7 @@ function getUnformattedValue(value) {
   return value ?? ''
 }
 
-export default function AddressBook({ index, addresses, storeDeliveryInfos }) {
+export default function AddressBook({ index, addresses, storeDeliveryInfos, shallPrefillAddress }) {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
   const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
@@ -77,10 +77,11 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos }) {
   }
 
   useEffect(() => {
-    if (storeDeliveryInfos.address && storeDeliveryInfos.prefillPickupAddress) {
+    console.log('shallPrefillAddress', shallPrefillAddress)
+    if (shallPrefillAddress) {
       handleAddressSelected(storeDeliveryInfos.address.streetAddress)
     }
-  }, [storeDeliveryInfos.address, storeDeliveryInfos.prefillPickupAddress])
+  }, [shallPrefillAddress])
 
   /** The value used by the input is formatedTelephone, as we need to send telephone with international area code
    * We also need to set the value to null if input is empty because React treats it as empty string and it causes validation errors from the back

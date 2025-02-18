@@ -351,7 +351,7 @@ export default function ({ storeId, deliveryId, order }) {
     },
     1000
   )
-
+  
   return (
     isLoading ? 
       <div className="delivery-spinner">
@@ -388,7 +388,7 @@ export default function ({ storeId, deliveryId, order }) {
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
-                                    deliveryId={deliveryId}
+                                    isEdit={Boolean(deliveryId)}
                                     key={originalIndex}
                                     task={task}
                                     index={originalIndex}
@@ -413,7 +413,7 @@ export default function ({ storeId, deliveryId, order }) {
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
-                                    deliveryId={deliveryId}
+                                    isEdit={Boolean(deliveryId)}
                                     index={originalIndex}
                                     addresses={addresses}
                                     storeId={storeId}
