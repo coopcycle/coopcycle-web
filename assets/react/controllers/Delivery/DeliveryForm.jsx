@@ -480,7 +480,7 @@ export default function ({ storeId, deliveryId, order }) {
                       />
                     </div>
 
-                    { deliveryId && isDispatcher === false ?
+                    { !(deliveryId && !isDispatcher) ?
                       <div className='order-informations__complete-order'>
                         <Button
                           type="primary"
