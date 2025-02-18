@@ -32,6 +32,9 @@ runs:
   - name: Wait webpack
     shell: bash
     run: until [ -f "web/build/entrypoints.json" ]; do sleep 5; done
+  - name: Wait for addok server to be reachable so geocoding works in test
+    shell: bash
+    run: curl --head -X GET --retry 10 --retry-delay 20 https://data.geopf.fr/geocodage/search
   - name: Create database
     shell: bash
     run: docker compose exec -T php bin/console doctrine:schema:create --env=test
