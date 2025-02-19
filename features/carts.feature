@@ -643,6 +643,7 @@ Feature: Carts
             "unitPrice":900,
             "total":1800,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -752,6 +753,7 @@ Feature: Carts
             "unitPrice":900,
             "total":1800,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -861,6 +863,7 @@ Feature: Carts
             "unitPrice":900,
             "total":1800,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -1047,6 +1050,7 @@ Feature: Carts
             "unitPrice":900,
             "total":2700,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":@...@
           }
         ],
@@ -1123,6 +1127,7 @@ Feature: Carts
             "unitPrice":900,
             "total":2700,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":@...@
           }
         ],

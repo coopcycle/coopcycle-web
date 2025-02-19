@@ -105,6 +105,7 @@ Feature: Orders Adhoc
               "unitPrice": 1200,
               "total": @integer@,
               "name": "3kg de patatas",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -122,6 +123,7 @@ Feature: Orders Adhoc
               "unitPrice": 400,
               "total": @integer@,
               "name": "2kg de tomates",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -233,6 +235,7 @@ Feature: Orders Adhoc
               "unitPrice": 1200,
               "total": @integer@,
               "name": "3kg de patatas",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -250,6 +253,7 @@ Feature: Orders Adhoc
               "unitPrice": 400,
               "total": @integer@,
               "name": "2kg de tomates",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -347,6 +351,7 @@ Feature: Orders Adhoc
               "unitPrice": 1200,
               "total": @integer@,
               "name": "3kg de patatas",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -364,6 +369,7 @@ Feature: Orders Adhoc
               "unitPrice": 400,
               "total": @integer@,
               "name": "2kg de tomates",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -381,6 +387,7 @@ Feature: Orders Adhoc
               "unitPrice": 4600,
               "total": @integer@,
               "name": "1kg de zanahorias",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Wild Buffet"

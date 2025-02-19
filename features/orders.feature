@@ -172,6 +172,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -196,6 +197,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -345,6 +347,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -369,6 +372,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -665,6 +669,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"}
@@ -677,6 +682,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"}
@@ -826,6 +832,7 @@ Feature: Orders
             "unitPrice":@integer@,
             "total":@integer@,
             "name":@string@,
+            "variantName": "@string@",
             "adjustments":{"@*@":"@*@"},
             "vendor":{"@*@":"@*@"},
             "player":{"@*@":"@*@"}
@@ -838,6 +845,7 @@ Feature: Orders
             "unitPrice":@integer@,
             "total":@integer@,
             "name":@string@,
+            "variantName": "@string@",
             "adjustments":{"@*@":"@*@"},
             "vendor":{"@*@":"@*@"},
             "player":{"@*@":"@*@"}
@@ -949,6 +957,7 @@ Feature: Orders
           "unitPrice":900,
           "total":900,
           "name":"Pizza",
+          "variantName": "@string@",
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"},
           "adjustments":{
@@ -976,6 +985,7 @@ Feature: Orders
           "unitPrice":699,
           "total":1398,
           "name":"Fish and Chips",
+          "variantName": "@string@",
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"},
           "adjustments":{
@@ -1209,6 +1219,7 @@ Feature: Orders
             "unitPrice":900,
             "total":2700,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {

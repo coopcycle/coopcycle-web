@@ -393,6 +393,11 @@
         "DELIVERY_FORM_OLD_PRICE": "Prezzo precedente",  
         "DELIVERY_FORM_TRACKING_LINK": "Link di tracciamento",  
         "DELIVERY_FROM_TRACKING_LINK_COPY": "Copia link di tracciamento",
-        "SHOW_BARCODES": "Vedi i codici a barre"
+        "SHOW_BARCODES": "Vedi i codici a barre",
+        "DELIVERY_FORM_SET_MANUALLY_PRICE": "Imposta il prezzo manualmente",
+        "DELIVERY_FORM_PRODUCT_NAME": "Nome del prodotto",
+        "DELIVERY_FORM_NAME_INSTRUCTION": "Il nome che apparirà nel riepilogo dell'ordine e nella fattura",
+        "DELIVERY_FORM_VAT_PRICE": "Prezzo IVA inclusa",
+        "DELIVERY_FORM_EXVAT_PRICE" : "Prezzo IVA esclusa"
     }
 }

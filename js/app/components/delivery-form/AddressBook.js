@@ -1,13 +1,13 @@
-import './AddressBookNew.scss'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, Select, Checkbox, Button } from 'antd'
-import AddressAutosuggest from '../AddressAutosuggest'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import { useFormikContext, Field } from 'formik'
 import { getCountry } from '../../i18n'
+import AddressAutosuggest from '../AddressAutosuggest'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+import './AddressBook.scss'
 
 function getFormattedValue(value) {
   if (typeof value === 'string') {
@@ -36,7 +36,7 @@ function getUnformattedValue(value) {
   return value ?? ''
 }
 
-export default function AddressBook({ index, addresses }) {
+export default function AddressBook({ index, addresses, storeDeliveryInfos, shallPrefillAddress }) {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
   const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
@@ -75,6 +75,13 @@ export default function AddressBook({ index, addresses }) {
     })
     setSelectValue(value)
   }
+
+  useEffect(() => {
+    console.log('shallPrefillAddress', shallPrefillAddress)
+    if (shallPrefillAddress) {
+      handleAddressSelected(storeDeliveryInfos.address.streetAddress)
+    }
+  }, [shallPrefillAddress])
 
   /** The value used by the input is formatedTelephone, as we need to send telephone with international area code
    * We also need to set the value to null if input is empty because React treats it as empty string and it causes validation errors from the back
@@ -123,7 +130,7 @@ export default function AddressBook({ index, addresses }) {
             }
             options={addresses.map(address => ({
               value: address.streetAddress,
-              label: address.streetAddress,
+              label: address.name ? `${address.name} - ${address.streetAddress}` : `${address.streetAddress}`,
               key: address['@id'],
               id: address['@id'],
             }))}
@@ -193,10 +200,9 @@ export default function AddressBook({ index, addresses }) {
         </div>
       </div>
       <div className="row">
-        <div className="col-sm-12">
+        <div className="address__autosuggest col-sm-12">
           <AddressAutosuggest
             address={values.tasks[index].address || ''}
-            addresses={addresses}
             required={true}
             reportValidity={true}
             preciseOnly={true}

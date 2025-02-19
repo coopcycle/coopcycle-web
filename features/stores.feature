@@ -128,7 +128,9 @@ Feature: Stores
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
         "weightRequired":@boolean@,
-        "packagesRequired":@boolean@
+        "packagesRequired":@boolean@,
+        "prefillPickupAddress": @boolean@,
+        "multiDropEnabled": @boolean@
       }
       """
 
@@ -168,7 +170,9 @@ Feature: Stores
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
         "weightRequired":@boolean@,
-        "packagesRequired":@boolean@
+        "packagesRequired":@boolean@,
+        "prefillPickupAddress": @boolean@,
+        "multiDropEnabled": @boolean@
       }
       """
 
@@ -710,7 +714,9 @@ Feature: Stores
               "/api/time_slots/2"
           ],
           "weightRequired":@boolean@,
-          "packagesRequired":@boolean@
+          "packagesRequired":@boolean@,
+          "prefillPickupAddress": @boolean@,
+          "multiDropEnabled": @boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -745,7 +751,9 @@ Feature: Stores
               "/api/time_slots/3"
           ],
           "weightRequired":@boolean@,
-          "packagesRequired":@boolean@
+          "packagesRequired":@boolean@,
+          "prefillPickupAddress": @boolean@,
+          "multiDropEnabled": @boolean@
       }
       """
 

@@ -56,4 +56,8 @@ final class TaxRate
         $this->category = $taxRate->getCategory()->getCode();
         $this->alternatives = $alternatives;
     }
+
+    public function getId() {
+        return $this->id;
+    }
 }
