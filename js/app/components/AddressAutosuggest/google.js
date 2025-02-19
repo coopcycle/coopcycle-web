@@ -241,6 +241,7 @@ export const configure = function (options) {
   )
   .catch(error => {
     if (error.response.status === 403) {
+      console.error("[Google adapter] Using legacy Places API")
       isNewPlacesApi = false
       autocompleteService = new window.google.maps.places.AutocompleteService()
     } else {
