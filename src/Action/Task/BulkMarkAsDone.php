@@ -3,6 +3,7 @@
 namespace AppBundle\Action\Task;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -43,22 +44,28 @@ class BulkMarkAsDone extends Base
         }
 
         $tasks = $payload["tasks"];
+        $tasksObjs = array_map(function ($taskIri) { return $this->iriConverter->getItemFromIri($taskIri); }, $tasks);
 
         $tasksResults= [];
         $tasksFailed= [];
 
-        // sort tasks by iri
-        // if a pickup and its dropoff have to be mark as done we need to order them so the pickup is marked first
-        usort($tasks, function($a, $b) {
-            return $a < $b ? -1 : 1;
+        // sort tasks
+        // if tasks are in a delivery make sure that the delivery order is respected so we avoid validation errors
+        usort($tasksObjs, function(Task $a, Task $b) {
+            if ($a->getDelivery() && $b->getDelivery()) {
+                $aPos = $a->getDelivery()->findTaskPosition($a);
+                $bPos = $b->getDelivery()->findTaskPosition($b);
+                return $aPos < $bPos ? -1 : 1;
+            } else {
+                return $a->getId() < $b->getId() ? -1 : 1;
+            }
         });
 
-        foreach($tasks as $task) {
-            $taskObj = $this->iriConverter->getItemFromIri($task);
+        foreach($tasksObjs as $task) {
             try {
-                $tasksResults[] = $this->done($taskObj, $request);
+                $tasksResults[] = $this->done($task, $request);
             } catch(BadRequestHttpException $e) {
-                $tasksFailed[$task] = $e->getMessage();
+                $tasksFailed[$this->iriConverter->getIriFromItem($task)] = $e->getMessage();
             }
         }
 
