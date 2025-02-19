@@ -92,3 +92,15 @@ li > a.text-danger // very specific selector for bootstrap dropdown
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button.no-number-input-arrow,
+input::-webkit-inner-spin-button.no-number-input-arrow {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number].no-number-input-arrow {
+  -moz-appearance: textfield;
+}
