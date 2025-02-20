@@ -110,6 +110,8 @@ export const onSuggestionsFetchRequested = function({ value }) {
       if (error.response.status === 403) {
         console.error("[Google adapter] Using legacy Places API")
         isNewPlacesApi = false
+        // autocompletion service for legacy places API
+        autocompleteService = new window.google.maps.places.AutocompleteService()
         this.onSuggestionsFetchRequested({ value })
       }
     })
@@ -240,7 +242,4 @@ export const configure = function (options) {
     new window.google.maps.LatLng(swLat, swLng),
     new window.google.maps.LatLng(neLat, neLng)
   )
-
-  // autocompletion service for legacy places API
-  autocompleteService = new window.google.maps.places.AutocompleteService()
 }
