@@ -42,7 +42,7 @@ use AppBundle\Action\Store\Packages as Packages;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER')"
  *     },
  *     "me_stores"={
  *       "method"="GET",
