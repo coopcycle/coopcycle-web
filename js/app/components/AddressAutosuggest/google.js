@@ -43,7 +43,7 @@ const placeToAddress = (place, value) => {
   }
 }
 
-let isNewPlacesApi // indicates if "Places (new)" is set up
+let isNewPlacesApi = true // indicates if "Places (new)" is set up
 let googleApiKey
 let sessionToken
 let autocompleteService
@@ -105,6 +105,13 @@ export const onSuggestionsFetchRequested = function({ value }) {
       }
       this._autocompleteCallback(predictionsAsSuggestions, value)
 
+    }).catch(error => {
+      // our API key is not valid for the places API (new), fallback to legacy API
+      if (error.response.status === 403) {
+        console.error("[Google adapter] Using legacy Places API")
+        isNewPlacesApi = false
+        this.onSuggestionsFetchRequested({ value })
+      }
     })
   } else {
     // https://developers.google.com/maps/documentation/javascript/reference/places-autocomplete-service
@@ -234,18 +241,6 @@ export const configure = function (options) {
     new window.google.maps.LatLng(neLat, neLng)
   )
 
-  axios.post(
-    'https://places.googleapis.com/v1/places:autocomplete',
-    {},
-    {headers: { "X-Goog-Api-Key": `${googleApiKey}`}}
-  )
-  .catch(error => {
-    if (error.response.status === 403) {
-      console.error("[Google adapter] Using legacy Places API")
-      isNewPlacesApi = false
-      autocompleteService = new window.google.maps.places.AutocompleteService()
-    } else {
-      isNewPlacesApi = true
-    }
-  })
+  // autocompletion service for legacy places API
+  autocompleteService = new window.google.maps.places.AutocompleteService()
 }
