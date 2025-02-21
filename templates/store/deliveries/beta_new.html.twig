@@ -63,10 +63,11 @@
   {% endif %}
 
   <div {{ react_component('Delivery/DeliveryForm', { 
-    isNew: is_new,
-    storeId: store.id,
-    deliveryId: delivery.id,
-    order: order,
-    trackingLink: tracking_link
-    }) }}></div>
+        isNew: is_new,
+        storeId: store.id,
+        deliveryId: delivery.id,
+        order: order,
+        trackingLink: tracking_link
+      }) 
+  }}></div>
 {% endblock %}

@@ -10,7 +10,7 @@ import './DateRangePicker.scss'
 function getNextRoundedTime() {
   const now = moment()
   now.add(60, 'minutes')
-  const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
+  const roundedMinutes = Math.ceil(now.minutes() / 10) * 10
   if (roundedMinutes >= 60) {
     now.add(1, 'hour')
     now.minutes(roundedMinutes - 60)
@@ -26,7 +26,7 @@ const { Option } = Select
 
 function generateTimeSlots(afterHour = null) {
   const items = []
-  const minutes = [0, 15, 30, 45]
+  const minutes = [0, 10, 20, 30, 40, 50]
 
   new Array(24).fill().forEach((_, index) => {
     minutes.forEach(minute => {
@@ -51,7 +51,7 @@ function generateTimeSlots(afterHour = null) {
   })
 }
 
-const DateTimeRangePicker = ({ format, index, isAdmin }) => {
+const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
 
@@ -63,7 +63,7 @@ const DateTimeRangePicker = ({ format, index, isAdmin }) => {
 
   const defaultAfterValue = React.useMemo(() => getNextRoundedTime(), [])
   const defaultBeforeValue = React.useMemo(
-    () => defaultAfterValue.clone().add(60, 'minutes'),
+    () => defaultAfterValue.clone().add(10, 'minutes'),
     [defaultAfterValue],
   )
 
@@ -132,7 +132,7 @@ const DateTimeRangePicker = ({ format, index, isAdmin }) => {
     const date =
       afterValue?.format('YYYY-MM-DD') || defaultAfterValue.format('YYYY-MM-DD')
     const newAfterHour = moment(`${date} ${newValue}:00`)
-    const newBeforeHour = newAfterHour.clone().add(60, 'minutes')
+    const newBeforeHour = newAfterHour.clone().add(10, 'minutes')
 
     setTimeValues({
       after: newAfterHour.format('HH:mm'),
@@ -204,7 +204,7 @@ const DateTimeRangePicker = ({ format, index, isAdmin }) => {
         />
       </div>
 
-      {isAdmin && (
+      {isDispatcher && (
         <a
           className="text-secondary"
           title={t('SWITCH_COMPLEX_DATEPICKER')}
@@ -268,7 +268,7 @@ const DateTimeRangePicker = ({ format, index, isAdmin }) => {
           ))}
         </Select>
       </div>
-      {isAdmin && (
+      {isDispatcher && (
         <a
           className="text-secondary"
           title={t('SWITCH_COMPLEX_DATEPICKER')}

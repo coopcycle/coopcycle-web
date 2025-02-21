@@ -1068,16 +1068,20 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        if (!$restaurant->isDepositRefundEnabled()
+        if (
+            !$restaurant->isDepositRefundEnabled()
             && !$restaurant->isLoopeatEnabled()
             && !$restaurant->isVytalEnabled()
-            && !$restaurant->isDabbaEnabled()) {
+            && !$restaurant->isDabbaEnabled()
+        ) {
             return false;
         }
 
         foreach ($this->getItems() as $item) {
-            if ($item instanceof OrderItemInterface
-            &&  $item->getVariant()->getProduct()->isReusablePackagingEnabled()) {
+            if (
+                $item instanceof OrderItemInterface
+                &&  $item->getVariant()->getProduct()->isReusablePackagingEnabled()
+            ) {
 
                 return true;
             }
@@ -1381,7 +1385,7 @@ class Order extends BaseOrder implements OrderInterface
 
             if (null !== $restaurant) {
                 $items = isset($hash[$restaurant]) ? $hash[$restaurant] : [];
-                $hash[$restaurant] = array_merge($items, [ $item ]);
+                $hash[$restaurant] = array_merge($items, [$item]);
             }
         }
 
@@ -1663,7 +1667,6 @@ class Order extends BaseOrder implements OrderInterface
             $carry[] = $item;
 
             return $carry;
-
         }, []);
 
         return $formats;
@@ -1872,7 +1875,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getPickupAddresses(): Collection
     {
-        return $this->getRestaurants()->map(fn (LocalBusiness $restaurant): Address => $restaurant->getAddress());
+        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => $restaurant->getAddress());
     }
 
     /**
@@ -1902,7 +1905,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setSubscription(?RecurrenceRule $subscription): void
     {
         $this->subscription = $subscription;
-
     }
 
     /**
@@ -1939,10 +1941,10 @@ class Order extends BaseOrder implements OrderInterface
         $payment = $payments->filter(function (PaymentInterface $payment) use ($method, $state): bool {
             $__filter = null;
             if (is_string($method)) {
-                $__filter = fn (PaymentInterface $payment) => $payment->getMethod()->getCode() === $method;
+                $__filter = fn(PaymentInterface $payment) => $payment->getMethod()->getCode() === $method;
             }
             if (is_array($method)) {
-                $__filter = fn (PaymentInterface $payment) => in_array($payment->getMethod()->getCode(), $method);
+                $__filter = fn(PaymentInterface $payment) => in_array($payment->getMethod()->getCode(), $method);
             }
             return (null === $state || $payment->getState() === $state) && $__filter($payment);
         })->last();
