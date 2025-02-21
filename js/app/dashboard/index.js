@@ -207,7 +207,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
   
   const tasksRequest = client.paginatedRequest({
     method: 'GET',
-    url: `${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=50`,
+    url: `${ window.Routing.generate('api_tasks_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,
     headers: headers
   })
 
