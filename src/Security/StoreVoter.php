@@ -60,13 +60,6 @@ class StoreVoter extends Voter
             return true;
         }
 
-        if (
-            in_array($attribute, [self::VIEW, self::EDIT_DELIVERY]) &&
-            $this->authorizationChecker->isGranted('ROLE_DISPATCHER')
-        ) {
-            return true;
-        }
-
         return false;
     }
 }
