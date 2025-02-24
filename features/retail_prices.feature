@@ -1,19 +1,19 @@
 Feature: Retail prices
 
-  Scenario: Get delivery price with JWT for dispatcher user
+  Scenario: Get delivery price with JWT for admin user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
-    And the user "dispatcher" is loaded:
-      | email      | dispatcher@coopcycle.org |
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
       | password   | 123456            |
-    And the user "dispatcher" has role "ROLE_DISPATCHER"
-    And the user "dispatcher" is authenticated
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "dispatcher" sends a "POST" request to "/api/retail_prices/calculate" with body:
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "store":"/api/stores/1",
@@ -50,14 +50,14 @@ Feature: Retail prices
       | sylius_taxation.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
-    And the user "admin" is loaded:
-      | email      | admin@coopcycle.org |
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
       | password   | 123456            |
-    And the user "admin" has role "ROLE_ADMIN"
-    And the user "admin" is authenticated
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+    And the user "dispatcher" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "store":"/api/stores/1",
