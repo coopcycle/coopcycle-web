@@ -44,7 +44,7 @@ class StoreVoter extends Voter
 
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
@@ -57,6 +57,13 @@ class StoreVoter extends Voter
 
         if ($this->authorizationChecker->isGranted('ROLE_STORE')
             && is_object($user) && is_callable([ $user, 'ownsStore' ]) && $user->ownsStore($subject)) {
+            return true;
+        }
+
+        if (
+            in_array($attribute, [self::VIEW, self::EDIT_DELIVERY]) &&
+            $this->authorizationChecker->isGranted('ROLE_DISPATCHER')
+        ) {
             return true;
         }
 
