@@ -51,7 +51,8 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
 
         if ($data->store && $data->store instanceof Store) {
 
-            if (!$this->authorizationChecker->isGranted('edit', $data->store)) {
+            //FIXME: move access controls to the operations in the Entities
+            if (!$this->authorizationChecker->isGranted('ROLE_DISPATCHER') && !$this->authorizationChecker->isGranted('edit', $data->store)) {
                 throw new AccessDeniedHttpException('');
             }
 
