@@ -80,8 +80,13 @@ Feature: Stores
             "@type":"http://schema.org/Store",
             "name":"Acme",
             "enabled":true,
-            "address":@...@,
-            "timeSlot":"/api/time_slots/1"
+            "address":{"@*@":"@*@"},
+            "timeSlot":"/api/time_slots/1",
+            "timeSlots":@array@,
+            "prefillPickupAddress": @boolean@,
+            "weightRequired":@boolean@,
+            "packagesRequired":@boolean@,
+            "multiDropEnabled": @boolean@
           }
         ],
         "hydra:totalItems":1
@@ -333,12 +338,17 @@ Feature: Stores
               "type": "PICKUP",
               "id":@integer@,
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -346,12 +356,17 @@ Feature: Stores
               "type": "DROPOFF",
               "id":@integer@,
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@
@@ -366,12 +381,18 @@ Feature: Stores
               "id":@integer@,
               "status":@string@,
               "type": "PICKUP",
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
+
             },
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -379,12 +400,17 @@ Feature: Stores
               "id":@integer@,
               "status":@string@,
               "type": "DROPOFF",
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@
@@ -428,12 +454,17 @@ Feature: Stores
               "id":@integer@,
               "type":"PICKUP",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -441,12 +472,17 @@ Feature: Stores
               "id":@integer@,
               "type":"DROPOFF",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@
@@ -461,12 +497,17 @@ Feature: Stores
               "id":@integer@,
               "type":"PICKUP",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -474,12 +515,17 @@ Feature: Stores
               "id":@integer@,
               "type":"DROPOFF",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@
@@ -519,12 +565,17 @@ Feature: Stores
               "id":@integer@,
               "type":"PICKUP",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -532,12 +583,17 @@ Feature: Stores
               "id":@integer@,
               "type":"DROPOFF",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T20:30:00+01:00",
               "doneBefore":"2019-11-12T20:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@
@@ -552,12 +608,17 @@ Feature: Stores
               "id":@integer@,
               "type":"PICKUP",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T18:30:00+01:00",
               "doneBefore":"2019-11-12T18:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "dropoff":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -565,12 +626,17 @@ Feature: Stores
               "id":@integer@,
               "type":"DROPOFF",
               "status":@string@,
-              "address":@...@,
+              "address":{"@*@":"@*@"},
               "doneAfter":"@string@.isDateTime()",
               "after":"@string@.isDateTime()",
               "before":"2019-11-12T19:30:00+01:00",
               "doneBefore":"2019-11-12T19:30:00+01:00",
-              "comments": ""
+              "comments": "",
+              "createdAt":"@string@.isDateTime()",
+              "tags":[],
+              "weight":null,
+              "packages": [],
+              "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@
