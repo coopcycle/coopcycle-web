@@ -391,8 +391,8 @@ Feature: Stores
           }
         ],
         "hydra:totalItems":2,
-        "hydra:view":@...@,
-        "hydra:search":@...@
+        "hydra:view":{"@*@":"@*@"},
+        "hydra:search":{"@*@":"@*@"}
       }
       """
 
@@ -486,8 +486,8 @@ Feature: Stores
           }
         ],
         "hydra:totalItems":2,
-        "hydra:view":@...@,
-        "hydra:search":@...@
+        "hydra:view":{"@*@":"@*@"},
+        "hydra:search":{"@*@":"@*@"}
       }
       """
 
@@ -577,8 +577,8 @@ Feature: Stores
           }
         ],
         "hydra:totalItems":2,
-        "hydra:view":@...@,
-        "hydra:search":@...@
+        "hydra:view":{"@*@":"@*@"},
+        "hydra:search":{"@*@":"@*@"}
       }
       """
 
