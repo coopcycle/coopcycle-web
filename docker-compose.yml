@@ -320,6 +320,25 @@ services:
     profiles:
       - devOdoo
 
+#  datadog-agent:
+#    container_name: dd-agent
+#    build: datadog
+#    links:
+#      - php # ensures that the web app can send metrics
+#    environment:
+#      - DD_API_KEY=${DD_API_KEY}
+#      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true # enables agent to receive custom metrics from other containers
+#      - DD_APM_ENABLED=true # enables tracing
+#      - DD_APM_NON_LOCAL_TRAFFIC=true # enables agent to receive traces from other containers
+#      - DD_AGENT_HOST=dd-agent # allows web container to forward traces to agent
+#      - DD_SITE=datadoghq.com # determines datadog instance to send data to
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+#      - /proc/:/host/proc/:ro
+#      - /sys/fs/cgroup:/host/sys/fs/cgroup:ro
+#    profiles:
+#      - devMonitoring
+
 volumes:
   node_modules_webpack:
   pg_data:
