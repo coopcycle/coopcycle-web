@@ -8,6 +8,10 @@ mkdir -p var/logs
 chgrp www-data var/logs
 chmod g+w var/logs
 
+mkdir -p var/profiles
+chgrp www-data var/profiles
+chmod g+w var/profiles
+
 mkdir -p web/images
 chgrp -R www-data web/images
 chmod -R g+w web/images

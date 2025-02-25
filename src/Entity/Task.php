@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Task\AddImagesToTasks;
-use AppBundle\Action\Task\Collection as TaskList;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
@@ -76,10 +75,8 @@ use stdClass;
  *          "enabled_parameter_name"="pagination",
  *          "items_per_page_parameter_name"="itemsPerPage"
  *         },
- *       "pagination_client_items_per_page"=true,
  *       "pagination_enabled"=false,
- *       "pagination_client_enabled"=true,
- *       "controller"=TaskList::class
+ *       "pagination_client_enabled"=true
  *     },
  *     "post"={
  *       "method"="POST",

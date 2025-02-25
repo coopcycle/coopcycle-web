@@ -1453,8 +1453,8 @@ Feature: Tasks
         }
       }
       """
-
-  Scenario: Retrieve tasks filtered by date for dispatcher
+    
+  Scenario: Retrieve tasks filtered by date for dispatcher without pagination
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | dispatch.yml        |
@@ -1462,7 +1462,7 @@ Feature: Tasks
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "GET" request to "/api/tasks?date=2018-12-01"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2024-12-01"
     Then the response status code should be 200
     And the JSON should match:
       """
@@ -1475,20 +1475,20 @@ Feature: Tasks
             "@id":"@string@.startsWith('/api/tasks')",
             "@type":"Task",
             "id":@integer@,
-            "type":"DROPOFF",
+            "type":"PICKUP",
             "status":"TODO",
             "address":{"@*@":"@*@"},
-            "after":"2018-12-01T10:30:00+01:00",
-            "before":"2018-12-01T11:00:00+01:00",
-            "doneAfter":"2018-12-01T10:30:00+01:00",
-            "doneBefore":"2018-12-01T11:00:00+01:00",
-            "comments":"",
+            "after":"2024-11-30T10:30:00+01:00",
+            "before":"2024-12-01T11:00:00+01:00",
+            "doneAfter":"2024-11-30T10:30:00+01:00",
+            "doneBefore":"2024-12-01T11:00:00+01:00",
+            "comments":"4 × SMALL\n",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"sarah",
             "previous":null,
-            "next":null,
+            "next":"@string@.startsWith('/api/tasks')",
             "group":null,
             "tags":[],
             "doorstep":false,
@@ -1497,14 +1497,20 @@ Feature: Tasks
             "ref": null,
             "recurrenceRule":null,
             "metadata":{
-              "foo":"bar",
-              "baz":"bat",
-              "zero_waste":false
+              "delivery_position": 1,
+              "@*@":"@*@"
             },
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
-            "packages": [],
+            "packages": [{
+              "name": "SMALL",
+              "type": "SMALL",
+              "quantity": 4,
+              "volume_per_package": 1,
+              "short_code": "AB",
+              "labels": @array@
+            }],
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@",
             "barcode":{"@*@":"@*@"}
@@ -1516,10 +1522,10 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":{"@*@":"@*@"},
-            "doneAfter":"2018-12-01T12:00:00+01:00",
-            "doneBefore":"2018-12-01T12:30:00+01:00",
-            "after":"2018-12-01T12:00:00+01:00",
-            "before":"2018-12-01T12:30:00+01:00",
+            "doneAfter":"2024-12-01T12:00:00+01:00",
+            "doneBefore":"2024-12-01T12:30:00+01:00",
+            "after":"2024-12-01T12:00:00+01:00",
+            "before":"2024-12-01T12:30:00+01:00",
             "comments":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
@@ -1534,7 +1540,7 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":{"zero_waste":false},
+            "metadata":{"@*@":"@*@"},
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -1550,10 +1556,10 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":{"@*@":"@*@"},
-            "doneAfter":"2018-12-01T12:00:00+01:00",
-            "doneBefore":"2018-12-01T12:30:00+01:00",
-            "after":"2018-12-01T12:00:00+01:00",
-            "before":"2018-12-01T12:30:00+01:00",
+            "doneAfter":"2024-12-01T12:00:00+01:00",
+            "doneBefore":"2024-12-01T12:30:00+01:00",
+            "after":"2024-12-01T12:00:00+01:00",
+            "before":"2024-12-01T12:30:00+01:00",
             "comments":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
@@ -1568,7 +1574,7 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":{"zero_waste":false},
+            "metadata":{"@*@":"@*@"},
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -1584,15 +1590,135 @@ Feature: Tasks
             "type":"DROPOFF",
             "status":"TODO",
             "address":{"@*@":"@*@"},
-            "after": "2018-11-30T11:30:00+01:00",
-            "before": "2018-12-02T12:00:00+01:00",
-            "doneAfter": "2018-11-30T11:30:00+01:00",
-            "doneBefore": "2018-12-02T12:00:00+01:00",
+            "after": "2024-11-30T11:30:00+01:00",
+            "before": "2024-12-02T12:00:00+01:00",
+            "doneAfter": "2024-11-30T11:30:00+01:00",
+            "doneBefore": "2024-12-02T12:00:00+01:00",
             "comments":"",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "isAssigned":true,
             "assignedTo":"sarah",
+            "previous":"@string@.startsWith('/api/tasks')",
+            "next":null,
+            "group":null,
+            "tags":[],
+            "doorstep":false,
+            "orgName":"",
+            "images":[],
+            "ref": null,
+            "recurrenceRule":null,
+            "metadata":{
+              "delivery_position": 2,
+              "@*@":"@*@"
+            },
+            "weight":null,
+            "hasIncidents": false,
+            "incidents": [],
+            "packages": [{
+              "name": "SMALL",
+              "type": "SMALL",
+              "quantity": 4,
+              "volume_per_package": 1,
+              "short_code": "AB",
+              "labels": @array@
+            }],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "barcode":{"@*@":"@*@"}
+          }
+        ],
+        "hydra:totalItems":4,
+        "hydra:view":{
+          "@id":"/api/tasks?date=2024-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve tasks filtered by date for dispatcher with pagination
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_DISPATCHER"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"PICKUP",
+            "status":"TODO",
+            "address":{"@*@":"@*@"},
+            "after":"2024-11-30T10:30:00+01:00",
+            "before":"2024-12-01T11:00:00+01:00",
+            "doneAfter":"2024-11-30T10:30:00+01:00",
+            "doneBefore":"2024-12-01T11:00:00+01:00",
+            "comments":"4 × SMALL\n",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "assignedTo":"sarah",
+            "previous":null,
+            "next":"@string@.startsWith('/api/tasks')",
+            "group":null,
+            "tags":[],
+            "doorstep":false,
+            "orgName":"",
+            "images":[],
+            "ref": null,
+            "recurrenceRule":null,
+            "metadata":{
+              "delivery_position": 1,
+              "@*@":"@*@"
+            },
+            "weight":null,
+            "hasIncidents": false,
+            "incidents": [],
+            "packages": [{
+              "name": "SMALL",
+              "type": "SMALL",
+              "quantity": 4,
+              "volume_per_package": 1,
+              "short_code": "AB",
+              "labels": @array@
+            }],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "barcode":{"@*@":"@*@"}
+          },
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{"@*@":"@*@"},
+            "doneAfter":"2024-12-01T12:00:00+01:00",
+            "doneBefore":"2024-12-01T12:30:00+01:00",
+            "after":"2024-12-01T12:00:00+01:00",
+            "before":"2024-12-01T12:30:00+01:00",
+            "comments":"",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":false,
+            "assignedTo":null,
             "previous":null,
             "next":null,
             "group":null,
@@ -1602,7 +1728,7 @@ Feature: Tasks
             "images":[],
             "ref": null,
             "recurrenceRule":null,
-            "metadata":{"zero_waste":false},
+            "metadata":{"@*@":"@*@"},
             "weight":null,
             "hasIncidents": false,
             "incidents": [],
@@ -1614,8 +1740,11 @@ Feature: Tasks
         ],
         "hydra:totalItems":4,
         "hydra:view":{
-          "@id":"/api/tasks?date=2018-12-01",
-          "@type":"hydra:PartialCollectionView"
+          "@id":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
+          "@type":"hydra:PartialCollectionView",
+          "hydra:first":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
+          "hydra:last":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2",
+          "hydra:next":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
