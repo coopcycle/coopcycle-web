@@ -75,7 +75,6 @@ use stdClass;
  *          "enabled_parameter_name"="pagination",
  *          "items_per_page_parameter_name"="itemsPerPage"
  *         },
- *       "pagination_client_items_per_page"=true,
  *       "pagination_enabled"=false,
  *       "pagination_client_enabled"=true
  *     },
