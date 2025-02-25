@@ -3,26 +3,20 @@
 namespace AppBundle\Service;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
-use AppBundle\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 
 class TaskListManager {
 
     public function __construct(
         protected EntityManagerInterface $entityManager,
         protected IriConverterInterface $iriConverter,
-        protected LoggerInterface $logger
     ) {}
-    
+
     /*
-        Assign items (tours and tasks). Works like a PUT, i.e. remove items non-present in $newItemsIris. 
+        Assign items (tours and tasks). Works like a PUT, i.e. remove items non-present in $newItemsIris.
     */
     public function assign(TaskList $taskList, $newItemsIris) {
 
@@ -33,23 +27,18 @@ class TaskListManager {
         $taskList->clear();
 
         foreach($newItemsIris as $position => $newItemIri) {
-            $this->logger->debug('match new item IRI ' .$newItemIri);
-
             $existingItem = array_filter(
                 $currentItems,
                 function (Item $item) use ($newItemIri) {
-                    $this->logger->debug('try match with item IRI ' .$newItemIri);
                     return $item->getItemIri($this->iriConverter) === $newItemIri;}
             );
             // update position
             if (count($existingItem) > 0) {
-                $this->logger->debug('found match for ' .$newItemIri);
                 $existingItem = array_shift($existingItem);
                 $existingItem->setPosition($position);
                 $taskList->addItem($existingItem);
             // items that were added to the tasklist
             } else {
-                $this->logger->debug('not found match for ' .$newItemIri);
                 $taskOrTour = $this->iriConverter->getItemFromIri($newItemIri);
                 $item = new Item();
                 $item->setPosition($position);
