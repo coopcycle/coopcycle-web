@@ -59,6 +59,7 @@ form.address.name.label: Name
 form.address.name.placeholder: Zuhause, Arbeit …
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Regeln
+form.pricing_rule_set.options.map_all_tasks.help: Mit Vorsicht verwenden! Gilt nur, wenn die Berechnungsmethode „Alle übereinstimmenden Regeln“ ist. Das bedeutet, dass jede Regel für jede Aufgabe und nicht für das gesamte Lieferobjekt ausgewertet wird. So hat beispielsweise die Regel „Distanz“ hier keine Auswirkung, da für eine Aufgabe, die für sich allein betrachtet wird, keine Distanz festgelegt ist.
 form.pricing_rule.price.label: Preis
 form.preparation_time_rule.expression.label: Ausdruck
 form.preparation_time_rule.time.label: Zeit

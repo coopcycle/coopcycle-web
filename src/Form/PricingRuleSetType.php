@@ -39,6 +39,7 @@ class PricingRuleSetType extends AbstractType
                     'form.pricing_rule_set.options.map_all_tasks.label' => PricingRuleSet::OPTION_MAP_ALL_TASKS,
                 ],
                 'label' => 'form.pricing_rule_set.options.label',
+                'help' => 'form.pricing_rule_set.options.map_all_tasks.help',
                 'multiple' => true,
                 'expanded' => true,
             ])
