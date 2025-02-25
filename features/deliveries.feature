@@ -187,8 +187,10 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "pickup":@...@,
-        "dropoff":@...@
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "tasks":@array@,
+        "trackingUrl": @string@
       }
       """
 
@@ -289,6 +291,7 @@ Feature: Deliveries
           "createdAt":"@string@.isDateTime()",
           "tags": []
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """
@@ -304,8 +307,10 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "pickup":@...@,
-        "dropoff":@...@
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "tasks":@array@,
+        "trackingUrl": @string@
       }
       """
 
@@ -442,8 +447,10 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "pickup":@...@,
-        "dropoff":@...@
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "tasks":@array@,
+        "trackingUrl": @string@
       }
       """
 
@@ -1809,7 +1816,7 @@ Feature: Deliveries
           "id":@integer@,
           "type":"PICKUP",
           "status":"TODO",
-          "address":@...@,
+          "address":{"@*@":"@*@"},
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
           "before":"@string@.startsWith('2018-08-29T11:00')",
