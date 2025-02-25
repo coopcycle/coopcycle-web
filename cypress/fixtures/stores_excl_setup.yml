@@ -1,6 +1,7 @@
 # 'excl_setup' means that the file does not include the 'setup.yml' file; see the 'setup.yml' file for more information.
 include:
   - admin_user.yml
+  - user_courier.yml
   - addresses.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
