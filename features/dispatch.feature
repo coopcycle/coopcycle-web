@@ -198,17 +198,33 @@ Feature: Dispatch
         "id":6,
         "type":"DROPOFF",
         "status":"TODO",
-        "address":@...@,
+        "address":{"@*@":"@*@"},
+        "after":"@string@.isDateTime()",
+        "before":"@string@.isDateTime()",
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
-        "comments":null,
+        "comments":"",
+        "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "doorstep":false,
+        "orgName":"",
+        "images":[],
+        "ref": null,
+        "recurrenceRule":null,
+        "metadata":{"@*@":"@*@"},
+        "weight":null,
+        "hasIncidents": false,
+        "incidents": [],
+        "packages": [],
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
+        "barcode":{"@*@":"@*@"}
       }
       """
 
@@ -250,7 +266,7 @@ Feature: Dispatch
       """
     Then the response status code should be 200
     And the response should be in JSON
-
+    
   Scenario: Courier can unassign task assigned to him/her
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -273,17 +289,33 @@ Feature: Dispatch
         "id":1,
         "type":"DROPOFF",
         "status":"TODO",
-        "address":@...@,
+        "address":{"@*@":"@*@"},
+        "after":"@string@.isDateTime()",
+        "before":"@string@.isDateTime()",
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
-        "comments":null,
+        "comments":"",
+        "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,
         "previous":null,
         "next":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "doorstep":false,
+        "orgName":"",
+        "images":[],
+        "ref": null,
+        "recurrenceRule":null,
+        "metadata":{"@*@":"@*@"},
+        "weight":null,
+        "hasIncidents": false,
+        "incidents": [],
+        "packages": [],
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
+        "barcode":{"@*@":"@*@"}
       }
       """
 
