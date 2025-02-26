@@ -76,7 +76,7 @@ export const onSuggestionsFetchRequested = function({ value }) {
             "longitude": latLngBounds.getNorthEast().lng()
           },
         }},
-        includedPrimaryTypes: ['street_address'],
+        includedPrimaryTypes: ['street_address', 'route', 'premise', 'subpremise'],
         languageCode: localeDetector()
       },
       {headers: {"X-Goog-Api-Key": googleApiKey}}
