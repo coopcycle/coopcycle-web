@@ -643,6 +643,8 @@ services:
 
   AppBundle\Entity\TaskListRepository: ~
 
+  AppBundle\Entity\TourRepository: ~
+
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
 
   AppBundle\Service\Routing\Osrm: ~

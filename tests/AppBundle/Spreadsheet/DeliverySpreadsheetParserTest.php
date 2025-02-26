@@ -6,12 +6,14 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\TourRepository;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Doctrine\Persistence\ObjectRepository;
 use Exception;
 use Prophecy\Argument;
@@ -21,9 +23,13 @@ use TypeError;
 
 class DeliverySpreadsheetParserTest extends TestCase
 {
+    protected $settingManager;
+    protected $geocoder;
+    protected $tourRepository;
+
     protected function createParser(): AbstractSpreadsheetParser
     {
-        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->slugify = $this->prophesize(SlugifyInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
 
@@ -56,18 +62,17 @@ class DeliverySpreadsheetParserTest extends TestCase
 
         $this->packageRepository = $this->prophesize(ObjectRepository::class);
 
-        $this->entityManager
-            ->getRepository(Package::class)
-            ->willReturn($this->packageRepository->reveal());
+        $this->tourRepository = self::getContainer()->get(TourRepository::class);
 
         return new DeliverySpreadsheetParser(
             $this->geocoder->reveal(),
             PhoneNumberUtil::getInstance(),
             'fr',
-            $this->entityManager->reveal(),
+            $this->entityManager,
             $this->slugify->reveal(),
             $this->translator,
-            $this->settingManager->reveal()
+            $this->settingManager->reveal(),
+            $this->tourRepository
         );
     }
 
@@ -157,5 +162,21 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->assertEquals($delivery->getPickup()->getMetadata()['foo'], 'fly');
         $this->assertEquals($delivery->getPickup()->getMetadata()['blu'], 'bla');
         $this->assertEquals($delivery->getDropoff()->getMetadata()['foo'], 'bar');
+    }
+
+    public function testWithTour()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_tour.csv');
+        
+        $parseResult = $this->parser->parse($filename);
+        $data = $parseResult->getData();
+
+        $tour = $this->tourRepository->findByNameAndDate('test route', new \DateTime('2024-01-16'));
+        $this->assertNotNull($tour);
+        $this->assertEquals(count($tour->getTasks()), 4);
+
+        /** @var Delivery */
+        $delivery = array_shift($data);
+        $this->assertEquals($delivery->getPickup(), $tour->getTasks()[0]);
     }
 }

@@ -8,6 +8,8 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Tour;
+use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
@@ -32,7 +34,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         private EntityManagerInterface $entityManager,
         private SlugifyInterface $slugify,
         private TranslatorInterface $translator,
-        private SettingsManager $settingsManager
+        private SettingsManager $settingsManager,
+        private TourRepository $tourRepository
     )
     {  }
 
@@ -147,6 +150,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
             }
 
+            if (isset($record['tourName']) && !empty($record['tourName'])) {
+                $this->setTour($delivery, $record['tourName']);
+            }
+
             if (!$parseResult->rowHasErrors($rowNumber)) {
                 $parseResult->addData($rowNumber, $delivery);
             }
@@ -241,6 +248,24 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         }
     }
 
+    private function setTour(Delivery $delivery, string $routeName) {
+        foreach ($delivery->getTasks() as $task) {
+
+            $date = $task->getAfter();
+            $tour = $this->tourRepository->findByNameAndDate($routeName, $date);
+
+            if (is_null($tour)) {
+                $tour = new Tour();
+                $tour->setName($routeName);
+                $tour->setDate($date);
+                $this->entityManager->persist($tour);
+                $this->entityManager->flush();
+            }
+
+            $tour->addTask($task);
+        }
+    }
+
     public function getExampleData(): array
     {
         return [
@@ -262,7 +287,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn heavy',
                 'dropoff.metadata' => 'external_system_id=10',
-                'weight' => '5.5'
+                'weight' => '5.5',
+                'tourName' => 'my tour name'
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
@@ -280,7 +306,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn',
-                'weight' => '8.0'
+                'weight' => '8.0',
+                'tourName' => 'another tour name'
             ],
         ];
     }
