@@ -658,6 +658,7 @@
         "ADMIN_ORDERS_TO_INVOICE_EXPORTED": "Exportado en archivo(s):",
         "ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED": "No facturado",
         "ADMIN_ORDERS_TO_INVOICE_FILE_FORMAT": "Formato de archivo",
+        "ADMIN_ORDERS_TO_INVOICE_FILE_NAME_PREFIX": "facturacion",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_STANDARD": "Estándar (CSV)",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_ODOO": "Odoo (CSV)",
         "VIEW": "Ver"
