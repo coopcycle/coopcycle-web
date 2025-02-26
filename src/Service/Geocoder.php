@@ -125,7 +125,8 @@ class Geocoder
 
             $query = $query
                 ->withData('proximity', $latlng)
-                ->withBounds($bounds);
+                ->withBounds($bounds)
+                ->withLocale($this->locale);
         }
 
         $results = [];
