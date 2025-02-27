@@ -12,7 +12,6 @@ use Doctrine\Persistence\ManagerRegistry;
 class TourRepository extends ServiceEntityRepository
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager,
         ManagerRegistry $registry
     )
     {
