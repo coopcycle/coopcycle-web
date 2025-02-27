@@ -13,6 +13,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\Tile38Helper;
+use AppBundle\Spreadsheet\ParseMetadataTrait;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,6 +25,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
+    use ParseMetadataTrait;
+
     private Hashids $hashids;
 
     public function __construct(
@@ -179,6 +182,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if (isset($data['weight'])) {
             $task->setWeight($data['weight']);
+        }
+
+        if (isset($data['metadata'])) {
+            $this->parseAndApplyMetadata($task, $data['metadata']);
         }
     }
 
