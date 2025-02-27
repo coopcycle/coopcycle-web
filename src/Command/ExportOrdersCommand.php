@@ -45,8 +45,12 @@ class ExportOrdersCommand extends BaseExportCommand
      */
     private function formatRow(array $row): array {
 
-        if (count($row) !== 28) {
-            throw new \Exception('Invalid row, expected 28 columns');
+        if (count($row) !== 22) {
+            throw new \Exception(sprintf(
+                'Invalid row. Expected 22 columns, got %d: %s',
+                count($row),
+                implode(',', $row)
+            ));
         }
 
         $__s = fn (?string $s): ?string => trim($s) ?: null;
@@ -59,21 +63,21 @@ class ExportOrdersCommand extends BaseExportCommand
             'completed_at' => $__d($row[4]),
             'courier' => $__s($row[1]),
             'fullfillment' => $__s($row[3]),
-            'payment_method' => $__s($row[19]),
-            'delivery_fee' => $__m($row[13]),
-            'tip' => $__m($row[16]),
-            'promotions' => $__m($row[17]),
-            'total_products_excl_vat' => $__m($row[8]),
-            'total_products_incl_vat' => $__m($row[12]),
-            'total_incl_tax' => $__m($row[18]),
-            'stripe_fee' => $__m($row[20]),
-            'platform_fee' => $__m($row[21]),
-            'refunds' => $__m($row[22]),
-            'net_revenue' => $__m($row[23]),
-            'incident_adjustments' => $__m($row[24]),
-            'incidents' => $__s($row[25]),
-            'billing_method' => $__s($row[26]),
-            'applied_billing' => $__s($row[27]),
+            'payment_method' => $__s($row[13]),
+            'delivery_fee' => $__m($row[7]),
+            'tip' => $__m($row[10]),
+            'promotions' => $__m($row[11]),
+            'total_products_excl_vat' => $__m($row[5]),
+            'total_products_incl_vat' => $__m($row[6]),
+            'total_incl_tax' => $__m($row[12]),
+            'stripe_fee' => $__m($row[14]),
+            'platform_fee' => $__m($row[15]),
+            'refunds' => $__m($row[16]),
+            'net_revenue' => $__m($row[17]),
+            'incident_adjustments' => $__m($row[18]),
+            'incidents' => $__s($row[19]),
+            'billing_method' => $__s($row[20]),
+            'applied_billing' => $__s($row[21]),
         ];
     }
 
