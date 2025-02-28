@@ -23,9 +23,11 @@ export default ({ dateRange, params, setModalOpen }) => {
   }
 
   const download = () => {
-    const filename = `orders_${dateRange[0].format(
-      'YYYY-MM-DD',
-    )}_${dateRange[1].format('YYYY-MM-DD')}`
+    const filename = [
+      t('ADMIN_ORDERS_TO_INVOICE_FILE_NAME_PREFIX'),
+      dateRange[0].format('YYYY-MM-DD'),
+      dateRange[1].format('YYYY-MM-DD'),
+    ].join('_')
 
     switch (destination) {
       case DESTINATIONS.standard:

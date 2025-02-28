@@ -215,6 +215,7 @@
         "ADMIN_ORDERS_TO_INVOICE_EXPORTED": "Exported in file(s):",
         "ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED": "Not invoiced",
         "ADMIN_ORDERS_TO_INVOICE_FILE_FORMAT": "File format",
+        "ADMIN_ORDERS_TO_INVOICE_FILE_NAME_PREFIX": "invoicing",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_STANDARD": "Standard (CSV)",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_ODOO": "Odoo (CSV)",
         "ADMIN_VEHICLE_FORM_TITLE": "Create vehicle",
