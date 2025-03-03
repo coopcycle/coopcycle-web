@@ -19,10 +19,16 @@ use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Http\Adapter\Guzzle7\Client;
+use Http\Client\Common\Plugin\CachePlugin;
+use Http\Client\Common\PluginClient;
+use Http\Discovery\Psr17Factory;
+use Http\Discovery\StreamFactoryDiscovery;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Redis;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Webmozart\Assert\Assert;
 
 class Geocoder
@@ -40,9 +46,9 @@ class Geocoder
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
         private readonly bool $autoconfigure = true,
-        private readonly LoggerInterface $logger = new NullLogger())
-    {
-    }
+        private readonly LoggerInterface $logger = new NullLogger(),
+        private Redis $redis
+    ) {}
 
     private function getGeocoder()
     {
@@ -77,16 +83,23 @@ class Geocoder
 
     private function createAddokProvider() {
 
+        $cache = new RedisAdapter($this->redis);
         $rateLimiter =
             RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+
+        $cachePlugin = new CachePlugin($cache, new Psr17Factory(), [
+            'respect_cache_headers' => false,
+            'default_ttl' => null,
+            'cache_lifetime' => 3600
+        ]);
 
         $stack = HandlerStack::create();
         $stack->push($rateLimiter);
 
         $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
-        $httpAdapter = new Client($httpClient);
+        $pluginClient = new PluginClient($httpClient, [$cachePlugin]);
 
-        return new AddokProvider($httpAdapter, 'https://data.geopf.fr/geocodage');
+        return new AddokProvider($pluginClient, 'https://data.geopf.fr/geocodage');
     }
 
     private function createGoogleMapsProvider()
