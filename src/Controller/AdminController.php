@@ -334,6 +334,9 @@ class AdminController extends AbstractController
 
                 if ('refund' === $form->getClickedButton()->getName()) {
                     foreach ($form->get('payments') as $paymentForm) {
+                        if (!$paymentForm->has('refund')) {
+                            continue;
+                        }
                         /** @var \Symfony\Component\Form\ClickableInterface $refundButton */
                         $refundButton = $paymentForm->get('refund');
                         if ($refundButton->isClicked()) {
