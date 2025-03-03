@@ -10,6 +10,7 @@ import Spinner from '../../../../js/app/components/core/Spinner.js'
 import BarcodesModal from '../BarcodesModal.jsx'
 import ShowPrice from '../../../../js/app/components/delivery-form/ShowPrice.js'
 import Task from '../../../../js/app/components/delivery-form/Task.js'
+import { usePrevious } from '../../../../js/app/dashboard/redux/utils'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n'
@@ -39,7 +40,7 @@ const getNextRoundedTime = () => {
   return now
 }
 
-/** Te be revamp for store as telephone is needed */
+/** TODO : use this validation when we port the form for store owners for which the phone is required */
 const validatePhoneNumber = (telephone) => {
   if (telephone) {
     try {
@@ -71,6 +72,7 @@ const dropoffSchema = {
   after: getNextRoundedTime().toISOString(),
   before: getNextRoundedTime().add(60, 'minutes').toISOString(),
   timeSlot: null,
+  timeSlotName: null,
   comments: '',
   address: {
     streetAddress: '',
@@ -89,6 +91,7 @@ const pickupSchema = {
   after: getNextRoundedTime().toISOString(),
   before: getNextRoundedTime().add(60, 'minutes').toISOString(),
   timeSlot: null,
+  timeSlotName: null,
   comments: '',
   address: {
     streetAddress: '',
@@ -349,7 +352,7 @@ export default function ({ storeId, deliveryId, order }) {
         }
 
     },
-    1000
+    800
   )
   
   return (
@@ -366,10 +369,21 @@ export default function ({ storeId, deliveryId, order }) {
           validateOnChange={false}
           validateOnBlur={false}
         >
-          {({ values, isSubmitting }) => {
+          {({ values, isSubmitting, setFieldValue }) => {
+            
+            const previousValues = usePrevious(values)
 
             useEffect(() => {
-                if(!overridePrice && !deliveryId) getPrice(values)
+                if(!overridePrice && !deliveryId) {
+                  getPrice(values)
+                }
+            }, [values.tasks, overridePrice, deliveryId]);
+
+            useEffect(() => {
+              if(previousValues?.tasks[0].after !== values?.tasks[0].after) {
+                setFieldValue('tasks[1]after', values.tasks[0].after)
+                setFieldValue('tasks[1]before', values.tasks[0].before)
+              }
             }, [values.tasks, overridePrice, deliveryId]);
 
             return (
