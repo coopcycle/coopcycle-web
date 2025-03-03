@@ -47,15 +47,13 @@ class Geocoder
     private function getGeocoder()
     {
         if (null === $this->geocoder) {
-            $httpClient = new Client();
-
             $providers = [];
 
             if ($this->autoconfigure) {
                 // For France only, use https://adresse.data.gouv.fr/
                 if ('fr' === $this->country) {
                     // TODO Create own provider to get results with a high score
-                    $providers[] = new AddokProvider($httpClient, 'https://data.geopf.fr/geocodage');
+                    $providers[] = $this->createAddokProvider();
                 }
             }
 
@@ -75,6 +73,20 @@ class Geocoder
         }
 
         return $this->geocoder;
+    }
+
+    private function createAddokProvider() {
+
+        $rateLimiter =
+            RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        return new AddokProvider($httpAdapter, 'https://data.geopf.fr/geocodage');
     }
 
     private function createGoogleMapsProvider()
