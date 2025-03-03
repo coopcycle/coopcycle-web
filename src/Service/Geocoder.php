@@ -45,9 +45,9 @@ class Geocoder
         private readonly string $country,
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
+        private Redis $redis,
         private readonly bool $autoconfigure = true,
         private readonly LoggerInterface $logger = new NullLogger(),
-        private Redis $redis
     ) {}
 
     private function getGeocoder()
@@ -59,9 +59,11 @@ class Geocoder
                 // For France only, use https://adresse.data.gouv.fr/
                 if ('fr' === $this->country) {
                     // TODO Create own provider to get results with a high score
-                    $providers[] = $this->createAddokProvider();
                 }
             }
+
+            $providers[] = $this->createAddokProvider();
+
 
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';

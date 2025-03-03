@@ -16,6 +16,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Spatie\GuzzleRateLimiterMiddleware\Store;
 use Geocoder\Provider\OpenCage\Model\OpenCageAddress;
+use Redis;
 
 class GeocoderTest extends TestCase
 {
@@ -34,7 +35,7 @@ class GeocoderTest extends TestCase
         $this->geocoder = new Geocoder(
             $this->rateLimiterStore->reveal(),
             $this->settingsManager->reveal(),
-            '', 'fr', 'fr', 1
+            '', 'fr', 'fr', 1, new Redis()
         );
         $this->geocoder->setGeocoder($this->innerGeocoder->reveal());
     }
