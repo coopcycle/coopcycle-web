@@ -607,7 +607,8 @@ Feature: Urbantz
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tags":@array@
+          "tags":@array@,
+          "metadata": []
         },
         "dropoff":{
           "@id":@string@,
@@ -638,7 +639,8 @@ Feature: Urbantz
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tags":@array@
+          "tags":@array@,
+          "metadata": []
         },
         "tasks":@array@,
         "trackingUrl": @string@

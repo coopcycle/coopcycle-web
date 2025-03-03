@@ -955,7 +955,8 @@ Feature: Manage restaurants
               "packages": [],
               "barcode": @array@,
               "createdAt":"@string@.isDateTime()",
-              "tags": []
+              "tags": [],
+"metadata": []
             },
             "dropoff":{
               "@id":@string@,
@@ -986,7 +987,8 @@ Feature: Manage restaurants
               "packages": [],
               "barcode": @array@,
               "createdAt":"@string@.isDateTime()",
-              "tags": []
+              "tags": [],
+"metadata": []
             },
             "tasks":@array@,
             "trackingUrl": @string@
