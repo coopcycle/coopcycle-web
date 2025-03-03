@@ -70,7 +70,7 @@ function getFormattedValue(value) {
 const dropoffSchema = {
   type: 'DROPOFF',
   after: getNextRoundedTime().toISOString(),
-  before: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  before: getNextRoundedTime().add(10, 'minutes').toISOString(),
   timeSlot: null,
   timeSlotName: null,
   comments: '',
@@ -89,7 +89,7 @@ const dropoffSchema = {
 const pickupSchema = {
   type: 'PICKUP',
   after: getNextRoundedTime().toISOString(),
-  before: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  before: getNextRoundedTime().add(10, 'minutes').toISOString(),
   timeSlot: null,
   timeSlotName: null,
   comments: '',
@@ -370,7 +370,7 @@ export default function ({ storeId, deliveryId, order }) {
           validateOnBlur={false}
         >
           {({ values, isSubmitting, setFieldValue }) => {
-            
+                        
             const previousValues = usePrevious(values)
 
             useEffect(() => {
@@ -380,9 +380,14 @@ export default function ({ storeId, deliveryId, order }) {
             }, [values.tasks, overridePrice, deliveryId]);
 
             useEffect(() => {
-              if(previousValues?.tasks[0].after !== values?.tasks[0].after) {
-                setFieldValue('tasks[1]after', values.tasks[0].after)
-                setFieldValue('tasks[1]before', values.tasks[0].before)
+              if (
+                previousValues?.tasks[0].after !== values?.tasks[0].after &&
+                moment(values.tasks[0].after).isSame(moment(values.tasks[0].before), 'day')
+              ) {
+                for (let i = 1; i < values.tasks.length; i++) {
+                  setFieldValue(`tasks[${i}]after`, values.tasks[0].after)
+                  setFieldValue(`tasks[${i}]before`, values.tasks[0].before)
+                }
               }
             }, [values.tasks, overridePrice, deliveryId]);
 
@@ -448,8 +453,13 @@ export default function ({ storeId, deliveryId, order }) {
                             <Button
                               disabled={false}
                               onClick={() => {
-                                arrayHelpers.push(dropoffSchema)
-                                }}>
+                                const newDeliverySchema = {
+                                  ...dropoffSchema,
+                                  before: values.tasks.slice(-1)[0].before,
+                                  after: values.tasks.slice(-1)[0].after
+                                }
+                                arrayHelpers.push(newDeliverySchema)
+                              }}>
                               {t('DELIVERY_FORM_ADD_DROPOFF')}
                             </Button>
                           </div> : null}

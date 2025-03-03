@@ -170,6 +170,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
               ? [afterValue, beforeValue]
               : [defaultAfterValue, defaultBeforeValue]
           }
+          value={[moment(values.tasks[index].after), moment(values.tasks[index].before)]}
           onChange={handleComplexPickerDateChange}
           showTime={{
             ...timePickerProps,
@@ -203,6 +204,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
           className="picker-container__datepicker mr-2"
           format={format}
           defaultValue={afterValue || defaultAfterValue}
+          value={moment(values.tasks[index].after)}
           onChange={newDate => {
             handleDateChange(newDate)
           }}
