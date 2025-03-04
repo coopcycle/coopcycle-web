@@ -346,7 +346,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -365,7 +365,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -391,7 +391,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -411,7 +411,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -466,7 +466,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -485,7 +485,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -511,7 +511,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -530,7 +530,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -581,7 +581,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -600,7 +600,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -626,7 +626,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -645,7 +645,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
-              "metadata":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}

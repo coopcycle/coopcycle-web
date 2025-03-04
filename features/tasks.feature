@@ -876,7 +876,7 @@ Feature: Tasks
         "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
         "tags":[],
-        "metadata": []
+                  "metadata": {"@*@": "@*@"}
       }
       """
 
@@ -2007,7 +2007,7 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": [],
+          "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
@@ -2026,7 +2026,7 @@ Feature: Tasks
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": [],
+          "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
@@ -2073,7 +2073,7 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": [],
+          "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
@@ -2092,7 +2092,7 @@ Feature: Tasks
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": [],
+          "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
@@ -2132,7 +2132,7 @@ Feature: Tasks
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": [],
+          "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
@@ -2151,7 +2151,7 @@ Feature: Tasks
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": [],
+          "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}

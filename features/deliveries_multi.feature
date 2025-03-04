@@ -70,7 +70,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -102,7 +102,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -199,7 +199,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":@string@,
@@ -240,7 +240,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -333,7 +333,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -374,7 +374,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -465,7 +465,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"/api/tasks/3",
@@ -506,7 +506,7 @@ Feature: Multi-step deliveries
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-"metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }

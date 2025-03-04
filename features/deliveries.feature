@@ -140,7 +140,7 @@ Feature: Deliveries
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -172,7 +172,7 @@ Feature: Deliveries
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -261,7 +261,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -293,7 +293,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "tasks":@array@,
         "trackingUrl": @string@
@@ -395,7 +395,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -436,7 +436,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -524,7 +524,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -556,7 +556,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -626,7 +626,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -658,7 +658,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -732,7 +732,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -764,7 +764,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -838,7 +838,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -870,7 +870,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -944,7 +944,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -976,7 +976,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1051,7 +1051,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1083,7 +1083,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1158,7 +1158,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1190,7 +1190,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1265,7 +1265,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1297,7 +1297,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1363,7 +1363,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1395,7 +1395,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1464,7 +1464,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1496,7 +1496,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "tasks":@array@,
         "trackingUrl": @string@
@@ -1569,7 +1569,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1601,7 +1601,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1671,7 +1671,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1703,7 +1703,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1774,7 +1774,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1806,7 +1806,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -1859,7 +1859,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1891,7 +1891,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -2084,7 +2084,7 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -2116,7 +2116,7 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
     }
@@ -2198,7 +2198,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2230,7 +2230,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -2326,7 +2326,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2357,7 +2357,8 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}]
+          "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}],
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -2412,7 +2413,7 @@ Feature: Deliveries
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
           "tags": [],
-          "metadata": []
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2601,7 +2602,7 @@ Feature: Deliveries
                     "email": "bob@coopcycle.org",
                     "phoneNumber": null,
                     "tags": [],
-          "metadata": [],
+          "metadata": {"@*@": "@*@"},
                     "telephone": null,
                     "username": "bob",
                     "fullName": ""
@@ -2712,7 +2713,7 @@ Feature: Deliveries
                   "email": "bob@coopcycle.org",
                   "phoneNumber": null,
                   "tags": [],
-          "metadata": [],
+          "metadata": {"@*@": "@*@"},
                   "telephone": null,
                   "username": "bob",
                   "fullName": ""
