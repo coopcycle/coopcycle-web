@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { render } from '../utils/react'
 import Sortable from 'sortablejs'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 import classNames from 'classnames'
