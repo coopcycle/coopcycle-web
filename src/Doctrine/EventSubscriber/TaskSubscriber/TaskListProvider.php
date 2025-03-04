@@ -17,7 +17,7 @@ class TaskListProvider
         $this->objectManager = $objectManager;
     }
 
-    public function getTaskList(Task $task, UserInterface $courier)
+    public function getTaskList(Task $task, UserInterface $courier) : TaskList
     {
         // FIXME
         // 1. if task->assignedOn is set, we have explictly set the assignment date -> good, we get the proper TaskList

@@ -11,19 +11,21 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Exception;
 use Prophecy\Argument;
 use libphonenumber\PhoneNumberUtil;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use TypeError;
 
 class DeliverySpreadsheetParserTest extends TestCase
 {
+    protected $settingManager;
+    protected $geocoder;
+
     protected function createParser(): AbstractSpreadsheetParser
     {
-        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->entityManager = $this->prophesize(EntityManager::class);
         $this->slugify = $this->prophesize(SlugifyInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
 
@@ -56,9 +58,7 @@ class DeliverySpreadsheetParserTest extends TestCase
 
         $this->packageRepository = $this->prophesize(ObjectRepository::class);
 
-        $this->entityManager
-            ->getRepository(Package::class)
-            ->willReturn($this->packageRepository->reveal());
+        $this->entityManager->getRepository(Package::class)->willReturn($this->packageRepository->reveal());
 
         return new DeliverySpreadsheetParser(
             $this->geocoder->reveal(),
@@ -157,5 +157,17 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->assertEquals($delivery->getPickup()->getMetadata()['foo'], 'fly');
         $this->assertEquals($delivery->getPickup()->getMetadata()['blu'], 'bla');
         $this->assertEquals($delivery->getDropoff()->getMetadata()['foo'], 'bar');
+    }
+
+    public function testWithTour()
+    {
+        $filename = realpath(__DIR__ . '/../Resources/spreadsheet/deliveries_with_tour.csv');
+        
+        $parseResult = $this->parser->parse($filename);
+        $data = $parseResult->getData();
+
+        /** @var Delivery */
+        $delivery = array_shift($data);
+        $this->assertEquals($delivery->getTourName(), 'test route');
     }
 }

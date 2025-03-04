@@ -5,7 +5,7 @@ namespace AppBundle\Spreadsheet;
 /**
  * A class to keep the relation between a row from a file
  * and the entity that is created or the errors that occurs
- * when the import and parse of that fail happens.
+ * during parsing.
  */
 class SpreadsheetParseResult
 {

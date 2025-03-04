@@ -33,8 +33,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         private SlugifyInterface $slugify,
         private TranslatorInterface $translator,
         private SettingsManager $settingsManager
-    )
-    {  }
+    ) {}
 
     /**
      * @inheritdoc
@@ -145,6 +144,10 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
 
             if (isset($record['dropoff.tags']) && !empty($record['dropoff.tags'])) {
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
+            }
+
+            if (isset($record['tour.name']) && !empty($record['tour.name'])) {
+                $delivery->setTourName($record['tour.name']);
             }
 
             if (!$parseResult->rowHasErrors($rowNumber)) {
@@ -262,7 +265,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn heavy',
                 'dropoff.metadata' => 'external_system_id=10',
-                'weight' => '5.5'
+                'weight' => '5.5',
+                'tour.name' => 'my tour name'
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
@@ -280,7 +284,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.timeslot' => '2019-12-12 12:00 - 2019-12-12 13:00',
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn',
-                'weight' => '8.0'
+                'weight' => '8.0',
+                'tour.name' => 'another tour name'
             ],
         ];
     }
