@@ -50,8 +50,6 @@ class PricingRuleSet
 
     protected array $options = [];
 
-    public const OPTION_MAP_ALL_TASKS = 'map_all_tasks';
-
     public function __construct()
     {
         $this->rules = new ArrayCollection();

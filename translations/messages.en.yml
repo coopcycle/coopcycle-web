@@ -527,8 +527,6 @@ form.pricing_rule_set.strategy.find.label: The first rule that matches
 form.pricing_rule_set.strategy.map.label: All the matching rules
 form.pricing_rule.price.label: Price
 form.pricing_rule_set.options.label: Options
-form.pricing_rule_set.options.map_all_tasks.label: Apply to all the tasks
-form.pricing_rule_set.options.map_all_tasks.help: Use with care! Applies only if the method of calculation is "All the matching rules". When this setting is active, each rule will be evaluated against each task, not on the whole delivery object. So for example "distance" rule has no effect here, because a task considered on its own has no distance set on it.
 form.preparation_time_rule.expression.label: Expression
 form.preparation_time_rule.time.label: Time
 form.preparation_time.defaults_warning: "This restaurant does not have any custom\

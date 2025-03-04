@@ -1120,7 +1120,6 @@ form.pricing_rule_set.strategy.help: Le regole sono valutate dall'alto verso il 
   A seconda del metodo di calcolo selezionato, o la prima regola che corrisponde determinerà
   il prezzo, oppure il prezzo sarà calcolato sommando tutte le regole corrispondenti.
 form.pricing_rule_set.strategy.label: Metodo di calcolo
-form.pricing_rule_set.options.map_all_tasks.help: Usare con cautela! Si applica solo se il metodo di calcolo è "Tutte le regole corrispondenti". Ciò significa che ogni regola verrà valutata rispetto a ogni task, non sull'intero oggetto di consegna. Quindi, ad esempio, la regola "distanza" non ha effetto qui, perché un task considerato di per sé non ha alcuna distanza impostata su di esso.
 form.company.make_the_request.label: Inviare la richiesta
 form.address.company.meal_estimate.label: Numero stimato di pasti (per giorno)
 form.address.company.collaborator_number.label: Numero di impiegati

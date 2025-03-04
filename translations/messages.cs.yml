@@ -1422,7 +1422,6 @@ form.settings.notifications.title: Oznámení
 form.settings.notifications.order.created: Objednávka vytvořena
 form.settings.notifications.order.picked: Objednávka vyzvednuta
 form.pricing_rule_set.options.label: Možnosti
-form.pricing_rule_set.options.map_all_tasks.label: Použít na všechny úkoly
 tags.featured: Doporučené
 tags.exclusive: Exkluzivní
 tags.shops.new: Nové prodejny
