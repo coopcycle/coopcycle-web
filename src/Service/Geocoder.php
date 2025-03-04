@@ -18,9 +18,12 @@ use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\RetryMiddleware;
 use Http\Adapter\Guzzle7\Client;
 use Http\Client\Common\Plugin\CachePlugin;
 use Http\Client\Common\PluginClient;
+use Http\Client\Exception\NetworkException;
 use Http\Discovery\Psr17Factory;
 use Http\Discovery\StreamFactoryDiscovery;
 use Psr\Log\LoggerInterface;
@@ -85,21 +88,30 @@ class Geocoder
 
     private function createAddokProvider() {
 
-        $cache = new RedisAdapter($this->redis);
         $rateLimiter =
             RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
-
-        $cachePlugin = new CachePlugin($cache, new Psr17Factory(), [
-            'respect_cache_headers' => false,
-            'default_ttl' => null,
-            'cache_lifetime' => 3600
-        ]);
+        
+        $decider = function ($retries, $request, $response, $exception) {
+            // Limit the number of retries to 5
+            if ($retries >= 5) {
+                return false;
+            }
+            
+            // Retry on network exceptions
+            if ($exception instanceof NetworkException) {
+                return true;
+            }
+    
+            return false;
+        };
+        $retryMiddleware = Middleware::retry($decider);
 
         $stack = HandlerStack::create();
         $stack->push($rateLimiter);
+        $stack->push($retryMiddleware);
 
         $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
-        $pluginClient = new PluginClient($httpClient, [$cachePlugin]);
+        $pluginClient = new PluginClient($httpClient);
 
         return new AddokProvider($pluginClient, 'https://data.geopf.fr/geocodage');
     }
