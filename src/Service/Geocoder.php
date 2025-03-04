@@ -18,7 +18,9 @@ use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use Http\Adapter\Guzzle7\Client;
+use Http\Client\Exception\NetworkException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
@@ -47,15 +49,13 @@ class Geocoder
     private function getGeocoder()
     {
         if (null === $this->geocoder) {
-            $httpClient = new Client();
-
             $providers = [];
 
             if ($this->autoconfigure) {
                 // For France only, use https://adresse.data.gouv.fr/
                 if ('fr' === $this->country) {
                     // TODO Create own provider to get results with a high score
-                    $providers[] = new AddokProvider($httpClient, 'https://data.geopf.fr/geocodage');
+                    $providers[] = $this->createAddokProvider();
                 }
             }
 
@@ -75,6 +75,36 @@ class Geocoder
         }
 
         return $this->geocoder;
+    }
+
+    private function createAddokProvider() {
+
+        $rateLimiter =
+            RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+        
+        $decider = function ($retries, $request, $response, $exception) {
+            // Limit the number of retries to 5
+            if ($retries >= 5) {
+                return false;
+            }
+            
+            // Retry on network exceptions
+            if ($exception instanceof NetworkException) {
+                return true;
+            }
+    
+            return false;
+        };
+        $retryMiddleware = Middleware::retry($decider);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+        $stack->push($retryMiddleware);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        return new AddokProvider($httpAdapter, 'https://data.geopf.fr/geocodage');
     }
 
     private function createGoogleMapsProvider()
