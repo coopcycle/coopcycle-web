@@ -1238,33 +1238,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $values;
     }
 
-    public function matchesPricingRule(PricingRule $pricingRule, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $expression = $pricingRule->getExpression();
-
-        return $language->evaluate($expression, $this->toExpressionLanguageValues());
-    }
     /**
      * @return void
      */
     public function appendToComments($comments)
     {
         $this->comments = implode("\n\n", array_filter([trim($this->getComments()), $comments]));
-    }
-    /**
-     * @return mixed
-     */
-    public function evaluatePrice(PricingRule $pricingRule, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
     /**

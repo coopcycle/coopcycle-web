@@ -121,21 +121,21 @@ class PricingRule
         return $this;
     }
 
-    public function evaluatePrice(Delivery $delivery, ExpressionLanguage $language = null)
+    public function evaluatePrice(array $values, ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getPrice(), Delivery::toExpressionLanguageValues($delivery));
+        return $language->evaluate($this->getPrice(), $values);
     }
 
-    public function matches(Delivery $delivery, ExpressionLanguage $language = null)
+    public function matches(array $values, ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getExpression(), Delivery::toExpressionLanguageValues($delivery));
+        return $language->evaluate($this->getExpression(), $values);
     }
 }

@@ -79,6 +79,9 @@ class PricingRuleSet
         return $this;
     }
 
+    /**
+     * @return ArrayCollection<int,PricingRule>
+     */
     public function getRules()
     {
         return $this->rules;

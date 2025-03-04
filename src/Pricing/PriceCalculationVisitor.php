@@ -3,6 +3,7 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
 use Psr\Log\LoggerInterface;
@@ -19,18 +20,29 @@ class PriceCalculationVisitor
         private LoggerInterface $logger)
     {}
 
-    public function visitDelivery(Delivery $delivery): void
+    /**
+     * @return int|null
+     */
+    public function getPrice(Delivery $delivery): ?int
     {
+        $this->visitDelivery($delivery);
+        return $this->price;
+    }
+
+    private function visitDelivery(Delivery $delivery): void
+    {
+        $deliveryAsExpressionLanguageValues = Delivery::toExpressionLanguageValues($delivery);
+
         if ($this->ruleSet->getStrategy() === 'find') {
 
             foreach ($this->ruleSet->getRules() as $rule) {
-                if ($rule->matches($delivery, $this->expressionLanguage)) {
+                if ($rule->matches($deliveryAsExpressionLanguageValues, $this->expressionLanguage)) {
                     $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
                             'strategy' => $this->ruleSet->getStrategy(),
                         ]
                     );
                     $this->matchedRules[] = $rule;
-                    $this->price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+                    $this->price = $rule->evaluatePrice($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
                     break;
                 }
             }
@@ -51,9 +63,9 @@ class PriceCalculationVisitor
                 }
             } else {
                 foreach ($this->ruleSet->getRules() as $rule) {
-                    if ($rule->matches($delivery, $this->expressionLanguage)) {
+                    if ($rule->matches($deliveryAsExpressionLanguageValues, $this->expressionLanguage)) {
 
-                        $price = $rule->evaluatePrice($delivery, $this->expressionLanguage);
+                        $price = $rule->evaluatePrice($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
                         $this->matchedRules[] = $rule;
                         $this->price += $price;
 
@@ -73,12 +85,14 @@ class PriceCalculationVisitor
         }
     }
 
-    public function visitTask(Task $task): void
+    private function visitTask(Task $task): void
     {
-        foreach ($this->ruleSet->getRules() as $rule) {
-            if ($task->matchesPricingRule($rule, $this->expressionLanguage)) {
+        $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
 
-                $price = $task->evaluatePrice($rule, $this->expressionLanguage);
+        foreach ($this->ruleSet->getRules() as $rule) {
+            if ($rule->matches($taskAsExpressionLanguageValues, $this->expressionLanguage)) {
+
+                $price = $rule->evaluatePrice($taskAsExpressionLanguageValues, $this->expressionLanguage);
                 $this->matchedRules[] = $rule;
                 $this->price += $price;
 
@@ -88,13 +102,5 @@ class PriceCalculationVisitor
                 ]);
             }
         }
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getPrice(): ?int
-    {
-        return $this->price;
     }
 }
