@@ -956,7 +956,7 @@ Feature: Manage restaurants
               "barcode": @array@,
               "createdAt":"@string@.isDateTime()",
               "tags": [],
-"metadata": []
+              "metadata": {"@*@": "@*@"}
             },
             "dropoff":{
               "@id":@string@,
@@ -988,7 +988,7 @@ Feature: Manage restaurants
               "barcode": @array@,
               "createdAt":"@string@.isDateTime()",
               "tags": [],
-"metadata": []
+              "metadata": {"@*@": "@*@"}
             },
             "tasks":@array@,
             "trackingUrl": @string@

@@ -2776,6 +2776,61 @@ Feature: Tasks
           "failed": []
         }
       """
+  
+  Scenario: Mark multiple tasks as done when they are in the same delivery and in wrong order regarding database IDs
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | mark_as_done_in_delivery.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/done" with body:
+      """
+      {
+        "tasks": [
+          "/api/tasks/1",
+          "/api/tasks/2",
+          "/api/tasks/3"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    Then print last JSON response
+    And the JSON should match:
+      """
+      {
+       "success": [
+           {
+               "@context": "/api/contexts/Task",
+               "@id": "/api/tasks/1",
+               "@type": "Task",
+               "id": 1,
+               "@*@":"@*@"
+           },
+           {
+               "@context": "/api/contexts/Task",
+               "@id": "/api/tasks/3",
+               "@type": "Task",
+               "id": 3,
+               "@*@":"@*@"
+           },
+           {
+               "@context": "/api/contexts/Task",
+               "@id": "/api/tasks/2",
+               "@type": "Task",
+               "id": 2,
+              "@*@":"@*@"
+           }
+       ],
+       "failed": []
+      }
+      """
 
   Scenario: Mark multiple tasks as done when they are in the same delivery and in wrong order regarding database IDs
     Given the fixtures files are loaded:

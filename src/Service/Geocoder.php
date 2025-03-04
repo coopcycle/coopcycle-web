@@ -18,11 +18,20 @@ use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\RetryMiddleware;
 use Http\Adapter\Guzzle7\Client;
+use Http\Client\Common\Plugin\CachePlugin;
+use Http\Client\Common\PluginClient;
+use Http\Client\Exception\NetworkException;
+use Http\Discovery\Psr17Factory;
+use Http\Discovery\StreamFactoryDiscovery;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Redis;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
 use Webmozart\Assert\Assert;
 
 class Geocoder
@@ -39,25 +48,25 @@ class Geocoder
         private readonly string $country,
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
+        private Redis $redis,
         private readonly bool $autoconfigure = true,
-        private readonly LoggerInterface $logger = new NullLogger())
-    {
-    }
+        private readonly LoggerInterface $logger = new NullLogger(),
+    ) {}
 
     private function getGeocoder()
     {
         if (null === $this->geocoder) {
-            $httpClient = new Client();
-
             $providers = [];
 
             if ($this->autoconfigure) {
                 // For France only, use https://adresse.data.gouv.fr/
                 if ('fr' === $this->country) {
                     // TODO Create own provider to get results with a high score
-                    $providers[] = new AddokProvider($httpClient, 'https://data.geopf.fr/geocodage');
                 }
             }
+
+            $providers[] = $this->createAddokProvider();
+
 
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';
@@ -75,6 +84,36 @@ class Geocoder
         }
 
         return $this->geocoder;
+    }
+
+    private function createAddokProvider() {
+
+        $rateLimiter =
+            RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+        
+        $decider = function ($retries, $request, $response, $exception) {
+            // Limit the number of retries to 5
+            if ($retries >= 5) {
+                return false;
+            }
+            
+            // Retry on network exceptions
+            if ($exception instanceof NetworkException) {
+                return true;
+            }
+    
+            return false;
+        };
+        $retryMiddleware = Middleware::retry($decider);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+        $stack->push($retryMiddleware);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $pluginClient = new PluginClient($httpClient);
+
+        return new AddokProvider($pluginClient, 'https://data.geopf.fr/geocodage');
     }
 
     private function createGoogleMapsProvider()
