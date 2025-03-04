@@ -8,8 +8,6 @@ use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\Tour;
-use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\DateTimeParseException;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
@@ -34,10 +32,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
         private EntityManagerInterface $entityManager,
         private SlugifyInterface $slugify,
         private TranslatorInterface $translator,
-        private SettingsManager $settingsManager,
-        private TourRepository $tourRepository
-    )
-    {  }
+        private SettingsManager $settingsManager
+    ) {}
 
     /**
      * @inheritdoc
@@ -151,7 +147,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             }
 
             if (isset($record['tour.name']) && !empty($record['tour.name'])) {
-                $this->setTour($delivery, $record['tour.name']);
+                $delivery->setTourName($record['tour.name']);
             }
 
             if (!$parseResult->rowHasErrors($rowNumber)) {
@@ -245,24 +241,6 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
             $slugs = explode(' ', $tagsAsString);
             $tags = array_map([$this->slugify, 'slugify'], $slugs);
             $task->addTags($tags);
-        }
-    }
-
-    private function setTour(Delivery $delivery, string $routeName) {
-        foreach ($delivery->getTasks() as $task) {
-
-            $date = $task->getAfter();
-            $tour = $this->tourRepository->findByNameAndDate($routeName, $date);
-
-            if (is_null($tour)) {
-                $tour = new Tour();
-                $tour->setName($routeName);
-                $tour->setDate($date);
-                $this->entityManager->persist($tour);
-                $this->entityManager->flush();
-            }
-
-            $tour->addTask($task);
         }
     }
 
