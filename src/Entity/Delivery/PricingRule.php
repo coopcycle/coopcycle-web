@@ -6,8 +6,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -43,6 +41,14 @@ class PricingRule
      */
     protected $id;
 
+    const TARGET_DELIVERY = 'DELIVERY';
+    const TARGET_TASK = 'TASK';
+
+    /**
+     * @Assert\Choice({"DELIVERY", "TASK"})
+     */
+    protected string $target = self::TARGET_DELIVERY;
+
     /**
      * @Groups({"original_rules"})
      * @Assert\Type(type="string")
@@ -71,6 +77,16 @@ class PricingRule
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
+    }
+
+    public function setTarget(string $target): void
+    {
+        $this->target = $target;
     }
 
     public function getExpression()
