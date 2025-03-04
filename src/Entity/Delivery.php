@@ -634,11 +634,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $messages;
     }
 
-    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
-    {
-        $visitor->visitDelivery($this);
-    }
-
     /**
      * Get the value of arbitraryPrice
      */

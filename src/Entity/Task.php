@@ -1307,15 +1307,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this;
     }
 
-    /**
-     * @return void
-     */
-    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
-    {
-        $visitor->visitTask($this);
-
-    }
-
     public static function fixTimeWindow(Task $task)
     {
         if (null === $task->getAfter()) {
