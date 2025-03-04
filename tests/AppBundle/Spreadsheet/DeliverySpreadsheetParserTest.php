@@ -6,30 +6,26 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Package;
-use AppBundle\Entity\TourRepository;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\AbstractSpreadsheetParser;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
 use Cocur\Slugify\SlugifyInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectRepository;
 use Exception;
 use Prophecy\Argument;
 use libphonenumber\PhoneNumberUtil;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use TypeError;
 
 class DeliverySpreadsheetParserTest extends TestCase
 {
     protected $settingManager;
     protected $geocoder;
-    protected $tourRepository;
 
     protected function createParser(): AbstractSpreadsheetParser
     {
-        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $this->entityManager = $this->prophesize(EntityManager::class);
         $this->slugify = $this->prophesize(SlugifyInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
 
@@ -62,17 +58,16 @@ class DeliverySpreadsheetParserTest extends TestCase
 
         $this->packageRepository = $this->prophesize(ObjectRepository::class);
 
-        $this->tourRepository = self::getContainer()->get(TourRepository::class);
+        $this->entityManager->getRepository(Package::class)->willReturn($this->packageRepository->reveal());
 
         return new DeliverySpreadsheetParser(
             $this->geocoder->reveal(),
             PhoneNumberUtil::getInstance(),
             'fr',
-            $this->entityManager,
+            $this->entityManager->reveal(),
             $this->slugify->reveal(),
             $this->translator,
-            $this->settingManager->reveal(),
-            $this->tourRepository
+            $this->settingManager->reveal()
         );
     }
 
@@ -171,12 +166,8 @@ class DeliverySpreadsheetParserTest extends TestCase
         $parseResult = $this->parser->parse($filename);
         $data = $parseResult->getData();
 
-        $tour = $this->tourRepository->findByNameAndDate('test route', new \DateTime('2024-01-16'));
-        $this->assertNotNull($tour);
-        $this->assertEquals(count($tour->getTasks()), 4);
-
         /** @var Delivery */
         $delivery = array_shift($data);
-        $this->assertEquals($delivery->getPickup(), $tour->getTasks()[0]);
+        $this->assertEquals($delivery->getTourName(), 'test route');
     }
 }
