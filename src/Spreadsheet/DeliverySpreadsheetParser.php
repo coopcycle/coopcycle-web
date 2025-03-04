@@ -150,8 +150,8 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
             }
 
-            if (isset($record['tourName']) && !empty($record['tourName'])) {
-                $this->setTour($delivery, $record['tourName']);
+            if (isset($record['tour.name']) && !empty($record['tour.name'])) {
+                $this->setTour($delivery, $record['tour.name']);
             }
 
             if (!$parseResult->rowHasErrors($rowNumber)) {
@@ -288,7 +288,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.tags' => 'warn heavy',
                 'dropoff.metadata' => 'external_system_id=10',
                 'weight' => '5.5',
-                'tourName' => 'my tour name'
+                'tour.name' => 'my tour name'
             ],
             [
                 'pickup.address' => '24 rue de rivoli paris',
@@ -307,7 +307,7 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 'dropoff.packages' => 'small-box=1 big-box=2',
                 'dropoff.tags' => 'warn',
                 'weight' => '8.0',
-                'tourName' => 'another tour name'
+                'tour.name' => 'another tour name'
             ],
         ];
     }
