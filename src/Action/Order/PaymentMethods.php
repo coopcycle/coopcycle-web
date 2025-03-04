@@ -34,11 +34,11 @@ class PaymentMethods
             $output->addMethod('card');
         }
 
-        if ($this->cashEnabled || $data->supportsCashOnDelivery()) {
+        if ($this->cashEnabled && $data->supportsCashOnDelivery()) {
             $output->addMethod('cash_on_delivery');
         }
 
-        if ($this->edenredEnabled || $data->supportsEdenred()) {
+        if ($this->edenredEnabled && $data->supportsEdenred()) {
             // TODO Also check if balance is > 0
             $output->addMethod('edenred');
         }
