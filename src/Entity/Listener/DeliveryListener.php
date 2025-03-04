@@ -6,6 +6,7 @@ use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\TourRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 
@@ -13,7 +14,8 @@ class DeliveryListener
 {
     public function __construct(
         protected EntityManagerInterface $entityManager,
-        protected TaskListProvider $taskListProvider
+        protected TaskListProvider $taskListProvider,
+        protected TourRepository $tourRepository
     )
     {
         
@@ -69,6 +71,11 @@ class DeliveryListener
             $courier = $delivery->getStore()->getDefaultCourier();
             
             foreach ($delivery->getTasks() as $task) {
+                // Ignore tasks that are part of a tour, that is the tour itself that should be assigned
+                if ($this->tourRepository->findOneByTask($task)) {
+                    continue;
+                }
+
                 $taskList = $this->taskListProvider->getTaskList($task, $courier);
                 $taskList->appendTask($task);
             }
