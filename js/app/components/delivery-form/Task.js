@@ -22,6 +22,7 @@ const renderTimeSlotPicker = ({isDispatcher, storeDeliveryInfos, storeId, index,
       format={format}
       isTimeSlotSelect={isTimeSlotSelect}
       setIsTimeSlotSelect={setIsTimeSlotSelect}
+      isDispatcher={isDispatcher}
     />)
   :  (<TimeSlotPicker
     storeId={storeId}

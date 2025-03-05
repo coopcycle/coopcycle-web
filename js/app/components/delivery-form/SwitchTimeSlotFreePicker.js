@@ -12,6 +12,7 @@ export default ({
   format,
   isTimeSlotSelect,
   setIsTimeSlotSelect,
+  isDispatcher
 }) => {
   const { t } = useTranslation()
 
@@ -35,7 +36,7 @@ export default ({
       ) : (
         <div className="daterange-picker-container">
           <div className="daterange-picker-container__picker">
-            <DateRangePicker format={format} index={index} />
+            <DateRangePicker format={format} index={index} isDispatcher={isDispatcher} />
           </div>
           <i
             className="daterange-picker-container__icon fa fa-calendar text-right"

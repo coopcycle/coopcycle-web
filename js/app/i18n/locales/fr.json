@@ -663,6 +663,7 @@
         "ADMIN_ORDERS_TO_INVOICE_FILE_NAME_PREFIX": "facturation",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_STANDARD": "Standard (CSV)",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_ODOO": "Odoo (CSV)",
-        "VIEW": "Voir"
+        "VIEW": "Voir",
+        "SWITCH_BACK_TIMESLOTPICKER": "Returner au timeslot picker"
     }
 }
