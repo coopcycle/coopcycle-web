@@ -380,13 +380,16 @@ export default function ({ storeId, deliveryId, order }) {
             }, [values.tasks, overridePrice, deliveryId]);
 
             useEffect(() => {
+              const pickupAfter = values.tasks[0].after
               if (
-                previousValues?.tasks[0].after !== values?.tasks[0].after &&
-                moment(values.tasks[0].after).isSame(moment(values.tasks[0].before), 'day')
+                previousValues?.tasks[0].after !== pickupAfter &&
+                moment(pickupAfter).isSame(moment(values.tasks[0].before), 'day') // do not go into complex date picking on several days
               ) {
                 for (let i = 1; i < values.tasks.length; i++) {
-                  setFieldValue(`tasks[${i}]after`, values.tasks[0].after)
-                  setFieldValue(`tasks[${i}]before`, values.tasks[0].before)
+                  if (moment(pickupAfter).isAfter(moment(values.tasks[i].after))) {
+                    setFieldValue(`tasks[${i}]after`, values.tasks[0].after)
+                    setFieldValue(`tasks[${i}]before`, values.tasks[0].before)
+                  }
                 }
               }
             }, [values.tasks, overridePrice, deliveryId]);
