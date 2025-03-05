@@ -379,8 +379,6 @@ export default function ({ storeId, deliveryId, order }) {
                 }
             }, [values.tasks, overridePrice, deliveryId]);
 
-            console.log('values', values)
-
             useEffect(() => {
               const newPickupAfter = values.tasks[0].after
               if (
@@ -392,10 +390,6 @@ export default function ({ storeId, deliveryId, order }) {
                     setFieldValue(`tasks[${i}]after`, values.tasks[0].after)
                     setFieldValue(`tasks[${i}]before`, values.tasks[0].before)
                   }
-                }
-              } else if (previousValues?.tasks[0].timeSlot !== values.tasks[0].timeSlot) {
-                for (let i = 1; i < values.tasks.length; i++) {
-                  setFieldValue(`tasks[${i}]timeSlot`, values.tasks[0].timeSlot)
                 }
               } else if (previousValues?.tasks[0].timeSlotName !== values.tasks[0].timeSlotName) {
                 for (let i = 1; i < values.tasks.length; i++) {

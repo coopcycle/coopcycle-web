@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
 import Spinner from '../core/Spinner'
+import { usePrevious } from '../../dashboard/redux/utils'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -15,6 +16,8 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   const { t } = useTranslation()
 
   const { setFieldValue, values } = useFormikContext()
+
+  const previousTimeSlotName = usePrevious(values.tasks[index].timeSlotName)
 
   const [timeSlotLabels, setStoreLabels] = useState(null)
   const [formattedTimeslots, setFormattedTimeslots] = useState(null)
@@ -48,10 +51,10 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     const url = `${baseURL}/api/stores/${storeId}/time_slots`
 
     const { response } = await httpClient.get(url)
-    const timeSlotsLabel = response['hydra:member']
-    setStoreLabels(timeSlotsLabel)
+    const timeSlotLabels = response['hydra:member']
+    setStoreLabels(timeSlotLabels)
     
-    const defaultLabel = timeSlotsLabel.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
+    const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
     setFieldValue(`tasks[${index}].timeSlotName`, defaultLabel.name)
   }
 
@@ -86,6 +89,13 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     getTimeSlotChoices(timeSlotUrl)
 
   }, [storeDeliveryInfos])
+
+  useEffect(() => {
+    if (previousTimeSlotName && previousTimeSlotName !== values.tasks[index].timeSlotName) {
+      const timeSlotUrl = timeSlotLabels.find(label => label.name === values.tasks[index].timeSlotName)['@id']
+      getTimeSlotChoices(timeSlotUrl)
+    }
+  }, [values.tasks[index].timeSlotName])
 
   useEffect(() => {
     if (Object.keys(selectedValues).length !== 0) {
@@ -133,9 +143,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   const selectedHour = selectedValues.hour
   
   const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')]
-
-  console.log(hourOptions)
-  console.log(selectedHour)
 
   return (
     <>
