@@ -18,38 +18,26 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState(null)
 
-  useEffect(() => {
-    const getTimeSlotsLabels = async () => {
-      const url = `${baseURL}/api/stores/${storeId}/time_slots`
+  const getTimeSlotsLabels = async () => {
+    const url = `${baseURL}/api/stores/${storeId}/time_slots`
 
-      const { response } = await httpClient.get(url)
+    const { response } = await httpClient.get(url)
 
-      if (response) {
-        const timeSlotsLabel = response['hydra:member']
-        setStoreDeliveryLabels(timeSlotsLabel)
-      }
+    if (response) {
+      const timeSlotsLabel = response['hydra:member']
+      setStoreDeliveryLabels(timeSlotsLabel)
     }
+  }
+
+  useEffect(() => {
+    // on load, get all the timeslotslabel
     getTimeSlotsLabels()
 
+    // load the first timeslot choices
     const timeSlotUrl = storeDeliveryInfos.timeSlot
     getTimeSlotOptions(timeSlotUrl)
 
   }, [storeDeliveryInfos])
-
-  /** We get the labels available and the default label for the radio buttons */
-
-  const getTimeSlotNames = useCallback(() => {
-    if (storeDeliveryLabels) {
-      const timeSlotNames = []
-      for (const label of storeDeliveryLabels) {
-        timeSlotNames.push(label.name)
-      }
-  
-      return timeSlotNames
-    }
-  }, [storeDeliveryLabels])
-
-  const timeSlotNames = getTimeSlotNames()
 
   const getDefaultLabel = useCallback(() => {
     if (storeDeliveryLabels) {
@@ -173,24 +161,22 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       <div className="mb-2 font-weight-bold title-slot">
         {t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}
       </div>
-      {defaultLabel && timeSlotNames ? (
-        <Radio.Group
-          className="timeslot__container mb-2"
-          defaultValue={defaultLabel.name}
-          value={values.tasks[index].timeSlotName || defaultLabel.name}
-        >
-          {timeSlotNames.map(label => (
-            <Radio.Button
-              key={label}
-              value={label}
-              onChange={timeSlot => {
-                handleTimeSlotLabelChange(timeSlot)
-              }}>
-              {label}
-            </Radio.Button>
-          ))}
-        </Radio.Group>
-      ) : null}
+      <Radio.Group
+        className="timeslot__container mb-2"
+        defaultValue={defaultLabel.name}
+        value={values.tasks[index].timeSlotName || defaultLabel.name}
+      >
+        {storeDeliveryLabels.map(label => (
+          <Radio.Button
+            key={label.name}
+            value={label.name}
+            onChange={timeSlotName => {
+              handleTimeSlotLabelChange(timeSlotName)
+            }}>
+            {label.name}
+          </Radio.Button>
+        ))}
+      </Radio.Group>
 
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
         {selectedValues.date ? (
