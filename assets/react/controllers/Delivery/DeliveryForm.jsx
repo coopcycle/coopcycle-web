@@ -475,7 +475,9 @@ export default function ({ storeId, deliveryId, order }) {
                                 const newDeliverySchema = {
                                   ...dropoffSchema,
                                   before: values.tasks.slice(-1)[0].before,
-                                  after: values.tasks.slice(-1)[0].after
+                                  after: values.tasks.slice(-1)[0].after,
+                                  timeSlot: values.tasks.slice(-1)[0].timeSlot,
+                                  timeSlotName: values.tasks.slice(-1)[0].timeSlotName
                                 }
                                 arrayHelpers.push(newDeliverySchema)
                               }}>
