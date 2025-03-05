@@ -4,6 +4,13 @@
 
   {% set pricing_rule = form.vars.data %}
 
+  <div class="delivery-pricing-ruleset__rule__target"
+    {% if pricing_rule is not empty %}
+      data-target="{{ pricing_rule.target }}"
+    {% endif %}
+  >
+    {# rendered by React #}
+  </div>
   <div class="delivery-pricing-ruleset__rule__main">
     <div class="delivery-pricing-ruleset__rule__handle">
       <i class="fa fa-2x fa-arrows"></i>

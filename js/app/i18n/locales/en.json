@@ -251,6 +251,8 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "The restaurant has to confirm your order. In case of refusal no amount will be debited from your card",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "The courier is coming!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Get ready!",
+        "RULE_TARGET_DELIVERY": "Per order",
+        "RULE_TARGET_TASK": "Per point (PICKUP and/or DROPOFF task)",
         "RULE_PICKER_ADD_CONDITION": "Add condition",
         "RULE_PICKER_LINE_DISTANCE": "Distance (km)",
         "RULE_PICKER_LINE_WEIGHT": "Weight (kg)",

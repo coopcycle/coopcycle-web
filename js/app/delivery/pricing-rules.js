@@ -10,6 +10,7 @@ import PricePerPackageEditor from '../components/PricePerPackageEditor'
 import './pricing-rules.scss'
 import { parsePriceAST, PriceRange, FixedPrice, PricePerPackage } from './pricing-rule-parser'
 import i18n from '../i18n'
+import PricingRuleTarget from './components/PricingRuleTarget'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
 
@@ -210,4 +211,14 @@ $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
     />,
     $(item).find('.rule-expression-container')[0]
   )
+})
+
+$('.delivery-pricing-ruleset__rule__target').each(function (index, item) {
+  const target = $(item).data('target')
+
+  if (!target) {
+    return
+  }
+
+  render(<PricingRuleTarget target={target} />, item)
 })
