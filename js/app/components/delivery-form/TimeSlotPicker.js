@@ -64,7 +64,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   /** We initialize with the default timesSlots, then changed when user selects a different option */
 
-  const [timeSlotChoices, setTimeSlotChoices] = useState([])
+  const [timeSlotChoices, setTimeSlotChoices] = useState(null)
 
   const getTimeSlotOptions = async timeSlotUrl => {
     const url = `${baseURL}${timeSlotUrl}/choices`
@@ -78,38 +78,47 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
    * We initialize the datepicker's and the select's values
    */
 
-  const [datesWithTimeslots, setDatesWithTimeslots] = useState({})
+  const [formattedTimeslots, setFormattedTimeslots] = useState({})
   const [selectedValues, setSelectedValues] = useState({})
   const [options, setOptions] = useState([])
 
-  useEffect(() => {
-    const formatTimeSlots = () => {
-      const formattedSlots = {}
-      timeSlotChoices.forEach(choice => {
-        let [first, second] = choice.value.split('/')
-        first = moment(first)
-        second = moment(second)
-        const date = moment(first).format('YYYY-MM-DD')
-        const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
-        if (formattedSlots[date]) {
-          formattedSlots[date].push(hour)
-        } else {
-          formattedSlots[date] = [hour]
-        }
-      })
-      setDatesWithTimeslots(formattedSlots)
+  const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
+    let [first, second] = timeSlotChoice.split('/')
+    first = moment(first)
+    second = moment(second)
+    const date = moment(first).format('YYYY-MM-DD')
+    const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
+    return {date, hour}
+  }
 
-      const availableDates = Object.keys(formattedSlots)
-      if (availableDates.length > 0) {
-        const firstDate = moment(availableDates[0])
-        setOptions(formattedSlots[availableDates[0]])
-        setSelectedValues({
-          date: firstDate,
-          option: formattedSlots[availableDates[0]][0],
-        })
+  const extractTimeSlotsDateAndHour = () => {
+    const formattedSlots = {}
+    timeSlotChoices.forEach(choice => {
+      const {date, hour} = extractDateAndRangeFromTimeSlot(choice.value)
+      if (formattedSlots[date]) {
+        formattedSlots[date].push(hour)
+      } else {
+        formattedSlots[date] = [hour]
       }
+    })
+
+    setFormattedTimeslots(formattedSlots)
+
+    const availableDates = Object.keys(formattedSlots)
+    if (availableDates.length > 0) {
+      const firstDate = moment(availableDates[0])
+      setOptions(formattedSlots[availableDates[0]])
+      setSelectedValues({
+        date: firstDate,
+        option: formattedSlots[availableDates[0]][0],
+      })
     }
-    formatTimeSlots()
+  }
+
+  useEffect(() => {
+    if (timeSlotChoices) {
+      extractTimeSlotsDateAndHour()
+    }
   }, [timeSlotChoices])
 
   useEffect(() => {
@@ -121,14 +130,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
     }
   }, [selectedValues])
-
-  /** disabled dates */
-
-  const dates = Object.keys(datesWithTimeslots || {}).map(date => moment(date))
-
-  function disabledDate(current) {
-    return !dates.some(date => date.isSame(current, 'day'))
-  }
 
   const handleTimeSlotLabelChange = e => {
     const label = storeDeliveryLabels.find(
@@ -144,9 +145,9 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
     setSelectedValues({
       date: newDate,
-      option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
+      option: formattedTimeslots[newDate.format('YYYY-MM-DD')][0],
     })
-    setOptions(datesWithTimeslots[newDate.format('YYYY-MM-DD')])
+    setOptions(formattedTimeslots[newDate.format('YYYY-MM-DD')])
   }
 
   const handleTimeSlotChange = newTimeslot => {
@@ -154,9 +155,18 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
   }
 
-  if (!storeDeliveryLabels) {
+  if (!storeDeliveryLabels || !timeSlotChoices || !values.tasks[index].timeSlot) {
     return <Spinner />
   }
+
+  const availableDates = Object.keys(formattedTimeslots || {}).map(date => moment(date))
+
+  function isDateDisabled(current) {
+    return !availableDates.some(date => date.isSame(current, 'day'))
+  }
+
+  const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
+  const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
 
   return (
     <>
@@ -188,9 +198,9 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
             format="LL"
             style={{ width: '60%' }}
             className="mr-2"
-            disabledDate={disabledDate}
-            disabled={dates.length > 1 ? false : true}
-            value={selectedValues.date}
+            disabledDate={isDateDisabled}
+            disabled={availableDates.length > 1 ? false : true}
+            value={selectedDate}
             onChange={date => {
               handleDateChange(date)
             }}
@@ -203,7 +213,8 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
             onChange={option => {
               handleTimeSlotChange(option)
             }}
-            value={selectedValues.option}>
+            value={selectedHour}
+          >
             {options.length >= 1 &&
               options.map(option => (
                 <Select.Option key={option} value={option}>

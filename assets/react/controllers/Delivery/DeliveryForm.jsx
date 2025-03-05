@@ -379,17 +379,27 @@ export default function ({ storeId, deliveryId, order }) {
                 }
             }, [values.tasks, overridePrice, deliveryId]);
 
+            console.log('values', values)
+
             useEffect(() => {
-              const pickupAfter = values.tasks[0].after
+              const newPickupAfter = values.tasks[0].after
               if (
-                previousValues?.tasks[0].after !== pickupAfter &&
-                moment(pickupAfter).isSame(moment(values.tasks[0].before), 'day') // do not go into complex date picking on several days
+                previousValues?.tasks[0].after !== newPickupAfter &&
+                moment(newPickupAfter).isSame(moment(values.tasks[0].before), 'day') // do not go into complex date picking on several days
               ) {
                 for (let i = 1; i < values.tasks.length; i++) {
-                  if (moment(pickupAfter).isAfter(moment(values.tasks[i].after))) {
+                  if (moment(newPickupAfter).isAfter(moment(values.tasks[i].after))) {
                     setFieldValue(`tasks[${i}]after`, values.tasks[0].after)
                     setFieldValue(`tasks[${i}]before`, values.tasks[0].before)
                   }
+                }
+              } else if (previousValues?.tasks[0].timeSlot !== values.tasks[0].timeSlot) {
+                for (let i = 1; i < values.tasks.length; i++) {
+                  setFieldValue(`tasks[${i}]timeSlot`, values.tasks[0].timeSlot)
+                }
+              } else if (previousValues?.tasks[0].timeSlotName !== values.tasks[0].timeSlotName) {
+                for (let i = 1; i < values.tasks.length; i++) {
+                    setFieldValue(`tasks[${i}]timeSlotName`, values.tasks[0].timeSlotName)
                 }
               }
             }, [values.tasks, overridePrice, deliveryId]);
