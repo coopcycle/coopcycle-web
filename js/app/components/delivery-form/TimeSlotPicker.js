@@ -17,6 +17,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   const { setFieldValue, values } = useFormikContext()
 
   const [timeSlotLabels, setStoreLabels] = useState(null)
+  const [timeSlotChoices, setTimeSlotChoices] = useState(null)
 
   const getTimeSlotsLabels = async () => {
     const url = `${baseURL}/api/stores/${storeId}/time_slots`
@@ -29,6 +30,14 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     }
   }
 
+  const getTimeSlotOptions = async timeSlotUrl => {
+    const url = `${baseURL}${timeSlotUrl}/choices`
+    const { response } = await httpClient.get(url)
+    if (response) {
+      setTimeSlotChoices(response['choices'])
+    }
+  }
+
   useEffect(() => {
     // on load, get all the timeslotslabel
     getTimeSlotsLabels()
@@ -38,22 +47,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     getTimeSlotOptions(timeSlotUrl)
 
   }, [storeDeliveryInfos])
-
-  /** We initialize with the default timesSlots, then changed when user selects a different option */
-
-  const [timeSlotChoices, setTimeSlotChoices] = useState(null)
-
-  const getTimeSlotOptions = async timeSlotUrl => {
-    const url = `${baseURL}${timeSlotUrl}/choices`
-    const { response } = await httpClient.get(url)
-    if (response) {
-      setTimeSlotChoices(response['choices'])
-    }
-  }
-
-  /** We format the data in order for them to fit in a datepicker and a select
-   * We initialize the datepicker's and the select's values
-   */
 
   const [formattedTimeslots, setFormattedTimeslots] = useState({})
   const [selectedValues, setSelectedValues] = useState({})
