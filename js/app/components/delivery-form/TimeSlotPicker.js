@@ -16,7 +16,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const { setFieldValue, values } = useFormikContext()
 
-  const [storeDeliveryLabels, setStoreDeliveryLabels] = useState(null)
+  const [timeSlotLabels, setStoreLabels] = useState(null)
 
   const getTimeSlotsLabels = async () => {
     const url = `${baseURL}/api/stores/${storeId}/time_slots`
@@ -25,7 +25,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
     if (response) {
       const timeSlotsLabel = response['hydra:member']
-      setStoreDeliveryLabels(timeSlotsLabel)
+      setStoreLabels(timeSlotsLabel)
     }
   }
 
@@ -109,7 +109,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   }, [selectedValues])
 
   const handleTimeSlotLabelChange = e => {
-    const label = storeDeliveryLabels.find(
+    const label = timeSlotLabels.find(
       label => label.name === e.target.value,
     )
     const timeSlotUrl = label['@id']
@@ -132,7 +132,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
   }
 
-  if (!storeDeliveryLabels || !timeSlotChoices || !values.tasks[index].timeSlot) {
+  if (!timeSlotLabels || !timeSlotChoices || !values.tasks[index].timeSlot) {
     return <Spinner />
   }
 
@@ -142,7 +142,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     return !availableDates.some(date => date.isSame(current, 'day'))
   }
 
-  const defaultLabel = storeDeliveryLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
+  const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
 
   const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
   const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
@@ -157,7 +157,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
         defaultValue={defaultLabel.name}
         value={values.tasks[index].timeSlotName || defaultLabel.name}
       >
-        {storeDeliveryLabels.map(label => (
+        {timeSlotLabels.map(label => (
           <Radio.Button
             key={label.name}
             value={label.name}
