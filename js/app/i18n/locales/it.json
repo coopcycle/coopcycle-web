@@ -94,6 +94,7 @@
         "ORDER_TIMELINE_AFTER_ACCEPTED_DESCRIPTION": "Ti informeremo quando il corriere ritirerà il tuo ordine",
         "ORDER_TIMELINE_AFTER_CREATED_TITLE": "L'ordine è in attesa di conferma",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "Il corriere è in arrivo!",
+        "PRICING_ADD_RULE": "Aggiungere regola",
         "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Indirizzo di consegna",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Differenza (giorni)",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Consegna alla soglia d'ingresso",

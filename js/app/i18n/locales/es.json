@@ -148,6 +148,7 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "El restaurante tiene que confirmar su pedido. En caso de rechazo recibirá la devolución del valor cargado de la su tarjeta en algunos días laborales, dependiendo de tu banco",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "¡El mensajero está de camino!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "¡Prepárate!",
+        "PRICING_ADD_RULE": "Añadir regla",
         "RULE_PICKER_ADD_CONDITION": "Añade una condición",
         "RULE_PICKER_LINE_DISTANCE": "Distancia (km)",
         "RULE_PICKER_LINE_WEIGHT": "Peso (kg)",

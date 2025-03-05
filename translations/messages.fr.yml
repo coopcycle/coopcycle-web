@@ -70,7 +70,6 @@ adminDashboard.pricing.noPricings: Pas de tarification pour le moment
 adminDashboard.pricing.createNew: Créer une tarification
 adminDashboard.pricing.noRuleFound: Veuillez ajouter au moins une règle de tarification.
   Les règles définissent comment le prix de la course est calculé.
-adminDashboard.pricing.addRule: Ajouter une règle
 adminDashboard.tags.title: Tags
 adminDashboard.tags.createNew: Créer un tag
 adminDashboard.tags.name: Nom

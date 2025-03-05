@@ -122,6 +122,7 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "Az étteremnek el kell fogadnia a rendelésed. Amennyiben visszautasítja, az összeg nem lesz levonva a kártyádról",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "A futár érkezik!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Készülj fel!",
+        "PRICING_ADD_RULE": "Szabály hozzáadása",
         "RULE_PICKER_LINE_DISTANCE": "Távolság (km)",
         "RULE_PICKER_LINE_WEIGHT": "Súly (kg)",
         "RULE_PICKER_LINE_BIKE_TYPE": "Kerékpár típusa",

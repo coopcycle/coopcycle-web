@@ -138,6 +138,7 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "Jatetexeak zure eskaera berretsi behar du. Ukatzen badu ez zaizu kreditu-txartela kobratuko",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "Mezularia bidean da!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Egon prest!",
+        "PRICING_ADD_RULE": "Gehitu araua",
         "RULE_PICKER_ADD_CONDITION": "Gehitu baldintza",
         "RULE_PICKER_LINE_DISTANCE": "Distantzia (km)",
         "RULE_PICKER_LINE_WEIGHT": "Pisua (kg)",

@@ -56,7 +56,6 @@ adminDashboard.pricing.noPricings: Aún no hay tarifas
 adminDashboard.pricing.createNew: Crear nueva tarifa
 adminDashboard.pricing.noRuleFound: No se encuentra ninguna regla de tarificación.
   Éstas definen como se calcula el coste de la entrega.
-adminDashboard.pricing.addRule: Añadir regla
 adminDashboard.pricing.duplicate: Duplicar
 adminDashboard.pricing.copyOf: Copia de %rule_set_name%
 adminDashboard.tags.title: Etiquetas

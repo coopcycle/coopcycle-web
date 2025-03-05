@@ -93,7 +93,6 @@ adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how
   the delivery cost is calculated.
-adminDashboard.pricing.addRule: Add rule
 adminDashboard.tags.title: Tags
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name

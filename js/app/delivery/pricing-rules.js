@@ -11,6 +11,7 @@ import './pricing-rules.scss'
 import { parsePriceAST, PriceRange, FixedPrice, PricePerPackage } from './pricing-rule-parser'
 import i18n from '../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
+import PricingRuleSetActions from './components/PricingRuleSetActions'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
 
@@ -154,13 +155,19 @@ const renderPriceChoice = (item) => {
   )
 }
 
-$('#add-pricing-rule').on('click', function(e) {
+const renderTarget = (item, target) => {
+  render(<PricingRuleTarget target={target} />, item)
+}
+
+function addPricingRule(e) {
   e.preventDefault()
 
   let newRule = ruleSet.attr('data-prototype')
   newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
 
-  let newLi = $('<li></li>').addClass('delivery-pricing-ruleset__rule').html(newRule),
+  let newLi = $('<li></li>')
+      .addClass('delivery-pricing-ruleset__rule')
+      .html(newRule),
     $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
     $input = $ruleExpression.find('input[data-expression]')
 
@@ -170,20 +177,22 @@ $('#add-pricing-rule').on('click', function(e) {
 
   render(
     <RulePicker
-      zones={ zones }
-      packages={ packages }
-      onExpressionChange={ onExpressionChange }
+      zones={zones}
+      packages={packages}
+      onExpressionChange={onExpressionChange}
     />,
-    newLi.find('.rule-expression-container')[0]
+    newLi.find('.rule-expression-container')[0],
   )
   newLi.appendTo(ruleSet)
 
-  renderPriceChoice(
-    newLi.find('.delivery-pricing-ruleset__rule__price')
+  renderTarget(
+    newLi.find('.delivery-pricing-ruleset__rule__target')[0],
+    'DELIVERY',
   )
+  renderPriceChoice(newLi.find('.delivery-pricing-ruleset__rule__price'))
 
   onListChange()
-})
+}
 
 $(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(e) {
   e.preventDefault()
@@ -220,5 +229,9 @@ $('.delivery-pricing-ruleset__rule__target').each(function (index, item) {
     return
   }
 
-  render(<PricingRuleTarget target={target} />, item)
+  renderTarget(item, target)
+})
+
+$('#pricing-rule-set-actions').each(function (index, item) {
+  render(<PricingRuleSetActions onClick={addPricingRule} />, item)
 })

@@ -154,7 +154,6 @@ adminDashboard.pricing.noPricings: Es gibt noch keine Preisermittlungen
 adminDashboard.pricing.createNew: Neue Preisermittlung erstellen
 adminDashboard.pricing.noRuleFound: Keine Regeln zur Preisermittlung gefunden. Die
   Regeln definieren, wie die Lieferkosten berechnet werden.
-adminDashboard.pricing.addRule: Regel hinzufügen
 adminDashboard.tags.title: Markierung
 adminDashboard.tags.createNew: Neue Markierung erstellen
 adminDashboard.taxation.title: Besteuerung

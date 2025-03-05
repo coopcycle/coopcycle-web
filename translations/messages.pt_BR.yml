@@ -73,7 +73,6 @@ adminDashboard.pricing.noPricings: Ainda não há precificações
 adminDashboard.pricing.createNew: Criar nova precificação
 adminDashboard.pricing.noRuleFound: Nenhuma regra de preço encontrada. Regras de preço
   definem como o custo do pedido é calculado.
-adminDashboard.pricing.addRule: Adicionar regra
 adminDashboard.tags.title: Tags
 adminDashboard.tags.createNew: Criar nova tag
 adminDashboard.tags.name: Nome

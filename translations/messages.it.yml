@@ -79,7 +79,6 @@ adminDashboard.tags.color: Colore
 adminDashboard.tags.name: Nome
 adminDashboard.tags.createNew: Crea un nuovo tag
 adminDashboard.tags.title: Tags
-adminDashboard.pricing.addRule: Aggiungere regola
 adminDashboard.pricing.createNew: Creare nuovi prezzi
 adminDashboard.pricing.noPricings: Non ci sono ancora i prezzi
 adminDashboard.pricing.noRuleFound: Nessuna regola di prezzo trovata. Le regole di
