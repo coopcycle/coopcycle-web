@@ -159,9 +159,7 @@ const renderTarget = (item, target) => {
   render(<PricingRuleTarget target={target} />, item)
 }
 
-function addPricingRule(e) {
-  e.preventDefault()
-
+function addPricingRule(ruleTarget) {
   let newRule = ruleSet.attr('data-prototype')
   newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
 
@@ -169,10 +167,12 @@ function addPricingRule(e) {
       .addClass('delivery-pricing-ruleset__rule')
       .html(newRule),
     $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
-    $input = $ruleExpression.find('input[data-expression]')
+    $expressionInput = $ruleExpression.find('input[data-expression]'),
+    $ruleTarget = newLi.find('.delivery-pricing-ruleset__rule__target'),
+    $ruleTargetInput = $ruleTarget.find('input[data-rule-target]')
 
   function onExpressionChange(newExpression) {
-    $input.val(newExpression)
+    $expressionInput.val(newExpression)
   }
 
   render(
@@ -185,10 +185,12 @@ function addPricingRule(e) {
   )
   newLi.appendTo(ruleSet)
 
+  $ruleTargetInput.val(ruleTarget)
   renderTarget(
-    newLi.find('.delivery-pricing-ruleset__rule__target')[0],
-    'DELIVERY',
+    newLi.find('.delivery-pricing-ruleset__rule__target__container')[0],
+    ruleTarget,
   )
+
   renderPriceChoice(newLi.find('.delivery-pricing-ruleset__rule__price'))
 
   onListChange()
@@ -223,15 +225,17 @@ $('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
 })
 
 $('.delivery-pricing-ruleset__rule__target').each(function (index, item) {
-  const target = $(item).data('target')
+  const container = $(item).find('.delivery-pricing-ruleset__rule__target__container')
+  const input = $(item).find('input')
+  const target = input.val()
 
   if (!target) {
     return
   }
 
-  renderTarget(item, target)
+  renderTarget(container[0], target)
 })
 
 $('#pricing-rule-set-actions').each(function (index, item) {
-  render(<PricingRuleSetActions onClick={addPricingRule} />, item)
+  render(<PricingRuleSetActions onAddRule={addPricingRule} />, item)
 })

@@ -4,12 +4,12 @@
 
   {% set pricing_rule = form.vars.data %}
 
-  <div class="delivery-pricing-ruleset__rule__target"
-    {% if pricing_rule is not empty %}
-      data-target="{{ pricing_rule.target }}"
-    {% endif %}
-  >
-    {# rendered by React #}
+  <div class="delivery-pricing-ruleset__rule__target">
+    <div class="delivery-pricing-ruleset__rule__target__container">
+      {# rendered by React #}
+    </div>
+    {# hidden form input field #}
+    {{ form_widget(form.target, { attr: { 'data-rule-target': '' } }) }}
   </div>
   <div class="delivery-pricing-ruleset__rule__main">
     <div class="delivery-pricing-ruleset__rule__handle">

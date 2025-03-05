@@ -252,6 +252,7 @@
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "The courier is coming!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Get ready!",
         "PRICING_ADD_RULE": "Add rule",
+        "PRICING_ADD_RULE_PER_TASK": "Add rule per point (advanced)",
         "RULE_TARGET_DELIVERY": "Per order",
         "RULE_TARGET_TASK": "Per point (PICKUP and/or DROPOFF task)",
         "RULE_PICKER_ADD_CONDITION": "Add condition",
