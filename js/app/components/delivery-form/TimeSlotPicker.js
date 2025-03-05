@@ -18,6 +18,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const [timeSlotLabels, setStoreLabels] = useState(null)
   const [formattedTimeslots, setFormattedTimeslots] = useState(null)
+  const [isLoadingChoices, setIsLoadingChoices] = useState(false)
   const [selectedValues, setSelectedValues] = useState({})
 
   const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
@@ -47,14 +48,14 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     const url = `${baseURL}/api/stores/${storeId}/time_slots`
 
     const { response } = await httpClient.get(url)
-
-    if (response) {
-      const timeSlotsLabel = response['hydra:member']
-      setStoreLabels(timeSlotsLabel)
-    }
+    const timeSlotsLabel = response['hydra:member']
+    setStoreLabels(timeSlotsLabel)
   }
 
-  const getTimeSlotOptions = async timeSlotUrl => {
+  const getTimeSlotChoices = async timeSlotUrl => {
+
+    setIsLoadingChoices(true)
+
     const url = `${baseURL}${timeSlotUrl}/choices`
     const { response } = await httpClient.get(url)
     const formattedSlots = extractTimeSlotsDateAndHour(response['choices'])
@@ -66,9 +67,11 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       const firstDate = moment(availableDates[0])
       setSelectedValues({
         date: firstDate,
-        option: formattedSlots[availableDates[0]][0],
+        hour: formattedSlots[availableDates[0]][0],
       })
     }
+
+    setIsLoadingChoices(false)
   }
 
   useEffect(() => {
@@ -77,14 +80,14 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
     // load the first timeslot choices
     const timeSlotUrl = storeDeliveryInfos.timeSlot
-    getTimeSlotOptions(timeSlotUrl)
+    getTimeSlotChoices(timeSlotUrl)
 
   }, [storeDeliveryInfos])
 
   useEffect(() => {
     if (Object.keys(selectedValues).length !== 0) {
       const date = selectedValues.date.format('YYYY-MM-DD')
-      const range = selectedValues.option
+      const range = selectedValues.hour
       const [first, second] = range.split('-')
       const timeSlot = `${date}T${first}:00Z/${date}T${second}:00Z`
       setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
@@ -96,8 +99,8 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       label => label.name === e.target.value,
     )
     const timeSlotUrl = label['@id']
+    getTimeSlotChoices(timeSlotUrl)
     setFieldValue(`tasks[${index}].timeSlotName`, label.name)
-    getTimeSlotOptions(timeSlotUrl)
   }
 
   const handleDateChange = newDate => {
@@ -105,16 +108,16 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
     setSelectedValues({
       date: newDate,
-      option: formattedTimeslots[newDate.format('YYYY-MM-DD')][0],
+      hour: formattedTimeslots[newDate.format('YYYY-MM-DD')][0],
     })
   }
 
   const handleTimeSlotChange = newTimeslot => {
     if (!newTimeslot) return
-    setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
+    setSelectedValues(prevState => ({ ...prevState, hour: newTimeslot }))
   }
 
-  if (!timeSlotLabels || !formattedTimeslots || !values.tasks[index].timeSlot) {
+  if (!timeSlotLabels || isLoadingChoices || !values.tasks[index].timeSlot) {
     return <Spinner />
   }
 
@@ -126,10 +129,13 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
 
-  const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
-  const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
-
+  const selectedDate = moment(selectedValues.date)
+  const selectedHour = selectedValues.hour
+  
   const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')]
+
+  console.log(hourOptions)
+  console.log(selectedHour)
 
   return (
     <>
