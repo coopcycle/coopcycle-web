@@ -98,6 +98,11 @@ class MarkAsDoneHandler
             $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
         }
 
+
+        if (count($coordinates) <= 1) {
+            return;
+        }
+
         // TODO : if we saved the whole route on the TaskList (not just the distance) we would not have to recalculate the legs here
         $route = $this->routing->route(...$coordinates)['routes'][0];
 
