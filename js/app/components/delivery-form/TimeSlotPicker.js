@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
 import { useFormikContext } from 'formik'
@@ -38,17 +38,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     getTimeSlotOptions(timeSlotUrl)
 
   }, [storeDeliveryInfos])
-
-  const getDefaultLabel = useCallback(() => {
-    if (storeDeliveryLabels) {
-      const defaultLabel = storeDeliveryLabels.find(
-        label => label['@id'] === storeDeliveryInfos.timeSlot,
-      )
-      return defaultLabel
-    }
-  }, [storeDeliveryLabels])
-
-  const defaultLabel = getDefaultLabel()
 
   /** We initialize with the default timesSlots, then changed when user selects a different option */
 
@@ -152,6 +141,8 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   function isDateDisabled(current) {
     return !availableDates.some(date => date.isSame(current, 'day'))
   }
+
+  const defaultLabel = storeDeliveryLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
 
   const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
   const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
