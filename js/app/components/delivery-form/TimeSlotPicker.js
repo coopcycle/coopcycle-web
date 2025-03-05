@@ -50,6 +50,9 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     const { response } = await httpClient.get(url)
     const timeSlotsLabel = response['hydra:member']
     setStoreLabels(timeSlotsLabel)
+    
+    const defaultLabel = timeSlotsLabel.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
+    setFieldValue(`tasks[${index}].timeSlotName`, defaultLabel.name)
   }
 
   const getTimeSlotChoices = async timeSlotUrl => {
@@ -112,9 +115,8 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     })
   }
 
-  const handleTimeSlotChange = newTimeslot => {
-    if (!newTimeslot) return
-    setSelectedValues(prevState => ({ ...prevState, hour: newTimeslot }))
+  const handleHourChange = hour => {
+    setSelectedValues(prevState => ({ ...prevState, hour: hour }))
   }
 
   if (!timeSlotLabels || isLoadingChoices || !values.tasks[index].timeSlot) {
@@ -126,8 +128,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   function isDateDisabled(current) {
     return !availableDates.some(date => date.isSame(current, 'day'))
   }
-
-  const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
 
   const selectedDate = moment(selectedValues.date)
   const selectedHour = selectedValues.hour
@@ -144,8 +144,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       </div>
       <Radio.Group
         className="timeslot__container mb-2"
-        defaultValue={defaultLabel.name}
-        value={values.tasks[index].timeSlotName || defaultLabel.name}
+        value={values.tasks[index].timeSlotName}
       >
         {timeSlotLabels.map(label => (
           <Radio.Button
@@ -177,7 +176,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
         <Select
           style={{ width: '35%' }}
           onChange={option => {
-            handleTimeSlotChange(option)
+            handleHourChange(option)
           }}
           value={selectedHour}
         >
