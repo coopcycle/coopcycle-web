@@ -1212,6 +1212,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     public function toExpressionLanguageValues()
     {
+        //FIXME: to be removed?; for now it might still needed for legacy 'map_all_tasks' rules
         $values = Delivery::toExpressionLanguageValues($this->getDelivery());
 
         $emptyObject = new \stdClass();
