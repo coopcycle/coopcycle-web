@@ -83,8 +83,8 @@ class Geocoder
             RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
         
         $decider = function ($retries, $request, $response, $exception) {
-            // Limit the number of retries to 5
-            if ($retries >= 5) {
+            // Limit the number
+            if ($retries >= 10) {
                 return false;
             }
             
