@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from './AddressBook'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
-import { Input, Button, Spin } from 'antd'
+import { Input, Button } from 'antd'
 import DateRangePicker from './DateRangePicker'
 import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
@@ -82,14 +82,6 @@ export default ({
       index !== values.tasks.length - 1
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
-
-  const areDefinedTimeSlots = useCallback(() => {
-    return (
-      storeDeliveryInfos &&
-      Array.isArray(storeDeliveryInfos.timeSlots) &&
-      storeDeliveryInfos.timeSlots.length > 0
-    )
-  }, [storeDeliveryInfos])
 
   return (
     <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>

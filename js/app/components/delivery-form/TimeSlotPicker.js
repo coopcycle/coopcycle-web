@@ -16,40 +16,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const { setFieldValue, values } = useFormikContext()
 
-  const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
-
-  /** We get the labels available and the default label for the radio buttons */
-
-  const getLabels = useCallback(() => {
-    const timeSlotsLabels = []
-    for (const label of storeDeliveryLabels) {
-      timeSlotsLabels.push(label.name)
-    }
-
-    return timeSlotsLabels
-  }, [storeDeliveryLabels])
-
-  const timeSlotsLabels = getLabels()
-
-  const getDefaultLabels = useCallback(() => {
-    return storeDeliveryLabels.find(
-      label => label['@id'] === storeDeliveryInfos.timeSlot,
-    )
-  }, [storeDeliveryLabels, storeDeliveryInfos])
-
-  const defaultLabel = getDefaultLabels()
-
-  /** We initialize with the default timesSlots, then changed when user selects a different option */
-
-  const [timeSlotChoices, setTimeSlotChoices] = useState([])
-
-  const getTimeSlotOptions = async timeSlotUrl => {
-    const url = `${baseURL}${timeSlotUrl}/choices`
-    const { response } = await httpClient.get(url)
-    if (response) {
-      setTimeSlotChoices(response['choices'])
-    }
-  }
+  const [storeDeliveryLabels, setStoreDeliveryLabels] = useState(null)
 
   useEffect(() => {
     const getTimeSlotsLabels = async () => {
@@ -68,6 +35,44 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     getTimeSlotOptions(timeSlotUrl)
 
   }, [storeDeliveryInfos])
+
+  /** We get the labels available and the default label for the radio buttons */
+
+  const getTimeSlotNames = useCallback(() => {
+    if (storeDeliveryLabels) {
+      const timeSlotNames = []
+      for (const label of storeDeliveryLabels) {
+        timeSlotNames.push(label.name)
+      }
+  
+      return timeSlotNames
+    }
+  }, [storeDeliveryLabels])
+
+  const timeSlotNames = getTimeSlotNames()
+
+  const getDefaultLabel = useCallback(() => {
+    if (storeDeliveryLabels) {
+      const defaultLabel = storeDeliveryLabels.find(
+        label => label['@id'] === storeDeliveryInfos.timeSlot,
+      )
+      return defaultLabel
+    }
+  }, [storeDeliveryLabels])
+
+  const defaultLabel = getDefaultLabel()
+
+  /** We initialize with the default timesSlots, then changed when user selects a different option */
+
+  const [timeSlotChoices, setTimeSlotChoices] = useState([])
+
+  const getTimeSlotOptions = async timeSlotUrl => {
+    const url = `${baseURL}${timeSlotUrl}/choices`
+    const { response } = await httpClient.get(url)
+    if (response) {
+      setTimeSlotChoices(response['choices'])
+    }
+  }
 
   /** We format the data in order for them to fit in a datepicker and a select
    * We initialize the datepicker's and the select's values
@@ -130,6 +135,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       label => label.name === e.target.value,
     )
     const timeSlotUrl = label['@id']
+    setFieldValue(`tasks[${index}].timeSlotName`, label.name)
     getTimeSlotOptions(timeSlotUrl)
   }
 
@@ -148,7 +154,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
   }
 
-  if (!storeDeliveryLabels.length > 1) {
+  if (!storeDeliveryLabels) {
     return <Spinner />
   }
 
@@ -157,11 +163,13 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       <div className="mb-2 font-weight-bold title-slot">
         {t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}
       </div>
-      {defaultLabel && timeSlotsLabels ? (
+      {defaultLabel && timeSlotNames ? (
         <Radio.Group
           className="timeslot__container mb-2"
-          defaultValue={defaultLabel.name}>
-          {timeSlotsLabels.map(label => (
+          defaultValue={defaultLabel.name}
+          value={values.tasks[index].timeSlotName || defaultLabel.name}
+        >
+          {timeSlotNames.map(label => (
             <Radio.Button
               key={label}
               value={label}
