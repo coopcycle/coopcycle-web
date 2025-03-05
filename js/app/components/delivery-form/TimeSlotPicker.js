@@ -5,6 +5,7 @@ import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
+import Spinner from '../core/Spinner'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -13,25 +14,9 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const { t } = useTranslation()
 
-  const { setFieldValue } = useFormikContext()
+  const { setFieldValue, values } = useFormikContext()
 
   const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
-
-  useEffect(() => {
-    const getTimeSlotsLabels = async () => {
-      const url = `${baseURL}/api/stores/${storeId}/time_slots`
-
-      const { response } = await httpClient.get(url)
-
-      if (response) {
-        const timeSlotsLabel = response['hydra:member']
-        setStoreDeliveryLabels(timeSlotsLabel)
-      }
-    }
-    if (storeId) {
-      getTimeSlotsLabels()
-    }
-  }, [storeId])
 
   /** We get the labels available and the default label for the radio buttons */
 
@@ -67,8 +52,21 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   }
 
   useEffect(() => {
+    const getTimeSlotsLabels = async () => {
+      const url = `${baseURL}/api/stores/${storeId}/time_slots`
+
+      const { response } = await httpClient.get(url)
+
+      if (response) {
+        const timeSlotsLabel = response['hydra:member']
+        setStoreDeliveryLabels(timeSlotsLabel)
+      }
+    }
+    getTimeSlotsLabels()
+
     const timeSlotUrl = storeDeliveryInfos.timeSlot
     getTimeSlotOptions(timeSlotUrl)
+
   }, [storeDeliveryInfos])
 
   /** We format the data in order for them to fit in a datepicker and a select
@@ -148,6 +146,10 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   const handleTimeSlotChange = newTimeslot => {
     if (!newTimeslot) return
     setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
+  }
+
+  if (!storeDeliveryLabels.length > 1) {
+    return <Spinner />
   }
 
   return (
