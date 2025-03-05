@@ -129,8 +129,14 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     setSelectedValues(prevState => ({ ...prevState, hour: hour }))
   }
 
+  const inputLabel = () => <div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>
+
   if (!timeSlotLabels || isLoadingChoices || !values.tasks[index].timeSlot) {
-    return <Spinner />
+    return (
+      <>
+        {inputLabel() }
+        <Spinner />
+      </>)
   }
 
   const availableDates = Object.keys(formattedTimeslots || {}).map(date => moment(date))
@@ -139,16 +145,14 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     return !availableDates.some(date => date.isSame(current, 'day'))
   }
 
-  const selectedDate = moment(selectedValues.date)
-  const selectedHour = selectedValues.hour
+  const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
+  const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
   
   const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')]
 
   return (
     <>
-      <div className="mb-2 font-weight-bold title-slot">
-        {t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}
-      </div>
+      { inputLabel() }
       <Radio.Group
         className="timeslot__container mb-2"
         value={values.tasks[index].timeSlotName}
@@ -166,20 +170,17 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
       </Radio.Group>
 
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
-        {selectedValues.date ? (
-          <DatePicker
-            format="LL"
-            style={{ width: '60%' }}
-            className="mr-2"
-            disabledDate={isDateDisabled}
-            disabled={availableDates.length > 1 ? false : true}
-            value={selectedDate}
-            onChange={date => {
-              handleDateChange(date)
-            }}
-          />
-        ) : null}
-
+        <DatePicker
+          format="LL"
+          style={{ width: '60%' }}
+          className="mr-2"
+          disabledDate={isDateDisabled}
+          disabled={availableDates.length > 1 ? false : true}
+          value={selectedDate}
+          onChange={date => {
+            handleDateChange(date)
+          }}
+        />
         <Select
           style={{ width: '35%' }}
           onChange={option => {

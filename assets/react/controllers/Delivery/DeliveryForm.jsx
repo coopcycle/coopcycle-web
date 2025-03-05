@@ -373,6 +373,8 @@ export default function ({ storeId, deliveryId, order }) {
                         
             const previousValues = usePrevious(values)
 
+            console.log(values)
+
             useEffect(() => {
                 if(!overridePrice && !deliveryId) {
                   getPrice(values)
@@ -394,6 +396,16 @@ export default function ({ storeId, deliveryId, order }) {
               } else if (previousValues?.tasks[0].timeSlotName !== values.tasks[0].timeSlotName) {
                 for (let i = 1; i < values.tasks.length; i++) {
                     setFieldValue(`tasks[${i}]timeSlotName`, values.tasks[0].timeSlotName)
+                }
+              } else if (previousValues?.tasks[0].timeSlot !== values.tasks[0].timeSlot) {
+                for (let i = 1; i < values.tasks.length; i++) {
+                  if (values.tasks[i].timeSlot) {
+                    const pickupAfter = moment(values.tasks[0].timeSlot.split('/')[0])
+                    const dropAfter = moment(values.tasks[i].timeSlot.split('/')[0])
+                    if (pickupAfter.isAfter(dropAfter)) {
+                      setFieldValue(`tasks[${i}]timeSlot`, values.tasks[0].timeSlot)
+                    }
+                  }
                 }
               }
             }, [values.tasks, overridePrice, deliveryId]);
