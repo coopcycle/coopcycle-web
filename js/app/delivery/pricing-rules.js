@@ -8,20 +8,28 @@ import RulePicker from '../components/RulePicker'
 import PriceRangeEditor from '../components/PriceRangeEditor'
 import PricePerPackageEditor from '../components/PricePerPackageEditor'
 import './pricing-rules.scss'
-import { parsePriceAST, PriceRange, FixedPrice, PricePerPackage } from './pricing-rule-parser'
+import {
+  parsePriceAST,
+  PriceRange,
+  FixedPrice,
+  PricePerPackage,
+} from './pricing-rule-parser'
 import i18n from '../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
 import PricingRuleSetActions from './components/PricingRuleSetActions'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
-
   const { t } = useTranslation()
 
   return (
-    <select onChange={ e => onChange(e.target.value) } defaultValue={ defaultValue }>
-      <option value="fixed">{ t('PRICE_RANGE_EDITOR.TYPE_FIXED') }</option>
-      <option value="range">{ t('PRICE_RANGE_EDITOR.TYPE_RANGE') }</option>
-      <option value="per_package">{ t('PRICE_RANGE_EDITOR.TYPE_PER_PACKAGE') }</option>
+    <select
+      onChange={e => onChange(e.target.value)}
+      defaultValue={defaultValue}>
+      <option value="fixed">{t('PRICE_RANGE_EDITOR.TYPE_FIXED')}</option>
+      <option value="range">{t('PRICE_RANGE_EDITOR.TYPE_RANGE')}</option>
+      <option value="per_package">
+        {t('PRICE_RANGE_EDITOR.TYPE_PER_PACKAGE')}
+      </option>
     </select>
   )
 }
@@ -53,15 +61,16 @@ new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
   onUpdate: onListChange,
 })
 
-const renderPriceChoice = (item) => {
-
+const renderPriceChoice = item => {
   const $label = $(item).find('label')
   const $input = $(item).find('input')
 
   const priceAST = $(item).data('priceExpression')
   const expression = $input.val()
 
-  const price = priceAST ? parsePriceAST(priceAST, expression) : new FixedPrice(0)
+  const price = priceAST
+    ? parsePriceAST(priceAST, expression)
+    : new FixedPrice(0)
 
   let priceType = 'fixed'
 
@@ -92,43 +101,47 @@ const renderPriceChoice = (item) => {
   $pricePerPackageEditorContainer.appendTo($parent)
 
   render(
-    <I18nextProvider i18n={ i18n }>
+    <I18nextProvider i18n={i18n}>
       <div
-        ref={ rangeEditorRef }
-        className={ classNames({ 'd-none': priceType !== 'range' }) }>
+        ref={rangeEditorRef}
+        className={classNames({ 'd-none': priceType !== 'range' })}>
         <PriceRangeEditor
-          defaultValue={ priceRangeDefaultValue }
-          onChange={ ({ attribute, price, step, threshold }) => {
-            $input.val(`price_range(${attribute}, ${price}, ${step}, ${threshold})`)
-          }} />
-      </div>
-    </I18nextProvider>,
-    $priceRangeEditorContainer[0]
-  )
-
-  render(
-    <I18nextProvider i18n={ i18n }>
-      <div
-        ref={ pricePerPackageEditorRef }
-        className={ classNames({ 'd-none': priceType !== 'per_package' }) }
-        >
-        <PricePerPackageEditor
-          defaultValue={ pricePerPackageDefaultValue }
-          onChange={ ({ packageName, unitPrice, offset, discountPrice }) => {
-            $input.val(`price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`)
+          defaultValue={priceRangeDefaultValue}
+          onChange={({ attribute, price, step, threshold }) => {
+            $input.val(
+              `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
+            )
           }}
-          packages={ packages }
-          />
+        />
       </div>
     </I18nextProvider>,
-    $pricePerPackageEditorContainer[0]
+    $priceRangeEditorContainer[0],
   )
 
   render(
-    <I18nextProvider i18n={ i18n }>
+    <I18nextProvider i18n={i18n}>
+      <div
+        ref={pricePerPackageEditorRef}
+        className={classNames({ 'd-none': priceType !== 'per_package' })}>
+        <PricePerPackageEditor
+          defaultValue={pricePerPackageDefaultValue}
+          onChange={({ packageName, unitPrice, offset, discountPrice }) => {
+            $input.val(
+              `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
+            )
+          }}
+          packages={packages}
+        />
+      </div>
+    </I18nextProvider>,
+    $pricePerPackageEditorContainer[0],
+  )
+
+  render(
+    <I18nextProvider i18n={i18n}>
       <PriceChoice
-        defaultValue={ priceType }
-        onChange={ value => {
+        defaultValue={priceType}
+        onChange={value => {
           switch (value) {
             case 'range':
               $input.addClass('d-none')
@@ -149,14 +162,38 @@ const renderPriceChoice = (item) => {
 
               $input.removeClass('d-none')
           }
-        }} />
+        }}
+      />
     </I18nextProvider>,
-    $label[0]
+    $label[0],
   )
 }
 
-const renderTarget = (item, target) => {
-  render(<PricingRuleTarget target={target} />, item)
+function hydrate(item, { ruleTarget, expression, expressionAST }) {
+  const ruleTargetContainer = $(item).find(
+    '.delivery-pricing-ruleset__rule__target__container',
+  )
+  render(<PricingRuleTarget target={ruleTarget} />, ruleTargetContainer[0])
+
+  let $expressionInput = $(item).find(
+    '.delivery-pricing-ruleset__rule__expression input',
+  )
+  function onExpressionChange(newExpression) {
+    $expressionInput.val(newExpression)
+  }
+  render(
+    <RulePicker
+      zones={zones}
+      packages={packages}
+      expression={expression}
+      expressionAST={expressionAST}
+      onExpressionChange={onExpressionChange}
+    />,
+    $(item).find('.rule-expression-container')[0],
+  )
+
+  const priceEl = $(item).find('.delivery-pricing-ruleset__rule__price')
+  renderPriceChoice(priceEl)
 }
 
 function addPricingRule(ruleTarget) {
@@ -164,76 +201,43 @@ function addPricingRule(ruleTarget) {
   newRule = newRule.replace(/__name__/g, ruleSet.find('li').length)
 
   let newLi = $('<li></li>')
-      .addClass('delivery-pricing-ruleset__rule')
-      .html(newRule),
-    $ruleExpression = newLi.find('.delivery-pricing-ruleset__rule__expression'),
-    $expressionInput = $ruleExpression.find('input[data-expression]'),
-    $ruleTarget = newLi.find('.delivery-pricing-ruleset__rule__target'),
-    $ruleTargetInput = $ruleTarget.find('input[data-rule-target]')
+    .addClass('delivery-pricing-ruleset__rule')
+    .html(newRule)
 
-  function onExpressionChange(newExpression) {
-    $expressionInput.val(newExpression)
-  }
-
-  render(
-    <RulePicker
-      zones={zones}
-      packages={packages}
-      onExpressionChange={onExpressionChange}
-    />,
-    newLi.find('.rule-expression-container')[0],
-  )
-  newLi.appendTo(ruleSet)
-
-  $ruleTargetInput.val(ruleTarget)
-  renderTarget(
-    newLi.find('.delivery-pricing-ruleset__rule__target__container')[0],
+  hydrate(newLi, {
     ruleTarget,
-  )
+    expression: undefined,
+    expressionAST: undefined,
+  })
 
-  renderPriceChoice(newLi.find('.delivery-pricing-ruleset__rule__price'))
-
+  newLi.appendTo(ruleSet)
   onListChange()
 }
 
-$(document).on('click', '.delivery-pricing-ruleset__rule__remove > a', function(e) {
-  e.preventDefault()
-  $(e.target).closest('li').remove()
+$(document).on(
+  'click',
+  '.delivery-pricing-ruleset__rule__remove > a',
+  function (e) {
+    e.preventDefault()
+    $(e.target).closest('li').remove()
 
-  onListChange()
-})
+    onListChange()
+  },
+)
 
-$('.delivery-pricing-ruleset__rule__price').each(function(index, item) {
-  renderPriceChoice(item)
-})
+$('.delivery-pricing-ruleset__rule').each(function (index, item) {
+  const ruleTarget = $(item)
+    .find('.delivery-pricing-ruleset__rule__target input')
+    .val()
 
-$('.delivery-pricing-ruleset__rule__expression').each(function(index, item) {
-  let $input = $(item).find('input')
-  function onExpressionChange(newExpression) {
-    $input.val(newExpression)
-  }
-  render(
-    <RulePicker
-      zones={ zones }
-      packages={ packages }
-      expression={ $input.val() }
-      expressionAST={ $(item).data('expression') }
-      onExpressionChange={ onExpressionChange }
-    />,
-    $(item).find('.rule-expression-container')[0]
-  )
-})
+  const expression = $(item)
+    .find('.delivery-pricing-ruleset__rule__expression input')
+    .val()
+  const expressionAST = $(item)
+    .find('.delivery-pricing-ruleset__rule__expression')
+    .data('expression')
 
-$('.delivery-pricing-ruleset__rule__target').each(function (index, item) {
-  const container = $(item).find('.delivery-pricing-ruleset__rule__target__container')
-  const input = $(item).find('input')
-  const target = input.val()
-
-  if (!target) {
-    return
-  }
-
-  renderTarget(container[0], target)
+  hydrate(item, { ruleTarget, expression, expressionAST })
 })
 
 $('#pricing-rule-set-actions').each(function (index, item) {
