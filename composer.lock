@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c09bd8a83c55d73a673905f48bcb768",
+    "content-hash": "c5d51133ead974fe84133995c1010a2d",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -4638,6 +4638,66 @@
             "time": "2022-07-30T12:09:30+00:00"
         },
         {
+            "name": "geocoder-php/geocode-earth-provider",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/geocode-earth-provider.git",
+                "reference": "154fa4774a444626447434f265ac96891ca638e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/geocode-earth-provider/zipball/154fa4774a444626447434f265ac96891ca638e9",
+                "reference": "154fa4774a444626447434f265ac96891ca638e9",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "geocoder-php/pelias-provider": "^1.0",
+                "php": "^7.4 || ^8.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "php-http/curl-client": "^2.2",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\GeocodeEarth\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder Geocode Earth adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "support": {
+                "source": "https://github.com/geocoder-php/geocode-earth-provider/tree/1.4.0"
+            },
+            "time": "2022-07-30T12:09:30+00:00"
+        },
+        {
             "name": "geocoder-php/google-maps-provider",
             "version": "4.7.1",
             "source": {
@@ -4811,6 +4871,65 @@
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
                 "source": "https://github.com/geocoder-php/open-cage-provider/tree/4.6.0"
+            },
+            "time": "2022-07-30T12:09:30+00:00"
+        },
+        {
+            "name": "geocoder-php/pelias-provider",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/pelias-provider.git",
+                "reference": "081245e7b47a8b7f234e3e78a67895fa85179e20"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/pelias-provider/zipball/081245e7b47a8b7f234e3e78a67895fa85179e20",
+                "reference": "081245e7b47a8b7f234e3e78a67895fa85179e20",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.4 || ^8.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "php-http/curl-client": "^2.2",
+                "php-http/message": "^1.7",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\Pelias\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder Pelias abstract adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "support": {
+                "source": "https://github.com/geocoder-php/pelias-provider/tree/1.4.0"
             },
             "time": "2022-07-30T12:09:30+00:00"
         },
@@ -24614,18 +24733,18 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "league/geotools": 0,
-        "drupal/core-vendor-hardening": 20,
-        "nucleos/profile-bundle": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
-        "behatch/contexts": 20
+        "drupal/core-vendor-hardening": 20,
+        "league/geotools": 0,
+        "nucleos/profile-bundle": 20,
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

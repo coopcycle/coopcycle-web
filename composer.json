@@ -152,7 +152,8 @@
         "flow-php/filesystem": "^0.9.2",
         "picqer/php-barcode-generator": "^2.4",
         "shipmonk/doctrine-entity-preloader": "^1.0",
-        "z4kn4fein/php-semver": "^3.0"
+        "z4kn4fein/php-semver": "^3.0",
+        "geocoder-php/geocode-earth-provider": "^1.4"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
