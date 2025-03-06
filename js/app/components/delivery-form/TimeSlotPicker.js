@@ -11,6 +11,7 @@ import { usePrevious } from '../../dashboard/redux/utils'
 const baseURL = location.protocol + '//' + location.host
 
 export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
+
   const httpClient = new window._auth.httpClient()
 
   const { t } = useTranslation()
@@ -46,11 +47,6 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
     return formattedSlots
   }
 
-  const getTimeSlotsLabels = () => {
-    const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
-    setFieldValue(`tasks[${index}].timeSlotName`, defaultLabel.name)
-  }
-
   const getTimeSlotChoices = async timeSlotUrl => {
 
     setIsLoadingChoices(true)
@@ -74,14 +70,9 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
   }
 
   useEffect(() => {
-    // on load, get all the timeslotslabel
-    getTimeSlotsLabels()
-
-    // load the first timeslot choices
     const timeSlotUrl = storeDeliveryInfos.timeSlot
     getTimeSlotChoices(timeSlotUrl)
-
-  }, [storeDeliveryInfos])
+  }, [])
 
   useEffect(() => {
     if (previousTimeSlotName && previousTimeSlotName !== values.tasks[index].timeSlotName) {
@@ -124,7 +115,7 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
 
   const inputLabel = () => <div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>
 
-  if (!timeSlotLabels || isLoadingChoices || !values.tasks[index].timeSlot) {
+  if (isLoadingChoices || !values.tasks[index].timeSlot) {
     return (
       <>
         {inputLabel()}
