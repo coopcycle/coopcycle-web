@@ -69,7 +69,9 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
         $result = $this->spreadsheetParser->parse($tempnam, $message->getOptions());
 
-        foreach ($result->getData() as $rowNumber => $delivery) {
+        foreach ($result->getData() as $rowNumber => $deliveryImportData) {
+
+            $delivery = $deliveryImportData['delivery'];
 
             // Validate data
             $violations = $this->validator->validate($delivery);
@@ -100,9 +102,9 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
                 $result->addErrorToRow($rowNumber, $errorMessage);
             }
 
-            if ($delivery->getTourName()) {
+            if ($deliveryImportData['tourName']) {
                 foreach ($delivery->getTasks() as $task) {
-                    $tourName = $delivery->getTourName();
+                    $tourName = $deliveryImportData['tourName'];
                     $date = $task->getAfter();
                     $tour = $this->tourRepository->findByNameAndDate($tourName, $date);
 

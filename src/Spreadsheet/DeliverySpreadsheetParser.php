@@ -146,12 +146,13 @@ class DeliverySpreadsheetParser extends AbstractSpreadsheetParser
                 $this->applyTags($delivery->getDropoff(), $record['dropoff.tags']);
             }
 
-            if (isset($record['tour.name']) && !empty($record['tour.name'])) {
-                $delivery->setTourName($record['tour.name']);
-            }
+            $tourName = isset($record['tour.name']) && !empty($record['tour.name']) ? $record['tour.name'] : null;
 
             if (!$parseResult->rowHasErrors($rowNumber)) {
-                $parseResult->addData($rowNumber, $delivery);
+                $parseResult->addData(
+                    $rowNumber,
+                    ['delivery' => $delivery, 'tourName' => $tourName]
+                );
             }
 
         }

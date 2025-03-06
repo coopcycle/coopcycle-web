@@ -80,7 +80,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->geocoder->geocode(null)->shouldNotBeCalled(); // not called with empty lines
 
         /** @var Delivery */
-        $delivery = array_shift($data);
+        $delivery = array_shift($data)['delivery'];
         $this->assertEquals($delivery->getPickup()->getAddress()->getStreetAddress(), 'street address');
         $this->assertEquals($delivery->getDropoff()->getAddress()->getStreetAddress(), 'street address');
 
@@ -93,7 +93,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         $data = $parseResult->getData();
 
         /** @var Delivery */
-        $delivery = array_shift($data);
+        $delivery = array_shift($data)['delivery'];
         $this->assertEquals($delivery->getPickup()->getAddress()->getStreetAddress(), 'INVALID ADDRESS');
         $this->assertEquals($delivery->getPickup()->getAddress()->getGeo()->getLatitude(), 48.8534);
         $this->assertEquals($delivery->getPickup()->getAddress()->getGeo()->getLongitude(), 2.3488);
@@ -124,7 +124,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         $data = $parseResult->getData();
 
         /** @var Delivery */
-        $delivery = array_shift($data);
+        $delivery = array_shift($data)['delivery'];
         
         $this->assertEquals($delivery->getDropoff()->getAddress()->getGeo()->getLatitude(), 48.8534);
         $this->assertEquals($delivery->getDropoff()->getAddress()->getGeo()->getLongitude(), 2.3488);
@@ -153,7 +153,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         $data = $parseResult->getData();
 
         /** @var Delivery */
-        $delivery = array_shift($data);
+        $delivery = array_shift($data)['delivery'];
         $this->assertEquals($delivery->getPickup()->getMetadata()['foo'], 'fly');
         $this->assertEquals($delivery->getPickup()->getMetadata()['blu'], 'bla');
         $this->assertEquals($delivery->getDropoff()->getMetadata()['foo'], 'bar');
@@ -167,7 +167,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         $data = $parseResult->getData();
 
         /** @var Delivery */
-        $delivery = array_shift($data);
-        $this->assertEquals($delivery->getTourName(), 'test route');
+        $result = array_shift($data);
+        $this->assertEquals($result['tourName'], 'test route');
     }
 }

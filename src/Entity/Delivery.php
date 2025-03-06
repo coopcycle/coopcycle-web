@@ -170,11 +170,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     private $arbitraryPrice;
 
-    /**
-     * @var string
-     */
-    private $tourName;
-
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
         "in" => "body",
@@ -666,18 +661,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function setArbitraryPrice(ArbitraryPrice $arbitraryPrice): self
     {
         $this->arbitraryPrice = $arbitraryPrice;
-
-        return $this;
-    }
-
-    public function getTourName(): ?string
-    {
-        return $this->tourName;
-    }
-
-    public function setTourName(string $tourName): self
-    {
-        $this->tourName = $tourName;
 
         return $this;
     }
