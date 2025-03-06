@@ -10,6 +10,7 @@ use Geocoder\Location;
 use Geocoder\Model\Bounds;
 use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
+use Geocoder\Provider\GeocodeEarth\GeocodeEarth as GeocodeEarthProvider;
 use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
 use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
 use Geocoder\Provider\OpenCage\Model\OpenCageAddress;
@@ -38,6 +39,7 @@ class Geocoder
         private readonly RateLimiterStore $rateLimiterStore,
         private readonly SettingsManager $settingsManager,
         private readonly string $openCageApiKey,
+        private readonly string $geocodeEarthApiKey,
         private readonly string $country,
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
@@ -61,12 +63,14 @@ class Geocoder
 
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';
-
+            
             // Add OpenCage provider only if api key is configured
             if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();
             } elseif ('google' === $geocodingProvider) {
                 $providers[] = $this->createGoogleMapsProvider();
+            } else if (!empty($this->geocodeEarthApiKey)) { // cannot be set in the settings from the UI as provider, so we just need to check for key
+                $providers[] = $this->createGeocodeEarthProvider();
             }
 
             $provider = new ChainProvider($providers);
@@ -75,6 +79,18 @@ class Geocoder
         }
 
         return $this->geocoder;
+    }
+
+    private function createGeocodeEarthProvider() {
+        $rateLimiter = RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        return new GeocodeEarthProvider($httpAdapter, $this->geocodeEarthApiKey);
     }
 
     private function createAddokProvider() {

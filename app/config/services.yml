@@ -693,6 +693,7 @@ services:
   AppBundle\Service\Geocoder:
     arguments:
       $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
+      $geocodeEarthApiKey: '%env(GEOCODE_EARTH_API_KEY)%'
       $country: "%country_iso%"
       $locale: "%env(COOPCYCLE_LOCALE)%"
       $rateLimitPerSecond: 15
