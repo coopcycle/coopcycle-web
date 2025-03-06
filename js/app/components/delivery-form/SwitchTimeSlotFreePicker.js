@@ -6,13 +6,13 @@ import DateRangePicker from './DateRangePicker'
 import './SwitchTimeSlotFreePicker.scss'
 
 export default ({
-  storeId,
   storeDeliveryInfos,
   index,
   format,
   isTimeSlotSelect,
   setIsTimeSlotSelect,
-  isDispatcher
+  isDispatcher,
+  timeSlotLabels
 }) => {
   const { t } = useTranslation()
 
@@ -22,9 +22,9 @@ export default ({
         <div className="timeslot-container">
           <div className="timeslot-container__picker" style={{ width: '95%' }}>
             <TimeSlotPicker
-              storeId={storeId}
               storeDeliveryInfos={storeDeliveryInfos}
               index={index}
+              timeSlotLabels={timeSlotLabels}
             />
           </div>
           <i

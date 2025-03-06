@@ -122,6 +122,7 @@ export default function({ storeId, deliveryId, order }) {
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
+  const [timeSlotLabels, setTimeSlotLabels] = useState([])
   const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({
     tasks: [
@@ -184,6 +185,7 @@ export default function({ storeId, deliveryId, order }) {
     const storeURL = `${baseURL}/api/stores/${storeId}`
     const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
     const tagsURL = `${baseURL}/api/tags`
+    const timeSlotLabelsUrl = `${baseURL}/api/stores/${storeId}/time_slots`
 
     if (deliveryId) {
       Promise.all([
@@ -191,9 +193,10 @@ export default function({ storeId, deliveryId, order }) {
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
         httpClient.get(packagesURL),
-        httpClient.get(tagsURL)
+        httpClient.get(tagsURL),
+        httpClient.get(timeSlotLabelsUrl)
       ]).then(values => {
-        const [delivery, addresses, storeInfos, packages, tags] = values
+        const [delivery, addresses, storeInfos, packages, tags, timeSlotLabels] = values
 
         const storePackages = packages.response['hydra:member']
 
@@ -219,6 +222,7 @@ export default function({ storeId, deliveryId, order }) {
         setAddresses(addresses.response['hydra:member'])
         setStoreDeliveryInfos(storeInfos.response)
         setTags(tags.response['hydra:member'])
+        setTimeSlotLabels(timeSlotLabels.response['hydra:member'])
         setIsLoading(false)
       })
     } else {
@@ -226,9 +230,10 @@ export default function({ storeId, deliveryId, order }) {
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
         httpClient.get(packagesURL),
-        httpClient.get(tagsURL)
+        httpClient.get(tagsURL),
+        httpClient.get(timeSlotLabelsUrl)
       ]).then(values => {
-        const [addresses, storeInfos, packages, tags] = values
+        const [addresses, storeInfos, packages, tags, timeSlotLabels] = values
 
         const storePackages = packages.response['hydra:member']
         if (storePackages.length > 0) {
@@ -238,6 +243,7 @@ export default function({ storeId, deliveryId, order }) {
         setAddresses(addresses.response['hydra:member'])
         setStoreDeliveryInfos(storeInfos.response)
         setTags(tags.response['hydra:member'])
+        setTimeSlotLabels(timeSlotLabels.response['hydra:member'])
         setIsLoading(false)
       })
     }
@@ -459,6 +465,7 @@ export default function({ storeId, deliveryId, order }) {
                                     packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
@@ -484,6 +491,7 @@ export default function({ storeId, deliveryId, order }) {
                                     packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );

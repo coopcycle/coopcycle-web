@@ -13,29 +13,29 @@ import TimeSlotPicker from './TimeSlotPicker'
 import './Task.scss'
 import TagsSelect from '../TagsSelect'
 
-const renderTimeSlotPicker = ({isDispatcher, storeDeliveryInfos, storeId, index,  format, isTimeSlotSelect, setIsTimeSlotSelect}) => 
+const renderTimeSlotPicker = ({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => 
   isDispatcher ? 
     (<SwitchTimeSlotFreePicker
-      storeId={storeId}
       storeDeliveryInfos={storeDeliveryInfos}
       index={index}
       format={format}
       isTimeSlotSelect={isTimeSlotSelect}
       setIsTimeSlotSelect={setIsTimeSlotSelect}
       isDispatcher={isDispatcher}
+      timeSlotLabels={timeSlotLabels}
     />)
   :  (<TimeSlotPicker
-    storeId={storeId}
-    storeDeliveryInfos={storeDeliveryInfos}
-    index={index}
-  />)
+        storeDeliveryInfos={storeDeliveryInfos}
+        index={index}
+        timeSlotLabels={timeSlotLabels}
+      />)
 
 
-const renderDatePart = ({isDispatcher, isEdit, storeDeliveryInfos, storeId, index,  format, isTimeSlotSelect, setIsTimeSlotSelect}) => {
+const renderDatePart = ({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => {
     if (!Array.isArray(storeDeliveryInfos.timeSlots)) { // not loaded yet
       return <Spinner />
     } else if (storeDeliveryInfos.timeSlots.length > 1 && !isEdit) {
-      return renderTimeSlotPicker({isDispatcher, storeDeliveryInfos, storeId, index,  format, isTimeSlotSelect, setIsTimeSlotSelect})
+      return renderTimeSlotPicker({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels})
     } else {
       return <DateRangePicker format={format} index={index} isDispatcher={isDispatcher} />
     }
@@ -52,6 +52,7 @@ export default ({
   packages,
   isDispatcher,
   tags,
+  timeSlotLabels
 }) => {
   const { t } = useTranslation()
 
@@ -124,7 +125,7 @@ export default ({
           shallPrefillAddress={Boolean(task.type === 'PICKUP' && !isEdit && storeDeliveryInfos.prefillPickupAddress)}
         />
 
-        { renderDatePart({isDispatcher, isEdit, storeDeliveryInfos, storeId, index,  format, isTimeSlotSelect, setIsTimeSlotSelect}) }
+        { renderDatePart({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) }
 
         {task.type === 'DROPOFF' ? (
           <div className="mt-4">

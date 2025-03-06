@@ -10,7 +10,7 @@ import { usePrevious } from '../../dashboard/redux/utils'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeId, storeDeliveryInfos, index }) => {
+export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
   const httpClient = new window._auth.httpClient()
 
   const { t } = useTranslation()
@@ -19,7 +19,6 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const previousTimeSlotName = usePrevious(values.tasks[index].timeSlotName)
 
-  const [timeSlotLabels, setStoreLabels] = useState(null)
   const [formattedTimeslots, setFormattedTimeslots] = useState(null)
   const [isLoadingChoices, setIsLoadingChoices] = useState(false)
   const [selectedValues, setSelectedValues] = useState({})
@@ -47,13 +46,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     return formattedSlots
   }
 
-  const getTimeSlotsLabels = async () => {
-    const url = `${baseURL}/api/stores/${storeId}/time_slots`
-
-    const { response } = await httpClient.get(url)
-    const timeSlotLabels = response['hydra:member']
-    setStoreLabels(timeSlotLabels)
-
+  const getTimeSlotsLabels = () => {
     const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
     setFieldValue(`tasks[${index}].timeSlotName`, defaultLabel.name)
   }
