@@ -30,13 +30,13 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     second = moment(second)
     const date = moment(first).format('YYYY-MM-DD')
     const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
-    return {date, hour}
+    return { date, hour }
   }
 
   const extractTimeSlotsDateAndHour = (timeSlotChoices) => {
     const formattedSlots = {}
     timeSlotChoices.forEach(choice => {
-      const {date, hour} = extractDateAndRangeFromTimeSlot(choice.value)
+      const { date, hour } = extractDateAndRangeFromTimeSlot(choice.value)
       if (formattedSlots[date]) {
         formattedSlots[date].push(hour)
       } else {
@@ -53,7 +53,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
     const { response } = await httpClient.get(url)
     const timeSlotLabels = response['hydra:member']
     setStoreLabels(timeSlotLabels)
-    
+
     const defaultLabel = timeSlotLabels.find(label => label['@id'] === storeDeliveryInfos.timeSlot)
     setFieldValue(`tasks[${index}].timeSlotName`, defaultLabel.name)
   }
@@ -134,7 +134,7 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   if (!timeSlotLabels || isLoadingChoices || !values.tasks[index].timeSlot) {
     return (
       <>
-        {inputLabel() }
+        {inputLabel()}
         <Spinner />
       </>)
   }
@@ -147,14 +147,14 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
 
   const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
   const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
-  
-  const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')]
+
+  const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
 
   return (
     <>
-      { inputLabel() }
+      {inputLabel()}
 
-      { timeSlotLabels.length > 1 ?
+      {timeSlotLabels.length > 1 ?
         <Radio.Group
           className="timeslot__container mb-2"
           value={values.tasks[index].timeSlotName}
