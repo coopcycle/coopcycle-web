@@ -72,7 +72,7 @@ const dropoffSchema = {
   after: getNextRoundedTime().toISOString(),
   before: getNextRoundedTime().add(10, 'minutes').toISOString(),
   timeSlot: null,
-  timeSlotName: null,
+  timeSlotUrl: null,
   comments: '',
   address: {
     streetAddress: '',
@@ -91,7 +91,7 @@ const pickupSchema = {
   after: getNextRoundedTime().toISOString(),
   before: getNextRoundedTime().add(10, 'minutes').toISOString(),
   timeSlot: null,
-  timeSlotName: null,
+  timeSlotUrl: null,
   comments: '',
   address: {
     streetAddress: '',
@@ -124,13 +124,8 @@ export default function({ storeId, deliveryId, order }) {
   const [tags, setTags] = useState([])
   const [timeSlotLabels, setTimeSlotLabels] = useState([])
   const [trackingLink, setTrackingLink] = useState('#')
-  const [initialValues, setInitialValues] = useState({
-    tasks: [
-      pickupSchema,
-      dropoffSchema,
-    ],
-  })
-  const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
+  const [initialValues, setInitialValues] = useState({tasks: []})
+  const [isLoading, setIsLoading] = useState(true)
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
@@ -240,6 +235,12 @@ export default function({ storeId, deliveryId, order }) {
           setStorePackages(storePackages)
         }
 
+        setInitialValues({
+          tasks: [
+            {...pickupSchema, timeSlotUrl: storeInfos.response.timeSlot},
+            {...dropoffSchema, timeSlotUrl: storeInfos.response.timeSlot}
+          ],
+        })
         setAddresses(addresses.response['hydra:member'])
         setStoreDeliveryInfos(storeInfos.response)
         setTags(tags.response['hydra:member'])
@@ -247,7 +248,7 @@ export default function({ storeId, deliveryId, order }) {
         setIsLoading(false)
       })
     }
-  }, [deliveryId, storeId])
+  }, [])
 
 
   const handleSubmit = useCallback(async (values) => {
@@ -360,7 +361,7 @@ export default function({ storeId, deliveryId, order }) {
     },
     800
   )
-
+  
   return (
     isLoading ?
       <div className="delivery-spinner">
@@ -412,10 +413,10 @@ export default function({ storeId, deliveryId, order }) {
               }
 
               // Case 2: Time slot changed
-              if (prevFirstTask.timeSlotName !== firstTask.timeSlotName) {
+              if (prevFirstTask.timeSlotUrl !== firstTask.timeSlotUrl) {
                 values.tasks.slice(1).forEach((_, idx) => {
                   const taskIndex = idx + 1;
-                  setFieldValue(`tasks[${taskIndex}].timeSlotName`, firstTask.timeSlotName);
+                  setFieldValue(`tasks[${taskIndex}].timeSlotUrl`, firstTask.timeSlotUrl);
                 });
                 return;
               }
@@ -508,7 +509,7 @@ export default function({ storeId, deliveryId, order }) {
                                   before: values.tasks.slice(-1)[0].before,
                                   after: values.tasks.slice(-1)[0].after,
                                   timeSlot: values.tasks.slice(-1)[0].timeSlot,
-                                  timeSlotName: values.tasks.slice(-1)[0].timeSlotName
+                                  timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
                                 }
                                 arrayHelpers.push(newDeliverySchema)
                               }}>

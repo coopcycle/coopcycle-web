@@ -6,19 +6,16 @@ import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
 import Spinner from '../core/Spinner'
-import { usePrevious } from '../../dashboard/redux/utils'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
+export default ({ index, timeSlotLabels }) => {
 
   const httpClient = new window._auth.httpClient()
 
   const { t } = useTranslation()
 
   const { setFieldValue, values } = useFormikContext()
-
-  const previousTimeSlotName = usePrevious(values.tasks[index].timeSlotName)
 
   const [formattedTimeslots, setFormattedTimeslots] = useState(null)
   const [isLoadingChoices, setIsLoadingChoices] = useState(false)
@@ -48,40 +45,34 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
   }
 
   const getTimeSlotChoices = async timeSlotUrl => {
-
     setIsLoadingChoices(true)
 
     const url = `${baseURL}${timeSlotUrl}/choices`
     const { response } = await httpClient.get(url)
-    const formattedSlots = extractTimeSlotsDateAndHour(response['choices'])
 
-    setFormattedTimeslots(formattedSlots)
-
-    const availableDates = Object.keys(formattedSlots)
-    if (availableDates.length > 0) {
+    if (response['choices'].length === 0) {
+      console.log('no choices')
+      setFieldValue(`tasks[${index}].timeSlot`, 'No choice')
+    } else {
+      const formattedSlots = extractTimeSlotsDateAndHour(response['choices'])
+      setFormattedTimeslots(formattedSlots)
+      const availableDates = Object.keys(formattedSlots)
       const firstDate = moment(availableDates[0])
       setSelectedValues({
         date: firstDate,
         hour: formattedSlots[availableDates[0]][0],
-      })
+      })  
     }
 
     setIsLoadingChoices(false)
   }
 
   useEffect(() => {
-    const timeSlotUrl = storeDeliveryInfos.timeSlot
-    getTimeSlotChoices(timeSlotUrl)
-  }, [])
+    getTimeSlotChoices(values.tasks[index].timeSlotUrl)
+  }, [values.tasks[index].timeSlotUrl])
 
   useEffect(() => {
-    if (previousTimeSlotName && previousTimeSlotName !== values.tasks[index].timeSlotName) {
-      const timeSlotUrl = timeSlotLabels.find(label => label.name === values.tasks[index].timeSlotName)['@id']
-      getTimeSlotChoices(timeSlotUrl)
-    }
-  }, [values.tasks[index].timeSlotName])
-
-  useEffect(() => {
+    console.log('slected changed', selectedValues)
     if (Object.keys(selectedValues).length !== 0) {
       const date = selectedValues.date.format('YYYY-MM-DD')
       const range = selectedValues.hour
@@ -92,17 +83,11 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
   }, [selectedValues])
 
   const handleTimeSlotLabelChange = e => {
-    const label = timeSlotLabels.find(
-      label => label.name === e.target.value,
-    )
-    const timeSlotUrl = label['@id']
-    getTimeSlotChoices(timeSlotUrl)
-    setFieldValue(`tasks[${index}].timeSlotName`, label.name)
+    setFieldValue(`tasks[${index}].timeSlot`, null)
+    setFieldValue(`tasks[${index}].timeSlotUrl`, e.target.value)
   }
 
   const handleDateChange = newDate => {
-    if (!newDate) return
-
     setSelectedValues({
       date: newDate,
       hour: formattedTimeslots[newDate.format('YYYY-MM-DD')][0],
@@ -110,6 +95,7 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
   }
 
   const handleHourChange = hour => {
+    console.log(hour)
     setSelectedValues(prevState => ({ ...prevState, hour: hour }))
   }
 
@@ -132,6 +118,9 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
   const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
   const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
 
+  console.log(values.tasks[index].timeSlot)
+  console.log(selectedHour)
+
   const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
 
   return (
@@ -141,14 +130,14 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
       {timeSlotLabels.length > 1 ?
         <Radio.Group
           className="timeslot__container mb-2"
-          value={values.tasks[index].timeSlotName}
+          value={values.tasks[index].timeSlotUrl}
         >
           {timeSlotLabels.map(label => (
             <Radio.Button
               key={label.name}
-              value={label.name}
-              onChange={timeSlotName => {
-                handleTimeSlotLabelChange(timeSlotName)
+              value={label['@id']}
+              onChange={timeSlotUrl => {
+                handleTimeSlotLabelChange(timeSlotUrl)
               }}>
               {label.name}
             </Radio.Button>
@@ -157,34 +146,37 @@ export default ({ storeDeliveryInfos, index, timeSlotLabels }) => {
         : null
       }
 
-      <div style={{ display: 'flex', marginTop: '0.5em' }}>
-        <DatePicker
-          format="LL"
-          style={{ width: '60%' }}
-          className="mr-2"
-          disabledDate={isDateDisabled}
-          disabled={availableDates.length > 1 ? false : true}
-          value={selectedDate}
-          onChange={date => {
-            handleDateChange(date)
-          }}
-        />
-        <Select
-          style={{ width: '35%' }}
-          onChange={option => {
-            handleHourChange(option)
-          }}
-          value={selectedHour}
-        >
-          {
-            hourOptions.map(option => (
-              <Select.Option key={option} value={option}>
-                {option}
-              </Select.Option>
-            ))
-          }
-        </Select>
-      </div>
+      { hourOptions.length > 0 ? 
+        <div style={{ display: 'flex', marginTop: '0.5em' }}>
+          <DatePicker
+            format="LL"
+            style={{ width: '60%' }}
+            className="mr-2"
+            disabledDate={isDateDisabled}
+            disabled={availableDates.length > 1 ? false : true}
+            value={selectedDate}
+            onChange={date => {
+              handleDateChange(date)
+            }}
+          />
+          <Select
+            style={{ width: '35%' }}
+            onChange={option => {
+              handleHourChange(option)
+            }}
+            value={selectedHour}
+          >
+            {
+              hourOptions.map(option => (
+                <Select.Option key={option} value={option}>
+                  {option}
+                </Select.Option>
+              ))
+            }
+          </Select>
+        </div>
+        : <p>{t('ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE')}</p>
+      }
     </>
   )
 }
