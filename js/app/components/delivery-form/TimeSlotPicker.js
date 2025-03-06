@@ -153,21 +153,25 @@ export default ({ storeId, storeDeliveryInfos, index }) => {
   return (
     <>
       { inputLabel() }
-      <Radio.Group
-        className="timeslot__container mb-2"
-        value={values.tasks[index].timeSlotName}
-      >
-        {timeSlotLabels.map(label => (
-          <Radio.Button
-            key={label.name}
-            value={label.name}
-            onChange={timeSlotName => {
-              handleTimeSlotLabelChange(timeSlotName)
-            }}>
-            {label.name}
-          </Radio.Button>
-        ))}
-      </Radio.Group>
+
+      { timeSlotLabels.length > 1 ?
+        <Radio.Group
+          className="timeslot__container mb-2"
+          value={values.tasks[index].timeSlotName}
+        >
+          {timeSlotLabels.map(label => (
+            <Radio.Button
+              key={label.name}
+              value={label.name}
+              onChange={timeSlotName => {
+                handleTimeSlotLabelChange(timeSlotName)
+              }}>
+              {label.name}
+            </Radio.Button>
+          ))}
+        </Radio.Group>
+        : null
+      }
 
       <div style={{ display: 'flex', marginTop: '0.5em' }}>
         <DatePicker
