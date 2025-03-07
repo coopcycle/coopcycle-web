@@ -19,29 +19,37 @@ export default ({ index, timeSlotLabels }) => {
 
   const [formattedTimeslots, setFormattedTimeslots] = useState(null)
   const [isLoadingChoices, setIsLoadingChoices] = useState(false)
-  const [selectedValues, setSelectedValues] = useState({})
 
   const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
     let [first, second] = timeSlotChoice.split('/')
     first = moment(first)
     second = moment(second)
-    const date = moment(first).format('YYYY-MM-DD')
+    const date = moment(first)
     const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
     return { date, hour }
   }
 
-  const extractTimeSlotsDateAndHour = (timeSlotChoices) => {
+  const formatSlots = (timeSlotChoices) => {
     const formattedSlots = {}
     timeSlotChoices.forEach(choice => {
       const { date, hour } = extractDateAndRangeFromTimeSlot(choice.value)
-      if (formattedSlots[date]) {
-        formattedSlots[date].push(hour)
+      const formattedDate = date.format('YYYY-MM-DD')
+      if (formattedSlots[formattedDate]) {
+        formattedSlots[formattedDate].push(hour)
       } else {
-        formattedSlots[date] = [hour]
+        formattedSlots[formattedDate] = [hour]
       }
     })
 
     return formattedSlots
+  }
+
+  const setTimeSlotFromDateAndRange = (date, hourRange) => {
+    const [first, second] = hourRange.split('-')
+    const startTime = date.clone().hours(first.split(':')[0]).minutes(first.split(':')[1])
+    const endTime = date.clone().hours(second.split(':')[0]).minutes(second.split(':')[1])
+    const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
+    setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
   }
 
   const getTimeSlotChoices = async timeSlotUrl => {
@@ -53,15 +61,12 @@ export default ({ index, timeSlotLabels }) => {
     if (response['choices'].length === 0) {
       setFieldValue(`tasks[${index}].timeSlot`, 'No choice')
     } else {
-      const formattedSlots = extractTimeSlotsDateAndHour(response['choices'])
+      const formattedSlots = formatSlots(response['choices'])
       setFormattedTimeslots(formattedSlots)
 
       const availableDates = Object.keys(formattedSlots)
       const firstDate = moment(availableDates[0])
-      setSelectedValues({
-        date: firstDate,
-        hour: formattedSlots[availableDates[0]][0],
-      })  
+      setTimeSlotFromDateAndRange(firstDate, formattedSlots[availableDates[0]][0])
     }
 
     setIsLoadingChoices(false)
@@ -71,31 +76,19 @@ export default ({ index, timeSlotLabels }) => {
     getTimeSlotChoices(values.tasks[index].timeSlotUrl)
   }, [values.tasks[index].timeSlotUrl])
 
-  useEffect(() => {
-    if (Object.keys(selectedValues).length !== 0) {
-      const range = selectedValues.hour
-      const [first, second] = range.split('-')
-      const startTime = selectedValues.date.clone().hours(first.split(':')[0]).minutes(first.split(':')[1])
-      const endTime = selectedValues.date.clone().hours(second.split(':')[0]).minutes(second.split(':')[1])
-      const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
-      setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
-    }
-  }, [selectedValues])
-
   const handleTimeSlotLabelChange = e => {
     setFieldValue(`tasks[${index}].timeSlot`, null)
     setFieldValue(`tasks[${index}].timeSlotUrl`, e.target.value)
   }
 
   const handleDateChange = newDate => {
-    setSelectedValues({
-      date: newDate,
-      hour: formattedTimeslots[newDate.format('YYYY-MM-DD')][0],
-    })
+    const { hour } = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot)
+    setTimeSlotFromDateAndRange(newDate, hour)
   }
 
-  const handleHourChange = hour => {
-    setSelectedValues(prevState => ({ ...prevState, hour: hour }))
+  const handleHourChange = hourRange => {
+    const { date } = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot)
+    setTimeSlotFromDateAndRange(date, hourRange)
   }
 
   const inputLabel = () => <div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>
@@ -114,7 +107,7 @@ export default ({ index, timeSlotLabels }) => {
     return !availableDates.some(date => date.isSame(current, 'day'))
   }
 
-  const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
+  const selectedDate = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date
   const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
 
   const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
