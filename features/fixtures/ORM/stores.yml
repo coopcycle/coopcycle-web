@@ -203,3 +203,12 @@ AppBundle\Entity\Store:
     timeSlots: ['@time_slot_1', '@time_slot_2']
     __calls:
       - addAddress: ['@address_1']
+  store_10:
+    name: 'Deleted store'
+    deletedAt: <identity(new \DateTime('yesterday'))>
+    address: '@address_1'
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: ['@address_1']
