@@ -163,6 +163,7 @@ function hydrate(item, { ruleTarget, expression, expressionAST }) {
   }
   render(
     <RulePicker
+      ruleTarget={ruleTarget}
       zones={zones}
       packages={packages}
       expression={expression}

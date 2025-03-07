@@ -131,6 +131,7 @@ class RulePicker extends React.Component {
             <RulePickerLine
               key={ `${index}-${this.state.rev}` }
               index={ index }
+              ruleTarget={ this.props.ruleTarget }
               type={ line.left }
               operator={ line.operator }
               value={ line.right }
@@ -157,6 +158,7 @@ class RulePicker extends React.Component {
 }
 
 RulePicker.defaultProps = {
+  ruleTarget: 'DELIVERY',
   expression: '',
   onExpressionChange: () => {},
   zones: [],
@@ -164,6 +166,7 @@ RulePicker.defaultProps = {
 }
 
 RulePicker.propTypes = {
+  ruleTarget: PropTypes.string,
   expression: PropTypes.string.isRequired,
   onExpressionChange: PropTypes.func.isRequired,
   zones: PropTypes.arrayOf(PropTypes.string),

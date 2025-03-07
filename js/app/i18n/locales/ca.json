@@ -85,8 +85,6 @@
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Diferencia (dies)",
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Diferència (hores)",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Entrega a domicili",
-        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Total d'ítems",
-        "RULE_PICKER_LINE_OPTGROUP_ORDER": "Comanda",
         "ORDER_LIST_STATE": "Estat",
         "ORDER_LIST_PREPARATION_TIME": "Hora de preparació",
         "ORDER_LIST_PICKUP_TIME": "Hora de recollida",
