@@ -78,11 +78,6 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
     return formValue ? moment(formValue) : defaultBeforeValue
   })
 
-  useEffect(() => {
-    setFieldValue(`tasks[${index}].after`, afterValue.toISOString(true))
-    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString(true))
-  }, [afterValue, beforeValue, index, setFieldValue])
-
   const [isComplexPicker, setIsComplexPicker] = useState(
     moment(values.tasks[index].after).isBefore(
       values.tasks[index].before,
@@ -90,17 +85,13 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
     ),
   )
 
-  const [timeValues, setTimeValues] = useState(() => {
-    const after = afterValue || defaultAfterValue
-    const before = beforeValue || defaultBeforeValue
-    return {
-      after: after.format('HH:mm'),
-      before: before.format('HH:mm'),
-    }
-  })
-
   const firstSelectOptions = generateTimeSlots()
   const [secondSelectOptions, setSecondSelectOptions] = useState([])
+
+  useEffect(() => {
+    setFieldValue(`tasks[${index}].after`, afterValue.toISOString(true))
+    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString(true))
+  }, [afterValue, beforeValue, index, setFieldValue])
 
   useEffect(() => {
     if (afterValue) {
@@ -127,29 +118,16 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   }
 
   const handleAfterHourChange = newValue => {
-    if (!newValue) return
-
     const date =
       afterValue?.format('YYYY-MM-DD') || defaultAfterValue.format('YYYY-MM-DD')
     const newAfterHour = moment(`${date} ${newValue}:00`)
     const newBeforeHour = newAfterHour.clone().add(10, 'minutes')
-
-    setTimeValues({
-      after: newAfterHour.format('HH:mm'),
-      before: newBeforeHour.format('HH:mm'),
-    })
 
     setAfterValue(newAfterHour)
     setBeforeValue(newBeforeHour)
   }
 
   const handleBeforeHourChange = newValue => {
-    if (!newValue) return
-
-    setTimeValues(prevState => ({
-      ...prevState,
-      before: newValue,
-    }))
     const date =
       beforeValue?.format('YYYY-MM-DD') ||
       defaultAfterValue.format('YYYY-MM-DD')
@@ -168,10 +146,6 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
     if (isComplexPicker === true) {
       const before = afterValue.clone().add(1, 'hours')
       setBeforeValue(before)
-      setTimeValues(prevValues => ({
-        ...prevValues,
-        before: before.format('HH:mm'),
-      }))
     }
     setIsComplexPicker(!isComplexPicker)
   }
@@ -196,6 +170,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
               ? [afterValue, beforeValue]
               : [defaultAfterValue, defaultBeforeValue]
           }
+          value={[moment(values.tasks[index].after), moment(values.tasks[index].before)]}
           onChange={handleComplexPickerDateChange}
           showTime={{
             ...timePickerProps,
@@ -229,6 +204,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
           className="picker-container__datepicker mr-2"
           format={format}
           defaultValue={afterValue || defaultAfterValue}
+          value={moment(values.tasks[index].after)}
           onChange={newDate => {
             handleDateChange(newDate)
           }}
@@ -237,7 +213,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         <Select
           className="picker-container__select-left mr-2"
           format={format}
-          value={timeValues.after}
+          value={moment(values.tasks[index].after).format('HH:mm')}
           onChange={newAfterHour => {
             handleAfterHourChange(newAfterHour)
           }}>
@@ -254,7 +230,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         <Select
           className="picker-container__select-right"
           format={format}
-          value={timeValues.before}
+          value={moment(values.tasks[index].before).format('HH:mm')}
           onChange={newBeforeHour => {
             handleBeforeHourChange(newBeforeHour)
           }}>
