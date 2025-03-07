@@ -12,6 +12,7 @@ import {
   ORDER_CANCELLED,
   ORDER_FULFILLED,
   ORDER_DELAYED,
+  ORDER_STATE_CHANGED,
   FETCH_REQUEST,
   ACCEPT_ORDER_REQUEST_SUCCESS,
   ACCEPT_ORDER_REQUEST_FAILURE,
@@ -23,6 +24,8 @@ import {
   DELAY_ORDER_REQUEST_FAILURE,
   FULFILL_ORDER_REQUEST_SUCCESS,
   FULFILL_ORDER_REQUEST_FAILURE,
+  RESTORE_ORDER_REQUEST_SUCCESS,
+  RESTORE_ORDER_REQUEST_FAILURE,
   SEARCH_RESULTS,
   ACTIVE_TAB,
   INIT_HTTP_CLIENT,
@@ -32,6 +35,7 @@ import {
   CLOSE_LOOPEAT_SECTION,
   SET_LOOPEAT_FORMATS,
   UPDATE_LOOPEAT_FORMATS_SUCCESS,
+  COLUMN_TOGGLED,
 } from './actions'
 
 export const initialState = {
@@ -59,6 +63,10 @@ export const initialState = {
   reusablePackagings: {},
   isLoopeatSectionOpen: false,
   loopeatFormats: [],
+  errorMessage: '',
+  preferences: {
+    collapsedColumns: [],
+  },
 }
 
 // The "force" parameter is useful for multi vendor orders,
@@ -100,6 +108,7 @@ export default (state = initialState, action = {}) => {
 
     return {
       ...state,
+      errorMessage: '',
       isFetching: true,
     }
 
@@ -108,6 +117,15 @@ export default (state = initialState, action = {}) => {
   case REFUSE_ORDER_REQUEST_FAILURE:
   case DELAY_ORDER_REQUEST_FAILURE:
   case FULFILL_ORDER_REQUEST_FAILURE:
+  case RESTORE_ORDER_REQUEST_FAILURE:
+
+    if (action.payload.response && 400 === action.payload.response.status) {
+      return {
+        ...state,
+        errorMessage: action.payload.response.data['hydra:description'],
+        isFetching: false,
+      }
+    }
 
     return {
       ...state,
@@ -119,9 +137,11 @@ export default (state = initialState, action = {}) => {
   case CANCEL_ORDER_REQUEST_SUCCESS:
   case DELAY_ORDER_REQUEST_SUCCESS:
   case FULFILL_ORDER_REQUEST_SUCCESS:
+  case RESTORE_ORDER_REQUEST_SUCCESS:
 
     return {
       ...state,
+      errorMessage: '',
       isFetching: false,
       orders: replaceOrder(state.orders, action.payload),
       order: null,
@@ -200,10 +220,20 @@ export default (state = initialState, action = {}) => {
       orders: replaceOrder(state.orders, Object.assign({}, action.payload), true),
     }
 
+  case ORDER_STATE_CHANGED:
+
+    return {
+      ...state,
+      orders: replaceOrder(state.orders, Object.assign({}, action.payload)),
+    }
+
   case SET_CURRENT_ORDER:
 
     return {
       ...state,
+      isLoopeatSectionOpen: false,
+      loopeatFormats: [],
+      errorMessage: '',
       order: action.payload,
     }
 
@@ -275,6 +305,29 @@ export default (state = initialState, action = {}) => {
       order: action.payload,
     }
 
+  case COLUMN_TOGGLED: {
+    const columnId = action.payload
+
+    const collapsedColumns = state.preferences.collapsedColumns
+
+    if (collapsedColumns.includes(columnId)) {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          collapsedColumns: collapsedColumns.filter(col => col !== columnId)
+        }
+      }
+    } else {
+      return {
+        ...state,
+        preferences: {
+          ...state.preferences,
+          collapsedColumns: collapsedColumns.concat(columnId)
+        }
+      }
+    }
+  }
   }
 
   return state

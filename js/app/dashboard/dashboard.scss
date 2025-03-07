@@ -17,7 +17,7 @@ html, body {
 }
 
 .content {
-  height: calc(100% - 50px);
+  height: calc(100vh - ($navbar-height));
 }
 
 .dashboard {
@@ -31,10 +31,8 @@ html, body {
     display: flex;
     flex: 1;
     width: 100%;
-    height: 100vh;
-  }
-  &--nav &__wrapper {
-    height: calc(100vh - 50px);
+    flex-direction: column;
+    height: 100%;
   }
 
   &__map, &__aside, &__map-container {
@@ -56,10 +54,16 @@ html, body {
 
   &__toolbar-container {
     width: 100%;
+    height: $navbar-height;
     .navbar {
+      height: $navbar-height;
       margin-bottom: 0;
       border-radius: 0;
     }
+  }
+
+  &__content {
+    height: calc(100vh - 2 * ($navbar-height));
   }
 
   &__loader {
@@ -80,7 +84,8 @@ html, body {
   &__panel {
     display: flex;
     flex-direction: column;
-    > h4 {
+
+    .dashboard__panel__header {
       padding: 15px;
       margin: 0;
       background-color: $dark-gray;
@@ -94,29 +99,15 @@ html, body {
       }
     }
 
+    &__collapsed {
+      text-align: center;
+      height: 100%;
+      padding: 5px;
+    }
+
     &__scroll {
       overflow: auto;
     }
-
-    &__search {
-      position: absolute;
-      max-height: 100%;
-      height: 100%;
-      z-index: 1;
-      left: 0;
-      right: 0;
-      transform: translateY(100%);
-      transition: transform 0.4s;
-      background-color: #fff;
-      &--on {
-        transform: translateY(0);
-      }
-    }
-
-    &__search-box {
-      padding: 15px;
-    }
-
   }
 
   &__date {
@@ -124,13 +115,24 @@ html, body {
     padding-right: 15px;
   }
 
-  &__date-picker {
+  &__date-picker, &__search-input {
     margin: 9px 0;
     display: inline-block;
 
     .ant-calendar-picker {
       margin: 0;
     }
+  }
+
+  &__search-result {
+    padding: 2px;
+    text-wrap: wrap;
+  }
+
+  &__search-result .ant-select-item-option-content {
+    overflow: unset;
+    white-space: unset;
+    text-overflow: unset;
   }
 
   &__date-link {
@@ -161,7 +163,7 @@ html, body {
     flex-direction: column;
 
     min-width: 275px;
-    font-size: 11px;
+    font-size: 12px;
 
     overflow: hidden;
 
@@ -172,25 +174,75 @@ html, body {
     }
   }
 
-  .accordion__button {
+  .task-list__header {
+    cursor: pointer;
     padding: 1em 0.5em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     background-color: darken(#f5f5f5, 10%);
     border-bottom: 1px solid darken(#f5f5f5, 20%);
-    > span {
-      font-size: 16px;
-    }
+
     &:hover {
       background-color: darken(#f5f5f5, 15%);
     }
   }
+
+  .panel--group, .panel--tour {
+    border-color: $main-blue-dark;
+    border-width: 2px;
+    margin: 4px; // so it is easier to drag tasks between tours in the dashboard panel
+  }
 }
 
-.list-group-padded {
-  padding-left: 15px;
-  background-color: #E8E8E8;
+.task-list__badges > * {
+  margin-right: $base-margin-xs;
+}
+
+.task-list__badges .badge {
+  background-color: $dark;
+}
+
+.dashboard__badge {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border-radius: 40px;
+}
+
+.dashboard__badge--trailer {
+  // small hack to visually center SVGs on badges
+  svg {
+    position: relative;
+    top: 2px;
+    left: 1px;
+  }
+}
+
+.dashboard__badge--vehicle {
+  // small hack to visually center SVGs on badges
+  svg {
+    position: relative;
+    top: 2px;
+  }
+}
+
+.dashboard__multi-value__label {
+  font-size: 100%;
+}
+
+.tasklist__actions--icon {
+  height: 30px;
+  width: 30px;
+  color: $dark;
+  fill: $dark;
+
+  &:hover {
+    color: $gray-300;
+    fill: $gray-300;
+    text-decoration: none;
+  }
+}
+
+.dashboard__map-container .leaflet-popup-content-wrapper {
+  min-width: 200px;
 }
 
 :not(.task-package).list-group-item {
@@ -198,7 +250,8 @@ html, body {
   font-size: 12px;
   position: relative;
   cursor: pointer;
-  border-radius: 0 !important;
+  border-radius: 4px 0 !important;
+  margin: 4px;
   padding: 8px 8px 8px 14px;
   border-right: none;
 
@@ -239,14 +292,14 @@ html, body {
 }
 
 .taskList__tasks {
+  border: 2px dashed #F1C40F;
+  padding: 4px;
+  background-color: $light-gray;
+  box-sizing: border-box;
+  min-height: ($line-height-computed * 2) + (6 * 2);
+
   .list-group-item {
     padding: 8px 32px 8px 14px;
-  }
-  &--empty {
-    box-sizing: border-box;
-    background-color: lighten(#F39C12, 30%);
-    border: 3px dashed #F1C40F;
-    min-height: ($line-height-computed * 2) + (6 * 2);
   }
 }
 
@@ -273,6 +326,7 @@ html, body {
 }
 
 .task__draggable {
+  border: 1px solid $dark !important;
   &--dragging {
     opacity: 0.4;
   }
@@ -284,7 +338,17 @@ html, body {
 }
 
 .task__highlighted {
-  background-color: $yellow!important;
+  background: $yellow!important;
+}
+
+.task__has-incidents {
+  background: repeating-linear-gradient(
+    -45deg,
+    $white,
+    $white 10px,
+    lighten($yellow, 40%) 9px,
+    lighten($yellow, 40%) 18px
+    )
 }
 
 .task__eta {
@@ -334,6 +398,9 @@ html, body {
   padding: 0;
 }
 
+.ReactModal__Content--task-report-incident {
+  min-width: 40%;
+}
 .ReactModal__Content--filters {
   min-width: 66.666%;
 }
@@ -530,4 +597,9 @@ $pulse-color: #2ECC40;
       overflow: auto;
     }
   }
+}
+
+.contexify .contexify_submenu {
+  max-height: 160px;
+  overflow: auto;
 }

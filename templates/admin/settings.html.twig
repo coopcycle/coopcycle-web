@@ -1,5 +1,9 @@
 {% extends "admin.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.settings.title'|trans) }}
+{% endblock %}
+
 {% form_theme form 'form/settings.html.twig' %}
 {% form_theme maintenance_form 'bootstrap_3_layout.html.twig' %}
 {% form_theme banner_form 'bootstrap_3_layout.html.twig' %}
@@ -13,10 +17,28 @@
 {% block content %}
 
 <div class="alert alert-info">
-  <i class="fa fa-globe"></i>  {% trans %}form.settings.date_time{% endtrans %}
-  <span class="pull-right">
-    <span>{{ 'now'|format_datetime('none', 'short') }} {{ timezone }}</span>
-  </span>
+  <table class="w-100">
+    <tbody>
+      <tr>
+        <td>
+          <i class="fa fa-code-fork mr-2"></i>
+          <span>{% trans %}form.settings.version{% endtrans %}</span>
+        </td>
+        <td class="text-right">
+          <a class="text-monospace" href="{{ coopcycle_github_release_link() }}" target="_blank">{{ coopcycle_version() }}</a>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <i class="fa fa-globe mr-2"></i>
+          <span>{% trans %}form.settings.date_time{% endtrans %}</span>
+        </td>
+        <td class="text-right">
+           <span class="mr-2">{{ 'now'|format_datetime('none', 'short') }}</span><span>{{ timezone }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 {{ form_start(form) }}
@@ -30,6 +52,8 @@
       {{ form_row(form.brand_name) }}
       {{ form_row(form.administrator_email) }}
       {{ form_row(form.phone_number) }}
+      {{ form_row(form.company_legal_name) }}
+      {{ form_row(form.company_legal_id) }}
     </div>
   </div>
 
@@ -40,20 +64,15 @@
     </div>
   </div>
 
-  {{ form_row(form.subject_to_vat) }}
-  {% if form.guest_checkout_enabled is defined %}
-  {{ form_row(form.guest_checkout_enabled) }}
-  {% endif %}
-
   <div class="alert alert-danger">
     <i class="fa fa-warning"></i> {{ 'form.maintenance.enable.label'|trans }}
     <div class="pull-right">
       <div id="maintenance"></div>
     </div>
     {% if maintenance is not empty %}
-    <div class="pull-right">
-      <a href="#" style="margin-right: 15px;" id="maintenance-edit">{{ 'basics.edit'|trans }}</a>
-    </div>
+      <div class="pull-right">
+        <a href="#" style="margin-right: 15px;" id="maintenance-edit">{{ 'basics.edit'|trans }}</a>
+      </div>
     {% endif %}
   </div>
 
@@ -66,12 +85,55 @@
 
   <hr>
 
+  {{ form_row(form.currency_code) }}
+
+  <hr>
+
+  <h5>{% trans %}adminDashboard.taxation.title{% endtrans %}</h5>
+
+  {{ form_row(form.subject_to_vat) }}
+
+  <hr>
+
   {% if form.stripe is defined %}
-  {% include 'admin/_partials/stripe.html.twig' %}
+    <hr>
+    {% include 'admin/_partials/stripe.html.twig' %}
   {% endif %}
 
   {% if form.mercadopago is defined %}
+    <hr>
     {% include 'admin/_partials/mercadopago.html.twig' %}
+  {% endif %}
+
+  {% if form.paygreen is defined %}
+    <hr>
+    {% include 'admin/_partials/paygreen.html.twig' %}
+  {% endif %}
+
+  <hr>
+
+  {{ form_row(form.accounting_account) }}
+
+  <hr>
+
+  <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
+
+  {{ form_row(form.latlng) }}
+
+  {% if form.autocomplete_provider is defined %}
+    {{ form_row(form.autocomplete_provider) }}
+  {% endif %}
+
+  {% if form.geocoding_provider is defined %}
+    {{ form_row(form.geocoding_provider) }}
+  {% endif %}
+
+  {% if form.google_api_key_custom is defined %}
+    {% set is_google_api_key_visible =
+      (form.autocomplete_provider.vars.data == 'google' or form.geocoding_provider.vars.data == 'google') %}
+    <div class="{{ not is_google_api_key_visible ? 'd-none' : '' }}" data-autocomplete-provider="google">
+      {{ form_row(form.google_api_key_custom) }}
+    </div>
   {% endif %}
 
   <hr>
@@ -115,24 +177,38 @@
 
   </div>
 
-  <h4>{% trans %}form.settings.addresses.title{% endtrans %}</h4>
+  <hr>
 
-  {{ form_row(form.latlng) }}
-
-  {% if form.autocomplete_provider is defined %}
-    {{ form_row(form.autocomplete_provider) }}
-  {% endif %}
-
-  {% if form.geocoding_provider is defined %}
-    {{ form_row(form.geocoding_provider) }}
-  {% endif %}
-
-  {% if form.google_api_key_custom is defined %}
-    {% set is_google_api_key_visible =
-      (form.autocomplete_provider.vars.data == 'google' or form.geocoding_provider.vars.data == 'google') %}
-    <div class="{{ not is_google_api_key_visible ? 'd-none' : '' }}" data-autocomplete-provider="google">
-    {{ form_row(form.google_api_key_custom) }}
+  {% if form.notifications is defined %}
+    <h4>{% trans %}form.settings.notifications.title{% endtrans %}</h4>
+    {{ form_help(form.notifications) }}
+    <div class="d-flex flex-row flex-wrap">
+    {% for notification in form.notifications %}
+      <div class="w-25 ">
+        {{ form_row(notification) }}
+      </div>
+    {% endfor %}
     </div>
+  {% endif %}
+
+  <hr>
+
+  <h4>{% trans %}admin.settings.foodtech{% endtrans %}</h4>
+
+  {% if form.guest_checkout_enabled is defined %}
+    {{ form_row(form.guest_checkout_enabled) }}
+  {% endif %}
+
+  <hr>
+
+  <h4>{% trans %}admin.settings.package_delivery{% endtrans %}</h4>
+
+  {{ form_row(form.on_demand_delivery_product_name) }}
+
+  {% if form.company_gln is defined %}
+    <hr>
+
+    {{ form_row(form.company_gln) }}
   {% endif %}
 
   <hr>
@@ -489,8 +565,10 @@
     })
 
     if ($('#settings_sms_gateway').val() === 'mailjet') {
-      var mailjetConfig = JSON.parse($('#settings_sms_gateway_config').val());
-      $('#mailjet_config_api_token').val(''.padStart(mailjetConfig.api_token.length, '•'));
+      try {
+        var mailjetConfig = JSON.parse($('#settings_sms_gateway_config').val());
+        $('#mailjet_config_api_token').val(''.padStart(mailjetConfig.api_token.length, '•'));
+      } catch (e) {}
     }
 
     if ($('#settings_sms_gateway').val() === 'twilio') {

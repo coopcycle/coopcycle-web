@@ -2,6 +2,7 @@
 <br>
 {{ order.vendor.address.postalCode }} {{ order.vendor.address.addressLocality }}
 <br>
-{% if not order.vendor.isHub() and order.vendor.restaurant.telephone %}
-  {{ order.vendor.restaurant.telephone|phone_number_format('NATIONAL') }}
+{% set phone_number = order_phone_number(order) %}
+{% if phone_number is not empty %}
+  {{ phone_number|phone_number_format('NATIONAL') }}
 {% endif %}

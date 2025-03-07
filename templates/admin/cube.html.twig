@@ -1,0 +1,15 @@
+{% extends "admin.html.twig" %}
+
+{% block content %}
+<div id="cubejs-playground"
+  data-api-url="{{ cubejs_api_url }}"
+  data-token="{{ cube_token }}"></div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('admin-cube') }}
+{% endblock %}
+
+{% block scripts %}
+	{{ encore_entry_script_tags('admin-cube') }}
+{% endblock %}

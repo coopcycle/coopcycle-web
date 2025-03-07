@@ -5,14 +5,12 @@ namespace Tests\AppBundle\Domain\Order\Reactor;
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Order\Reactor\CapturePayment;
-use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Message\RetrieveStripeFee;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\MercadopagoManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Service\StripeManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
@@ -29,16 +27,14 @@ class CapturePaymentTest extends TestCase
     public function setUp(): void
     {
         $this->stripeManager = $this->prophesize(StripeManager::class);
-        $this->mercadopagoManager = $this->prophesize(MercadopagoManager::class);
-        $this->edenred = $this->prophesize(EdenredClient::class);
 
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
 
+        $this->stripeGateway = new Gateway\Stripe($this->stripeManager->reveal());
+
         $this->gateway = new Gateway(
             $this->gatewayResolver->reveal(),
-            $this->stripeManager->reveal(),
-            $this->mercadopagoManager->reveal(),
-            $this->edenred->reveal()
+            ['stripe' => $this->stripeGateway]
         );
 
         $this->capturePayment = new CapturePayment(
@@ -63,11 +59,8 @@ class CapturePaymentTest extends TestCase
             ->isFree()
             ->willReturn(true);
         $order
-            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
-            ->willReturn(null);
-        $order
-            ->getLastPayment(PaymentInterface::STATE_COMPLETED)
-            ->willReturn($payment);
+            ->getPayments()
+            ->willReturn(new ArrayCollection([$payment]));
         $order
             ->getNumber()
             ->willReturn('ABC123');
@@ -86,6 +79,7 @@ class CapturePaymentTest extends TestCase
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
+        $payment->setState(PaymentInterface::STATE_AUTHORIZED);
 
         $order = $this->prophesize(OrderInterface::class);
 
@@ -102,11 +96,8 @@ class CapturePaymentTest extends TestCase
             ->getTotal()
             ->willReturn(3350);
         $order
-            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
-            ->willReturn($payment);
-        $order
-            ->getLastPayment(PaymentInterface::STATE_COMPLETED)
-            ->willReturn(null);
+            ->getPayments()
+            ->willReturn(new ArrayCollection([$payment]));
         $order
             ->getNumber()
             ->willReturn('ABC123');
@@ -125,6 +116,7 @@ class CapturePaymentTest extends TestCase
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
+        $payment->setState(PaymentInterface::STATE_AUTHORIZED);
 
         $order = $this->prophesize(OrderInterface::class);
 
@@ -141,11 +133,8 @@ class CapturePaymentTest extends TestCase
             ->getTotal()
             ->willReturn(3350);
         $order
-            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
-            ->willReturn($payment);
-        $order
-            ->getLastPayment(PaymentInterface::STATE_COMPLETED)
-            ->willReturn(null);
+            ->getPayments()
+            ->willReturn(new ArrayCollection([$payment]));
         $order
             ->getNumber()
             ->willReturn('ABC123');
@@ -164,6 +153,7 @@ class CapturePaymentTest extends TestCase
         $payment = new Payment();
         $payment->setAmount(3350);
         $payment->setCurrencyCode('EUR');
+        $payment->setState(PaymentInterface::STATE_AUTHORIZED);
 
         $order = $this->prophesize(OrderInterface::class);
 
@@ -180,11 +170,8 @@ class CapturePaymentTest extends TestCase
             ->getTotal()
             ->willReturn(3350);
         $order
-            ->getLastPayment(PaymentInterface::STATE_AUTHORIZED)
-            ->willReturn($payment);
-        $order
-            ->getLastPayment(PaymentInterface::STATE_COMPLETED)
-            ->willReturn(null);
+            ->getPayments()
+            ->willReturn(new ArrayCollection([$payment]));
         $order
             ->getNumber()
             ->willReturn('ABC123');

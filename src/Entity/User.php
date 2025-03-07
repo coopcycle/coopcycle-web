@@ -103,6 +103,13 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
 
     protected ?string $salt = null;
 
+    private $businessAccount;
+
+    /**
+     * Only to keep data in form flow
+     */
+    private $termsAndConditionsAndPrivacyPolicy;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -446,6 +453,9 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         return $this->stripeCustomerId;
     }
 
+    /**
+     * @param string|null $stripeCustomerId
+     */
     public function setStripeCustomerId($stripeCustomerId)
     {
         $this->stripeCustomerId = $stripeCustomerId;
@@ -456,6 +466,30 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     public function getSalt(): ?string
     {
         return $this->salt;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(?BusinessAccount $businessAccount)
+    {
+        $this->businessAccount = $businessAccount;
+    }
+
+    public function hasBusinessAccount(): bool
+    {
+        return null !== $this->businessAccount;
+    }
+
+    public function getTermsAndConditionsAndPrivacyPolicy() {
+        return $this->termsAndConditionsAndPrivacyPolicy;
+    }
+
+    public function setTermsAndConditionsAndPrivacyPolicy($termsAndConditionsAndPrivacyPolicy) {
+        $this->termsAndConditionsAndPrivacyPolicy = $termsAndConditionsAndPrivacyPolicy;
+        return $this;
     }
 
     /**

@@ -44,8 +44,8 @@ final class Version20180906190342 extends AbstractMigration implements Container
 
         $liveAccounts = $this->settingsManager->canEnableStripeLivemode() ? $this->getLiveAccounts() : [];
 
-        $stmt->execute();
-        while ($stripeAccount = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($stripeAccount = $result->fetchAssociative()) {
             $this->addSql('UPDATE stripe_account SET livemode = :livemode WHERE id = :id', [
                 'livemode' => in_array($stripeAccount['stripe_user_id'], $liveAccounts) ? 't' : 'f',
                 'id' => $stripeAccount['id']

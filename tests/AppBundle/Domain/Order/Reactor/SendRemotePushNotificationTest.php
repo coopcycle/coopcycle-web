@@ -12,6 +12,7 @@ use AppBundle\Message\PushNotification;
 use AppBundle\Security\UserManager;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -54,7 +55,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
             $this->userManager->reveal(),
             $this->messageBus->reveal(),
             $iriConverter,
-            $this->translator->reveal()
+            $this->translator->reveal(),
+            new NullLogger()
         );
     }
 

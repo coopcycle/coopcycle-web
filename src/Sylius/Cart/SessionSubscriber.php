@@ -17,8 +17,8 @@ final class SessionSubscriber implements EventSubscriberInterface
     /** @var CartContextInterface */
     private $cartContext;
 
-    /** @var string */
-    private $sessionKeyName;
+    /** @var SessionStorage */
+    private $storage;
 
     /** @var bool */
     private $enabled;
@@ -28,12 +28,12 @@ final class SessionSubscriber implements EventSubscriberInterface
 
     public function __construct(
         CartContextInterface $cartContext,
-        string $sessionKeyName,
+        SessionStorage $storage,
         bool $enabled,
         LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
-        $this->sessionKeyName = $sessionKeyName;
+        $this->storage = $storage;
         $this->enabled = $enabled;
         $this->logger = $logger ?? new NullLogger();
     }
@@ -77,17 +77,17 @@ final class SessionSubscriber implements EventSubscriberInterface
         /** @var OrderInterface $cart */
         Assert::isInstanceOf($cart, OrderInterface::class);
 
-        if (!$cart->hasVendor()) {
-            $this->logger->debug('SessionSubscriber | No vendor(s) associated to cart');
-            return;
-        }
-
         if (null === $cart->getId()) {
-            $this->logger->debug('SessionSubscriber | Cart has not been persisted yet');
+            $this->logger->debug(sprintf('SessionSubscriber | Order (cart) (created_at = %s) has not been persisted yet', $cart->getCreatedAt()->format(\DateTime::ATOM)));
             return;
         }
 
-        $this->logger->debug(sprintf('SessionSubscriber | Saving cart #%d in session', $cart->getId()));
-        $request->getSession()->set($this->sessionKeyName, $cart->getId());
+        if (!$cart->hasVendor()) {
+            $this->logger->debug(sprintf('SessionSubscriber | Order #%d | No vendor(s) associated to cart', $cart->getId()));
+            return;
+        }
+
+        $this->logger->debug(sprintf('SessionSubscriber | Order #%d | Saving in session', $cart->getId()));
+        $this->storage->set($cart);
     }
 }

@@ -2,15 +2,52 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\PackageSet\Applications;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Validator\Constraints as Assert;
 
+
+/**
+ *
+ * @ApiResource(
+ *   itemOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_ADMIN')",
+ *       "controller"=NotFoundAction::class,
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     },
+ *     "applications"={
+ *        "method"="GET",
+ *        "path"="/package_sets/{id}/applications",
+ *        "controller"=Applications::class,
+ *        "security"="is_granted('ROLE_ADMIN')",
+ *        "openapi_context"={
+ *          "summary"="Get the objects to which this pricing rule set is applied"
+ *        }
+ *     },
+ *   }
+ * )
+ */
 class PackageSet
 {
     use Timestampable;
 
     protected $id;
     protected $name;
+
+    /**
+     * @Assert\Unique(
+     *  normalizer="AppBundle\Entity\Package::getPackageName",
+     *  message="form.package_set.duplicatePackageNames"
+     * )
+     */
     protected $packages;
 
     public function __construct()
@@ -51,7 +88,14 @@ class PackageSet
      */
     public function getPackages()
     {
-        return $this->packages;
+        $filtered = $this->packages->filter(
+            function ($package) {
+                return !$package->isDeleted();
+            }
+        );
+
+        // reset index after filtering
+        return new ArrayCollection(array_values($filtered->toArray()));
     }
 
     /**

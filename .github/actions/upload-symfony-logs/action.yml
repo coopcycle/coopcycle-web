@@ -1,0 +1,13 @@
+name: Upload Symfony logs
+
+runs:
+  using: "composite"
+  steps:
+    - name: Copy Symfony logs
+      shell: bash
+      run: docker compose exec -T php cat var/logs/test-$(date +'%Y-%m-%d').log > symfony_logs.log
+    - name: Upload Symfony logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: symfony-logs
+        path: symfony_logs.log

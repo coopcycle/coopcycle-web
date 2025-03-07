@@ -2,10 +2,6 @@
 
 {% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
 
-{% set gateway = payment_gateway_resolver.resolve() %}
-{% set gateway_configs = {} %}
-{% set country = country_iso %}
-
 {% block banner %}{% endblock %}
 {% block menu %}{% endblock %}
 {% block footer %}{% endblock %}
@@ -83,33 +79,11 @@
 
 {% block scripts %}
 
-
-{% if gateway == 'stripe' %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-{% set gateway_configs = gateway_configs|merge({
-  stripe: {
-    account: null,
-    publishableKey: coopcycle_setting('stripe_publishable_key'),
-    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid })
-  }
-}) %}
-{% endif %}
-
-{% if gateway == 'mercadopago' %}
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-{% set gateway_configs = gateway_configs|merge({
-  mercadopago: {
-    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
-    country: country
-  }
-}) %}
-{% endif %}
-
 {% set pickup = delivery.pickup %}
 {% set dropoff = delivery.dropoff %}
 
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
 {{ encore_entry_script_tags('delivery-map') }}
+
 <script>
 
 new CoopCycle.DeliveryMap('map', {
@@ -124,13 +98,13 @@ $("#modify-form").on('click', function() {
     .submit()
 });
 
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
-  card: "{{ gateway }}",
-  amount: {{ price }},
-  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-  tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}"
-});
-
 </script>
+
+{% include 'payment/scripts.html.twig' with {
+  order: order,
+  payment_form_selector: 'form[name="checkout_payment"]',
+  token_element_selector: '#checkout_payment_stripePayment_stripeToken',
+  select_payment_method_url: path('order_by_hashid16_select_payment_method', { hashid: order|hashid(16) })
+} %}
+
 {% endblock %}

@@ -18,18 +18,18 @@ final class Version20181107222601 extends AbstractMigration
         $stmt['delivery'] = $this->connection->prepare('SELECT * FROM delivery WHERE order_id = :order_id');
         $stmt['tasks'] = $this->connection->prepare('SELECT * FROM task_collection_item JOIN task ON task_collection_item.task_id = task.id WHERE task_collection_item.parent_id = :delivery_id');
 
-        $stmt['orders']->execute();
-        while ($order = $stmt['orders']->fetch()) {
+        $result = $stmt['orders']->execute();
+        while ($order = $result->fetchAssociative()) {
 
             $stmt['delivery']->bindParam('order_id', $order['id']);
-            $stmt['delivery']->execute();
+            $result2 = $stmt['delivery']->execute();
 
-            $delivery = $stmt['delivery']->fetch();
+            $delivery = $result2->fetchAssociative();
 
             $stmt['tasks']->bindParam('delivery_id', $delivery['id']);
-            $stmt['tasks']->execute();
+            $result3 = $stmt['tasks']->execute();
 
-            while ($task = $stmt['tasks']->fetch()) {
+            while ($task = $result3->fetchAssociative()) {
                 if ($task['type'] === 'DROPOFF') {
                     $this->addSql('UPDATE sylius_order SET shipped_at = :shipped_at WHERE id = :order_id', [
                         'shipped_at' => $task['done_before'],

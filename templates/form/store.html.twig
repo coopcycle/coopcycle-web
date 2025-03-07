@@ -19,16 +19,7 @@
   {% endif %}
 {% endblock %}
 
-{% block _store_timeSlots_entry_widget %}
-  {% set default_control_id = (form.vars.id ~ '_default') %}
-  <div class="d-flex align-items-center justify-content-between"
-    style="margin-bottom: -10px;">
-    {{ form_widget(form, { attr: { 'data-default-control': ('#' ~ default_control_id) } }) }}
-    <div class="radio text-right {% if not form.vars.checked %}disabled{% endif %}">
-      <label>
-        <input type="radio" name="store_timeSlots_default" value="{{ form.vars.value }}" id="{{ default_control_id }}" {% if not form.vars.checked %}disabled{% endif %}>
-        {{ 'form.store_type.time_slots.set_as_default'|trans }}
-      </label>
-    </div>
-  </div>
+{% block _store_checkExpression_row %}
+  {{ block('delivery_perimeter_expression_widget') }}
 {% endblock %}
+

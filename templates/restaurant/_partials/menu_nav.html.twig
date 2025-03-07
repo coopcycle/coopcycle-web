@@ -1,0 +1,15 @@
+<nav id="restaurant-menu-nav" class="restaurant-menu-nav">
+  <div {{ react_component('MenuNav', { 'sections': sections|coopcycle_normalize('Sylius\\Component\\Taxonomy\\Model\\TaxonInterface', ['restaurant_menu'], 'json') }) }}>
+    {# server side rendered content; will be replaced by react #}
+    <div class="ant-anchor">
+      <div class="custom-container pt-3 d-flex">
+        {% for section in sections %}
+          {# 'id' is used on the JS side to get element's width #}
+          <div class="ant-anchor-link" id="menu-nav-section-{{ section.name|url_encode }}">
+            <a class="ant-anchor-link-title" href="#">{{ section.name }}</a>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</nav>

@@ -60,7 +60,7 @@ const ImportModalContent = ({ addImport, closeImportModal, date, t, url, example
         this.on('success', function(file, response) {
           closeImportModal()
           addImport(response.token)
-          toast(t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING'))
+          toast.info(t('ADMIN_DASHBOARD_TASK_IMPORT_PROCESSING'))
         })
 
         // TODO Allow removing file inside modal

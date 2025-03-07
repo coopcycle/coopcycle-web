@@ -114,6 +114,32 @@ const traverseNode = (node, accumulator) => {
         operator: node.attributes.name,
         right:    node.nodes.arguments.nodes[1].attributes.value,
       })
+    } else if (node.attributes.name === 'diff_hours' || node.attributes.name === 'diff_days') {
+
+      let [ cmpSign, cmpValue ] = node.nodes.arguments.nodes[1].attributes.value.split(' ')
+      if (cmpSign === 'in') {
+        cmpValue = cmpValue.split('..')
+      }
+
+      accumulator.push({
+        left:     `${node.attributes.name}(${node.nodes.arguments.nodes[0].attributes.name})`,
+        operator: cmpSign,
+        right:    cmpValue,
+      })
+
+    } else if (node.attributes.name === 'time_range_length') {
+
+      let [ cmpSign, cmpValue ] = node.nodes.arguments.nodes[2].attributes.value.split(' ')
+      if (cmpSign === 'in') {
+        cmpValue = cmpValue.split('..')
+      }
+
+      accumulator.push({
+        left:     `time_range_length(${node.nodes.arguments.nodes[0].attributes.name}, 'hours')`,
+        operator: cmpSign,
+        right:    cmpValue,
+      })
+
     } else {
       if (node.nodes.left.nodes.node?.attributes.name === 'dropoff' && node.nodes.left.nodes.attribute?.attributes.value === 'doorstep') {
         accumulator.push({
@@ -187,8 +213,14 @@ const traverseNode = (node, accumulator) => {
           ],
         })
       } else {
+
+        let left = node.nodes.left.attributes.name
+        if (node.nodes?.left?.nodes?.node?.attributes?.name === 'task' && node.nodes?.left?.nodes?.attribute?.attributes?.value === 'type') {
+          left = 'task.type'
+        }
+
         accumulator.push({
-          left:     node.nodes.left.attributes.name,
+          left,
           operator: node.attributes.operator,
           right:    node.nodes.right.attributes.value,
         })

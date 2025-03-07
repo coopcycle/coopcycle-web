@@ -34,14 +34,6 @@ services:
     tags:
       - { name: 'console.command', command: 'craue:setting:create' }
 
-  AppBundle\Command\ImportStripeFeeCommand:
-    arguments:
-      $orderRepository: '@sylius.repository.order'
-      $orderManager: '@sylius.manager.order'
-      $adjustmentFactory: '@sylius.factory.adjustment'
-    tags:
-      - { name: 'console.command', command: 'coopcycle:orders:import-stripe-fee' }
-
   AppBundle\Command\InitDemoCommand:
     arguments:
       $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
@@ -77,10 +69,12 @@ services:
       $currencyRepository: '@sylius.repository.currency'
       $currencyFactory: '@sylius.factory.currency'
       $promotionFactory: '@sylius.factory.promotion'
-      $taxCategoryFactory: '@sylius.factory.tax_category'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $country: "%country_iso%"
       $localeRegex: "%locale_regex%"
+      $cityZonesUrl: "%env(CITY_ZONES_URL)%"
+      $cityZonesProvider: "%env(CITY_ZONES_PROVIDER)%"
+      $cityZonesOptions: "%env(json:CITY_ZONES_OPTIONS)%"
     tags:
       - { name: 'console.command', command: 'coopcycle:setup' }
 
@@ -101,12 +95,6 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:geofencing' }
       - { name: 'monolog.logger', channel: 'geofencing' }
-
-  AppBundle\Command\WatchExpiringAuthorizationCommand:
-    arguments:
-      $orderRepository: '@sylius.repository.order'
-    tags:
-      - { name: 'console.command', command: 'coopcycle:orders:watch-expiring-authorization' }
 
   # AppBundle\Command\OrderNotificationCommand:
   #   arguments:
@@ -170,3 +158,23 @@ services:
   AppBundle\Command\CopyStoreAddressesCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:stores:copy_addresses' }
+
+  AppBundle\Command\SyncTransportersCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:transporters:sync' }
+
+  AppBundle\Command\EmailCubeQueryResultCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:cube:email-results' }
+
+  AppBundle\Command\ExportTasksCommand:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:export:tasks' }
+
+  AppBundle\Command\ExportOrdersCommand:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:export:orders' }

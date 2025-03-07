@@ -11,16 +11,14 @@ use Nucleos\UserBundle\Util\CanonicalFieldsUpdater;
 
 class UserManager implements UserManagerInterface
 {
-    private $canonicalFieldsUpdater;
+    private $decorated;
 
     public function __construct(
         DoctrineUserManager $decorated,
-        ObjectManager $objectManager,
-        CanonicalFieldsUpdater $canonicalFieldsUpdater)
+        private ObjectManager $objectManager,
+        private CanonicalFieldsUpdater $canonicalFieldsUpdater)
     {
         $this->decorated = $decorated;
-        $this->objectManager = $objectManager;
-        $this->canonicalFieldsUpdater = $canonicalFieldsUpdater;
     }
 
     /**

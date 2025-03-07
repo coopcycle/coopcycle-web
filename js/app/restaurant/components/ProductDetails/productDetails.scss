@@ -1,0 +1,166 @@
+@import "../../../../../assets/css/vars.scss";
+
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+
+@mixin modal-padding-horizontal() {
+  padding-left: $modal-inner-padding;
+  padding-right: $modal-inner-padding;
+
+  @media (min-width: $screen-md-min) {
+    padding-left: $modal-padding-md;
+    padding-right: $modal-padding-md;
+  }
+}
+
+.ReactModal__Content--product-options {
+
+  overflow: inherit;
+  display: flex;
+  flex-direction: column;
+
+  width: calc(100% - 2rem);
+  height: calc(100% - 2rem);
+
+  @media (min-width: $screen-sm-min) {
+    width: 500px;
+    height: auto;
+    min-height: 480px;
+    max-height: calc(100% - 2rem);
+  }
+
+  .product-modal-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .modal-body {
+    padding: 0 0 1.5rem;
+  }
+
+  main {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .product-images {
+    @include modal-padding-horizontal;
+  }
+
+  .product-image {
+    margin: 0 auto;
+  }
+
+  .product-info {
+    @include modal-padding-horizontal;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .product-option-group {
+    border-top: 1px solid $gray-100;
+    @include modal-padding-horizontal;
+
+    &--invalid {
+      .product-option-group__name,
+      .product-option-group__values_range {
+        color: $brand-danger;
+      }
+    }
+
+    &__name {
+      padding-top: 1rem;
+      font-weight: bold;
+    }
+  }
+
+  .product-option-item {
+    label {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      font-weight: 400;
+      overflow: hidden;
+    }
+
+    &__name {
+      flex: 1;
+      hyphens: auto;
+    }
+
+    &__price {
+      white-space: nowrap;
+    }
+  }
+
+  .product-option-item-single-choice {
+    &:hover {
+      background-color: $light-gray;
+      cursor: pointer;
+    }
+    label {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  @mixin no-ui-controls() {
+    appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      appearance: none;
+    }
+  }
+
+  .product-option-item-range {
+    display: flex;
+    align-items: center;
+    input[type="number"] {
+      @extend .form-control;
+      @include no-ui-controls;
+      width: 3em;
+      text-align: center;
+    }
+    label {
+      flex: 1;
+      align-self: stretch;
+      &:hover {
+        background-color: $light-gray;
+        cursor: pointer;
+      }
+    }
+    &-buttons {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .quantity-input-group {
+    @include modal-padding-horizontal;
+    display: flex;
+    align-items: center;
+    input[type="number"] {
+      @extend .form-control;
+      @include no-ui-controls;
+      width: 3em;
+      text-align: center;
+      font-weight: 600;
+    }
+    &__price {
+      padding-right: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  .modal-footer {
+    text-align: inherit;
+  }
+}

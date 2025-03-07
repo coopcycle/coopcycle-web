@@ -2,11 +2,8 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\ShippingDateFilter;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
-use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 class ClosingRulesValidator extends ConstraintValidator
 {

@@ -83,7 +83,7 @@ class AddressType extends AbstractType
         if (true === $options['with_name']) {
             $builder
                 ->add('name', TextType::class, [
-                    'required' => false,
+                    'required' => true,
                     'label' => 'form.address.name.label',
                     'attr' => ['placeholder' => 'form.address.name.placeholder']
                 ]);

@@ -8,47 +8,36 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Form\Type\MoneyType;
+use AppBundle\Service\OrderManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class DeliveryType extends AbstractType
 {
-    protected $routing;
-    protected $translator;
-    protected $authorizationChecker;
-    protected $country;
-    protected $locale;
 
     public function __construct(
-        RoutingInterface $routing,
-        TranslatorInterface $translator,
-        AuthorizationCheckerInterface $authorizationChecker,
-        string $country,
-        string $locale)
-    {
-        $this->routing = $routing;
-        $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->country = $country;
-        $this->locale = $locale;
-    }
+        protected RoutingInterface $routing,
+        protected TranslatorInterface $translator,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected string $country,
+        protected string $locale,
+        private readonly OrderManager $orderManager,
+    )
+    { }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -68,11 +57,16 @@ class DeliveryType extends AbstractType
             $form = $event->getForm();
             $delivery = $event->getData();
 
+            /** @var ?Store $store */
             $store = $delivery->getStore();
+
+            $isNew = null === $delivery->getId();
+            // other order types are foodtech and b2c deliveries (via Order form: https://docs.coopcycle.org/en/admin/deliveries/externaldisplay/)
+            $isStoreDeliveryOrder = $store !== null;
 
             // When this is a new delivery,
             // set defaults for pickup/dropoff date
-            if (null === $delivery->getId()) {
+            if ($isNew && true === $options['asap_timing']) {
 
                 $now = Carbon::now();
 
@@ -113,6 +107,8 @@ class DeliveryType extends AbstractType
                     'with_packages_required' => null !== $store ? $store->isPackagesRequired() : true,
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
+                    'with_position' => true,
+                    'with_barcode' => null !== $store ? !empty($store->getStoreGLN()) : false, // or transporter enabled
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
@@ -120,9 +116,10 @@ class DeliveryType extends AbstractType
             ]);
 
             $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
-            $createOrders = null !== $store ? $store->getCreateOrders() : false;
+            // customers/stores owners are not allowed to edit existing deliveries
+            $isEditEnabled = ($isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_DISPATCHER')) || $isNew;
 
-            if ($isMultiDropEnabled && !$createOrders) {
+            if ($isMultiDropEnabled && $isEditEnabled) {
                 $form->add('addTask', ButtonType::class, [
                     'label' => 'basics.add',
                     'attr' => [
@@ -131,26 +128,85 @@ class DeliveryType extends AbstractType
                 ]);
             }
 
+            if ($options['with_price_preview']) {
+                $form->add('pricePreview', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ]);
+            }
+
             // Allow admins to define an arbitrary price
-            if (true === $options['with_arbitrary_price'] &&
+            if (true === $options['with_arbitrary_price'] && $isStoreDeliveryOrder &&
                 $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+
+                // If the current price was calculated using pricing rules, display it as a hint
+                if (null !== $options['pricing_rules_based_price']) {
+                    $form->add('pricingRulesBasedPrice', HiddenType::class, [
+                        'required' => false,
+                        'mapped' => false,
+                        'data' => $options['pricing_rules_based_price']->getValue(),
+                    ]);
+                }
+
+                $arbitraryPrice = $options['arbitrary_price'];
+
                 $form->add('arbitraryPrice', CheckboxType::class, [
                     'label' => 'form.delivery.arbitrary_price.label',
                     'mapped' => false,
                     'required' => false,
+                    'data' => isset($arbitraryPrice),
                 ])
                 ->add('variantName', TextType::class, [
                     'label' => 'form.new_order.variant_name.label',
                     'help' => 'form.new_order.variant_name.help',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $arbitraryPrice ? $arbitraryPrice->getVariantName() : null,
                 ])
                 ->add('variantPrice', MoneyType::class, [
                     'label' => 'form.new_order.variant_price.label',
                     'mapped' => false,
                     'required' => false,
+                    'data' => $arbitraryPrice ? $arbitraryPrice->getValue() : null,
                 ]);
             }
+
+            if ($options['with_bookmark'] && $isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $form->add('bookmark', CheckboxType::class, [
+                    'label' => 'form.delivery.bookmark.label',
+                    'mapped' => false,
+                    'required' => false,
+                    'data' => $delivery->getOrder() && $this->orderManager->hasBookmark($delivery->getOrder()),
+                ]);
+            }
+
+            if ($options['with_recurrence'] && $isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+                $form->add('recurrence', HiddenType::class, [
+                    'required' => false,
+                    'mapped' => false,
+                ]);
+            }
+        });
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+
+            $data = $event->getData();
+
+            $tasks = $data['tasks'];
+
+            $reordered = [];
+
+            foreach ($tasks as $task) {
+                if (isset($task['position']) && is_numeric($task['position'])) {
+                    $reordered[(int) $task['position']] = $task;
+                } else {
+                    $reordered[] = $task;
+                }
+            }
+
+            $data['tasks'] = $reordered;
+
+            $event->setData($data);
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -191,8 +247,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slot']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slot']) {
             return $options['with_time_slot'];
         }
 
@@ -217,8 +276,11 @@ class DeliveryType extends AbstractType
         }
         */
 
-        if (null !== $options['with_time_slots']) {
+        if (false === $options['use_time_slots']) {
+            return null;
+        }
 
+        if (null !== $options['with_time_slots']) {
             return $options['with_time_slots'];
         }
 
@@ -252,16 +314,24 @@ class DeliveryType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Delivery::class,
+            'redirect_to_enabled' => true,
             'with_vehicle' => false,
             'with_weight' => true,
             'with_tags' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             'with_dropoff_doorstep' => false,
+            'use_time_slots' => true,
             'with_time_slot' => null,
             'with_time_slots' => null,
             'with_package_set' => null,
             'with_remember_address' => false,
             'with_address_props' => false,
+            'with_price_preview' => false,
+            'pricing_rules_based_price' => null,
             'with_arbitrary_price' => false,
+            'arbitrary_price' => null,
+            'with_bookmark' => false,
+            'with_recurrence' => false,
+            'asap_timing' => false, // When true, the tasks after/before dates are automatically updated (only relevant when placing a new order)
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

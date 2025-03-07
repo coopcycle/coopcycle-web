@@ -11,21 +11,18 @@ use AppBundle\Entity\Task;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
-use ApiPlatform\Core\Api\IriConverterInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class DeliveryInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        RoutingInterface $routing,
-        IriConverterInterface $iriConverter,
-        ManagerRegistry $doctrine,
-        DeliveryManager $deliveryManager)
+        private readonly RoutingInterface $routing,
+        private readonly ManagerRegistry $doctrine,
+        private readonly DeliveryManager $deliveryManager,
+        private readonly AuthorizationCheckerInterface $authorizationChecker)
     {
-        $this->routing = $routing;
-        $this->iriConverter = $iriConverter;
-        $this->doctrine = $doctrine;
-        $this->deliveryManager = $deliveryManager;
     }
 
     /**
@@ -49,19 +46,26 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
                 $dropoff->setPrevious($pickup);
 
                 $delivery->addTask($dropoff);
-
-                $this->deliveryManager->setDefaults($delivery);
             }
         }
 
         if ($data->store && $data->store instanceof Store) {
+
+            //FIXME: move access controls to the operations in the Entities
+            if (!$this->authorizationChecker->isGranted('ROLE_DISPATCHER') && !$this->authorizationChecker->isGranted('edit', $data->store)) {
+                throw new AccessDeniedHttpException('');
+            }
+
             $delivery->setStore($data->store);
         }
 
+        $this->deliveryManager->setDefaults($delivery);
+
         if ($data->packages && is_array($data->packages)) {
             $packageRepository = $this->doctrine->getRepository(Package::class);
+
             foreach ($data->packages as $p) {
-                $package = $packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByNameAndStore($p['type'], $delivery->getStore());
                 if ($package) {
                     $delivery->addPackageWithQuantity($package, $p['quantity']);
                 }

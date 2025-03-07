@@ -33,7 +33,8 @@ Feature: Manage shops
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
-          "name":null
+          "name":null,
+          "description": null
         },
         "state":"normal",
         "telephone":null,
@@ -54,6 +55,7 @@ Feature: Manage shops
         ],
         "specialOpeningHoursSpecification":[],
         "image":@string@,
+        "bannerImage":@string@,
         "fulfillmentMethods":@array@,
         "potentialAction":{
           "@type":"OrderAction",
@@ -67,6 +69,13 @@ Feature: Manage shops
         },
         "isOpen":true,
         "hub":null,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false
       }
       """

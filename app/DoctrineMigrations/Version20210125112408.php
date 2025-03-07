@@ -28,9 +28,9 @@ final class Version20210125112408 extends AbstractMigration
         $this->addSql('ALTER TABLE sylius_order_timeline ADD shipping_time VARCHAR(255) DEFAULT NULL');
 
         $getTimelines = $this->connection->prepare('SELECT * FROM sylius_order_timeline');
-        $getTimelines->execute();
+        $result = $getTimelines->execute();
 
-        while ($timeline = $getTimelines->fetch()) {
+        while ($timeline = $result->fetchAssociative()) {
 
             $preparation = new \DateTime($timeline['preparation_expected_at']);
             $pickup = new \DateTime($timeline['pickup_expected_at']);

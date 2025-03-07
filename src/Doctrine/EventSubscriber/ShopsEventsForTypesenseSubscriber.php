@@ -14,26 +14,19 @@ use Psr\Log\LoggerInterface;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
 use Typesense\Exceptions\ObjectNotFound;
 use ACSEO\TypesenseBundle\Client\TypesenseClient;
-
+use AppBundle\Entity\Store;
 
 class ShopsEventsForTypesenseSubscriber implements EventSubscriber
 {
-    private $typesenseClient;
     private $productsCollection;
     private $maxPosts = 250;
 
     public function __construct(
-        CollectionManager $collectionManager,
-        DocumentManager $documentManager,
-        LoggerInterface $logger,
-        TypesenseClient $typeClient
-    )
+        private CollectionManager $collectionManager,
+        private DocumentManager $documentManager,
+        private LoggerInterface $logger,
+        private TypesenseClient $typesenseClient)
     {
-        $this->logger = $logger;
-        $this->collectionManager = $collectionManager;
-        $this->documentManager = $documentManager;
-        $this->typesenseClient = $typeClient;
-
         $this->productsCollection = array_search(Product::class, $this->collectionManager->getManagedClassNames(), true);
     }
 
@@ -75,7 +68,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
             'q'         => '*',
             'query_by'  => 'name', // TypeSense can't search for non string fields...
             'filter_by' => 'shop_id:=' . $search, //... so we need to filter
-            'per_page' => $this->maxPosts, // max! 
+            'per_page' => $this->maxPosts, // max!
             'page' => $page,
         ];
 
@@ -87,7 +80,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
         // `$sResults['found']` is the total count of products found.
         // `$sResults['hits']` are the products returned (by the query) limited by `per_page`
         // `$sResults['page']` is the current results page
-        
+
         $productsToUpsert = [];
 
         foreach ($sResults['hits'] as $sResult) {
@@ -103,7 +96,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
                 ->import($productsToUpsert, ['action' => 'upsert']);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage());
-            
+
             // bail early if there was an error, as next request will probably fail
             return;
         }
@@ -124,7 +117,7 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
             $uow = $om->getUnitOfWork();
             $uow->computeChangeSets();
             $changeset = $uow->getEntityChangeSet($entity);
-            
+
             // LocalBusiness `enabled` status changed, so update it's products
             // enabled status on the search server.
             if (isset($changeset['enabled'])) {

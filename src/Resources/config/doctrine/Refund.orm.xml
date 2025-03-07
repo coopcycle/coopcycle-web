@@ -6,7 +6,7 @@
     </id>
     <field name="amount" type="integer" column="amount"/>
     <field name="liableParty" type="string" column="liable_party"/>
-    <field name="data" type="json_array" column="data"/>
+    <field name="data" type="json" column="data"/>
     <field name="comments" type="text" column="comments" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>

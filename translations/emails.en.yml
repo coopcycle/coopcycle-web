@@ -11,6 +11,9 @@ registration.email.textMessage: |
   Welcome to %brand_name%, %username%,\n\n
   You’re receiving this message because you recently signed up for a %brand_name% account.\n
   To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+registration.company: Company registration request
+registration.restaurant: New restaurant addition request
+
 resetting.email.message: <h2>Hello %username%</h2> To reset your password, please
   click the button below.
 resetting.email.reset: Reset password
@@ -114,6 +117,16 @@ order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error proce
   \ your payment. Please try again with a different payment method."
 order.payment_failed.return_to_order: Return to order
 
+order.loopeat.accepted: |
+  <p>Congratulations on your zero-waste order with our partner « %name% ».</p>
+  <p>You can return your reusable boxes free of charge to our network of partners (list on your « %name% » account) or ask your courier to do it for you on your next order.</p>
+  <p>Don't forget to return the totebag!</p>
+
+order.loopeat.accepted.with_fee: |
+  <p>Congratulations on your zero-waste order with our partner « %name% ».</p>
+  <p>You can return your reusable boxes free of charge to our network of partners (list on your « %name% » account) or ask your courier to do it for you on your next order (%amount% fee).</p>
+  <p>Don't forget to return the totebag!</p>
+
 task.pickup.done.subject: 'The delivery #%id% has been picked'
 task.pickup.done.body: |
   Hello,
@@ -156,3 +169,9 @@ order.adhoc.body: |
   A new order has been created for you.
   <br>
   In order to finalize your order, click on the link below to specify your address, choose a delivery slot, and pay by credit card.
+
+business_account.send_invitation.body: |
+  Hello %name%,
+  <br>
+  This is an invitation to configure the business account in CoopCycle, to continue with the activation please click on the following link.
+business_account.send_invitation.cta: Continue to activate

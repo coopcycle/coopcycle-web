@@ -20,8 +20,8 @@ final class Version20200915100034 extends AbstractMigration
     private function linkToRestaurants()
     {
         $stmt = $this->connection->prepare('SELECT t.id AS task_id, r.organization_id FROM sylius_order o JOIN delivery d ON d.order_id = o.id JOIN task t ON t.delivery_id = d.id JOIN restaurant r ON o.restaurant_id = r.id');
-        $stmt->execute();
-        while ($task = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($task = $result->fetchAssociative()) {
             $this->addSql('UPDATE task SET organization_id = :organization_id WHERE id = :task_id', $task);
         }
     }
@@ -29,8 +29,8 @@ final class Version20200915100034 extends AbstractMigration
     private function linkToStores()
     {
         $stmt = $this->connection->prepare('SELECT t.id AS task_id, s.organization_id FROM delivery d JOIN task t ON t.delivery_id = d.id JOIN store s ON d.store_id = s.id');
-        $stmt->execute();
-        while ($task = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($task = $result->fetchAssociative()) {
             $this->addSql('UPDATE task SET organization_id = :organization_id WHERE id = :task_id', $task);
         }
     }

@@ -23,6 +23,8 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
 use AppBundle\Entity\LocalBusiness\ImageTrait;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsTrait;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Enum\FoodEstablishment;
@@ -66,6 +68,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *       "method"="GET",
  *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_potential_action"}},
  *       "security"="is_granted('view', object)"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
  *     },
  *     "restaurant_menu"={
  *       "method"="GET",
@@ -119,7 +125,9 @@ class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,
     OpenCloseInterface,
     OrganizationAwareInterface,
-    ShippingOptionsInterface
+    ShippingOptionsInterface,
+    CustomFailureReasonInterface,
+    Vendor
 {
     use Timestampable;
     use SoftDeleteable;
@@ -132,6 +140,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     use ClosingRulesTrait;
     use FulfillmentMethodsTrait;
     use ShippingOptionsTrait;
+    use CustomFailureReasonTrait;
 
     /**
      * @var int
@@ -150,7 +159,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      *
      * @Assert\Type(type="string")
      * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple", "order", "order_minimal"})
      */
     protected $name;
 
@@ -193,7 +202,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var Address
      *
-     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple"})
+     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple", "order", "order_minimal"})
      */
     protected $address;
 
@@ -230,12 +239,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * The roles needed to be able to manage Stripe Connect.
      */
-    protected $stripeConnectRoles = ['ROLE_ADMIN'];
+    protected array $stripeConnectRoles = ['ROLE_ADMIN'];
 
     /**
      * The roles needed to be able to manage Mercadopago connect.
      */
-    protected $mercadopagoConnectRoles = ['ROLE_ADMIN'];
+    protected array $mercadopagoConnectRoles = ['ROLE_ADMIN'];
 
     protected $preparationTimeRules;
 
@@ -245,16 +254,29 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $featured = false;
 
-    protected $stripePaymentMethods = [];
+    protected array $stripePaymentMethods = [];
+
+    protected $mercadopagoAccount;
 
     /**
      * @Groups({"restaurant"})
      */
-    protected $isAvailableForB2b;
-
-    protected $mercadopagoAccount;
-
     protected $edenredMerchantId;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredTRCardEnabled = false;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredEnabled = false;
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected $edenredSyncSent = false;
 
     /**
      * @Groups({"restaurant"})
@@ -276,6 +298,17 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected ?int $rateLimitAmount;
 
+    protected ?string $paygreenShopId = null;
+
+    protected string $billingMethod = 'unit';
+
+    /**
+     * @Groups({"restaurant"})
+     */
+    protected bool $autoAcceptOrdersEnabled = false;
+
+    protected string $paymentGateway = 'stripe';
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -288,7 +321,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
-        $this->isAvailableForB2b = false ;
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -398,22 +430,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->address = $address;
 
         return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAvailableForB2b(): bool
-    {
-        return $this->isAvailableForB2b;
-    }
-
-    /**
-     * @param bool $isAvailableForB2b
-     */
-    public function setIsAvailableForB2b(bool $isAvailableForB2b): void
-    {
-        $this->isAvailableForB2b = $isAvailableForB2b;
     }
 
     public function getStripeAccounts()
@@ -829,9 +845,39 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->edenredMerchantId = $edenredMerchantId;
     }
 
+    public function isEdenredEnabled()
+    {
+        return $this->edenredEnabled;
+    }
+
+    public function setEdenredEnabled($edenredEnabled)
+    {
+        $this->edenredEnabled = $edenredEnabled;
+    }
+
+    public function isEdenredTRCardEnabled()
+    {
+        return $this->edenredTRCardEnabled;
+    }
+
+    public function setEdenredTRCardEnabled($edenredTRCardEnabled)
+    {
+        $this->edenredTRCardEnabled = $edenredTRCardEnabled;
+    }
+
+    public function getEdenredSyncSent()
+    {
+        return $this->edenredSyncSent;
+    }
+
+    public function setEdenredSyncSent($edenredSyncSent)
+    {
+        $this->edenredSyncSent = $edenredSyncSent;
+    }
+
     public function supportsEdenred(): bool
     {
-        return null !== $this->getEdenredMerchantId();
+        return $this->edenredEnabled && null !== $this->getEdenredMerchantId();
     }
 
     public function getHub(): ?Hub
@@ -1138,5 +1184,48 @@ class LocalBusiness extends BaseLocalBusiness implements
         );
     }
 
+    public function isAutoAcceptOrdersEnabled(): bool
+    {
+        return $this->autoAcceptOrdersEnabled;
+    }
 
+    public function setAutoAcceptOrdersEnabled(bool $enabled): void
+    {
+        $this->autoAcceptOrdersEnabled = $enabled;
+    }
+
+    public function setPaygreenShopId(string $shopId): void
+    {
+        $this->paygreenShopId = $shopId;
+    }
+
+    public function getPaygreenShopId(): ?string
+    {
+        return $this->paygreenShopId;
+    }
+
+    public function supportsPaygreen(): bool
+    {
+        return null !== $this->getPaygreenShopId();
+    }
+
+    public function setBillingMethod(string $billingMethod): void
+    {
+        $this->billingMethod = $billingMethod;
+    }
+
+    public function getBillingMethod(): string
+    {
+        return $this->billingMethod;
+    }
+
+    public function setPaymentGateway(string $paymentGateway): void
+    {
+        $this->paymentGateway = $paymentGateway;
+    }
+
+    public function getPaymentGateway(): string
+    {
+        return $this->paymentGateway;
+    }
 }

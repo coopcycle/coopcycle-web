@@ -18,56 +18,44 @@ use Geocoder\Query\ReverseQuery;
 use Geocoder\StatefulGeocoder;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use Http\Adapter\Guzzle7\Client;
+use Http\Client\Exception\NetworkException;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Spatie\GuzzleRateLimiterMiddleware\RateLimiterMiddleware;
 use Spatie\GuzzleRateLimiterMiddleware\Store as RateLimiterStore;
 use Webmozart\Assert\Assert;
 
 class Geocoder
 {
-    private $rateLimiterStore;
-    private $settingsManager;
-    private $openCageApiKey;
-    private $country;
-    private $locale;
-    private $rateLimitPerSecond;
-    private $autoconfigure;
-
-    private $geocoder;
+    private ?GeocoderInterface $geocoder = null;
 
     /**
      * FIXME Inject providers through constructor (needs a CompilerPass)
      */
     public function __construct(
-        RateLimiterStore $rateLimiterStore,
-        SettingsManager $settingsManager,
-        string $openCageApiKey,
-        string $country,
-        string $locale,
-        int $rateLimitPerSecond,
-        bool $autoconfigure = true)
+        private readonly RateLimiterStore $rateLimiterStore,
+        private readonly SettingsManager $settingsManager,
+        private readonly string $openCageApiKey,
+        private readonly string $country,
+        private readonly string $locale,
+        private readonly int $rateLimitPerSecond,
+        private readonly bool $autoconfigure = true,
+        private readonly LoggerInterface $logger = new NullLogger())
     {
-        $this->rateLimiterStore = $rateLimiterStore;
-        $this->settingsManager = $settingsManager;
-        $this->openCageApiKey = $openCageApiKey;
-        $this->country = $country;
-        $this->locale = $locale;
-        $this->rateLimitPerSecond = $rateLimitPerSecond;
-        $this->autoconfigure = $autoconfigure;
     }
 
     private function getGeocoder()
     {
         if (null === $this->geocoder) {
-            $httpClient = new Client();
-
             $providers = [];
 
             if ($this->autoconfigure) {
                 // For France only, use https://adresse.data.gouv.fr/
                 if ('fr' === $this->country) {
                     // TODO Create own provider to get results with a high score
-                    $providers[] = AddokProvider::withBANServer($httpClient);
+                    $providers[] = $this->createAddokProvider();
                 }
             }
 
@@ -81,10 +69,42 @@ class Geocoder
                 $providers[] = $this->createGoogleMapsProvider();
             }
 
-            $this->geocoder = new StatefulGeocoder(new ChainProvider($providers), $this->locale);
+            $provider = new ChainProvider($providers);
+            $provider->setLogger($this->logger);
+            $this->geocoder = new StatefulGeocoder($provider, $this->locale);
         }
 
         return $this->geocoder;
+    }
+
+    private function createAddokProvider() {
+
+        $rateLimiter =
+            RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+        
+        $decider = function ($retries, $request, $response, $exception) {
+            // Limit the number
+            if ($retries >= 10) {
+                return false;
+            }
+            
+            // Retry on network exceptions
+            if ($exception instanceof NetworkException) {
+                return true;
+            }
+    
+            return false;
+        };
+        $retryMiddleware = Middleware::retry($decider);
+
+        $stack = HandlerStack::create();
+        $stack->push($rateLimiter);
+        $stack->push($retryMiddleware);
+
+        $httpClient  = new GuzzleClient(['handler' => $stack, 'timeout' => 30.0]);
+        $httpAdapter = new Client($httpClient);
+
+        return new AddokProvider($httpAdapter, 'https://data.geopf.fr/geocodage');
     }
 
     private function createGoogleMapsProvider()
@@ -118,10 +138,7 @@ class Geocoder
         $this->geocoder = $geocoder;
     }
 
-    /**
-     * @return Address|null
-     */
-    public function geocode($value, $address = null)
+    public function geocode($value, $address = null): ?Address
     {
         $query = GeocodeQuery::create($value);
 
@@ -138,12 +155,18 @@ class Geocoder
 
             $query = $query
                 ->withData('proximity', $latlng)
-                ->withBounds($bounds);
+                ->withBounds($bounds)
+                ->withLocale($this->locale);
         }
 
-        $results = $this->getGeocoder()->geocodeQuery(
-            $query
-        );
+        $results = [];
+        try {
+            $results = $this->getGeocoder()->geocodeQuery(
+                $query
+            );
+        } catch(\Exception $e) {
+            $this->logger->error(sprintf('Geocoder: %s', $e->getMessage()));
+        }
 
         if (count($results) > 0) {
             $result = $results->first();
@@ -161,6 +184,7 @@ class Geocoder
             return $address;
         }
 
+        $this->logger->warning(sprintf('Geocoder: No results for "%s"', $query));
         return null;
     }
 

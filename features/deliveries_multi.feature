@@ -3,6 +3,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -36,10 +39,12 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type": "PICKUP",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -52,7 +57,8 @@ Feature: Multi-step deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -61,13 +67,16 @@ Feature: Multi-step deliveries
           "comments": "1.50 kg",
           "weight":1500,
           "packages": [],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
           "id":@integer@,
+          "type": "DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
@@ -80,7 +89,8 @@ Feature: Multi-step deliveries
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
-            "contactName": null
+            "contactName": null,
+            "description": null
           },
           "doneAfter":"@string@.isDateTime()",
           "after":"@string@.isDateTime()",
@@ -89,8 +99,10 @@ Feature: Multi-step deliveries
           "comments": "",
           "weight":1500,
           "packages": [],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -99,6 +111,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with pickup & dropoff + packages with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -144,10 +159,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "tasks":@array@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -160,7 +177,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"4 × XL\n3.00 kg",
           "weight":3000,
@@ -172,15 +190,21 @@ Feature: Multi-step deliveries
             {
               "type":"XL",
               "name":"XL",
-              "quantity":4
+              "quantity":4,
+              "volume_per_package": 3,
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":@string@,
           "@type":"Task",
+          "type":"DROPOFF",
           "id":@integer@,
           "status":"TODO",
           "address":{
@@ -194,7 +218,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":@string@,
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -206,11 +231,16 @@ Feature: Multi-step deliveries
             {
               "type":"XL",
               "name":"XL",
-              "quantity":2
+              "quantity":2,
+              "volume_per_package": 3,
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -219,6 +249,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with multiple pickups & 1 dropoff + packages with OAuth
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -260,10 +293,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -276,7 +311,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"2 × XL\n1.50 kg",
           "weight":1500,
@@ -288,16 +324,22 @@ Feature: Multi-step deliveries
             {
               "type":"XL",
               "name":"XL",
-              "quantity":2
+              "quantity":2,
+              "volume_per_package": 3,
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"/api/tasks/3",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -310,7 +352,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -322,11 +365,16 @@ Feature: Multi-step deliveries
             {
               "type":"XL",
               "name":"XL",
-              "quantity":2
+              "quantity":2,
+              "volume_per_package": 3,
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
       }
@@ -335,6 +383,9 @@ Feature: Multi-step deliveries
   Scenario: Create delivery with multiple pickups & 1 dropoff, without time slot for pickups
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -374,10 +425,12 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
           "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -390,7 +443,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"2 × XL\n1.50 kg",
           "weight":1500,
@@ -402,16 +456,22 @@ Feature: Multi-step deliveries
             {
               "type":"XL",
               "name":"XL",
-              "quantity":2
+              "quantity":2,
+              "volume_per_package": 3,
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
           "@id":"/api/tasks/3",
           "@type":"Task",
           "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":@string@,
@@ -424,7 +484,8 @@ Feature: Multi-step deliveries
             },
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"",
           "weight":1500,
@@ -436,12 +497,78 @@ Feature: Multi-step deliveries
             {
               "type":"XL",
               "name":"XL",
-              "quantity":2
+              "quantity":2,
+              "volume_per_package": 3,
+              "short_code": "AB",
+              "labels":@array@
             }
           ],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@
+      }
+      """
+
+  Scenario: Suggest delivery optimizations with OAuth
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries/suggest_optimizations" with body:
+      """
+      {
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24 Rue de Rivoli, 75004 Paris",
+            "after": "tomorrow 13:00",
+            "before": "tomorrow 13:15"
+          },
+          {
+            "type": "dropoff",
+            "address": "45 Rue d'Ulm, 75005 Paris",
+            "after": "tomorrow 13:45",
+            "before": "tomorrow 15:30"
+          },
+          {
+            "type": "dropoff",
+            "address": "45 Rue de Rivoli, 75001 Paris",
+            "after": "tomorrow 13:15",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+          "@context": {"@*@": "@*@"},
+          "@type": "OptimizationSuggestions",
+          "@id": @string@,
+          "suggestions": [
+            {
+              "@context": {"@*@": "@*@"},
+              "@type": "OptimizationSuggestion",
+              "@id": @string@,
+              "gain": {
+                "type": "distance",
+                "amount": @integer@
+              },
+              "order": [
+                0,
+                2,
+                1
+              ]
+            }
+          ]
       }
       """

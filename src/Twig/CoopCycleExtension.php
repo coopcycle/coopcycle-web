@@ -67,6 +67,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
             new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
             new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
+            new TwigFilter('placeholder_image', array(AssetsRuntime::class, 'placeholderImage')),
+            new TwigFilter('recurr_rule', array(RecurrRuleFormatResolver::class, 'format'), ['needs_context' => true]),
         );
     }
 
@@ -97,6 +99,16 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
             new TwigFunction('loopeat_authorization_url', array(LoopeatRuntime::class, 'getAuthorizationUrl')),
             new TwigFunction('loopeat_name', array(LoopeatRuntime::class, 'getName')),
+            new TwigFunction('restaurant_tags', array(LocalBusinessRuntime::class, 'tags')),
+            new TwigFunction('restaurant_badges', array(LocalBusinessRuntime::class, 'badges')),
+            new TwigFunction('coopcycle_configtest', array(SettingResolver::class, 'configTest')),
+            new TwigFunction('coopcycle_lat_lng_bounds', array(SettingResolver::class, 'getLatLngBounds')),
+            new TwigFunction('restaurant_menu', array(LocalBusinessRuntime::class, 'resolveMenu')),
+            new TwigFunction('order_phone_number', array(LocalBusinessRuntime::class, 'resolvePhoneNumber')),
+            new TwigFunction('restaurant_opening_hours', array(LocalBusinessRuntime::class, 'openingHours')),
+            new TwigFunction('add_title_prefix', array(PageTitlePrefixResolver::class, 'addTitlePrefix')),
+            new TwigFunction('coopcycle_version', array(SettingResolver::class, 'getVersion')),
+            new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
         );
     }
 

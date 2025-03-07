@@ -50,7 +50,7 @@ final class TaskFilter extends AbstractContextAwareFilter
             return;
         }
 
-        if (!$user->hasRole('ROLE_ADMIN') && $user->hasRole('ROLE_COURIER')) {
+        if (!($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) && $user->hasRole('ROLE_COURIER')) {
 
             $parameterName = $queryNameGenerator->generateParameterName('user');
             $queryBuilder

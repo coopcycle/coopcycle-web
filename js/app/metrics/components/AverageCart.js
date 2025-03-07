@@ -33,24 +33,14 @@ const Chart = ({ cubejsApi, dateRange }) => {
     <QueryRenderer
       query={{
         "measures": [
-          "Order.averageTotal"
+          "OrderExport.total_incl_tax_avg"
         ],
         "timeDimensions": [
           {
-            "dimension": "Order.shippingTimeRange",
+            "dimension": "OrderExport.completed_at",
             "dateRange": getCubeDateRange(dateRange)
           }
         ],
-        "order": {},
-        "filters": [
-          {
-            "member": "Order.state",
-            "operator": "equals",
-            "values": [
-              "fulfilled"
-            ]
-          }
-        ]
       }}
       cubejsApi={cubejsApi}
       resetResultSetOnChange={false}

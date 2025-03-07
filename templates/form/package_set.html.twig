@@ -1,22 +1,69 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
+{% block _package_set_name_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
+{% block _package_set_packages_label %}
+  <h3>{{ label|trans }}</h3>
+{% endblock %}
+
 {% block _package_set_packages_widget %}
   <div>
     {{ form_widget(form) }}
-    <button type="button" class="btn btn-success" id="package_set_packages_add">
+    <button type="button" class="btn btn-success m-2" id="package_set_packages_add">
       <i class="fa fa-plus"></i>  {{ 'basics.add'|trans }}
     </button>
   </div>
 {% endblock %}
 
 {% block _package_set_packages_entry_row %}
-  <div class="row">
-    <div class="col-sm-6">
-      {{ form_row(form.name) }}
+  <div class="package-entry thumbnail p-4 m-2 mb-4">
+    <div class="my-2">
+        <span class="form-inline d-inline-block">
+          {{ form_label(form.name) }}<i class="text-danger">*</i> {{ form_widget(form.name) }}
+        </span>
+        <a class="text-danger text-center pull-right mr-2">
+          <i class="fa fa-trash delete-package-entry"></i>
+        </a>
     </div>
-    <div class="col-sm-6">
-      {{ form_row(form.volumeUnits) }}
+    <div class="mb-0 package-entry-body">
+      <hr />
+      <div class="row m-0">
+        <div class="col-md-8">
+          {{ form_row(form.description) }}
+        </div>
+        <div class="col-md-1">
+          {{ form_row(form.shortCode) }}
+        </div>
+        <div class="col-md-3">
+          {{ form_row(form.color, { 'attr': {'class': 'package_color'}}) }}
+        </div>
+      </div>
+      <div class="row m-0">
+        <div class="col-md-3">
+          {{ form_label(form.averageWeight) }} {{ form_widget(form.averageWeight) }}
+          {{ form_help(form.averageWeight) }}
+        </div>
+          <div class="col-md-3">
+          {{ form_label(form.maxWeight) }}<i class="text-danger">*</i> {{ form_widget(form.maxWeight) }}
+          {{ form_help(form.maxWeight) }}
+        </div>
+        <div class="col-md-3 ">
+          {{ form_label(form.averageVolumeUnits) }} {{ form_widget(form.averageVolumeUnits) }}
+          {{ form_help(form.averageVolumeUnits) }}
+        </div>
+        <div class="col-md-3 ">
+          {{ form_label(form.maxVolumeUnits) }}<i class="text-danger">*</i> {{ form_widget(form.maxVolumeUnits) }}
+          {{ form_help(form.maxVolumeUnits) }}
+        </div>
+      </div>
+      <div class="row m-0">
+        <div class="col-md-12">
+          {{ form_row(form.tags, { 'attr': {'class': 'package_tags'}}) }}
+          {{ form_help(form.tags) }}
+        </div>
+      </div>
     </div>
   </div>
 {% endblock %}
-

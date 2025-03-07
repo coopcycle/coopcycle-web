@@ -1,8 +1,6 @@
 {% if restaurant.id is not null %}
 
-  {% set gateway = payment_gateway_resolver.resolve() %}
-
-  {% if gateway == 'stripe' and show_stripe_connect %}
+  {% if payment_gateway_resolver.supports('stripe') and show_stripe_connect %}
 
     {% include "_partials/restaurant/stripe_accounts.html.twig" %}
 
@@ -14,18 +12,10 @@
         </div>
       </div>
     {% endif %}
-    {% if form.enableGiropay is defined %}
-      <div class="alert alert-warning">
-        {{ 'restaurant.form.giropay_enabled.label'|trans }}
-        <div class="pull-right">
-          {{ form_widget(form.enableGiropay, { attr: { class: 'checkbox switch' }}) }}
-        </div>
-      </div>
-    {% endif %}
 
   {% endif %}
 
-  {% if gateway == 'mercadopago' %}
+  {% if payment_gateway_resolver.supports('mercadopago') %}
     {% include "_partials/restaurant/mercadopago_accounts.html.twig" %}
 
     {% if form.allowMercadopagoConnect is defined %}
@@ -38,18 +28,33 @@
     {% endif %}
   {% endif %}
 
+  {% if form.edenredEnabled is defined %}
+      <div class="alert alert-warning">
+        {{ field_label(form.edenredEnabled) }}
+        <div class="pull-right">
+          {{ form_widget(form.edenredEnabled, { attr: { class: 'checkbox switch' }}) }}
+        </div>
+      </div>
+    {% endif %}
+
+  {% if form.paygreenShopId is defined %}
+    <h4>{{ 'form.local_business.paygreen_account.title'|trans }}</h4>
+    {{ form_row(form.paygreenShopId) }}
+  {% endif %}
+
+  {% if form.usePaygreen is defined %}
+    {{ form_row(form.usePaygreen) }}
+  {% endif %}
+
 {% endif %}
 
 {% if form.allowStripeConnect is defined and not form.allowStripeConnect.rendered %}
   {% do form.allowStripeConnect.setRendered %}
 {% endif %}
-{% if form.enableGiropay is defined and not form.enableGiropay.rendered %}
-  {% do form.enableGiropay.setRendered %}
-{% endif %}
 {% if form.allowMercadopagoConnect is defined and not form.allowMercadopagoConnect.rendered %}
   {% do form.allowMercadopagoConnect.setRendered %}
 {% endif %}
 
-{% if form.edenredMerchantId is defined %}
-  {{ form_row(form.edenredMerchantId) }}
+{% if form.edenredEnabled is defined and not form.edenredEnabled.rendered %}
+  {% do form.edenredEnabled.setRendered %}
 {% endif %}

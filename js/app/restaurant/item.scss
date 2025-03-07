@@ -1,0 +1,142 @@
+@import "../../../assets/css/vars.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "../../../assets/css/grid.scss";
+
+.restaurant-banner {
+  margin-top: -20px;
+}
+
+#restaurant-body {
+  .custom-container {
+    @extend .container-full-hd;
+    @extend .container--extra-space-on-sides;
+    padding: 0 1rem;
+  }
+
+  main {
+    padding-top: 1.5rem;
+    background-color: $body-bg-secondary;
+  }
+}
+
+.footer {
+  margin-top: 0;
+}
+
+#restaurant-opening-hours-modal {
+  .modal-dialog {
+    // width: inherit from bootstrap .modal-dialog
+
+    @media (min-width: $screen-xs-min) {
+      min-width: 350px;
+      width: auto;
+      max-width: calc(100% - 2rem);
+    }
+  }
+
+  .modal-body {
+    overflow-x: auto;
+  }
+
+  .table-opening-hours {
+    width: auto;
+    thead > tr > th {
+      text-align: right;
+    }
+    tbody > tr > td,
+    tbody > tr > th {
+      border-top: none;
+    }
+    tbody > tr:not(.active) {
+      color: $text-muted;
+    }
+    tbody > tr.active > td,
+    tbody > tr.active > th {
+      background-color: transparent;
+    }
+  }
+}
+
+// Custom class to allow scrolling inside modal
+// @see https://github.com/reactjs/react-modal/issues/283
+.ReactModal__Overlay--cart {
+  @media (max-width: $screen-xs-max) {
+    // height: 100vh;
+    // Dot *NOT* use 100vh on mobile
+    // https://developers.google.com/web/updates/2016/12/url-bar-resizing
+    height: 100%;
+    .ReactModal__Content {
+      overflow-y: auto;
+    }
+  }
+}
+
+.ReactModal__Content--enter-address {
+  overflow: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  @media (min-width: $screen-lg-min) {
+    width: 33%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 50%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: calc(100% - 30px);
+  }
+}
+
+.ReactModal__Content--restaurant {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: 80%;
+  }
+}
+
+.ReactModal__Content--date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
+  // @see https://github.com/reactjs/react-modal/issues/177
+  overflow: visible;
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+    height: 80%;
+  }
+  .ReactModal__Date__asap {
+    display: block;
+    padding: 15px 0;
+    margin: 15px 0;
+  }
+}
+
+.ReactModal__Content--invite-people-to-order {
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+  }
+}

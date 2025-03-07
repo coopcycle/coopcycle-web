@@ -17,13 +17,14 @@ use Webmozart\Assert\Assert;
 
 class Client
 {
+    private $client;
     private $logger;
 
     public function __construct(
-        string $paymentClientId,
-        string $paymentClientSecret,
+        private string $paymentClientId,
+        private string $paymentClientSecret,
         RefreshTokenHandler $refreshTokenHandler,
-        Authentication $authentication,
+        private Authentication $authentication,
         array $config = [],
         LoggerInterface $logger = null
     )
@@ -48,14 +49,19 @@ class Client
 
     public function getBalance(Customer $customer): int
     {
+        if (!$customer->hasEdenredCredentials()) {
+
+            return 0;
+        }
+
         try {
 
             $userInfo = $this->authentication->userInfo($customer);
 
             $credentials = $customer->getEdenredCredentials();
 
-            // https://documenter.getpostman.com/view/10405248/TVewaQQX#82e953fc-9110-4246-8a78-aba888b70b31
-            $response = $this->client->request('GET', sprintf('/v2/users/%s', $userInfo['username']), [
+            // https://anypoint.mulesoft.com/exchange/portals/edenred-corporate/f02a5569-24ac-491a-964a-0950ab318728/edenred-payment-services-api/minor/2.0/console/method/%231390/
+            $response = $this->client->request('GET', sprintf('/v2/users/%s/balances', $userInfo['username']), [
                 'headers' => [
                     'Authorization' => sprintf('Bearer %s', $credentials->getAccessToken()),
                     'X-Client-Id' => $this->paymentClientId,
@@ -66,14 +72,16 @@ class Client
 
             $data = json_decode((string) $response->getBody(), true);
 
-            return $data['data']['available_amount'] ?? 0;
+            foreach ($data['data'] as $balance) {
+                if ($balance['product_class'] === 'ETR') {
+                    return $balance['available_amount'];
+                }
+            }
+
+            return 0;
 
         } catch (BadResponseException $e) {
             // This means the refresh token has expired
-            if (401 === $e->getResponse()->getStatusCode()) {
-                $this->logger->error('Refresh token has expired, clearing credentials');
-                $customer->clearEdenredCredentials();
-            }
         } catch (RequestException $e) {
             $this->logger->error(sprintf(
                 'Could not get customer balance: "%s"',
@@ -100,7 +108,7 @@ class Client
         $body = [
             "mid" => $order->getRestaurant()->getEdenredMerchantId(),
             "order_ref" => $order->getNumber(),
-            "amount" => $payment->getAmountForMethod('EDENRED'),
+            "amount" => $payment->getAmount(),
             "capture_mode" => "manual",
             "tstamp" => (new \DateTime())->format(\DateTime::ATOM),
         ];
@@ -143,7 +151,7 @@ class Client
         $order = $payment->getOrder();
 
         $body = [
-            'amount' => $payment->getAmountForMethod('EDENRED'),
+            'amount' => $payment->getAmount(),
             'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
         ];
 
@@ -176,11 +184,8 @@ class Client
         }
     }
 
-    public function splitAmounts(OrderInterface $order)
+    public function getMaxAmount(OrderInterface $order): int
     {
-        // FIXME
-        // If the order is click & collect, customer can pay it all
-
         $total = $order->getTotal();
 
         $notPayableAmount = array_sum([
@@ -194,15 +199,10 @@ class Client
         $balance = $this->getBalance($order->getCustomer());
 
         if ($payableAmount > $balance) {
-            $rest = $payableAmount - $balance;
-            $notPayableAmount += $rest;
-            $payableAmount = $balance;
+            return $balance;
         }
 
-        return [
-            'edenred' => $payableAmount,
-            'card' => $notPayableAmount,
-        ];
+        return $payableAmount;
     }
 
     public function cancelTransaction(PaymentInterface $payment)
@@ -210,7 +210,7 @@ class Client
         $order = $payment->getOrder();
 
         $body = [
-            'amount' => $payment->getAmountForMethod('EDENRED'),
+            'amount' => $payment->getAmount(),
             'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
         ];
 
@@ -248,7 +248,7 @@ class Client
         $order = $payment->getOrder();
 
         $body = [
-            'amount' => $amount ?? $payment->getAmountForMethod('EDENRED'),
+            'amount' => $amount ?? $payment->getAmount(),
             'tstamp' => (new \DateTime())->format(\DateTime::ATOM),
         ];
 
@@ -279,5 +279,28 @@ class Client
 
             throw $e;
         }
+    }
+
+    public function hasValidCredentials(Customer $customer): bool
+    {
+        if (!$customer->hasEdenredCredentials()) {
+            return false;
+        }
+
+        try {
+
+            $this->authentication->userInfo($customer);
+
+            return true;
+
+        } catch (BadResponseException $e) {
+            // This means the refresh token has expired
+        } catch (RequestException $e) {
+            // We do *NOT* rethrow the exception.
+            // This way, if the Edenred server has problems,
+            // it doesn't break the checkout.
+        }
+
+        return false;
     }
 }

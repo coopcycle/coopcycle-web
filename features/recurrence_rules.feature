@@ -14,6 +14,7 @@ Feature: Task recurrence rules
       {
         "store":"/api/stores/1",
         "rule":"FREQ=WEEKLY;",
+        "name":"test rule",
         "template": {
           "@type":"Task",
           "address": {
@@ -34,6 +35,7 @@ Feature: Task recurrence rules
         "@type":"RecurrenceRule",
         "store":"/api/stores/1",
         "orgName":"Acme",
+        "name":"test rule",
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -42,7 +44,8 @@ Feature: Task recurrence rules
           },
           "after":"11:30",
           "before":"12:00"
-        }
+        },
+        "isCancelled":false
       }
       """
 
@@ -95,6 +98,7 @@ Feature: Task recurrence rules
         "rule":"FREQ=WEEKLY",
         "store":"/api/stores/1",
         "orgName":"Acme",
+        "name":null,
         "template": {
           "@type":"hydra:Collection",
           "hydra:member": [
@@ -116,7 +120,8 @@ Feature: Task recurrence rules
               "before":"12:30"
             }
           ]
-        }
+        },
+        "isCancelled":false
       }
       """
 
@@ -153,6 +158,7 @@ Feature: Task recurrence rules
         "@type":"RecurrenceRule",
         "store":"/api/stores/1",
         "orgName":"Acme",
+        "name":null,
         "rule":"FREQ=WEEKLY",
         "template":{
           "@type":"Task",
@@ -161,7 +167,8 @@ Feature: Task recurrence rules
           },
           "after":"11:30",
           "before":"12:30"
-        }
+        },
+        "isCancelled":false
       }
       """
 
@@ -234,7 +241,9 @@ Feature: Task recurrence rules
           ]
         },
         "store":"/api/stores/1",
-        "orgName":"Acme"
+        "orgName":"Acme",
+        "name":null,
+        "isCancelled":false
       }
       """
 
@@ -318,13 +327,13 @@ Feature: Task recurrence rules
             "@id":"/api/tasks/1",
             "@type":"Task",
             "packages": [],
-            "tour":null
+            "barcode": @array@
           },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
             "packages": [],
-            "tour":null
+            "barcode": @array@
           }
         ],
         "hydra:totalItems":2
@@ -334,6 +343,9 @@ Feature: Task recurrence rules
   Scenario: Apply recurrence rule creates delivery
     Given the fixtures files are loaded:
       | sylius_channels.yml  |
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -362,20 +374,20 @@ Feature: Task recurrence rules
             "@type":"Task",
             "packages": [],
             "weight": null,
-            "tour":null
-          },
+            "barcode": @array@
+            },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
             "packages": [],
-            "tour":null
-          },
+            "barcode": @array@
+            },
           {
             "@id":"/api/tasks/3",
             "@type":"Task",
             "packages": [],
-            "tour":null
-          }
+            "barcode": @array@
+            }
         ],
         "hydra:totalItems":3
       }

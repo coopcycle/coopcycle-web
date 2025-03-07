@@ -31,11 +31,13 @@ order.foodtech.cancelled: |
   <br>
   Votre compte n'a pas été débité.
 order.loopeat.accepted: |
-  <p>Vous avez choisi l’option zéro déchet, bravo !</p>
-  <p>Pensez à rendre la/les lunchbox et le sac en tissu au coursier lors de votre prochaine livraison de repas.</p>
-  <p>Grâce à vous, nous changeons le monde, un repas après l’autre.</p>
-  <p>Parlez-en autour de vous, chaque geste compte !</p>
-  <p>Bon appétit ! LoopEat</p>
+  <p>Bravo pour votre commande zéro-déchet avec notre partenaire « %name% ».</p>
+  <p>Vous pourrez retourner vos boîtes réutilisables gratuitement dans le réseau de partenaires (liste sur votre compte « %name% ») ou demander à votre coursier de le faire pour vous à la prochaine commande.</p>
+  <p>N'oubliez pas de rendre le totebag!</p>
+order.loopeat.accepted.with_fee: |
+  <p>Bravo pour votre commande zéro-déchet avec notre partenaire « %name% ».</p>
+  <p>Vous pourrez retourner vos boîtes réutilisables gratuitement dans le réseau de partenaires (liste sur votre compte « %name% ») ou demander à votre coursier de le faire pour vous à la prochaine commande (frais %amount%).</p>
+  <p>N'oubliez pas de rendre le totebag!</p>
 admin.order.created.subject: Nouvelle commande à confirmer
 admin.order.created.body: |
   Bonjour,
@@ -167,3 +169,20 @@ task.dropoff.failed.body: |
   La livraison <strong>#%id%</strong> n'a pas pû être déposée à l'adresse suivante :
   <br>
   %address%
+
+order.payment_failed.subject: "Une erreur s'est produite lors du traitement de votre paiement"
+order.payment_failed.body: "Bonjour,\n<br>\nNous sommes désolés, une erreur s'est produite lors du traitement de votre paiement. Veuillez réessayer avec un autre moyen de paiement."
+order.payment_failed.return_to_order: "Retourner à la commande"
+
+order.adhoc.body: |
+  Bonjour,
+  <br>
+  Une nouvelle commande a été créée pour vous.
+  <br>
+  Pour finaliser votre commande, cliquez sur le lien ci-dessous pour spécifier votre adresse, choisir un créneau de livraison et payer par carte bleue.
+
+business_account.send_invitation.body: |
+  Bonjour %name%,
+  <br>
+  Ceci est une invitation à configurer le compte entreprise sur CoopCycle, pour continuer l'activation veuillez cliquer sur le lien suivant.
+business_account.send_invitation.cta: "Continuer l'activation"

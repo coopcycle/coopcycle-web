@@ -6,17 +6,29 @@ use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Store\AddAddress;
 use AppBundle\Entity\Base\LocalBusiness;
+use AppBundle\Entity\Model\CustomFailureReasonInterface;
+use AppBundle\Entity\Model\CustomFailureReasonTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Package;
+use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
+use AppBundle\Action\Store\Packages as Packages;
+
 
 /**
  * A retail good store.
@@ -30,7 +42,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
+ *       "access_control"="is_granted('ROLE_DISPATCHER')"
  *     },
  *     "me_stores"={
  *       "method"="GET",
@@ -42,7 +54,36 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *     "get"={
  *       "method"="GET",
  *       "security"="is_granted('edit', object)"
- *     }
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "patch"={
+ *       "method"="PATCH",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     },
+ *     "time_slots"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/time_slots",
+ *       "controller"=TimeSlots::class,
+ *       "normalization_context"={"groups"={"store_time_slots"}},
+ *       "security"="is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
+ *     },
+ *     "packages"={
+ *       "method"="GET",
+ *       "path"="/stores/{id}/packages",
+ *       "controller"=Packages::class,
+ *       "normalization_context"={"groups"={"store_packages"}},
+ *       "security"="is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
+ *     },
+ *     "add_address"={
+ *       "method"="POST",
+ *       "path"="/stores/{id}/addresses",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=Address::class,
+ *       "controller"=AddAddress::class
+ *     },
  *   },
  *   subresourceOperations={
  *     "deliveries_get_subresource"={
@@ -52,13 +93,16 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * )
  * @Vich\Uploadable
  */
-class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface
+class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
 {
+    use SoftDeleteable;
     use TaggableTrait;
     use OrganizationAwareTrait;
+    use CustomFailureReasonTrait;
 
     /**
      * @var int
+     * @Groups({"store"})
      */
     private $id;
 
@@ -121,11 +165,14 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $deliveries;
 
+    private $rrules;
+
     private $owners;
 
+    /**
+     * @Groups({"store"})
+     */
     private $prefillPickupAddress = false;
-
-    private $createOrders = false;
 
     /**
      * @ApiSubresource
@@ -141,19 +188,50 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $checkExpression;
 
+    /**
+     * @Groups({"store"})
+     */
     private $weightRequired = false;
 
+    /**
+     * @Groups({"store"})
+     */
     private $packagesRequired = false;
 
+    /**
+     * @Groups({"store"})
+     */
     private $multiDropEnabled = false;
 
+    /**
+     * @var Collection<int, StoreTimeSlot>
+     * @Groups({"store"})
+     */
     private $timeSlots;
 
-    public function __construct() {
+    private ?string $transporter = null;
+
+    /**
+     * The deliveries of this store will be linked by default to this rider
+     * @var User
+     */
+    private $defaultCourier;
+
+    protected string $billingMethod = 'unit';
+
+    /**
+     * The GLN of the store used for field M03004
+     * @var string|null
+     */
+    protected ?string $storeGLN = null;
+
+    public function __construct()
+    {
         $this->deliveries = new ArrayCollection();
         $this->owners = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->timeSlots = new ArrayCollection();
+        $this->rrules = new ArrayCollection();
     }
 
     /**
@@ -210,14 +288,18 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->website;
     }
-
+    /**
+     * @param mixed $website
+     */
     public function setWebsite($website)
     {
         $this->website = $website;
 
         return $this;
     }
-
+    /**
+     * @param mixed $imageName
+     */
     public function setImageName($imageName)
     {
         $this->imageName = $imageName;
@@ -291,7 +373,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->pricingRuleSet;
     }
-
+    /**
+     * @param mixed $pricingRuleSet
+     */
     public function setPricingRuleSet($pricingRuleSet)
     {
         $this->pricingRuleSet = $pricingRuleSet;
@@ -323,22 +407,12 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->prefillPickupAddress;
     }
-
+    /**
+     * @param mixed $prefillPickupAddress
+     */
     public function setPrefillPickupAddress($prefillPickupAddress)
     {
         $this->prefillPickupAddress = $prefillPickupAddress;
-
-        return $this;
-    }
-
-    public function getCreateOrders()
-    {
-        return $this->createOrders;
-    }
-
-    public function setCreateOrders($createOrders)
-    {
-        $this->createOrders = $createOrders;
 
         return $this;
     }
@@ -347,7 +421,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->addresses;
     }
-
+    /**
+     * @param mixed $addresses
+     */
     public function setAddresses($addresses)
     {
         $this->addresses = $addresses;
@@ -363,7 +439,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
         return $this;
     }
-
+    /**
+     * @param mixed $timeSlot
+     */
     public function setTimeSlot($timeSlot)
     {
         $this->timeSlot = $timeSlot;
@@ -375,7 +453,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->timeSlot;
     }
-
+    /**
+     * @param mixed $packageSet
+     */
     public function setPackageSet($packageSet)
     {
         $this->packageSet = $packageSet;
@@ -402,7 +482,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
         return $delivery;
     }
-
+    /**
+     * @param mixed $checkExpression
+     */
     public function setCheckExpression($checkExpression)
     {
         $this->checkExpression = $checkExpression;
@@ -477,11 +559,124 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     public function getTimeSlots()
     {
-        return $this->timeSlots;
+        return $this->timeSlots->map(fn(StoreTimeSlot $sts): TimeSlot => $sts->getTimeSlot());
     }
 
-    public function addTimeSlot(TimeSlot $timeSlot)
+    public function setTimeSlots($timeSlots): void
     {
-        $this->timeSlots->add($timeSlot);
+        $originalTimeSlots = new ArrayCollection();
+        foreach ($this->timeSlots as $sts) {
+            $originalTimeSlots->add($sts->getTimeSlot());
+        }
+
+        /** @var Collection<int, TimeSlot> */
+        $newTimeSlots = new ArrayCollection();
+        foreach ($timeSlots as $ts) {
+            $newTimeSlots->add($ts);
+        }
+
+        /** @var TimeSlot[] */
+        $timeSlotsToRemove = [];
+        foreach ($originalTimeSlots as $originalTimeSlot) {
+            if (!$newTimeSlots->contains($originalTimeSlot)) {
+                $timeSlotsToRemove[] = $originalTimeSlot;
+            }
+        }
+
+        foreach ($timeSlotsToRemove as $ts) {
+            foreach ($this->timeSlots as $i => $sts) {
+                if ($sts->getTimeSlot() === $ts) {
+                    $this->timeSlots->remove($i);
+                }
+            }
+        }
+
+        foreach ($newTimeSlots as $position => $ts) {
+
+            foreach ($this->timeSlots as $i => $sts) {
+                if ($sts->getTimeSlot() === $ts) {
+                    $sts->setPosition($position);
+                    continue 2;
+                }
+            }
+
+            $sts = new StoreTimeSlot();
+            $sts->setStore($this);
+            $sts->setTimeSlot($ts);
+            $sts->setPosition($position);
+
+            $this->timeSlots->add($sts);
+        }
+    }
+
+    /**
+     * @SerializedName("packages")
+     * @Groups({"store_with_packages"})
+     *
+     * @return Package[]
+     */
+    public function getPackages()
+    {
+        if (null !== $this->packageSet) {
+            return $this->packageSet->getPackages();
+        }
+
+        return [];
+    }
+
+    public function isTransporterEnabled(): bool
+    {
+        return !is_null($this->transporter);
+    }
+
+    public function getTransporter(): ?string
+    {
+        return $this->transporter;
+    }
+
+    public function setTransporter(?string $transporter): Store
+    {
+        $this->transporter = $transporter;
+        return $this;
+    }
+
+    public function getDefaultCourier(): ?User
+    {
+        return $this->defaultCourier;
+    }
+
+    public function setDefaultCourier(?User $defaultCourier): Store
+    {
+        $this->defaultCourier = $defaultCourier;
+        return $this;
+    }
+
+    /**
+     * Get the recurrence rules linked to this store
+     * @return RecurrenceRule[]
+     */
+    public function getRrules()
+    {
+        return $this->rrules;
+    }
+
+    public function setBillingMethod(string $billingMethod): void
+    {
+        $this->billingMethod = $billingMethod;
+    }
+
+    public function getBillingMethod(): string
+    {
+        return $this->billingMethod;
+    }
+
+    public function setStoreGLN(?string $storeGLN): void
+    {
+        $this->storeGLN = $storeGLN;
+    }
+
+    public function getStoreGLN(): ?string
+    {
+        return $this->storeGLN;
     }
 }

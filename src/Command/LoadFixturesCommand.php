@@ -2,29 +2,26 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Fidry\AliceDataFixtures\LoaderInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class LoadFixturesCommand extends Command
 {
-    public function __construct(
-        LoaderInterface $fixturesLoader,
-        string $projectDir,
-        string $environment)
-    {
-        $this->fixturesLoader = $fixturesLoader;
-        $this->projectDir = $projectDir;
-        $this->environment = $environment;
+    private ?StyleInterface $io;
 
+    public function __construct(
+        private readonly LoaderInterface $fixturesLoader,
+        private readonly string $projectDir,
+        private readonly string $environment,
+        private readonly LoggerInterface $logger)
+    {
         parent::__construct();
     }
 
@@ -34,11 +31,16 @@ class LoadFixturesCommand extends Command
             ->setName('coopcycle:fixtures:load')
             ->setDescription('Load fixtures')
             ->addOption(
+                'setup',
+                's',
+                InputOption::VALUE_REQUIRED,
+                'The platform setup files to load fixtures from.'
+            )
+            ->addOption(
                 'file',
                 'f',
-                InputOption::VALUE_REQUIRED,
-                'The entity manager to use for this command. If not specified, use the default Doctrine fixtures entity'
-                .'manager.'
+                InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+                'The files to load fixtures from.'
             );
     }
 
@@ -57,13 +59,31 @@ class LoadFixturesCommand extends Command
             return 1;
         }
 
-        $file = $input->getOption('file');
+        $setupFile = $input->getOption('setup');
 
-        $files = [
-            $this->projectDir . '/' . $file
-        ];
+        $hasSetupFile = null !== $setupFile;
+        if ($hasSetupFile) {
+            $this->logger->info('Loading fixtures from setup file: ' . $setupFile);
 
-        $this->fixturesLoader->load($files, $_SERVER);
+            $filePaths = [
+                $this->projectDir . '/' . $setupFile
+            ];
+
+            $this->fixturesLoader->load($filePaths, $_SERVER);
+        }
+
+        $files = $input->getOption('file');
+
+        if (empty($files)) {
+            $this->io->error('No files specified');
+            return 1;
+        }
+
+        $this->logger->info('Loading fixtures from files: ' . implode(', ', $files));
+
+        $filePaths = array_map(fn($file) => $this->projectDir . '/' . $file, $files);
+
+        $this->fixturesLoader->load($filePaths, $_SERVER, [], $hasSetupFile ? PurgeMode::createNoPurgeMode() : null);
 
         return 0;
     }

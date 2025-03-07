@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
       </button>
       <a class="navbar-brand" href="{{ path('homepage') }}">
-        <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
+        <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />
       </a>
       <a class="navbar-brand hidden-sm hidden-xs" href="{{ path('admin_dashboard') }}">
         {% trans %}adminDashboard.title{% endtrans %}
@@ -65,6 +65,9 @@
             <li><a href="{{ path('admin_activity') }}">{% trans %}adminDashboard.activity.title{% endtrans %}</a></li>
             {% if is_granted('ROLE_ADMIN') %}
             <li><a href="{{ path('admin_metrics') }}">{% trans %}adminDashboard.metrics.title{% endtrans %}</a></li>
+            {% endif %}
+            {% if odoo_url is not empty %}
+            <li><a href="{{ odoo_url }}" target="_blank">Odoo</a></li>
             {% endif %}
           </ul>
         </li>

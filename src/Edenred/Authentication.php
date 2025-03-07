@@ -8,19 +8,24 @@ use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
+use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Authentication
 {
+    private $baseUrl;
+    private $clientId;
+    private $clientSecret;
+    private $client;
+
     public function __construct(
         string $clientId,
         string $clientSecret,
         RefreshTokenHandler $refreshTokenHandler,
-        UrlGeneratorInterface $urlGenerator,
-        JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter,
-        LoggerInterface $logger,
+        private UrlGeneratorInterface $urlGenerator,
+        private JWTEncoderInterface $jwtEncoder,
+        private IriConverterInterface $iriConverter,
         array $config = []
     )
     {
@@ -34,10 +39,6 @@ class Authentication
         $this->baseUrl = $config['base_uri'];
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
-        $this->urlGenerator = $urlGenerator;
-        $this->jwtEncoder = $jwtEncoder;
-        $this->iriConverter = $iriConverter;
-        $this->logger = $logger;
     }
 
     /**
@@ -81,47 +82,27 @@ class Authentication
     }
 
     /**
-     * @return array|bool
+     * @return array
+     * @throws HttpExceptionInterface
      */
-    public function authorizationCode(string $code)
+    public function authorizationCode(string $code, ?string $redirectUri = null)
     {
+        $client = HttpClient::create([
+            'base_uri' => $this->baseUrl
+        ]);
+
         // https://documenter.getpostman.com/view/10405248/TVewaQQX
-        $params = array(
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'grant_type' => 'authorization_code',
-            'code' => $code,
-            'redirect_uri' => $this->urlGenerator->generate('edenred_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
-        );
+        $response = $client->request('POST', 'connect/token', [
+            'body' => [
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'redirect_uri' => $redirectUri !== null ? $redirectUri : $this->urlGenerator->generate('edenred_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL),
+            ]
+        ]);
 
-        $url = sprintf('%s/connect/token', $this->baseUrl);
-
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-
-        $res = curl_exec($ch);
-
-        $httpCode = !curl_errno($ch) ? curl_getinfo($ch, CURLINFO_HTTP_CODE) : null;
-
-        if ($httpCode !== 200) {
-            $data = json_decode($res, true);
-
-            $this->logger->error(sprintf(
-                'There was an "%s" error when trying to fetch an access token from Edenred: "%s"',
-                $data['error'],
-                $data['error_description'] ?? ''
-            ));
-
-            curl_close($ch);
-
-            return false;
-        }
-
-        curl_close($ch);
-
-        return json_decode($res, true);
+        return $response->toArray();
     }
 
     public function userInfo(CustomerInterface $customer)

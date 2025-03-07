@@ -3,7 +3,6 @@
 namespace AppBundle\Form\Type;
 
 use AppBundle\DataType\NumRange;
-use AppBundle\Entity\Package;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
@@ -46,28 +45,26 @@ class MinMaxType extends AbstractType implements DataMapperInterface
      */
     public function mapDataToForms($viewData, $forms)
     {
+        $data = null;
+
         if (null === $viewData) {
-            $numRange = new NumRange();
-            $forms = iterator_to_array($forms);
-            $forms['lower']->setData($numRange->getLower());
-            if ($numRange->getUpper() === 'INF') {
-                $forms['infinity']->setData(true);
-            } else {
-                $forms['upper']->setData($numRange->getUpper());
+            $data = new NumRange();
+        } else {
+            if (!$viewData instanceof NumRange) {
+                throw new UnexpectedTypeException($viewData, NumRange::class);
             }
-
-            return;
-        }
-
-        if (!$viewData instanceof NumRange) {
-            throw new UnexpectedTypeException($viewData, NumRange::class);
+            $data = $viewData;
         }
 
         $forms = iterator_to_array($forms);
 
-        $forms['lower']->setData($viewData->getLower());
-        $forms['upper']->setData($viewData->getUpper());
-        $forms['infinity']->setData($viewData->getUpper() === 'INF');
+        $forms['lower']->setData($data->getLower());
+        if ($data->isUpperInfinite()) {
+            $forms['upper']->setData(NumRange::DEFAULT_UPPER);
+        } else {
+            $forms['upper']->setData($data->getUpper());
+        }
+        $forms['infinity']->setData($data->isUpperInfinite());
     }
 
     public function mapFormsToData($forms, &$viewData)
@@ -80,7 +77,7 @@ class MinMaxType extends AbstractType implements DataMapperInterface
 
         $numRange = new NumRange();
         $numRange->setLower($lower);
-        $numRange->setUpper($infinity ? 'INF' : $upper);
+        $numRange->setUpper($infinity ? NumRange::UPPER_INF : $upper);
 
         $viewData = $numRange;
     }

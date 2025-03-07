@@ -1,0 +1,258 @@
+@import "../../../../../assets/css/vars.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+
+$card-padding: 1rem;
+$card-padding-lg: 2rem;
+
+#restaurant-body {
+  .panel {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
+  }
+
+  .panel-body {
+    padding: $card-padding;
+
+    @media (min-width: $screen-lg-min) {
+      padding: $card-padding-lg;
+    }
+  }
+}
+
+#restaurant__fulfilment-details__container {
+  display: none;
+
+  @media (min-width: $screen-lg-min) {
+    display: block;
+  }
+}
+
+.fulfillment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  .alert {
+    width: 100%;
+    margin-bottom: 0;
+  }
+}
+
+// mobile (and small tablets)
+.order-overlay {
+  background-color: $body-bg;
+  padding: 0 1rem;
+
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(calc(100% - #{$navbar-height}));
+  transition: transform 0.4s;
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $screen-lg-min) {
+    display: none;
+  }
+
+  &--show {
+    transform: translateY(0);
+  }
+}
+
+.ReactModal__Body--open {
+  .order-overlay {
+    z-index: unset;
+  }
+}
+
+// desktop (and larger tablets)
+.sticky-outer-wrapper {
+  display: none;
+
+  @media (min-width: $screen-lg-min) {
+    display: block;
+  }
+}
+
+@media (min-width: $screen-lg-min) {
+  .sticky-inner-wrapper {
+    max-height: calc(100vh - var(--restaurant-menu-nav-height));
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sticky-outer-wrapper.active {
+    .sticky-inner-wrapper {
+      padding-top: 1rem;
+    }
+  }
+}
+
+.order-overlay__heading {
+  cursor: pointer;
+
+  .panel-heading {
+    position: relative;
+    height: $navbar-height;
+    display: flex;
+    align-items: center;
+    color: $white !important;
+    background-color: $main-blue-light !important;
+
+    &--warning {
+      background-color: $state-warning-bg !important;
+      color: $state-warning-text !important;
+    }
+
+    &__body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.order-overlay__content {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.panel-cart-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $screen-lg-min) {
+    overflow-y: auto;
+  }
+
+  .panel-body {
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+
+    @media (min-width: $screen-lg-min) {
+      overflow-y: auto;
+    }
+  }
+}
+
+.hub-order,
+.group-order {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  .username {
+    margin-bottom: 0.25rem;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}
+
+.cart__empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart__items {
+  flex: 1;
+  margin: 0 (-$card-padding) 0;
+  padding: 0 $card-padding 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (min-width: $screen-lg-min) {
+    margin: 0 (-$card-padding-lg) 0;
+    padding: 0 $card-padding-lg 0;
+    overflow-y: auto;
+  }
+
+  .cart__item:not(:last-child) {
+    border-bottom: 1px solid $gray-100;
+  }
+}
+
+.cart__item {
+  padding-top: 0.5rem;
+
+  &__elements {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__quantity {
+    display: flex;
+    align-items: center;
+    margin-left: -8px; //to compensate for padding around the button
+  }
+}
+
+.cart__footer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid $gray-100;
+
+  .cart__total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+.cart__time {
+  display: block;
+  color: $state-success-text;
+
+  &:hover,
+  &:visited,
+  &:focus {
+    text-decoration: none;
+  }
+
+  &--not-today {
+    color: $state-danger-text;
+  }
+
+  &__text,
+  &__edit {
+    display: block;
+  }
+
+  &__text {
+  }
+
+  &__edit {
+  }
+}
+
+.button-composite {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.invite-to-order-button {
+  flex: 1;
+  min-width: 150px;
+}
+
+.order-button {
+  flex: 2;
+  min-width: 300px;
+}

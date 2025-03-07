@@ -7,7 +7,6 @@ import {
   TOGGLE_TASK,
   SELECT_TASK,
   SELECT_TASKS,
-  SELECT_TASKS_BY_IDS,
   SET_TASK_LIST_GROUP_MODE,
   OPEN_NEW_TASK_MODAL,
   CLOSE_NEW_TASK_MODAL,
@@ -17,12 +16,8 @@ import {
   CREATE_TASK_FAILURE,
   COMPLETE_TASK_FAILURE,
   CANCEL_TASK_FAILURE,
-  TOKEN_REFRESH_SUCCESS,
   OPEN_FILTERS_MODAL,
   CLOSE_FILTERS_MODAL,
-  TOGGLE_SEARCH,
-  OPEN_SEARCH,
-  CLOSE_SEARCH,
   OPEN_SETTINGS,
   CLOSE_SETTINGS,
   LOAD_TASK_EVENTS_REQUEST,
@@ -34,7 +29,6 @@ import {
   OPEN_IMPORT_MODAL,
   CLOSE_IMPORT_MODAL,
   CLEAR_SELECTED_TASKS,
-  MODIFY_TASK_LIST_REQUEST_SUCCESS,
   RIGHT_PANEL_MORE_THAN_HALF,
   RIGHT_PANEL_LESS_THAN_HALF,
   OPEN_RECURRENCE_RULE_MODAL,
@@ -48,22 +42,36 @@ import {
   CLOSE_EXPORT_MODAL,
   OPEN_CREATE_GROUP_MODAL,
   CLOSE_CREATE_GROUP_MODAL,
+  OPEN_REPORT_INCIDENT_MODAL,
+  CLOSE_REPORT_INCIDENT_MODAL,
   OPEN_ADD_TASK_TO_GROUP_MODAL,
   CLOSE_ADD_TASK_TO_GROUP_MODAL,
   RESTORE_TASK_FAILURE,
   OPEN_CREATE_DELIVERY_MODAL,
   CLOSE_CREATE_DELIVERY_MODAL,
-  OPEN_CREATE_TOUR_MODAL,
-  CLOSE_CREATE_TOUR_MODAL, OPEN_TASK_RESCHEDULE_MODAL, CLOSE_TASK_RESCHEDULE_MODAL,
+  OPEN_TASK_RESCHEDULE_MODAL,
+  CLOSE_TASK_RESCHEDULE_MODAL,
+  CREATE_TOUR_REQUEST,
+  CREATE_TOUR_REQUEST_SUCCESS,
+  CREATE_GROUP_REQUEST,
+  CREATE_GROUP_SUCCESS,
+  MODIFY_TASK_LIST_REQUEST,
+  ADD_TASK_TO_GROUP_REQUEST,
+  toggleTourPolyline,
+  openCreateTourModal,
+  closeCreateTourModal,
+  MODIFY_TOUR_REQUEST_SUCCESS,
 } from './actions'
 
 import {
   recurrenceRulesAdapter,
 } from './selectors'
+import { tokenRefreshSuccess } from '../utils/client'
 
 const initialState = {
   addModalIsOpen: false,
   polylineEnabled: {},
+  tourPolylinesEnabled: {},
   taskListGroupMode: 'GROUP_MODE_FOLDERS',
   selectedTasks: [],
   jwt: '',
@@ -72,7 +80,6 @@ const initialState = {
   completeTaskErrorMessage: null,
   filtersModalIsOpen: false,
   settingsModalIsOpen: false,
-  searchIsOn: false,
   isLoadingTaskEvents: false,
   taskEvents: {},
   imports: {},
@@ -85,8 +92,11 @@ const initialState = {
   recurrenceRulesErrorMessage: '',
   exportModalIsOpen: false,
   createGroupModalIsOpen: false,
+  reportIncidentModalIsOpen: false,
+  isCreateGroupButtonLoading: false,
   isCreateDeliveryModalVisible: false,
   isCreateTourModalVisible: false,
+  isCreateTourButtonLoading: false,
   isTaskRescheduleModalVisible: false,
 }
 
@@ -114,51 +124,58 @@ export const polylineEnabled = (state = {}, action) => {
   }
 }
 
-export const selectedTasks = (state = [], action) => {
+export const tourPolylinesEnabled = (state = {}, action) => {
   switch (action.type) {
-  case TOGGLE_TASK:
-
-    if (-1 !== state.indexOf(action.task['@id'])) {
-      if (!action.multiple) {
-        return []
-      }
-      return _.filter(state, task => task !== action.task['@id'])
-    }
-
-    const newState = action.multiple ? state.slice(0) : []
-    newState.push(action.task['@id'])
-
+  case toggleTourPolyline.type:
+    let newState = { ...state }
+    const tourId = action.payload
+    newState[tourId] = !state[tourId]
     return newState
+  default:
+    return state
+  }
+}
 
+export const selectedTasks = (state = [], action) => {
+  /*
+    FIXME selectedTasks is an array of task ids, not tasks objects
+  */
+  let newState
+
+  switch (action.type) {
+    case TOGGLE_TASK:
+
+      if (-1 !== state.indexOf(action.taskId)) { // let's remove this task!
+        if (!action.multiple) {
+          return []
+        }
+        return _.filter(state, task => task !== action.taskId)
+      }
+
+      newState = action.multiple ? state.slice(0) : []
+      newState.push(action.taskId)
+      return newState
   case SELECT_TASK:
-
-    if (-1 !== state.indexOf(action.task['@id'])) {
-
+    if (-1 !== state.indexOf(action.taskId)) {
       return state
     }
-
-    return [ action.task['@id'] ]
-
+    return [action.taskId]
   case SELECT_TASKS:
-
-    return action.tasks.map(task => task['@id'])
-
-  case SELECT_TASKS_BY_IDS:
-
     return action.taskIds
-
   case CLEAR_SELECTED_TASKS:
-  case MODIFY_TASK_LIST_REQUEST_SUCCESS:
-
+  case MODIFY_TASK_LIST_REQUEST:
+  case MODIFY_TOUR_REQUEST_SUCCESS:
+  case CREATE_TOUR_REQUEST:
+  case CREATE_GROUP_REQUEST:
+  case ADD_TASK_TO_GROUP_REQUEST:
     // OPTIMIZATION
     // Make sure the array if not already empty
     // before returning a new reference
     if (state.length > 0) {
       return []
     }
-    break
+  break
   }
-
   return state
 }
 
@@ -173,9 +190,9 @@ export const taskListGroupMode = (state = 'GROUP_MODE_FOLDERS', action) => {
 
 export const jwt = (state = '', action) => {
   switch (action.type) {
-  case TOKEN_REFRESH_SUCCESS:
+  case tokenRefreshSuccess.type:
 
-    return action.token
+    return action.payload
 
   default:
 
@@ -252,22 +269,6 @@ export const filtersModalIsOpen = (state = initialState.filtersModalIsOpen, acti
   case OPEN_FILTERS_MODAL:
     return true
   case CLOSE_FILTERS_MODAL:
-    return false
-  default:
-    return state
-  }
-}
-
-export const searchIsOn = (state = initialState.searchIsOn, action) => {
-  switch (action.type) {
-  case TOGGLE_SEARCH:
-
-    return !state
-  case OPEN_SEARCH:
-
-    return true
-  case CLOSE_SEARCH:
-
     return false
   default:
     return state
@@ -453,6 +454,28 @@ export const createGroupModalIsOpen = (state = false, action) => {
   }
 }
 
+export const reportIncidentModalIsOpen = (state = false, action) => {
+  switch(action.type) {
+  case OPEN_REPORT_INCIDENT_MODAL:
+    return true
+  case CLOSE_REPORT_INCIDENT_MODAL:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateGroupButtonLoading = (state = initialState.isCreateGroupButtonLoading, action) => {
+  switch (action.type) {
+  case CREATE_GROUP_REQUEST:
+    return true
+  case CREATE_GROUP_SUCCESS:
+    return false
+  default:
+    return state
+  }
+}
+
 export const addTaskToGroupModalIsOpen = (state = false, action) => {
   switch(action.type) {
   case OPEN_ADD_TASK_TO_GROUP_MODAL:
@@ -477,9 +500,20 @@ export const isCreateDeliveryModalVisible = (state = initialState.isCreateDelive
 
 export const isCreateTourModalVisible = (state = initialState.isCreateTourModalVisible, action) => {
   switch (action.type) {
-  case OPEN_CREATE_TOUR_MODAL:
+  case openCreateTourModal.type:
     return true
-  case CLOSE_CREATE_TOUR_MODAL:
+  case closeCreateTourModal.type:
+    return false
+  default:
+    return state
+  }
+}
+
+export const isCreateTourButtonLoading = (state = initialState.isCreateTourButtonLoading, action) => {
+  switch (action.type) {
+  case CREATE_TOUR_REQUEST:
+    return true
+  case CREATE_TOUR_REQUEST_SUCCESS:
     return false
   default:
     return state
@@ -496,4 +530,3 @@ export const isTaskRescheduleModalVisible = (state = initialState.isTaskReschedu
       return state
   }
 }
-

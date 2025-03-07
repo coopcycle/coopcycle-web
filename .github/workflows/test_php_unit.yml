@@ -1,0 +1,25 @@
+name: Test PHP unit
+on: push
+env:
+  APP_ENV: test
+  NODE_ENV: test
+jobs:
+  PHP_UNIT:
+    name: Run PHP unit tests
+    runs-on: ubuntu-latest
+    env:
+      STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+    steps:
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Paris"
+      - uses: actions/checkout@v2
+      - name: Run CoopCycle Web
+        uses: ./.github/actions/run-coopcycle-web
+        timeout-minutes: 5
+      - name: Run PHPUnit
+        run: |
+          cp phpunit.xml.dist phpunit.xml
+          docker compose exec -T php vendor/bin/phpunit

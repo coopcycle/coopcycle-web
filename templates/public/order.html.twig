@@ -9,7 +9,7 @@
   <div class="container">
     <div class="navbar-header">
       <a class="navbar-brand" href="{{ path('homepage') }}">
-        <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />
+        <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />
       </a>
       <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
     </div>
@@ -46,13 +46,13 @@
         {% include "_partials/order/items.html.twig" %}
       </div>
 
-      {% if last_payment.state == 'failed' %}
-        <div class="alert alert-danger">{{ last_payment.lastError }}</div>
+      {% if failed_payment is not empty %}
+        <div class="alert alert-danger">{{ failed_payment.lastError }}</div>
       {% endif %}
 
-      {% if last_payment.state == 'completed' %}
+      {% if completed_payment is not empty %}
         <div class="alert alert-success">
-          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': last_payment.updatedAt|format_datetime('medium', 'short') }) }}
+          <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': completed_payment.updatedAt|format_datetime('medium', 'short') }) }}
         </div>
       {% endif %}
 
@@ -74,7 +74,7 @@
 
           <div class="text-center">
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>
 
@@ -90,38 +90,13 @@
 <div style="padding: 20px 0;">
   <div class="container">
     <div class="text-center">
-      <img src="https://coopcycle.org/images/logo.svg" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
+      <img src="{{ asset('img/logo.svg') }}" width="20" height="20" />  {{ 'basics.powered_by'|trans|raw }}
     </div>
   </div>
 </div>
 {% endblock %}
 
 {% block scripts %}
-
-{% set gateway = payment_gateway_resolver.resolve() %}
-{% set gateway_configs = {} %}
-{% set country = country_iso %}
-
-{% if gateway == 'stripe' %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-{% set gateway_configs = gateway_configs|merge({
-  stripe: {
-    publishableKey: coopcycle_setting('stripe_publishable_key'),
-    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: last_payment|hashid }),
-  }
-}) %}
-{% endif %}
-
-{% if gateway == 'mercadopago' %}
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-{% set gateway_configs = gateway_configs|merge({
-  mercadopago: {
-    publishableKey: coopcycle_setting('mercadopago_test_publishable_key'),
-    country: country
-  }
-}) %}
-{% endif %}
-
 {{ encore_entry_script_tags('delivery-map') }}
 <script>
 new CoopCycle.DeliveryMap('map', {
@@ -131,15 +106,11 @@ new CoopCycle.DeliveryMap('map', {
 });
 </script>
 {% if payment_form is defined %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-<script type="text/javascript">
-new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
-  card: "{{ gateway }}",
-  amount: {{ order.total }},
-  gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-  tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-  selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: last_payment|hashid }) }}"
-});
-</script>
+  {% include 'payment/scripts.html.twig' with {
+    order: order,
+    payment_form_selector: 'form[name="checkout_payment"]',
+    token_element_selector: '#checkout_payment_stripePayment_stripeToken',
+    select_payment_method_url: path('order_by_hashid16_select_payment_method', { hashid: order|hashid(16) })
+  } %}
 {% endif %}
 {% endblock %}

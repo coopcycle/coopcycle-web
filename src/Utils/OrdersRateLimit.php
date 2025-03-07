@@ -6,6 +6,7 @@ use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Domain\Order\Event\OrderDelayed;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -24,7 +25,7 @@ class OrdersRateLimit
      * @return bool
      * @throws \RedisException
      */
-    public function isRangeFull(Order $order, \DateTime $pickupTime): bool {
+    public function isRangeFull(Order|OrderInterface $order, \DateTime $pickupTime): bool {
 
         if (!$this->featureEnabled($order)) {
             return false;
@@ -40,11 +41,13 @@ class OrdersRateLimit
         // Get all order timestamps within the current window
         $count = $this->redis->zCount($params['key'], $start_time, $end_time);
 
+        // Return true if the number of orders exceeds the limit
+        $isFull = $count >= $params['max_orders_amount'];
 
-        //TODO: Conditional logging
-        $this->logger->info(sprintf(
-            "%s: Check if the range is full [Order: %u] [Count: %u] [Pickup: %s] [Params: %s] [Start: %s (%u)] [End: %s (%u)]",
+        $logMessage = sprintf(
+            "%s: Check if the range is full: %s [Order: %u] [Count: %u] [Pickup: %s] [Params: %s] [Start: %s (%u)] [End: %s (%u)]",
             self::class . ':' . __FUNCTION__,
+            $isFull ? 'YES' : 'NO',
             $params['id'],
             $count,
             $pickupTime->format(DATE_W3C),
@@ -53,10 +56,14 @@ class OrdersRateLimit
             $start_time,
             (new \DateTime())->setTimestamp($end_time)->format(DATE_W3C),
             $end_time
-        ));
-
-        // Return true if the number of orders exceeds the limit
-        return $count >= $params['max_orders_amount'];
+        );
+        if ($isFull) {
+            $this->logger->info($logMessage, ['order' =>  sprintf('#%d', $params['id'])]);
+        } else {
+            $this->logger->debug($logMessage, ['order' =>  sprintf('#%d', $params['id'])]);
+        }
+        
+        return $isFull;
     }
 
     /**
@@ -167,7 +174,7 @@ class OrdersRateLimit
      * @param Order $order
      * @return bool
      */
-    private function featureEnabled(Order $order): bool
+    private function featureEnabled(Order|OrderInterface $order): bool
     {
         if (!$order->hasVendor()) {
             return false;

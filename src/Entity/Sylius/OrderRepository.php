@@ -3,16 +3,17 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryRepository;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Refund;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
+use DateTime;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Query\ResultSetMapping;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Sylius\Bundle\OrderBundle\Doctrine\ORM\OrderRepository as BaseOrderRepository;
 use Sylius\Component\Customer\Model\CustomerInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
@@ -21,6 +22,45 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class OrderRepository extends BaseOrderRepository
 {
+
+    private ?DeliveryRepository $deliveryRepository;
+
+    /**
+     * Use this method if you plan to hydrate the results into the Order entity
+     *
+     * @param $alias
+     * @param $indexBy
+     * @return QueryBuilder
+     */
+    public function createOpmizedQueryBuilder($alias, $indexBy = null)
+    {
+        $qb = parent::createQueryBuilder($alias, $indexBy);
+
+        //Optimization: to avoid extra queries during Hydration preload bi-directional one-to-one relations
+        // https://stackoverflow.com/questions/12362901/doctrine2-one-to-one-relation-auto-loads-on-query/34353840#34353840
+        // https://github.com/doctrine/orm/issues/4389
+        $qb->addSelect([
+            'order_delivery',
+            'order_timeline',
+            'order_invitation',
+            'order_loopeat_credentials',
+            'order_loopeat_details'
+        ])
+            ->leftJoin('o.delivery', 'order_delivery')
+            ->leftJoin('o.timeline', 'order_timeline')
+            ->leftJoin('o.invitation', 'order_invitation')
+            ->leftJoin('o.loopeatCredentials', 'order_loopeat_credentials')
+            ->leftJoin('o.loopeatDetails', 'order_loopeat_details');
+
+        return $qb;
+    }
+
+    // This method is called by Dependency Injection
+    public function setDeliveryRepository(?DeliveryRepository $deliveryRepository): void
+    {
+        $this->deliveryRepository = $deliveryRepository;
+    }
+
     public function findCartsByRestaurant(LocalBusiness $restaurant)
     {
         $qb = $this->createQueryBuilder('o')
@@ -198,27 +238,24 @@ class OrderRepository extends BaseOrderRepository
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    public function search($q)
+    public function search($q): QueryBuilder
     {
         $qb = $this->createQueryBuilder('o');
 
         $qb
-            ->join(Customer::class, 'c', Join::WITH, 'o.customer = c.id')
-            // ->andWhere('o.state != :state_cart')
-            ->add('where', $qb->expr()->orX(
+            ->leftJoin(Customer::class, 'c', Join::WITH, 'o.customer = c.id')
+            ->andWhere($qb->expr()->orX(
                 $qb->expr()->gt('SIMILARITY(o.number, :q)', 0),
                 $qb->expr()->gt('SIMILARITY(c.email, :q)', 0)
             ))
-            ->add('where', $qb->expr()->neq('o.state', ':state_cart'))
+            ->andWhere($qb->expr()->neq('o.state', ':state_cart'))
             ->addOrderBy('SIMILARITY(o.number, :q)', 'DESC')
             ->addOrderBy('SIMILARITY(c.email, :q)', 'DESC')
             ->addOrderBy('o.createdAt', 'DESC')
             ->setParameter('q', strtolower($q))
             ->setParameter('state_cart', OrderInterface::STATE_CART);
 
-        $qb->setMaxResults(10);
-
-        return $qb->getQuery()->getResult();
+        return $qb;
     }
 
     public function findRefundedOrdersByRestaurantAndDateRange(LocalBusiness $restaurant, \DateTime $start, \DateTime $end)
@@ -244,5 +281,41 @@ class OrderRepository extends BaseOrderRepository
             ->join(OrderVendor::class, $vendorAlias, Join::WITH, sprintf('%s.id = %s.order', $alias, $vendorAlias))
             ->andWhere(sprintf('%s.restaurant = :restaurant', $vendorAlias))
             ->setParameter('restaurant', $restaurant);
+    }
+
+    public function fetchNextSeqId(){
+        $dbConnection = $this->getEntityManager()->getConnection();
+        $nextValQuery = $dbConnection->getDatabasePlatform()->getSequenceNextValSQL('sylius_order_id_seq');
+        $id = (int) $dbConnection->executeQuery($nextValQuery)->fetchOne();
+        return $id;
+    }
+
+    public function findBookmarked(Store $store, UserInterface $user): array
+    {
+        $qb = $this->deliveryRepository->createQueryBuilder('d')
+            ->where('d.store = :store')
+            ->join(Order::class, 'o', Join::WITH, 'o = d.order')
+            ->join(OrderBookmark::class, 'b', Join::WITH, 'b.order = o')
+            ->andWhere('b.owner = :user OR b.role IN (:userRoles)')
+            ->orderBy('o.id', 'DESC')
+            ->setParameter('store', $store)
+            ->setParameter('user', $user)
+            ->setParameter('userRoles', $user->getRoles())
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findBySubscriptionAndDate(Task\RecurrenceRule $subscription, DateTime $date)
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        $this->addDateClause($qb, $date);
+
+        return $qb
+            ->andWhere('o.subscription = :subscription')
+            ->setParameter('subscription', $subscription)
+            ->getQuery()
+            ->getResult();
     }
 }

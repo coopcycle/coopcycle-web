@@ -43,21 +43,22 @@ doctrine:
             pool: doctrine.result_cache_pool
 
 monolog:
+    # channels to use with autowire are configured in config.yml
+    # https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
         main:
             type: fingers_crossed
             action_level: error
-            handler: nested
+            handler: default_file
             excluded_404s:
-                # regex: exclude all 404 errors from the logs
-                - ^/
-        nested:
+              # regex: exclude all 404 errors from the logs
+              - ^/
+        default_file:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
             level: debug
             formatter: monolog.formatter.json
             max_files: 7
-            channels: ["!api", "!stripe", "!loopeat"]
         api:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
@@ -85,6 +86,13 @@ monolog:
             level: info
             max_files: 7
             channels: [timing]
+        checkout:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/checkout.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [ checkout, coopcycle.order_processing ]
         geofencing:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
@@ -92,6 +100,20 @@ monolog:
             formatter: monolog.formatter.json
             max_files: 7
             channels: [geofencing]
+        push_notification:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/push_notification.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [ push_notification ]
+        real_time_message:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/real_time_message.%kernel.environment%.log"
+            level: debug
+            formatter: monolog.formatter.json
+            max_files: 7
+            channels: [ real_time_message ]
         stripe:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
@@ -116,8 +138,51 @@ monolog:
             level: info
             max_files: 7
             channels: [dabba]
+        edenred:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/edenred.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [edenred]
+        transporter:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/transporter.%kernel.environment%.log"
+            level: info
+            max_files: 7
+            channels: [ transporter ]
         console:
             type:  console
+
+        # include all info or higher messages from all channels except the channels excluded in channels
+        upload_info:
+            type: filter
+            channels: [
+              "!php",
+              "!cache",
+              "!security",
+              "!messenger",
+              "!request"
+            ]
+            min_level: info
+            handler: logs_to_upload
+        # still upload warning and higher messages from the excluded channels
+        upload_warning:
+            type: filter
+            channels: [
+              php,
+              cache,
+              security,
+              messenger,
+              request
+            ]
+            min_level: warning
+            handler: logs_to_upload
+
+        logs_to_upload:
+            type: rotating_file
+            path: "%env(APP_LOG_DIR)%/logs_to_upload.%kernel.environment%.log"
+            formatter: monolog.formatter.json
+            max_files: 2
 
 nucleos_profile:
     registration:

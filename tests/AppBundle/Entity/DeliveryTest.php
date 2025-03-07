@@ -358,4 +358,22 @@ class DeliveryTest extends TestCase
 
         $this->assertNotNull($delivery->getPickup());
     }
+
+    public function testGetTasksWithFilterExpression()
+    {
+        $delivery = new Delivery();
+
+        $firstTask = $delivery->getItems()->get(0)->getTask();
+        $firstTask->setStatus(Task::STATUS_CANCELLED);
+
+        $notCancelled = $delivery->getTasks('not task.isCancelled()');
+
+        $this->assertCount(1, $notCancelled);
+        $this->assertNotContains($firstTask, $notCancelled);
+
+        $cancelled = $delivery->getTasks('task.isCancelled()');
+
+        $this->assertCount(1, $cancelled);
+        $this->assertContains($firstTask, $cancelled);
+    }
 }

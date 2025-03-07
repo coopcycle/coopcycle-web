@@ -1,0 +1,65 @@
+@import "~font-awesome/scss/_variables.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../assets/css/vars.scss";
+
+@import "~font-awesome/scss/_mixins.scss";
+
+
+.order-timeline {
+
+  $bullet-width: 26px;
+
+  &__step {
+
+    padding-bottom: $base-margin-s;
+    opacity: 0.7;
+
+    &__bullet {
+      @include fa-icon();
+      margin-right: $base-margin-s;
+      line-height: $bullet-width;
+      height: $bullet-width;
+      width: $bullet-width;
+      text-align: center;
+      vertical-align: middle;
+      border-radius: 50%;
+      color: #fff;
+      background-color: $main-blue;
+    }
+    &__bullet:before {
+      content: $fa-var-clock-o;
+    }
+
+    &--success &__bullet {
+      background-color: $green;
+    }
+    &--success &__bullet:before {
+      content: $fa-var-check;
+    }
+
+    &--danger &__bullet {
+      background-color: $red;
+    }
+    &--danger &__bullet:before {
+      content: $fa-var-times;
+    }
+
+    &__description {
+      border-left: 1px solid $gray;
+      min-height: 50px;
+      margin: $base-margin-s 0 $base-margin-s ($bullet-width * 0.5);
+      padding: $base-margin-s;
+      display: none;
+    }
+
+    &--active &__description {
+      display: block;
+    }
+
+    &--active {
+      opacity: 1;
+    }
+
+  }
+
+}

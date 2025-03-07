@@ -1,0 +1,16 @@
+include:
+  - foodtech.yml
+  - business_account.yml
+  - business_account_manager.yml
+
+AppBundle\Entity\User:
+  user01:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'user01'
+        - '12345678'
+        - 'user01@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>

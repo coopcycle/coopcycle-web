@@ -4,22 +4,19 @@ namespace AppBundle\Sylius\Cart;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\Vendor;
+use AppBundle\Service\LoggingUtils;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Webmozart\Assert\Assert;
 
 class RestaurantResolver
 {
-    /**
-     * @var RequestStack
-     */
-    private RequestStack $requestStack;
 
-    private $repository;
+    private LoggerInterface $logger;
 
-    private $entityManager;
+    private LoggingUtils $loggingUtils;
 
     private static $routes = [
         'restaurant',
@@ -36,13 +33,13 @@ class RestaurantResolver
      * @param LocalBusinessRepository $repository
      */
     public function __construct(
-        RequestStack $requestStack,
-        LocalBusinessRepository $repository,
-        EntityManagerInterface $entityManager)
+        private RequestStack $requestStack,
+        private LocalBusinessRepository $repository,
+        LoggerInterface $logger = null,
+        LoggingUtils $loggingUtils = null)
     {
-        $this->requestStack = $requestStack;
-        $this->repository = $repository;
-        $this->entityManager = $entityManager;
+        $this->logger = $logger ?? new NullLogger();
+        $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();
     }
 
     /**
@@ -50,7 +47,7 @@ class RestaurantResolver
      */
     public function resolve(): ?LocalBusiness
     {
-        $request = $this->requestStack->getMasterRequest();
+        $request = $this->requestStack->getMainRequest();
 
         if (!$request) {
 
@@ -72,48 +69,33 @@ class RestaurantResolver
      */
     public function accept(OrderInterface $cart): bool
     {
-        $data = $this->entityManager
-            ->getUnitOfWork()
-            ->getOriginalEntityData($cart);
-
-        // This means it is a new object, not persisted yet
-        if (!is_array($data) || empty($data)) {
-            return true;
-        }
-
-        if (!isset($data['vendor'])) {
-            throw new \LogicException('No "vendor" key found in original entity data. The column may have been renamed.');
-        }
-
         $restaurant = $this->resolve();
+        $restaurants = $cart->getRestaurants();
 
-        if (null === $restaurant) {
-            throw new \LogicException('No restaurant could be resolved from request.');
-        }
-
-        if ($cart->getId() === null) {
+        if (count($restaurants) === 0) {
+            $this->logger->debug('Cart is empty, accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
             return true;
         }
 
-        Assert::isInstanceOf($data['vendor'], Vendor::class);
-
-        $vendor = $data['vendor'];
-
-        if ($vendor->isHub()) {
-
-            return $vendor->getHub() === $restaurant->getHub();
+        if ($restaurants->contains($restaurant)) {
+            $this->logger->debug('Cart contains restaurant, accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+            return true;
         }
 
-        if ($vendor->getRestaurant() !== $restaurant) {
+        $hub = $restaurants->first()->getHub();
 
-            $thisHub = $data['vendor']->getRestaurant()->getHub();
-            $thatHub = $restaurant->getHub();
-
-            if (null !== $thisHub && null !== $thatHub && $thisHub === $thatHub) {
-                return true;
-            }
+        if (null === $hub) {
+            $this->logger->debug('Cart does not contain a restaurant, not accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+            return false;
         }
 
-        return $vendor->getRestaurant() === $restaurant;
+        $isSameHub = $hub === $restaurant->getHub();
+        if ($isSameHub) {
+            $this->logger->debug('Cart contains a restaurant from the same hub, accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+        } else {
+            $this->logger->debug('Cart contains a restaurant from another hub, not accepting', ['order' => $this->loggingUtils->getOrderId($cart)]);
+        }
+
+        return $isSameHub;
     }
 }

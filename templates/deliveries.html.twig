@@ -11,6 +11,7 @@
       {% block breadcrumb %}
       <li><a href="{{ path('admin_deliveries') }}">{% trans %}adminDashboard.deliveries.title{% endtrans %}</a></li>
       {% endblock %}
+      <div class="pull-right">{% block docs %}{% endblock %}</div>
     </ol>
     {% block content %}
     {% endblock %}

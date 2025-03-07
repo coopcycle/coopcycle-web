@@ -76,7 +76,8 @@ Feature: Manage restaurants
             },
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "state":"normal",
           "openingHoursSpecification":[
@@ -96,13 +97,21 @@ Feature: Manage restaurants
           ],
           "specialOpeningHoursSpecification":[],
           "image":@string@,
+          "bannerImage":@string@,
           "fulfillmentMethods":@array@,
           "isOpen":true,
           "hub":null,
           "facets": {
             "@*@": "@*@"
           },
-          "loopeatEnabled":false
+          "loopeatEnabled":false,
+          "tags":@array@,
+          "badges":@array@,
+          "autoAcceptOrdersEnabled": @boolean@,
+          "edenredMerchantId": null,
+          "edenredTRCardEnabled": false,
+          "edenredSyncSent": false,
+          "edenredEnabled": false
         }
       ],
       "hydra:totalItems":1,
@@ -153,10 +162,12 @@ Feature: Manage restaurants
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "telephone":"+33612345678",
       "image":@string@,
+      "bannerImage":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHoursSpecification":[
         {
@@ -180,7 +191,14 @@ Feature: Manage restaurants
       },
       "isOpen":true,
       "hub":null,
-      "loopeatEnabled":false
+      "loopeatEnabled":false,
+      "tags":@array@,
+      "badges":@array@,
+      "autoAcceptOrdersEnabled": @boolean@,
+      "edenredMerchantId": null,
+      "edenredTRCardEnabled": false,
+      "edenredSyncSent": false,
+      "edenredEnabled": false
     }
     """
 
@@ -226,10 +244,12 @@ Feature: Manage restaurants
         },
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "telephone":"+33612345678",
       "image":@string@,
+      "bannerImage":@string@,
       "hasMenu":"@string@.startsWith('/api/restaurants/menus')",
       "openingHoursSpecification":[
         {
@@ -254,7 +274,14 @@ Feature: Manage restaurants
       "isOpen":false,
       "nextOpeningDate":@string@,
       "hub":null,
-      "loopeatEnabled":false
+      "loopeatEnabled":false,
+      "tags":@array@,
+      "badges":@array@,
+      "autoAcceptOrdersEnabled": @boolean@,
+      "edenredMerchantId": null,
+      "edenredTRCardEnabled": false,
+      "edenredSyncSent": false,
+      "edenredEnabled": false
     }
     """
 
@@ -288,12 +315,12 @@ Feature: Manage restaurants
         "@type":"TimeInfo",
         "@id":@string@,
         "range":[
-          "2020-09-18T12:00:00+02:00",
-          "2020-09-18T12:10:00+02:00"
+          "2020-09-18T11:50:00+02:00",
+          "2020-09-18T12:00:00+02:00"
         ],
         "today":false,
         "fast": false,
-        "diff":"1260 - 1270"
+        "diff":"1250 - 1260"
       },
       "collection":null
     }
@@ -344,6 +371,7 @@ Feature: Manage restaurants
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_locales.yml  |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "6" has menu:
@@ -695,7 +723,14 @@ Feature: Manage restaurants
             "code":@string@,
             "name":@string@,
             "description":null,
-            "enabled":@boolean@
+            "enabled":@boolean@,
+            "identifier":@string@,
+            "reusablePackagingEnabled":@boolean@,
+            "offers": {
+              "@type":"Offer",
+              "price":@integer@
+            },
+            "images":@array@
           },
           {
             "@id":"@string@.startsWith('/api/products')",
@@ -704,7 +739,16 @@ Feature: Manage restaurants
             "code":@string@,
             "name":@string@,
             "description":null,
-            "enabled":@boolean@
+            "enabled":@boolean@,
+            "identifier":@string@,
+            "reusablePackagingEnabled":@boolean@,
+            "offers": {
+              "@type":"Offer",
+              "price":@integer@
+            },
+            "suitableForDiet":@array@,
+            "allergens":@array@,
+            "images":@array@
           }
         ],
         "hydra:totalItems":2
@@ -822,7 +866,16 @@ Feature: Manage restaurants
             "code":@string@,
             "name":@string@,
             "description":null,
-            "enabled":@boolean@
+            "enabled":@boolean@,
+            "identifier":@string@,
+            "reusablePackagingEnabled":@boolean@,
+            "offers": {
+              "@type":"Offer",
+              "price":@integer@
+            },
+            "suitableForDiet":@array@,
+            "allergens":@array@,
+            "images":@array@
           }
         ],
         "hydra:totalItems":1
@@ -874,10 +927,11 @@ Feature: Manage restaurants
             "@type":"http://schema.org/ParcelDelivery",
             "id":@integer@,
             "pickup":{
-              "@id":"/api/tasks/1",
+              "@id":@string@,
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"PICKUP",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -899,14 +953,17 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight": null,
               "packages": [],
+              "barcode": @array@,
               "createdAt":"@string@.isDateTime()",
-              "tour":null
+              "tags": [],
+              "metadata": {"@*@": "@*@"}
             },
             "dropoff":{
-              "@id":"/api/tasks/2",
+              "@id":@string@,
               "@type":"Task",
               "id":@integer@,
               "status":"TODO",
+              "type":"DROPOFF",
               "address":{
                 "@id":"/api/addresses/1",
                 "@type":"http://schema.org/Place",
@@ -928,9 +985,12 @@ Feature: Manage restaurants
               "doneBefore":"@string@.isDateTime()",
               "weight":null,
               "packages": [],
+              "barcode": @array@,
               "createdAt":"@string@.isDateTime()",
-              "tour":null
+              "tags": [],
+              "metadata": {"@*@": "@*@"}
             },
+            "tasks":@array@,
             "trackingUrl": @string@
           }
         ],

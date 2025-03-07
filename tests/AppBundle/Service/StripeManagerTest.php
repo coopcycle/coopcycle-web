@@ -127,7 +127,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $payment->setOrder($order->reveal());
 
         $this->shouldSendStripeRequestForAccount('GET', '/v1/payment_intents/pi_12345678', 'acct_123456');
@@ -154,9 +154,6 @@ class StripeManagerTest extends TestCase
             ->getRestaurants()
             ->willReturn([ $restaurant1, $restaurant2 ]);
 
-        $vendor = new Vendor();
-        $vendor->setHub($hub->reveal());
-
         $order
             ->getNumber()
             ->willReturn('000001');
@@ -177,7 +174,7 @@ class StripeManagerTest extends TestCase
             ->willReturn(new ArrayCollection([ $restaurant1, $restaurant2 ]));
         $order
             ->getVendor()
-            ->willReturn($vendor);
+            ->willReturn($hub->reveal());
         $order
             ->getTransferAmount(Argument::type(LocalBusiness::class))
             ->will(function ($args) use ($restaurant1, $restaurant2) {
@@ -233,9 +230,6 @@ class StripeManagerTest extends TestCase
             ->getRestaurants()
             ->willReturn([ $restaurant1, $restaurant2 ]);
 
-        $vendor = new Vendor();
-        $vendor->setHub($hub->reveal());
-
         $order
             ->getNumber()
             ->willReturn('000001');
@@ -256,7 +250,7 @@ class StripeManagerTest extends TestCase
             ->willReturn(new ArrayCollection([ $restaurant1 ]));
         $order
             ->getVendor()
-            ->willReturn($vendor);
+            ->willReturn($hub->reveal());
         $order
             ->getTransferAmount(Argument::type(LocalBusiness::class))
             ->will(function ($args) use ($restaurant1, $restaurant2) {
@@ -313,7 +307,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -362,7 +356,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -435,7 +429,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -557,7 +551,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getFeeTotal()
             ->willReturn(750);
@@ -610,7 +604,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->getTotal()
             ->willReturn(3000);
@@ -656,7 +650,7 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->isMultiVendor()
             ->willReturn(false);
@@ -683,16 +677,23 @@ class StripeManagerTest extends TestCase
 
     public function testCreateIntentWithAmountBreakdownForEdenred()
     {
+        $edenred = $this->prophesize(PaymentMethodInterface::class);
+        $edenred->getCode()->willReturn('EDENRED');
+
+        $card = $this->prophesize(PaymentMethodInterface::class);
+        $card->getCode()->willReturn('CARD');
+
+        $edenredPayment = new Payment();
+        $edenredPayment->setAmount(2650);
+        $edenredPayment->setCurrencyCode('EUR');
+        $edenredPayment->setPaymentMethod('pm_123456');
+        $edenredPayment->setMethod($edenred->reveal());
+
         $payment = new Payment();
-        $payment->setAmount(3000);
+        $payment->setAmount(350);
         $payment->setCurrencyCode('EUR');
         $payment->setPaymentMethod('pm_123456');
-
-        $edenredPlusCard = $this->prophesize(PaymentMethodInterface::class);
-        $edenredPlusCard->getCode()->willReturn('EDENRED+CARD');
-
-        $payment->setMethod($edenredPlusCard->reveal());
-        $payment->setAmountBreakdown(2650, 350);
+        $payment->setMethod($card->reveal());
 
         $restaurant = $this->createRestaurant('acct_123456');
 
@@ -711,13 +712,35 @@ class StripeManagerTest extends TestCase
             ->willReturn($restaurant);
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
         $order
             ->isMultiVendor()
             ->willReturn(false);
         $order
             ->getFeeTotal()
             ->willReturn(750);
+        $order
+            ->getPayments()
+            ->willReturn(new ArrayCollection([ $edenredPayment, $payment ]));
+
+        $user = $this->prophesize(User::class);
+
+        $user
+            ->getStripeCustomerId()
+            ->willReturn('cus_123456abcdef');
+
+        $customer = $this->prophesize(Customer::class);
+
+        $customer
+            ->hasUser()
+            ->willReturn(true);
+        $customer
+            ->getUser()
+            ->willReturn($user->reveal());
+
+        $order
+            ->getCustomer()
+            ->willReturn($customer->reveal());
 
         $payment->setOrder($order->reveal());
 
@@ -729,6 +752,7 @@ class StripeManagerTest extends TestCase
             "confirmation_method" => "manual",
             "confirm" => "true",
             "capture_method" => "manual",
+            "customer" => "cus_123456abcdef",
         ]);
 
         $this->stripeManager->createIntent($payment);

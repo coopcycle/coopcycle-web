@@ -5,6 +5,7 @@ namespace AppBundle\Utils;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
+use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Refund;
@@ -27,48 +28,44 @@ use Knp\Component\Pager\PaginatorInterface;
 use League\Csv\Writer as CsvWriter;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RestaurantStats implements \Countable
 {
     private $result;
-    private $translator;
-    private $withVendorName;
-    private $withMessenger;
+    private $ids;
 
     private $columnTotals = [];
     private $taxTotals = [];
     private $itemsTotalExclTaxTotals = [];
     private $taxColumns = [];
-    private $productTaxColumns;
+    private $productTaxColumns = [];
 
     private $numberFormatter;
 
-    private bool $nonProfitsEnabled;
-
     const MAX_RESULTS = 50;
 
+    private $serviceTaxRateCode;
+
+    private $messengers;
+
     public function __construct(
-        EntityManagerInterface $entityManager,
+        private readonly EntityManagerInterface $entityManager,
         \DateTime $start,
         \DateTime $end,
         ?LocalBusiness $restaurant,
-        PaginatorInterface $paginator,
+        private readonly PaginatorInterface $paginator,
         string $locale,
-        TranslatorInterface $translator,
-        TaxesHelper $taxesHelper,
-        bool $withVendorName = false,
-        bool $withMessenger = false,
-        bool $nonProfitsEnabled = false)
+        private readonly TranslatorInterface $translator,
+        private readonly TaxesHelper $taxesHelper,
+        private readonly bool $withVendorName = false,
+        private readonly bool $withMessenger = false,
+        private readonly bool $nonProfitsEnabled = false,
+        private readonly bool $withBillingMethod = false,
+        private readonly bool $includeTaxes = true
+    )
     {
-        $this->entityManager = $entityManager;
-
-        $this->paginator = $paginator;
-        $this->translator = $translator;
-        $this->taxesHelper = $taxesHelper;
-        $this->withVendorName = $withVendorName;
-        $this->withMessenger = $withMessenger;
-        $this->nonProfitsEnabled = $nonProfitsEnabled;
 
         $this->numberFormatter = \NumberFormatter::create($locale, \NumberFormatter::DECIMAL);
         $this->numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
@@ -81,6 +78,7 @@ class RestaurantStats implements \Countable
         $this->addVendors();
         $this->addRefunds();
         $this->addStores();
+        $this->addPaymentMethods();
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -188,16 +186,18 @@ class RestaurantStats implements \Countable
 
         $this->result = array_map(function ($order) use ($byOrderId) {
 
-            foreach ($byOrderId[$order->id] as $entry) {
+            if (array_key_exists($order->id, $byOrderId)) {
+                foreach ($byOrderId[$order->id] as $entry) {
 
-                $order->adjustments[] = [
-                    'type'          => 'items_total_excl_tax',
-                    'amount'        => $entry['items_total_excl_tax'],
-                    'neutral'       => true,
-                    'order_id'      => $order->id,
-                    'order_item_id' => null,
-                    'origin_code'   => $entry['tax_rate_code'],
-                ];
+                    $order->adjustments[] = [
+                        'type'          => 'items_total_excl_tax',
+                        'amount'        => $entry['items_total_excl_tax'],
+                        'neutral'       => true,
+                        'order_id'      => $order->id,
+                        'order_item_id' => null,
+                        'origin_code'   => $entry['tax_rate_code'],
+                    ];
+                }
             }
 
             return $order;
@@ -219,6 +219,7 @@ class RestaurantStats implements \Countable
             ->select('IDENTITY(v.order) AS order_id')
             ->addSelect('IDENTITY(v.restaurant) AS restaurant_id')
             ->addSelect('r.name AS restaurant_name')
+            ->addSelect('r.billingMethod AS restaurant_billing_method')
             ->addSelect('IDENTITY(r.hub) AS hub_id')
             ->addSelect('h.name AS hub_name')
             ->addSelect('v.itemsTotal')
@@ -247,6 +248,7 @@ class RestaurantStats implements \Countable
 
             if (isset($vendorsByOrderId[$order->id])) {
                 $order->vendors = $vendorsByOrderId[$order->id];
+                $order->billingMethod = count($vendorsByOrderId[$order->id]) === 1 ? $vendorsByOrderId[$order->id][0]['restaurant_billing_method'] : 'unit';
             }
 
             return $order;
@@ -291,6 +293,63 @@ class RestaurantStats implements \Countable
         }, $this->result);
     }
 
+    private function addPaymentMethods()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager->getRepository(Order::class)
+            ->createQueryBuilder('o');
+        $qb
+            ->select([
+                'o.id AS order_id',
+                'pm.code',
+            ])
+            ->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id')
+            ->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id')
+            ->andWhere(
+                $qb->expr()->in('o.id', ':ids')
+            )
+            ->andWhere(
+                $qb->expr()->in('p.state', ':payment_states')
+            )
+            ->setParameter('ids', $this->ids)
+            ->setParameter('payment_states', [ PaymentInterface::STATE_COMPLETED, PaymentInterface::STATE_REFUNDED])
+            ;
+
+        $paymentMethods = $qb->getQuery()->getArrayResult();
+        $paymentMethods = array_reduce($paymentMethods, function ($carry, $item) {
+            if (!isset($carry[$item['order_id']])) {
+                $carry[$item['order_id']] = [];
+            }
+            $carry[$item['order_id']][] = $item['code'];
+
+            return $carry;
+        }, []);
+
+        $this->result = array_map(function ($order) use ($paymentMethods) {
+
+            $codes = $paymentMethods[$order->id] ?? [];
+
+            // Even if the order was partially paid with Edenred,
+            // we only show one payment method.
+            $code = array_reduce($codes, function ($carry, $item) {
+                if ('EDENRED' === $carry || 'EDENRED' === $item) {
+                    return 'EDENRED';
+                }
+
+                return $item;
+            }, null);
+
+            $order->paymentMethod = $code;
+
+            return $order;
+
+        }, $this->result);
+    }
+
+    //DEADCODE: NON_PROFIT
     private function addNonprofits()
     {
         if (count($this->ids) === 0) {
@@ -340,6 +399,7 @@ class RestaurantStats implements \Countable
         $qb
             ->select('IDENTITY(d.order) AS order_id')
             ->addSelect('s.name AS store_name')
+            ->addSelect('s.billingMethod AS store_billing_method')
             ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
             ->andWhere(
                 $qb->expr()->in('d.order', $this->ids)
@@ -353,7 +413,10 @@ class RestaurantStats implements \Countable
                 $accumulator[$store['order_id']] = [];
             }
 
-            $accumulator[$store['order_id']] = $store['store_name'];
+            $accumulator[$store['order_id']] = [
+                'name' => $store['store_name'],
+                'billing_method' => $store['store_billing_method']
+            ];
 
             return $accumulator;
 
@@ -362,7 +425,8 @@ class RestaurantStats implements \Countable
         $this->result = array_map(function ($order) use ($storesByOrderId) {
 
             if (isset($storesByOrderId[$order->id])) {
-                $order->storeName = $storesByOrderId[$order->id];
+                $order->storeName = $storesByOrderId[$order->id]['name'];
+                $order->billingMethod = $storesByOrderId[$order->id]['billing_method'];
             }
 
             return $order;
@@ -400,7 +464,10 @@ class RestaurantStats implements \Countable
 
                 // This allows showing fewer columns
                 if (!in_array($taxRateCode, $this->taxColumns)) {
-                    $taxRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
+                    $matchingBaseRateCode = $this->taxesHelper->getMatchingBaseRateCode($taxRateCode);
+                    if (!empty($matchingBaseRateCode)) {
+                        $taxRateCode = $matchingBaseRateCode;
+                    }
                 }
 
                 $this->taxTotals[$order->getId()][$taxRateCode] += $adjustment['amount'];
@@ -514,15 +581,19 @@ class RestaurantStats implements \Countable
         $headings[] = 'order_number';
         $headings[] = 'fulfillment_method';
         $headings[] = 'completed_at';
-        foreach ($this->productTaxColumns as $code) {
-            $headings[] = $code;
+        if ($this->includeTaxes) {
+            foreach ($this->productTaxColumns as $code) {
+                $headings[] = $code;
+            }
         }
         $headings[] = 'total_products_excl_tax';
-        foreach ($this->taxColumns as $code) {
-            if ($code === $this->serviceTaxRateCode) {
-                continue;
+        if ($this->includeTaxes) {
+            foreach ($this->taxColumns as $code) {
+                if ($code === $this->serviceTaxRateCode) {
+                    continue;
+                }
+                $headings[] = $code;
             }
-            $headings[] = $code;
         }
         $headings[] = 'total_products_incl_tax';
         $headings[] = 'delivery_fee';
@@ -531,12 +602,19 @@ class RestaurantStats implements \Countable
         $headings[] = 'tip';
         $headings[] = 'promotions';
         $headings[] = 'total_incl_tax';
+        $headings[] = 'payment_method';
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
         $headings[] = 'net_revenue';
+        $headings[] = 'incident_adjustments';
+        $headings[] = 'incidents';
         if ($this->nonProfitsEnabled) {
             $headings[] = 'nonprofit';
+        }
+        if ($this->withBillingMethod) {
+            $headings[] = 'billing_method';
+            $headings[] = 'applied_billing';
         }
 
         return $headings;
@@ -600,7 +678,7 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT), !$formatted);
             case 'promotions':
                 $promotionsTotal =
-                    $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
+                $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT)
                     +
                     $order->getAdjustmentsTotal(AdjustmentInterface::ORDER_PROMOTION_ADJUSTMENT);
                 return $this->formatNumber($promotionsTotal, !$formatted);
@@ -616,6 +694,16 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getRevenue(), !$formatted);
             case 'nonprofit':
                 return $order->getNonprofit();
+            case 'payment_method':
+                return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
+            case 'incident_adjustments':
+                return $this->formatNumber($order->getAdjustmentsTotal(AdjustmentInterface::INCIDENT_ADJUSTMENT), !$formatted);
+            case 'incidents':
+                return implode('\n', $order->getIncidents());
+            case 'billing_method':
+                return $order->billingMethod ?? 'unit';
+            case 'applied_billing':
+                return $order->hasVendor() ? Order::STORE_TYPE_FOODTECH : Order::STORE_TYPE_LASTMILE;
         }
 
         return '';
@@ -706,15 +794,24 @@ class RestaurantStats implements \Countable
 
         $rsm->addRootEntityFromClassMetadata(Order::class, 'o');
         $rsm->addJoinedEntityResult(OrderVendor::class, 'v', 'o', 'vendors');
+        // Add this line to map the incident_titles scalar result
+        $rsm->addScalarResult('incident_titles', 'incident_titles');
 
-        $sql = 'SELECT ' . $rsm->generateSelectClause() . ' '
+        $sql = 'SELECT ' . $rsm->generateSelectClause() . ',
+            (
+            SELECT string_agg(DISTINCT i.title, E\'\n\')
+            FROM delivery d
+            JOIN task t ON t.delivery_id = d.id
+            JOIN incident i ON i.task_id = t.id
+            WHERE d.order_id = o.id
+            ) as incident_titles '
             . 'FROM sylius_order o '
             . 'LEFT JOIN sylius_order_vendor v ON (o.id = v.order_id) '
             . 'LEFT JOIN sylius_order_event evt ON (o.id = evt.aggregate_id AND type = :event_type) '
             . 'WHERE '
             . 'evt.created_at BETWEEN :start AND :end '
             . 'AND o.state = :state'
-            ;
+        ;
 
         if (null !== $restaurant) {
             $sql .= ' AND v.restaurant_id = :restaurant';
@@ -733,7 +830,17 @@ class RestaurantStats implements \Countable
 
         $result = $query->getArrayResult();
 
-        $orders = array_map(fn ($data) => OrderView::create($data, $restaurant), $result);
+        // Modify the mapping to handle the mixed result (entities + scalar)
+        $orders = array_map(function ($data) use ($restaurant) {
+            // Extract the order entity and incident_titles from the mixed result
+            $orderData = $data[0]; // The first element contains the Order entity data
+            $incidentTitles = $data['incident_titles']; // Get the scalar result
+
+            // Add incident_titles to the order data
+            $orderData['incident_titles'] = $incidentTitles;
+
+            return OrderView::create($orderData, $restaurant);
+        }, $result);
 
         return $orders;
     }

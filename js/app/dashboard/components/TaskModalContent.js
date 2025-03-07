@@ -6,6 +6,7 @@ import {withTranslation} from 'react-i18next'
 import {DatePicker, Radio, Timeline} from 'antd';
 import {Formik} from 'formik'
 import {isValidPhoneNumber} from 'react-phone-number-input'
+import JsBarcode from 'jsbarcode'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
 import TagsSelect from '../../components/TagsSelect'
@@ -38,6 +39,7 @@ const itemColor = event => {
   case 'task:cancelled':
     return 'red'
   case 'task:rescheduled':
+  case 'task:incident-reported':
     return 'orange'
   default:
     return 'blue'
@@ -234,8 +236,11 @@ class TaskModalContent extends React.Component {
         { events.map(event => (
           <Timeline.Item key={ event.createdAt + '-' + event.name } color={ itemColor(event) }>
             <p>{ moment(event.createdAt).format('lll') } { event.name }</p>
+            { event.data.incident_id && (
+              <a href={ window.Routing.generate('admin_incident', { id: event.data.incident_id }) } target="_blank" rel="noopener noreferrer">Incident #{event.data.incident_id}</a>
+            )}
             { event.data.notes && (
-              <p>{ event.data.notes }</p>
+              <p><i className="fa fa-comment" aria-hidden="true"></i> { event.data.notes }</p>
             ) }
           </Timeline.Item>
         )) }
@@ -265,6 +270,44 @@ class TaskModalContent extends React.Component {
         </div>
         <div className="collapse" id="task_history" aria-expanded="false">
           { this.renderTimelineContent() }
+        </div>
+      </div>
+    )
+  }
+
+  renderBarcode(task) {
+
+    if (task?.type !== 'DROPOFF') {
+      return null
+    }
+
+    let anchorProps = {}
+    if (this.props.events.length === 0) {
+      anchorProps = {
+        ...anchorProps,
+        onClick: e => {
+          e.preventDefault()
+          JsBarcode('.barcode').init();
+        }
+      }
+    }
+
+    const {barcode, label:{token}} = task.barcode
+
+    return (
+      <div>
+        <div className="text-center">
+          <a className="help-block" role="button" data-toggle="collapse" href="#task_barcode" aria-expanded="false" { ...anchorProps }>
+            <small>{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_SHOW_BARCODE') }</small>
+          </a>
+        </div>
+        <div className="collapse" id="task_barcode" aria-expanded="false">
+          <a href={window.Routing.generate('task_label_pdf') + '?code=' + barcode + '&token=' + token } target="_blank" rel="noreferrer">
+            <svg className="barcode img-thumbnail img-responsive center-block"
+              data-format="code128"
+              data-height="60"
+              data-value={barcode}/>
+          </a>
         </div>
       </div>
     )
@@ -324,6 +367,7 @@ class TaskModalContent extends React.Component {
                 </Radio.Group>
               </div>
               { Object.prototype.hasOwnProperty.call(values, '@id') && this.renderTimeline(values) }
+              { Object.prototype.hasOwnProperty.call(values, '@id') && this.renderBarcode(values) }
               <div className={ errors.address && touched.address && errors.address.streetAddress && touched.address.streetAddress ? 'form-group form-group-sm has-error' : 'form-group form-group-sm' }>
                 <label className="control-label required">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_STREET_ADDRESS_LABEL') }</label>
                 <AddressAutosuggest
@@ -416,6 +460,17 @@ class TaskModalContent extends React.Component {
                   onBlur={handleBlur}
                   value={values.comments}></textarea>
               </div>
+              {
+                (values.type === "PICKUP" && values.metadata?.order_notes && !!values.metadata?.order_notes?.length) && (
+                  <div className="form-group form-group-sm">
+                    <label className="control-label" htmlFor="order_notes">{ this.props.t('ADMIN_DASHBOARD_TASK_FORM_ORDER_NOTES_LABEL') }</label>
+                    <textarea id="order_notes" name="order_notes" rows="2"
+                      className="form-control"
+                      disabled="true"
+                      value={values.metadata.order_notes}></textarea>
+                  </div>
+                )
+              }
               <div className="form-group form-group-sm">
                 <label className="control-label">Tags</label>
                 <TagsSelect
@@ -448,7 +503,7 @@ class TaskModalContent extends React.Component {
                   </div>
                 </div>
               )}
-              { (values.packages && values.packages.length) && (
+              { (values.packages && !!values.packages.length) && (
                 <div className="form-group form-group-sm">
                   <label className="control-label">{ this.props.t('ADMIN_DASHBOARD_PACKAGES') }</label>
                   <ul className="list-group table-hover">

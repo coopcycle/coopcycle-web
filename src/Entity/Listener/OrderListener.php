@@ -4,32 +4,45 @@ namespace AppBundle\Entity\Listener;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
-use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Dflydev\Base32\Crockford\Crockford;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreFlushEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 class OrderListener
 {
-    public function preFlush(Order $order, PreFlushEventArgs $args)
+    public function preUpdate(Order $order, PreUpdateEventArgs $args)
     {
-        $entityManager = $args->getEntityManager();
-        $vendor = $order->getVendor();
+        $objectManager = $args->getObjectManager();
 
-        if (null !== $vendor) {
-            if (!$entityManager->contains($vendor)) {
-                $params = $vendor->isHub() ?
-                    ['hub' => $vendor->getHub()] : ['restaurant' => $vendor->getRestaurant()];
+        if ($args->hasChangedField('number')) {
+            $number = $args->getNewValue('number');
 
-                $existingVendor = $entityManager->getRepository(Vendor::class)
-                    ->findOneBy($params);
+            if (null !== $number) {
+                $numberWithoutCollision = $this->findNumberWithoutCollision($objectManager, $number);
 
-                if (null !== $existingVendor) {
-                    $order->setVendor($existingVendor);
-                } else {
-                    $entityManager->persist($vendor);
-                    $entityManager->flush();
+                if ($numberWithoutCollision !== $number) {
+                    $args->setNewValue('number', $numberWithoutCollision);
                 }
             }
         }
+    }
+
+    private function findNumberWithoutCollision(EntityManagerInterface $objectManager, string $number, int $depth = 10)
+    {
+        if ($depth <= 0) {
+            throw new \Exception('Could not find a unique number');
+        }
+
+        $orderRepository = $objectManager->getRepository(Order::class);
+        $orderWithSameNumber = $orderRepository->findOneByNumber($number);
+
+        if (null === $orderWithSameNumber) {
+            return $number;
+        }
+
+        $nextId = $orderRepository->fetchNextSeqId();
+        $newNumber = Crockford::encode($nextId);
+        return $this->findNumberWithoutCollision($objectManager, $newNumber, $depth - 1);
     }
 }

@@ -5,9 +5,9 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="orderId" type="string" column="loopeat_order_id" nullable="true"/>
-    <field name="returns" type="json_array" column="returns" nullable="true"/>
-    <field name="deliver" type="json_array" column="deliver" nullable="true"/>
-    <field name="pickup" type="json_array" column="pickup" nullable="true"/>
+    <field name="returns" type="json" column="returns" nullable="true"/>
+    <field name="deliver" type="json" column="deliver" nullable="true"/>
+    <field name="pickup" type="json" column="pickup" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>

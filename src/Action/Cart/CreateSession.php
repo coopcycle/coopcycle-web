@@ -2,38 +2,41 @@
 
 namespace AppBundle\Action\Cart;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Api\UrlGeneratorInterface;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
+use AppBundle\Security\OrderAccessTokenManager;
+use AppBundle\Service\LoggingUtils;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 final class CreateSession
 {
     public function __construct(
-        DataPersisterInterface $dataPersister,
-        JWTEncoderInterface $jwtEncoder,
-        IriConverterInterface $iriConverter,
-        NormalizerInterface $itemNormalizer)
+        private DataPersisterInterface $dataPersister,
+        private NormalizerInterface $itemNormalizer,
+        private OrderAccessTokenManager $orderAccessTokenManager,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils
+    )
     {
-        $this->dataPersister = $dataPersister;
-        $this->jwtEncoder = $jwtEncoder;
-        $this->iriConverter = $iriConverter;
-        $this->itemNormalizer = $itemNormalizer;
     }
 
     public function __invoke($data)
     {
-        $this->dataPersister->persist($data->cart);
+        $cart = $data->cart;
+        $isExisting = $cart->getId() === null;
 
-        $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($data->cart, UrlGeneratorInterface::ABS_URL),
-            'exp' => time() + (60 * 60 * 24),
-        ];
+        $this->dataPersister->persist($cart);
+
+        if ($isExisting) {
+            $this->checkoutLogger->info('Order updated in the database', ['file' => 'CreateSession', 'order' => $this->loggingUtils->getOrderId($cart)]);
+        } else {
+            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database',
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM)), ['file' => 'CreateSession', 'order' => $this->loggingUtils->getOrderId($cart)]);
+        }
 
         return new JsonResponse([
-            'token' => $this->jwtEncoder->encode($payload),
+            'token' => $this->orderAccessTokenManager->create($cart),
             'cart' => $this->itemNormalizer->normalize($data->cart, 'jsonld', [
                 'groups' => ['cart']
             ]),

@@ -1,6 +1,7 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
+import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Bar } from 'react-chartjs-2';
 import _ from 'lodash'
 
@@ -30,7 +31,7 @@ const renderChart = ({ resultSet, error }) => {
     datasets: resultSet.series().map((s, index) => ({
       label: s.title,
       data: labels.map((label) => {
-        const r = _.find(s.series, s => s.category === label)
+        const r = _.find(s.series, s => s.x === label)
         return r ? r.value : 0
       }),
       backgroundColor: COLORS_SERIES[index],

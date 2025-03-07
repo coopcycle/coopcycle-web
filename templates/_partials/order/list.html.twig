@@ -2,16 +2,18 @@
   <thead>
     <th>#</th>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <th>{% trans %}order.list.customer{% endtrans %}</th>
+      <th>{% trans %}order.list.state{% endtrans %}</th>
+      <th>{% trans %}delivery.table.heading.owner{% endtrans %}</th>
     {% endif %}
-    <th>{% trans %}order.list.state{% endtrans %}</th>
     <th>{% trans %}order.list.summary{% endtrans %}</th>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <th class="text-right">{% trans %}order.total_excluding_tax{% endtrans %}</th>
+    <th class="text-right">{% trans %}order.items_total_excluding_tax{% endtrans %}</th>
     <th class="text-right">{% trans %}basics.platform_fees{% endtrans %}</th>
     {% endif %}
     <th class="text-right">{% trans %}order.total_including_tax{% endtrans %}</th>
+    {% if with_receipt ?? true %}
     <th class="text-center">{% trans %}order.list.receipt{% endtrans %}</th>
+    {% endif %}
     <th class="text-right">{% trans %}order.list.shippedAt{% endtrans %}</th>
     {% if with_reorder ?? false %}
     <th></th>
@@ -21,32 +23,50 @@
   {% for order in orders %}
   <tr>
     <td width="5%">
+      {% if is_granted('ROLE_ADMIN') or (order.customer is not null and order.customer == app.user.customer) %}
       <a href="{{ path(routes.order, { id: order.id }) }}" class="text-monospace">
         {% if order.number is not null %}
         {{ order.number }}
         {% else %}
         #{{ order.id }}
         {% endif %}
+      {% else %}
+        <span>
+          {% if order.number is not null %}
+          {{ order.number }}
+          {% else %}
+          #{{ order.id }}
+          {% endif %}
+        </span>
+      {% endif %}
       </a>
     </td>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <td width="10%">
-      {% if order.customer is not null %}
-        {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
+    <td width="5%">{% include '_partials/order/state.html.twig' %}</td>
+    <td>
+      {% if order.hasVendor() and not order.isMultiVendor() %}
+        {{ order.vendor.name }}
+      {% elseif order.delivery and order.delivery.store %}
+        {{ order.delivery.store.name }}
       {% endif %}
     </td>
     {% endif %}
-    <td width="5%">{% include '_partials/order/state.html.twig' %}</td>
-    <td>{% include '_partials/order/summary.html.twig' %}</td>
+    <td>
+      {% if order.customer is not null %}
+        {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
+      {% endif %}
+      {% include '_partials/order/summary.html.twig' %}
+    </td>
     {% if is_granted('ROLE_ADMIN') and (with_extras ?? true) %}
-    <td class="text-right">
+    <td width="8%" class="text-right">
       <span>{{ (order.itemsTotal - order.itemsTaxTotal)|price_format }}</span>
     </td>
-    <td class="text-right">{{ order.getFeeTotal()|price_format }}</td>
+    <td width="8%" class="text-right">{{ order.getFeeTotal()|price_format }}</td>
     {% endif %}
-    <td class="text-right">
+    <td width="8%" class="text-right">
       <span>{{ order.total|price_format }}</span>
     </td>
+    {% if with_receipt ?? true %}
     <td width="10%" class="text-center">
       {% if order.hasReceipt() %}
       <a target="_blank" href="{{ path(routes.order_receipt, { orderNumber: order.number }) }}">
@@ -58,10 +78,11 @@
           data-action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">{{ 'order.list.generate_receipt'|trans }}</button>
       {% endif %}
     </td>
+    {% endif %}
     <td class="text-right">{{ order.shippingTimeRange|time_range_for_humans_short }}</td>
     {% if with_reorder ?? false %}
     <td class="text-right">
-      {% if order.hasVendor() and not order.vendor.isHub() and order.vendor.restaurant.enabled %}
+      {% if order.hasVendor() and not order.isMultiVendor() and order.vendor.enabled %}
       <a class="btn btn-sm btn-success" href="{{ path('order_reorder', { hashid: order|hashid(16) }) }}">
         <i class="fa fa-shopping-basket mr-1"></i>
         <span>{{ 'order.list.reorder'|trans }}</span>

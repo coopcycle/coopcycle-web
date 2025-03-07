@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\Product;
 
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface as BaseProductVariantInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -29,4 +30,10 @@ interface ProductVariantInterface extends BaseProductVariantInterface, TaxableIn
     public function hasOptionValueWithQuantity(ProductOptionValueInterface $optionValue, int $quantity = 1): bool;
 
     public function getQuantityForOptionValue(ProductOptionValueInterface $optionValue): int;
+
+    public function isBusiness(): bool;
+
+    public function getPricingRuleSet(): ?PricingRuleSet;
+
+    public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void;
 }

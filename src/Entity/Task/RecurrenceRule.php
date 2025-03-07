@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Task;
 
 use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
+use AppBundle\Action\Task\GenerateOrders;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -21,31 +22,37 @@ use Symfony\Component\Validator\Constraints as Assert;
  *   collectionOperations={
  *     "get"={
  *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     },
  *     "post"={
  *       "method"="POST",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     }
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
+ *     },
+ *     "generate_orders"={
+ *       "method"="POST",
+ *       "path"="/recurrence_rules/generate_orders",
+ *       "security"="is_granted('ROLE_DISPATCHER')",
+ *       "controller"=GenerateOrders::class
+ *     },
  *   },
  *   itemOperations={
  *     "get"={
  *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     },
  *     "put"={
  *       "method"="PUT",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     },
  *     "between"={
  *       "method"="POST",
  *       "path"="/recurrence_rules/{id}/between",
- *       "security"="is_granted('ROLE_ADMIN')",
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')",
  *       "controller"=BetweenController::class
  *     },
  *     "delete"={
  *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')"
+ *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
  *     }
  *   }
  * )
@@ -59,6 +66,13 @@ class RecurrenceRule
      * @var int
      */
     private $id;
+
+
+    /**
+     * @var string|null
+     * @Groups({"task_recurrence_rule"})
+     */
+    private $name;
 
     /**
      * @var Rule
@@ -81,6 +95,8 @@ class RecurrenceRule
      */
     private $template = [];
 
+    private ?array $arbitraryPriceTemplate = null;
+
     /**
      * @var Store
      * @Assert\NotNull
@@ -88,12 +104,34 @@ class RecurrenceRule
      */
     private $store;
 
+    private bool $generateOrders = false;
+
     /**
      * @return int
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Sets the name of the object.
+     *
+     * @param string|null $name The name to set.
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Retrieves the name associated with the object.
+     *
+     * @return string|null The name of the object.
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -164,4 +202,34 @@ class RecurrenceRule
     {
         return $this->store->getOrganization()->getName();
     }
+
+    public function getArbitraryPriceTemplate(): ?array
+    {
+        return $this->arbitraryPriceTemplate;
+    }
+
+    public function setArbitraryPriceTemplate(?array $arbitraryPriceTemplate): void
+    {
+        $this->arbitraryPriceTemplate = $arbitraryPriceTemplate;
+    }
+
+    /**
+     * @SerializedName("isCancelled")
+     * @Groups({"task_recurrence_rule"})
+     */
+    public function isCancelled(): bool
+    {
+        return $this->isDeleted();
+    }
+
+    public function isGenerateOrders(): bool
+    {
+        return $this->generateOrders;
+    }
+
+    public function setGenerateOrders(bool $generateOrders): void
+    {
+        $this->generateOrders = $generateOrders;
+    }
+
 }

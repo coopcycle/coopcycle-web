@@ -5,17 +5,20 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
+use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
-use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Form\AddressType;
+use AppBundle\Form\BusinessAccountType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\TaskCompleteType;
@@ -26,9 +29,10 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use League\Csv\Writer as CsvWriter;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
@@ -39,10 +43,10 @@ use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -50,6 +54,7 @@ use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Webmozart\Assert\Assert;
 
 class ProfileController extends AbstractController
 {
@@ -57,11 +62,14 @@ class ProfileController extends AbstractController
 
     use OrderTrait;
     use UserTrait;
+    use InjectAuthTrait;
+    use LoopeatTrait;
 
-    public function __construct(OrderRepositoryInterface $orderRepository)
-    {
-        $this->orderRepository = $orderRepository;
-    }
+    public function __construct(
+        protected OrderRepositoryInterface $orderRepository,
+        protected JWTTokenManagerInterface $JWTTokenManager
+    )
+    { }
 
     public function indexAction(Request $request,
         SlugifyInterface $slugify,
@@ -74,11 +82,6 @@ class ProfileController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($user->hasRole('ROLE_COURIER')) {
-
-            return $this->tasksAction($request);
-        }
-
         $customer = $user->getCustomer();
 
         $loopeatAuthorizeUrl = '';
@@ -88,7 +91,7 @@ class ProfileController extends AbstractController
             $redirectUri = $this->generateUrl('loopeat_oauth_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
             $redirectAfterUri = $this->generateUrl(
-                'nucleos_profile_profile_show',
+                'profile_edit',
                 [],
                 UrlGeneratorInterface::ABSOLUTE_URL
             );
@@ -128,7 +131,7 @@ class ProfileController extends AbstractController
     /**
      * @Route("/profile/edit", name="profile_edit")
      */
-    public function editProfileAction(Request $request, UserManagerInterface $userManager) {
+    public function editProfileAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator) {
 
         $user = $this->getUser();
 
@@ -146,40 +149,37 @@ class ProfileController extends AbstractController
 
             $userManager->updateUser($user);
 
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
         }
 
-        return $this->render('profile/edit_profile.html.twig', array(
+        return $this->render('profile/edit_profile.html.twig', $this->auth(array(
             'form' => $editForm->createView()
-        ));
+        )));
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
+        Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
+
         $qb = $this->orderRepository
             ->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state != :state')
+            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
             ->setParameter('customer', $this->getUser()->getCustomer())
             ->setParameter('state', OrderInterface::STATE_CART);
 
-        $count = (clone $qb)
-            ->select('COUNT(o)')
-            ->getQuery()
-            ->getSingleScalarResult();
-
-        $pages  = ceil($count / self::ITEMS_PER_PAGE);
-        $page   = $request->query->getInt('p', 1);
-        $offset = self::ITEMS_PER_PAGE * ($page - 1);
-
-        $orders = (clone $qb)
-            ->setMaxResults(self::ITEMS_PER_PAGE)
-            ->setFirstResult($offset)
-            ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-            ->getQuery()
-            ->getResult();
-
-        return [ $orders, $pages, $page ];
+        return $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
+        );
     }
 
     public function orderAction($id, Request $request,
@@ -230,7 +230,7 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        return $this->render('order/service.html.twig', [
+        return $this->render('order/item.html.twig', [
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
@@ -519,50 +519,92 @@ class ProfileController extends AbstractController
     }
 
     /**
-     * @Route("/profile/loopeat", name="profile_loopeat")
+     * @Route("/profile/business-account", name="profile_business_account")
      */
-    public function loopeatAction(Request $request, CubeJsTokenFactory $tokenFactory, HttpClientInterface $cubejsClient)
+    public function businessAccountAction(
+        Request $request,
+        EntityManagerInterface $objectManager,
+        TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted('ROLE_LOOPEAT');
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS_ACCOUNT');
 
-        $cubeJsToken = $tokenFactory->createToken();
+        $user = $this->getUser();
 
-        if ($request->isMethod('POST')) {
+        $businessAccount = $user->getBusinessAccount();
 
-            $response = $cubejsClient->request('POST', 'load', [
-                'headers' => [
-                    'Authorization' => $cubeJsToken,
-                    'Content-Type' => 'application/json',
-                ],
-                'body' => '{"query":{"measures":[],"timeDimensions":[],"order":[["Loopeat.orderDate","desc"]],"dimensions":["Loopeat.restaurantName","Loopeat.orderNumber","Loopeat.orderDate","Loopeat.customerEmail","Loopeat.grabbedQuantity","Loopeat.returnedQuantity"]}}'
-            ]);
-
-            // Need to invoke a method on the Response,
-            // to actually throw the Exception here
-            // https://github.com/symfony/symfony/issues/34281
-            // https://symfony.com/doc/5.4/http_client.html#handling-exceptions
-            $content = $response->getContent();
-
-            $resultSet = json_decode($content, true);
-
-            $csv = CsvWriter::createFromString('');
-            $csv->insertOne(array_keys($resultSet['data'][0]));
-            $csv->insertAll($resultSet['data']);
-
-            $response = new Response($csv->getContent());
-            $response->headers->add(['Content-Type' => 'text/csv']);
-            $response->headers->add([
-                'Content-Disposition' => $response->headers->makeDisposition(
-                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    'loopeat.csv'
-                )
-            ]);
-
-            return $response;
+        if (!$businessAccount) {
+            throw $this->createNotFoundException('User does not have a business account associated');
         }
 
-        return $this->render('profile/loopeat.html.twig', [
-            'cube_token' => $cubeJsToken,
+        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+        $form->add('save', SubmitType::class, [
+            'label'  => 'form.menu_editor.save.label',
+        ]);
+
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $objectManager->persist($businessAccount);
+            $objectManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            return $this->redirectToRoute('profile_business_account');
+        }
+
+        return $this->render('profile/business_account.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/profile/business-account-orders", name="profile_business_account_orders")
+     */
+    public function businessAccountOrdersAction(
+        Request $request,
+        EntityManagerInterface $objectManager,
+        PaginatorInterface $paginator)
+    {
+        $this->denyAccessUnlessGranted('ROLE_BUSINESS_ACCOUNT');
+
+        $user = $this->getUser();
+
+        $businessAccount = $user->getBusinessAccount();
+
+        if (!$businessAccount) {
+            throw $this->createNotFoundException('User does not have a business account associated');
+        }
+
+        $orders = [];
+
+        if (null !== $businessAccount->getId()) {
+            Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
+
+            $qb = $this->orderRepository
+                ->createQueryBuilder('o')
+                ->andWhere('o.businessAccount = :business_account')
+                ->andWhere('o.state != :state')
+                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
+                ->setParameter('business_account', $businessAccount)
+                ->setParameter('state', OrderInterface::STATE_CART);
+
+            $orders = $paginator->paginate(
+                $qb,
+                $request->query->getInt('page', 1),
+                self::ITEMS_PER_PAGE,
+                [
+                    PaginatorInterface::DISTINCT => false,
+                ]
+            );
+        }
+
+        return $this->render('profile/business_account_orders.html.twig', [
+            'orders' => $orders,
+            'routes' => [
+                'restaurant' => 'restaurant',
+                'order' => 'profile_order'
+            ]
         ]);
     }
 }

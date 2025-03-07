@@ -8,12 +8,14 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Package;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Security\TokenStoreExtractor;
@@ -21,12 +23,15 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DeliveryManagerTest extends KernelTestCase
 {
@@ -42,25 +47,32 @@ class DeliveryManagerTest extends KernelTestCase
 
         $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
 
+        $this->denormalizer = $this->prophesize(DenormalizerInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->routing = $this->prophesize(RoutingInterface::class);
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
         $this->storeExtractor = $this->prophesize(TokenStoreExtractor::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+    }
+
+    public function tearDown(): void
+    {
+        Carbon::setTestNow();
     }
 
     public function testGetPrice()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('distance in 0..3000');
-        $rule1->setPrice(5.99);
+        $rule1->setPrice(599);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('distance in 3000..5000');
-        $rule2->setPrice(6.99);
+        $rule2->setPrice(699);
 
         $rule3 = new PricingRule();
         $rule3->setExpression('distance in 5000..7500');
-        $rule3->setPrice(8.99);
+        $rule3->setPrice(899);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -70,17 +82,19 @@ class DeliveryManagerTest extends KernelTestCase
         ]));
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = new Delivery();
         $delivery->setDistance(1500);
 
-        $this->assertEquals(5.99, $deliveryManager->getPrice($delivery, $ruleSet));
+        $this->assertEquals(599, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 
     public function testGetPriceWithMapStrategy()
@@ -106,11 +120,13 @@ class DeliveryManagerTest extends KernelTestCase
         ]));
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = new Delivery();
@@ -164,11 +180,13 @@ class DeliveryManagerTest extends KernelTestCase
             ->willReturn($timeline);
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -204,11 +222,13 @@ class DeliveryManagerTest extends KernelTestCase
         // $order->setShippingAddress(null);
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -280,11 +300,13 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $pickup = new Task();
@@ -304,10 +326,10 @@ class DeliveryManagerTest extends KernelTestCase
         $this->assertEquals(500, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 
-    public function testGetMultiPriceWithTimeDiff()
+    public function testGetMultiPriceWithDiffHoursGreaterThan()
     {
         $rule1 = new PricingRule();
-        $rule1->setExpression('diff_hours(pickup) > 3');
+        $rule1->setExpression('diff_hours(pickup, "> 3")');
         $rule1->setPrice(100);
 
         $rule2 = new PricingRule();
@@ -327,11 +349,13 @@ class DeliveryManagerTest extends KernelTestCase
         );
 
         $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
             $expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
-            $this->storeExtractor->reveal()
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
         );
 
         $pickup = new Task();
@@ -348,5 +372,150 @@ class DeliveryManagerTest extends KernelTestCase
         $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
 
         $this->assertEquals(400, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
+    public function testGetMultiPriceWithTaskTypeCondition()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.type == "PICKUP"');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.type == "DROPOFF"');
+        $rule2->setPrice(200);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+
+        $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
+        );
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(500, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
+    public function testGetMultiPriceWithPricePerPackage()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setExpression('task.type == "PICKUP"');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('task.type == "DROPOFF"');
+        $rule2->setPrice('price_per_package(packages, "XXL", 100, 0, 0)');
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(
+            new PricePerPackageExpressionLanguageProvider()
+        );
+
+        $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
+        );
+
+        $package = new Package();
+        $package->setName('XXL');
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->addPackageWithQuantity($package, 1);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->addPackageWithQuantity($package, 2);
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(400, $deliveryManager->getPrice($delivery, $ruleSet));
+    }
+
+    public function testGetMultiPriceWithDiffHoursLessThan()
+    {
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('diff_hours(pickup, "< 3")');
+        $rule1->setPrice(100);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('weight > 5000');
+        $rule2->setPrice(200);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $expressionLanguage = new ExpressionLanguage();
+        $expressionLanguage->registerProvider(
+            new PickupExpressionLanguageProvider()
+        );
+
+        $deliveryManager = new DeliveryManager(
+            $this->denormalizer->reveal(),
+            $expressionLanguage,
+            $this->routing->reveal(),
+            $this->orderTimeHelper->reveal(),
+            $this->orderTimelineCalculator->reveal(),
+            $this->storeExtractor->reveal(),
+            $this->entityManager->reveal()
+        );
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
+
+        $this->assertEquals(100, $deliveryManager->getPrice($delivery, $ruleSet));
     }
 }

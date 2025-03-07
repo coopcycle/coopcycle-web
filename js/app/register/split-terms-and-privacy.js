@@ -14,8 +14,8 @@ const init = async () => {
     return
   }
 
-  const termsAndConditionsCheck = document.getElementById('registration_form_termsAndConditionsAndPrivacyPolicy_termsAndConditions')
-  const privacyPolicyCheck = document.getElementById('registration_form_termsAndConditionsAndPrivacyPolicy_privacyPolicy')
+  const termsAndConditionsCheck = document.querySelector('[id$=_termsAndConditionsAndPrivacyPolicy_termsAndConditions]')
+  const privacyPolicyCheck = document.querySelector('[id$=termsAndConditionsAndPrivacyPolicy_privacyPolicy]')
 
   Modal.setAppElement(container)
 

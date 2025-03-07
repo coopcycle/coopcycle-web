@@ -2,6 +2,7 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Utils\Settings;
 use Craue\ConfigBundle\Util\Config as CraueConfig;
 use Craue\ConfigBundle\CacheAdapter\CacheAdapterInterface as CraueCache;
@@ -9,24 +10,22 @@ use Doctrine\Persistence\ManagerRegistry;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
-use AppBundle\Payment\GatewayResolver;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Process;
 
 class SettingsManager
 {
     private $craueConfig;
+    private $craueCache;
     private $configEntityName;
     private $phoneNumberUtil;
     private $country;
+    private $foodtechEnabled;
+    private $b2bEnabled;
     private $doctrine;
     private $gatewayResolver;
-
-    private $mandatorySettings = [
-        'brand_name',
-        'administrator_email',
-        'google_api_key',
-        'latlng',
-        'currency_code',
-    ];
+    private $projectDir;
+    private $forceStripe;
 
     private $secretSettings = [
         'stripe_test_publishable_key',
@@ -37,13 +36,14 @@ class SettingsManager
         'stripe_live_connect_client_id',
         'payment_gateway',
         'payment_method_publishable_key',
-        'google_api_key',
         'mercadopago_test_publishable_key',
         'mercadopago_live_publishable_key',
         'mercadopago_test_access_token',
         'mercadopago_live_access_token',
         'mercadopago_client_secret',
         'google_api_key_custom',
+        'paygreen_public_key',
+        'paygreen_secret_key',
     ];
 
     private static $boolean = [
@@ -64,6 +64,7 @@ class SettingsManager
         bool $foodtechEnabled,
         bool $b2bEnabled,
         GatewayResolver $gatewayResolver,
+        string $projectDir,
         $forceStripe = false)
     {
         $this->craueConfig = $craueConfig;
@@ -75,6 +76,7 @@ class SettingsManager
         $this->foodtechEnabled = $foodtechEnabled;
         $this->b2bEnabled = $b2bEnabled;
         $this->gatewayResolver = $gatewayResolver;
+        $this->projectDir = $projectDir;
         $this->forceStripe = $forceStripe;
     }
 
@@ -231,13 +233,14 @@ class SettingsManager
     {
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
+        $supportsPaygreen = $this->configKeysAreNotEmpty('paygreen_public_key', 'paygreen_secret_key', 'paygreen_shop_id');
 
         if ($this->forceStripe) {
 
             return $supportsStripe;
         }
 
-        return $supportsStripe || $supportsMercadopago;
+        return $supportsStripe || $supportsMercadopago || $supportsPaygreen;
     }
 
     public function canSendSms()
@@ -315,22 +318,6 @@ class SettingsManager
         $this->craueCache->clear();
     }
 
-    public function isFullyConfigured()
-    {
-        foreach ($this->mandatorySettings as $name) {
-            try {
-                $value = $this->craueConfig->get($name);
-                if (null === $value) {
-                    return false;
-                }
-            } catch (\RuntimeException $e) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
     public function asEntity()
     {
         $settings = new Settings();
@@ -355,5 +342,73 @@ class SettingsManager
     public function clearCache()
     {
         $this->craueCache->clear();
+    }
+
+    public function delete($name)
+    {
+        $setting = $this->doctrine->getRepository($this->configEntityName)->findOneBy([
+            'name' => $name,
+        ]);
+
+        if ($setting !== null) {
+            $this->doctrine->getManagerForClass($this->configEntityName)->remove($setting);
+        }
+    }
+
+    private function configKeysAreNotEmpty(...$keys)
+    {
+        foreach ($keys as $key) {
+            try {
+                $value = $this->craueConfig->get($key);
+                if (empty($value)) {
+                    return false;
+                }
+            } catch (\RuntimeException $e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public function getVersion(): string
+    {
+        // TODO Add caching
+
+        // If there is a REVISION file in project dir containing a SHA1, trust it
+        $revisionFile = $this->projectDir . '/REVISION';
+        if (file_exists($revisionFile)) {
+
+            $sha1 = trim(file_get_contents($revisionFile));
+
+            $process = new Process(['git', 'ls-remote', '--tags', 'https://github.com/coopcycle/coopcycle-web.git']);
+            $process->run();
+
+            if ($process->isSuccessful()) {
+                $lines = explode("\n", $process->getOutput());
+                foreach ($lines as $line) {
+                    $pattern = sprintf('#^%s[ \t]+refs\/tags\/(v[0-9\.]+)$#', $sha1);
+                    if (1 === preg_match($pattern, $line, $matches)) {
+                        return trim($matches[1]);
+                    }
+                }
+            }
+        }
+
+        // https://stackoverflow.com/questions/2324195/how-to-get-tags-on-current-commit
+        $process = new Process(['git', 'tag', '--points-at', 'HEAD'], $this->projectDir);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            return 'dev-master';
+        }
+
+        $version = trim($process->getOutput());
+
+        if (empty($version)) {
+            return 'dev-master';
+        }
+
+        return $version;
     }
 }

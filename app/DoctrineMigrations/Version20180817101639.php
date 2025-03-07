@@ -17,8 +17,6 @@ final class Version20180817101639 extends AbstractMigration implements Container
 {
     use ContainerAwareTrait;
 
-    private $orderFactory;
-
     private function createOrder($data)
     {
         $orderFactory = $this->container->get('sylius.factory.order');
@@ -61,18 +59,18 @@ final class Version20180817101639 extends AbstractMigration implements Container
         $stmt['restaurant_address'] =
             $this->connection->prepare('SELECT ST_AsText(address.geo) AS latlng FROM restaurant JOIN address ON restaurant.address_id = address.id WHERE restaurant.id = :restaurant_id');
 
-        $stmt['orders']->execute();
+        $result = $stmt['orders']->execute();
 
-        while ($data = $stmt['orders']->fetch()) {
+        while ($data = $result->fetchAssociative()) {
 
             $stmt['restaurant_address']->bindParam('restaurant_id', $data['restaurant_id']);
-            $stmt['restaurant_address']->execute();
+            $result2 = $stmt['restaurant_address']->execute();
 
             $stmt['address']->bindParam('address_id', $data['shipping_address_id']);
-            $stmt['address']->execute();
+            $result3 = $stmt['address']->execute();
 
-            $restaurantAddressData = $stmt['restaurant_address']->fetch();
-            $shippingAddressData = $stmt['address']->fetch();
+            $restaurantAddressData = $result2->fetch();
+            $shippingAddressData = $result3->fetch();
 
             $data['shipping_address'] = [
                 'latlng' => $shippingAddressData['latlng']

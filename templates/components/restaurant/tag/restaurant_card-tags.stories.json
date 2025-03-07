@@ -1,0 +1,48 @@
+{
+  "title": "Foodtech/1. Restaurant/4. Tag/2. RestaurantCard",
+  "parameters": {
+    "server": {
+      "id": "restaurant_card"
+    }
+  },
+  "args": {},
+  "argTypes": {},
+  "tags": [],
+  "stories": [
+    {
+      "name": "Few tags",
+      "args": { "tags": ["italian", "pizza"] }
+    },
+    {
+      "name": "Many tags",
+      "args": {
+        "tags": [
+          "italian testtest",
+          "pizza",
+          "italian",
+          "pizza test",
+          "italian",
+          "pizza"
+        ]
+      }
+    },
+    {
+      "name": "No tags, short description",
+      "args": { "description": "Lorem ipsum dolor sit amet" }
+    },
+    {
+      "name": "No tags, long description",
+      "args": {
+        "description": "Lorem ipsum dolor sit amet consectetur adipiscing elit Nulla facilisi Nullam facilisis tellus eget justo interdum at facilisis mauris commodo"
+      }
+    },
+    {
+      "name": "No tags, no description",
+      "args": { "address": "123 Example Street" }
+    },
+    {
+      "name": "No tags, no description, no address",
+      "args": {  }
+    }
+  ]
+}

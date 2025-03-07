@@ -10,14 +10,14 @@
       </button>
       <span class="navbar-brand">
         {% if is_granted('ROLE_ADMIN') and order.hasVendor() %}
-        {% if order.vendor.isHub() %}
+        {% if order.isMultiVendor() %}
         <span>{{ order.vendor.name }}</span>
         {% else %}
         <a href="{{ path('admin_restaurant', { id: order.restaurant.id  }) }}">{{ order.restaurant.name }}</a>
         {% endif %}
         <span class="mx-1">›</span>
         {% endif %}
-        <span>{{ 'order.summary.heading'|trans({ '%number%': order.number, '%id%': order.id }) }}</span>
+        <span>{{ 'order.summary.heading'|trans({ '%number%': order.number }) }}</span>
       </span>
     </div>
     <div class="collapse navbar-collapse" id="order-navbar-collapse">
@@ -25,6 +25,30 @@
         <li><a>{% include '_partials/order/state.html.twig' %}</a></li>
         <li><a>{{ 'basics.updated_at'|trans({ '%date%': order.updatedAt|format_datetime('medium', 'short') }) }}</a></li>
       </ul>
+      <div class="nav navbar-nav navbar-right">
+        {% if is_granted('ROLE_DISPATCHER') and order.isDeliveryForStore() %}
+          <li>
+            <a href="{{ path('admin_order_edit', { id: order.id }) }}">
+              <i class="fa fa-pencil"></i>  {% trans %}basics.edit{% endtrans %}
+            </a>
+          </li>
+        {% endif %}
+        {% if is_granted('ROLE_DISPATCHER') and order.delivery is not empty %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+               aria-haspopup="true" aria-expanded="false">{{ 'basics.more'|trans }} <span
+                class="caret"></span></a>
+            <ul class="dropdown-menu">
+
+              <li id="report-incident" {{ react_component('admin/orders/[id]/ReportIncidentModal', {
+                items: order.delivery.items|serialize('jsonld', {groups: ['task', 'task_collection', 'address']})
+              }) }}>
+              </li>
+
+            </ul>
+          </li>
+        {% endif %}
+      </div>
     </div>
   </div>
 </nav>

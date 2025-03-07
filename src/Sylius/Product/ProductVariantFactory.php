@@ -3,47 +3,27 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\PriceInterface;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Service\SettingsManager;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
-use Sylius\Component\Product\Repository\ProductVariantRepositoryInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
-    /**
-     * @var ProductVariantFactoryInterface
-     */
-    private $factory;
-
-    private $productRepository;
-
-    private $productVariantRepository;
-
-    private $taxCategoryRepository;
-
-    private $settingsManager;
-
-    private $translator;
 
     public function __construct(
-        ProductVariantFactoryInterface $factory,
-        ProductRepositoryInterface $productRepository,
-        ProductVariantRepositoryInterface $productVariantRepository,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        SettingsManager $settingsManager,
-        TranslatorInterface $translator)
+        private readonly ProductVariantFactoryInterface $factory,
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private readonly SettingsManager $settingsManager
+    )
     {
-        $this->factory = $factory;
-        $this->productRepository = $productRepository;
-        $this->productVariantRepository = $productVariantRepository;
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->settingsManager = $settingsManager;
-        $this->translator = $translator;
     }
 
     /**
@@ -62,20 +42,8 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $this->factory->createForProduct($product);
     }
 
-    /**
-     * @param Delivery $delivery
-     * @param int $price
-     */
-    public function createForDelivery(Delivery $delivery, int $price): ProductVariantInterface
+    public function createForDelivery(Delivery $delivery, PriceInterface $price): ProductVariantInterface
     {
-        $hash = sprintf('%s-%d-%d', $delivery->getVehicle(), $delivery->getDistance(), $price);
-        $code = sprintf('CPCCL-ODDLVR-%s', strtoupper(substr(sha1($hash), 0, 7)));
-
-        if ($productVariant = $this->productVariantRepository->findOneByCode($code)) {
-
-            return $productVariant;
-        }
-
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
 
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
@@ -86,18 +54,48 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant = $this->createForProduct($product);
 
-        $name = sprintf('%s, %s km',
-            $this->translator->trans(sprintf('vehicle.%s', $delivery->getVehicle())),
-            (string) number_format($delivery->getDistance() / 1000, 2)
-        );
+        $nameParts = [];
+
+        if ($delivery->hasPackages()) {
+            foreach ($delivery->getPackages() as $packageQuantity) {
+                $nameParts[] = sprintf('%d × %s', $packageQuantity->getQuantity(), $packageQuantity->getPackage()->getName());
+            }
+        }
+
+        if ($delivery->getWeight()) {
+            $nameParts[] = $this->gramsToKilos($delivery->getWeight());
+        }
+
+        $nameParts[] = $this->metersToKilometers($delivery->getDistance());
+
+        $name = implode(' - ', $nameParts);
 
         $productVariant->setName($name);
-        $productVariant->setPosition(1);
 
-        $productVariant->setPrice($price);
+        $productVariant->setCode('CPCCL-ODDLVR-'.Uuid::uuid4()->toString());
+
+        if ($price instanceof ArbitraryPrice) {
+            if ($price->getVariantName()) {
+                $productVariant->setName($price->getVariantName());
+            }
+        } else if ($price instanceof PricingRulesBasedPrice) {
+            $productVariant->setPricingRuleSet($price->getPricingRuleSet());
+        }
+
+        $productVariant->setPosition(1);
+        $productVariant->setPrice($price->getValue());
         $productVariant->setTaxCategory($taxCategory);
-        $productVariant->setCode($code);
 
         return $productVariant;
+    }
+
+    private function metersToKilometers($meters)
+    {
+        return sprintf('%s km', number_format($meters / 1000, 2));
+    }
+
+    private function gramsToKilos($grams)
+    {
+        return sprintf('%s kg', number_format($grams / 1000, 2));
     }
 }

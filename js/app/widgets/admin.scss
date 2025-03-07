@@ -117,8 +117,13 @@ form[name="restaurant"] {
 }
 
 .deliveries-nav {
+  height: 100vh;
+  overflow-y: scroll;
+  direction:rtl; // scroll bar on the left
+
   &-item {
     display: block;
+    direction:ltr;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid #ededed;
     text-decoration: none;

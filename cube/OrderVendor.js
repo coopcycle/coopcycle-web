@@ -3,11 +3,11 @@ cube(`OrderVendor`, {
 
   joins: {
     Order: {
-      relationship: `hasOne`,
+      relationship: `one_to_one`,
       sql: `${Order}.id = ${OrderVendor}.order_id`
     },
     Restaurant: {
-      relationship: `hasOne`,
+      relationship: `one_to_one`,
       sql: `${Restaurant}.id = ${OrderVendor}.restaurant_id`
     },
   },
@@ -24,6 +24,20 @@ cube(`OrderVendor`, {
       sql: `${CUBE}.order_id || '-' || ${CUBE}.restaurant_id`,
       type: `string`,
       primaryKey: true
+    },
+    name: {
+      type: `string`,
+      case: {
+        when: [
+          {
+            sql: `${CUBE.Restaurant}.hub_id IS NOT NULL`,
+            label: { sql: `${CUBE.Restaurant.Hub}.name` },
+          },
+        ],
+        else: {
+          label: { sql: `${CUBE.Restaurant}.name` },
+        },
+      },
     },
   },
 

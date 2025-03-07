@@ -5,6 +5,7 @@ namespace AppBundle\Controller\Utils;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
+use AppBundle\Edenred\SynchronizerClient;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\Contract;
@@ -62,13 +63,16 @@ use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -291,6 +295,17 @@ trait RestaurantTrait
         $restaurant = $repository->find($id);
 
         $this->accessControl($restaurant);
+
+        if ($request->query->has('format') && 'json' === $request->query->get('format')) {
+            $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
+                'resource_class' => LocalBusiness::class,
+                'operation_type' => 'item',
+                'item_operation_name' => 'get',
+                'groups' => ['restaurant']
+            ]);
+
+            return new JsonResponse($restaurantNormalized);
+        }
 
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
     }
@@ -1131,20 +1146,9 @@ trait RestaurantTrait
 
         $mercadopagoManager->configure();
 
-        $oAuth = new MercadoPago\OAuth();
+        $oAuth = new MercadoPago\Client\OAuth\OAuthClient();
 
-        $authURL = $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri);
-
-        if ('cl' === $this->getParameter('country_iso')) {
-            // for Chile Mercadopago is building the URL as .com.cl and should be just .cl instead
-            // https://github.com/mercadopago/sdk-php/blob/9ca999e06cc8a875a11f0fcf4dccc75b41d020d5/src/MercadoPago/Entities/OAuth.php#L109
-            $authURL = str_replace('.com.cl', '.cl', $authURL);
-        }
-
-        $url = sprintf('%s&state=%s',
-            $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri),
-            $state
-        );
+        $url = $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri, $state);
 
         return $this->redirect($url);
     }
@@ -1549,118 +1553,115 @@ trait RestaurantTrait
         SlugifyInterface $slugify,
         Request $request)
     {
-        $qb = $this->getDoctrine()->getRepository(PaymentInterface::class)
-            ->createQueryBuilder('p');
+        return $this->redirectToRoute('admin_restaurants_meal_voucher_transactions', $request->query->all());
+    }
 
-        $qb->join(OrderInterface::class, 'o', Expr\Join::WITH, 'p.order = o.id');
-        $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
+    public function addRestaurantsEdenredAction(Request $request, SynchronizerClient $synchronizerClient)
+    {
+        $form = $this->createFormBuilder()
+            ->add('restaurants', CollectionType::class, [
+                'entry_type' => EntityType::class,
+                'entry_options' => [
+                    'label' => false,
+                    'class' => LocalBusiness::class,
+                    'choice_label' => 'name',
+                ],
+                'label' => 'restaurants.edenred.add_list_title',
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->getForm();
 
-        $edenredWithCard = 'EDENRED+CARD';
+        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
+            $restaurantsToSync = [];
+            $errors = [];
 
-        $qb->andWhere('pm.code = :code');
-        $qb->andWhere('o.state = :order_state');
-        $qb->andWhere('p.state = :payment_state');
-
-        $qb->setParameter('code', $edenredWithCard);
-        $qb->setParameter('order_state', OrderInterface::STATE_FULFILLED);
-        $qb->setParameter('payment_state', PaymentInterface::STATE_COMPLETED);
-
-        $month = new \DateTime('now');
-        if ($request->query->has('month')) {
-            $month = new \DateTime($request->query->get('month'));
-        }
-
-        $start = new \DateTime(
-            sprintf('first day of %s', $month->format('F Y'))
-        );
-        $end = new \DateTime(
-            sprintf('last day of %s', $month->format('F Y'))
-        );
-
-        $start->setTime(0, 0, 0);
-        $end->setTime(23, 59, 59);
-
-        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'o', $start, $end);
-
-        $qb->orderBy('o.shippingTimeRange', 'DESC');
-
-        $hash = new \SplObjectStorage();
-
-        $payments = $qb->getQuery()->getResult();
-
-        foreach ($payments as $payment) {
-
-            $restaurant = $payment->getOrder()->getRestaurant();
-
-            if (!$hash->contains($restaurant)) {
-                $hash->attach($restaurant, []);
+            foreach($form->get('restaurants')->getData() as $restaurant) {
+                if ($restaurant->hasAdditionalProperty('siret') && !empty($restaurant->getAdditionalPropertyValue('siret'))) {
+                    if (!$restaurant->getEdenredSyncSent()) {
+                        $restaurantsToSync[] = $restaurant;
+                    }
+                } else {
+                    $errors[] = $this->translator->trans('restaurants.edenred.sending_failed.no_siret', [
+                        '%restaurant_name%' => $restaurant->getName()
+                    ]);
+                }
             }
 
-            $hash->attach($restaurant, array_merge($hash[$restaurant], [ $payment ]));
-        }
+            $response = $synchronizerClient->synchronizeMerchants($restaurantsToSync);
 
-        if ($request->isMethod('POST') && $request->request->has('restaurant')) {
-
-            $restaurantId = $request->request->getInt('restaurant');
-
-            $exported = $this->getDoctrine()->getRepository(LocalBusiness::class)
-                ->find($restaurantId);
-
-            if (null === $exported) {
-
-                throw $this->createNotFoundException();
+            if ($response->getStatusCode() !== 200) {
+                $responseData = json_decode((string) $response->getContent(false), true);
+                $errors[] = $responseData["detail"];
+            } else {
+                foreach($restaurantsToSync as $restaurant) {
+                    $restaurant->setEdenredSyncSent(true);
+                }
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
             }
 
-            $filename = sprintf('edenred-%s-%s.csv',
-                $month->format('Y-m'),
-                $slugify->slugify($exported->getName())
-            );
-
-            $csv = CsvWriter::createFromString('');
-
-            $numberFormatter = \NumberFormatter::create($request->getLocale(), \NumberFormatter::DECIMAL);
-            $numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
-            $numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
-
-            $heading = [
-                'Order number',
-                'Completed at',
-                'Total amount',
-                'Edenred amount',
-                'Platform fee',
-            ];
-
-            $records = [];
-            foreach ($hash[$exported] as $payment) {
-
-                $order = $payment->getOrder();
-
-                $records[] = [
-                    $order->getNumber(),
-                    $order->getShippingTimeRange()->getLower()->format('Y-m-d'),
-                    $numberFormatter->format($order->getTotal() / 100),
-                    $numberFormatter->format($payment->getAmountForMethod('EDENRED') / 100),
-                    $numberFormatter->format($order->getFeeTotal() / 100),
-                ];
-            }
-
-            $csv->insertOne($heading);
-            $csv->insertAll($records);
-
-            $response = new Response($csv->getContent());
-            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                $filename
-            ));
-
-            return $response;
+            return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+                'layout' => $request->attributes->get('layout'),
+                'form' => $form->createView(),
+                'sending_result' => $response->getStatusCode() === 200,
+                'errors' => $errors,
+            ]));
         }
 
-        return $this->render('restaurant/edenred_transactions.html.twig', $this->withRoutes([
+        if ($request->query->has('section') && $request->query->get('section') === 'added') {
+            $restaurants = $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->findBy([ 'edenredSyncSent' => true ]);
+
+            return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
+                'layout' => $request->attributes->get('layout'),
+                'restaurants' => $restaurants,
+            ]));
+        }
+
+        return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'month' => $month,
-            'payments' => $hash,
+            'form' => $form->createView(),
         ]));
+    }
+
+    public function refreshRestaurantEdenredAction($restaurantId, Request $request, SynchronizerClient $synchronizerClient)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $response = $synchronizerClient->getMerchant($restaurant);
+
+        $responseData = json_decode((string) $response->getContent(false), true);
+
+        $hasUpdates = false;
+
+        if ($response->getStatusCode() === 200) {
+            if (isset($responseData['merchantId']) && !empty($responseData['merchantId']) && null === $restaurant->getEdenredMerchantId()) {
+                $restaurant->setEdenredMerchantId($responseData['merchantId']);
+                $hasUpdates = true;
+            }
+            if (isset($responseData['acceptsTRCard']) && !empty($responseData['acceptsTRCard']) && false === $restaurant->isEdenredTRCardEnabled()) {
+                $restaurant->setEdenredTRCardEnabled($responseData['acceptsTRCard']);
+                $hasUpdates = true;
+            }
+
+            if ($hasUpdates) {
+                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            }
+        }
+
+        $this->addFlash(
+            'notice',
+            $this->translator->trans(
+                $hasUpdates ? 'restaurants.edenred.refresh.has_updates' : 'restaurants.edenred.refresh.no_updates', [
+                    '%restaurant_name%' => $restaurant->getName(),
+                ])
+        );
+
+        return $this->redirectToRoute('admin_add_restaurants_edenred', [ 'section' => 'added' ]);
     }
 
     public function restaurantApiAction(
@@ -1730,5 +1731,165 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
         ], $routes));
+    }
+
+    public function restaurantImageFromUrlAction($id, Request $request,
+        UploadHandler $uploadHandler,
+        EntityManagerInterface $entityManager)
+    {
+        $restaurant = $this->getDoctrine()
+            ->getRepository(LocalBusiness::class)
+            ->find($id);
+
+        $url = $request->request->get('url');
+
+        // https://stackoverflow.com/questions/40454950/set-symfony-uploaded-file-by-url-input
+
+        $file = tmpfile();
+        $newfile = stream_get_meta_data($file)['uri'];
+
+        copy($url, $newfile);
+        $mimeType = mime_content_type($newfile);
+        $size = filesize($newfile);
+        $finalName = md5(uniqid(rand(), true)) . '.jpg';
+
+        $uploadedFile = new UploadedFile($newfile, $finalName, $mimeType, $size);
+
+        $restaurant->setBannerImageFile($uploadedFile);
+
+        $uploadHandler->upload($restaurant, 'bannerImageFile');
+
+        unlink($newfile);
+
+        $restaurant->setBannerImageName(
+            $restaurant->getBannerImageFile()->getBasename()
+        );
+
+        $entityManager->flush();
+
+        return new JsonResponse(
+            ['imageName' => $restaurant->getBannerImageName()]
+        );
+    }
+
+    public function mealVouchersTransactionsAction(
+        SlugifyInterface $slugify,
+        Request $request)
+    {
+        $qb = $this->getDoctrine()->getRepository(OrderInterface::class)
+            ->createQueryBuilder('o');
+
+        $qb->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id');
+        $qb->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id');
+
+        $paymentMethods = ['EDENRED', 'CONECS', 'SWILE', 'RESTOFLASH'];
+
+        $qb->andWhere('pm.code IN (:code)');
+        $qb->andWhere('o.state = :order_state');
+        $qb->andWhere('p.state = :payment_state');
+
+        $qb->setParameter('code', $paymentMethods);
+        $qb->setParameter('order_state', OrderInterface::STATE_FULFILLED);
+        $qb->setParameter('payment_state', PaymentInterface::STATE_COMPLETED);
+
+        $month = new \DateTime('now');
+        if ($request->query->has('month')) {
+            $month = new \DateTime($request->query->get('month'));
+        }
+
+        $start = new \DateTime(
+            sprintf('first day of %s', $month->format('F Y'))
+        );
+        $end = new \DateTime(
+            sprintf('last day of %s', $month->format('F Y'))
+        );
+
+        $start->setTime(0, 0, 0);
+        $end->setTime(23, 59, 59);
+
+        $qb = OrderRepository::addShippingTimeRangeClause($qb, 'o', $start, $end);
+
+        $qb->orderBy('o.shippingTimeRange', 'DESC');
+
+        $hash = new \SplObjectStorage();
+
+        $orders = $qb->getQuery()->getResult();
+
+        foreach ($orders as $order) {
+
+            $restaurant = $order->getRestaurant();
+
+            if (!$hash->contains($restaurant)) {
+                $hash->attach($restaurant, []);
+            }
+
+            $hash->attach($restaurant, array_merge($hash[$restaurant], [ $order ]));
+        }
+
+        if ($request->isMethod('POST') && $request->request->has('restaurant')) {
+
+            $restaurantId = $request->request->getInt('restaurant');
+
+            $exported = $this->getDoctrine()->getRepository(LocalBusiness::class)
+                ->find($restaurantId);
+
+            if (null === $exported) {
+
+                throw $this->createNotFoundException();
+            }
+
+            $filename = sprintf('edenred-%s-%s.csv',
+                $month->format('Y-m'),
+                $slugify->slugify($exported->getName())
+            );
+
+            $csv = CsvWriter::createFromString('');
+
+            $numberFormatter = \NumberFormatter::create($request->getLocale(), \NumberFormatter::DECIMAL);
+            $numberFormatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
+            $numberFormatter->setAttribute(\NumberFormatter::MAX_FRACTION_DIGITS, 2);
+
+            $heading = [
+                'Order number',
+                'Completed at',
+                'Total amount',
+                'Voucher amount',
+                'Platform fee',
+                'Payment method',
+            ];
+
+            $records = [];
+            foreach ($hash[$exported] as $order) {
+
+                $voucherPayment = $order->getLastPaymentByMethod(['EDENRED', 'CONECS', 'SWILE', 'RESTOFLASH'], PaymentInterface::STATE_COMPLETED);
+
+                $records[] = [
+                    $order->getNumber(),
+                    $order->getShippingTimeRange()->getLower()->format('Y-m-d'),
+                    $numberFormatter->format($order->getTotal() / 100),
+                    $numberFormatter->format($voucherPayment->getAmount() / 100),
+                    $numberFormatter->format($order->getFeeTotal() / 100),
+                    mb_ucfirst(mb_strtolower($voucherPayment->getMethod()->getCode())),
+                ];
+            }
+
+            $csv->insertOne($heading);
+            $csv->insertAll($records);
+
+            $response = new Response($csv->getContent());
+            $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                $filename
+            ));
+
+            return $response;
+        }
+
+        return $this->render('restaurant/meal_vouchers_transactions.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'month' => $month,
+            'orders' => $hash,
+            'payment_methods' => $paymentMethods,
+        ]));
     }
 }

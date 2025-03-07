@@ -4,7 +4,7 @@
     <id name="code" type="string" column="code" length="180"/>
     <field name="email" type="string" column="email" nullable="false"/>
     <field name="sentAt" type="datetime" column="sent_at" nullable="true"/>
-    <field name="grants" type="json_array" column="grants" nullable="true"/>
+    <field name="grants" type="json" column="grants" nullable="true"/>
     <many-to-one field="user" target-entity="AppBundle\Entity\User" />
   </entity>
 </doctrine-mapping>

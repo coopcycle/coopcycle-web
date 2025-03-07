@@ -1,0 +1,71 @@
+{% extends "deliveries.html.twig" %}
+
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
+{% block breadcrumb %}
+{{ parent() }}
+<li><a href="{{ path('admin_failures_list') }}">{% trans %}adminDashboard.failureSet.title{% endtrans %}</a></li>
+{% endblock %}
+
+
+{% block content %}
+
+  {{ form_start(form) }}
+
+    {{ form_errors(form) }}
+
+    {{ form_row(form.name) }}
+  <div id="reasons-form"  data-index="{{ form.reasons|length > 0 ? form.reasons|last.vars.name + 1 : 0 }}" >
+    {% for reason in form.reasons|reverse %}
+      <div class="row">
+        <div class="col-md-2">
+          {{ form_row(reason.code) }}
+        </div>
+        <div class="col-md-9">
+          {{ form_row(reason.description) }}
+        </div>
+        <div class="col-md-1 delete">
+          <button type="button" class="btn btn-danger btn-sm" onclick="deleteReason(this)">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="row">
+    <div class="col-md-11">
+      <button type="button" class="btn btn-default" id="add_reason"><i class="fa fa-plus"></i></button>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-block btn-primary mt-5">
+    {% trans %}basics.save{% endtrans %}
+  </button>
+
+  {{ form_end(form) }}
+
+  <div style="display: none" id="custom-prototype">
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-group"><label class="control-label required" for="failure_reason_set_reasons___NAME___code">{% trans %}form.failure_reason.code.label{% endtrans %}</label> <input type="text" id="failure_reason_set_reasons___NAME___code" name="failure_reason_set[reasons][__NAME__][code]" required="required" class="form-control">  </div>
+      </div>
+      <div class="col-md-9">
+        <div class="form-group"><label class="control-label required" for="failure_reason_set_reasons___NAME___description">{% trans %}form.failure_reason.description.label{% endtrans %}</label> <input type="text" id="failure_reason_set_reasons___NAME___description" name="failure_reason_set[reasons][__NAME__][description]" required="required" class="form-control">  </div>
+      </div>
+      <div class="col-md-1 delete">
+        <button type="button" class="btn btn-danger btn-sm" onclick="deleteReason(this)">
+          <i class="fa fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('failure-form') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('failure-form') }}
+{% endblock %}
+

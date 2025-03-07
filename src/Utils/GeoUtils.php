@@ -74,4 +74,25 @@ class GeoUtils
             $latMin
         ];
     }
+
+    /**
+     * @see https://developers.google.com/maps/documentation/javascript/reference/coordinates?hl=en#LatLngBounds.toUrlValue
+     * @return string Returns a string of the form "lat_lo,lng_lo,lat_hi,lng_hi" for this bounds, where "lo" corresponds to the southwest corner of the bounding box, while "hi" corresponds to the northeast corner of that box.
+     */
+    public static function getLatLngBounds($lat, $lng, $distance = 50): string
+    {
+        $geotools = new Geotools();
+
+        // We generate a bounding box around the center
+        // the adresses will be generated inside this bounding box
+        $southWest = new Coordinate(self::getBoundingBoxCoords($lat, $lng, 225, $distance));
+        $northEast = new Coordinate(self::getBoundingBoxCoords($lat, $lng, 45,  $distance));
+
+        return implode(',', [
+            $southWest->getLatitude(),
+            $southWest->getLongitude(),
+            $northEast->getLatitude(),
+            $northEast->getLongitude()
+        ]);
+    }
 }

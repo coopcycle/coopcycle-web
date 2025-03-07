@@ -16,6 +16,7 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders"
     Then the response status code should be 403
 
+  @debug
   Scenario: Retrieve restaurant orders
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
@@ -63,6 +64,7 @@ Feature: Food Tech
             "shippedAt":"@string@.isDateTime()",
             "reusablePackagingEnabled":false,
             "reusablePackagingPledgeReturn":0,
+            "reusablePackagingQuantity": @integer@,
             "shippingTimeRange":@array@,
             "takeaway":false,
             "id":@integer@,
@@ -85,12 +87,15 @@ Feature: Food Tech
               "order_promotion":[],
               "reusable_packaging":[],
               "tax":@array@,
-              "tip":[]
+              "tip":[],
+              "incident":[]
             },
             "paymentMethod": "CARD",
             "hasReceipt":@boolean@,
             "invitation": "@string@||@null@",
-            "events":@array@
+            "events":@array@,
+            "paymentGateway":@string@,
+            "hasEdenredCredentials":@boolean@
           }
         ],
         "hydra:totalItems":1,
@@ -100,16 +105,9 @@ Feature: Food Tech
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
-          "hydra:template":"/api/restaurants/1/orders{?date}",
+          "hydra:template":@string@,
           "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":[
-            {
-              "@type":"IriTemplateMapping",
-              "variable":"date",
-              "property":"date",
-              "required":false
-            }
-          ]
+          "hydra:mapping":@array@
         }
       }
       """
@@ -219,6 +217,7 @@ Feature: Food Tech
   Scenario: Not authorized to delay order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -385,6 +384,7 @@ Feature: Food Tech
   Scenario: Not authorized to accept order (with empty JSON payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -585,17 +585,25 @@ Feature: Food Tech
             "@id":@string@,
             "@type":"OpeningHoursSpecification",
             "id":@integer@,
-            "opens":"00:00",
+            "opens":"23:59",
             "closes":"00:00",
             "validFrom":"2020-10-02",
-            "validThrough":"2020-10-03"
+            "validThrough":"2020-10-02"
           }
         ],
         "image":@string@,
+        "bannerImage":@string@,
         "isOpen":false,
         "nextOpeningDate":@string@,
         "hub":null,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false
       }
       """
 

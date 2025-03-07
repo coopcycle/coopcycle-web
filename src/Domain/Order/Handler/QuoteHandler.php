@@ -4,8 +4,6 @@ namespace AppBundle\Domain\Order\Handler;
 
 use AppBundle\Domain\Order\Command\Quote;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\OrderTimeHelper;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 

@@ -2,11 +2,14 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\User;
+use AppBundle\Form\BusinessAccountRegistration;
+use AppBundle\Form\BusinessAccountRegistrationFlow;
 use AppBundle\Sylius\Order\OrderFactory;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -29,7 +32,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
@@ -100,6 +106,28 @@ class UserController extends AbstractController
     }
 
     /**
+     * @Route("/register/check-email-exists", name="register_check_email_exists")
+     */
+    public function emailExistsAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator)
+    {
+        if (!$request->query->has('email')) {
+            throw new BadRequestHttpException('Missing "email" parameter');
+        }
+
+        $email = $request->query->get('email');
+
+        $user = null;
+        if (!empty($email)) {
+            $user = $userManager->findUserByEmail($email);
+        }
+
+        return new JsonResponse([
+            'exists' => null !== $user,
+            'errorMessage' => null !== $user ? $translator->trans('nucleos_user.email.already_used', [], 'validators') : ''
+        ]);
+    }
+
+    /**
      * @Route("/users/{username}", name="user")
      */
     public function indexAction($username, UserManagerInterface $userManager)
@@ -167,7 +195,10 @@ class UserController extends AbstractController
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
         EventDispatcherInterface $eventDispatcher,
-        Canonicalizer $canonicalizer)
+        Canonicalizer $canonicalizer,
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        Security $security,
+        TokenGeneratorInterface $tokenGenerator)
     {
         $repository = $this->getDoctrine()->getRepository(Invitation::class);
 
@@ -175,9 +206,36 @@ class UserController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $user = $userManager->createUser();
-        $user->setEmail($invitation->getEmail());
-        $user->setEnabled(true);
+        $user = $userManager->findUserByEmail($invitation->getEmail());
+        if (null === $user) {
+            $user = $userManager->createUser();
+            $user->setEmail($invitation->getEmail());
+            $user->setEnabled(true);
+        }
+
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
+                return $this->loadBusinessAccountRegistrationFlow($request, $businessAccountRegistrationFlow, $user,
+                    $businessAccountInvitation, $objectManager, $userManager, $eventDispatcher, $canonicalizer, $tokenGenerator);
+            } else {
+                $loggedInUser = $security->getUser();
+
+                if ($loggedInUser) {
+                    return $this->render('profile/associate_loggedin_user_to_business_account.html.twig', [
+                        'show_left_menu' => false,
+                        'businessAccountInvitation' => $businessAccountInvitation
+                    ]);
+                }
+
+                // Reset object for a new user
+                $user = $userManager->createUser();
+                $user->setEnabled(true);
+            }
+        }
 
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->add('save', SubmitType::class, [
@@ -186,55 +244,186 @@ class UserController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            return $this->handleInvitationConfirmed($request, $user, $invitation,
+                $objectManager, $userManager, $eventDispatcher, $canonicalizer
+            );
+        }
 
-            $existingCustomer = $objectManager->getRepository(Customer::class)
-                ->findOneBy([
-                    'emailCanonical' => $canonicalizer->canonicalize($user->getEmail())
-                ]);
+        return $this->render('_partials/profile/definition_password_for_classical_users.html.twig', [
+            'form' => $form->createView(),
+            'invitationUser' => $invitation->getUser(),
+            'businessAccountInvitation' => $businessAccountInvitation
+        ]);
+    }
 
-            if (null !== $existingCustomer) {
-                $user->setCustomer($existingCustomer);
+    /**
+     * @Route("/invitation/associate-loggedin-user-to-business-account/{code}", name="associate-loggedin-user-to-business-account")
+     */
+    public function associateLoggedinUserToBusinessAccount(
+        string $code,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        TranslatorInterface $translator)
+    {
+        $user = $this->getUser();
+
+        $repository = $objectManager->getRepository(Invitation::class);
+
+        if (null === $invitation = $repository->findOneByCode($code)) {
+            throw $this->createNotFoundException();
+        }
+
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation) {
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
             }
+        }
 
-            if ($grants = $invitation->getGrants()) {
-                if (isset($grants['roles'])) {
-                    foreach ($grants['roles'] as $role) {
-                        $user->addRole($role);
-                    }
-                }
-                if (isset($grants['restaurants'])) {
-                    foreach ($grants['restaurants'] as $restaurantId) {
-                        if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
-                            $user->addRestaurant($restaurant);
-                            $user->addRole('ROLE_RESTAURANT');
-                        }
+        $userManager->updateUser($user);
+        $objectManager->flush();
 
+        $this->addFlash(
+            'notice',
+            $translator->trans('business_account.employee.associated', [
+                '%name%' => $businessAccountInvitation->getBusinessAccount()->getName()
+            ])
+        );
+
+        return $this->redirectToRoute('homepage');
+    }
+
+    private function loadBusinessAccountRegistrationFlow(Request $request,
+        BusinessAccountRegistrationFlow $businessAccountRegistrationFlow,
+        User $user,
+        BusinessAccountInvitation $businessAccountInvitation,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        EventDispatcherInterface $eventDispatcher,
+        Canonicalizer $canonicalizer,
+        TokenGeneratorInterface $tokenGenerator
+    )
+    {
+        $flowData = new BusinessAccountRegistration($user, $businessAccountInvitation->getBusinessAccount());
+        $businessAccountRegistrationFlow->bind($flowData);
+        $form = $submittedForm = $businessAccountRegistrationFlow->createForm();
+
+        if ($businessAccountRegistrationFlow->isValid($submittedForm)) {
+            $businessAccountRegistrationFlow->saveCurrentStepData($submittedForm);
+
+            if ($businessAccountRegistrationFlow->nextStep()) {
+                // form for the next step
+                $form = $businessAccountRegistrationFlow->createForm();
+            } else {
+                $invitation = new Invitation();
+                $invitation->setEmail($canonicalizer->canonicalize($user->getEmail()));
+                $invitation->setUser($user);
+                $invitation->setCode($tokenGenerator->generateToken());
+
+                $businessAccountEmployeeInvitation = new BusinessAccountInvitation();
+                $businessAccountEmployeeInvitation->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+                $businessAccountEmployeeInvitation->setInvitation($invitation);
+
+                $response = $this->handleInvitationConfirmed($request, $flowData->user, $businessAccountInvitation->getInvitation(),
+                    $objectManager, $userManager, $eventDispatcher, $canonicalizer
+                );
+
+                $objectManager->persist($businessAccountEmployeeInvitation);
+                $objectManager->flush();
+
+                $businessAccountRegistrationFlow->reset(); // remove step data from the session
+
+                return $response;
+            }
+        }
+
+        return $this->render('_partials/profile/definition_password_for_business_account.html.twig', [
+            'form' => $form->createView(),
+            'flow' => $businessAccountRegistrationFlow,
+            'businessAccountInvitation' => $businessAccountInvitation,
+        ]);
+    }
+
+    private function handleInvitationConfirmed(
+        Request $request,
+        User $user,
+        Invitation $invitation,
+        EntityManagerInterface $objectManager,
+        UserManagerInterface $userManager,
+        EventDispatcherInterface $eventDispatcher,
+        Canonicalizer $canonicalizer)
+    {
+        $existingCustomer = $objectManager->getRepository(Customer::class)
+            ->findOneBy([
+                'emailCanonical' => $canonicalizer->canonicalize($user->getEmail())
+            ]);
+
+        if (null !== $existingCustomer) {
+            $user->setCustomer($existingCustomer);
+        }
+
+        if ($grants = $invitation->getGrants()) {
+            if (isset($grants['roles'])) {
+                foreach ($grants['roles'] as $role) {
+                    $user->addRole($role);
+                }
+            }
+            if (isset($grants['restaurants'])) {
+                foreach ($grants['restaurants'] as $restaurantId) {
+                    if ($restaurant = $objectManager->getRepository(LocalBusiness::class)->find($restaurantId)) {
+                        $user->addRestaurant($restaurant);
+                        $user->addRole('ROLE_RESTAURANT');
+                    }
+
+                }
+            }
+            if (isset($grants['stores'])) {
+                foreach ($grants['stores'] as $storeId) {
+                    if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
+                        $user->addStore($store);
+                        $user->addRole('ROLE_STORE');
                     }
                 }
-                if (isset($grants['stores'])) {
-                    foreach ($grants['stores'] as $storeId) {
-                        if ($store = $objectManager->getRepository(Store::class)->find($storeId)) {
-                            $user->addStore($store);
-                            $user->addRole('ROLE_STORE');
-                        }
-                    }
-                }
+            }
+        }
+
+        $businessAccountInvitation = null;
+        if ($this->getParameter('business_account_enabled')) {
+            $businessAccountInvitation = $objectManager->getRepository(BusinessAccountInvitation::class)->findOneBy([
+                'invitation' => $invitation,
+            ]);
+            if (null !== $businessAccountInvitation) {
+                $user->setBusinessAccount($businessAccountInvitation->getBusinessAccount());
+            }
+        }
+
+        if (null === $businessAccountInvitation || $businessAccountInvitation->isInvitationForManager()) {
+            if (null !== $businessAccountInvitation && $businessAccountInvitation->isInvitationForManager()) {
+                $objectManager->remove($businessAccountInvitation);
             }
 
             $userManager->updateUser($user);
 
             $objectManager->remove($invitation);
             $objectManager->flush();
-
-            $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed'));
-
-            $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
-
-            return $response;
+        } else {
+            $userManager->updateUser($user);
+            $objectManager->flush();
         }
 
-        return $this->render('profile/invitation_define_password.html.twig', [
-            'form' => $form->createView()
-        ]);
+        $parameters = [];
+
+        if ($businessAccountInvitation) {
+            $parameters['_business'] = true;
+        }
+
+        $response = new RedirectResponse($this->generateUrl('nucleos_profile_registration_confirmed', $parameters));
+
+        $eventDispatcher->dispatch(new FilterUserResponseEvent($user, $request, $response), NucleosProfileEvents::REGISTRATION_CONFIRMED);
+
+        return $response;
     }
 }

@@ -22,7 +22,8 @@ class RoutingProblemNormalizer implements NormalizerInterface
             $data["jobs"][] = [
                 "id"=>$job->id,
                 "location"=>$job->location,
-                "time_windows" => $job->time_windows
+                "time_windows" => $job->time_windows,
+                "description" => $job->description ? $job->description : "",
             ];
         }
 
@@ -31,12 +32,14 @@ class RoutingProblemNormalizer implements NormalizerInterface
                 "pickup"=>[
                     "id"=>$shipment->pickup->id,
                     "location"=>$shipment->pickup->location,
-                    "time_windows" => $shipment->pickup->time_windows
+                    "time_windows" => $shipment->pickup->time_windows,
+                    "description" => $shipment->pickup->description ? $shipment->pickup->description : "",
                 ],
                 "delivery"=>[
                     "id"=>$shipment->delivery->id,
                     "location"=>$shipment->delivery->location,
-                    "time_windows" => $shipment->delivery->time_windows
+                    "time_windows" => $shipment->delivery->time_windows,
+                    "description" => $shipment->delivery->description ? $shipment->delivery->description : "",
                 ]
             ];
         }

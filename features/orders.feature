@@ -17,6 +17,7 @@ Feature: Orders
   Scenario: Not authorized to retrieve order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -128,6 +129,7 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
         "image":@string@,
+        "bannerImage":@string@,
         "address":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
@@ -138,12 +140,15 @@ Feature: Orders
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
         "isOpen":false,
-        "nextOpeningDate":"@string@.isDateTime()"
+        "nextOpeningDate":"@string@.isDateTime()",
+        "tags":@array@,
+        "badges":@array@
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -155,7 +160,8 @@ Feature: Orders
         },
         "streetAddress":"1, rue de Rivoli",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "items":[
         {
@@ -166,6 +172,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -190,6 +197,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -221,6 +229,7 @@ Feature: Orders
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
       "reusablePackagingPledgeReturn":0,
+      "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
       "takeaway":false,
@@ -230,7 +239,9 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -293,6 +304,7 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
         "image":@string@,
+        "bannerImage":@string@,
         "address":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
@@ -303,12 +315,15 @@ Feature: Orders
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
         "isOpen":false,
-        "nextOpeningDate":"@string@.isDateTime()"
+        "nextOpeningDate":"@string@.isDateTime()",
+        "tags":@array@,
+        "badges":@array@
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -320,7 +335,8 @@ Feature: Orders
         },
         "streetAddress":"1, rue de Rivoli",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "items":[
         {
@@ -331,6 +347,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -355,6 +372,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{
             "@id":"/api/restaurants/1",
@@ -386,6 +404,7 @@ Feature: Orders
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
       "reusablePackagingPledgeReturn":0,
+      "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
       "takeaway":false,
@@ -395,7 +414,9 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -447,14 +468,14 @@ Feature: Orders
       {
         "preparation":"15 minutes",
         "shipping":"1 minute 35 seconds",
-        "asap":"2017-09-02T12:05:00+02:00",
+        "asap":"2017-09-02T11:55:00+02:00",
         "range":[
-          "2017-09-02T12:00:00+02:00",
-          "2017-09-02T12:10:00+02:00"
+          "2017-09-02T11:50:00+02:00",
+          "2017-09-02T12:00:00+02:00"
         ],
         "today":true,
         "fast":false,
-        "diff":"60 - 70",
+        "diff":"50 - 60",
         "choices":@array@,
         "ranges":@array@,
         "behavior":@string@
@@ -465,6 +486,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
@@ -504,6 +526,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
@@ -529,7 +552,7 @@ Feature: Orders
       {
         "preparation":"@string@.matchRegex('/^[0-9]+ minutes$/')",
         "shipping":"10 minutes",
-        "asap":"@string@.startsWith('2017-09-04T12:05:00')",
+        "asap":"@string@.startsWith('2017-09-04T11:55:00')",
         "range": @array@,
         "today":@boolean@,
         "fast":@boolean@,
@@ -603,6 +626,7 @@ Feature: Orders
         "@type":"http://schema.org/Restaurant",
         "name":"Nodaiwa",
         "image":@string@,
+        "bannerImage":@string@,
         "address":{
           "@id":"@string@.startsWith('/api/addresses')",
           "@type":"http://schema.org/Place",
@@ -613,12 +637,15 @@ Feature: Orders
           },
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "telephone":"+33612345678",
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@
       },
       "shippingAddress":{
         "@id":"@string@.startsWith('/api/addresses')",
@@ -630,7 +657,8 @@ Feature: Orders
         },
         "streetAddress":"190 Rue de Rivoli, Paris",
         "name":null,
-        "telephone": null
+        "telephone": null,
+        "description": null
       },
       "items":[
         {
@@ -641,6 +669,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"}
@@ -653,6 +682,7 @@ Feature: Orders
           "unitPrice":@integer@,
           "total":@integer@,
           "name":@string@,
+          "variantName": "@string@",
           "adjustments":{"@*@":"@*@"},
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"}
@@ -672,6 +702,7 @@ Feature: Orders
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
       "reusablePackagingPledgeReturn":0,
+      "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":@array@,
       "takeaway":false,
@@ -681,7 +712,9 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -757,6 +790,7 @@ Feature: Orders
           "@type":"http://schema.org/Restaurant",
           "name":"Nodaiwa",
           "image":@string@,
+          "bannerImage":@string@,
           "address":{
             "@id":"@string@.startsWith('/api/addresses')",
             "@type":"http://schema.org/Place",
@@ -767,11 +801,14 @@ Feature: Orders
             },
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
-            "telephone": null
+            "telephone": null,
+            "description": null
           },
           "telephone":"+33612345678",
           "isOpen":true,
-          "loopeatEnabled":false
+          "loopeatEnabled":false,
+          "tags":@array@,
+          "badges":@array@
         },
         "shippingAddress":{
           "@id":"@string@.startsWith('/api/addresses')",
@@ -783,7 +820,8 @@ Feature: Orders
           },
           "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
-          "telephone": null
+          "telephone": null,
+          "description": null
         },
         "items":[
           {
@@ -794,6 +832,7 @@ Feature: Orders
             "unitPrice":@integer@,
             "total":@integer@,
             "name":@string@,
+            "variantName": "@string@",
             "adjustments":{"@*@":"@*@"},
             "vendor":{"@*@":"@*@"},
             "player":{"@*@":"@*@"}
@@ -806,6 +845,7 @@ Feature: Orders
             "unitPrice":@integer@,
             "total":@integer@,
             "name":@string@,
+            "variantName": "@string@",
             "adjustments":{"@*@":"@*@"},
             "vendor":{"@*@":"@*@"},
             "player":{"@*@":"@*@"}
@@ -821,11 +861,12 @@ Feature: Orders
         "notes": null,
         "createdAt":@string@,
         "shippedAt":"@string@.isDateTime()",
-        "shippingTimeRange":["2017-09-02T13:30:00+02:00","2017-09-02T13:40:00+02:00"],
+        "shippingTimeRange":["2017-09-02T13:20:00+02:00","2017-09-02T13:30:00+02:00"],
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "takeaway":false,
         "assignedTo":"@string@||@null@",
         "preparationTime":"@string@||@null@",
@@ -833,7 +874,9 @@ Feature: Orders
         "paymentMethod":"@string@||@null@",
         "hasReceipt":@boolean@,
         "invitation":null,
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -902,7 +945,8 @@ Feature: Orders
         },
         "streetAddress":"1, rue de Rivoli",
         "telephone":null,
-        "name":null
+        "name":null,
+        "description": null
       },
       "items":[
         {
@@ -913,6 +957,7 @@ Feature: Orders
           "unitPrice":900,
           "total":900,
           "name":"Pizza",
+          "variantName": "@string@",
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"},
           "adjustments":{
@@ -940,6 +985,7 @@ Feature: Orders
           "unitPrice":699,
           "total":1398,
           "name":"Fish and Chips",
+          "variantName": "@string@",
           "vendor":{"@*@":"@*@"},
           "player":{"@*@":"@*@"},
           "adjustments":{
@@ -974,6 +1020,7 @@ Feature: Orders
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
       "reusablePackagingPledgeReturn":0,
+      "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
       "takeaway":false,
@@ -983,7 +1030,9 @@ Feature: Orders
       "paymentMethod":"CARD",
       "assignedTo":null,
       "invitation":null,
-      "events":@array@
+      "events":@array@,
+      "paymentGateway":@string@,
+      "hasEdenredCredentials":@boolean@
     }
     """
 
@@ -991,6 +1040,7 @@ Feature: Orders
     Given the current time is "2017-09-02 12:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -1045,6 +1095,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -1155,6 +1206,7 @@ Feature: Orders
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "id":@integer@,
         "number":null,
         "notes":null,
@@ -1167,6 +1219,7 @@ Feature: Orders
             "unitPrice":900,
             "total":2700,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -1205,7 +1258,9 @@ Feature: Orders
         "paymentMethod":"CARD",
         "assignedTo":null,
         "invitation":null,
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1213,6 +1268,7 @@ Feature: Orders
     Given the current time is "2017-09-03 12:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"
@@ -1267,6 +1323,7 @@ Feature: Orders
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "brand_name" has value "CoopCycle"
@@ -1316,6 +1373,7 @@ Feature: Orders
   Scenario: Validate cart
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1356,6 +1414,7 @@ Feature: Orders
   Scenario: Get cart payment details
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1380,19 +1439,19 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 
   Scenario: Get cart payment methods for guest
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1430,6 +1489,7 @@ Feature: Orders
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1462,6 +1522,7 @@ Feature: Orders
   Scenario: Get cart payment details for guest
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1496,6 +1557,7 @@ Feature: Orders
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1516,19 +1578,19 @@ Feature: Orders
       """
       {
         "@context":{
-          "@vocab":@string@,
-          "hydra":"http://www.w3.org/ns/hydra/core#",
-          "stripeAccount":@string@
+          "@*@":"@*@"
         },
         "@type":"PaymentDetailsOutput",
         "@id":@string@,
-        "stripeAccount":null
+        "stripeAccount":null,
+        "payments":@array@
       }
       """
 
   Scenario: Get cart payment methods
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1569,6 +1631,7 @@ Feature: Orders
   Scenario: Retrieve Centrifugo connection details for order
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "default_tax_category" has value "tva_livraison"

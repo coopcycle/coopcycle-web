@@ -6,48 +6,32 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Sonata\SeoBundle\Seo\SeoPageInterface;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
 class SeoListener
 {
-    private $translator;
-    private $settingsManager;
-    private $seoPage;
-    private $entityManager;
-
-    /**
-     * @var FilterService
-     */
-    private FilterService $imagineFilter;
-
-    /**
-     * @var UploaderHelper
-     */
-    private UploaderHelper $uploaderHelper;
-
     private static $excluded = [
         'search_geocode',
     ];
 
     public function __construct(
-        TranslatorInterface $translator,
-        SettingsManager $settingsManager,
-        SeoPageInterface $seoPage,
-        EntityManagerInterface $entityManager,
-        FilterService $imagineFilter,
-        UploaderHelper $uploaderHelper)
+        private readonly TranslatorInterface $translator,
+        private readonly SettingsManager $settingsManager,
+        private readonly SeoPageInterface $seoPage,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FilterService $imagineFilter,
+        private readonly UploaderHelper $uploaderHelper,
+        private readonly Packages $packages,
+        private readonly UrlHelper $urlHelper
+    )
     {
-        $this->translator = $translator;
-        $this->settingsManager = $settingsManager;
-        $this->seoPage = $seoPage;
-        $this->entityManager = $entityManager;
-        $this->imagineFilter = $imagineFilter;
-        $this->uploaderHelper = $uploaderHelper;
     }
 
     /**
@@ -87,7 +71,7 @@ class SeoListener
         $this->seoPage
             ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:type', 'website')
-            ->addMeta('property', 'og:image', 'https://coopcycle.org/images/homepage-banner.jpg')
+            ->addMeta('property', 'og:image', $this->urlHelper->getAbsoluteUrl($this->packages->getUrl('img/homepage-banner.jpg')))
             ->addMeta('property', 'og:url', $request->getUri());
 
         // @see http://ogp.me/#optional
@@ -95,7 +79,8 @@ class SeoListener
             ->addMeta('property', 'og:locale', $locale)
             ->addMeta('property', 'og:site_name', 'CoopCycle');
 
-        switch ($request->attributes->get('_route')) {
+        $route = $request->attributes->get('_route');
+        switch ($route) {
             case 'restaurant':
                 $this->seoPageForRestaurant($request);
                 break;
@@ -145,8 +130,10 @@ class SeoListener
 
         $imagePath = $this->uploaderHelper->asset($restaurant, 'imageFile');
         if (null !== $imagePath) {
-            $this->seoPage->addMeta('property', 'og:image',
-                $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
+            try {
+                $this->seoPage->addMeta('property', 'og:image',
+                    $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail'));
+            } catch (NotLoadableException $e) {}
         }
     }
 }

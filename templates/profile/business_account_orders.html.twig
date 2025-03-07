@@ -1,0 +1,23 @@
+{% extends "profile.html.twig" %}
+
+{% block content %}
+
+  {% if orders is empty %}
+    <div class="alert alert-warning">
+      {%  trans %}profile.orders.empty{%  endtrans %}
+    </div>
+  {% else %}
+    {% include "_partials/order/list.html.twig" with { with_extras: false, with_reorder: false, with_receipt: false } %}
+    <div class="text-center">
+      {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+    </div>
+  {% endif %}
+
+  <div class="d-flex justify-content-end">
+    <div class="link-section form-section">
+      {% include '_partials/profile/invitation_link.html.twig' with {
+        title: 'business.account.settings.link'|trans
+      } %}
+    </div>
+  </div>
+{% endblock %}

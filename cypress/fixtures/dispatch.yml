@@ -1,19 +1,9 @@
 include:
-  - settings.yml
-  - sylius_channels.yml
+  - setup.yml
+  - admin_user.yml
   - addresses.yml
 
 AppBundle\Entity\User:
-  bob:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'admin'
-        - '12345678'
-        - 'admin@demo.coopcycle.org'
-        - true
-        - false
-    roles: [ 'ROLE_ADMIN' ]
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   jane:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
@@ -25,6 +15,17 @@ AppBundle\Entity\User:
     roles: [ 'ROLE_COURIER' ]
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
 
+  dispatcher_01:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'dispatcher'
+        - 'dispatcher'
+        - 'dispatcher@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_DISPATCHER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
 AppBundle\Entity\Task:
   task_1:
     address: "@address_1"
@@ -34,3 +35,52 @@ AppBundle\Entity\Task:
     address: "@address_2"
     doneAfter: <identity(new \DateTime('today 11:30:00'))>
     doneBefore: <identity(new \DateTime('today 12:00:00'))>
+
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+    rules: [ '@pricing_rule_1' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'distance \> 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    openingHours:
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'
+
+AppBundle\Entity\Address:
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+
+AppBundle\Entity\DeliveryForm:
+  delivery_form:
+    pricingRuleSet: '@pricing_rule_set_1'
+    withVehicle: false
+    withWeight: false

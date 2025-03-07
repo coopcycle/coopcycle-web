@@ -1,0 +1,84 @@
+registration.email.subject: |
+  Email megerősítése
+registration.email.message: |
+  <h2>Üdvözöl a %brand_name%, %username%</h2>
+  Azért kapod ezt az üzenetet, mert regisztráltál a %brand_name% oldalára.
+  <br>
+  Emailed megerősítéséhez kattints az alábbi linkre.
+registration.email.confirm: 'Email megerősítése'
+registration.email.disclaimer: 'Ezen a linken tudod aktiválni a profilod'
+registration.email.textMessage: |
+  Üdvözlünk %username%,\n\n
+  Azért kapod ezt az üzenetet, mert létehoztál egy profilt a %brand_name% oldalán.\n
+  Az emailed megerősítéséhez kattints a következő linkre: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+resetting.email.message: '<h2>Szia %username%</h2> a jelszó törléséhez kattints az
+  alábbi gombra.'
+resetting.email.reset: 'Jelszó törlése'
+order.view: 'Rendelés megtekintése'
+order.public_url: |
+  A rendelés követéséhez <a href="%order.public_url%">kattints ide</a>.
+order.foodtech.accepted.delivery: "Kiszállítás várható időpontja:"
+order.foodtech.accepted.delivery.disclaimer: "Keresni fogunk amennyiben problémák\
+  \ adódnak a címed megtalálásával"
+order.foodtech.accepted.collection: "Ekkor kell összegyűjteded:"
+order.foodtech.accepted.collection.disclaimer: "Ha problémád van, keresd a <strong>%name%</strong>\
+  \ az alábbi telefonszámon <strong>%phone_number%</strong> a rendelésed törléséhez."
+order.foodtech.cancelled: "Az étterem nem tudja elkészíteni a %order.number% rendelésed.\n\
+  <br>\nAz pénzed 5 napon belül visszatérítjük.\n"
+admin.order.created.subject: 'Új rendelés elfogadása'
+admin.order.created.body: |
+  Szia,
+  <br>
+  Új rendelés létrehozva
+admin.order_foodtech.created.body: |
+  Szia,
+  <br>
+  Új rendelés létrhezova <strong>%restaurant.name%</strong> számára.
+admin.pledge.subject: 'Egy új javaslat került beküldésre!'
+admin.send_invitation.subject: 'Meghívás a CoopCycle-be!'
+admin.send_invitation.body: |
+  Szia %username%,
+  <br>
+  Ez egy meghívó a CoopCycle univerzumba, a profilod létrehozásának befejezeséhez kattints a következő linkre.
+admin.send_invitation.create_password: 'Jelszó létrehozása'
+admin.pledge.body: |
+user.pledge.subject: 'A javaslatod most a CoopCycle-re került!'
+user.pledge.body: |
+  Szia,
+  <br>
+  neked köszönhetően %pledge.name% most már megtalálható a CoopCycle oldalán!
+owner.order.created.subject: 'Új rendelés elfogadása'
+owner.order.created.body: |
+  Szia,
+  <br>
+  Egy új rendelés érkezett a <strong>%restaurant.name%</strong> részére.
+order.created.subject: 'Rendelés %order.number% fogadva'
+order.created.body: "Szia,\n<br>\nMegkaptuk a rendelésed.\n<br>\nAmilyen hamar lehet,\
+  \ ellenőrizzük és emailben értesítünk amikor elfogadásra került.\n"
+order.accepted.subject: 'Rendelés %order.number% elfogadva'
+order.accepted.body.intro: "Szia,\n<br>\nRendelésed elfogadva."
+order.cancelled.subject: 'A %order.number% számú rendelésed elutasításra került'
+order.cancelled.body.intro: |
+  Szia,
+  <br>
+  Sajnáljuk, a rendelésed törölve lett.
+order.delayed.subject: 'A %order.number% rendelésed késésben van'
+order.delayed.body: |
+  Szia,
+  <br>
+  Sajnáljuk, a rendelésed késleltetve lesz %delay% perccel.
+  <br>
+  Elnézést kérünk a kellemetlenségért.
+task.done.subject: 'Feladat #%task.id% teljesítve'
+task.done.body: |
+  Szia,
+  <br>
+  Feladat #%task.id% teljesítve.
+task.failed.subject: 'Feladat #%task.id% teljesítése sikertelen'
+task.failed.body: |
+  Szia,
+  <br>
+  Task #%task.id% teljesítése sikertelen
+order.payment.subject: 'Rendelésed fizetése %order.number%'
+order.payment.body: "Szia,\n<br>\nTeljesítettük a rendelésed.\n<br>\nAz alábbi linken\
+  \ tudsz bankkártyával fizetni.\n"

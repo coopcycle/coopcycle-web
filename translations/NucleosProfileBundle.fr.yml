@@ -8,6 +8,9 @@ registration:
     before_confirmation_continue_order: |
       Une fois que vous avez activé votre compte, vous pouvez terminer votre commande.
     after_confirmation_continue_order: Terminez votre commande
+    congratulations: Félicitations !
+    after_confirmation_redirect_to_dashboard: Vous allez être redirigé vers votre tableau de bord
+    go_to_dashboard: Aller voir
 
 form:
     username: Nom d'utilisateur

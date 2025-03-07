@@ -21,3 +21,50 @@
   </button>
   </div>
 {% endblock %}
+
+{% block businessRestaurantGrouppPrices_widget %}
+  <div id="{{ form.vars.id }}" class="form-group mt-2">
+    {{ form_label(form) }}
+    <div id="{{ form.vars.id }}_list">
+      {% for child in form %}
+        {{ form_widget(child) }}
+        <hr />
+      {% endfor %}
+    </div>
+    <div class="text-right">
+      <button type="button" class="btn btn-default" id="{{ form.vars.id }}_add"
+        data-target="#{{ form.vars.id }}_list"
+        data-prototype="{{ form_widget(form.vars.prototype)|e }}">
+        {{ 'basics.add'|trans }}
+        </button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block _product_businessRestaurantGroupPrices_widget %}
+  {{ block('businessRestaurantGrouppPrices_widget') }}
+{% endblock %}
+
+{% block businessRestaurantGroup_price_entry_widget %}
+  <div id="{{ form.vars.id }}" class="row">
+    <div class="col-sm-3">
+      {{ form_row(form.businessRestaurantGroup) }}
+    </div>
+    <div class="col-sm-8">
+      {{ form_widget(form.priceWithTax) }}
+    </div>
+    <div class="col-sm-1">
+      <div class="form-group">
+        <label class="control-label">{{ 'basics.delete'|trans }}</label>
+        <button type="button" class="btn btn-default"
+          data-delete data-target="#{{ form.vars.id }}">
+          <i class="fa fa-trash-o"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block _product_businessRestaurantGroupPrices_entry_widget %}
+  {{ block('businessRestaurantGroup_price_entry_widget') }}
+{% endblock %}

@@ -5,7 +5,7 @@ base.footer.contactUs: Kontakt
 base.footer.help: Pomoc
 base.footer.legal: Nota prawna
 base.footer.suggest: Zaproponuj restauracje
-adminDashboard.title: Panel administracyjny
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Ustawienia
 adminDashboard.tooltip.orders: Zarządzaj zamówieniami restauracji
 adminDashboard.tooltip.deliveries: Zarządzaj dostawami
@@ -168,7 +168,6 @@ adminDashboard.taxation.button: Dodaj opodatkowanie
 deliveryForm.noPriceFromPricingWarning: Ceny nie można ustalić na podstawie cennika.
   Proszę wprowadź ją ręcznie lub edytuj cennik.
 help.home: Dom
-restaurants.visible_by_you_only: Widoczny tylko przez ciebie
 localBusiness.form.orderingDelayMinutes: Dodatkowe opóźnienie przed złożeniem zamówienia
 localBusiness.form.orderingDelayMinutes.help: Użyj tego pola, aby dodać trochę czasu
   zanim klient będzie mógł złożyć zamówienie. To ustawienie nie zmienia czasu potrzebnego
@@ -299,7 +298,7 @@ profile.managedRestaurants: Restauracje zarządzane przez użytkownika
 profile.accountType: Typ konta
 order.cart.title: Koszyk
 order.items.products_with_count: Produkty (%count%)
-order.summary.heading: Zamówienie %number% (#%id%)
+order.summary.heading: Zamówienie %number%
 order.total_excluding_tax: Łącznie (bez VAT)
 order.total_including_tax: Łącznie (z VAT)
 order.items_total: Wszystkie produkty
@@ -632,7 +631,7 @@ form.menu_item_modifier.name.label: Nazwa
 form.menu_item.price.label: Cena
 form.menu_item.name.label: Nazwa
 form.settings.stripe_connect_client_id.help: "Uzyskaj identyfikator na <a href=\"\
-  https://dashboard.stripe.com/account/applications/settings\">stronie parametrów</a>\n"
+  https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">stronie parametrów</a>\n"
 form.settings.stripe_connect_client_id.label: Identyfikator Połączenia Stripe
 form.settings.stripe_secret_key.help: "Stwórz konto Stripe, aby uzyskać swój <a href=\"\
   https://stripe.com/docs/dashboard#api-keys\">klucz do upubliczniania / publishable\
@@ -839,14 +838,14 @@ roles.ROLE_ADMIN: Administrator
 product_option.strategy.option_value: Każda opcja ma inną cenę
 product_option.strategy.free: Darmowy
 promotion_coupon.used.label: Liczba zastosowań
-form.new_order.variant_price.label: Cena
+form.new_order.variant_price.label: Cena z VAT
 form.new_order.variant_name.help: Nazwa, która pojawi się w podsumowaniu zamówienia
   i na fakturze
 form.new_order.variant_name.label: Nazwa produktu
 form.deposit_refund_settings.deposit_refund_optin.label: System zwrotu kaucji jest
   opcjonalny
 form.reusable_packaging.on_hand.label: Asortyment
-form.reusable_packaging.price.label: Cena
+form.reusable_packaging.price.label: Cena z VAT
 form.reusable_packaging.is_tracked.label: Śledzenie aktywowane
 form.reusable_packaging.name.label: Nazwa
 form.package.volume_units.label: Jednostki objętości

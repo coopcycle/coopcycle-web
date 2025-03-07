@@ -12,6 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class TourInputDataTransformer implements DataTransformerInterface
 {
+    private $routing;
+
     public function __construct(RoutingInterface $routing)
     {
         $this->routing = $routing;
@@ -28,17 +30,15 @@ class TourInputDataTransformer implements DataTransformerInterface
             if (!empty($data->name)) {
                 $tour->setName($data->name);
             }
-            
-            $tour->setTasks($data->tasks);
 
-            foreach ($data->tasks as $task) {
-                $task->setTour($tour);
-            }
+            $tour->setTasks($data->tasks);
 
         } else {
             $tour = new Tour();
-            
+
             $tour->setName($data->name);
+
+            $tour->setDate(new \DateTime($data->date));
 
             foreach ($data->tasks as $task) {
                 $tour->addTask($task);
@@ -71,4 +71,3 @@ class TourInputDataTransformer implements DataTransformerInterface
         return $to === Tour::class && ($context['input']['class'] ?? null) === TourInput::class;
     }
 }
-

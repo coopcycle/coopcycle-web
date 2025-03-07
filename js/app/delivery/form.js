@@ -1,17 +1,22 @@
 import MapHelper from '../MapHelper'
+import L from 'leaflet'
 import _ from 'lodash'
+import JsBarcode from 'jsbarcode'
 require('gasparesganga-jquery-loading-overlay')
 
 import DeliveryForm from '../forms/delivery'
 import PricePreview from './PricePreview'
+import axios from 'axios'
+
+const baseURL = location.protocol + '//' + location.host
 
 import './form.scss'
 
 let map
-let form
-let pricePreview
+let polylineLayerGroup
+let markersLayerGroup
 
-let markers = []
+JsBarcode('.barcode').init();
 
 function route(delivery) {
 
@@ -33,6 +38,7 @@ function route(delivery) {
       return {
         distance,
         kms,
+        polyline: MapHelper.decodePolyline(route.geometry),
       }
     })
 }
@@ -50,37 +56,12 @@ function createMarker(location, index, addressType) {
 
   const { icon, color } = markerIcons[addressType]
 
-  removeMarker(index)
-
   const marker = MapHelper.createMarker({
     lat: location.latitude,
     lng: location.longitude
   }, icon, 'marker', color)
 
-  marker.addTo(map)
-
-  markers.splice(index, 0, marker)
-
-  MapHelper.fitToLayers(map, _.filter(markers))
-}
-
-function removeMarker(index) {
-
-  if (!map) {
-    return
-  }
-
-  const marker = markers[index]
-
-  if (!marker) {
-    return
-  }
-
-  marker.removeFrom(map)
-
-  markers.splice(index, 1)
-
-  MapHelper.fitToLayers(map, _.filter(markers))
+  marker.addTo(markersLayerGroup)
 }
 
 function serializeAddress(address) {
@@ -105,97 +86,145 @@ function isValid(delivery) {
 
 if (document.getElementById('map')) {
   map = MapHelper.init('map')
+  polylineLayerGroup = new L.LayerGroup()
+  polylineLayerGroup.addTo(map)
+
+  markersLayerGroup = new L.LayerGroup()
+  markersLayerGroup.addTo(map)
 }
 
-form = new DeliveryForm('delivery', {
-  onReady: function(delivery) {
-    delivery.tasks.forEach((task, index) => {
-      if (task.address) {
-        createMarker({
-          latitude: task.address.geo.latitude,
-          longitude: task.address.geo.longitude
-        }, index, task.type.toLowerCase())
-      }
-    })
-  },
-  onChange: function(delivery) {
-
-    delivery.tasks.forEach((task, index) => {
-      if (task.address) {
-        createMarker({
-          latitude: task.address.geo.latitude,
-          longitude: task.address.geo.longitude
-        }, index, task.type.toLowerCase())
-      } else {
-        removeMarker(index)
-      }
-    })
-
-    if (isValid(delivery)) {
-
-      this.disable()
-
-      const updateDistance = new Promise((resolve) => {
-        route(delivery).then((infos) => {
-          $('#delivery_distance').text(`${infos.kms} Km`)
-          resolve()
-        })
-      })
-
-      const updatePrice = new Promise((resolve) => {
-        if (delivery.store && pricePreview) {
-
-          const tasks = delivery.tasks.slice(0)
-
-          const deliveryAsPayload = {
-            ...delivery,
-            tasks: tasks.map(t => ({
-              ...t,
-              address: serializeAddress(t.address)
-            }))
-          }
-
-          pricePreview.update(deliveryAsPayload).then(() => resolve())
-        } else {
-          resolve()
-        }
-      })
-
-      Promise.all([
-        updateDistance,
-        updatePrice,
-      ])
-      .then(() => {
-        form.enable()
-      })
-      // eslint-disable-next-line no-console
-      .catch(e => console.error(e))
-    }
-  }
-})
-
 const priceEl = document.getElementById('delivery-price')
-
+let pricePreview
 if (priceEl) {
-  $('form[name="delivery"]').LoadingOverlay('show', {
-    image: false,
-  })
-  $.getJSON(window.Routing.generate('profile_jwt'))
-    .then(result => {
-      $('form[name="delivery"]').LoadingOverlay('hide')
-      pricePreview = new PricePreview(priceEl, { token: result.jwt })
-    })
+  pricePreview = new PricePreview(priceEl)
 }
 
 const arbitraryPriceEl = document.getElementById('delivery_arbitraryPrice')
-const variantDetailsEl = document.querySelector('[data-variant-details]')
 
 if (arbitraryPriceEl) {
-  arbitraryPriceEl.addEventListener('change', function(e) {
-    if (e.target.checked) {
-      variantDetailsEl.classList.remove('d-none')
+  const containerEl = document.querySelector('[data-variant-details]')
+  const variantPriceEl = document.getElementById('delivery_variantPrice')
+
+  const setIsChecked = (isChecked) => {
+    if (isChecked) {
+      containerEl.classList.remove('d-none')
+      variantPriceEl.setAttribute('required', 'required');
     } else {
-      variantDetailsEl.classList.add('d-none')
+      containerEl.classList.add('d-none')
+      variantPriceEl.removeAttribute('required');
     }
+  }
+
+  // update on initial load
+  setIsChecked(arbitraryPriceEl.checked)
+
+  arbitraryPriceEl.addEventListener('change', function(e) {
+    setIsChecked(e.target.checked)
   })
 }
+
+const updateData = (form, delivery) => {
+  markersLayerGroup.clearLayers()
+  delivery.tasks.forEach((task, index) => {
+    if (task.address) {
+      createMarker({
+        latitude: task.address.geo.latitude,
+        longitude: task.address.geo.longitude
+      }, index, task.type.toLowerCase())
+    }
+  })
+  MapHelper.fitToLayers(map, markersLayerGroup.getLayers())
+
+  if (isValid(delivery)) {
+
+    form.disable()
+    polylineLayerGroup.clearLayers()
+
+    const promises = []
+
+    const updateDistance = new Promise((resolve) => {
+      route(delivery).then((infos) => {
+        polylineLayerGroup.addLayer(
+          MapHelper.createPolylineWithArrows(infos.polyline, '#3498DB')
+        )
+        $('#delivery_distance').text(`${infos.kms} Km`)
+        resolve()
+      })
+    })
+
+    const updatePrice = new Promise((resolve) => {
+      if (delivery.store && pricePreview) {
+
+        const tasks = delivery.tasks.slice(0)
+
+        const deliveryAsPayload = {
+          ...delivery,
+          tasks: tasks.map(t => ({
+            ...t,
+            address: serializeAddress(t.address)
+          }))
+        }
+
+        pricePreview.update(deliveryAsPayload).then(() => resolve())
+      } else {
+        resolve()
+      }
+    })
+
+    promises.push(updateDistance)
+    promises.push(updatePrice)
+
+    Promise.all(promises)
+    .then(() => {
+      form.enable()
+    })
+    // eslint-disable-next-line no-console
+    .catch(e => console.error(e))
+  }
+}
+
+const checkSuggestionsOnSubmit = async (form, formHTMLEl, delivery) => {
+  form.disable()
+
+  if (!delivery.tasks.length > 2) {
+    formHTMLEl.submit()
+  }
+
+  const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
+  const jwt = jwtResp.jwt
+  const url = `${baseURL}/api/deliveries/suggest_optimizations` 
+  const response = await axios.post(
+    url, 
+    {
+      ...delivery,
+      tasks: delivery.tasks.slice(0).map(t => ({
+        ...t,
+        address: serializeAddress(t.address)
+      }))
+    },
+    {
+      headers: {
+        Accept: 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+        Authorization: `Bearer ${jwt}`
+      }
+    })
+  
+  if (response.data.suggestions.length > 0) {
+    form.showSuggestions(response.data.suggestions)
+  } else {
+    formHTMLEl.submit()
+  }
+}
+
+new DeliveryForm('delivery', {
+  onReady: function(delivery) {
+    updateData(this, delivery)
+  },
+  onChange: function(delivery) {
+    updateData(this, delivery)
+  },
+  onSubmit: function(formHTMLEl, delivery) {
+    checkSuggestionsOnSubmit(this, formHTMLEl, delivery)
+  }
+})

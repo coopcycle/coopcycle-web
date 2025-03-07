@@ -1,0 +1,103 @@
+@import "../../../assets/css/vars.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+
+@import "./tag.scss";
+@import "./badge.scss";
+
+$orig-image-width: 480px;
+$orig-image-height: 270px;
+
+@mixin image-size() {
+  width: calc($orig-image-width * 0.6);
+  height: calc($orig-image-height * 0.6);
+
+  @media (min-width: 360px) {
+    width: calc($orig-image-width * 0.65);
+    height: calc($orig-image-height * 0.65);
+  }
+}
+
+@mixin image-border-radius() {
+  border-radius: 16px;
+}
+
+.restaurant-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  @media (min-width: $screen-md-min) {
+    padding-top: 1.5rem;
+    flex-direction: row;
+    align-items: unset;
+  }
+
+  .restaurant-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    a {
+      color: $text-color;
+
+      &:hover,
+      &:focus {
+        background-color: $light-gray;
+        text-decoration: none;
+      }
+    }
+  }
+
+  .restaurant-image {
+    position: relative;
+    margin-bottom: 1rem;
+
+    @media (min-width: $screen-md-min) {
+      margin-bottom: 0;
+      margin-right: 1.5rem;
+    }
+
+    img {
+      @include image-size();
+      @include image-border-radius();
+    }
+  }
+
+  figcaption {
+    @include image-size();
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    .overlay {
+      @include image-border-radius();
+      opacity: 0.5;
+    }
+  }
+
+  .restaurant-name {
+    margin: 0;
+    font-weight: bold;
+  }
+
+  .badges-or-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .restaurant-badge {
+    box-shadow: none;
+  }
+
+  .restaurant-opening-hours {
+    padding: 4px 0;
+
+    i {
+      color: $primary-default;
+    }
+  }
+}

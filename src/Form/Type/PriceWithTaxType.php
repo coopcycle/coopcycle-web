@@ -4,7 +4,7 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Form\Type\MoneyType;
-use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
+use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\AbstractType;
@@ -22,7 +22,7 @@ class PriceWithTaxType extends AbstractType
     private $calculator;
 
     public function __construct(
-        ProductVariantResolverInterface $variantResolver,
+        LazyProductVariantResolverInterface $variantResolver,
         TaxRateResolverInterface $taxRateResolver,
         CalculatorInterface $calculator,
         bool $taxIncl = true)
@@ -49,14 +49,25 @@ class PriceWithTaxType extends AbstractType
                 'label' => 'form.product.taxCategory.label',
             ]);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $product = $form->getParent()->getData();
 
-            if (null !== $product->getId()) {
+            $variant = null;
 
-                $variant = $this->variantResolver->getVariant($product);
+            if ($options['for_local_business_group']) {
+                if (null !== $options['local_business_group']) {
+                    $product = $form->getRoot()->getData();
+                    $variant = $this->variantResolver->getVariantForBusinessRestaurantGroup($product, $options['local_business_group']);
+                }
+            } else {
+                if ($product && null !== $product->getId()) {
+                    $variant = $this->variantResolver->getVariant($product);
+                }
+            }
+
+            if ($variant) {
                 $rates = $this->taxRateResolver->resolveAll($variant);
 
                 if (count($rates) > 0) {
@@ -90,5 +101,13 @@ class PriceWithTaxType extends AbstractType
     public function getBlockPrefix()
     {
         return 'coopcycle_price_with_tax';
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(array(
+            'for_local_business_group' => false,
+            'local_business_group' => null,
+        ));
     }
 }

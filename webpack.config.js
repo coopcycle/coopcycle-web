@@ -3,6 +3,10 @@ var webpack = require('webpack')
 var path = require('path')
 var ESLintPlugin = require('eslint-webpack-plugin')
 
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+}
+
 Encore
 
   .setOutputPath(__dirname + '/web/build')
@@ -15,12 +19,15 @@ Encore
 
   .addEntry('app', './assets/app.js')
   .addEntry('adhoc-order', './js/app/adhoc_order/index.js')
+  .addEntry('admin-cube', './js/app/admin/cube.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
+  .addEntry('admin-foodtech-dashboard', './js/app/admin/foodtech/dashboard.js')
+  .addEntry('business-account', './js/app/business-account/index.js')
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
-  .addEntry('checkout-summary', './js/app/checkout/summary.js')
   .addEntry('dashboard', './js/app/dashboard/index.js')
+  .addEntry('datadog', './js/app/datadog.js')
   .addEntry('delivery-form', './js/app/delivery/form.js')
   .addEntry('delivery-homepage', './js/app/delivery/homepage.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')
@@ -34,23 +41,29 @@ Encore
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
   .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
   .addEntry('optins', './js/app/optins/index.js')
-  .addEntry('order', './js/app/order/index.js')
+  .addEntry('order-index', './js/app/order/index.js')
+  .addEntry('order-payment', './js/app/order/payment/index.js')
+  .addEntry('order-details', './js/app/order/details.js')
   .addEntry('product-form', './js/app/product/form.js')
+  .addEntry('package-set-form', './js/app/admin/package-set.js')
   .addEntry('product-list', './js/app/product/list.js')
   .addEntry('product-option-form', './js/app/forms/product-option.js')
   .addEntry('register', './js/app/register/index.js')
-  .addEntry('restaurant', './js/app/restaurant/index.js')
   .addEntry('restaurant-edenred', './js/app/restaurant/edenred.js')
   .addEntry('restaurant-form', './js/app/restaurant/form.js')
   .addEntry('restaurant-fulfillment-methods', './js/app/restaurant/fulfillment-methods.js')
   .addEntry('restaurant-list', './js/app/restaurant/list.js')
+  .addEntry('restaurant-item', './js/app/restaurant/item.js')
   .addEntry('restaurant-menu-editor', './js/app/restaurant/menu-editor.js')
   .addEntry('restaurant-planning', './js/app/restaurant/planning.js')
   .addEntry('restaurant-preparation-time', './js/app/restaurant/preparationTime.js')
   .addEntry('restaurants-map', './js/app/restaurants-map/index.js')
+  .addEntry('restaurant-dashboard', './js/app/dashboard/@restaurant/dashboard.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('search-user', './js/app/search/user.js')
-  .addEntry('store-form', './js/app/store/form.js')
+  .addEntry('sentry', './js/app/sentry.js')
+  .addEntry('store-form', './js/app/admin/store/form.js')
+  .addEntry('stores-list', './js/app/admin/store/list.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
   .addEntry('time-slot-form', './js/app/time-slot/form.js')
   .addEntry('time-slot-list', './js/app/time-slot/list.js')
@@ -61,6 +74,8 @@ Encore
   .addEntry('widgets', './js/app/widgets/index.js')
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
+  .addEntry('failure-form', './js/app/failure/form.js')
+  .addEntry('incident-form', './js/app/incident/form.js')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373
@@ -70,10 +85,31 @@ Encore
     /ca|de|es|fr|pl|pt-br/
   ))
 
+  /**
+   * added to fix:
+   * "BREAKING CHANGE: The request failed to resolve only because it was resolved as fully specified
+   * (probably because the origin is strict EcmaScript Module,
+   * e. g. a module with javascript mimetype, a '.mjs' file, or a '.js' file
+   * where the package.json contains '"type": "module"')."
+   * in @cubejs-client
+    */
+  .addRule({
+    test: /\.m?js$/,
+    resolve: {
+      fullySpecified: false,
+    },
+  })
+
   .enableStimulusBridge('./assets/controllers.json')
 
-  .enableSingleRuntimeChunk()
+  // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
   .splitEntryChunks()
+
+  // will require an extra script tag for runtime.js
+  // but, you probably want this, unless you're building a single-page app
+  .enableSingleRuntimeChunk()
+
+  .enableReactPreset()
 
   .enablePostCssLoader()
   .enableSassLoader(function(sassLoaderOptions) {

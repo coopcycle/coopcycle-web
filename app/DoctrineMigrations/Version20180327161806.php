@@ -19,10 +19,10 @@ class Version20180327161806 extends AbstractMigration implements ContainerAwareI
     private function findAllDeliveryOrderItems()
     {
         $stmt = $this->connection->prepare('SELECT delivery_order_item.order_item_id, delivery.vehicle, delivery.total_including_tax, task_collection.distance FROM delivery_order_item JOIN delivery ON delivery_order_item.delivery_id = delivery.id JOIN task_collection ON task_collection.id = delivery.id');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $deliveryOrderItems = [];
-        while ($deliveryOrderItem = $stmt->fetch()) {
+        while ($deliveryOrderItem = $result->fetchAssociative()) {
             $deliveryOrderItems[] = $deliveryOrderItem;
         }
 

@@ -11,5 +11,11 @@ class TourInput extends ArrayOfTasksInput
      * @Groups({"tour"})
      */
     public $name;
+
+    /**
+     * @var string
+     * @Groups({"tour"})
+     */
+    public $date;
 }
 

@@ -44,6 +44,7 @@ Feature: Dispatch
         "hydra:member":[
           {
             "@id":"@string@.startsWith('/api/task_lists')",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":@array@,
             "distance":0,
@@ -52,10 +53,13 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"sarah",
-            "date":"2018-12-01"
+            "date":"2018-12-01",
+            "vehicle": null,
+            "trailer": null
           },
           {
             "@id":"@string@.startsWith('/api/task_lists')",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":@array@,
             "distance":0,
@@ -64,7 +68,9 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"bob",
-            "date":"2018-12-01"
+            "date":"2018-12-01",
+            "vehicle": null,
+            "trailer": null
           }
         ],
         "hydra:totalItems":2,
@@ -140,17 +146,33 @@ Feature: Dispatch
         "id":4,
         "type":"PICKUP",
         "status":"TODO",
-        "address":@...@,
+        "address":{"@*@":"@*@"},
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
-        "comments":null,
+        "comments":"",
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "createdAt":"@string@.isDateTime()",
+        "doorstep": @boolean@,
+        "ref": null,
+        "recurrenceRule": null,
+        "metadata": @array@,
+        "weight": null,
+        "incidents": @array@,
+        "after":"@string@.isDateTime()",
+        "before":"@string@.isDateTime()",
+        "orgName": @string@,
+        "images": @array@,
+        "hasIncidents": @boolean@,
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
+        "barcode": @array@,
+        "packages": @array@
       }
       """
 
@@ -176,17 +198,33 @@ Feature: Dispatch
         "id":6,
         "type":"DROPOFF",
         "status":"TODO",
-        "address":@...@,
+        "address":{"@*@":"@*@"},
+        "after":"@string@.isDateTime()",
+        "before":"@string@.isDateTime()",
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
-        "comments":null,
+        "comments":"",
+        "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":true,
         "assignedTo":"sarah",
         "previous":null,
         "next":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "doorstep":false,
+        "orgName":"",
+        "images":[],
+        "ref": null,
+        "recurrenceRule":null,
+        "metadata":{"@*@":"@*@"},
+        "weight":null,
+        "hasIncidents": false,
+        "incidents": [],
+        "packages": [],
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
+        "barcode":{"@*@":"@*@"}
       }
       """
 
@@ -209,7 +247,7 @@ Feature: Dispatch
         "@context":"/api/contexts/Error",
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
-        "hydra:description":"Task #4 is already assigned to \u0022sarah\u0022",
+        "hydra:description":"Task #4 is already assigned to \u0022bob\u0022",
         "trace":@array@
       }
       """
@@ -228,7 +266,7 @@ Feature: Dispatch
       """
     Then the response status code should be 200
     And the response should be in JSON
-
+    
   Scenario: Courier can unassign task assigned to him/her
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -251,17 +289,33 @@ Feature: Dispatch
         "id":1,
         "type":"DROPOFF",
         "status":"TODO",
-        "address":@...@,
+        "address":{"@*@":"@*@"},
+        "after":"@string@.isDateTime()",
+        "before":"@string@.isDateTime()",
         "doneAfter":"@string@.isDateTime()",
         "doneBefore":"@string@.isDateTime()",
-        "comments":null,
+        "comments":"",
+        "createdAt":"@string@.isDateTime()",
         "updatedAt":"@string@.isDateTime()",
         "isAssigned":false,
         "assignedTo":null,
         "previous":null,
         "next":null,
         "group":null,
-        "tags":@array@
+        "tags":@array@,
+        "doorstep":false,
+        "orgName":"",
+        "images":[],
+        "ref": null,
+        "recurrenceRule":null,
+        "metadata":{"@*@":"@*@"},
+        "weight":null,
+        "hasIncidents": false,
+        "incidents": [],
+        "packages": [],
+        "emittedCo2": "@integer@",
+        "traveledDistanceMeter": "@integer@",
+        "barcode":{"@*@":"@*@"}
       }
       """
 
@@ -330,7 +384,6 @@ Feature: Dispatch
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the OAuth client "Acme" sends a "GET" request to "/api/task_lists?date=2018-12-01"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -342,6 +395,7 @@ Feature: Dispatch
         "hydra:member":[
           {
             "@id":"/api/task_lists/1",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":[
               {
@@ -358,10 +412,13 @@ Feature: Dispatch
             "date":"2018-12-01",
             "username":"sarah",
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()"
+            "updatedAt":"@string@.isDateTime()",
+            "vehicle": null,
+            "trailer": null
           },
           {
             "@id":"/api/task_lists/2",
+            "id": "@integer@",
             "@type":"TaskList",
             "items":[
               {
@@ -378,7 +435,9 @@ Feature: Dispatch
             "date":"2018-12-01",
             "username":"bob",
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()"
+            "updatedAt":"@string@.isDateTime()",
+            "vehicle": null,
+            "trailer": null
           }
         ],
         "hydra:totalItems":2,
@@ -411,7 +470,6 @@ Feature: Dispatch
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/tasks?date=2018-12-01&organization=Acme"
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -422,23 +480,7 @@ Feature: Dispatch
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "id":1,
-            "type":"DROPOFF",
-            "status":"TODO",
-            "address":{
-              "@id":"/api/addresses/1",
-              "@*@":"@*@"
-            },
-            "doneAfter":"@string@.isDateTime()",
-            "doneBefore":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
-            "isAssigned":true,
-            "orgName":"Acme",
-            "assignedTo":"sarah",
-            "@*@":"@*@"
-          },
-          {
-            "id":3,
+            "id":@integer@,
             "type":"DROPOFF",
             "status":"TODO",
             "address":{
@@ -451,6 +493,22 @@ Feature: Dispatch
             "isAssigned":true,
             "orgName":"Acme",
             "assignedTo":"bob",
+            "@*@":"@*@"
+          },
+          {
+            "id":@integer@,
+            "type":"DROPOFF",
+            "status":"TODO",
+            "address":{
+              "@id":"/api/addresses/1",
+              "@*@":"@*@"
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "isAssigned":true,
+            "orgName":"Acme",
+            "assignedTo":"sarah",
             "@*@":"@*@"
           }
         ],
@@ -496,6 +554,7 @@ Feature: Dispatch
             "id":5,
             "@*@":"@*@"
          },
+         "tasks":@array@,
          "trackingUrl":@string@
       }
       """
@@ -526,15 +585,18 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
+         "tasks":@array@,
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
+            "type": "PICKUP",
             "id":4,
             "@*@":"@*@"
          },
          "dropoff":{
             "@id":"/api/tasks/8",
             "@type":"Task",
+            "type": "DROPOFF",
             "id":8,
             "@*@":"@*@"
          },
@@ -553,6 +615,7 @@ Feature: Dispatch
       """
       {
         "name":"Monday tour",
+        "date": "2018-02-02",
         "tasks":[
           "/api/tasks/4",
           "/api/tasks/5"
@@ -565,13 +628,14 @@ Feature: Dispatch
       """
       {
          "@context":"/api/contexts/Tour",
-         "@id":"/api/tours/5",
+         "@id":"@string@.startsWith('/api/tours')",
          "@type":"Tour",
          "name":"Monday tour",
+         "date": "2018-02-02",
          "items":[
-            "/api/tasks/4",
-            "/api/tasks/5"
-         ],
+          "/api/tasks/4",
+          "/api/tasks/5"
+        ],
          "distance":@integer@,
          "duration":@integer@,
          "polyline":@string@,
@@ -588,7 +652,7 @@ Feature: Dispatch
     And the user "sarah" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "sarah" sends a "PUT" request to "/api/tours/5" with body:
+    And the user "sarah" sends a "PUT" request to "/api/tours/1" with body:
       """
       {
         "name":"Monday tour",
@@ -605,14 +669,15 @@ Feature: Dispatch
       """
       {
          "@context":"/api/contexts/Tour",
-         "@id":"/api/tours/5",
+         "@id":"/api/tours/1",
          "@type":"Tour",
          "name":"Monday tour",
+         "date": "2018-03-02",
          "items":[
-            "/api/tasks/3",
-            "/api/tasks/2",
-            "/api/tasks/1"
-         ],
+          "/api/tasks/3",
+          "/api/tasks/2",
+          "/api/tasks/1"
+        ],
          "distance":@integer@,
          "duration":@integer@,
          "polyline":@string@,
@@ -652,6 +717,7 @@ Feature: Dispatch
           {
             "@id":"/api/tasks/8",
             "@type":"Task",
+            "type":"DROPOFF",
             "id":8,
             "isAssigned":true,
             "assignedTo":"sarah",
@@ -660,6 +726,7 @@ Feature: Dispatch
           {
             "@id":"/api/tasks/9",
             "@type":"Task",
+            "type": "DROPOFF",
             "id":9,
             "isAssigned":true,
             "assignedTo":"sarah",

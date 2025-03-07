@@ -37,7 +37,11 @@ class MarkAsFailedHandler
             throw new PreviousTaskNotCompletedException('Previous task must be completed first');
         }
 
-        $this->eventRecorder->record(new Event\TaskFailed($task, $command->getNotes()));
+        if (!is_null($command->getReason())) {
+            $this->eventRecorder->record(new Event\TaskIncidentReported($task, $command->getReason(), $command->getNotes()));
+        }
+
+        $this->eventRecorder->record(new Event\TaskFailed($task, $command->getNotes(), $command->getReason()));
 
         $task->setStatus(Task::STATUS_FAILED);
 
@@ -45,5 +49,6 @@ class MarkAsFailedHandler
         if (!empty($contactName)) {
             $task->getAddress()->setContactName($contactName);
         }
-    }
+
+   }
 }

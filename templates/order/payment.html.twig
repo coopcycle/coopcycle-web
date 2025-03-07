@@ -1,8 +1,5 @@
 {% extends "base.html.twig" %}
 
-{% set country = country_iso %}
-{% set gateway = payment_gateway_resolver.resolve() %}
-
 {% form_theme form 'form/order.html.twig' %}
 
 {% block banner %}
@@ -12,13 +9,24 @@
 
 <div class="container container--full-height">
 
+  <div id="react-root"></div>
+
   {% if not order.empty %}
 
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
     <div class="row">
       <div class="col-xs-12">
         {% include 'order/breadcrumb.html.twig' %}
-        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h4>
+
+        <div id="order-error-container">
+          {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
+            {% include 'order/_partials/errors.html.twig' with {
+              errors: pre_submit_errors,
+            } %}
+          {% endif %}
+        </div>
+
+        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
         <div>
           <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
           <div id="items">
@@ -26,7 +34,7 @@
           </div>
         </div>
 
-        <div>
+        <div class="mb-4">
           <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
           <div>
 
@@ -45,8 +53,26 @@
             {{ form_widget(form.stripePayment.stripeToken) }}
             {{ form_widget(form.stripePayment.savedPaymentMethodId) }}
 
-            <div id="card-element">
-              <!-- a React element will be inserted here. -->
+            <div id="card-onmount-focus">
+              <div id="card-element">
+                <!-- a React element will be inserted here. -->
+              </div>
+              <div id="paygreen-container"></div>
+              {#
+              We DO NOT add the methods container on purpose,
+              because we manage them at a upper level.
+              #}
+              <!--
+              <div id="paygreen-methods-container"></div>
+              -->
+              <div>
+                <div id="paygreen-pan-frame" class="mb-3"></div>
+                <div class="d-flex justify-content-between mb-3">
+                  <div id="paygreen-exp-frame"></div>
+                  <div id="paygreen-cvv-frame"></div>
+                </div>
+                <div id="paygreen-reuse-checkbox-container"></div>
+              </div>
             </div>
 
             <div id="card-errors" role="alert" class="text-danger"></div>
@@ -58,13 +84,12 @@
     <nav class="checkout-nav border-top">
       <div class="container">
         <div class="d-flex flex-row justify-content-between align-items-center py-3">
-          <span class="text-success">
-            <i class="fa fa-clock-o fa-lg mr-2"></i>
-            <strong>{{ form.shippingTimeRange.vars.value|time_range_for_humans }}</strong>
-          </span>
+          <!-- React component will be inserted here -->
+          <div id="order__fulfilment_time_range__container">
+          </div>
           <div>
             <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-              <i class="fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>
         </div>
@@ -78,54 +103,31 @@
     </div>
   {% endif %}
 </div>
+
+  <div id="js-order-data"
+       data-order-node-id="{{ order|get_iri_from_item }}"
+       data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
+       data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+
 {% endblock %}
 
 {% block footer %}
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('order-payment') }}
+  {% include 'payment/styles.html.twig' with { order: order } %}
+{% endblock %}
+
 {% block scripts %}
 {% if not order.empty %}
-
-{% set gateway = payment_gateway_resolver.resolve() %}
-{% set gateway_configs = {} %}
-
-{% if gateway == 'stripe' %}
-<script type="text/javascript" src="https://js.stripe.com/v3/"></script>
-{% set gateway_configs = gateway_configs|merge({
-  stripe: {
-    publishableKey: coopcycle_setting('stripe_publishable_key'),
-    account: payment.stripeUserId ? payment.stripeUserId : null,
-    createPaymentIntentURL: path('stripe_create_payment_intent', { hashId: payment|hashid }),
-    clonePaymentMethodToConnectedAccountURL: path('stripe_clone_payment_method', { hashId: payment|hashid }),
-    createSetupIntentOrAttachPMURL: path('stripe_create_setup_intent_or_attach_pm', { hashId: payment|hashid }),
-    customerPaymentMethodsURL: path('stripe_customer_payment_methods', { hashId: order.customer|hashid }),
-    createGiropayPaymentIntentURL: path('stripe_create_giropay_payment_intent', { hashId: payment|hashid }),
-  }
-}) %}
-{% endif %}
-
-{% if gateway == 'mercadopago' and (mercadopago_can_enable_testmode() or mercadopago_can_enable_livemode()) %}
-<script src="https://sdk.mercadopago.com/js/v2"></script>
-{% set gateway_configs = gateway_configs|merge({
-  mercadopago: {
-    publishableKey: coopcycle_setting('mercadopago_publishable_key'),
-    country: country
-  }
-}) %}
-{% endif %}
-
-<script type="text/javascript">
-  // FIXME
-  // 'StripePaymentForm' should be renamed to something more generic like GatewatPaymentForm - @sgobotta
-  new CoopCycle.StripePaymentForm(document.querySelector('form[name="checkout_payment"]'), {
-    card: "{{ gateway }}",
-    amount: {{ order.total }},
-    orderHasUser: "{{ order.customer.hasUser() }}",
-    gatewayConfigs: {{ gateway_configs|json_encode|raw }},
-    tokenElement: document.querySelector('#checkout_payment_stripePayment_stripeToken'),
-    savedPaymentMethodElement: document.querySelector('#checkout_payment_stripePayment_savedPaymentMethodId'),
-    selectPaymentMethodURL: "{{ path('order_payment_select_method', { hashId: payment|hashid }) }}",
-  });
-</script>
+  {{ encore_entry_script_tags('order-payment') }}
+  {% include 'payment/scripts.html.twig' with {
+    order: order,
+    payment_form_selector: 'form[name="checkout_payment"]',
+    token_element_selector: '#checkout_payment_stripePayment_stripeToken',
+    order_access_token: order_access_token,
+    with_saved_cards: true
+  } %}
 {% endif %}
 {% endblock %}

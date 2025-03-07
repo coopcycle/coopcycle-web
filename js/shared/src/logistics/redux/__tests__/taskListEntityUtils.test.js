@@ -3,20 +3,19 @@ import {
   findTaskListByTask,
   addAssignedTask,
   removeUnassignedTask,
-  addOrReplaceTaskList,
 } from '../taskListEntityUtils.js'
 
 describe('taskListEntityUtils', () => {
 
   describe('findTaskListByUsername', () => {
 
-    it('should return a task list, if it is found ', () => {
+    it('should return a task list, if it is found', () => {
 
       let taskListsById = {
         '/api/task_lists/1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ],
@@ -24,7 +23,7 @@ describe('taskListEntityUtils', () => {
         '/api/task_lists/2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ],
@@ -36,7 +35,7 @@ describe('taskListEntityUtils', () => {
       expect(result).toEqual({
         '@id': '/api/task_lists/2',
         'username': 'bot_2',
-        itemIds: [
+        items: [
           '/api/tasks/3',
           '/api/tasks/4',
         ],
@@ -49,7 +48,7 @@ describe('taskListEntityUtils', () => {
         '/api/task_lists/1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ],
@@ -64,13 +63,13 @@ describe('taskListEntityUtils', () => {
 
   describe('findTaskListByTask', () => {
 
-    it('should return a task list, if it is found ', () => {
+    it('should return a task list, if it is found', () => {
 
       let taskListsById = {
         '/api/task_lists/1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ],
@@ -78,7 +77,7 @@ describe('taskListEntityUtils', () => {
         '/api/task_lists/2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ],
@@ -96,7 +95,7 @@ describe('taskListEntityUtils', () => {
       expect(result).toEqual({
         '@id': '/api/task_lists/1',
         'username': 'bot_1',
-        itemIds: [
+        items: [
           '/api/tasks/1',
           '/api/tasks/2',
         ],
@@ -109,7 +108,7 @@ describe('taskListEntityUtils', () => {
         '/api/task_lists/1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ],
@@ -117,7 +116,7 @@ describe('taskListEntityUtils', () => {
         '/api/task_lists/2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ],
@@ -144,7 +143,7 @@ describe('taskListEntityUtils', () => {
         'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ]
@@ -152,7 +151,7 @@ describe('taskListEntityUtils', () => {
         'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ]
@@ -172,7 +171,7 @@ describe('taskListEntityUtils', () => {
         {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
             '/api/tasks/5',
@@ -188,7 +187,7 @@ describe('taskListEntityUtils', () => {
         'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ]
@@ -204,7 +203,7 @@ describe('taskListEntityUtils', () => {
 
       let result = addAssignedTask(taskListsById, task)
 
-      expect(result[0].itemIds).toEqual([
+      expect(result[0].items).toEqual([
         '/api/tasks/3',
       ])
     })
@@ -214,7 +213,7 @@ describe('taskListEntityUtils', () => {
         'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ]
@@ -222,7 +221,7 @@ describe('taskListEntityUtils', () => {
         'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ]
@@ -242,14 +241,14 @@ describe('taskListEntityUtils', () => {
         {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/4',
           ]
         },
         {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
             '/api/tasks/3',
@@ -265,7 +264,7 @@ describe('taskListEntityUtils', () => {
         'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ]
@@ -273,7 +272,7 @@ describe('taskListEntityUtils', () => {
         'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ]
@@ -301,7 +300,7 @@ describe('taskListEntityUtils', () => {
         'bot_1': {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/1',
             '/api/tasks/2',
           ]
@@ -309,7 +308,7 @@ describe('taskListEntityUtils', () => {
         'bot_2': {
           '@id': '/api/task_lists/2',
           'username': 'bot_2',
-          itemIds: [
+          items: [
             '/api/tasks/3',
             '/api/tasks/4',
           ]
@@ -329,7 +328,7 @@ describe('taskListEntityUtils', () => {
         {
           '@id': '/api/task_lists/1',
           'username': 'bot_1',
-          itemIds: [
+          items: [
             '/api/tasks/2',
           ]
         },

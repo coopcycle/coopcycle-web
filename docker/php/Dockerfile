@@ -1,4 +1,4 @@
-FROM php:8.1-fpm-alpine
+FROM php:8.3-fpm-alpine3.18
 
 RUN apk update
 
@@ -7,8 +7,8 @@ RUN apk add --no-cache \
         icu \
         zlib
 
-ENV APCU_VERSION 5.1.21
-ENV PHPREDIS_VERSION 5.3.6
+ENV APCU_VERSION 5.1.23
+ENV PHPREDIS_VERSION 6.0.2
 
 RUN set -xe \
     && apk add --no-cache \
@@ -42,6 +42,7 @@ RUN set -xe \
         bcmath \
         gd \
         pcntl \
+        ftp \
     && pecl install \
         apcu-${APCU_VERSION} \
         redis-${PHPREDIS_VERSION} \
@@ -81,12 +82,10 @@ HEALTHCHECK \
 COPY composer.json ./
 COPY composer.lock ./
 
-RUN mkdir -p var/cache var/logs web/images/products web/images/restaurants web/images/tasks vendor \
+RUN mkdir -p var/cache vendor \
     # Permissions hack because setfacl does not work on Mac and Windows
     && chown -R www-data var \
-    && chown -R www-data web/images \
     && chmod -R a+w var \
-    && chmod -R a+w web/images \
     && chown -R www-data vendor
 
 COPY app app/

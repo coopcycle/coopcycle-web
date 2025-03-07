@@ -119,8 +119,30 @@
   }
 }
 
+.delivery__form__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
 .ant-picker + .ant-picker {
   margin-left: 0.5em;
+}
+
+.ReactModal__Overlay--optimization-suggestions {
+  z-index: 1001; // Needed to show always above Leaflet map
+}
+
+.ReactModal__Content--optimization-suggestions {
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+  }
 }
 
 @import "./packages.scss";

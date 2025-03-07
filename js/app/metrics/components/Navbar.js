@@ -22,6 +22,11 @@ const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
           e.preventDefault()
           changeView('logistics')
         }}>Logistics</a>
+        <span className="mx-2">|</span>
+        <a href="#" onClick={ e => {
+          e.preventDefault()
+          changeView('profitability')
+        }}>Profitability</a>
         { zeroWaste && (
         <React.Fragment>
           <span className="mx-2">|</span>

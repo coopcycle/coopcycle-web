@@ -69,32 +69,6 @@ class CancelOrderHandlerTest extends KernelTestCase
         call_user_func_array($this->handler, [ $command ]);
     }
 
-    public function testCancelOrderWithGiropayRefundsCustomer()
-    {
-        $payment = new Payment();
-        $payment->setAmount(3000);
-        $payment->setState(PaymentInterface::STATE_COMPLETED);
-        $payment->setCurrencyCode('EUR');
-        $payment->setPaymentMethodTypes(['giropay']);
-
-        $order = new Order();
-        $order->setState(OrderInterface::STATE_NEW);
-        $order->addPayment($payment);
-        $order->setTakeaway(true);
-
-        $this->stripeManager
-            ->refund($payment, null, true)
-            ->shouldBeCalled();
-
-        $this->eventRecorder
-            ->record(Argument::type(OrderCancelled::class))
-            ->shouldBeCalled();
-
-        $command = new CancelOrder($order, OrderInterface::CANCEL_REASON_NO_SHOW);
-
-        call_user_func_array($this->handler, [ $command ]);
-    }
-
     public function testCancelAcceptedOrder()
     {
         $order = new Order();

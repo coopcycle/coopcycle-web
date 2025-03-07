@@ -4,6 +4,8 @@ namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use AppBundle\Action\Cart\AddItem as AddCartItem;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
@@ -12,8 +14,11 @@ use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer as AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
+use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
+use AppBundle\Action\Order\FinishPreparing as OrderFinishPreparing;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
+use AppBundle\Action\Order\ConfigurePayment as ConfigurePaymentController;
 use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
 use AppBundle\Action\Order\CreateSetupIntentOrAttachPM;
 use AppBundle\Action\Order\Delay as OrderDelay;
@@ -26,23 +31,31 @@ use AppBundle\Action\Order\Pay as OrderPay;
 use AppBundle\Action\Order\PaymentDetails as PaymentDetailsController;
 use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
+use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
 use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\Dto\ConfigurePaymentInput;
+use AppBundle\Api\Dto\ConfigurePaymentOutput;
+use AppBundle\Api\Dto\InvoiceLineItem;
+use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
 use AppBundle\Api\Dto\LoopeatReturns;
+use AppBundle\Api\Dto\EdenredCredentialsInput;
+use AppBundle\Api\Filter\OrderDateFilter;
+use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LoopEat\OrderCredentials;
+use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
-use AppBundle\Filter\OrderDateFilter;
-use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -110,6 +123,38 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/me/orders",
  *       "controller"=MyOrders::class
+ *     },
+ *     "invoice_line_items_grouped_by_organization"={
+ *        "method"="GET",
+ *        "path"="/invoice_line_items/grouped_by_organization",
+ *        "security"="is_granted('ROLE_ADMIN')",
+ *        "output"=InvoiceLineItemGroupedByOrganization::class,
+ *        "normalization_context"={"groups"={"default_invoice_line_item"}}
+ *      },
+ *     "invoice_line_items"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"default_invoice_line_item"}}
+ *     },
+ *     "invoice_line_items_export"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items/export",
+ *       "formats"={"csv"={"text/csv"}},
+ *       "pagination_enabled"=false,
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"export_invoice_line_item"}}
+ *     },
+ *     "invoice_line_items_odoo_export"={
+ *       "method"="GET",
+ *       "path"="/invoice_line_items/export/odoo",
+ *       "formats"={"csv"={"text/csv"}},
+ *       "pagination_enabled"=false,
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *       "output"=InvoiceLineItem::class,
+ *       "normalization_context"={"groups"={"odoo_export_invoice_line_item"}}
  *     }
  *   },
  *   itemOperations={
@@ -121,7 +166,8 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/payment",
  *       "controller"=PaymentDetailsController::class,
- *       "security"="is_granted('session', object)",
+ *       "normalization_context"={"api_sub_level"=true, "groups"={"payment_details"}},
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get payment details for a Order resource."
  *       }
@@ -132,7 +178,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "controller"=PaymentMethodsController::class,
  *       "output"=PaymentMethodsOutput::class,
  *       "normalization_context"={"api_sub_level"=true},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Get available payment methods for a Order resource."
  *       }
@@ -141,7 +187,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="PUT",
  *       "path"="/orders/{id}/pay",
  *       "controller"=OrderPay::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Pays a Order resource."
  *       }
@@ -192,6 +238,33 @@ use Webmozart\Assert\Assert as WMAssert;
  *         "summary"="Cancels a Order resource."
  *       }
  *     },
+ *     "start_preparing"={
+ *        "method"="PUT",
+ *        "path"="/orders/{id}/start_preparing",
+ *        "controller"=OrderStartPreparing::class,
+ *        "security"="is_granted('start_preparing', object)",
+ *        "openapi_context"={
+ *          "summary"="Starts preparing an Order resource."
+ *        }
+ *      },
+ *     "finish_preparing"={
+ *        "method"="PUT",
+ *        "path"="/orders/{id}/finish_preparing",
+ *        "controller"=OrderFinishPreparing::class,
+ *        "security"="is_granted('finish_preparing', object)",
+ *        "openapi_context"={
+ *          "summary"="Finishes preparing an Order resource."
+ *        }
+ *      },
+ *     "restore"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/restore",
+ *       "controller"=OrderRestore::class,
+ *       "security"="is_granted('restore', object)",
+ *       "openapi_context"={
+ *         "summary"="Restores a cancelled Order resource."
+ *       }
+ *     },
  *     "assign"={
  *       "method"="PUT",
  *       "path"="/orders/{id}/assign",
@@ -207,7 +280,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/tip",
  *       "controller"=OrderTip::class,
  *       "validation_groups"={"cart"},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "normalization_context"={"groups"={"cart"}},
  *       "openapi_context"={
  *         "summary"="Updates tip amount of an Order resource."
@@ -216,7 +289,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *     "get_cart_timing"={
  *       "method"="GET",
  *       "path"="/orders/{id}/timing",
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('view', object)",
  *       "openapi_context"={
  *         "summary"="Retrieves timing information about a Order resource.",
  *         "responses"={
@@ -235,7 +308,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="GET",
  *       "path"="/orders/{id}/validate",
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "put_cart"={
  *       "method"="PUT",
@@ -243,7 +316,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "normalization_context"={"groups"={"cart"}},
  *       "denormalization_context"={"groups"={"order_update"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "post_cart_items"={
  *       "method"="POST",
@@ -253,7 +326,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Adds items to a Order resource."
  *       }
@@ -265,7 +338,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validation_groups"={"cart"},
  *       "denormalization_context"={"groups"={"cart"}},
  *       "normalization_context"={"groups"={"cart"}},
- *       "security"="is_granted('session', object)"
+ *       "security"="is_granted('edit', object)"
  *     },
  *     "delete_item"={
  *       "method"="DELETE",
@@ -276,7 +349,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "validate"=false,
  *       "write"=false,
  *       "status"=200,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Deletes items from a Order resource."
  *       }
@@ -296,7 +369,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "path"="/orders/{id}/mercadopago-preference",
  *       "controller"=MercadopagoPreference::class,
  *       "output"=MercadopagoPreferenceResponse::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "openapi_context"={
  *         "summary"="Creates a MercadoPago preference and returns its ID."
  *       }
@@ -325,7 +398,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "path"="/orders/{id}/stripe/clone-payment-method/{paymentMethodId}",
  *      "controller"=CloneStripePayment::class,
  *      "output"=StripePaymentMethodOutput::class,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "openapi_context"={
  *        "summary"=""
  *      }
@@ -334,7 +407,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "method"="POST",
  *      "path"="/orders/{id}/stripe/create-setup-intent-or-attach-pm",
  *      "controller"=CreateSetupIntentOrAttachPM::class,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "openapi_context"={
  *        "summary"=""
  *      }
@@ -343,7 +416,7 @@ use Webmozart\Assert\Assert as WMAssert;
  *      "method"="POST",
  *      "path"="/orders/{id}/create_invitation",
  *      "status"=200,
- *      "security"="is_granted('session', object)",
+ *      "security"="is_granted('edit', object)",
  *      "normalization_context"={"groups"={"cart"}},
  *      "controller"=CreateInvitationController::class,
  *      "validate"=false,
@@ -384,13 +457,39 @@ use Webmozart\Assert\Assert as WMAssert;
  *       "method"="POST",
  *       "path"="/orders/{id}/loopeat_returns",
  *       "controller"=UpdateLoopeatReturnsController::class,
- *       "security"="is_granted('session', object)",
+ *       "security"="is_granted('edit', object)",
  *       "input"=LoopeatReturns::class,
  *       "validate"=false,
  *       "normalization_context"={"groups"={"cart"}},
  *       "denormalization_context"={"groups"={"update_loopeat_returns"}},
  *       "openapi_context"={
  *         "summary"="Update Loopeat returns for an order"
+ *       }
+ *     },
+ *     "update_edenred_credentials"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/edenred_credentials",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=EdenredCredentialsInput::class,
+ *       "validate"=false,
+ *       "normalization_context"={"groups"={"cart"}},
+ *       "denormalization_context"={"groups"={"update_edenred_credentials"}},
+ *       "openapi_context"={
+ *         "summary"="Update Edenred credentials for an order"
+ *       }
+ *     },
+ *     "configure_payment"={
+ *       "method"="PUT",
+ *       "path"="/orders/{id}/payment",
+ *       "security"="is_granted('edit', object)",
+ *       "input"=ConfigurePaymentInput::class,
+ *       "controller"=ConfigurePaymentController::class,
+ *       "output"=ConfigurePaymentOutput::class,
+ *       "validate"=false,
+ *       "denormalization_context"={"groups"={"order_configure_payment"}},
+ *       "normalization_context"={"api_sub_level"=true, "groups"={"order_configure_payment"}},
+ *       "openapi_context"={
+ *         "summary"="Configure payment for a Order resource."
  *       }
  *     },
  *   },
@@ -400,6 +499,9 @@ use Webmozart\Assert\Assert as WMAssert;
  *   }
  * )
  * @ApiFilter(OrderDateFilter::class, properties={"date": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"state": "exact"})
+ * @ApiFilter(ExistsFilter::class, properties={"exports"})
+ * @ApiFilter(OrderStoreFilter::class)
  *
  * @AssertOrder(groups={"Default"})
  * @AssertOrderIsModifiable(groups={"cart"})
@@ -410,9 +512,14 @@ class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;
 
-    protected $customer;
+    const STORE_TYPE_FOODTECH = 'FOODTECH';
+    const STORE_TYPE_LASTMILE = 'LASTMILE';
+    const STORE_TYPE = [
+        self::STORE_TYPE_FOODTECH,
+        self::STORE_TYPE_LASTMILE
+    ];
 
-    protected $vendor;
+    protected $customer;
 
     /**
      * @Assert\Valid
@@ -458,7 +565,7 @@ class Order extends BaseOrder implements OrderInterface
 
     /**
      * @Assert\Expression(
-     *   "!this.isTakeaway() or (this.isTakeaway() and this.getRestaurant().isFulfillmentMethodEnabled('collection'))",
+     *   "!this.isTakeaway() or (this.isTakeaway() and this.getVendor().isFulfillmentMethodEnabled('collection'))",
      *   message="order.collection.not_available",
      *   groups={"cart"}
      * )
@@ -472,6 +579,14 @@ class Order extends BaseOrder implements OrderInterface
     protected $loopeatDetails;
 
     protected ?OrderCredentials $loopeatCredentials = null;
+
+    protected $businessAccount;
+
+    protected Collection $bookmarks;
+
+    protected ?RecurrenceRule $subscription = null;
+
+    protected Collection $exports;
 
     const SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA = [
         "type" => "object",
@@ -494,6 +609,8 @@ class Order extends BaseOrder implements OrderInterface
         $this->events = new ArrayCollection();
         $this->promotions = new ArrayCollection();
         $this->vendors = new ArrayCollection();
+        $this->bookmarks = new ArrayCollection();
+        $this->exports = new ArrayCollection();
     }
 
     /**
@@ -510,15 +627,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
-
-        if (null !== $customer && $this->hasLoopEatCredentials()) {
-
-            WMAssert::isInstanceOf($this->customer, LoopeatOAuthCredentialsInterface::class);
-
-            $this->customer->setLoopeatAccessToken($this->loopeatCredentials->getLoopeatAccessToken());
-            $this->customer->setLoopeatRefreshToken($this->loopeatCredentials->getLoopeatRefreshToken());
-            $this->clearLoopEatCredentials();
-        }
     }
 
     public function getTaxTotal(): int
@@ -642,12 +750,12 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function getRestaurant(): ?LocalBusiness
     {
-        if (null === $this->vendor) {
+        if (!$this->hasVendor() || $this->isMultiVendor()) {
 
             return null;
         }
 
-        return $this->vendor->getRestaurant();
+        return $this->getRestaurants()->first();
     }
 
     /**
@@ -655,14 +763,7 @@ class Order extends BaseOrder implements OrderInterface
      */
     public function setRestaurant(?LocalBusiness $restaurant): void
     {
-        $currentRestaurant = $this->getRestaurant();
-
-        $vendor = new Vendor();
-        $vendor->setRestaurant($restaurant);
-
-        $this->vendor = $vendor;
-
-        if (null !== $restaurant && $restaurant !== $currentRestaurant) {
+        if (null !== $restaurant && $restaurant !== $this->getRestaurant()) {
 
             $this->vendors->clear();
 
@@ -675,7 +776,24 @@ class Order extends BaseOrder implements OrderInterface
 
     public function hasVendor(): bool
     {
-        return null !== $this->getVendor();
+        return count($this->getVendors()) > 0;
+    }
+
+    public function getStoreType(): ?string
+    {
+        if ($this->isMultiVendor()) {
+            return null;
+        }
+
+        if (!is_null($this->getRestaurant())) {
+            return self::STORE_TYPE_FOODTECH;
+        }
+
+        if (!is_null($this->getDelivery()?->getStore())) {
+            return self::STORE_TYPE_LASTMILE;
+        }
+
+        throw new \LogicException('Cannot get store type for order without delivery or restaurant');
     }
 
     /**
@@ -950,16 +1068,20 @@ class Order extends BaseOrder implements OrderInterface
             return false;
         }
 
-        if (!$restaurant->isDepositRefundEnabled()
+        if (
+            !$restaurant->isDepositRefundEnabled()
             && !$restaurant->isLoopeatEnabled()
             && !$restaurant->isVytalEnabled()
-            && !$restaurant->isDabbaEnabled()) {
+            && !$restaurant->isDabbaEnabled()
+        ) {
             return false;
         }
 
         foreach ($this->getItems() as $item) {
-            if ($item instanceof OrderItemInterface
-            &&  $item->getVariant()->getProduct()->isReusablePackagingEnabled()) {
+            if (
+                $item instanceof OrderItemInterface
+                &&  $item->getVariant()->getProduct()->isReusablePackagingEnabled()
+            ) {
 
                 return true;
             }
@@ -1083,7 +1205,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function setTipAmount(int $tipAmount)
     {
-        $this->tipAmount = $tipAmount;
+        $this->tipAmount = max(0, $tipAmount);
     }
 
     public function getShippingTimeRange(): ?TsRange
@@ -1155,33 +1277,6 @@ class Order extends BaseOrder implements OrderInterface
     public function setFulfillmentMethod(string $fulfillmentMethod)
     {
         $this->setTakeaway($fulfillmentMethod === 'collection');
-    }
-
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod
-    {
-        $restaurants = $this->getRestaurants();
-
-        if (count($restaurants) === 0) {
-
-            // Vendors may not have been processed yet
-            $restaurant = $this->getRestaurant();
-
-            if (null !== $restaurant) {
-
-                return $restaurant->getFulfillmentMethod(
-                    $this->getFulfillmentMethod()
-                );
-            }
-
-            return null;
-        }
-
-        $first = $restaurants->first();
-        $target = count($restaurants) === 1 ? $first : $first->getHub();
-
-        return $target->getFulfillmentMethod(
-            $this->getFulfillmentMethod()
-        );
     }
 
     public function getRefundTotal(): int
@@ -1258,14 +1353,25 @@ class Order extends BaseOrder implements OrderInterface
         return $this->customer->getUser();
     }
 
-    public function getVendor(): ?Vendor
+    public function getVendorConditions(): ?Vendor
     {
-        return $this->vendor;
+        if (null !== $this->getBusinessAccount()) {
+            return $this->getBusinessAccount()->getBusinessRestaurantGroup();
+        }
+
+        return $this->getVendor();
     }
 
-    public function setVendor(?Vendor $vendor): void
+    public function getVendor(): ?Vendor
     {
-        $this->vendor = $vendor;
+        if (!$this->hasVendor()) {
+
+            return null;
+        }
+
+        $first = $this->getRestaurants()->first();
+
+        return $this->isMultiVendor() ? $first->getHub() : $first;
     }
 
     public function getItemsGroupedByVendor(): \SplObjectStorage
@@ -1279,7 +1385,7 @@ class Order extends BaseOrder implements OrderInterface
 
             if (null !== $restaurant) {
                 $items = isset($hash[$restaurant]) ? $hash[$restaurant] : [];
-                $hash[$restaurant] = array_merge($items, [ $item ]);
+                $hash[$restaurant] = array_merge($items, [$item]);
             }
         }
 
@@ -1313,6 +1419,8 @@ class Order extends BaseOrder implements OrderInterface
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TAX_ADJUSTMENT)->toArray());
         $tipAdjustments =
             array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::TIP_ADJUSTMENT)->toArray());
+        $incidentAdjustments =
+            array_map($serializeAdjustment, $this->getAdjustments(AdjustmentInterface::INCIDENT_ADJUSTMENT)->toArray());
 
         return [
             AdjustmentInterface::DELIVERY_ADJUSTMENT => array_values($deliveryAdjustments),
@@ -1321,6 +1429,7 @@ class Order extends BaseOrder implements OrderInterface
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT => array_values($reusablePackagingAdjustments),
             AdjustmentInterface::TAX_ADJUSTMENT => array_values($taxAdjustments),
             AdjustmentInterface::TIP_ADJUSTMENT => array_values($tipAdjustments),
+            AdjustmentInterface::INCIDENT_ADJUSTMENT => array_values($incidentAdjustments),
         ];
     }
 
@@ -1402,7 +1511,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function isMultiVendor(): bool
     {
-        return $this->hasVendor() && $this->getVendor()->isHub();
+        return $this->hasVendor() && count($this->getVendors()) > 1;
     }
 
     public function getPickupAddress(): ?Address
@@ -1425,16 +1534,6 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $recipients;
-    }
-
-    public function supportsGiropay(): bool
-    {
-        if ($this->isMultiVendor() || !$this->hasVendor()) {
-
-            return false;
-        }
-
-        return $this->getRestaurant()->isStripePaymentMethodEnabled('giropay');
     }
 
     public function supportsEdenred(): bool
@@ -1555,6 +1654,21 @@ class Order extends BaseOrder implements OrderInterface
             }
         }
 
+        // Make sure same formats do not appear twice
+        $formats = array_reduce($formats, function ($carry, $item) {
+            foreach ($carry as $index => $el) {
+                if ($el['format_id'] === $item['format_id']) {
+                    $carry[$index]['quantity'] += $item['quantity'];
+
+                    return $carry;
+                }
+            }
+
+            $carry[] = $item;
+
+            return $carry;
+        }, []);
+
         return $formats;
     }
 
@@ -1627,16 +1741,18 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getLoopeatAccessToken()
     {
-        if (null === $this->loopeatCredentials) {
+        $ownToken = $this->loopeatCredentials?->getLoopeatAccessToken();
+        $customerToken = $this->customer?->getLoopeatAccessToken();
 
-            return null;
-        }
-
-        return $this->loopeatCredentials->getLoopeatAccessToken();
+        return $customerToken ?? $ownToken;
     }
 
     public function setLoopeatAccessToken($accessToken)
     {
+        if (null !== $this->customer) {
+            $this->customer->setLoopeatAccessToken($accessToken);
+        }
+
         if (null === $this->loopeatCredentials) {
 
             $this->loopeatCredentials = new OrderCredentials();
@@ -1648,16 +1764,18 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getLoopeatRefreshToken()
     {
-        if (null === $this->loopeatCredentials) {
+        $ownToken = $this->loopeatCredentials?->getLoopeatRefreshToken();
+        $customerToken = $this->customer?->getLoopeatRefreshToken();
 
-            return null;
-        }
-
-        return $this->loopeatCredentials->getLoopeatRefreshToken();
+        return $customerToken ?? $ownToken;
     }
 
     public function setLoopeatRefreshToken($refreshToken)
     {
+        if (null !== $this->customer) {
+            $this->customer->setLoopeatRefreshToken($refreshToken);
+        }
+
         if (null === $this->loopeatCredentials) {
 
             $this->loopeatCredentials = new OrderCredentials();
@@ -1715,5 +1833,221 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return $text;
+    }
+
+    public function supportsLoopeat(): bool
+    {
+        foreach ($this->getVendors() as $vendor) {
+            if ($vendor->getRestaurant()->isLoopeatEnabled() && $vendor->getRestaurant()->hasLoopEatCredentials()) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function hasEvent(string $type): bool
+    {
+        foreach ($this->getEvents() as $event) {
+            if ($event->getType() === $type) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getBusinessAccount(): ?BusinessAccount
+    {
+        return $this->businessAccount;
+    }
+
+    public function setBusinessAccount(?BusinessAccount $businessAccount): void
+    {
+        $this->businessAccount = $businessAccount;
+    }
+
+    public function isBusiness(): bool
+    {
+        return null !== $this->businessAccount;
+    }
+
+    public function getPickupAddresses(): Collection
+    {
+        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => $restaurant->getAddress());
+    }
+
+    /**
+     * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
+     * @return Collection all bookmarks set by different users
+     */
+    public function getBookmarks(): Collection
+    {
+        return $this->bookmarks;
+    }
+
+    public function supportsPaygreen(): bool
+    {
+        if ($this->isMultiVendor() || !$this->hasVendor()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->supportsPaygreen() && 'paygreen' === $this->getRestaurant()->getPaymentGateway();
+    }
+
+    public function getSubscription(): ?RecurrenceRule
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription(?RecurrenceRule $subscription): void
+    {
+        $this->subscription = $subscription;
+    }
+
+    /**
+     * @SerializedName("hasEdenredCredentials")
+     * @Groups({"order", "order_update", "cart"})
+     */
+    public function hasEdenredCredentials(): bool
+    {
+        /** @var \AppBundle\Sylius\Customer\CustomerInterface|null */
+        $customer = $this->getCustomer();
+
+        if (null === $customer) {
+            return false;
+        }
+
+        return $customer->hasEdenredCredentials();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface
+    {
+        if ($this->payments->isEmpty()) {
+            return null;
+        }
+
+        $iterator = $this->payments->getIterator();
+        $iterator->uasort(function ($a, $b) {
+            return ($a->getCreatedAt() < $b->getCreatedAt()) ? -1 : 1;
+        });
+        $payments = new ArrayCollection(iterator_to_array($iterator));
+
+        $payment = $payments->filter(function (PaymentInterface $payment) use ($method, $state): bool {
+            $__filter = null;
+            if (is_string($method)) {
+                $__filter = fn(PaymentInterface $payment) => $payment->getMethod()->getCode() === $method;
+            }
+            if (is_array($method)) {
+                $__filter = fn(PaymentInterface $payment) => in_array($payment->getMethod()->getCode(), $method);
+            }
+            return (null === $state || $payment->getState() === $state) && $__filter($payment);
+        })->last();
+
+        return $payment !== false ? $payment : null;
+    }
+
+    public function isZeroWaste(): bool
+    {
+        if (!$this->isReusablePackagingEnabled()) {
+            return false;
+        }
+
+        foreach ($this->getItems() as $item) {
+
+            $product = $item->getVariant()->getProduct();
+
+            if ($product->isReusablePackagingEnabled()) {
+
+                if ($product->hasReusablePackagings()) {
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function getLoopeatFormatById(int $formatId): ?array
+    {
+        $reusablePackagings = $this->getRestaurant()->getReusablePackagings();
+
+        foreach ($reusablePackagings as $reusablePackaging) {
+            if (ReusablePackaging::TYPE_LOOPEAT === $reusablePackaging->getType()) {
+                $data = $reusablePackaging->getData();
+                if ($data['id'] === $formatId) {
+                    return $data;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function isFoodtech(): bool
+    {
+        //FIXME: combine with $this->getStoreType() implementation
+        return $this->hasVendor();
+    }
+
+    public function isDeliveryForStore(): bool
+    {
+        //FIXME: combine with $this->getStoreType() implementation
+
+        // There are two types of On Demand Delivery orders:
+        // 1. Local Commerce and Last Mile ("store") orders (this method)
+        // 2. B2C via Order form
+        return !is_null($this->getDelivery()?->getStore());
+    }
+
+    public function getDeliveryItem(): ?OrderItemInterface
+    {
+        if ($this->isFoodtech()) {
+            //FIXME: delivery is modeled as an item only in non-foodtech orders
+            return null;
+        }
+
+        if ($deliveryItem = $this->getItems()->first()) {
+            return $deliveryItem; // @phpstan-ignore return.type
+        } else {
+            return null;
+        }
+    }
+
+    public function getDeliveryPrice(): PriceInterface
+    {
+        if ($this->isFoodtech()) {
+            //FIXME: get the delivery price for food tech orders from Adjustments
+            return new PricingRulesBasedPrice(0);
+        }
+
+        $deliveryItem = $this->getDeliveryItem();
+
+        if (null === $deliveryItem) {
+            throw new \LogicException('Order has no delivery price');
+        }
+
+        $productVariant = $deliveryItem->getVariant();
+
+        if ($pricingRulesSet = $productVariant->getPricingRuleSet()) {
+            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice(), $pricingRulesSet);
+        } else {
+            // Some productVariants created before $pricingRulesSet was introduced
+            // may have a price calculated based on a pricing rule set, but pricingRulesSet is null
+
+            // custom price
+            return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+        }
+    }
+
+    public function getExports(): Collection
+    {
+        return $this->exports;
     }
 }

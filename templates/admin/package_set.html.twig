@@ -13,26 +13,21 @@
 {% endblock %}
 
 {% block content %}
+{% set package_set = form.vars.value %}
+{% if package_set.id is not null %}
+  <div {{ react_component('ShowApplications', { 'objectId': package_set.id, fetchUrl: 'api_package_sets_applications_item' }) }}>
+    <span class="loader loader--dark"></span>
+  </div>
+  <hr />
+{% endif %}
 {{ form_start(form) }}
   {{ form_widget(form) }}
-  <button type="submit" class="btn btn-block btn-primary">
-    {{ 'basics.save'|trans }}
-  </button>
+    <button type="submit" class="btn btn-block btn-primary">
+      {{ 'basics.save'|trans }}
+    </button>
 {{ form_end(form) }}
 {% endblock %}
 
 {% block scripts %}
-<script>
-var $packagesList = $('#package_set_packages');
-$('#package_set_packages_add').on('click', function (e) {
-  var counter = $packagesList.data('widget-counter') || $packagesList.children().length;
-  var newWidget = $packagesList.attr('data-prototype');
-  newWidget = newWidget.replace(/__name__/g, counter);
-  counter++;
-  $packagesList.data('widget-counter', counter);
-  var newElem = $(newWidget);
-  newElem.appendTo($packagesList);
-});
-</script>
+  {{ encore_entry_script_tags('package-set-form') }}
 {% endblock %}
-

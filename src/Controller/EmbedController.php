@@ -2,16 +2,18 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryFormSubmission;
-use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
+use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\DeliveryEmbedType;
-use AppBundle\Form\StripePaymentType;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -28,11 +30,8 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -41,18 +40,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class EmbedController extends AbstractController
 {
+    use AccessControlTrait;
+    use InjectAuthTrait;
     use DeliveryTrait;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        RepositoryInterface $customerRepository,
-        FactoryInterface $customerFactory,
-        TranslatorInterface $translator)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly RepositoryInterface $customerRepository,
+        private readonly FactoryInterface $customerFactory,
+        private readonly TranslatorInterface $translator)
     {
-        $this->entityManager = $entityManager;
-        $this->customerRepository = $customerRepository;
-        $this->customerFactory = $customerFactory;
-        $this->translator = $translator;
     }
 
     protected function getDeliveryRoutes()
@@ -153,7 +150,6 @@ class EmbedController extends AbstractController
      */
     public function deliveryStartAction($hashid, Request $request,
         DeliveryManager $deliveryManager,
-        CanonicalizerInterface $canonicalizer,
         EntityManagerInterface $entityManager)
     {
         if ($this->container->has('profiler')) {
@@ -166,15 +162,16 @@ class EmbedController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            try {
+            $delivery = $form->getData();
 
-                $delivery = $form->getData();
+            $price = $deliveryManager->getPrice($delivery, $this->getPricingRuleSet($request));
 
-                $price = $this->getDeliveryPrice(
-                    $delivery,
-                    $this->getPricingRuleSet($request),
-                    $deliveryManager
-                );
+            if (null === $price) {
+
+                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+                $form->addError(new FormError($message));
+
+            } else  {
 
                 $submission = new DeliveryFormSubmission();
                 $submission->setDeliveryForm($this->getDeliveryForm($request));
@@ -191,11 +188,7 @@ class EmbedController extends AbstractController
                     'data' => $hashids->encode($submission->getId()),
                 ]);
 
-            } catch (NoRuleMatchedException $e) {
-                $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                $form->addError(new FormError($message));
             }
-
         }
 
         return $this->render('embed/delivery/start.html.twig', [
@@ -208,7 +201,6 @@ class EmbedController extends AbstractController
      * @Route("/forms/{hashid}/summary", name="embed_delivery_summary")
      */
     public function deliverySummaryAction($hashid, Request $request,
-        DeliveryManager $deliveryManager,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
         OrderFactory $orderFactory,
@@ -264,15 +256,14 @@ class EmbedController extends AbstractController
                     return $this->redirectToRoute('embed_delivery_start', ['hashid' => $hashid]);
                 }
 
-                $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
+                $checkoutPayment = new CheckoutPayment($order);
+                $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
                     'csrf_protection' => false,
                 ]);
 
                 $paymentForm->handleRequest($request);
 
                 if ($paymentForm->isSubmitted() && $paymentForm->isValid()) {
-
-                    $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
 
                     $data = [
                         'stripeToken' => $paymentForm->get('stripePayment')->get('stripeToken')->getData()
@@ -289,19 +280,28 @@ class EmbedController extends AbstractController
                         $order->setDelivery($delivery);
                     }
 
+                    // Keep a copy of the payments before trying authorization
+                    $payments = $order->getPayments()->filter(
+                        fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
+
                     $orderManager->checkout($order, $data);
                     $objectManager->flush();
 
-                    if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+                    $failedPayments = $payments->filter(
+                        fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_FAILED);
+
+                    if (count($failedPayments) > 0) {
+                        $errors = $failedPayments->map(fn (PaymentInterface $payment): string => $payment->getLastError());
+                        $error = implode("\n", $errors->toArray());
+
                         return $this->render('embed/delivery/summary.html.twig', [
                             'hashid' => $hashid,
                             'delivery' => $delivery,
                             'price' => $price,
                             'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                             'form' => $paymentForm->createView(),
-                            'payment' => $payment,
                             'order' => $order,
-                            'error' => $payment->getLastError(),
+                            'error' => $error,
                             'submission_hashid' => $request->query->get('data'),
                         ]);
                     }
@@ -316,6 +316,16 @@ class EmbedController extends AbstractController
                     return $this->redirectToRoute('public_order', [
                         'hashid' => $hashids->encode($order->getId())
                     ]);
+                } else {
+                    return $this->render('embed/delivery/summary.html.twig', [
+                        'hashid' => $hashid,
+                        'delivery' => $delivery,
+                        'price' => $price,
+                        'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
+                        'form' => $paymentForm->createView(),
+                        'order' => $order,
+                        'submission_hashid' => $request->query->get('data'),
+                    ]);
                 }
             }
 
@@ -323,9 +333,10 @@ class EmbedController extends AbstractController
             $telephone = $form->get('telephone')->getData();
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $this->createOrderForDelivery($orderFactory, $delivery, $price, $customer, $attach = false);
+            $order    = $orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price), $customer, false);
 
-            $paymentForm = $this->createForm(CheckoutPaymentType::class, $order, [
+            $checkoutPayment = new CheckoutPayment($order);
+            $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
                 'csrf_protection' => false,
             ]);
 
@@ -338,15 +349,12 @@ class EmbedController extends AbstractController
             $objectManager->persist($order);
             $objectManager->flush();
 
-            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
             return $this->render('embed/delivery/summary.html.twig', [
                 'hashid' => $hashid,
                 'delivery' => $delivery,
                 'price' => $price,
                 'price_excluding_tax' => ($order->getTotal() - $order->getTaxTotal()),
                 'form' => $paymentForm->createView(),
-                'payment' => $payment,
                 'order' => $order,
                 'submission_hashid' => $request->query->get('data'),
             ]);

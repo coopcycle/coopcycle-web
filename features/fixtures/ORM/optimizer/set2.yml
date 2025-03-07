@@ -1,0 +1,127 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.8704288", "2.3355269" ]
+  geo_2:
+    __construct: [ "48.8669865", "2.338254" ]
+  geo_3:
+    __construct: [ "48.8655514", "2.3328735" ]
+  geo_4:
+    __construct: [ "48.8696315", "2.3026263" ]
+  geo_5:
+    __construct: [ "48.8501504", "2.3376736" ]
+  geo_6:
+    __construct: [ "48.8699566", "2.3870763" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Centre de paris'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Centre de paris'
+    geo: "@geo_2"
+  address_3:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Centre de paris'
+    geo: "@geo_3"
+  address_4:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Exterieur de paris'
+    geo: "@geo_4"
+  address_5:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Exterieur de paris'
+    geo: "@geo_5"
+  address_6:
+    addressLocality: 'Paris'
+    postalCode: '75000'
+    streetAddress: 'Exterieur de paris'
+    geo: "@geo_5"
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-03-02 10:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 11:00:00'))>
+    comments: ""
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-03-02 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    comments: "#bob"
+  task_3:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
+    comments: "#bob"
+    status: "DONE"
+  task_4:
+    address: "@address_4"
+    doneAfter: <identity(new \DateTime('2018-03-03 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-03 12:30:00'))>
+    comments: "#bob"
+  task_5:
+    address: "@address_5"
+    doneAfter: <identity(new \DateTime('2018-03-03 13:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-03 13:30:00'))>
+    comments: "#bob"
+  task_6:
+    address: "@address_6"
+    doneAfter: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-03-02 12:30:00'))>
+    comments: "#bob"
+    status: "CANCELLED"
+
+AppBundle\Entity\User:
+  bob:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'bob'
+        - '123456'
+        - 'bob@demo.coopcycle.org'
+        - true
+        - false
+
+AppBundle\Entity\Tour:
+  tour_1:
+    name: "tour_1"
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    tasks:
+      - '@task_1'
+      - '@task_2'
+      - '@task_3'
+
+AppBundle\Entity\TaskList\Item:
+  item_1:
+    tour: "@tour_1"
+    position: 0
+  item_2:
+    task: "@task_4"
+    position: 1
+  item_3:
+    task: "@task_5"
+    position: 2
+  item_4:
+    task: "@task_6"
+    position: 3
+
+
+AppBundle\Entity\TaskList:
+  tasklist_1:
+    courier: "@bob"
+    date: <identity(new \DateTime('2018-03-02 12:00:00'))>
+    __calls:
+      - addItem:
+        - "@item_1"
+      - addItem:
+        - "@item_2"
+      - addItem:
+        - "@item_3"
+      - addItem:
+        - "@item_4"

@@ -1,0 +1,16 @@
+# There are two ways to load the 'setup' fixtures:
+# 1. using --setup (-s) option: bin/console coopcycle:fixtures:load -s cypress/fixtures/setup.yml
+# that will load and PERSIST all the fixtures from setup.yml
+# 2. using the `include` directive in the fixtures files
+# that will only load the fixtures from setup.yml, but they will NOT be persisted yet
+# which might prevent some other fixtures that expect a certain database state from being loaded
+# For example, a fixture that creates an On Demand Delivery order expects both On Demand Delivery product
+# and taxes to be present in the database
+
+include:
+  - settings.yml
+  - sylius_channels.yml
+  - sylius_currency.yml
+  - payment_methods.yml
+  - sylius_taxation.yml
+  - sylius_on_demand_delivery_product.yml

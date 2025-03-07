@@ -39,9 +39,11 @@ const typeToOperators = {
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
   'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
   'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
+  'task.type': ['=='],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
+const isDecimals = type => isK(type) || ["time_range_length(pickup, 'hours')", "time_range_length(dropoff, 'hours')"].includes(type)
 
 const formatValue = (value, type) => {
   if (!_.includes(numericTypes, type)) {
@@ -144,10 +146,10 @@ class RulePickerLine extends React.Component {
     this.props.onDelete(this.props.index)
   }
 
-  renderNumberInput(k = false) {
+  renderNumberInput(k = false, decimals = false) {
 
     let props = {}
-    if (k) {
+    if (decimals) {
       props = {
         ...props,
         step: '.1'
@@ -201,11 +203,21 @@ class RulePickerLine extends React.Component {
         )
       }
 
+      if (this.state.type === 'task.type') {
+        return (
+          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+            <option value="">-</option>
+            <option value="PICKUP">Pickup</option>
+            <option value="DROPOFF">Dropoff</option>
+          </select>
+        )
+      }
+
       if (this.state.type === 'dropoff.doorstep') {
         return this.renderBooleanInput()
       }
 
-      return this.renderNumberInput(isK(this.state.type))
+      return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
     // weight, distance, diff_days(pickup)
     case 'in':
       return (
@@ -220,7 +232,7 @@ class RulePickerLine extends React.Component {
       )
     case '<':
     case '>':
-      return this.renderNumberInput(isK(this.state.type))
+      return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
     case 'containsAtLeastOne':
       return (
         <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
@@ -253,6 +265,7 @@ class RulePickerLine extends React.Component {
               <option value="packages.totalVolumeUnits()">{ this.props.t('RULE_PICKER_LINE_VOLUME_UNITS') }</option>
               <option value="time_range_length(pickup, 'hours')">{ this.props.t('RULE_PICKER_LINE_PICKUP_TIME_RANGE_LENGTH_HOURS') }</option>
               <option value="time_range_length(dropoff, 'hours')">{ this.props.t('RULE_PICKER_LINE_DROPOFF_TIME_RANGE_LENGTH_HOURS') }</option>
+              <option value="task.type">{ this.props.t('RULE_PICKER_LINE_TASK_TYPE') }</option>
             </optgroup>
             <optgroup label={ this.props.t('RULE_PICKER_LINE_OPTGROUP_ORDER') }>
               <option value="order.itemsTotal">{ this.props.t('RULE_PICKER_LINE_ORDER_ITEMS_TOTAL') }</option>

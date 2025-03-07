@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-md-6">
       {{ form_widget(form.mercadopago.mercadopago_test_publishable_key) }}
-      <span class="help-block">{% trans with { '%country%': country_iso } %}form.settings.mercadopago.publishable_key.help{% endtrans %}</span>
+      <span class="help-block">{% trans %}form.settings.mercadopago.publishable_key.help{% endtrans %}</span>
     </div>
     <div class="col-md-6">
       {{ form_widget(form.mercadopago.mercadopago_live_publishable_key) }}
@@ -18,7 +18,7 @@
   <div class="row">
     <div class="col-md-6">
       {{ form_widget(form.mercadopago.mercadopago_test_access_token) }}
-      <span class="help-block">{% trans with { '%country%': country_iso } %}form.settings.mercadopago.access_token.help{% endtrans %}</span>
+      <span class="help-block">{% trans %}form.settings.mercadopago.access_token.help{% endtrans %}</span>
     </div>
     <div class="col-md-6">
       {{ form_widget(form.mercadopago.mercadopago_live_access_token) }}
@@ -43,7 +43,7 @@
 
 {% if not mercadopago_livemode %}
 <p class="help-block">
-  <i class="fa fa-info-circle"></i> {{ 'form.settings.mercadopago_testmode.help'|trans|raw }}
+  <i class="fa fa-info-circle"></i> {{ 'form.settings.mercadopago_testmode.help'|trans({ '%url%': 'https://www.mercadopago.com/developers/es/docs/checkout-bricks/integration-test/test-cards' })|raw }}
 </p>
 {% endif %}
 

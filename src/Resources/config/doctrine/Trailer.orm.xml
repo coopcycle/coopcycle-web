@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\Trailer" table="trailer">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name"/>
+    <field name="maxVolumeUnits" type="integer" column="max_volume_units"/>
+    <field name="maxWeight" type="integer" column="max_weight"/>
+    <field name="color" length="7" type="string" column="color"/>
+    <field name="isElectric" type="boolean" column="is_electric"/>
+    <field name="electricRange" type="integer" column="electric_range" nullable="true" />
+    <one-to-many field="compatibleVehicles" target-entity="AppBundle\Entity\Vehicle\Trailer" orphan-removal="true" mapped-by="trailer">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <field name="deletedAt" type="datetime" column="deleted_at" nullable="true"/>
+    <gedmo:soft-deleteable field-name="deletedAt" time-aware="false" hard-delete="false" />
+  </entity>
+</doctrine-mapping>

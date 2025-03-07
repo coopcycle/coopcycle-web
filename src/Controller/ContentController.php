@@ -20,21 +20,22 @@ class ContentController extends AbstractController
      * @Route({
      *   "an": "/sobre-nosotros",
      *   "ca": "/sobre-nosaltres",
+     *   "da": "/om-os",
      *   "de": "/uber-uns",
      *   "en": "/about-us",
      *   "es": "/sobre-nosotros",
      *   "eu": "/guri-buruz",
      *   "fr": "/a-propos",
+     *   "hu": "/rolunk",
      *   "it": "/riguardo-a-noi",
      *   "pl": "/o-nas",
      *   "pt_BR": "/sobre-nos",
-     *   "pt_PT": "/sobre-nos",
-     *   "da": "/om-os"
+     *   "pt_PT": "/sobre-nos"
      * }, name="about_us")
      */
     public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
-        if (!$assetsFilesystem->has('about_us.md')) {
+        if (!$assetsFilesystem->fileExists('about_us.md')) {
             throw $this->createNotFoundException();
         }
 
@@ -54,9 +55,9 @@ class ContentController extends AbstractController
     {
         $locale = $request->getLocale();
         $files = [
-            'fr' => sprintf('http://coopcycle.org/%s/fr.md', $type),
-            'en' => sprintf('http://coopcycle.org/%s/en.md', $type),
-            'es' => sprintf('http://coopcycle.org/%s/es.md', $type),
+            'fr' => sprintf('https://coopcycle-assets.sfo2.digitaloceanspaces.com/%s/fr.md', $type),
+            'en' => sprintf('https://coopcycle-assets.sfo2.digitaloceanspaces.com/%s/en.md', $type),
+            'es' => sprintf('https://coopcycle-assets.sfo2.digitaloceanspaces.com/%s/es.md', $type),
         ];
 
         $key = array_key_exists($locale, $files) ? $locale : 'en';
@@ -69,7 +70,7 @@ class ContentController extends AbstractController
      */
     public function legalAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->has('custom_legal.md')) {
+        if ($assetsFilesystem->fileExists('custom_legal.md')) {
             $text = $assetsFilesystem->read('custom_legal.md');
         } else {
             $text = $this->localizeRemoteFile($request, 'legal');
@@ -85,7 +86,7 @@ class ContentController extends AbstractController
      */
     public function termsAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->has('custom_terms.md')) {
+        if ($assetsFilesystem->fileExists('custom_terms.md')) {
             $text = $assetsFilesystem->read('custom_terms.md');
         } else {
             $text = $this->localizeRemoteFile($request, 'terms');
@@ -101,11 +102,24 @@ class ContentController extends AbstractController
      */
     public function privacyAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->has('custom_privacy.md')) {
+        if ($assetsFilesystem->fileExists('custom_privacy.md')) {
             $text = $assetsFilesystem->read('custom_privacy.md');
         } else {
             $text = $this->localizeRemoteFile($request, 'privacy');
         }
+
+        return $this->render('content/markdown.html.twig', [
+            'text' => $text
+        ]);
+    }
+
+    /**
+     * @Route("/privacy-mobile", name="privacy-mobile")
+     */
+    public function privacyMobileAction(Request $request, Filesystem $assetsFilesystem)
+    {
+
+        $text = $this->localizeRemoteFile($request, 'privacy-mobile');
 
         return $this->render('content/markdown.html.twig', [
             'text' => $text
@@ -127,7 +141,7 @@ class ContentController extends AbstractController
      */
     public function termsTextAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->has('custom_terms.md')) {
+        if ($assetsFilesystem->fileExists('custom_terms.md')) {
             $text = $assetsFilesystem->read('custom_terms.md');
         } else {
             $text = $this->localizeRemoteFile($request, 'terms');
@@ -143,7 +157,7 @@ class ContentController extends AbstractController
      */
     public function privacyTextAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->has('custom_privacy.md')) {
+        if ($assetsFilesystem->fileExists('custom_privacy.md')) {
             $text = $assetsFilesystem->read('custom_privacy.md');
         } else {
             $text = $this->localizeRemoteFile($request, 'privacy');

@@ -2,27 +2,17 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Exception\Pricing\NoRuleMatchedException;
-use AppBundle\Form\DeliveryType;
-use AppBundle\Service\DeliveryManager;
-use AppBundle\Sylius\Customer\CustomerInterface;
-use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Entity\Sylius\UseArbitraryPrice;
+use AppBundle\Form\Order\ExistingOrderType;
+use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 trait DeliveryTrait
 {
@@ -31,42 +21,55 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    /**
-     * @param OrderFactory $factory
-     * @param Delivery $delivery
-     * @param int $price
-     * @param CustomerInterface $customer
-     *
-     * @return OrderInterface
-     */
-    protected function createOrderForDelivery(OrderFactory $factory, Delivery $delivery, int $price, ?CustomerInterface $customer = null, $attach = true)
-    {
-        return $factory->createForDelivery($delivery, $price, $customer, $attach);
-    }
+    public function deliveryActionBeta(
+        $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+    ) {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
 
-    protected function createDeliveryForm(Delivery $delivery, array $options = [])
-    {
-        return $this->createForm(DeliveryType::class, $delivery, $options);
-    }
+        $this->accessControl($delivery, 'view');
 
-    protected function getDeliveryPrice(Delivery $delivery, PricingRuleSet $pricingRuleSet, DeliveryManager $deliveryManager)
-    {
-        $price = $deliveryManager->getPrice($delivery, $pricingRuleSet);
-
-        if (null === $price) {
-            throw new NoRuleMatchedException();
-        }
-
-        return (int) ($price);
-    }
-
-    private function renderDeliveryForm(Delivery $delivery, Request $request,
-        OrderFactory $orderFactory, EntityManagerInterface $entityManager, OrderNumberAssignerInterface $orderNumberAssigner,
-        array $options = [])
-    {
         $routes = $request->attributes->get('routes');
 
-        $form = $this->createDeliveryForm($delivery, $options);
+        return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
+            'delivery' => $delivery,
+            'order' => $delivery->getOrder(),
+            'store' => $delivery->getStore(),
+            'layout' => $request->attributes->get('layout'),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
+            'stores_route' => $routes['stores'],
+            'store_route' => $routes['store'],
+            'back_route' => $routes['back'],
+            'show_left_menu' => true,
+        ]));
+    }
+
+    public function deliveryAction(
+        $id,
+        Request $request,
+        OrderFactory $orderFactory,
+        EntityManagerInterface $entityManager,
+        OrderManager $orderManager,
+        PricingManager $pricingManager,
+    ) {
+        $delivery = $entityManager
+            ->getRepository(Delivery::class)
+            ->find($id);
+
+        $this->accessControl($delivery, 'view');
+
+        $routes = $request->attributes->get('routes');
+
+        $order = $delivery->getOrder();
+        $price = $order?->getDeliveryPrice();
+
+        $form = $this->createForm(ExistingOrderType::class, $delivery, [
+            'pricing_rules_based_price' => $price instanceof PricingRulesBasedPrice ? $price : null,
+            'arbitrary_price' => $price instanceof ArbitraryPrice ? $price : null
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -77,69 +80,61 @@ trait DeliveryTrait
                 $form->has('arbitraryPrice') && true === $form->get('arbitraryPrice')->getData();
 
             if ($useArbitraryPrice) {
-                $this->createOrderForDeliveryWithArbitraryPrice($form, $orderFactory, $delivery,
-                    $entityManager, $orderNumberAssigner);
-            } else {
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->persist($delivery);
-                $this->getDoctrine()->getManagerForClass(Delivery::class)->flush();
+                $arbitraryPrice = $this->getArbitraryPrice($form);
+                if (null === $order) {
+                    // Should not happen normally, but just in case
+                    // there is still some delivery created without an order
+                    $order = $pricingManager->createOrder($delivery, [
+                        'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
+                    ]);
+                } else {
+                    $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                }
+            }
+
+            $entityManager->persist($delivery);
+            $entityManager->flush();
+
+            if ($form->has('bookmark')) {
+                $isBookmarked = true === $form->get('bookmark')->getData();
+
+                $order = $delivery->getOrder();
+
+                if (null !== $order) {
+                    $orderManager->setBookmark($order, $isBookmarked);
+                    $entityManager->flush();
+                }
             }
 
             return $this->redirectToRoute($routes['success']);
         }
 
-        return $this->render('delivery/form.html.twig', [
-            'layout' => $request->attributes->get('layout'),
+        return $this->render('delivery/item.html.twig', $this->auth([
             'delivery' => $delivery,
+            'layout' => $request->attributes->get('layout'),
             'form' => $form->createView(),
             'debug_pricing' => $request->query->getBoolean('debug', false),
             'back_route' => $routes['back'],
-        ]);
+        ]));
     }
 
-    public function deliveryAction($id,
-        Request $request,
-        OrderFactory $orderFactory,
-        EntityManagerInterface $entityManager,
-        OrderNumberAssignerInterface $orderNumberAssigner
-    )
+    private function getArbitraryPrice(FormInterface $form): ?ArbitraryPrice
     {
-        $delivery = $this->getDoctrine()
-            ->getRepository(Delivery::class)
-            ->find($id);
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            return null;
+        }
 
-        $this->accessControl($delivery, 'view');
+        if (!$form->has('arbitraryPrice')) {
+            return null;
+        }
 
-        return $this->renderDeliveryForm($delivery, $request, $orderFactory, $entityManager, $orderNumberAssigner, [
-            'with_address_props' => true,
-            'with_arbitrary_price' => null === $delivery->getOrder(),
-        ]);
-    }
+        if (true !== $form->get('arbitraryPrice')->getData()) {
+            return null;
+        }
 
-    protected function createOrderForDeliveryWithArbitraryPrice(
-        FormInterface $form,
-        OrderFactory $orderFactory,
-        Delivery $delivery,
-        EntityManagerInterface $entityManager,
-        OrderNumberAssignerInterface $orderNumberAssigner
-    )
-    {
         $variantPrice = $form->get('variantPrice')->getData();
         $variantName = $form->get('variantName')->getData();
 
-        $order = $this->createOrderForDelivery($orderFactory, $delivery, $variantPrice);
-
-        $variant = $order->getItems()->get(0)->getVariant();
-
-        $variant->setName($variantName);
-        $variant->setCode(Uuid::uuid4()->toString());
-
-        $order->setState(OrderInterface::STATE_ACCEPTED);
-
-        $entityManager->persist($order);
-        $entityManager->flush();
-
-        $orderNumberAssigner->assignNumber($order);
-
-        $entityManager->flush();
+        return new ArbitraryPrice($variantName, $variantPrice);
     }
 }

@@ -20,19 +20,18 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class DeliverySubscriber implements EventSubscriberInterface
 {
-    private $doctrine;
-    private $storeExtractor;
 
     private static $matchingRoutes = [
         'api_deliveries_get_item',
         'api_deliveries_post_collection',
         'api_deliveries_check_collection',
+        'api_deliveries_suggest_optimizations_collection',
     ];
 
     public function __construct(
-        ManagerRegistry $doctrine,
-        TokenStoreExtractor $storeExtractor,
-        DeliveryManager $deliveryManager)
+        private  ManagerRegistry $doctrine,
+        private TokenStoreExtractor $storeExtractor,
+        protected DeliveryManager $deliveryManager)
     {
         $this->doctrine = $doctrine;
         $this->storeExtractor = $storeExtractor;
@@ -46,8 +45,11 @@ final class DeliverySubscriber implements EventSubscriberInterface
     {
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
+            KernelEvents::REQUEST => [
+                ['setStore', EventPriorities::POST_DESERIALIZE],
+                ['setDefaults', EventPriorities::POST_DESERIALIZE],
+            ],
             KernelEvents::VIEW => [
-                ['setDefaults', EventPriorities::PRE_VALIDATE],
                 ['handleCheckResponse', EventPriorities::POST_VALIDATE],
                 ['addToStore', EventPriorities::POST_WRITE],
             ],
@@ -59,14 +61,36 @@ final class DeliverySubscriber implements EventSubscriberInterface
         return in_array($request->attributes->get('_route'), self::$matchingRoutes);
     }
 
-    public function setDefaults(ViewEvent $event)
+    public function setStore(RequestEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+            return;
+        }
+
+        $store = $this->storeExtractor->extractStore();
+
+        if (null === $store) {
+            return;
+        }
+
+        $delivery = $request->attributes->get('data');
+
+        $delivery->setStore($store);
+    }
+
+    public function setDefaults(RequestEvent $event)
+        /*
+        After denormalizing the request, we may deduce missing data from the delivery's store or from the pickup.
+        */
     {
         $request = $event->getRequest();
         if (!$this->matchRoute($request)) {
             return;
         }
 
-        $delivery = $event->getControllerResult();
+        $delivery = $request->attributes->get('data');
 
         $this->deliveryManager->setDefaults($delivery);
     }

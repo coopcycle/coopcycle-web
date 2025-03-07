@@ -1,0 +1,29 @@
+{
+  "title": "Foodtech/2. Product/2. Badge",
+  "parameters": {
+    "server": {
+      "id": "product_badge"
+    }
+  },
+  "args": {
+    "value": ""
+  },
+  "argTypes": {
+    "value": { "control": "text" }
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Allergen",
+      "args": { "type": "allergen", "value": "Soja" }
+    },
+    {
+      "name": "Restricted Diet",
+      "args": { "type": "restricted_diet", "value": "Vegan" }
+    },
+    {
+      "name": "Very long text",
+      "args": { "type": "restricted_diet", "value": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Nulla nec purus feugiat vestibulum mi id facilisis libero. Sed non sapien nec nunc aliquam ultrices. Nulla facilisi. Nulla nec purus feugiat vestibulum mi id facilisis libero. Sed non sapien nec nunc aliquam ultrices. Nulla facilisi" }
+    }
+  ]
+}

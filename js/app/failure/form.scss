@@ -1,0 +1,9 @@
+#reasons-form .row div {
+  height: 75px;
+  &.delete button {
+    margin-top: 25px;
+  }
+}
+#add_reason {
+  width: 100%;
+}

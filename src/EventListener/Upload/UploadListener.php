@@ -11,6 +11,8 @@ use AppBundle\Message\ImportTasks;
 use AppBundle\Spreadsheet\ProductSpreadsheetParser;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Spreadsheet\TaskSpreadsheetParser;
+use AppBundle\Utils\ValidationUtils;
+use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
@@ -19,48 +21,27 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
 
 final class UploadListener
 {
-    private $entityManager;
-    private $mappingFactory;
-    private $uploadHandler;
-    private $settingsManager;
-    private $messageBus;
-    private $productSpreadsheetParser;
-    private $secret;
-    private $isDemo;
-    private $logger;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        PropertyMappingFactory $mappingFactory,
-        UploadHandler $uploadHandler,
-        SettingsManager $settingsManager,
-        MessageBusInterface $messageBus,
-        ProductSpreadsheetParser $productSpreadsheetParser,
-        SerializerInterface $serializer,
-        IriConverterInterface $iriConverter,
-        CacheInterface $projectCache,
-        string $secret,
-        bool $isDemo,
-        LoggerInterface $logger)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PropertyMappingFactory $mappingFactory,
+        private readonly UploadHandler $uploadHandler,
+        private readonly SettingsManager $settingsManager,
+        private readonly MessageBusInterface $messageBus,
+        private readonly ProductSpreadsheetParser $productSpreadsheetParser,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly CacheInterface $projectCache,
+        private readonly ValidatorInterface $validator,
+        private readonly string $secret,
+        private readonly bool $isDemo,
+        private readonly LoggerInterface $logger)
     {
-        $this->entityManager = $entityManager;
-        $this->mappingFactory = $mappingFactory;
-        $this->uploadHandler = $uploadHandler;
-        $this->settingsManager = $settingsManager;
-        $this->messageBus = $messageBus;
-        $this->productSpreadsheetParser = $productSpreadsheetParser;
-        $this->serializer = $serializer;
-        $this->iriConverter = $iriConverter;
-        $this->projectCache = $projectCache;
-        $this->secret = $secret;
-        $this->isDemo = $isDemo;
-        $this->logger = $logger;
     }
 
     public function onUpload(PostPersistEvent $event)
@@ -72,6 +53,11 @@ final class UploadListener
         if ('products' === $event->getType()) {
 
             try {
+
+                $violations = $this->validator->validate($file, new AssertSpreadsheet('product'));
+                if (count($violations) > 0) {
+                    throw new \Exception(ValidationUtils::serializeToString($violations));
+                }
 
                 $restaurant = $this->iriConverter->getItemFromIri($request->get('restaurant'));
 
@@ -110,12 +96,12 @@ final class UploadListener
             return $this->onTasksUpload($event);
         }
 
-        if ($type === 'restaurant') {
+        if ($type === 'restaurant' || $type === 'restaurant_banner') {
             $object = $this->entityManager->getRepository(LocalBusiness::class)->find(
                 $request->get('id')
             );
             // Remove previous file
-            $this->uploadHandler->remove($object, 'imageFile');
+            $this->uploadHandler->remove($object, $type === 'restaurant_banner' ? 'bannerImageFile' : 'imageFile');
         } elseif ($type === 'product') {
             $product = $this->entityManager->getRepository(Product::class)->find(
                 $request->get('id')
@@ -131,17 +117,22 @@ final class UploadListener
         }
 
         // Update image_name column in database
-        $object->setImageName($file->getBasename());
+        if ($type === 'restaurant_banner') {
+            $object->setBannerImageName($file->getBasename());
+        } else {
+            $object->setImageName($file->getBasename());
+        }
+
         $this->entityManager->flush();
 
         // Invoke VichUploaderBundle's directory namer
-        $propertyMapping = $this->mappingFactory->fromField($object, 'imageFile');
+        $propertyMapping = $this->mappingFactory->fromField($object, $type === 'restaurant_banner' ? 'bannerImageFile' : 'imageFile');
         $directoryNamer = $propertyMapping->getDirectoryNamer();
 
         $directoryName = $directoryNamer->directoryName($object, $propertyMapping);
 
-        $file->getFilesystem()->rename(
-            $file->getPath(),
+        $file->getFilesystem()->move(
+            $file->getPathname(),
             sprintf('%s/%s', $directoryName, $file->getBasename())
         );
     }
@@ -170,22 +161,11 @@ final class UploadListener
 
         $mimeType = $file->getMimeType();
 
-        $this->logger->debug(sprintf('UploadListener | file = %s', $file->getPathname()));
-        $this->logger->debug(sprintf('UploadListener | mime = %s', $mimeType));
+        $violations = $this->validator->validate($file, new AssertSpreadsheet('task'));
+        if (count($violations) > 0) {
+            $fileSystem->delete($file->getPathname());
 
-        // For CSV files, we need to make sure they are in UTF-8
-        if (in_array($mimeType, ['text/csv', 'text/plain'])) {
-
-            // Make sure the file is in UTF-8
-            $encoding = mb_detect_encoding($fileSystem->read($file->getPathname()), ['UTF-8', 'Windows-1252'], true);
-
-            $this->logger->debug(sprintf('UploadListener | encoding = %s', var_export($encoding, true)));
-
-            if ($encoding !== 'UTF-8') {
-                $fileSystem->delete($file->getPathname());
-
-                throw new UploadException('CSV files must be encoded in UTF-8');
-            }
+            throw new UploadException(ValidationUtils::serializeToString($violations));
         }
 
         $date = $request->get('date');
@@ -197,7 +177,7 @@ final class UploadListener
         $filename = sprintf('%s.%s', $encoded, TaskSpreadsheetParser::getFileExtension($mimeType));
         $this->logger->debug(sprintf('UploadListener | filename = %s', $filename));
 
-        $fileSystem->rename($file->getPathname(), $filename);
+        $fileSystem->move($file->getPathname(), $filename);
 
         $this->messageBus->dispatch(
             new ImportTasks($encoded, $filename, new \DateTime($date)),

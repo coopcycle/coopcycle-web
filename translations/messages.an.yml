@@ -9,7 +9,7 @@ base.footer.legal: 'Notas legals'
 base.footer.suggest: 'Sucherir un restaurant'
 base.footer.privacy: 'Privacidat'
 base.footer.terms: 'Termins de servicio'
-adminDashboard.title: 'Panel d''administración'
+adminDashboard.title: Dispatch
 adminDashboard.configuration: 'Configuración'
 adminDashboard.tooltip.orders: 'Chestiona pedius'
 adminDashboard.tooltip.deliveries: 'Chestiona entregas'
@@ -107,7 +107,6 @@ help.title: 'Aduya'
 help.home: 'Inicio'
 restaurants.no_results: 'No hemos trobau garra restaurant que coincida con a tuya
   busqueda ☹<br> Torna a prebar con una adreza diferent'
-restaurants.visible_by_you_only: 'Visible solo pa tu'
 localBusiness.form.orderingDelayMinutes: 'Retardo adicional antes d''o pediu'
 localBusiness.form.orderingDelayMinutes.help: 'Usa estes campos pa anyadir un tiempo
   adicional antes d''o pediu d''un usuario. Esta opción no cambia los tiempos de cocina
@@ -165,7 +164,6 @@ restaurant.form.loopeat_enabled.label: 'Habilite lo sistema de deposito y reembo
   de LoopEat'
 restaurant.form.loopeat_disconnect.label: 'Desconnectar LoopEat'
 restaurant.form.featured.label: 'Este restaurant amaneixe en a pachina d''inicio'
-restaurant.form.giropay_enabled.label: 'Habilitar Giropay'
 restaurant.form.fulfillment_methods.label: 'Metodos de complimiento'
 restaurant.form.section.general: 'Cheneral'
 restaurant.form.section.options: 'Opcions'
@@ -289,7 +287,7 @@ profile.managedRestaurants: 'Restaurants chestionaus per l''usuario'
 profile.accountType: 'Tipo de cuenta'
 order.cart.title: 'Cesta'
 order.items.products_with_count: 'Productos (%count%)'
-order.summary.heading: 'Pediu %number% (#%id%)'
+order.summary.heading: 'Pediu %number%'
 order.total_excluding_tax: 'Total (sin IVA)'
 order.total_including_tax: 'Total (IVA incl.)'
 order.items_total: 'Total productos'
@@ -503,7 +501,7 @@ form.settings.stripe_secret_key.help: "Creya una cuenta Stripe pa obtener la tuy
   \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clau secreta</a>\n"
 form.settings.stripe_connect_client_id.label: 'Identificador de Stripe Connect'
 form.settings.stripe_connect_client_id.help: "Puetz trobar lo tuyo identificador en\
-  \ a <a href=\"https://dashboard.stripe.com/account/applications/settings\">pachina\
+  \ a <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">pachina\
   \ de parametros</a>\n"
 form.settings.latlng.label: 'Coordinadas cheograficas'
 form.settings.latlng.help: "Especifica la latitut y lonchitut per defecto d'o mapa.\
@@ -603,18 +601,18 @@ form.mercadopago_livemode.disable_and_enable_maintenance.label: 'Utilizar lo mod
   «test» y activar lo mantenimiento'
 form.mercadopago_livemode.disable_and_enable_maintenance.alert: 'Yes utilizando lo
   modo «live».<br>Si quiere pasar en modo «test», lo mantenimiento s''activará automaticament.'
-form.settings.mercadopago_testmode.help: 'En modo «test», ha d''usar <a href="https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba">numeros
+form.settings.mercadopago_testmode.help: 'En modo «test», ha d''usar <a href="%url%">numeros
   de tarchetas de preba</a> pa pagar. <strong>No s''intercambiará diners.</strong> '
 form.settings.mercadopago_enable_livemode.help: 'Pa activar lo modo «live», primero
   necesita configurar las credencials «live».'
 form.settings.mercadopago.publishable_key.label: 'Clau de publicación'
-form.settings.mercadopago.publishable_key.help: "Obtienga la <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.publishable_key.help: "Obtienga la <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">clau de publicación</a>"
 form.settings.mercadopago.access_token.label: 'Token d''acceso'
-form.settings.mercadopago.access_token.help: "Obtienga lo <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.access_token.help: "Obtienga lo <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">token d'acceso</a>"
 form.settings.mercadopago.app_id.label: 'ID d''Aplicación'
-form.settings.mercadopago.app_id.help: 'Necesita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">creyar
+form.settings.mercadopago.app_id.help: 'Necesita <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">creyar
   una aplicación</a> pa obtener lo suyo ID d''Aplicación.'
 form.settings.mercadopago.redirect_uri.help: "Quan configure la suyo app, use la siguient\
   \ URI de redirección: <code>%redirect_uri%</code>"
@@ -726,7 +724,7 @@ form.deposit_refund_settings.deposit_refund_optin.help: 'Quan o sistema de depos
 form.new_order.variant_name.label: 'Nombre d''o producto'
 form.new_order.variant_name.help: 'Lo nombre que amaneixerá en o resumen d''o pediu
   y la factura'
-form.new_order.variant_price.label: 'Pre'
+form.new_order.variant_price.label: 'Pre con IVA inclusa'
 form.customize.about_us_enabled.label: 'Habilitar la pachina «about us»'
 form.customize.about_us.label: 'Conteniu d''a pachina «about us»'
 form.customize.motto.label: 'Lema'

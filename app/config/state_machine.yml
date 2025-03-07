@@ -11,16 +11,17 @@ winzou_state_machine:
             fulfilled: ~
             accepted: ~
             refused: ~
+            started: ~
             ready: ~
         transitions:
             create:
                 from: [cart]
                 to: new
             cancel:
-                from: [new, accepted]
+                from: [new, accepted, started, ready, refused]
                 to: cancelled
             fulfill:
-                from: [new, accepted]
+                from: [new, accepted, started, ready]
                 to: fulfilled
             accept:
                 from: [new]
@@ -28,11 +29,24 @@ winzou_state_machine:
             refuse:
                 from: [new]
                 to: refused
+            restore:
+                from: [cancelled]
+                to: accepted
+            start_preparing:
+                from: [accepted]
+                to: started
+            finish_preparing:
+                from: [accepted, started]
+                to: ready
         callbacks:
             guard:
                 guard_on_fulfill:
                     on:   'fulfill'
                     do:   ['@AppBundle\Domain\Order\Workflow\Guard', 'isFulfillable']
+                    args: ['object']
+                guard_on_restore:
+                    on:   'restore'
+                    do:   ['@AppBundle\Domain\Order\Workflow\Guard', 'isRestorable']
                     args: ['object']
     sylius_payment:
         class: "%sylius.model.payment.class%"

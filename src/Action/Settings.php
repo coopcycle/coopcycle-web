@@ -4,9 +4,9 @@ namespace AppBundle\Action;
 
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimeRegistry;
-use Aws\S3\Exception\S3Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,12 +32,14 @@ class Settings
         'stripe_publishable_key',
         'payment_gateway',
         'mercadopago_publishable_key',
-        'google_api_key',
         'latlng',
         'currency_code',
         'administrator_email',
         'guest_checkout_enabled',
+        'motto',
     ];
+    private $edenredClientId;
+    private $edenredAuthorizationEndpoint;
 
     public function __construct(
         SettingsManager $settingsManager,
@@ -50,7 +52,9 @@ class Settings
         $splitTermsAndConditionsAndPrivacyPolicy,
         EntityManagerInterface $entityManager,
         UrlGeneratorInterface $router,
-        Hashids $hashids12)
+        Hashids $hashids12,
+        $edenredClientId,
+        $edenredAuthorizationEndpoint)
     {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
@@ -63,6 +67,8 @@ class Settings
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->hashids12 = $hashids12;
+        $this->edenredClientId = $edenredClientId;
+        $this->edenredAuthorizationEndpoint = $edenredAuthorizationEndpoint;
     }
 
     /**
@@ -86,10 +92,10 @@ class Settings
 
         try {
             $companyLogo = $this->settingsManager->get('company_logo');
-            if (!empty($companyLogo) && $this->assetsFilesystem->has($companyLogo)) {
+            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
                 $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
             }
-        } catch (S3Exception $e) {
+        } catch (UnableToCheckFileExistence $e) {
             // TODO Log error
         }
 
@@ -108,6 +114,19 @@ class Settings
             $deliveryFormIdHash = $this->hashids12->encode($deliveryFormId);
             $data['default_delivery_form_url'] = $this->router->generate('embed_delivery_start', ['hashid'=> $deliveryFormIdHash], UrlGeneratorInterface::ABSOLUTE_URL);
         }
+
+        $orderConfirmMessage = '';
+        try {
+            if ($this->assetsFilesystem->fileExists('order_confirm.md')) {
+                $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
+            }
+        } catch (UnableToCheckFileExistence $e) {
+            // TODO Log error
+        }
+        $data['order_confirm_message'] = $orderConfirmMessage;
+
+        $data['edenred_client_id'] = $this->edenredClientId;
+        $data['edenred_authorization_endpoint'] = $this->edenredAuthorizationEndpoint;
         
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));

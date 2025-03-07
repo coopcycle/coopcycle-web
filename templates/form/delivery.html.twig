@@ -54,6 +54,10 @@ col-md-9
     {{ form_row(form.doorstep) }}
   {% endif %}
 
+  {% if form.barcode is defined and form.vars.data.type != "PICKUP" %}
+    {{ form_row(form.barcode) }}
+  {% endif %}
+
   {% if form.tagsAsString is defined %}
     {{ form_row(form.tagsAsString) }}
   {% endif %}
@@ -64,6 +68,10 @@ col-md-9
 
   {% if form.doneAfter is defined %}
     {{ form_widget(form.doneAfter) }}
+  {% endif %}
+
+  {% if form.position is defined %}
+    {{ form_widget(form.position, { attr: { 'data-position': '' } }) }}
   {% endif %}
 
 {% endblock %}

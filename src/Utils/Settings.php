@@ -4,11 +4,19 @@ namespace AppBundle\Utils;
 
 use Symfony\Component\Validator\Constraints as Assert;
 use Misd\PhoneNumberBundle\Validator\Constraints\PhoneNumber as AssertPhoneNumber;
+use AppBundle\Validator\Constraints\GoogleApiKey as AssertGoogleApiKey;
 
 class Settings
 {
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $brand_name;
 
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     * @Assert\Email(groups={"Default", "mandatory"})
+     */
     public $administrator_email;
 
     /**
@@ -48,6 +56,12 @@ class Settings
 
     public $sms_enabled;
 
+    /**
+     * @Assert\Expression(
+     *   "!this.sms_enabled or value in ['mailjet', 'twilio']",
+     *   message="This value should not be blank."
+     * )
+     */
     public $sms_gateway;
 
     public $sms_gateway_config;
@@ -57,12 +71,18 @@ class Settings
      */
     public $stripe_livemode;
 
-    public $google_api_key;
-
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $latlng;
 
     public $subject_to_vat;
 
+    public $accounting_account;
+
+    /**
+     * @Assert\NotBlank(groups={"Default", "mandatory"})
+     */
     public $currency_code;
 
     /**
@@ -98,16 +118,31 @@ class Settings
 
     public $autocomplete_provider;
 
+    public $company_legal_name;
+
+    public $company_legal_id;
+
+    public $company_gln;
+
     /**
-     * The regex to validate Google API Key was found on https://github.com/odomojuli/RegExAPI
-     *
-     * @Assert\Expression(
-     *   "this.autocomplete_provider != 'google' or this.geocoding_provider != 'google' or value != ''",
-     *   message="This value should not be blank."
-     * )
-     * @Assert\Regex("/AIza[0-9A-Za-z-_]{35}/")
+     * @AssertGoogleApiKey()
      */
     public $google_api_key_custom;
 
     public $geocoding_provider;
+
+    /**
+     * @Assert\Regex("/^pk_[A-Za-z0-9]+/")
+     */
+    public $paygreen_public_key;
+
+    /**
+     * @Assert\Regex("/^sk_[A-Za-z0-9]+/")
+     */
+    public $paygreen_secret_key;
+
+    /**
+     * @Assert\Regex("/^sh_[A-Za-z0-9]+/")
+     */
+    public $paygreen_shop_id;
 }

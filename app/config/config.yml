@@ -27,7 +27,7 @@ parameters:
     database_user:     "%env(COOPCYCLE_DB_USER)%"
     database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
     locale: "%coopcycle.locale%"
-    locale_regex: an|ca|fr|en|es|eu|de|it|pl|pt_BR|pt_PT|da
+    locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
     router.request_context.scheme: 'http'
     router.request_context.host: "%env(APP_HOST)%"
     loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -68,6 +68,9 @@ parameters:
     typesense_products_collection_name: "products"
     colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
     group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
+    business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+    transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+    billing_enabled: '%env(bool:BILLING_ENABLED)%'
 
 services:
     # For some cache pools, want *STABLE* cache keys between deploys.
@@ -137,6 +140,9 @@ framework:
             messenger.bus.default:
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
+                    # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    - 'AppBundle\Messenger\RequestIdMiddleware'
+                    - 'AppBundle\Messenger\RouteMiddleware'
                     # each time a message is handled, the Doctrine connection
                     # is "pinged" and reconnected if it's closed. Useful
                     # if your workers run for a long time and the database
@@ -169,13 +175,13 @@ framework:
             'AppBundle\Message\PushNotification': async
             'AppBundle\Message\ImportTasks': async
             'AppBundle\Message\OrderReceiptEmail': async
-            'AppBundle\Message\RetrieveStripeFee': async
             'AppBundle\Message\Sms': async
             'AppBundle\Message\UpdateLocation': async
             'AppBundle\Message\TopBarNotification': async
             'AppBundle\Message\Webhook': async
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
+            'AppBundle\Message\ImportDeliveries': async
     workflows:
         enabled: true
     mailer:
@@ -202,9 +208,27 @@ framework:
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             woopit.http_client:
-                base_uri: 'https://car-api.%env(WOOPIT_HOST)%/'
+                base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
             dabba.client:
                 base_uri: "%env(DABBA_BASE_URL)%/"
+            umap.client:
+                base_uri: "https://umap.openstreetmap.fr/"
+            unsplash.client:
+                base_uri: "https://api.unsplash.com/"
+                headers:
+                    Authorization: 'Client-ID %env(UNSPLASH_ACCESS_KEY)%'
+            pixabay.client:
+                base_uri: "https://pixabay.com/api/"
+                query:
+                    key: "%env(PIXABAY_API_KEY)%"
+            edenredsynchronizer.client:
+                base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
+                query:
+                    api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
+            insee.client:
+                base_uri: "https://api.insee.fr/api-sirene/3.11/"
+                headers:
+                    X-INSEE-Api-Key-Integration: '%env(INSEE_PORTAIL_API_KEY)%'
 
 # Twig Configuration
 twig:
@@ -213,11 +237,15 @@ twig:
     form_themes:
         - 'form/address_book.html.twig'
         - 'form/price_with_tax.html.twig'
+        - 'form/delivery_zone_picker.html.twig'
         - 'form/delivery.html.twig'
         - '@VichUploader/Form/fields.html.twig'
     globals:
         is_demo: "%is_demo%"
+        instance_name: "%env(COOPCYCLE_APP_NAME)%"
         sentry_public_dsn: "%sentry_public_dsn%"
+        datadog_client_token: "%env(COOPCYCLE_DATADOG_CLIENT_TOKEN)%"
+        datadog_application_id: "%env(COOPCYCLE_DATADOG_APPLICATION_ID)%"
         country_iso: "%country_iso%"
         region_iso: "%region_iso%"
         cart_provider: '@AppBundle\Service\CartProviderService'
@@ -234,7 +262,7 @@ twig:
         loopeat_context: '@AppBundle\LoopEat\Context'
         legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
         payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
-        context_channel: "@sylius.context.channel"
+        business_context: '@AppBundle\Business\Context'
         loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
         embed_context: '@AppBundle\Embed\Context'
         locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
@@ -247,8 +275,18 @@ twig:
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
+        business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+        odoo_url: '%env(ODOO_URL)%'
+        invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
+        loopeat_processing_fee: '%env(int:LOOPEAT_PROCESSING_FEE)%'
+        loopeat_processing_fee_behavior: '%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%'
+        paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
     exception_controller: null
+
+monolog:
+  # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+  channels: [ 'domain_event', 'checkout', 'database', 'push_notification', 'real_time_message', 'transporter' ]
 
 # Doctrine Configuration
 doctrine:
@@ -264,7 +302,6 @@ doctrine:
         types:
             geography: Jsor\Doctrine\PostGIS\Types\GeographyType
             geometry: Jsor\Doctrine\PostGIS\Types\GeometryType
-            raster: Jsor\Doctrine\PostGIS\Types\RasterType
             geojson: AppBundle\Doctrine\DBAL\Types\GeoJSONType
             uuid: Ramsey\Uuid\Doctrine\UuidType
             phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
@@ -276,13 +313,15 @@ doctrine:
             numrange: string
             tsrange: string
 
+        # Tells Doctrine what database features are supported
+        # Make sure that your production database uses this version or higher.
         # If you don't define this option and you haven't created your database yet,
         # you may get PDOException errors because Doctrine will try to guess
         # the database server version automatically and none is available.
         # http://symfony.com/doc/current/reference/configuration/doctrine.html
         # Should be fixed in next Doctrine version
         # https://github.com/doctrine/dbal/pull/2671
-        server_version: 9.4
+        server_version: '13'
 
         # Add a schema filter to avoid having PostGIS tables tiger.* & topology.* in migrations diff
         # https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html#manual-tables
@@ -308,6 +347,8 @@ doctrine:
                 CAST: DoctrineExtensions\Query\Mysql\Cast
                 JSON_GET_FIELD_AS_TEXT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetFieldAsText
                 JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
+                JSON_AGG: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonAgg
+                JSON_BUILD_OBJECT: AppBundle\Doctrine\Functions\JsonBuildObject
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
@@ -321,6 +362,9 @@ doctrine:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
 
 api_platform:
+    defaults:
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 100
     version: 1.0.0
     title: CoopCycle
     show_webby: false
@@ -335,15 +379,17 @@ api_platform:
         ApiPlatform\Core\Exception\InvalidArgumentException: 400
         ApiPlatform\Core\Validator\Exception\ValidationException: 400
         AppBundle\Api\Exception\BadRequestHttpException: 400
+        AppBundle\Exception\LoopeatInsufficientStockException: 400
     # see https://github.com/api-platform/core/pull/2721
     messenger:
         enabled: false
     formats:
-        jsonld: ['application/ld+json']
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
         csv: ['text/csv']
         html: ['text/html']
     patch_formats:
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
     swagger:
         versions: [3, 2]
@@ -460,48 +506,76 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: product_imports
+        delivery_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: delivery_imports
         nonprofits_images:
             awss3v3:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: nonprofits
+        edi_messages:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: edi_messages
+        incident_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: incidents
+
     filesystems:
         assets:
             adapter: assets
             alias: assets_filesystem
-            mount: assets_filesystem
+            mount: assets
         product_images:
             adapter: product_images
             alias: product_images_filesystem
-            mount: product_images_filesystem
+            mount: product_images
         restaurant_images:
             adapter: restaurant_images
             alias: restaurant_images_filesystem
-            mount: restaurant_images_filesystem
+            mount: restaurant_images
         store_images:
             adapter: store_images
             alias: store_images_filesystem
-            mount: store_images_filesystem
+            mount: store_images
         task_images:
             adapter: task_images
             alias: task_images_filesystem
-            mount: task_images_filesystem
+            mount: task_images
         receipts:
             adapter: receipts
             alias: receipts_filesystem
-            mount: receipts_filesystem
+            mount: receipts
         task_imports:
             adapter: task_imports
             alias: task_imports_filesystem
-            mount: task_imports_filesystem
+            mount: task_imports
         product_imports:
             adapter: product_imports
             alias: product_imports_filesystem
-            mount: product_imports_filesystem
+            mount: product_imports
+        delivery_imports:
+            adapter: delivery_imports
+            alias: delivery_imports_filesystem
+            mount: delivery_imports
         nonprofits_images:
             adapter: nonprofits_images
             alias: nonprofits_images_filesystem
-            mount: nonprofits_images_filesystem
+            mount: nonprofits_images
+        edi_messages:
+            adapter: edi_messages
+            alias: edi_messages_filesystem
+            mount: edi_messages
+        incident_images:
+            adapter: incident_images
+            alias: incident_images_filesystem
+            mount: incident_images
 
 vich_uploader:
     db_driver: orm
@@ -509,7 +583,16 @@ vich_uploader:
     mappings:
         restaurant_image:
             uri_prefix: ''
-            upload_destination: restaurant_images_filesystem
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        restaurant_banner_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -518,7 +601,7 @@ vich_uploader:
                     dirs: 2
         store_image:
             uri_prefix: ''
-            upload_destination: store_images_filesystem
+            upload_destination: oneup_flysystem.store_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -527,7 +610,7 @@ vich_uploader:
                     dirs: 2
         task_image:
             uri_prefix: ''
-            upload_destination: task_images_filesystem
+            upload_destination: oneup_flysystem.task_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -536,7 +619,16 @@ vich_uploader:
                     dirs: 2
         product_image:
             uri_prefix: ''
-            upload_destination: product_images_filesystem
+            upload_destination: oneup_flysystem.product_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        incident_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.incident_images_filesystem
             namer: vich_uploader.namer_uniqid
             directory_namer:
                 service: vich_uploader.directory_namer_subdir
@@ -660,25 +752,33 @@ fos_js_routing:
         - restaurant_cart_address
         - restaurant_cart_clear_time
         - restaurant_modify_cart_item_quantity
+        - admin_deliveries
         - admin_delivery
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings
+        - admin_form
         - admin_metrics
+        - admin_order
+        - admin_order_edit
         - admin_order_accept
         - admin_order_refuse
         - admin_order_cancel
         - admin_order_delay
         - admin_order_fulfill
         - admin_restaurant
+        - admin_store
         - admin_restaurant_dashboard
+        - admin_restaurant_image_from_url
         - admin_restaurant_stats
+        - admin_business_restaurant_group
         - admin_tags
         - admin_task_image_download
         - admin_task_list_create
-        - admin_task_list_modify
         - admin_task_receipt
         - admin_users_search
+        - admin_user_edit
+        - admin_vehicles
         - order_continue
         - profile_jwt
         - profile_notifications
@@ -691,6 +791,7 @@ fos_js_routing:
         - dashboard_order_delay
         - dashboard_order_fulfill
         - dashboard_restaurant_dashboard
+        - dashboard_restaurant_image_from_url
         - dashboard_restaurant_stats
         - routing_route
         - user_avatar
@@ -699,6 +800,48 @@ fos_js_routing:
         - order_set_guest_customer_email
         - api_orders_add_player_item
         - api_orders_create_invitation_item
+        - api_orders_get_cart_timing_item
+        - api_orders_validate_item
+        - api_incidents_add_comment_item
+        - api_incidents_action_item
+        - api_tasks_task_failure_reasons_item
+        - api_incident_images_post_collection
+        - api_incidents_get_item
+        - api_incidents_get_collection
+        - api_tasks_get_task_context_item
+        - api_tasks_get_collection
+        - api_tours_get_collection
+        - api_task_lists_v2_collection
+        - api_task_lists_set_items_item
+        - admin_incident
+        - api_stores_get_item
+        - api_restaurants_get_item
+        - api_stores_delete_item
+        - api_restaurants_delete_item
+        - api_delivery_forms_delete_item
+        - api_pricing_rule_sets_delete_item
+        - api_pricing_rule_sets_applications_item
+        - api_package_sets_delete_item
+        - api_package_sets_applications_item
+        - api_time_slots_delete_item
+        - admin_transporter_message
+        - api_organizations_get_collection
+        - api_time_slots_get_collection
+        - api_warehouses_post_collection
+        - api_warehouses_get_collection
+        - api_warehouses_delete_item
+        - api_trailers_post_collection
+        - api_trailers_get_collection
+        - api_trailers_delete_item
+        - api_vehicles_post_collection
+        - api_vehicles_get_collection
+        - api_vehicles_delete_item
+        - admin_warehouses
+        - api_task_lists_patch_item
+        - api_vehicles_patch_item
+        - api_trailers_patch_item
+        - api_trailers_set_vehicles_item
+        - task_label_pdf
 
 webpack_encore:
     output_path: '%kernel.project_dir%/web/build'
@@ -718,6 +861,23 @@ liip_imagine:
                     min: [ 512, 512 ]
                 thumbnail:
                     size: [ 512, 512 ]
+                    mode: outbound
+                    allow_upscale: true
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
+        restaurant_banner:
+            data_loader: restaurant_images
+            filters:
+                upscale:
+                    min: [ 480, 270 ]
+                thumbnail:
+                    size: [ 480, 270 ]
                     mode: outbound
                     allow_upscale: true
             post_processors:
@@ -834,6 +994,22 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        incident_image_thumbnail:
+            data_loader: incident_images
+            filters:
+                upscale:
+                    min: [ 768, 768 ]
+                thumbnail:
+                    size: [ 768, 768 ]
+                    mode: outbound
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
@@ -855,6 +1031,9 @@ liip_imagine:
         assets:
             flysystem:
                 filesystem_service: oneup_flysystem.assets_filesystem
+        incident_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.incident_images_filesystem
 
 oneup_uploader:
     mappings:
@@ -1045,3 +1224,8 @@ acseo_typesense:
                     entity_attribute: 'AppBundle\Typesense\Converter\ShopConverter::getImageURL'
                     optional: true
             default_sorting_field: sortable_id
+
+kreait_firebase:
+    projects:
+        coopcycle:
+            credentials: '%env(FIREBASE_CREDENTIALS)%'

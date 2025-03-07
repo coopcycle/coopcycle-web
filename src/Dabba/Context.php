@@ -8,15 +8,13 @@ use GuzzleHttp\Exception\RequestException;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 class Context
 {
-    private $client;
-    private $cartContext;
     private $logger;
 
     private $wallet = 0;
@@ -24,16 +22,12 @@ class Context
     private $userContainers = [];
 
     public function __construct(
-        Client $client,
-        CartContextInterface $cartContext,
-        SessionInterface $session,
-        CacheInterface $appCache,
+        private Client $client,
+        private CartContextInterface $cartContext,
+        private RequestStack $requestStack,
+        private CacheInterface $appCache,
         LoggerInterface $logger = null)
     {
-        $this->client = $client;
-        $this->cartContext = $cartContext;
-        $this->session = $session;
-        $this->appCache = $appCache;
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -55,7 +49,7 @@ class Context
             return $this->client->containers();
         });
 
-        $adapter = new DabbaAdapter($order, $this->session);
+        $adapter = new DabbaAdapter($order, $this->requestStack->getSession());
 
         if ($adapter->hasDabbaCredentials()) {
 

@@ -1,0 +1,118 @@
+@import "../../../../../assets/css/vars";
+
+@mixin ant-anchor-link--no-padding() {
+  .ant-anchor-link {
+    padding: 0;
+  }
+}
+
+@mixin ant-anchor-link--max-width() {
+  .ant-anchor-link {
+    max-width: 180px;
+  }
+}
+
+@mixin ant-anchor-link-title__text() {
+  .ant-anchor-link-title {
+    color: $gray-300;
+    white-space: nowrap;
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+    }
+  }
+
+  // Selected state
+  .ant-anchor-link-title-active {
+    color: $primary-default;
+  }
+}
+
+
+.restaurant-menu-nav {
+  .ant-anchor {
+    width: 100%;
+    overflow: hidden;
+    background-color: $white;
+  }
+
+  .ant-affix {
+    z-index: 1;
+  }
+
+  .ant-anchor-ink {
+    display: none;
+  }
+
+  @include ant-anchor-link--no-padding();
+
+  .ant-anchor-link {
+    border-bottom: 1px solid $gray-100;
+
+    &:hover {
+      background-color: $nav-link-hover-bg;
+    }
+  }
+
+  // Selected state
+  .ant-anchor-link-active {
+    border-bottom: 1px solid $primary-default;
+  }
+
+  @include ant-anchor-link-title__text();
+
+  .ant-anchor-link-title {
+    padding: 0.5rem 1.5rem;
+  }
+
+  .ant-anchor-space {
+    flex: 1;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+}
+
+.ReactModal__Body--open {
+  .ant-affix {
+    z-index: inherit;
+  }
+}
+
+.more-trigger {
+  @include ant-anchor-link--max-width();
+
+  .ant-anchor-link-title {
+    display: flex;
+    align-items: center;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.more-overlay {
+  .ant-dropdown-menu {
+    overflow-y: auto;
+    max-height: 500px;
+  }
+
+  .ant-dropdown-menu-item {
+    &:hover {
+      background-color: $nav-link-hover-bg;
+    }
+  }
+
+  @include ant-anchor-link--no-padding();
+  @include ant-anchor-link--max-width();
+
+  @include ant-anchor-link-title__text();
+
+  .ant-anchor-link-title {
+    padding: 0.5rem 0;
+  }
+}

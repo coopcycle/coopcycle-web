@@ -7,7 +7,7 @@ base.footer.legal: Aviso legal
 base.footer.suggest: Sugira um restaurante
 base.footer.privacy: Privacidade
 base.footer.terms: Termos de serviço
-adminDashboard.title: Painel do administrador
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuração
 adminDashboard.tooltip.orders: Administrar os pedidos dos restaurantes
 adminDashboard.tooltip.deliveries: Administrar entregas
@@ -101,7 +101,6 @@ help.title: Ajuda
 help.home: Página inicial
 restaurants.no_results: Não encontramos nenhum restaurante que satisfaça os critérios
   da sua pesquisa. ☹ <br>Tente com um endereço diferente
-restaurants.visible_by_you_only: Visível apenas para si
 localBusiness.form.orderingDelayMinutes: Atraso adicional antes de fazer o pedido
 localBusiness.form.orderingDelayMinutes.help: Use este campo para adicionar algum
   tempo antes do cliente poder pedir. Esta configuração não altera o tempo de confeção
@@ -211,7 +210,7 @@ order.total_tax: IVA
 order.items_total: Total de produtos
 order.total_including_tax: Total (com IVA)
 order.total_excluding_tax: Total (sem IVA)
-order.summary.heading: Pedido%número% (#%id%)
+order.summary.heading: Pedido%número%
 order.items.products_with_count: Produtos(%count%)
 order.cart.title: Carrinho
 profile.accountType: Tipo de conta
@@ -248,7 +247,7 @@ profile.addresses.empty: Nenhum endereço salvo ainda!
 profile.addresses.breadcrumb: Endereço
 restaurant.stats.delivery: Entrega
 restaurant.stats.total_products_excluding_taxes: Total de produtos sem impostos
-restaurant.stats.total_products_including_all_taxes: Total de produtos incluindo todos
+restaurant.stats.total_products_including_all_taxes: Total de produtos incl. todos
   os impostos
 restaurant.stats.delivered_on: Entregue em
 restaurant.stats.order_number: Número do pedido
@@ -295,7 +294,6 @@ restaurant.contract.restaurantPaysStripeFee.label: Responsável pelo custo das t
   reembolsos e estornos do Stripe
 restaurant.form.section.taxonomy: Taxonomia
 restaurant.form.fulfillment_methods.label: Métodos de preenchimento
-restaurant.form.giropay_enabled.label: Habilitar Giropay
 restaurant.form.loopeat_disconnect.label: Desconecar LoopEat
 restaurant.form.loopeat_enabled.label: Habilite o sistema de depósito e reembolso
   de LoopEat
@@ -420,7 +418,7 @@ form.customize.custom_privacy_enabled.label: Habilitar política de privacidade 
 form.customize.custom_legal.label: Personalizar a página de informação legal
 form.customize.custom_legal_enabled.label: Habilitar nota legal personalizada
 form.customize.motto.help: Isto não será mostrado na página do início
-form.new_order.variant_price.label: Preço
+form.new_order.variant_price.label: Preço incl. IVA
 form.new_order.variant_name.help: O nome que aparecerá no resumo do pedido e na fatura
 form.new_order.variant_name.label: Nome do produto
 form.deposit_refund_settings.deposit_refund_optin.label: Sistema de reembolso é opcional
@@ -589,7 +587,7 @@ form.settings.latlng.help: "Especifique a latitude e longitude padrão. Você po
   \ em <a href=\"https://www.latlong.net/\"> latlong.net </a>\n"
 form.settings.latlng.label: Cordenadas geográficas
 form.settings.stripe_connect_client_id.help: "Obtenha o identificador na <a href=\"\
-  https://dashboard.stripe.com/account/applications/settings\"> página de parâmetros\
+  https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"> página de parâmetros\
   \ </a>\n"
 form.settings.stripe_connect_client_id.label: ID do Stripe Connect
 form.settings.stripe_secret_key.label: Chave secreta de Stripe

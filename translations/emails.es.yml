@@ -23,10 +23,10 @@ order.foodtech.accepted.collection.disclaimer: Si tiene algún problema, contact
   <strong>%name%</strong> en <strong>%phone_number%</strong> con suficiente antelación
   para cancelar su pedido.
 order.foodtech.cancelled: "El restaurante no puede preparar tu pedido %order.number%.\n\
-  <br>\nSi tu cuenta ha sido cargada, recibiras la devolución en algunos días laborales,\
-  \ dependiendo de tu banco.\n"
+  <br>\nSi se ha hecho un cargo en su cuenta, recibirás la devolución en algunos días\
+  \ laborales, dependiendo de tu banco.\n"
 admin.order.created.subject: Nuevo pedido para confirmar
-admin.order.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido.\n"
+admin.order.created.body: "Buenos días,\n<br>\nSe ha creado un nuevo pedido.\n"
 admin.order_foodtech.created.body: "Buenos dias,\n<br>\nSe ha creado un nuevo pedido\
   \ para <strong>%restaurant.name%</strong>.\n"
 owner.order.created.subject: Nuevo pedido para confirmar
@@ -88,3 +88,27 @@ order.adhoc.body: |
   Se ha creado un nuevo pedido para usted.
   <br>
   Para finalizar su pedido, haga clic en el siguiente enlace para especificar su dirección, elegir una franja de entrega y pagar con tarjeta de crédito.
+business_account.send_invitation.body: |
+  Hola %name%,
+  <br>
+  Ésta es una invitación para configurar su cuenta de empresa en Coopcycle, por favor haga click en el siguiente enlace para continuar con la activación.
+business_account.send_invitation.cta: Continuar activación
+order.loopeat.accepted: "<p>Ha elegido la opción de residuo cero, ¡enhorabuena!</p>\n\
+  <p>Acuérdate de devolver la(s) fiambrera(s) y la bolsa de tela al mensajero durante\
+  \ la próxima entrega de comida..</p>\n<p>Gracias a ti estamos cambiando el mundo,\
+  \ comida a comida.</p>\n<p>Corra la voz, ¡cada acción cuenta!</p>\n<p>¡Buen provecho!\
+  \ LoopEat</p>\n"
+registration.restaurant: Solicitud de adición de un nuevo restaurante
+registration.company: Solicitud de adición de una nueva tienda
+task.pickup.failed.body: "Hola,\n<br>\n<br>\nNo ha sido posible recoger el pedido\
+  \ en la siguiente dirección: <strong>#%id%</strong> \n<br>\n%address%\n"
+task.dropoff.done.subject: 'El pedido #%id% ha sido entregado'
+task.dropoff.done.body: "Hola,\n<br>\n<br>\nEl pedido <strong>#%id%</strong> ha sido\
+  \ recogido en la siguiente dirección:\n<br>\n%address%\n"
+task.dropoff.failed.subject: 'No se ha podido entregar el pedido #%id%'
+task.dropoff.failed.body: "Hola,\n<br>\n<br>\nNo se ha podido entregar el pedido <strong>#%id%</strong>\
+  \ en la siguiente dirección:\n<br>\n%address%\n"
+task.pickup.done.subject: 'El pedido #%id% ha sido recogido'
+task.pickup.done.body: "Hola,\n<br>\n<br>\nEl pedido <strong>#%id%</strong> ha sido\
+  \ recogido en la dirección:\n<br>\n%address%\n"
+task.pickup.failed.subject: 'No ha sido posible recoger el pedido #%id%'

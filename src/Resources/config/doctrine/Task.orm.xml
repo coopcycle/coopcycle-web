@@ -19,8 +19,10 @@
         <option name="default">0</option>
       </options>
     </field>
-    <field name="metadata" type="json_array" column="metadata" nullable="true"/>
+    <field name="metadata" type="json" column="metadata" nullable="true"/>
     <field name="weight" type="integer" column="weight" nullable="true"/>
+    <field name="emittedCo2" type="integer" column="emitted_co2" default="0" />
+    <field name="traveledDistanceMeter" type="integer" column="traveled_distance_meter" default="0" />
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
@@ -73,7 +75,7 @@
         <join-column name="group_id" referenced-column-name="id" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="assignedTo" target-entity="AppBundle\Entity\User">
+    <many-to-one field="assignedTo" target-entity="AppBundle\Entity\User" fetch="EAGER">
       <join-columns>
         <join-column name="assigned_to" referenced-column-name="id"/>
       </join-columns>
@@ -88,17 +90,29 @@
         <join-column name="rrule_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />
       </join-columns>
     </many-to-one>
-    <many-to-one field="tour" target-entity="AppBundle\Entity\Tour">
-      <join-columns>
-        <join-column name="tour_id" referenced-column-name="id"/>
-      </join-columns>
-    </many-to-one>
+    <many-to-many field="edifactMessages" target-entity="AppBundle\Entity\Edifact\EDIFACTMessage" inversed-by="tasks">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+      <join-table name="tasks_edifact_messages">
+        <join-columns>
+          <join-column name="task_id" referenced-column-name="id" on-delete="CASCADE"/>
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="edifact_message_id" referenced-column-name="id"/>
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
+    <one-to-many field="incidents" target-entity="AppBundle\Entity\Incident\Incident" mapped-by="task" />
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\TaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
         <lifecycle-callback type="preUpdate" method="preUpdate"/>
       </entity-listener>
       <entity-listener class="AppBundle\LoopEat\TaskListener">
+        <lifecycle-callback type="prePersist" method="prePersist"/>
+      </entity-listener>
+      <entity-listener class="AppBundle\Integration\Standtrack\StandtrackTaskListener">
         <lifecycle-callback type="prePersist" method="prePersist"/>
       </entity-listener>
     </entity-listeners>

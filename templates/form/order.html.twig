@@ -101,9 +101,14 @@
                 {{ (loopeat_trans_prefix ~ '.enough_credits')|trans }}
               </li>
               {% endif %}
-              {% if loopeat_context.suggestion == 'returns' %}
+              {% if form.vars.valid and loopeat_context.suggestion == 'returns' %}
               <li class="text-info">
                 {{ (loopeat_trans_prefix ~ '.suggest_returns.label')|trans }}
+              </li>
+              {% endif %}
+              {% if not form.vars.valid %}
+              <li class="text-danger">
+                {{ form.vars.errors|map(e => e.message)|join(' ') }}
               </li>
               {% endif %}
             </ul>
@@ -115,11 +120,6 @@
           {% endif %}
           <div class="d-flex justify-content-between loopeat-links">
             <a href="#" data-toggle="modal" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
-            {#
-            {% if loopeat_context.hasCredentials and missingAmount > 0 %}
-            <a href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans }} ›</a>
-            {% endif %}
-            #}
             <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
           </div>
         </div>
@@ -127,24 +127,23 @@
       <div>
       {% if isChecked %}
         {% if loopeat_context.hasCredentials %}
-          {% if loopeat_context.containersCount > 0 %}
-            <a class="btn btn-md btn-warning" href="#"
-              data-toggle="modal"
-              data-target="#modal-loopeat"
-              data-customer-containers="{{ loopeat_context.containers|json_encode|e('html_attr') }}"
-              data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
-              data-formats-to-deliver="{{ order.getFormatsToDeliverForLoopeat()|json_encode|e('html_attr') }}"
-              data-returns="{{ order.getLoopeatReturns()|json_encode|e('html_attr') }}"
-              data-credits-count-cents="{{ loopeat_context.creditsCountCents|json_encode|e('html_attr') }}"
-              data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
-            >
-              {{ (loopeat_trans_prefix ~ '.return_containers')|trans }}
-            </a>
-          {% elseif missingAmount > 0 %}
-            <a class="btn btn-md btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.add_credits')|trans({ '%name%': loopeat_context.name }) }}</a>
-          {% endif %}
+          <a class="btn btn-md btn-default" href="#"
+            data-toggle="modal"
+            data-target="#modal-loopeat"
+            data-customer-containers="{{ loopeat_context.containers|json_encode|e('html_attr') }}"
+            data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
+            data-formats-to-deliver="{{ order.getFormatsToDeliverForLoopeat()|json_encode|e('html_attr') }}"
+            data-returns="{{ order.getLoopeatReturns()|json_encode|e('html_attr') }}"
+            data-credits-count-cents="{{ loopeat_context.creditsCountCents|json_encode|e('html_attr') }}"
+            data-required-amount="{{ loopeat_context.requiredAmount|json_encode|e('html_attr') }}"
+            data-containers-count="{{ loopeat_context.containersCount|json_encode|e('html_attr') }}"
+            data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount, true)|e('html_attr') }}"
+          >
+            <i class="fa fa-sliders mr-1"></i>
+            <span>{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
+          </a>
         {% else %}
-          <a class="btn btn-md btn-warning" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
+          <a class="btn btn-md btn-default" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
         {% endif %}
       {% endif %}
       </div>
@@ -157,16 +156,17 @@
             <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
-          <div class="modal-body mb-0 p-0">
-            <img src="{{ asset('img/loopeat/how_it_works.png') }}" class="w-100" />`
+          <div class="modal-body mb-0 p-4">
             <div class="d-flex justify-content-between">
               {% for loopeat_step in 1..4 %}
-                <div class="text-center w-25 m-2">
-                  <h5>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
+                <div class="text-center w-25">
+                  <span class="badge" style="background-color: #e17e3f;">{{ loopeat_step - 1 }}</span>
+                  <h5 class="font-weight-bold mb-1" style="color: #e17e3f;">{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
                   <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
                 </div>
               {% endfor %}
             </div>
+            <img src="{{ asset('img/loopeat/how_it_works.svg') }}" class="w-100" />`
           </div>
         </div>
       </div>

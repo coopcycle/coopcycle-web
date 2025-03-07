@@ -10,6 +10,7 @@ export default class extends Component {
 
   constructor (props) {
     super(props)
+
     this.state = {
       task: this.props.task
     }
@@ -32,7 +33,7 @@ export default class extends Component {
             { i18n.t('ADMIN_DASHBOARD_TASK_CAPTION_SHORT', { id: task.id }) }{ !_.isEmpty(task.metadata.order_number) && (' | ' + name + ' ' + task.metadata.order_number) }
           </strong>
           <span>
-            <a className="task__edit" onClick={ this.props.onEditClick }>
+            <a className="task__edit" onClick={ () => this.props.onEditClick(task) }>
               { task.isAssigned && (
                 <Avatar username={ task.assignedTo } />
               )}

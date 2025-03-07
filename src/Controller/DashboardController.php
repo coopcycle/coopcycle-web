@@ -4,23 +4,22 @@ namespace AppBundle\Controller;
 
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
+use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderTrait;
 use AppBundle\Controller\Utils\RestaurantTrait;
 use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\DeliveryRepository;
-use AppBundle\Entity\LocalBusiness;
-use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
+use League\Flysystem\Filesystem;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardController extends AbstractController
@@ -30,16 +29,15 @@ class DashboardController extends AbstractController
     use OrderTrait;
     use RestaurantTrait;
     use StoreTrait;
+    use InjectAuthTrait;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        bool $adhocOrderEnabled
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TranslatorInterface $translator,
+        private readonly bool $adhocOrderEnabled,
+        private readonly JWTTokenManagerInterface $JWTTokenManager
     )
     {
-        $this->entityManager = $entityManager;
-        $this->translator = $translator;
-        $this->adhocOrderEnabled = $adhocOrderEnabled;
     }
 
     protected function getRestaurantRoutes()
@@ -65,6 +63,7 @@ class DashboardController extends AbstractController
             'reusable_packaging_new' => 'dashboard_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'dashboard_restaurant_mercadopago_oauth_redirect',
             'mercadopago_oauth_remove' => 'dashboard_restaurant_mercadopago_oauth_remove',
+            'image_from_url' => 'dashboard_restaurant_image_from_url',
         ];
     }
 
@@ -81,7 +80,7 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getOrderList(Request $request, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
     {
         return [];
     }
@@ -93,10 +92,10 @@ class DashboardController extends AbstractController
         EntityManagerInterface $entityManager,
         TaxesHelper $taxesHelper,
         CubeJsTokenFactory $tokenFactory,
-        OrderManager $orderManager,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory,
-        DeliveryRepository $deliveryRepository
+        DeliveryRepository $deliveryRepository,
+        MessageBusInterface $messageBus,
+        Hashids $hashids8,
+        Filesystem $deliveryImportsFilesystem
     )
     {
         $user = $this->getUser();
@@ -117,10 +116,12 @@ class DashboardController extends AbstractController
                 $store->getId(),
                 $request,
                 $paginator,
-                $orderManager,
-                $deliveryManager,
-                $orderFactory,
-                $deliveryRepository
+                deliveryRepository: $deliveryRepository,
+                entityManager: $entityManager,
+                hashids8: $hashids8,
+                deliveryImportsFilesystem: $deliveryImportsFilesystem,
+                messageBus: $messageBus,
+                slugify: $slugify
             );
         }
 
@@ -131,6 +132,6 @@ class DashboardController extends AbstractController
             return $this->statsAction($restaurant->getId(), $request, $slugify, $translator, $entityManager, $paginator, $taxesHelper, $tokenFactory);
         }
 
-        return $this->redirectToRoute('nucleos_profile_profile_show');
+        return $this->redirectToRoute('profile_edit');
     }
 }

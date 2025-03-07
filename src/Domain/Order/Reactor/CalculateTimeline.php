@@ -3,6 +3,7 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Task\Event\TaskRescheduled;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimelineCalculator;
 use SimpleBus\Message\Bus\MessageBus;
@@ -11,10 +12,12 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 class CalculateTimeline
 {
     private $calculator;
+    private $eventBus;
 
-    public function __construct(OrderTimelineCalculator $calculator)
+    public function __construct(OrderTimelineCalculator $calculator, MessageBus $eventBus)
     {
         $this->calculator = $calculator;
+        $this->eventBus = $eventBus;
     }
 
     private function getTimeline(OrderInterface $order)
@@ -41,6 +44,15 @@ class CalculateTimeline
 
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());
+
+            $delivery = $order->getDelivery();
+            if (null !== $delivery) {
+                foreach ($delivery->getTasks() as $task) {
+                    $this->eventBus->handle(
+                        new TaskRescheduled($task, $task->getAfter(), $task->getBefore())
+                    );
+                }
+            }
         }
     }
 }

@@ -1,0 +1,62 @@
+<section class="restaurant-info">
+  {% if restaurant_banner is not empty %}
+    <div class="restaurant-image">
+      <img src="{{ restaurant_banner }}">
+      {% if should_show_pre_order(restaurant) %}
+        <figcaption>
+          <div class="position-absolute w-100 h-100 bg-dark overlay"></div>
+          <div
+            class="position-absolute text-white font-weight-bold d-flex flex-column justify-content-center align-items-center w-100 h-100 p-1">
+            <i class="fa fa-clock-o"></i>
+            <span>{{ 'restaurants.pre_order'|trans }}</span>
+          </div>
+        </figcaption>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="restaurant-details">
+    <h2 class="restaurant-name">{{ restaurant.name }}</h2>
+
+    {% set badges = restaurant_badges(restaurant) %}
+    {% if badges is not empty %}
+      <div class="badges-or-tags">
+        {% for badge in badges %}
+          {% include "components/restaurant/badge/restaurant_badge.html.twig" with {type: badge} %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <section class="restaurant-description text-muted">
+      {% if restaurant.description is defined and restaurant.description is not empty %}
+        {{ restaurant.description|markdown_to_html }}
+      {% endif %}
+    </section>
+
+    {% set tags = restaurant_tags(restaurant) %}
+    {% if tags is not empty %}
+      <div class="badges-or-tags">
+        {% for tag in tags %}
+          {% include "components/restaurant/tag/restaurant_tag.html.twig" with {value: tag} %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div>
+      <a class="restaurant-opening-hours" href="#" data-toggle="modal"
+         data-target="#restaurant-opening-hours-modal">
+        <i class="fa fa-clock-o"></i> {{ 'localBusiness.form.openingHours'|trans }}
+      </a>
+    </div>
+
+    <div><i class="fa fa-map-marker"></i>  {{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</div>
+
+    {% if restaurant.website is defined and restaurant.website is not empty %}
+      <div>
+        <a href="{{ restaurant.website }}" target="_blank">
+          <i class="fa fa-external-link"></i> {{ 'localBusiness.form.website'|trans }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>

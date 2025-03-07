@@ -10,9 +10,8 @@ use Webmozart\Assert\Assert;
 
 class EnhanceShippingAddress
 {
-    public function __construct(PhoneNumberUtil $phoneNumberUtil)
+    public function __construct(private readonly PhoneNumberUtil $phoneNumberUtil)
     {
-        $this->phoneNumberUtil = $phoneNumberUtil;
     }
 
     public function __invoke(OrderCreated $event)

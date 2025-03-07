@@ -25,19 +25,13 @@ class CreateSetupIntentOrAttachPM
 
     public function __invoke($data, Request $request)
     {
-        $body = [];
-        $content = $request->getContent();
-        if (!empty($content)) {
-            $body = json_decode($content, true);
-        }
+        $body = $request->toArray();
 
         if (!isset($body['payment_method_to_save'])) {
             throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
-        $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
-
-        $this->stripeManager->configure();
+        $payment = $data->getLastPaymentByMethod('CARD', PaymentInterface::STATE_CART);
 
         try {
             $intent = $this->stripeManager->createSetupIntent($payment, $body['payment_method_to_save']);

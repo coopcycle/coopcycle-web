@@ -2,33 +2,46 @@ import React from 'react'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
-import { Accordion } from 'react-accessible-accordion'
 
-import { openAddUserModal } from '../redux/actions'
+import { openAddUserModal, setMapFilterValue } from '../redux/actions'
 import TaskList from './TaskList'
 
-import { selectTaskLists } from '../redux/selectors'
+import { selectHiddenCouriersSetting, selectMapFiltersSetting, selectTaskLists, selectTaskListsLoading } from '../redux/selectors'
+import { Switch, Tooltip } from 'antd'
 
 class TaskLists extends React.Component {
 
   render() {
 
-    const { taskLists, taskListsLoading } = this.props
+    const { taskLists, taskListsLoading, setMapFilterValue, mapFiltersSettings } = this.props
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
-        <h4>
+        <h4 className="dashboard__panel__header d-flex justify-content-between">
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
-          { taskListsLoading ?
-            (<span className="pull-right"><i className="fa fa-spinner"></i></span>) :
-            (<a className="pull-right" onClick={this.props.openAddUserModal}>
-              <i className="fa fa-plus"></i>&nbsp;<i className="fa fa-user"></i>
-            </a>)
-          }
+          <span className="pull-right">
+            <Tooltip
+              title={this.props.t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
+              placement="left"
+              className="mr-2"
+            >
+              <Switch
+                unCheckedChildren={"0"}
+                checkedChildren={"I"}
+                defaultChecked={mapFiltersSettings.showAssigned}
+                checked={mapFiltersSettings.showAssigned}
+                onChange={checked => setMapFilterValue(checked)}
+              />
+            </Tooltip>
+            { taskListsLoading ?
+              (<span className="loader"></span>) :
+              (<a onClick={this.props.openAddUserModal}>
+                <i className="fa fa-plus" data-cypress-add-to-planning></i>&nbsp;<i className="fa fa-user"></i>
+              </a>)
+            }
+          </span>
         </h4>
-        <Accordion
-          allowZeroExpanded
-          id="accordion"
+        <div
           className="dashboard__panel__scroll"
           style={{ opacity: taskListsLoading ? 0.7 : 1, pointerEvents: taskListsLoading ? 'none' : 'initial' }}>
           {
@@ -44,11 +57,12 @@ class TaskLists extends React.Component {
                   username={ taskList.username }
                   distance={ taskList.distance }
                   duration={ taskList.duration }
-                  uri={ taskList['@id'] } />
+                  taskListsLoading={ taskListsLoading }
+                />
               )
             })
           }
-        </Accordion>
+        </div>
       </div>
     )
   }
@@ -58,8 +72,9 @@ function mapStateToProps (state) {
 
   return {
     taskLists: selectTaskLists(state),
-    taskListsLoading: state.logistics.ui.taskListsLoading,
-    hiddenCouriers: state.settings.filters.hiddenCouriers,
+    taskListsLoading: selectTaskListsLoading(state),
+    hiddenCouriers: selectHiddenCouriersSetting(state),
+    mapFiltersSettings: selectMapFiltersSetting(state)
   }
 }
 
@@ -67,6 +82,7 @@ function mapDispatchToProps (dispatch) {
 
   return {
     openAddUserModal: () => dispatch(openAddUserModal()),
+    setMapFilterValue: (checked) => dispatch(setMapFilterValue({key: "showAssigned", value: checked}))
   }
 }
 

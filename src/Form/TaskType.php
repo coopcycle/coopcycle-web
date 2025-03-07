@@ -18,6 +18,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -66,22 +67,17 @@ class TaskType extends AbstractType
                 'label' => 'form.task.comments.label',
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
-            ]);
+            ])
+        ->add('imported_from');
 
         if (null !== $options['with_time_slot']
         && null !== $options['with_time_slots']
         && count($options['with_time_slots']) > 1) {
 
-            $iterator = $options['with_time_slots']->getIterator();
-            $iterator->uasort(function (TimeSlot $a, TimeSlot $b) {
-                return ($a->getName() < $b->getName()) ? -1 : 1;
-            });
-            $choices = new ArrayCollection(iterator_to_array($iterator));
-
             $builder
                 ->add('switchTimeSlot', EntityType::class, [
                     'class' => TimeSlot::class,
-                    'choices' => $choices,
+                    'choices' => $options['with_time_slots'],
                     'choice_label' => 'name',
                     'choice_attr' => function($choice, $key, $value) {
 
@@ -110,7 +106,6 @@ class TaskType extends AbstractType
                     'multiple' => false,
                     'data' => $options['with_time_slot'],
                 ]);
-
             // https://symfony.com/doc/5.4/form/dynamic_form_modification.html#form-events-submitted-data
             $builder->get('switchTimeSlot')->addEventListener(
                 FormEvents::POST_SUBMIT,
@@ -129,6 +124,13 @@ class TaskType extends AbstractType
                         ->add('timeSlot', TimeSlotChoiceType::class, $timeSlotOptions);
                 }
             );
+        }
+
+        if ($options['with_barcode']) {
+            $builder->add('barcode', TextType::class, [
+                'label' => 'form.task.barcode.label',
+                'required' => false
+            ]);
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
@@ -294,13 +296,20 @@ class TaskType extends AbstractType
                             ),
                         ]);
 
-                    if (null !== $task && null !== $task->getId()) {
+                    if (null !== $task) {
                         $weight = null !== $task->getWeight() ? $task->getWeight() / 1000 : 0;
                         $form->get('weight')->setData($weight);
                     }
                 }
 
             });
+        }
+
+        if (true === $options['with_position']) {
+            $builder
+                ->add('position', HiddenType::class, [
+                    'mapped' => false,
+                ]);
         }
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -370,6 +379,8 @@ class TaskType extends AbstractType
             'with_packages_required' => false,
             'with_weight' => true,
             'with_weight_required' => false,
+            'with_position' => false,
+            'with_barcode' => false,
         ));
 
         $resolver->setAllowedTypes('with_time_slot', ['null', TimeSlot::class]);

@@ -1,0 +1,48 @@
+{% set isLastStep = flow.getCurrentStepNumber() == flow.getLastStepNumber() %}
+{% set renderBackButton = flow.getFirstStepNumber() < flow.getLastStepNumber() and flow.getCurrentStepNumber() in (flow.getFirstStepNumber() + 1) .. flow.getLastStepNumber() %}
+
+{% set flow_buttons = [
+  {
+    label: 'registration.flow.back',
+    render: renderBackButton,
+    attr: {
+      class: 'btn btn-primary-outline mr-4',
+      name: flow.getFormTransitionKey(),
+      value: 'back',
+      formnovalidate: 'formnovalidate',
+    },
+    renderPrefixIcon: true,
+    renderSufixIcon: false,
+    prefixIconClass: 'fa-angle-left'
+  },
+  {
+    label: isLastStep ? 'registration.flow.finish' : 'registration.flow.next',
+    render: true,
+    attr: {
+      class: 'btn btn-primary',
+    },
+    renderPrefixIcon: false,
+    renderSufixIcon: true,
+    sufixIconClass: 'fa-angle-right'
+  },
+] %}
+
+<div class="row">
+  <div class="col-md-6"></div>
+    <div class="flow-buttons">
+      {% for button in flow_buttons %}
+        {% if button.render %}
+          <button type="submit"{% for key, value in button.attr %} {{ key }}="{{ value }}"{% endfor %}>
+            {% if button.renderPrefixIcon %}
+              <i class="fa {{ button.prefixIconClass }} mr-2"></i>
+            {% endif %}
+            {{ button.label|trans }}
+            {% if button.renderSufixIcon %}
+              <i class="fa {{ button.sufixIconClass }} ml-2"></i>
+            {% endif %}
+          </button>
+        {% endif %}
+      {% endfor %}
+    </div>
+</div>
+

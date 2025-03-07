@@ -2,13 +2,13 @@
 
 namespace AppBundle\ExpressionLanguage;
 
-use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Package\PackagesAwareInterface;
 
 class PackagesResolver
 {
     private $delivery;
 
-    public function __construct(Delivery $delivery)
+    public function __construct(PackagesAwareInterface $delivery)
     {
         $this->delivery = $delivery;
     }
@@ -40,7 +40,7 @@ class PackagesResolver
         $total = 0;
 
         foreach ($this->delivery->getPackages() as $package) {
-            $total += ($package->getPackage()->getVolumeUnits() * $this->delivery->getQuantityForPackage($package->getPackage()));
+            $total += ($package->getPackage()->getMaxVolumeUnits() * $this->delivery->getQuantityForPackage($package->getPackage()));
         }
 
         return $total;

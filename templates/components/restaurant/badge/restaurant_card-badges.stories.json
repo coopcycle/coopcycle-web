@@ -1,0 +1,40 @@
+{
+  "title": "Foodtech/1. Restaurant/3. Badge/2. RestaurantCard",
+  "parameters": {
+    "server": {
+      "id": "restaurant_card"
+    }
+  },
+  "args": {
+    "banner_image": "https://source.unsplash.com/MQUqbmszGGM"
+  },
+  "argTypes": {
+  },
+  "tags": [],
+  "stories": [
+    {
+      "name": "Exclusive",
+      "args": { "badges": ["exclusive"] }
+    },
+    {
+      "name": "Edenred",
+      "args": { "badges": ["edenred"] }
+    },
+    {
+      "name": "New",
+      "args": { "badges": ["new"] }
+    },
+    {
+      "name": "Vytal",
+      "args": { "badges": ["vytal"] }
+    },
+    {
+      "name": "Exclusive & New",
+      "args": { "badges": ["new", "exclusive" ] }
+    },
+    {
+      "name": "All",
+      "args": { "badges": ["new", "exclusive", "edenred", "zero-waste"] }
+    }
+  ]
+}

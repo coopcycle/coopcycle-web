@@ -3,6 +3,7 @@ Feature: Carts
   Scenario: Can't update order when state is cart
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -41,6 +42,7 @@ Feature: Carts
   Scenario: Update cart restaurant
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -70,6 +72,7 @@ Feature: Carts
         "shippingAddress":null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -88,16 +91,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Update cart shipping address
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -147,6 +154,7 @@ Feature: Carts
         "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -163,16 +171,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Update cart shipping address (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -222,6 +234,7 @@ Feature: Carts
         "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -238,16 +251,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod": "delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Update cart shipping time (legacy)
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -282,6 +299,7 @@ Feature: Carts
         ],
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -298,16 +316,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Update cart shipping time
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -345,6 +367,7 @@ Feature: Carts
         ],
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -361,16 +384,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Clear cart shipping time
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -402,6 +429,7 @@ Feature: Carts
         "shippingTimeRange":null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -418,16 +446,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Add promotion coupon (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
       | promotions.yml      |
@@ -460,6 +492,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -467,14 +500,14 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":3,
+              "id":2,
               "label":"Livraison",
               "amount":350
             }
           ],
           "delivery_promotion":[
             {
-              "id":1,
+              "id":3,
               "label":"Free delivery",
               "amount":-350
             }
@@ -482,16 +515,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":@array@,
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Enable reusable packaging (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -523,6 +560,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":true,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -539,16 +577,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax": @array@,
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -590,6 +632,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[
           {
@@ -600,6 +643,7 @@ Feature: Carts
             "unitPrice":900,
             "total":1800,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -643,16 +687,20 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Add items to cart
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -694,6 +742,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[
           {
@@ -704,6 +753,7 @@ Feature: Carts
             "unitPrice":900,
             "total":1800,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -747,16 +797,20 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Add items to cart (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -798,6 +852,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[
           {
@@ -808,6 +863,7 @@ Feature: Carts
             "unitPrice":900,
             "total":1800,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":{
               "menu_item_modifier":[
                 {
@@ -851,16 +907,20 @@ Feature: Carts
               "amount":@integer@
             }
           ],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Obtain reusable packaging potential action (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml    |
+      | payment_methods.yml    |
       | products.yml           |
       | restaurants.yml        |
       | reusable_packaging.yml |
@@ -905,6 +965,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":@array@,
         "itemsTotal":1800,
@@ -925,6 +986,7 @@ Feature: Carts
   Scenario: Update cart items quantity
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -977,6 +1039,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[
           {
@@ -987,6 +1050,7 @@ Feature: Carts
             "unitPrice":900,
             "total":2700,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":@...@
           }
         ],
@@ -1000,6 +1064,7 @@ Feature: Carts
   Scenario: Update cart items quantity (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1051,6 +1116,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[
           {
@@ -1061,6 +1127,7 @@ Feature: Carts
             "unitPrice":900,
             "total":2700,
             "name":"Pizza",
+            "variantName": "@string@",
             "adjustments":@...@
           }
         ],
@@ -1074,6 +1141,7 @@ Feature: Carts
   Scenario: Delete cart item
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1121,6 +1189,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -1133,6 +1202,7 @@ Feature: Carts
   Scenario: Delete cart item (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1179,6 +1249,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -1191,6 +1262,7 @@ Feature: Carts
   Scenario: Start cart session
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1218,6 +1290,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1253,6 +1326,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1266,6 +1340,7 @@ Feature: Carts
   Scenario: Start cart session as an authenticated user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1298,6 +1373,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1333,6 +1409,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1346,6 +1423,7 @@ Feature: Carts
   Scenario: Start cart session (with collection fulfillment method)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1373,6 +1451,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -1386,6 +1465,7 @@ Feature: Carts
   Scenario: Wrong cart session token
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1416,6 +1496,7 @@ Feature: Carts
   Scenario: Update cart shipping address with expired session
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1453,6 +1534,7 @@ Feature: Carts
   Scenario: Assign cart to customer
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1487,6 +1569,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -1503,16 +1586,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Can't assign cart to customer
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -1539,6 +1626,7 @@ Feature: Carts
   Scenario: Assign cart to guest customer
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the setting "guest_checkout_enabled" has value "1"
@@ -1571,13 +1659,15 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1607,6 +1697,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -1623,10 +1714,13 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1654,13 +1748,15 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1690,6 +1786,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -1706,10 +1803,13 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1737,13 +1837,15 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
           "total":0,
           "adjustments":@...@,
           "fulfillmentMethod":"delivery",
-          "invitation": "@string@||@null@"
+          "invitation": "@string@||@null@",
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1773,6 +1875,7 @@ Feature: Carts
         "shippingTimeRange": null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "notes":null,
         "items":[],
         "itemsTotal":0,
@@ -1789,16 +1892,20 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
         "fulfillmentMethod":"delivery",
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Update cart with invalid phone number
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1846,6 +1953,7 @@ Feature: Carts
   Scenario: Update cart fulfillment method
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1876,6 +1984,7 @@ Feature: Carts
         "shippedAt":null,
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange":null,
         "notes":null,
         "items":[],
@@ -1888,15 +1997,19 @@ Feature: Carts
           "order_promotion":[],
           "reusable_packaging":[],
           "tax":[],
-          "tip":[]
+          "tip":[],
+          "incident":[]
         },
-        "invitation": "@string@||@null@"
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
   Scenario: Update cart fulfillment method (not enabled)
     And the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1936,6 +2049,7 @@ Feature: Carts
     Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -1961,14 +2075,14 @@ Feature: Carts
         "behavior":"asap",
         "preparation":"10 minutes",
         "shipping":"10 minutes",
-        "asap":"2020-10-02T12:05:00+02:00",
+        "asap":"2020-10-02T11:55:00+02:00",
         "range":[
-          "2020-10-02T12:00:00+02:00",
-          "2020-10-02T12:10:00+02:00"
+          "2020-10-02T11:50:00+02:00",
+          "2020-10-02T12:00:00+02:00"
         ],
         "today":true,
         "fast":false,
-        "diff":"60 - 70",
+        "diff":"50 - 60",
         "ranges":@array@,
         "choices":@array@
       }
@@ -1977,6 +2091,7 @@ Feature: Carts
   Scenario: Validate cart (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -2016,6 +2131,7 @@ Feature: Carts
   Scenario: Start cart session with address
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2052,6 +2168,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -2065,6 +2182,7 @@ Feature: Carts
   Scenario: Start cart session as an authenticated user with existing address not belonging to user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -2102,6 +2220,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -2115,6 +2234,7 @@ Feature: Carts
   Scenario: Start cart session as an authenticated user with existing address
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -2152,6 +2272,7 @@ Feature: Carts
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
           "reusablePackagingPledgeReturn": 0,
+          "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
           "itemsTotal":0,
@@ -2159,5 +2280,90 @@ Feature: Carts
           "adjustments":@...@,
           "fulfillmentMethod":"delivery"
         }
+      }
+      """
+
+  Scenario: Don't allow negative tip amount
+    And the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/orders/1/tip" with body:
+      """
+      {
+        "tipAmount": -100
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+
+  Scenario: Select Edenred payment method
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/orders/1/payment" with body:
+      """
+      {
+        "paymentMethod": "edenred"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": {"@*@": "@*@"},
+        "@type": "ConfigurePaymentOutput",
+        "@id": "@string@",
+        "payments": [
+          {
+            "@context": {"@*@": "@*@"},
+            "@type": "@string@",
+            "@id": "@string@",
+            "method": {
+              "@context": {"@*@": "@*@"},
+              "@type": "@string@",
+              "@id": "@string@",
+              "code": "CARD"
+            },
+            "amount": @integer@
+          },
+          {
+            "@context": {"@*@": "@*@"},
+            "@type": "@string@",
+            "@id": "@string@",
+            "method": {
+              "@context": {"@*@": "@*@"},
+              "@type": "@string@",
+              "@id": "@string@",
+              "code": "EDENRED"
+            },
+            "amount": @integer@
+          }
+        ],
+        "redirectUrl":"@string@||@null@"
       }
       """

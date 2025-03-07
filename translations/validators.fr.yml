@@ -26,6 +26,7 @@ delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
 delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.
 
 delivery.check.notValid: Votre demande n'est pas réalisable
+delivery.check.outOfBounds: Votre demande est en dehors de la zone acceptée ou trop éloignée
 
 time_range.empty: Vous n'avez sélectionné aucune valeur
 time_range.no_weekday: Vous n'avez pas sélectionné de jour de la semaine
@@ -38,10 +39,14 @@ product_option.valuesRange.notAllowed: Vous ne pouvez pas définir d'intervalle 
 
 product.reusablePackagingUnit.mustBeGreaterThanZero: Vous devez spécifier une quantité supérieure à 0
 
-loopeat.insufficient_balance: Votre cagnotte %name% est insuffisante pour bénéficier de la consigne. Veuillez rendre des boîtes ou recréditer votre cagnotte.
+loopeat.insufficient_balance: Votre cagnotte %name% est insuffisante pour bénéficier de la consigne, il manque %amount% pour finaliser votre commande. Veuillez rendre des boîtes ou recréditer votre cagnotte.
+loopeat.request_failed: Erreur de connection avec %name%
+loopeat.insufficient_stock: Quantité d'emballages zéro déchet insuffisante pour « %name% »
 
 restaurant.contract.variableCustomerAmount.pickOne: Veuillez sélectionner une tarification
 restaurant.contract.variableDeliveryPrice.pickOne: Veuillez sélectionner une tarification
+
+siret.invalid: Numéro SIRET invalide
 
 checkout.user_with_same_email_exists: Un compte avec le même email existe déjà
 
@@ -51,3 +56,20 @@ order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
 dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
 
+googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide. %error%
+
+spreadsheet.missing_column: Vous devez définir une colonne « %column% »
+spreadsheet.missing_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% »
+spreadsheet.alternative_columns: Vous devez définir une colonne « %column% » ou une colonne « %other_column% » column, mais pas les deux
+spreadsheet.csv_encoding: Les fichiers CSV doivent être encodés en UTF-8
+
+siret.head_office: Vous devez fournir le numéro SIRET de l'établissement, et non du siège social.
+
+delivery.check.noStore: Vous devez fournir un magasin
+order.state.notModifiable: La commande ne peut plus être modifiée
+order.collection.not_available: La méthode de réalisation "collection" n'est pas disponible
+task_group.ref.duplicate: La référence "%ref%" apparaît plusieurs fois
+pricing_rule.expression.syntax_error: Erreur de syntaxe dans l'expression "%expression%"
+order.adjustments.unexpectedCount: Nombre inattendu d'ajustements "%type%"
+
+form.package_set.duplicatePackageNames: Les noms de paquet doivent être uniques

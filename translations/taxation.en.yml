@@ -6,6 +6,7 @@ tax_rate.gst: GST
 tax_rate.pst: PST
 tax_rate.reduced: Reduced rate
 tax_rate.intermediary: Intermediary rate
+tax_rate.icms: ICMS
 
 tax_category.food: Food
 tax_category.food_takeaway: Food › Takeaway

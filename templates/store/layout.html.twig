@@ -1,5 +1,9 @@
 {% extends layout %}
 
+{% block prepare_title %}
+  {{ add_title_prefix(store.name ?? ('adminDashboard.stores.createNew'|trans)) }}
+{% endblock %}
+
 {% block content %}
 
 {% set is_main_screen = form is defined and form.vars.id == 'store' %}
@@ -9,7 +13,7 @@
 {% endif %}
 
   <div class="row">
-    <div class="col-sm-3">
+    <div data-testid="sidenav" class="col-sm-3">
       {% if form is defined and form.imageFile is defined %}
         {{ form_row(form.imageFile) }}
       {% else %}
@@ -29,11 +33,13 @@
             {{ 'restaurant.form.section.general'|trans }}
           </a>
         </li>
+        {% if is_granted('ROLE_ADMIN') %}
         <li role="presentation">
           <a href="{% if store.id is not empty %}{{ path(store_route, { id: store.id }) }}{% endif %}#settings" {% if is_main_screen %}role="tab" data-toggle="tab" aria-controls="settings"{% endif %}>
             {{ 'store.form.section.settings'|trans }}
           </a>
         </li>
+        {% endif %}
         {% if store.id is not empty %}
         <li role="presentation" {% if app.request.attributes.get('_route') == store_addresses_route %}class="active"{% endif %}>
           <a href="{{ path(store_addresses_route, { id: store.id }) }}">
@@ -49,6 +55,16 @@
         <li role="presentation">
           <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
             {{ 'stores.deliveries'|trans }}
+          </a>
+        </li>
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_orders_saved' %}class="active"{% endif %}>
+          <a data-testid="bookmarks" href="{{ path('admin_store_orders_saved', { id: store.id }) }}">
+            {{ 'stores.deliveries.bookmarks'|trans }}
+          </a>
+        </li>
+        <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_recurrence_rules' %}class="active"{% endif %}>
+          <a data-testid="recurrence-rules" href="{{ path('admin_store_recurrence_rules', { id: store.id }) }}">
+            {{ 'stores.recurrence_rules'|trans }}
           </a>
         </li>
         {% endif %}

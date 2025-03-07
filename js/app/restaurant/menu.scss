@@ -1,0 +1,211 @@
+@import "../../../assets/css/vars.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+@import "../../../assets/css/mixins/card";
+
+.button-reset {
+  // Reset button styles based on https://gist.github.com/MoOx/9137295
+  border: none;
+  padding: 0;
+  background: transparent;
+
+  text-align: inherit;
+
+  /* Corrects inability to style clickable `input` types in iOS */
+  -webkit-appearance: none;
+}
+
+.restaurant-menu {
+  padding: 1rem 0;
+
+  // On mobile, add a margin to allow scrolling
+  @media (max-width: $screen-xs-max) {
+    margin-bottom: $navbar-height;
+  }
+
+  &__section-name {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  &__section {
+
+    /**
+    use minmax to prevent items from overflowing the column width;
+    https://css-tricks.com/preventing-a-grid-blowout/
+     */
+
+    padding-top: 16px;
+    padding-bottom: 64px;
+    display: grid;
+    grid-gap: 24px;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+
+    @media (min-width: $screen-md-min) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: 1600px) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}
+
+$item-height: 9rem;
+
+.menu-item {
+  @include card;
+
+  & {
+    width: 100%;
+    height: $item-height;
+    overflow: hidden;
+    display: flex;
+    border-radius: $border-radius-large;
+  }
+
+  &__inner-wrapper {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  &--unavailable {
+    .menu-item__inner-wrapper {
+      color: $gray;
+      cursor: default;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    .menu-item-inner__price {
+      text-decoration: line-through;
+    }
+  }
+
+  &__add-wrapper {
+    border: 1px solid $light-gray;
+    border-radius: $border-radius-base;
+    margin: 4px;
+    align-self: stretch;
+
+    &--active {
+      &:hover,
+      &:focus {
+        border: 1px solid $gray;
+      }
+    }
+
+    .add-button {
+      padding: 0 0.75rem;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.menu-item-inner {
+  height: 100%;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+
+  &__image-wrapper {
+    > img {
+      object-fit: cover;
+      width: $item-height;
+      height: $item-height;
+      border-radius: $border-radius-large 0 0 $border-radius-large;
+    }
+  }
+
+  &__content {
+    padding: 0.75rem;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+
+    &__block1 {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    &__block2 {
+      display: flex;
+      overflow: hidden;
+    }
+  }
+
+  &__name {
+    font-family: inherit;
+    font-weight: bold;
+    margin: 0;
+  }
+
+  &__description {
+    margin: 0.5rem 0;
+    max-height: 3.25rem; // 3 lines ~ 52px
+    display: block;
+    font-weight: normal;
+    overflow: hidden;
+  }
+
+  &__price {
+    padding: 2px 0 2px 4px;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+}
+
+.product-badge-container {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.product-badge-container--compact {
+  max-height: 3.25rem;
+  overflow: hidden;
+}
+
+.product-badge-wrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  padding: 2px 8px;
+  overflow: hidden;
+}
+
+.product-badge-allergen {
+  background-color: rgba($color: #000000, $alpha: 0.05);
+}
+
+.product-badge-restricted-diet {
+  background-color: rgba($color: $text-green, $alpha: 0.1);
+  color: $text-green;
+}
+
+.product-badge-reusable-packaging {
+  background-color: $label-info-bg;
+  color: $label-color;
+}
+
+.product-badge-text {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: bold;
+}
+
+.product-badge-text--compact {
+  text-overflow: ellipsis;
+}

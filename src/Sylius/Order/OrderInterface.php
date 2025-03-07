@@ -4,10 +4,12 @@ namespace AppBundle\Sylius\Order;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\OrderEvent;
+use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Vendor;
 use AppBundle\LoopEat\LoopeatAwareInterface;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
@@ -162,14 +164,25 @@ interface OrderInterface extends
     public function getUser(): ?UserInterface;
 
     /**
+     * As we've introduced the concept of Business Account for Orders associated with one of it
+     * all the vendor information should be consumed from the Restaurant entity.
+     *
+     * Use this method to get vendor data like ID, name, address, etc.
      * @return Vendor|null
      */
     public function getVendor(): ?Vendor;
 
     /**
-     * @param Vendor|null $vendor
+     * As we've introduced the concept of Business Account for Orders associated with one of it
+     * all the setup information should be consumed from the BusinessRestaurantGroup entity.
+     * For Orders without association with a Business Account the setup information should be consumed
+     * as usual (from the Restaurant).
+     *
+     * Use this method to get vendor setup like contract, fulfillmentMethods, closingRules,
+     * shippingOptionsDays, openingHours.
+     * @return Vendor|null
      */
-    public function setVendor(?Vendor $vendor): void;
+    public function getVendorConditions(): ?Vendor;
 
     /**
      * @return boolean
@@ -213,8 +226,6 @@ interface OrderInterface extends
      */
     public function getPickupAddress(): ?Address;
 
-    public function getFulfillmentMethodObject(): ?FulfillmentMethod;
-
     public function getAlcoholicItemsTotal(): int;
 
     public function isLoopeat(): bool;
@@ -226,4 +237,41 @@ interface OrderInterface extends
     public function isReusablePackagingEnabled();
 
     public function getPaymentMethod(): ?string;
+
+    public function hasEvent(string $type): bool;
+
+    public function getBusinessAccount(): ?BusinessAccount;
+
+    /**
+     * @param BusinessAccount $businessAccount
+     */
+    public function setBusinessAccount(BusinessAccount $businessAccount): void;
+
+    public function isBusiness(): bool;
+
+    /**
+     * @return Collection
+     */
+    public function getPickupAddresses(): Collection;
+
+    /**
+     * To get bookmarks that current user has access to use OrderManager::hasBookmark instead
+     * @return Collection all bookmarks set by different users
+     */
+    public function getBookmarks(): Collection;
+
+    /**
+     * @param string|null $state
+     *
+     * @return PaymentInterface|null
+     */
+    public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
+
+    public function isFoodtech(): bool;
+
+    public function getDeliveryItem(): ?OrderItemInterface;
+
+    public function getDeliveryPrice(): PriceInterface;
+
+    public function getExports(): Collection;
 }

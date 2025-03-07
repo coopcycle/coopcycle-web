@@ -54,6 +54,11 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
         // This is the URL (if any) the user visited that forced them to login
         $targetPath = $this->getTargetPath($request->getSession(), $this->providerKey);
 
+        // Check if there is a target path in request params
+        if (!$targetPath) {
+            $targetPath = $request->get('_target_path');
+        }
+
         // If there is no target path, redirect depending on role
         if (!$targetPath) {
 
@@ -70,7 +75,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
                 }
 
                 if ($user->hasRole('ROLE_COURIER')) {
-                    return new RedirectResponse($this->router->generate('nucleos_profile_profile_show'));
+                    return new RedirectResponse($this->router->generate('profile_edit'));
                 }
 
                 return $this->httpUtils->createRedirectResponse($request, $this->options['default_target_path']);

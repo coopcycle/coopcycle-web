@@ -1,6 +1,6 @@
 Feature: Retail prices
 
-  Scenario: Get delivery price with JWT
+  Scenario: Get delivery price with JWT for admin user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
@@ -14,6 +14,50 @@ Feature: Retail prices
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        }
+      }
+      """
+
+  Scenario: Get delivery price with JWT for dispatcher user
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "POST" request to "/api/retail_prices/calculate" with body:
       """
       {
         "store":"/api/stores/1",
@@ -500,6 +544,118 @@ Feature: Retail prices
         "currency":"EUR",
         "tax":{
           "amount":83,
+          "included": true
+        }
+      }
+      """
+
+  Scenario: Can't calculate a price for another store
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "bob" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris, France",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 403
+
+  Scenario: Get delivery price with JWT with explicit store
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "bob" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the user "bob" is authenticated
+    And the store with name "Acme" belongs to user "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris, France",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        }
+      }
+      """
+
+    Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | store_w_package_pricing.yml |
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "packages": [
+          {"type": "XL", "quantity": 2}
+        ],
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":699,
+        "currency":"EUR",
+        "tax":{
+          "amount":@integer@,
           "included": true
         }
       }

@@ -5,7 +5,7 @@ namespace AppBundle\Spreadsheet;
 /**
  * A class to keep the relation between a row from a file
  * and the entity that is created or the errors that occurs
- * when the import and parse of that fail happens.
+ * during parsing.
  */
 class SpreadsheetParseResult
 {
@@ -80,5 +80,14 @@ class SpreadsheetParseResult
     public function hasErrors()
     {
         return count(array_keys($this->errors)) > 0;
+    }
+
+    public function getNormalizedErrors(): array
+    {
+        return array_map(
+            fn (int $row, array $errors) => ['row' => $row, 'errors' => $errors],
+            array_keys($this->errors),
+            array_values($this->errors)
+        );
     }
 }

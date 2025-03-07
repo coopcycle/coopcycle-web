@@ -5,66 +5,79 @@ namespace AppBundle\Controller;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
+use AppBundle\Controller\Utils\SelectPaymentMethodTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Embed\Context as EmbedContext;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderInvitation;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutAddressType;
 use AppBundle\Form\Checkout\CheckoutCouponType;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Checkout\CheckoutTipType;
 use AppBundle\Form\Checkout\CheckoutVytalType;
 use AppBundle\Form\Checkout\LoopeatReturnsType;
+use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Order\CartType;
+use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Service\TimingRegistry;
+use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderTransitions;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
 use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
+use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
+use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Psr\Log\LoggerInterface;
 
 class OrderController extends AbstractController
 {
     use OrderConfirmTrait;
     use UserTrait;
     use InjectAuthTrait;
-
-    private $objectManager;
+    use SelectPaymentMethodTrait;
 
     public function __construct(
-        EntityManagerInterface $objectManager,
-        FactoryInterface $orderFactory,
+        private EntityManagerInterface $objectManager,
+        private OrderFactory $orderFactory,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        string $sessionKeyName)
+        private TimingRegistry $timingRegistry,
+        private ValidatorInterface $validator,
+        private OrderAccessTokenManager $orderAccessTokenManager,
+        private LoggerInterface $checkoutLogger,
+        private string $environment
+    )
     {
-        $this->objectManager = $objectManager;
-        $this->orderFactory = $orderFactory;
-        $this->sessionKeyName = $sessionKeyName;
     }
 
     /**
@@ -75,7 +88,6 @@ class OrderController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
-        ValidatorInterface $validator,
         SettingsManager $settingsManager,
         EmbedContext $embedContext,
         SessionInterface $session)
@@ -93,17 +105,15 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('homepage');
         }
 
-        $errors = $validator->validate($order);
+        $orderErrors = $this->validator->validate($order);
 
         // @see https://github.com/coopcycle/coopcycle-web/issues/2069
-        if (count($errors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
+        if (count($orderErrors->findByCodes(ShippingAddressConstraint::ADDRESS_NOT_SET)) > 0) {
 
             $vendor = $order->getVendor();
-            if ($order->isMultiVendor()) {
-                return $this->redirectToRoute('hub', ['id' => $vendor->getHub()->getId()]);
-            }
+            $routeName = $order->isMultiVendor() ? 'hub' : 'restaurant';
 
-            return $this->redirectToRoute('restaurant', ['id' => $vendor->getRestaurant()->getId()]);
+            return $this->redirectToRoute($routeName, ['id' => $vendor->getId()]);
         }
 
         $user = $this->getUser();
@@ -144,7 +154,7 @@ class OrderController extends AbstractController
         $tipForm = $this->createForm(CheckoutTipType::class);
         $tipForm->handleRequest($request);
 
-        if ($tipForm->isSubmitted()) {
+        if ($tipForm->isSubmitted() && $tipForm->isValid()) {
 
             $tipAmount = $tipForm->get('amount')->getData();
             $order->setTipAmount((int) ($tipAmount * 100));
@@ -214,7 +224,9 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $form = $this->createForm(CheckoutAddressType::class, $order);
+        $form = $this->createForm(CheckoutAddressType::class, $order, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests should run with CSRF protection enabled, but once in a while it fails
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted()) {
@@ -226,6 +238,12 @@ class OrderController extends AbstractController
                 $order->setCustomer($customer);
             }
 
+            // Reset phone number (important when a Saved address is used)
+            // The latest phone number will be set later by EnhanceShippingAddress
+            if ($shippingAddress = $order->getShippingAddress()) {
+                $shippingAddress->setTelephone(null);
+            }
+            
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 
@@ -247,7 +265,7 @@ class OrderController extends AbstractController
                 return $this->redirectToRoute('order');
             }
 
-            if ($form->isValid()) {
+            if ($orderErrors->count() === 0 && $form->isValid()) {
 
                 // https://github.com/coopcycle/coopcycle-web/issues/1910
                 // Maybe a better would be to use "empty_data" option in CheckoutAddressType
@@ -277,14 +295,30 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', array(
+        return $this->render('order/index.html.twig', [
             'order' => $order,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'form' => $form->createView(),
             'form_tip' => $tipForm->createView(),
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ));
+        ]);
+    }
+
+    private function getShippingTimeRange(OrderInterface $order)
+    {
+        $range = $order->getShippingTimeRange();
+
+        // Don't forget that $range may be NULL
+        $shippingTimeRange = $range ? [
+            $range->getLower()->format(\DateTime::ATOM),
+            $range->getUpper()->format(\DateTime::ATOM),
+        ] : null;
+
+        return $shippingTimeRange;
     }
 
     /**
@@ -315,56 +349,68 @@ class OrderController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        $orderErrors = $this->validator->validate($order);
 
-        // Make sure to call StripeManager::configurePayment()
-        // It will resolve the Stripe account that will be used
-        // TODO Make sure we are using Stripe, not MercadoPago
-        $stripeManager->configurePayment($payment);
-
-        $form = $this->createForm(CheckoutPaymentType::class, $order);
+        $checkoutPayment = new CheckoutPayment($order);
+        $form = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [
+            'csrf_protection' => 'test' !== $this->environment #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while it fails
+        ]);
 
         $parameters =  [
             'order' => $order,
-            'payment' => $payment,
+            'shipping_time_range' => $this->getShippingTimeRange($order),
+            'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
         ];
 
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
-            $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
+        /**
+         * added to debug issues with stripe payment:
+         * https://github.com/coopcycle/coopcycle-web/issues/3688
+         * https://github.com/coopcycle/coopcycle-app/issues/1603
+         */
+        if ($request->isMethod('POST')) {
+            if ($form->isSubmitted()) {
+                $this->checkoutLogger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: true, isValid: %d errors: %s',
+                    $order->getId(), $form->isValid(), json_encode($form->getErrors()->__toString())));
+            } else {
+                $this->checkoutLogger->info(sprintf('Order #%d | OrderController::paymentAction | isSubmitted: false, errors: %s',
+                    $order->getId(), json_encode($form->getErrors()->__toString())));
+            }
+        }
+
+        // Keep a copy of the payments before trying authorization
+        $payments = $order->getPayments()->filter(
+            fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_CART);
+
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $data = [
                 'stripeToken' => $form->get('stripePayment')->get('stripeToken')->getData()
             ];
 
-            if ($form->has('paymentMethod')) {
-                $data['mercadopagoPaymentMethod'] = $form->get('paymentMethod')->getData();
-            }
-            if ($form->has('installments')) {
-                $data['mercadopagoInstallments'] = $form->get('installments')->getData();
+            // Used by Mercado Pago
+            foreach (['paymentMethod', 'installments', 'issuer', 'payerEmail'] as $key) {
+                if ($form->has($key)) {
+                    $data[sprintf('mercadopago%s', ucfirst($key))] = $form->get($key)->getData();
+                }
             }
 
             $orderManager->checkout($order, $data);
 
             $this->objectManager->flush();
 
-            if (PaymentInterface::STATE_FAILED === $payment->getState()) {
+            $failedPayments = $payments->filter(
+                fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_FAILED);
 
-                $error = $payment->getLastError();
-
-                // Make sure to retrieve the last payment
-                $payment = $order->getLastPayment(PaymentInterface::STATE_CART);
-
-                // Make sure to call StripeManager::configurePayment()
-                // It will resolve the Stripe account that will be used
-                // TODO Make sure we are using Stripe, not MercadoPago
-                $stripeManager->configurePayment($payment);
+            if (count($failedPayments) > 0) {
+                $errors = $failedPayments->map(fn (PaymentInterface $payment): string => $payment->getLastError());
+                $error = implode("\n", $errors->toArray());
 
                 return $this->render('order/payment.html.twig', array_merge($parameters, [
                     'form' => $form->createView(),
                     'error' => $error,
-                    'payment' => $payment,
                 ]));
             }
 
@@ -377,88 +423,84 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/order/payment/{hashId}/method", name="order_payment_select_method", methods={"POST"})
+     * @Route("/order/payment-method", name="order_select_payment_method", methods={"POST"})
      */
-    public function selectPaymentMethodAction($hashId, Request $request,
-        OrderManager $orderManager,
+    public function selectPaymentMethodAction(Request $request,
         CartContextInterface $cartContext,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
-        EdenredClient $edenredClient)
+        NormalizerInterface $normalizer,
+        PaymentContext $paymentContext,
+        OrderProcessorInterface $orderPaymentProcessor,
+        Hashids $hashids8)
     {
-        $hashids = new Hashids($this->getParameter('secret'), 8);
+        $order = $cartContext->getCart();
 
-        $decoded = $hashids->decode($hashId);
+        if (null === $order || !$order->hasVendor()) {
+
+            return new JsonResponse(['message' => 'Order does not exist or has no vendor'], 400);
+        }
+
+        if (null === $order->getCustomer()) {
+
+            return new JsonResponse(['message' => 'Order does not have any customer'], 400);
+        }
+
+        return $this->selectPaymentMethodForOrder(
+            $order,
+            $request,
+            $paymentMethodRepository,
+            $entityManager,
+            $normalizer,
+            $paymentContext,
+            $orderPaymentProcessor,
+            $hashids8
+        );
+    }
+
+    /**
+     * @Route("/order/{hashid}/payment-method", name="order_by_hashid16_select_payment_method", methods={"POST"})
+     */
+    public function selectPaymentMethodByHashid16Action($hashid, Request $request,
+        OrderRepository $orderRepository,
+        PaymentMethodRepositoryInterface $paymentMethodRepository,
+        EntityManagerInterface $entityManager,
+        NormalizerInterface $normalizer,
+        PaymentContext $paymentContext,
+        OrderProcessorInterface $orderPaymentProcessor,
+        Hashids $hashids16,
+        Hashids $hashids8,
+        StateMachineFactoryInterface $stateMachineFactory)
+    {
+        $decoded = $hashids16->decode($hashid);
 
         if (count($decoded) !== 1) {
-
-            return new JsonResponse(['message' => 'Hashid could not be decoded'], 400);
+            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
         }
 
-        $paymentId = current($decoded);
-        $payment = $entityManager->getRepository(PaymentInterface::class)->find($paymentId);
-
-        if (null === $payment) {
-
-            return new JsonResponse(['message' => 'Payment does not exist'], 404);
-        }
-
-        $order = $payment->getOrder();
+        $id = current($decoded);
+        $order = $orderRepository->find($id);
 
         if (null === $order) {
-
-            return new JsonResponse(['message' => 'Payment does not belong to any order'], 400);
+            throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
-        $content = $request->getContent();
-
-        $data = [];
-
-        if (!empty($content)) {
-            $data = json_decode($content, true);
+        $stateMachine = $stateMachineFactory->get($order, OrderTransitions::GRAPH);
+        $isExpectedState = $stateMachine->can(OrderTransitions::TRANSITION_CREATE) || $stateMachine->can(OrderTransitions::TRANSITION_FULFILL);
+        if (!$isExpectedState) {
+            throw new BadRequestHttpException(sprintf('Order #%d is not in an expected state', $id));
         }
 
-        if (!isset($data['method'])) {
-
-            return new JsonResponse(['message' => 'No payment method found in request'], 400);
-        }
-
-        $code = strtoupper($data['method']);
-
-        $paymentMethod = $paymentMethodRepository->findOneByCode($code);
-
-        if (null === $paymentMethod) {
-
-            return new JsonResponse(['message' => 'Payment method does not exist'], 404);
-        }
-
-        // The "CASH_ON_DELIVERY" payment method may not be enabled,
-        // however if it's enabled at shop level, it is allowed
-        $bypass = $code === 'CASH_ON_DELIVERY' && $order->supportsCashOnDelivery();
-
-        if (!$paymentMethod->isEnabled() && !$bypass) {
-
-            return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
-        }
-
-        $payment->setMethod($paymentMethod);
-
-        switch ($code) {
-            case 'EDENRED+CARD':
-            case 'EDENRED':
-                $breakdown = $edenredClient->splitAmounts($order);
-                $payment->setAmountBreakdown($breakdown['edenred'], $breakdown['card']);
-                break;
-            default:
-                $payment->clearAmountBreakdown();
-                break;
-        }
-
-        $entityManager->flush();
-
-        return new JsonResponse([
-            'amount_breakdown' => $payment->getAmountBreakdown(),
-        ]);
+        return $this->selectPaymentMethodForOrder(
+            $order,
+            $request,
+            $paymentMethodRepository,
+            $entityManager,
+            $normalizer,
+            $paymentContext,
+            $orderPaymentProcessor,
+            $hashids8
+        );
     }
 
     /**
@@ -492,26 +534,6 @@ class OrderController extends AbstractController
 
         // TODO Check if order is in expected state (new or superior)
 
-        $loopeatAccessTokenKey =
-            sprintf('loopeat.order.%d.access_token', $id);
-        $loopeatRefreshTokenKey =
-            sprintf('loopeat.order.%d.refresh_token', $id);
-
-        if ($session->has($loopeatAccessTokenKey) && $session->has($loopeatRefreshTokenKey)) {
-
-            $order->getCustomer()->setLoopeatAccessToken(
-                $session->get($loopeatAccessTokenKey)
-            );
-            $order->getCustomer()->setLoopeatRefreshToken(
-                $session->get($loopeatRefreshTokenKey)
-            );
-
-            $this->objectManager->flush();
-
-            $session->remove($loopeatAccessTokenKey);
-            $session->remove($loopeatRefreshTokenKey);
-        }
-
         $dabbaAccessTokenKey =
             sprintf('dabba.order.%d.access_token', $id);
         $dabbaRefreshTokenKey =
@@ -541,8 +563,12 @@ class OrderController extends AbstractController
         $exp->modify('+3 hours');
 
         $customMessage = null;
-        if ($assetsFilesystem->has('order_confirm.md')) {
-            $customMessage = $assetsFilesystem->read('order_confirm.md');
+        try {
+            if ($assetsFilesystem->fileExists('order_confirm.md')) {
+                $customMessage = $assetsFilesystem->read('order_confirm.md');
+            }
+        } catch (UnableToCheckFileExistence $e) {
+            $this->checkoutLogger->error($e->getMessage());
         }
 
         return $this->render('order/foodtech.html.twig', [
@@ -567,9 +593,9 @@ class OrderController extends AbstractController
      */
     public function reorderAction($hashid,
         OrderRepository $orderRepository,
-        SessionInterface $session,
         OrderProcessorInterface $orderProcessor,
-        OrderModifierInterface $orderModifier)
+        OrderModifierInterface $orderModifier,
+        CartStorage $cartStorage)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -589,6 +615,9 @@ class OrderController extends AbstractController
         $restaurant = $order->getRestaurant();
 
         $cart = $this->orderFactory->createForRestaurant($restaurant);
+        $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s) | OrderController',
+            $cart->getCreatedAt()->format(\DateTime::ATOM)));
+
         $cart->setCustomer($this->getUser()->getCustomer());
 
         foreach ($order->getItems() as $item) {
@@ -600,7 +629,10 @@ class OrderController extends AbstractController
         $this->objectManager->persist($cart);
         $this->objectManager->flush();
 
-        $session->set($this->sessionKeyName, $cart->getId());
+        $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database (id = %d) | OrderController',
+            $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM), $cart->getId()));
+
+        $cartStorage->set($cart);
 
         return $this->redirectToRoute('order');
     }
@@ -662,9 +694,8 @@ class OrderController extends AbstractController
      * @Route("/order/share/{slug}", name="public_share_order")
      */
     public function shareOrderAction($slug, Request $request,
-        RequestStack $requestStack,
-        SessionInterface $session,
-        OrderTimeHelper $orderTimeHelper)
+        OrderTimeHelper $orderTimeHelper,
+        CartStorage $cartStorage)
     {
         $invitation =
             $this->objectManager->getRepository(OrderInvitation::class)->findOneBy(['slug' => $slug]);
@@ -682,18 +713,20 @@ class OrderController extends AbstractController
         // $this->denyAccessUnlessGranted('view_public', $order);
 
         // Hacky fix to correctly set the session and reload all the context
-        if (!$session->has($this->sessionKeyName) || $session->get($this->sessionKeyName) != $order->getId()) {
-            $session->set($this->sessionKeyName, $order->getId());
+        if (!$cartStorage->has() || $cartStorage->get() !== $order) {
+            $cartStorage->set($order);
+
             return $this->redirectToRoute($request->attributes->get('_route'), ['slug' => $slug]);
         }
-
 
         $cartForm = $this->createForm(CartType::class, $order);
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $order->getRestaurant(),
-            'times' => $orderTimeHelper->getTimeInfo($order),
+            'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($order->getRestaurant()),
             'cart_form' => $cartForm->createView(),
+            'cart_timing' => $orderTimeHelper->getTimeInfo($order),
+            'order_access_token' => $this->orderAccessTokenManager->create($order),
             'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));

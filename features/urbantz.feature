@@ -3,6 +3,9 @@ Feature: Urbantz
   Scenario: Receive webhook for TasksAnnounced event
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/ld+json"
@@ -282,6 +285,9 @@ Feature: Urbantz
   Scenario: Receive webhook for TasksAnnounced event with multiple hubs
     Given the fixtures files are loaded:
       | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     And the store with name "Acme" is associated with Urbantz hub "61289572c2b7aab94f380d76"
@@ -573,9 +579,10 @@ Feature: Urbantz
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
-          "@id":"/api/tasks/1",
+          "@id":@string@,
           "@type":"Task",
-          "id":1,
+          "id":@integer@,
+          "type":"PICKUP",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/2",
@@ -588,7 +595,8 @@ Feature: Urbantz
             },
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": null
           },
           "comments":"Coopcycle\n\nCommande n° 1269-00099999991\n0 × bac(s)\n1.082 kg\n\n\n1.08 kg",
           "after":"@string@.isDateTime()",
@@ -597,13 +605,16 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages":[],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags":@array@,
+          "metadata": {"@*@": "@*@"}
         },
         "dropoff":{
-          "@id":"/api/tasks/2",
+          "@id":@string@,
           "@type":"Task",
-          "id":2,
+          "id":@integer@,
+          "type":"DROPOFF",
           "status":"TODO",
           "address":{
             "@id":"/api/addresses/4",
@@ -616,7 +627,8 @@ Feature: Urbantz
             },
             "streetAddress":"4 Rue Perrault, 44000 Nantes",
             "telephone":null,
-            "name":null
+            "name":null,
+            "description": "4ème étage"
           },
           "comments":"",
           "after":"@string@.isDateTime()",
@@ -625,9 +637,12 @@ Feature: Urbantz
           "doneBefore":"@string@.isDateTime()",
           "weight":1082,
           "packages": [],
+          "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "tour":null
+          "tags":@array@,
+          "metadata": {"@*@": "@*@"}
         },
+        "tasks":@array@,
         "trackingUrl": @string@
       }
       """

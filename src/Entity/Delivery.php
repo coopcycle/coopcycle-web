@@ -9,14 +9,22 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
+use AppBundle\Action\Delivery\Edit as EditDelivery;
+use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Entity\Edifact\EDIFACTMessage;
+use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -36,6 +44,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "openapi_context"={
  *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
  *       },
+ *       "input_formats"={"jsonld"={"application/ld+json"}},
  *       "security_post_denormalize"="is_granted('create', object)"
  *     },
  *     "check"={
@@ -57,7 +66,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "input"=DeliveryInput::class,
  *       "denormalization_context"={"groups"={"delivery_create_from_tasks"}},
  *       "security"="is_granted('ROLE_ADMIN')"
- *     }
+ *     },
+ *     "suggest_optimizations"={
+ *       "method"="POST",
+ *       "path"="/deliveries/suggest_optimizations",
+ *       "write"=false,
+ *       "status"=200,
+ *       "controller"=SuggestOptimizationsController::class,
+ *       "output"=OptimizationSuggestions::class,
+ *       "denormalization_context"={"groups"={"delivery_create"}},
+ *       "normalization_context"={"groups"={"optimization_suggestions"}, "api_sub_level"=true},
+ *       "security_post_denormalize"="is_granted('create', object)",
+ *       "openapi_context"={
+ *         "summary"="Suggests optimizations for a delivery",
+ *         "parameters"=Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
+ *       }
+ *     },
+ *     "deliveries_import_async"={
+ *       "method"="POST",
+ *       "path"="/deliveries/import_async",
+ *       "deserialize"=false,
+ *       "input_formats"={"csv"={"text/csv"}},
+ *       "controller"= BulkAsyncDelivery::class,
+ *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')"
+ *     },
  *   },
  *   itemOperations={
  *     "get"={
@@ -66,7 +98,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     "put"={
  *        "method"="PUT",
- *        "security"="is_granted('edit', object)"
+ *        "controller"=EditDelivery::class,
+ *        "security"="is_granted('edit', object)",
+ *        "denormalization_context"={"groups"={"delivery_create"}}
  *     },
  *     "pick"={
  *        "method"="PUT",
@@ -111,6 +145,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
     use PackagesAwareTrait;
+    use EDIFACTMessageAwareTrait;
 
     const VEHICLE_BIKE = 'bike';
     const VEHICLE_CARGO_BIKE = 'cargo_bike';
@@ -125,13 +160,19 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $vehicle = self::VEHICLE_BIKE;
 
     /**
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     private $store;
 
+    /**
+     * @var ?ArbitraryPrice
+     * @Groups({"delivery_create"})
+     */
+    private $arbitraryPrice;
+
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
         "name" => "delivery",
-        "in"=>"body",
+        "in" => "body",
         "schema" => [
             "type" => "object",
             "required" => ["dropoff"],
@@ -167,8 +208,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function addTask(Task $task, $position = null)
     {
         $task->setDelivery($this);
+        $taskCollection = parent::addTask($task, $position);
 
-        return parent::addTask($task, $position);
+        $deliveryPosition = $taskCollection->findTaskPosition($task);
+        $task->setMetadata('delivery_position', $deliveryPosition + 1); // we prefer it to be 1-indexed for user display
+
+        return $taskCollection;
     }
 
 
@@ -177,7 +222,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this->order;
     }
 
-    public function setOrder(OrderInterface $order)
+    public function setOrder(?OrderInterface $order)
     {
         $this->order = $order;
 
@@ -195,6 +240,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $totalWeight;
     }
 
+    /**
+     * @deprecated Set weight via Task::setWeight()
+     * @param $weight
+     * @return self
+     */
     public function setWeight($weight)
     {
         if (null !== $weight) {
@@ -264,56 +314,76 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return new self();
     }
 
+    public static function canCreateWithTasks(Task ...$tasks): bool
+    {
+        if (count($tasks) < 2) {
+            return false;
+        }
+
+        // the first task must be a pickup
+        if (!$tasks[0]->isPickup()) {
+            return false;
+        }
+
+        // the last task must be a dropoff
+        if (!$tasks[count($tasks) - 1]->isDropoff()) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function createWithTasks(Task ...$tasks)
     {
         $delivery = self::create();
-
-        $delivery->removeTask($delivery->getPickup());
-        $delivery->removeTask($delivery->getDropoff());
-
-        if (count($tasks) > 2) {
-
-            $delivery = $delivery->withTasks(...$tasks);
-
-        } else {
-
-            [ $pickup, $dropoff ] = $tasks;
-
-            $pickup->setType(Task::TYPE_PICKUP);
-            $pickup->setDelivery($delivery);
-
-            $dropoff->setType(Task::TYPE_DROPOFF);
-            $dropoff->setDelivery($delivery);
-
-            $pickup->setNext($dropoff);
-            $dropoff->setPrevious($pickup);
-
-            $delivery->addTask($pickup);
-            $delivery->addTask($dropoff);
-        }
-
+        $delivery->withTasks(...$tasks);
         return $delivery;
     }
 
     public function withTasks(Task ...$tasks)
     {
+        $this->removeTask($this->getPickup());
+        $this->removeTask($this->getDropoff());
+
+        // reset array keys/indices
         $this->items->clear();
 
-        $pickup = array_shift($tasks);
+        if (count($tasks) > 2) {
 
-        // Make sure the first task is a pickup
-        $pickup->setType(Task::TYPE_PICKUP);
+            $pickup = array_shift($tasks);
 
-        $this->addTask($pickup);
+            // Make sure the first task is a pickup
+            $pickup->setType(Task::TYPE_PICKUP);
 
-        foreach ($tasks as $dropoff) {
+            $this->addTask($pickup);
+
+            foreach ($tasks as $dropoff) {
+                $dropoff->setPrevious($pickup);
+                $this->addTask($dropoff);
+            }
+        } else {
+
+            [$pickup, $dropoff] = $tasks;
+
+            $pickup->setType(Task::TYPE_PICKUP);
+            $pickup->setNext($dropoff);
+
+            $dropoff->setType(Task::TYPE_DROPOFF);
             $dropoff->setPrevious($pickup);
+
+            $this->addTask($pickup);
             $this->addTask($dropoff);
         }
 
         return $this;
     }
 
+    /**
+     * @deprecated Set address via Task::setAddress()
+     * @param $pickupAddress
+     * @param $dropoffAddress
+     * @return self
+     */
     public static function createWithAddress($pickupAddress, $dropoffAddress)
     {
         $delivery = self::createWithDefaults();
@@ -359,6 +429,34 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this->getPickup()->isAssigned() && $this->getDropoff()->isAssigned();
     }
 
+    /**
+     * Assigns the courier to all tasks in the delivery
+     */
+    public function assignTo(User $user): void
+    {
+        $tasks = $this->getTasks();
+        array_walk(
+            $tasks,
+            function (Task $task) use ($user) {
+                $task->assignTo($user);
+            }
+        );
+    }
+
+    /**
+     * Unassigns the courier from all tasks in the delivery
+     */
+    public function unassign(): void
+    {
+        $tasks = $this->getTasks();
+        array_walk(
+            $tasks,
+            function (Task $task) {
+                $task->unassign();
+            }
+        );
+    }
+
     public function isCompleted()
     {
         foreach ($this->getTasks() as $task) {
@@ -398,6 +496,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $packages;
     }
 
+    /**
+     * @deprecated set quantity via Task::setPackageWithQuantity()
+     * @param Package $package
+     * @param $quantity
+     * @return void
+     */
     public function addPackageWithQuantity(Package $package, $quantity = 1)
     {
         if (0 === $quantity) {
@@ -441,6 +545,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $dropoff = self::createTaskObject($delivery->getDropoff());
         $order = self::createOrderObject($delivery->getOrder());
 
+        $emptyTaskObject = new \stdClass();
+        $emptyTaskObject->type = '';
+
         return [
             'distance' => $delivery->getDistance(),
             'weight' => $delivery->getWeight(),
@@ -449,6 +556,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
             'dropoff' => $dropoff,
             'packages' => new PackagesResolver($delivery),
             'order' => $order,
+            'task' => $emptyTaskObject,
         ];
     }
 
@@ -461,6 +569,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $this;
     }
 
+    /**
+     * @deprecated Set dropoff range via Task::setDoneAfter() and Task::setDoneBefore()
+     * @param \DateTime $after
+     * @param \DateTime $before
+     * @return $this
+     */
     public function setDropoffRange(\DateTime $after, \DateTime $before)
     {
         $this->getDropoff()
@@ -483,12 +597,12 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
     }
 
-    public static function toVroomShipment(Delivery $delivery): VroomShipment
+    public static function toVroomShipment(Delivery $delivery, $dropoff, $pickupIri, $dropoffIri): VroomShipment
     {
         $shipment = new VroomShipment();
 
-        $shipment->pickup = Task::toVroomJob($delivery->getPickup());
-        $shipment->delivery = Task::toVroomJob($delivery->getDropoff());
+        $shipment->pickup = Task::toVroomJob($delivery->getPickup(), $pickupIri);
+        $shipment->delivery = Task::toVroomJob($dropoff, $dropoffIri);
 
         return $shipment;
     }
@@ -509,5 +623,45 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function hasImages()
     {
         return count($this->getImages()) > 0;
+    }
+
+    public function getEdifactMessagesTimeline(): array
+    {
+        $messages = array_merge(...array_map(function (Task $task) {
+            return $task->getEdifactMessages()->toArray();
+        }, $this->getTasks()));
+        usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
+        return $messages;
+    }
+
+    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
+    {
+        $visitor->visitDelivery($this);
+    }
+
+    /**
+     * Get the value of arbitraryPrice
+     */
+    public function hasArbitraryPrice(): bool
+    {
+        return !is_null($this->arbitraryPrice);
+    }
+
+    /**
+     * Get the value of arbitraryPrice
+     */
+    public function getArbitraryPrice(): ?ArbitraryPrice
+    {
+        return $this->arbitraryPrice;
+    }
+
+    /**
+     * Set the value of arbitraryPrice
+     */
+    public function setArbitraryPrice(ArbitraryPrice $arbitraryPrice): self
+    {
+        $this->arbitraryPrice = $arbitraryPrice;
+
+        return $this;
     }
 }

@@ -47,7 +47,6 @@ final class StoreAddressesSubresourceDataProvider implements SubresourceDataProv
 
         $request = $this->requestStack->getCurrentRequest();
 
-        $addresses = [];
         if ($request->query->has('type') && 'dropoff' === $request->query->get('type')) {
 
             $qb = $this->doctrine->getRepository(Address::class)->createQueryBuilder('a');
@@ -65,6 +64,6 @@ final class StoreAddressesSubresourceDataProvider implements SubresourceDataProv
             return $qb->getQuery()->getResult();
         }
 
-        return $addresses;
+        return $store->getAddresses();
     }
 }

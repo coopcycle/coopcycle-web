@@ -34,7 +34,7 @@ class PayTest extends TestCase
 
         $order = new Order();
 
-        $request = Request::create('/foo');
+        $request = Request::create('/foo', content: '{}');
 
         $pay = new Pay(
             $orderManager->reveal(),

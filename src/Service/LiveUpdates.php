@@ -3,16 +3,15 @@
 namespace AppBundle\Service;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Domain\Order\Event as OrderEvent;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\SerializableEventInterface;
-use AppBundle\Domain\Task\Event as TaskEvent;
-use AppBundle\Entity\User;
+use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Message\TopBarNotification;
+use AppBundle\Security\UserManager;
+use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use phpcent\Client as CentrifugoClient;
-use Ramsey\Uuid\Uuid;
+use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Name\NamedMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -24,29 +23,20 @@ class LiveUpdates
 {
     use TokenStorageTrait;
 
-    private $userManager;
-    private $serializer;
-    private $translator;
-    private $centrifugoClient;
-    private $messageBus;
-    private $namespace;
+    protected $tokenStorage;
 
     public function __construct(
-        UserManagerInterface $userManager,
         TokenStorageInterface $tokenStorage,
-        SerializerInterface $serializer,
-        TranslatorInterface $translator,
-        CentrifugoClient $centrifugoClient,
-        MessageBusInterface $messageBus,
-        string $namespace)
+        private UserManager $userManager,
+        private SerializerInterface $serializer,
+        private TranslatorInterface $translator,
+        private CentrifugoClient $centrifugoClient,
+        private MessageBusInterface $messageBus,
+        private NotificationPreferences $notificationPreferences,
+        private LoggerInterface $realTimeMessageLogger,
+        private string $namespace)
     {
-        $this->userManager = $userManager;
         $this->tokenStorage = $tokenStorage;
-        $this->serializer = $serializer;
-        $this->translator = $translator;
-        $this->centrifugoClient = $centrifugoClient;
-        $this->messageBus = $messageBus;
-        $this->namespace = $namespace;
     }
 
     public function toAdmins($message, array $data = [])
@@ -81,8 +71,14 @@ class LiveUpdates
             'data' => $data
         ];
 
+        $channel = $this->getOrderChannelName($order);
+
+        $this->realTimeMessageLogger->info(sprintf("Publishing event '%s' on channel %s",
+            $payload['name'],
+            $channel));
+
         $this->centrifugoClient->publish(
-            $this->getOrderChannelName($order),
+            $channel,
             ['event' => $payload]
         );
     }
@@ -113,6 +109,13 @@ class LiveUpdates
             return $this->getEventsChannelName($user);
         }, $users);
 
+        $this->realTimeMessageLogger->info(sprintf("Broadcasting event '%s' on channels %s for users %s",
+            $payload['name'],
+            implode(', ', $centrifugoChannels),
+            implode(', ', array_map(function (UserInterface $user) {
+                return $user->getUserIdentifier();
+            }, $users))));
+
         // We use broadcast to reduce the number of HTTP requests
         $this->centrifugoClient->broadcast(
             $centrifugoChannels,
@@ -128,6 +131,16 @@ class LiveUpdates
      */
     private function createNotification($users, $message)
     {
+        $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
+
+        if ($message instanceof SilentEventInterface) {
+            return;
+        }
+
+        if (!$this->shouldNotifyEvent($messageName)) {
+            return;
+        }
+
         // Since we use Centrifugo the execution time to publish events has increased.
         // This is because for each event, it needs to send 3 HTTP requests.
         // To improve performance, we manage top bar notifications via an async job.
@@ -170,6 +183,17 @@ class LiveUpdates
     {
         $channel = $this->getEventsChannelName($user);
 
+        // This method is used only for 'notifications' and 'notifications:count' events at the moment
+        $this->realTimeMessageLogger->debug(sprintf("Publishing event '%s' on channel %s for user %s",
+            $payload['name'],
+            $channel,
+            $user instanceof UserInterface ? $user->getUserIdentifier() : $user));
+
         $this->centrifugoClient->publish($channel, ['event' => $payload]);
+    }
+
+    private function shouldNotifyEvent(string $messageName)
+    {
+        return $this->notificationPreferences->isEventEnabled($messageName);
     }
 }

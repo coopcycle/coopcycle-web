@@ -9,9 +9,8 @@ use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 
 class RestaurantInputDataTransformer implements DataTransformerInterface
 {
-    public function __construct(IriConverterInterface $iriConverter)
+    public function __construct(private readonly IriConverterInterface $iriConverter)
     {
-        $this->iriConverter = $iriConverter;
     }
 
     /**

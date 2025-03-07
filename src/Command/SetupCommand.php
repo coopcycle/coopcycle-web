@@ -2,11 +2,12 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Entity\CityZone;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\TaxCategory;
+use AppBundle\Geography\CityZoneImporter;
 use AppBundle\Message\CreateWebhookEndpoint;
 use AppBundle\MessageHandler\CreateWebhookEndpointHandler;
-use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Taxation\TaxesInitializer;
 use AppBundle\Sylius\Taxation\TaxesProvider;
@@ -26,7 +27,6 @@ use Sylius\Component\Channel\Repository\ChannelRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentMethod;
-use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
@@ -41,20 +41,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SetupCommand extends Command
 {
-    private $productRepository;
-    private $productManager;
-    private $productFactory;
-
-    private $productAttributeRepository;
-    private $productAttributeManager;
-
-    private $localeRepository;
-    private $localeFactory;
-
-    private $slugify;
-
-    private $locale;
-
     private $channels = [
         'web' => 'Web',
         'app' => 'App',
@@ -77,77 +63,42 @@ class SetupCommand extends Command
         'CLP',
         'HUF',
         'COP',
+        'GHS',
+        'CHF',
     ];
 
+    private array $locales;
+
     public function __construct(
-        ProductRepositoryInterface $productRepository,
-        ProductFactoryInterface $productFactory,
-        EntityManagerInterface $productManager,
-        RepositoryInterface $productAttributeRepository,
-        EntityManagerInterface $productAttributeManager,
-        RepositoryInterface $localeRepository,
-        FactoryInterface $localeFactory,
-        ChannelRepositoryInterface $channelRepository,
-        ChannelFactoryInterface $channelFactory,
-        RepositoryInterface $currencyRepository,
-        FactoryInterface $currencyFactory,
-        PromotionRepositoryInterface $promotionRepository,
-        FactoryInterface $promotionFactory,
-        CuisineProvider $cuisineProvider,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        TaxesProvider $taxesProvider,
-        FactoryInterface $taxCategoryFactory,
-        ManagerRegistry $doctrine,
-        SlugifyInterface $slugify,
-        TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator,
-        CreateWebhookEndpointHandler $createWebhookEndpointHandler,
-        string $locale,
-        string $country,
-        string $localeRegex)
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly ProductFactoryInterface $productFactory,
+        private readonly EntityManagerInterface $productManager,
+        private readonly RepositoryInterface $productAttributeRepository,
+        private readonly EntityManagerInterface $productAttributeManager,
+        private readonly RepositoryInterface $localeRepository,
+        private readonly FactoryInterface $localeFactory,
+        private readonly ChannelRepositoryInterface $channelRepository,
+        private readonly ChannelFactoryInterface $channelFactory,
+        private readonly RepositoryInterface $currencyRepository,
+        private readonly FactoryInterface $currencyFactory,
+        private readonly PromotionRepositoryInterface $promotionRepository,
+        private readonly FactoryInterface $promotionFactory,
+        private readonly CuisineProvider $cuisineProvider,
+        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private readonly TaxesProvider $taxesProvider,
+        private readonly ManagerRegistry $doctrine,
+        private readonly SlugifyInterface $slugify,
+        private readonly TranslatorInterface $translator,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly CreateWebhookEndpointHandler $createWebhookEndpointHandler,
+        private readonly CityZoneImporter $cityZoneImporter,
+        private readonly string $locale,
+        private readonly string $country,
+        private readonly string $localeRegex,
+        private readonly string $cityZonesUrl,
+        private readonly string $cityZonesProvider,
+        private readonly array $cityZonesOptions)
     {
-        $this->productRepository = $productRepository;
-        $this->productFactory = $productFactory;
-        $this->productManager = $productManager;
-
-        $this->productAttributeRepository = $productAttributeRepository;
-        $this->productAttributeManager = $productAttributeManager;
-
-        $this->localeRepository = $localeRepository;
-        $this->localeFactory = $localeFactory;
-
-        $this->channelRepository = $channelRepository;
-        $this->channelFactory = $channelFactory;
-
-        $this->currencyRepository = $currencyRepository;
-        $this->currencyFactory = $currencyFactory;
-
-        $this->promotionRepository = $promotionRepository;
-        $this->promotionFactory = $promotionFactory;
-
-        $this->cuisineProvider = $cuisineProvider;
-
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxCategoryFactory = $taxCategoryFactory;
-        $this->taxesProvider = $taxesProvider;
-
-        $this->paymentMethodRepository =
-            $doctrine->getRepository(PaymentMethod::class);
-
-        $this->doctrine = $doctrine;
-
-        $this->slugify = $slugify;
-
-        $this->translator = $translator;
-
-        $this->urlGenerator = $urlGenerator;
-
-        $this->createWebhookEndpointHandler = $createWebhookEndpointHandler;
-
-        $this->locale = $locale;
-        $this->country = $country;
-        $this->localeRegex = $localeRegex;
-
         parent::__construct();
     }
 
@@ -207,6 +158,11 @@ class SetupCommand extends Command
         $output->writeln('<info>Configuring Stripe webhook endpoint…</info>');
         $this->configureStripeWebhooks($output);
 
+        if (!empty($this->cityZonesUrl) && !empty($this->cityZonesProvider)) {
+            $output->writeln('<info>Configuring city zones…</info>');
+            $this->configureCityZones($output);
+        }
+
         return 0;
     }
 
@@ -263,6 +219,8 @@ class SetupCommand extends Command
 
     private function createSyliusPaymentMethods(OutputInterface $output)
     {
+        $paymentMethodRepository = $this->doctrine->getRepository(PaymentMethod::class);
+
         $methods = [
             [
                 'code' => 'CARD',
@@ -279,20 +237,30 @@ class SetupCommand extends Command
                 'countries' => ['fr'],
             ],
             [
-                'code' => 'EDENRED+CARD',
-                'name' => 'Edenred + Card',
-                'countries' => ['fr'],
-            ],
-            [
                 'code' => 'CASH_ON_DELIVERY',
                 'name' => 'Cash on delivery',
                 'countries' => ['mx','ar'],
+            ],
+            [
+                'code' => 'RESTOFLASH',
+                'name' => 'Restoflash',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'CONECS',
+                'name' => 'Conecs',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'SWILE',
+                'name' => 'Swile',
+                'countries' => ['fr'],
             ],
         ];
 
         foreach ($methods as $method) {
 
-            $paymentMethod = $this->paymentMethodRepository->findOneByCode($method['code']);
+            $paymentMethod = $paymentMethodRepository->findOneByCode($method['code']);
 
             if (null === $paymentMethod) {
 
@@ -310,7 +278,7 @@ class SetupCommand extends Command
                     $translation->setName($method['name']);
                 }
 
-                $this->paymentMethodRepository->add($paymentMethod);
+                $paymentMethodRepository->add($paymentMethod);
                 $output->writeln(sprintf('Creating payment method « %s »', $method['name']));
             } else {
                 $output->writeln(sprintf('Payment method « %s » already exists', $method['name']));
@@ -502,7 +470,41 @@ class SetupCommand extends Command
 
         foreach (['test', 'live'] as $mode) {
             $message = new CreateWebhookEndpoint($url, $mode);
-            call_user_func_array($this->createWebhookEndpointHandler, [ $message ]);
+            try {
+                $this->createWebhookEndpointHandler->__invoke($message);
+            } catch (Stripe\Exception\ApiErrorException $e) {
+                $output->writeln(sprintf('Error creating Stripe webhook; mode: %s; %s', $mode, $e->getMessage()));
+            }
         }
+    }
+
+    private function configureCityZones(OutputInterface $output)
+    {
+        $qb = $this->doctrine->getRepository(CityZone::class)->createQueryBuilder('cz');
+
+        // Useful for debugging
+        // $qb->delete()->getQuery()->execute();
+        // $this->doctrine->getManagerForClass(CityZone::class)->flush();
+
+        $count = $qb->select('COUNT(cz.id)')->getQuery()->getSingleScalarResult();
+
+        if ($count > 0) {
+            $output->writeln('City zones already configured');
+            return;
+        }
+
+        $cityZones = $this->cityZoneImporter->import(
+            $this->cityZonesUrl,
+            $this->cityZonesProvider,
+            $this->cityZonesOptions
+        );
+
+        $output->writeln(sprintf('Found %d city zones', count($cityZones)));
+
+        foreach ($cityZones as $cityZone) {
+            $this->doctrine->getManagerForClass(CityZone::class)->persist($cityZone);
+        }
+
+        $this->doctrine->getManagerForClass(CityZone::class)->flush();
     }
 }

@@ -7,10 +7,8 @@ use Twig\Environment as TwigEnvironment;
 
 class OrderTextEncoder implements EncoderInterface
 {
-    public function __construct(TwigEnvironment $templating)
-    {
-        $this->templating = $templating;
-    }
+    public function __construct(private TwigEnvironment $templating)
+    {}
 
     public function encode($data, $format, array $context = array())
     {

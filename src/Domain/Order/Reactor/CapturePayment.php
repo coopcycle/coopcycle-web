@@ -35,38 +35,24 @@ class CapturePayment
 
         $order = $event->getOrder();
 
-        $payment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+        $authorizedOnlinePayments = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
+            return $payment->getState() === PaymentInterface::STATE_AUTHORIZED
+                && !$payment->isCashOnDelivery();
+        });
 
-        // This happens when a B2B customer has placed an order
-        if (null === $payment && !$order->hasVendor()) {
+        if (count($authorizedOnlinePayments) === 0) {
             return;
         }
 
-        $isFreeOrder = null === $payment && $order->isFree();
-        $isCashOnDelivery = null !== $payment && $payment->isCashOnDelivery();
-
-        if ($isFreeOrder || $isCashOnDelivery) {
-            return;
-        }
-
-        $completedPayment =
-            $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
-
-        if (null !== $completedPayment && $completedPayment->isGiropay()) {
-            return;
-        }
-
-        // TODO Handle error if payment is NULL
-
-        try {
-
-            $this->gateway->capture($payment);
-
-        } catch (\Exception $e) {
-            // FIXME
-            // If we land here, there is a severe problem
-            // Maybe schedule a retry?
-            $this->logger->error($e->getMessage());
+        foreach ($authorizedOnlinePayments as $payment) {
+            try {
+                $this->gateway->capture($payment);
+            } catch (\Exception $e) {
+                // FIXME
+                // If we land here, there is a severe problem
+                // Maybe schedule a retry?
+                $this->logger->error($e->getMessage());
+            }
         }
     }
 }

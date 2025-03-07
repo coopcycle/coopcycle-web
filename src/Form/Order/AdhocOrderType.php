@@ -77,7 +77,6 @@ class AdhocOrderType extends AbstractType
 
             if ($options['with_payment'] && $pendingPayment) {
                 $form->add('payment', StripePaymentType::class, [
-                    'data' => $payment,
                     'mapped' => false,
                 ]);
             }

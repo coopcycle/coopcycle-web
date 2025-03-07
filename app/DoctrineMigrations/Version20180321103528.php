@@ -21,9 +21,9 @@ class Version20180321103528 extends AbstractMigration
         ]);
 
         $stmt = $this->connection->prepare('SELECT * FROM api_user');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($user = $stmt->fetch()) {
+        while ($user = $result->fetchAssociative()) {
 
             $username = $slugify->slugify($user['username']);
 

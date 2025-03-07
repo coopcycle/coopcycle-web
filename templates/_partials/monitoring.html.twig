@@ -1,0 +1,15 @@
+{% if app.environment == "prod" %}
+  <div id="sentry" data-dsn="{{ sentry_public_dsn }}"></div>
+  {{ encore_entry_script_tags('sentry') }}
+{% endif %}
+
+{% if app.environment == "prod" %}
+  <div id="datadog"
+       data-client-token="{{ datadog_client_token }}"
+       data-application-id="{{ datadog_application_id }}"
+       data-service="{{ instance_name }}"
+  ></div>
+{% endif %}
+
+{# inject on all environments (on dev: logs to console) #}
+{{ encore_entry_script_tags('datadog') }}

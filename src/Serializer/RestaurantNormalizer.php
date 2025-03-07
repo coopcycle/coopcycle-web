@@ -3,14 +3,17 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Assets\PlaceholderImageResolver;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Utils\PriceFormatter;
+use AppBundle\Utils\RestaurantDecorator;
 use Cocur\Slugify\SlugifyInterface;
 use Liip\ImagineBundle\Service\FilterService;
+use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,38 +25,20 @@ use Carbon\Carbon;
 
 class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $urlGenerator;
-    private $requestStack;
-    private $uploaderHelper;
-    private $currencyContext;
-    private $priceFormatter;
-    private $slugify;
-    private $locale;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        UrlGeneratorInterface $urlGenerator,
-        RequestStack $requestStack,
-        UploaderHelper $uploaderHelper,
-        CurrencyContextInterface $currencyContext,
-        PriceFormatter $priceFormatter,
-        SlugifyInterface $slugify,
-        FilterService $imagineFilter,
-        TranslatorInterface $translator,
-        string $locale)
-    {
-        $this->normalizer = $normalizer;
-        $this->urlGenerator = $urlGenerator;
-        $this->requestStack = $requestStack;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->currencyContext = $currencyContext;
-        $this->priceFormatter = $priceFormatter;
-        $this->slugify = $slugify;
-        $this->imagineFilter = $imagineFilter;
-        $this->translator = $translator;
-        $this->locale = $locale;
-    }
+        private ItemNormalizer $normalizer,
+        private UrlGeneratorInterface $urlGenerator,
+        private RequestStack $requestStack,
+        private UploaderHelper $uploaderHelper,
+        private CurrencyContextInterface $currencyContext,
+        private PriceFormatter $priceFormatter,
+        private SlugifyInterface $slugify,
+        private FilterService $imagineFilter,
+        private TranslatorInterface $translator,
+        private PlaceholderImageResolver $placeholderImageResolver,
+        private RestaurantDecorator $restaurantDecorator,
+        private string $locale)
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -74,7 +59,18 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
                 $data['image'] = $request->getUriForPath($imagePath);
             }
         } else {
-            $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+            try {
+                $data['image'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'restaurant_thumbnail');
+            } catch (NotLoadableException $e) {}
+        }
+
+        $bannerImagePath = $this->uploaderHelper->asset($object, 'bannerImageFile');
+        if (empty($bannerImagePath)) {
+            $data['bannerImage'] = $this->placeholderImageResolver->resolve(filter: 'restaurant_banner', obj: $object, referenceType: UrlGeneratorInterface::ABSOLUTE_URL);
+        } else {
+            try {
+                $data['bannerImage'] = $this->imagineFilter->getUrlOfFilteredImage($bannerImagePath, 'restaurant_banner');
+            } catch (NotLoadableException $e) {}
         }
 
         // Stop now if this is for SEO
@@ -109,9 +105,12 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
                 $this->translator->trans(LocalBusiness::getTransKeyForType($data['facets']['type']));
 
             $categories =
-                array_map(fn ($c) => $this->translator->trans(sprintf('homepage.%s', $c)), $data['facets']['category']);
+                array_map(fn ($c) => $this->translator->trans(sprintf('tags.%s', $c)), $data['facets']['category']);
             $data['facets']['category'] = $categories;
         }
+
+        $data['tags'] = $this->restaurantDecorator->getTags($object);
+        $data['badges'] = $this->restaurantDecorator->getBadges($object);
 
         return $data;
     }

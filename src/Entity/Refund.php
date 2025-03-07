@@ -17,7 +17,7 @@ class Refund
     private $liableParty;
     private $amount;
     private $comments = '';
-    private $data = [];
+    private array $data = [];
 
     /**
      * @return mixed

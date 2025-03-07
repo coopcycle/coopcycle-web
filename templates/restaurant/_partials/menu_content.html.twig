@@ -1,0 +1,29 @@
+<div class="restaurant-menu">
+  {% for section in sections %}
+    <h4 id={{ section.name|url_encode }} class="restaurant-menu__section-name">{{ section.name }}</h4>
+    {% if section.description is not empty %}
+      <div class="text-muted">{{ section.description }}</div>
+    {% endif %}
+    <div class="restaurant-menu__section">
+      {% for product in section.products %}
+        {% set product_images = [] %}
+        {% set images_16x9 = product.images|filter(image => image.ratio == '16:9') %}
+        {% if images_16x9|length > 0 %}
+          {% set product_images_filtered = images_16x9 %}
+        {% else %}
+          {% set product_images_filtered = product.images|filter(image => image.ratio == '1:1') %}
+        {% endif %}
+        {% for product_image in product_images_filtered %}
+          {% set imagine_filter = ('product_thumbnail_' ~ (product_image.ratio|replace({ ':': 'x' }))) %}
+          {% set product_images = product_images|merge([ coopcycle_asset(product_image, 'imageFile', imagine_filter, true, true) ]) %}
+        {% endfor %}
+        {% set card_product_image = null %}
+        {% set images_1x1 = product.images|filter(image => image.ratio == '1:1') %}
+        {% if images_1x1|length > 0 %}
+          {% set card_product_image = coopcycle_asset(images_1x1|first, 'imageFile', 'product_thumbnail', true, true) %}
+        {% endif %}
+        {% include 'components/product/card/menu_item.html.twig' %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>

@@ -4,11 +4,7 @@ namespace AppBundle\Sylius\Payment;
 
 class Context
 {
-    const METHOD_CARD              = 'card';
-    const METHOD_EDENRED           = 'edenred';
-    const METHOD_EDENRED_PLUS_CARD = 'edenred+card';
-
-    private $method = self::METHOD_CARD;
+    private $method = 'CARD';
 
     public function setMethod($method)
     {
@@ -18,5 +14,10 @@ class Context
     public function getMethod()
     {
         return $this->method;
+    }
+
+    public function hasMethod(): bool
+    {
+        return null !== $this->method;
     }
 }

@@ -3,23 +3,15 @@
 namespace AppBundle\Domain\Order\Reactor;
 
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
-use Symfony\Component\HttpFoundation\RequestStack;
+use AppBundle\Sylius\Cart\SessionStorage;
 
 class ClearSession
 {
-    private $requestStack;
-    private $sessionKeyName;
-
-    public function __construct(
-        RequestStack $requestStack,
-        $sessionKeyName)
-    {
-        $this->requestStack = $requestStack;
-        $this->sessionKeyName = $sessionKeyName;
-    }
+    public function __construct(private SessionStorage $storage)
+    {}
 
     public function __invoke(CheckoutSucceeded $event)
     {
-        $this->requestStack->getSession()->remove($this->sessionKeyName);
+        $this->storage->remove();
     }
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
+import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Line } from 'react-chartjs-2';
 import moment from 'moment'
 
@@ -21,7 +22,7 @@ const renderChart = ({ resultSet, error }) => {
   }
 
   const data = {
-    labels: resultSet.categories().map((c) => moment(c.category).format('MMMM')),
+    labels: resultSet.categories().map((c) => moment(c.x).format('MMMM')),
     datasets: resultSet.series().map((s, index) => ({
       label: 'Number of stores',
       data: s.series.map((r) => r.value),

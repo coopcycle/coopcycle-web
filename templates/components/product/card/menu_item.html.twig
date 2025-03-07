@@ -1,0 +1,39 @@
+{# TODO Skip if no variant is defined #}
+{% if product.enabled %}
+  <div class="menu-item">
+    <button
+      class="button-reset menu-item__inner-wrapper"
+      data-modal="product-details"
+      data-form-action="{{ path('restaurant_add_product_to_cart', { id: restaurant_id, code: product.code })|e('html_attr') }}"
+      data-product="{{ product|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Product')|json_encode|e('html_attr') }}"
+      data-product-images="{{ product_images|json_encode|e('html_attr') }}"
+      data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+{#      FIXME: data-product-options format is slightly different from the format returned by the API #}
+{#      switch to the API format to be able to shared code with the mobile app #}
+      data-product-options="{{ product.options|coopcycle_normalize('AppBundle\\Entity\\Sylius\\ProductOption', ['product_option'], 'json')|json_encode|e('html_attr') }}">
+      {% include 'components/product/card/menu_item_inner.html.twig' %}
+      {% if product.hasOptions() %}
+        <div class="menu-item__add-wrapper">
+          <div class="add-button">+</div>
+        </div>
+      {% endif %}
+    </button>
+    {% if not product.hasOptions() %}
+      <form
+        method="post"
+        action="{{ path('restaurant_add_product_to_cart', { id: restaurant_id, code: product.code }) }}"
+        data-product-simple
+        class="menu-item__add-wrapper menu-item__add-wrapper--active">
+        <button class="button-reset add-button" type="submit">
+          +
+        </button>
+      </form>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="menu-item menu-item--unavailable">
+    <a class="menu-item__inner-wrapper">
+      {% include 'components/product/card/menu_item_inner.html.twig' %}
+    </a>
+  </div>
+{% endif %}

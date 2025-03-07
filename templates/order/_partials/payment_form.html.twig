@@ -5,7 +5,7 @@
 
 <div class="modal fade" id="{{ refund_modal_id }}" tabindex="-1" role="dialog" aria-labelledby="{{ refund_modal_id }}-label">
   <div class="modal-dialog" role="document">
-    {{ form_start(payment_form, { attr: { class: 'modal-content' } }) }}
+    <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -15,20 +15,6 @@
         </h4>
       </div>
       <div class="modal-body">
-
-        {% if payment.method.code == 'EDENRED+CARD' %}
-        <div class="alert alert-warning">
-          <div class="mb-2">
-            <i class="fa fa-warning"></i>
-            <span>{{ 'form.payment.edenred_disclaimer'|trans }}</span>
-          </div>
-          <span>{{ 'form.payment.refund_breakdown'|trans({
-            '%card%': payment.getRefundableAmountForMethod('CARD')|price_format,
-            '%edenred%': payment.getRefundableAmountForMethod('EDENRED')|price_format
-          }) }}</span>
-        </div>
-        {% endif %}
-
         {% if payment_form.amount is defined %}
           {{ form_row(payment_form.amount) }}
         {% endif %}
@@ -47,6 +33,6 @@
           {{ form_widget(payment_form.refund, { attr: { class: 'btn btn-danger' } }) }}
         {% endif %}
       </div>
-    {{ form_end(payment_form) }}
+    </div>
   </div>
 </div>

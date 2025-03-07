@@ -3,11 +3,15 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Task;
+use AppBundle\LoopEat\Context as LoopeatContext;
+use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
@@ -30,6 +34,9 @@ class EmailManager
         RendererInterface $mjml,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
+        private LoopeatContextInitializer $loopeatContextInitializer,
+        private LoopeatContext $loopeatContext,
+        private LoggerInterface $logger,
         $transactionalAddress)
     {
         $this->mailer = $mailer;
@@ -65,6 +72,8 @@ class EmailManager
             $message = $message->html($body);
         }
 
+        $message->embedFromPath(__DIR__ . '/../../web/img/logo.png', 'logo', 'image/png');
+
         return $message;
     }
 
@@ -91,7 +100,11 @@ class EmailManager
 
         $message->to(...$addresses);
 
-        $this->mailer->send($message);
+        try {
+            $this->mailer->send($message);
+        } catch(\Exception $e) {
+            $this->logger->error(sprintf("Failed to send email: %s", $e->getMessage()));
+        }
     }
 
     /**
@@ -160,6 +173,10 @@ class EmailManager
 
     public function createOrderAcceptedMessage(OrderInterface $order)
     {
+        if ($order->isLoopeat()) {
+            $this->loopeatContextInitializer->initialize($order, $this->loopeatContext);
+        }
+
         $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
         $body = $this->mjml->render($this->templating->render('emails/order/accepted.mjml.twig', [
             'order' => $order,
@@ -217,6 +234,18 @@ class EmailManager
         $body = $this->mjml->render($this->templating->render('emails/admin_send_invitation.mjml.twig', [
             'user' => $invitation->getUser(),
             'invitation' => $invitation,
+        ]));
+
+        return $this->createHtmlMessageWithReplyTo($subject, $body);
+    }
+
+    public function createBusinessAccountInvitationMessage(Invitation $invitation, BusinessAccount $account)
+    {
+        $subject = $this->translator->trans('admin.send_invitation.subject', [], 'emails');
+        $body = $this->mjml->render($this->templating->render('emails/business_account_send_invitation.mjml.twig', [
+            'user' => $invitation->getUser(),
+            'invitation' => $invitation,
+            'account' => $account,
         ]));
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);

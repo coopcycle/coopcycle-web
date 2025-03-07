@@ -90,6 +90,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'cart', 'order_update']
     reusablePackagingPledgeReturn:
       groups: ['order', 'cart', 'order_update']
+    reusablePackagingQuantity:
+      groups: ['order', 'cart', 'order_update']
     takeaway:
       groups: ['order', 'order_minimal']
     fulfillmentMethod:
@@ -100,6 +102,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     paymentMethod:
       groups: ['order', 'order_update', 'order_minimal']
+    hasEdenredCredentials:
+      groups: ['cart', 'order', 'order_update']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
@@ -193,9 +197,28 @@ AppBundle\Entity\LocalBusiness\FulfillmentMethod:
     enabled:
       groups: ['restaurant']
 
-AppBundle\Entity\Vendor:
+AppBundle\Entity\Hub:
   attributes:
     name:
       groups: ['order', 'order_minimal']
     address:
       groups: ['order']
+
+AppBundle\Entity\Delivery\FailureReason:
+  attributes:
+    code:
+      groups: ['task']
+    description:
+      groups: ['task']
+
+Sylius\Component\Payment\Model\Payment:
+  attributes:
+    amount:
+      groups: ['payment', 'order_configure_payment', 'payment_details']
+    method:
+      groups: ['payment', 'order_configure_payment', 'payment_details']
+
+Sylius\Component\Payment\Model\PaymentMethod:
+  attributes:
+    code:
+      groups: ['payment', 'order_configure_payment', 'payment_details']

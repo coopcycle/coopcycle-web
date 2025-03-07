@@ -18,4 +18,9 @@ class Shipment
      * @var Job
      */
     public $delivery;
+
+    /**
+     * @var string
+     */
+    public $description;
 }

@@ -1,0 +1,4 @@
+restaurant.telephone.notBlank: Írd be a telefonszámod
+restaurant.contract.notValid: Add meg a kiszállítási szerződés feltételeit (adminisztrátori
+  jogosultság szükséges)
+restaurant.openingHours.notBlank: Válassz ki legalább egy nyitva tartási időpontot

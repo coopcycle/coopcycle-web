@@ -19,8 +19,8 @@ class Version20180225183656 extends AbstractMigration
 
         $stmt = $this->connection->prepare('SELECT o.id AS order_id, d.duration, d.date FROM order_ o JOIN delivery d ON o.id = d.order_id');
 
-        $stmt->execute();
-        while ($row = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($row = $result->fetchAssociative()) {
 
             $duration = $row['duration'];
 

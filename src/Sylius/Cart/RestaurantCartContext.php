@@ -2,67 +2,36 @@
 
 namespace AppBundle\Sylius\Cart;
 
+use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityNotFoundException;
+use Psr\Log\LoggerInterface;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
-use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
 final class RestaurantCartContext implements CartContextInterface
 {
-    private $session;
-
-    private $orderRepository;
-
-    private $orderFactory;
-
-    private $sessionKeyName;
-
-    /**
-     * @var ChannelContextInterface
-     */
-    private ChannelContextInterface $channelContext;
-
-    /**
-     * @var AuthorizationCheckerInterface
-     */
-    private AuthorizationCheckerInterface $authorizationChecker;
-
-    private TokenStorageInterface $tokenStorage;
-
     /** @var OrderInterface|null */
     private $cart;
 
-    /**
-     * @param SessionInterface $session
-     * @param OrderRepositoryInterface $orderRepository
-     * @param string $sessionKeyName
-     */
     public function __construct(
-        SessionInterface $session,
-        OrderRepositoryInterface $orderRepository,
-        FactoryInterface $orderFactory,
-        string $sessionKeyName,
-        ChannelContextInterface $channelContext,
-        RestaurantResolver $resolver,
-        AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage)
-    {
-        $this->session = $session;
-        $this->orderRepository = $orderRepository;
-        $this->orderFactory = $orderFactory;
-        $this->sessionKeyName = $sessionKeyName;
-        $this->channelContext = $channelContext;
-        $this->resolver = $resolver;
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
-    }
+        private OrderFactory $orderFactory,
+        private SessionStorage $storage,
+        private ChannelContextInterface $channelContext,
+        private RestaurantResolver $resolver,
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private Security $security,
+        private BusinessContext $businessContext,
+        private LoggerInterface $checkoutLogger,
+        private LoggingUtils $loggingUtils)
+    {}
 
     /**
      * {@inheritdoc}
@@ -75,22 +44,29 @@ final class RestaurantCartContext implements CartContextInterface
 
         $cart = null;
 
-        if ($this->session->has($this->sessionKeyName)) {
+        if ($this->storage->has()) {
 
-            $cart = $this->orderRepository->findCartById($this->session->get($this->sessionKeyName));
+            $cart = $this->storage->get();
 
             if (null === $cart || $cart->getChannel()->getCode() !== $this->channelContext->getChannel()->getCode()) {
-                $this->session->remove($this->sessionKeyName);
+                $this->storage->remove();
             } else {
                 try {
-                    if (!$cart->isMultiVendor() && !$cart->getVendor()->getRestaurant()->isEnabled()
-                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor()->getRestaurant())) {
+                    if (!$cart->isMultiVendor() && !$cart->getRestaurant()->isEnabled()
+                        && !$this->authorizationChecker->isGranted('edit', $cart->getVendor())) {
+
+                        $this->checkoutLogger->info('cart is not valid any more',
+                            ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
+
                         $cart = null;
-                        $this->session->remove($this->sessionKeyName);
+                        $this->storage->remove();
                     }
                 } catch (EntityNotFoundException $e) {
+                    $this->checkoutLogger->info(sprintf('error: %s', $e->getMessage()),
+                        ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
+
                     $cart = null;
-                    $this->session->remove($this->sessionKeyName);
+                    $this->storage->remove();
                 }
             }
 
@@ -100,9 +76,11 @@ final class RestaurantCartContext implements CartContextInterface
             if (null !== $cart) {
                 if ($restaurant = $this->resolver->resolve()) {
                     if (!$this->resolver->accept($cart)) {
+                        $this->checkoutLogger->info(sprintf(' cart is not accepted by this restaurant: %d', $restaurant->getId()),
+                            ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
+
                         $cart->clearItems();
                         $cart->setShippingTimeRange(null);
-                        $cart->setRestaurant($restaurant);
                     }
                 }
             }
@@ -118,11 +96,23 @@ final class RestaurantCartContext implements CartContextInterface
             }
 
             $cart = $this->orderFactory->createForRestaurant($restaurant);
+
+            $this->checkoutLogger->info(sprintf('Order (cart) object created (created_at = %s)', $cart->getCreatedAt()->format(\DateTime::ATOM)),
+                ['file' => 'RestaurantCartContext', 'order' => $this->loggingUtils->getOrderId($cart)]);
         }
 
-        if (is_null($cart->getCustomer())) {
-            $token = $this->tokenStorage->getToken();
-            $cart->setCustomer($token?->getUser()?->getCustomer());
+        if (null === $cart->getCustomer()) {
+            if ($user = $this->security->getUser()) {
+                $cart->setCustomer($user->getCustomer());
+            }
+        }
+
+        if ($this->businessContext->isActive()) {
+            $cart->setBusinessAccount($this->businessContext->getBusinessAccount());
+            // Set default address
+            if (null === $cart->getShippingAddress()) {
+                $cart->setShippingAddress($this->businessContext->getShippingAddress());
+            }
         }
 
         $this->cart = $cart;

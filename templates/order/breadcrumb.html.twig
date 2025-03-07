@@ -11,8 +11,8 @@
 
 <ol class="multi-step-list mb-5">
   <li class="multi-step-item">
-    <a class="item-wrap" href="{{ path((order.vendor.isHub() ? 'hub' : 'restaurant'), {
-        id: (order.vendor.isHub() ? order.vendor.hub.id : order.vendor.restaurant.id),
+    <a class="item-wrap" href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
+        id:   order.vendor.id,
         slug: order.vendor.name|slugify
       }) }}">
       <span class="item-title">

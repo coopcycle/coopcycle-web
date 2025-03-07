@@ -1,17 +1,17 @@
 import _ from 'lodash'
 import L from 'leaflet'
-import 'leaflet-polylinedecorator'
 import 'leaflet.markercluster'
 import 'leaflet-area-select'
 import 'leaflet-swoopy'
-import React from 'react'
-import { render } from 'react-dom'
-import ColorHash from 'color-hash'
+import React, { StrictMode } from 'react'
 
-import MapHelper from '../../MapHelper'
+import MapHelper, { mapColorHash } from '../../MapHelper'
 import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
+import { isMarkerInsidePolygon } from '../utils'
+import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -19,21 +19,21 @@ const tagsColor = tags => {
   return tag.color
 }
 
-const taskColor = (task, selected, useAvatarColors) => {
+const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}, tourPolylinesEnabled = {}, taskIdToTourIdMap, tourIdToColorMap) => {
 
   if (selected) {
     return '#EEB516'
-  }
-
-  if (task.group && task.group.tags.length > 0) {
+  } else if (taskIdToTourIdMap.get(task['@id']) && tourPolylinesEnabled[taskIdToTourIdMap.get(task['@id'])]) {
+    return tourIdToColorMap.get(taskIdToTourIdMap.get(task['@id']))
+  } else if (task.isAssigned && (useAvatarColors || polylineEnabled[task.assignedTo])) {
+    return mapColorHash.hex(task.assignedTo)
+  } else if (task.group && task.group.tags.length > 0) {
     return tagsColor(task.group.tags)
-  }
-
-  if (task.tags.length > 0) {
+  } else if (task.tags.length > 0) {
     return tagsColor(task.tags)
+  } else {
+    return '#777'
   }
-
-  return task.isAssigned && useAvatarColors ? colorHash.hex(task.assignedTo) : '#777'
 }
 
 const taskIcon = task => {
@@ -65,10 +65,6 @@ const polylineOptions = {
   opacity: 0.7
 }
 
-const colorHash = new ColorHash({
-  hash: 'bkdr'
-})
-
 export default class MapProxy {
 
   constructor(map, options) {
@@ -93,6 +89,8 @@ export default class MapProxy {
     this.drawPolylineLayerGroup.addTo(this.map)
 
     this.onEditClick = options.onEditClick
+    this.selectTaskOnMarkerClick = options.selectTaskOnMarkerClick
+    this.toggleTaskOnMarkerClick = options.toggleTaskOnMarkerClick
 
     this.tasksLayerGroup = new L.LayerGroup()
     this.tasksLayerGroup.addTo(this.map)
@@ -157,43 +155,68 @@ export default class MapProxy {
       })
     })
 
-    this.useAvatarColors = options.useAvatarColors
+    this.map.on('pm:create', ({layer}) => {
 
+      const polygonLayer = layer
+      L.Util.requestAnimFrame(() => {
+        const markers = []
+        this.map.eachLayer((marker) => {
+          if (!_.includes(Array.from(this.taskMarkers.values()), marker)) {
+            return
+          }
+          if (isMarkerInsidePolygon(marker, polygonLayer)) {
+            markers.push(marker)
+          }
+        })
+        options.onMarkersSelected(markers)
+        map.removeLayer(polygonLayer)
+        map.pm.disableDraw()
+      })
+    })
   }
 
-  addTask(task, selected = false, isRestaurantAddress = false) {
+  addTask(task, useAvatarColors, selected = false, isRestaurantAddress = false, polylineEnabled = {}, tourPolylinesEnabled = {}, taskIdToTourIdMap, tourIdToColorMap) {
 
     let marker = this.taskMarkers.get(task['@id'])
 
-    const color = taskColor(task, selected, this.useAvatarColors)
+    const color = taskColor(task, selected, useAvatarColors, polylineEnabled, tourPolylinesEnabled, taskIdToTourIdMap, tourIdToColorMap)
     const iconName = taskIcon(task)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
-    let popupComponent = this.taskPopups.get(task['@id'])
+    let popupComponent
 
     if (!marker) {
 
       marker = MapHelper.createMarker(coords, iconName, 'marker', color)
 
       const el = document.createElement('div')
+      const root = createRoot(el)
 
-      popupComponent = React.createRef()
+      this.taskMarkers.set(task['@id'], marker)
 
-      const cb = () => {
-        this.taskMarkers.set(task['@id'], marker)
+      marker.bindPopup(() => {
+        popupComponent = React.createRef()
+        root.render(
+          <StrictMode>
+            <LeafletPopupContent
+              ref={ popupComponent }
+              task={ task }
+              onEditClick={ this.onEditClick }
+            />
+          </StrictMode>
+          )
         this.taskPopups.set(task['@id'], popupComponent)
-      }
+        return el
+      }).addTo(this.map)
 
-      render(<LeafletPopupContent
-        task={ task }
-        ref={ popupComponent }
-        onEditClick={ () => this.onEditClick(task) } />, el, cb)
-
-      const popup = L.popup()
-        .setContent(el)
-
-      marker.bindPopup(popup)
+      marker.on('click', (e) => {
+        if(e.originalEvent.ctrlKey) { // e is a leaflet 'click' event
+          this.toggleTaskOnMarkerClick(task)
+        } else {
+          this.selectTaskOnMarkerClick(task['@id'])
+        }
+      })
 
     } else {
 
@@ -210,6 +233,7 @@ export default class MapProxy {
         'textColor',
         'borderColor',
       ])
+
       if (!_.isEqual(currentOpts, newOpts)) {
         L.Util.setOptions(marker.options.icon, newOpts)
         marker.setIcon(marker.options.icon)
@@ -218,9 +242,12 @@ export default class MapProxy {
       if (!marker.getLatLng().equals(latLng)) {
         marker.setLatLng(latLng).update()
       }
+    }
 
+    popupComponent = this.taskPopups.get(task['@id'])
+
+    if (popupComponent && popupComponent.current) { // ref.current may be null, but I didn't understood why, maybe when the popup unmounts (?)
       popupComponent.current.updateTask(task)
-
     }
 
     L.Util.setOptions(marker, { task })
@@ -316,79 +343,32 @@ export default class MapProxy {
     return layerGroup
   }
 
-  setPolylineAsTheCrowFlies(username, polyline) {
+  setPolylineAsTheCrowFlies(username, polyline, color) {
+
     const layerGroup = this.getPolylineAsTheCrowFliesLayerGroup(username)
     layerGroup.clearLayers()
 
-    const color = colorHash.hex(username)
-
-    const layer = L.polyline(polyline, {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
-  setPolyline(username, polyline) {
+  setPolyline(username, polyline, color) {
 
     const layerGroup = this.getPolylineLayerGroup(username)
     layerGroup.clearLayers()
 
-    const color = colorHash.hex(username)
-
-    const layer = L.polyline(MapHelper.decodePolyline(polyline), {
-      ...polylineOptions,
-      color,
-    })
-
-    // Add arrows to polyline
-    const decorator = L.polylineDecorator(layer, {
-      patterns: [
-        {
-          offset: '5%',
-          repeat: '12.5%',
-          symbol: L.Symbol.arrowHead({
-            pixelSize: 12,
-            polygon: false,
-            pathOptions: {
-              stroke: true,
-              color,
-              opacity: 0.7
-            }
-          })
-        }
-      ]
-    })
-
-    layerGroup.addLayer(layer)
-    layerGroup.addLayer(decorator)
+    layerGroup.addLayer(
+      MapHelper.createPolylineWithArrows(polyline, color)
+    )
   }
 
   showPolyline(username, style = 'normal') {
     if (style === 'as_the_crow_flies') {
+      this.getPolylineLayerGroup(username).removeFrom(this.map)
       this.getPolylineAsTheCrowFliesLayerGroup(username).addTo(this.map)
     } else {
+      this.getPolylineAsTheCrowFliesLayerGroup(username).removeFrom(this.map)
       this.getPolylineLayerGroup(username).addTo(this.map)
     }
   }
@@ -510,34 +490,5 @@ export default class MapProxy {
 
   hideNext() {
     this.swoopyLayerGroup.clearLayers()
-  }
-
-  setUseAvatarColors(useAvatarColors) {
-
-    this.useAvatarColors = useAvatarColors
-
-    this.taskMarkers.forEach((marker) => {
-
-      const task = marker.options.task
-      const color = taskColor(task, false, useAvatarColors)
-
-      const newOpts = {
-        textColor: color,
-        borderColor: color,
-      }
-      const currentOpts = _.pick(marker.options.icon.options, [
-        'textColor',
-        'borderColor',
-      ])
-
-      if (!_.isEqual(currentOpts, newOpts)) {
-        L.Util.setOptions(marker.options.icon, newOpts)
-        marker.setIcon(marker.options.icon)
-      }
-
-    })
-
-    window.sessionStorage.setItem('use_avatar_colors', JSON.stringify(useAvatarColors))
-
   }
 }

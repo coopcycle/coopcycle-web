@@ -29,6 +29,7 @@ class ExpressionLanguageRuntime implements RuntimeExtensionInterface
                 'dropoff',
                 'packages',
                 'order',
+                'task',
             ]);
 
         } catch (SyntaxError $e) {

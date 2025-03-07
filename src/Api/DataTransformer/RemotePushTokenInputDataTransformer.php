@@ -13,10 +13,11 @@ class RemotePushTokenInputDataTransformer implements DataTransformerInterface
 {
     use TokenStorageTrait;
 
-    public function __construct(TokenStorageInterface $tokenStorage, EntityManagerInterface $objectManager)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        private readonly EntityManagerInterface $objectManager)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->objectManager = $objectManager;
     }
 
     /**

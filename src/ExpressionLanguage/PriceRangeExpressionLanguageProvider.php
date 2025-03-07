@@ -16,14 +16,19 @@ class PriceRangeExpressionLanguageProvider implements ExpressionFunctionProvider
             // FIXME Need to test compilation
         };
 
-        $evaluator = function ($arguments, $value, $price, $size, $over) {
+        $evaluator = function ($arguments, $value, $price, $step, $threshold): int {
 
             if (!$value) {
 
                 return 0;
             }
 
-            return (int) ceil(($value - $over) / $size) * $price;
+            if ($value < $threshold) {
+
+                return 0;
+            }
+
+            return (int) ceil(($value - $threshold) / $step) * $price;
         };
 
         return array(

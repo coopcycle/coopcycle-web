@@ -1,0 +1,50 @@
+{% extends "deliveries.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.failureSet.title'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+  {{ parent() }}
+  <li>{% trans %}adminDashboard.failureSet.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+  <div class="text-right mb-4">
+    <a class="btn btn-success" href="{{ path('admin_deliveries_failures_failurereasonset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.failureSet.createNew{% endtrans %}</a>
+  </div>
+  <table class="table">
+    <tbody>
+    {% if failureReasonSets|length > 0 %}
+      {% for failureReasonSet in failureReasonSets %}
+        <tr>
+          <td><a href="{{ path('admin_deliveries_failures_failurereasonset', { id: failureReasonSet.id }) }}">{{ failureReasonSet.name }}</a></td>
+          <td class="text-right">
+            <form method="post" id="delete_failure_{{ failureReasonSet.id }}" action="{{ path('admin_failures_delete', { id: failureReasonSet.id }) }}">
+            </form>
+            <a href="#" onclick="deleteFailureSet('delete_failure_{{ failureReasonSet.id }}')">
+               <i class="fa fa-trash text-danger"></i>
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-info">
+        {% trans %}adminDashboard.failureSet.nofailureSet{% endtrans %}
+      </div>
+    {% endif %}
+    </tbody>
+  </table>
+{% endblock %}
+
+
+
+{% block scripts %}
+  <script>
+    window.deleteFailureSet = function(id) {
+      if (confirm('{% trans %}basics.are_you_sure{% endtrans %}')) {
+        document.getElementById(id).submit()
+      }
+    }
+  </script>
+{% endblock %}

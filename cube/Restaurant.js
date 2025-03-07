@@ -3,8 +3,12 @@ cube(`Restaurant`, {
 
   joins: {
     OrderVendor: {
-      relationship: `hasMany`,
+      relationship: `one_to_many`,
       sql: `${Restaurant}.id = ${OrderVendor}.restaurant_id`
+    },
+    Hub: {
+      relationship: `one_to_one`,
+      sql: `${Restaurant}.hub_id = ${Hub}.id`
     }
   },
 

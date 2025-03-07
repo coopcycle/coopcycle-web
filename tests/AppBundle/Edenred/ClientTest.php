@@ -69,7 +69,10 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 3800,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 3800,
+                    ]
                 ]
             ]))
         );
@@ -77,7 +80,7 @@ class ClientTest extends TestCase
         $this->assertEquals(3800, $this->client->getBalance($customer));
     }
 
-    public function testSplitAmounts()
+    public function testGetMaxAmount()
     {
         $order = $this->prophesize(Order::class);
 
@@ -99,18 +102,18 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 3800,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 3800,
+                    ]
                 ]
             ]))
         );
 
-        $amounts = $this->client->splitAmounts($order->reveal());
-
-        $this->assertEquals(2650, $amounts['edenred']);
-        $this->assertEquals(350, $amounts['card']);
+        $this->assertEquals(2650, $this->client->getMaxAmount($order->reveal()));
     }
 
-    public function testSplitAmountsFullEdenred()
+    public function testGetMaxAmountFullEdenred()
     {
         $order = $this->prophesize(Order::class);
 
@@ -132,15 +135,15 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 3800,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 3800,
+                    ]
                 ]
             ]))
         );
 
-        $amounts = $this->client->splitAmounts($order->reveal());
-
-        $this->assertEquals(3000, $amounts['edenred']);
-        $this->assertEquals(0, $amounts['card']);
+        $this->assertEquals(3000, $this->client->getMaxAmount($order->reveal()));
     }
 
     public function testSplitAmountsWithRemaingingEdenredAmount()
@@ -165,14 +168,14 @@ class ClientTest extends TestCase
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
-                    'available_amount' => 1200,
+                    [
+                        'product_class' => 'ETR',
+                        'available_amount' => 1200
+                    ]
                 ]
             ]))
         );
 
-        $amounts = $this->client->splitAmounts($order->reveal());
-
-        $this->assertEquals(1200, $amounts['edenred']);
-        $this->assertEquals(1800, $amounts['card']);
+        $this->assertEquals(1200, $this->client->getMaxAmount($order->reveal()));
     }
 }

@@ -1,6 +1,7 @@
 {% extends "profile.html.twig" %}
 
 {% block content %}
+<div data-turbo="true">
 <turbo-frame id="notifications">
   <form action="{{ path('profile_notifications_remove') }}" method="post">
     <div class="d-flex justify-content-start align-items-center">
@@ -45,10 +46,10 @@
     </turbo-frame>
   </form>
 </turbo-frame>
+</div>
 {% endblock %}
 
 {% block scripts %}
-  {{ encore_entry_script_tags('app') }}
   <script>
     const originalNotificationRemoveBtnLabel = $('#notifications-remove-btn').val();
 

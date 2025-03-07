@@ -176,7 +176,14 @@ class GeofencingCommand extends Command
 
                     $customer = $order->getCustomer();
 
-                    if (!$customer->hasUser()) {
+                    // customer may not be set depending on how the order was created
+                    if (is_null($customer) || !$customer->hasUser()) {
+                        return;
+                    }
+
+                    // do not send geofencing notif if an admin/dispatcher placed the order on behalf of the shop owner or customer
+                    // https://github.com/coopcycle/coopcycle-web/issues/4247
+                    if ($customer->getUser()->hasRole('ROLE_DISPATCHER')) {
                         return;
                     }
 
@@ -205,6 +212,7 @@ class GeofencingCommand extends Command
             );
 
         } catch (RedisException $e) {
+            var_dump($e->getMessage());
             $this->logMessage($e->getMessage());
         }
 

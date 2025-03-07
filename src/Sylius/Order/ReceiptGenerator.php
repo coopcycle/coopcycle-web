@@ -17,6 +17,8 @@ use Twig\Environment as TwigEnvironment;
 
 class ReceiptGenerator
 {
+    private Filesystem $filesystem;
+
     public function __construct(
         TwigEnvironment $twig,
         HttpClientInterface $browserlessClient,
@@ -85,13 +87,13 @@ class ReceiptGenerator
         return $receipt;
     }
 
-    public function generate(OrderInterface $order, $filename): bool
+    public function generate(OrderInterface $order, $filename)
     {
-        if ($this->filesystem->has($filename)) {
+        if ($this->filesystem->fileExists($filename)) {
             $this->filesystem->delete($filename);
         }
 
-        return $this->filesystem->write($filename, $this->render($order));
+        $this->filesystem->write($filename, $this->render($order));
     }
 
     public function render(OrderInterface $order): string
@@ -105,7 +107,7 @@ class ReceiptGenerator
         $html = $this->twig->render('order/receipt.pdf.twig', [
             'receipt'      => $order->getReceipt(),
             'order_number' => $order->getNumber(),
-            'payment'      => $order->getLastPayment(),
+            'payments'     => $order->getPayments(),
             'restaurant'   => $order->getRestaurant(),
             'locale'       => $this->locale,
         ]);

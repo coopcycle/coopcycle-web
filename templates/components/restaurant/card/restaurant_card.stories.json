@@ -1,0 +1,69 @@
+{
+  "title": "Foodtech/1. Restaurant/1. Card",
+  "parameters": {
+    "server": {
+      "id": "restaurant_card"
+    }
+  },
+  "args": {},
+  "argTypes": {
+    "name": { "control": "text", "description": "Restaurant name" },
+    "description": {
+      "control": "text",
+      "description": "Restaurant description"
+    },
+    "url": { "control": "text", "description": "Restaurant URL" },
+    "image": { "control": "text", "description": "Restaurant logo" },
+    "address": { "control": "text", "description": "Restaurant address" },
+    "should_show_pre_order": {
+      "control": "boolean",
+      "description": "If the restaurant is in pre-order status"
+    },
+    "fulfillment_timing_url": {
+      "control": "text",
+      "description": "Restaurant timing url"
+    },
+    "tags": {
+      "control": "array",
+      "description": "Restaurant tags"
+    }
+  },
+  "badges": {
+    "control": "select",
+    "options": ["exclusive", "zero-waste", "edenred", "vytal", "new"],
+    "description": "Restaurant badges"
+  },
+  "banner_image": {
+    "control": "text",
+    "description": "Restaurant banner"
+  },
+  "tags": ["autodocs"],
+  "stories": [
+    {
+      "name": "Basic",
+      "args": {
+        "name": "Lorem ipsum",
+        "description": "Lorem ipsumLorem ipsum Lorem ipsumLorem ipsumLorem ipsum Lorem ipsum",
+        "url": "https://localhost/fr/restaurant/1-acme",
+        "image": "https://img.logoipsum.com/300.png",
+        "address": "1, rue de Rivoli",
+        "should_show_pre_order": false,
+        "fulfillment_timing_url": "https://localhost/fr/restaurant/1-acme/timing",
+        "tags": ["italian", "pizza"],
+        "badges": [],
+        "banner_image": "https://source.unsplash.com/MQUqbmszGGM"
+      }
+    },
+    {
+      "name": "Without values"
+    },
+    {
+      "name": "Badge",
+      "args": { "badges": ["exclusive"] }
+    },
+    {
+      "name": "Pre-order",
+      "args": { "should_show_pre_order": true }
+    }
+  ]
+}

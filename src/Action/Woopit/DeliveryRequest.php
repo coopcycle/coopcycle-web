@@ -8,26 +8,26 @@ use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumberUtil;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class DeliveryRequest
 {
     use CreateDeliveryTrait;
 
-    private $deliveryManager;
-    private $geocoder;
-
     public function __construct(
-        DeliveryManager $deliveryManager,
-        Geocoder $geocoder,
-        Hashids $hashids12,
-        EntityManagerInterface $entityManager,
-        PhoneNumberUtil $phoneNumberUtil,
-        ValidatorInterface $checkDeliveryValidator)
+        private DeliveryManager $deliveryManager,
+        private Geocoder $geocoder,
+        private Hashids $hashids12,
+        private EntityManagerInterface $entityManager,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private ValidatorInterface $checkDeliveryValidator,
+        private UrlGeneratorInterface $urlGenerator)
     {
         $this->deliveryManager = $deliveryManager;
         $this->geocoder = $geocoder;
@@ -49,7 +49,7 @@ class DeliveryRequest
                 "reasons" => [
                     "REFUSED_EXCEPTION"
                 ],
-                "comments" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+                "comment" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
             ], 202);
         }
 
@@ -93,6 +93,31 @@ class DeliveryRequest
 
         $data->deliveryObject = $delivery;
         $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
+
+        $dropoff = $delivery->getDropoff();
+
+        foreach ($dropoff->getPackages() as $package) {
+
+            $parcelId = sprintf('pkg_%s', $this->hashids12->encode($package->getId()));
+
+            $data->parcels[] = [
+                'id' => $parcelId,
+            ];
+
+            $barcodes = BarcodeUtils::getBarcodesFromPackage($package);
+            foreach ($barcodes as $i => $barcode) {
+
+                $barcodeToken = BarcodeUtils::getToken($barcode);
+
+                $data->labels[] = [
+                    'id' => sprintf('lbl_%s', $this->hashids12->encode($dropoff->getId(), $package->getId(), $i)),
+                    'type' => 'url',
+                    'mode' => 'pdf',
+                    'value' => $this->urlGenerator->generate('task_label_pdf', ['code' => $barcode, 'token' => $barcodeToken], UrlGeneratorInterface::ABSOLUTE_URL),
+                    'parcelId' => $parcelId,
+                ];
+            }
+        }
 
         return $data;
     }

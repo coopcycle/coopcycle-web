@@ -16,13 +16,8 @@ class SearchDeliveriesSubscriber implements EventSubscriber
 {
     private $deliveries = [];
 
-    public function __construct(
-        MessageBusInterface $messageBus,
-        LoggerInterface $logger)
-    {
-        $this->messageBus = $messageBus;
-        $this->logger = $logger;
-    }
+    public function __construct(private MessageBusInterface $messageBus)
+    {}
 
     public function getSubscribedEvents()
     {

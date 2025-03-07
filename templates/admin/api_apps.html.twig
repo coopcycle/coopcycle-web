@@ -1,5 +1,9 @@
 {% extends "deliveries.html.twig" %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.api.title'|trans) }}
+{% endblock %}
+
 {% block breadcrumb %}
 <li><a href="{{ path('admin_api_apps') }}">{{ 'api_apps.breadcrumb'|trans }}</a></li>
 {% endblock %}

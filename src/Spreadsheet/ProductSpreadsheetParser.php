@@ -3,7 +3,6 @@
 namespace AppBundle\Spreadsheet;
 
 use AppBundle\Entity\Sylius\Product;
-use League\Flysystem\File;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -83,21 +82,6 @@ class ProductSpreadsheetParser extends AbstractSpreadsheetParser
             return $product;
 
         }, $data);
-    }
-
-    public function validateHeader(array $header)
-    {
-        $expected = [
-            'name',
-            'price_tax_incl',
-            'tax_category',
-        ];
-
-        foreach ($expected as $key) {
-            if (!in_array($key, $header)) {
-                throw new \Exception(sprintf('You must provide a "%s" column', $key));
-            }
-        }
     }
 
     public function getExampleData(): array

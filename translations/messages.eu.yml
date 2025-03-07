@@ -9,7 +9,7 @@ base.footer.legal: 'Lege oharra'
 base.footer.suggest: 'Proposatu denda bat'
 base.footer.privacy: 'Pribatutasuna'
 base.footer.terms: 'Zerbitzu-baldintzak'
-adminDashboard.title: 'Administrazio panela'
+adminDashboard.title: Dispatch
 adminDashboard.configuration: 'Konfigurazioa'
 adminDashboard.tooltip.orders: 'Kudeatu jatetxeetako eskaerak'
 adminDashboard.tooltip.deliveries: 'Kudeatu banaketak'
@@ -106,7 +106,6 @@ help.title: 'Laguntza'
 help.home: 'Hasiera'
 restaurants.no_results: 'Ez dugu zure bilaketarekin bat datorren jatetxerik aurkitu
   ☹<br>Saiatu helbide desberdin batekin'
-restaurants.visible_by_you_only: 'Zugatik ikusgarri soilik'
 localBusiness.form.orderingDelayMinutes: 'Gehitutako atzerapena eskatu aurretik'
 localBusiness.form.orderingDelayMinutes.help: 'Erabili eremu hau denbora gehitzeko
   bezeroak eskatu ahal izan baino lehen. Ezarpen honek ez du janaria prestatzearen
@@ -163,7 +162,6 @@ restaurant.form.quotes_allowed.label: 'Jatetxe honek aipuak ere onartzen ditu (a
 restaurant.form.loopeat_enabled.label: 'Gaitu LoopEat gordailu-itzulera sistema'
 restaurant.form.loopeat_disconnect.label: 'Deskonektatu LoopEat'
 restaurant.form.featured.label: 'Jatetxe hau hasiera orrian aipatzen da'
-restaurant.form.giropay_enabled.label: 'Gaitu Giropay'
 restaurant.form.fulfillment_methods.label: 'Osatze metodoak'
 restaurant.form.section.general: 'Orokorra'
 restaurant.form.section.options: 'Aukerak'
@@ -278,7 +276,7 @@ profile.managedRestaurants: 'Erabiltzaileak kudeatutako jatetxeak'
 profile.accountType: 'Kontu mota'
 order.cart.title: 'Orga'
 order.items.products_with_count: 'Produktuak (%count%)'
-order.summary.heading: '%number% eskaera (#%id%)'
+order.summary.heading: '%number% eskaera'
 order.total_excluding_tax: 'Guztira (BEZik gabe)'
 order.total_including_tax: 'Guztira (BEZa barne)'
 order.items_total: 'Produktuak guztira'
@@ -478,7 +476,7 @@ form.settings.stripe_secret_key.label: 'Stripe gako sekretua'
 form.settings.stripe_secret_key.help: "tu Stripe kontu bat zure <a href=\"https://stripe.com/docs/dashboard#api-keys\"\
   >gako sekretua</a> lortzeko\n"
 form.settings.stripe_connect_client_id.label: 'Stripe Connect identifikatzailea'
-form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+form.settings.stripe_connect_client_id.help: "Lortu identifikatzailea <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >parametro orrian</a>\n"
 form.settings.google_api_key.label: 'Google API gakoa'
 form.settings.google_api_key.help: "Sortu Google kontu bat zure <a href=\"https://developers.google.com/maps/documentation/javascript/get-api-key?hl=eu\"\
@@ -558,10 +556,10 @@ form.local_business.mercadopago_account.success: 'MercadoPago kontua ondo konekt
   da'
 form.local_business.mercadopago.connect_button.text: 'Konektatu MercadoPago-rekin'
 form.settings.mercadopago.publishable_key.label: 'Argitaratze-gakoa'
-form.settings.mercadopago.publishable_key.help: "Lortu <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.publishable_key.help: "Lortu <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">argitaratze gakoa</a>"
 form.settings.mercadopago.access_token.label: 'Sarbide tokena'
-form.settings.mercadopago.access_token.help: "Lortu <a href=\"https://www.mercadopago.com.%country%/developers/panel/credentials\"\
+form.settings.mercadopago.access_token.help: "Lortu <a href=\"https://www.mercadopago.com/developers/panel/credentials\"\
   \ target=\"_blank\">sarbide tokena</a>"
 form.settings.mercadopago.app_id.label: 'Aplikazio IDa'
 form.menu_item.name.label: 'Izena'
@@ -640,7 +638,7 @@ form.reusable_packaging.on_hand.label: 'Kantitatea'
 form.deposit_refund_settings.deposit_refund_optin.label: 'Itzulpen-sistema aukerakoa
   da'
 form.new_order.variant_name.label: 'Produktuaren izena'
-form.new_order.variant_price.label: 'Prezioa'
+form.new_order.variant_price.label: 'Prezioa BEZa barne'
 form.customize.about_us_enabled.label: 'Gaitu ''guri buruz'' orria'
 form.customize.about_us.label: '''Guri buruz'' orriaren edukia'
 form.customize.motto.label: 'Lema'
@@ -982,7 +980,7 @@ restaurant.form.section.vytal: Vytal
 form.checkout_address.reusable_packaging_vytal_enabled.label: Vytal kontenedoreak
   erabili nahi ditut
 form.product.alcohol.label: Produktu hau edari alkoholiko bat da
-restaurants.edenred_transactions.title: Edenred transakzioak
+restaurants.meal_vouchers_transactions.title: Edenred transakzioak
 adminDashboard.metrics.title: Estatistikak
 form.items_total_promotion.fixed_discount_amount.label: Ezarri beherapen kopuru hau
 restaurant.stats.view_detailed: Ikuspegi xehetua
@@ -1018,7 +1016,7 @@ order.payment.card_number.help: Stripe <a href="https://stripe.com/docs/testing#
   target="_blank" tabindex="-1">test txartel-zenbaki</a> bat aurrezarri da. Ez da
   konturik kobratuko.
 restaurant.form.vytal_enabled.label: Gaitu Vytal gordailu-itzulpen sistema
-restaurants.edenred_transactions.edenred_amount: Edenred ordaindutako kopurua
+restaurants.meal_vouchers_transactions.amount: Edenred ordaindutako kopurua
 form.items_total_promotion.items_total.label: Goiko produktuen totala
 adminDashboard.api.help: Baimendu entregak periodikoki sortzen
 form.time_slot.preview_title: Denbora-tarte aurreikuspena
@@ -1072,7 +1070,7 @@ form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu,
   egun bereko eskaerak soilik egin ahalko dituzte.
 ordering_delay.disclaimer: Eskaera asko jasotzen ari gara, banaketa-denborak luzetzen
   ari dira!
-ordering_delay.admin_reminder: Eskaera atzerapen globala konfiguratu duzu
+ordering_delay.admin_reminder: Foodtech picku^ bilketa-atzerapen globala konfiguratu duzu
 notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
 store.PAWN_SHOP: Bahitetxea
 order.adjustment_type.reusable_packaging.loopeat.help: Kuota honek garbitze, jatetxearen
@@ -1120,12 +1118,10 @@ hub.disclaimer: Erosi hainbat dendetatik, eta dena banaketa bakarrean emango diz
 form.local_business.stripe_account.help: Konektatu Stripe kontu bat beste banku-kontu
   batetik dirua transferitzeko
 form.settings.autocomplete_provider.label: Iradokizun-hornitzailea
-restaurants.edenred_transactions.disclaimer: Orri honek Edenred-en bidez ordaindutako
+restaurants.meal_vouchers_transactions.disclaimer: Orri honek Edenred-en bidez ordaindutako
   eskaera guztiak zerrendatzen ditu, partzialki edo osorik. Eskaera honentzat, diru
   guztia jatetxeak batu du. Beraz, jatetxe bakoitzari faktura bat bidali behar diozu,
   ordaindu beharreko komisioak eskatzeko.
-form.payment.refund_breakdown: Txartel bidez itzuli daitekeen kopurua %card%, Edenred-ek
-  itzuli dezakeen kopurua %edenred%
 form.settings.geocoding_provider.help: APIak erabiltzen du kalkulu-orriak inportatzerakoan
 promotion_rule.is_items_total_above: Elementuen totala %amount% gainetik dago
 form.store_type.multi_drop_enabled.label: Gaitu hainbat banaketa-puntu
@@ -1168,7 +1164,7 @@ form.local_business.stripe_account.need_stripe_account: "Ez duzu oraindik jatetx
   \ transferentziak modu seguruan kudeatzen ahalbidetzen digun ordainketa plataforma\
   \ segurua da.<br>\nJatetxe honetarako Stripe kontu bat sortzeko <a href=\"%stripeAuthorizeURL%\"\
   >egin klik hemen</a>.\n"
-form.settings.mercadopago_testmode.help: '« test » moduan, <a href="https://www.mercadopago.com.ar/developers/en/guides/online-payments/checkout-api/testing#bookmark_how_to_test_your_integration">proba
+form.settings.mercadopago_testmode.help: '« test » moduan, <a href="%url%">proba
   kreditu-txartel zenbakiak</a> erabili beharko dituzu plataforman ordantzeko. <strong>Ez
   da dirurik trukatuko.</strong> '
 form.product.confirm.help: "Produktuaren izena aldatu duzu. <strong>Aldaketa txiki</strong>\
@@ -1199,10 +1195,7 @@ guest_checkout.user_with_same_email_exists: Helbide elektroniko berdina duen kon
   bat dago jada. Mesedez, hasi saioa aurrera jarraitzeko, edo erabili beste e-posta
   bat eskaera egiteko kontua sortu gabe.
 homepage.zerowaste: Ezagutu gure hondakinik gabeko jatetxeak!
-form.payment.edenred_disclaimer: Eskaera hau Edenred-ekin ordaindu da kreditu-txartel
-  batekin. Itzulpena kreditu-txartelak ordaindutako kopuruaren prioritatearen arabera
-  egingo da, eta beharrezkoa bada Edenred kopuruarena.
-form.settings.mercadopago.app_id.help: <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">Aplikazio
+form.settings.mercadopago.app_id.help: <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">Aplikazio
   bat sortu</a> behar duzu zure aplikazio IDa lortzeko.
 embed.delivery.confirm_message: Zure banaketa eskaera sortu da eta laster e-posta
   bat jasoko duzu laburpenarekin. Zure eskaera egiaztatu eta berrespen e-posta bat

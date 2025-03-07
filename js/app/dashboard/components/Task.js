@@ -4,16 +4,46 @@ import { withTranslation, useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { useContextMenu } from 'react-contexify'
 import _ from 'lodash'
+import { Draggable } from "@hello-pangea/dnd"
 
-import { setCurrentTask, toggleTask, selectTask } from '../redux/actions'
-import { selectVisibleTaskIds } from '../redux/selectors'
+
+import { setCurrentTask, toggleTask, selectTask, selectTasksByIds } from '../redux/actions'
+import { selectSettings, selectStandaloneTasks, selectVisibleTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
 import TaskEta from './TaskEta'
-import OrderNumber from './OrderNumber'
+import { getTaskPackages, getTaskVolumeUnits, selectTaskById } from '../../../shared/src/logistics/redux/selectors'
+import { formatVolumeUnits, formatWeight } from '../redux/utils'
+import { toast } from 'react-toastify'
+import i18next from 'i18next'
 
 moment.locale($('html').attr('lang'))
+
+const TaskComments = ({ task }) => {
+  switch(task.type) {
+    case 'PICKUP':
+      if (task.metadata?.order_notes && task.metadata.order_notes.length){
+        return <i className="fa fa-comments ml-2"></i>;
+      }
+      return null;
+    case 'DROPOFF':
+      if (task.address.description && task.address.description.length) {
+        return <i className="fa fa-comments ml-2"></i>;
+      }
+      return null;
+    default:
+      return null;
+  }
+}
+
+const TaskZeroWaste = ({ task }) => {
+  if (task.metadata?.zero_waste) {
+    return <i className="fa fa-recycle ml-2"></i>;
+  }
+
+  return null;
+}
 
 const TaskCaption = ({ task }) => {
 
@@ -22,12 +52,26 @@ const TaskCaption = ({ task }) => {
   return (
     <span>
       <span className="mr-1">
-        <span className="text-monospace">#{ task.id }</span>
-        <OrderNumber task={ task } />
+        <span className="text-monospace font-weight-bold">
+          { task.metadata?.order_number ?
+            <>
+              {
+                task.metadata?.delivery_position ?
+                <>{task.metadata.order_number}-{task.metadata.delivery_position}</>
+                : task.metadata.order_number
+              }
+            </>
+            : `#${ task.id }`
+          }
+        </span>
+        {/* keep the task ID displayed for the web dispatcher while migrating the client code as the rider sees the task ID in the app */}
+        <span className='text-muted ml-1'>
+          {`#${ task.id }`}
+        </span>
       </span>
       { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
-          <span className="font-weight-bold">{ task.orgName }</span>
+          <span>{ task.orgName }</span>
           <span className="mx-1">›</span>
         </span>
       ) }
@@ -77,11 +121,6 @@ const TaskIconRight = ({ task, onRemove }) => {
   if (task.isAssigned) {
     switch (task.status) {
     case 'TODO':
-
-      if (task.tour) {
-        return null
-      }
-
       return (
         <a
           href="#"
@@ -137,10 +176,6 @@ const TaskIconRight = ({ task, onRemove }) => {
   return null
 }
 
-const { show } = useContextMenu({
-  id: 'dashboard',
-})
-
 class Task extends React.Component {
 
   constructor(props) {
@@ -154,17 +189,44 @@ class Task extends React.Component {
   // @see https://css-tricks.com/snippets/javascript/bind-different-events-to-click-and-double-click/
 
   onClick(e) {
+    e.stopPropagation()
     const multiple = (e.ctrlKey || e.metaKey)
     this.timer = setTimeout(() => {
       if (!this.prevent) {
-        const { toggleTask, task } = this.props
-        toggleTask(task, multiple)
+        if (e.shiftKey && this.props.selectedTasks.length > 0) {
+          if (this.props.task.isAssigned) {
+            toast.warn(i18next.t("ADMIN_DASHBOARD_ONLY_UNASSIGNED_WITH_SHIFT"))
+          } else {
+            const standaloneTaskIds = this.props.standaloneTasks.map(t => t['@id'])
+            const taskPosition = standaloneTaskIds.findIndex(id => id === this.props.task['@id'])
+
+            const latestSelectedTaskId = this.props.selectedTasks.slice(-1).at(0)
+            const latestSelectedTaskPosition = standaloneTaskIds.findIndex(id => id === latestSelectedTaskId)
+  
+            const startIndex = taskPosition > latestSelectedTaskPosition ? latestSelectedTaskPosition : taskPosition 
+            const endIndex =  taskPosition > latestSelectedTaskPosition ? taskPosition + 1 : latestSelectedTaskPosition + 1
+
+            const toSelect = taskPosition > latestSelectedTaskPosition ? [...this.props.selectedTasks, ...standaloneTaskIds.slice(startIndex, endIndex)] : standaloneTaskIds.slice(startIndex, endIndex)
+  
+            this.props.selectTasksByIds(
+              _.intersection(
+                this.props.visibleTaskIds, // user wants only to select tasks visible to theirs ^^
+                toSelect
+              )
+            )
+          }
+          e.preventDefault()
+        } else {
+          const { toggleTask, task } = this.props
+          toggleTask(task, multiple)
+        }
       }
       this.prevent = false
     }, 250)
   }
 
-  onDoubleClick() {
+  onDoubleClick(e) {
+    e.stopPropagation()
     clearTimeout(this.timer)
     this.prevent = true
 
@@ -174,9 +236,15 @@ class Task extends React.Component {
 
   render() {
 
-    const { color, task, selected, isVisible, date } = this.props
+    // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+    if (this.props.task === undefined) {
+      return <></>
+    }
+
+    const { color, task, selected, isVisible, date, showWeightAndVolumeUnit } = this.props
 
     const classNames = [
+      'no-select',
       'list-group-item',
       'list-group-item--' + task.type.toLowerCase(),
       'list-group-item--' + task.status.toLowerCase(),
@@ -195,6 +263,10 @@ class Task extends React.Component {
       classNames.push('task__highlighted')
     }
 
+    if (task.hasIncidents) {
+      classNames.push('task__has-incidents')
+    }
+
     const taskProps = {
       ...taskAttributes,
       style: {
@@ -210,19 +282,11 @@ class Task extends React.Component {
 
         this.props.selectTask(task)
 
-        // FIXME: this is temporary
-        // disable menu if task from assigned tour
-        if (task.isAssigned && task.tour) {
-          return
-        }
-
-        show(e, {
-          props: { task }
-        })
+        this.props.show({ event: e, props: task})
       }
     }
 
-    return (
+    const taskContent = (
       <span { ...taskProps }>
         <span className="list-group-item-color" style={{ backgroundColor: color }}></span>
         <span>
@@ -236,27 +300,80 @@ class Task extends React.Component {
             after={ task.after }
             before={ task.before }
             date={ date } />
+          <TaskComments task={ task } />
+          <TaskZeroWaste task={ task } />
+          { showWeightAndVolumeUnit ?
+            (
+              <div className="text-muted">
+                <span>{ formatWeight(task.weight) } kg</span>
+                <span className="mx-2">|</span>
+                <span>{ formatVolumeUnits(getTaskVolumeUnits(task)) } VU</span>
+                <span className="mx-2">|</span>
+                <span>{ getTaskPackages(task) }</span>
+              </div>
+            )
+            : null
+          }
         </span>
-      </span>
-    )
+      </span>)
 
+    if(this.props.taskWithoutDrag) {
+      return taskContent
+    } else {
+      return (
+        <Draggable key={ task['@id'] } draggableId={ task['@id'] } index={ this.props.draggableIndex }>
+          {(provided, snapshot) => {
+            return (
+              <div
+                ref={ provided.innerRef }
+                { ...provided.draggableProps }
+                { ...provided.dragHandleProps }
+              >
+                { taskContent}
+                {(snapshot.isDragging && this.props.selectedTasks.length > 1) && (
+                  <div className="task-dragging-number">
+                    <span>{ this.props.selectedTasks.length }</span>
+                  </div>
+                )}
+              </div>
+              )
+            }}
+          </Draggable>
+      )
+    }
   }
 }
 
 function mapStateToProps(state, ownProps) {
 
+  let task = selectTaskById(state, ownProps.taskId)
+
+  // may happen if we reschedule the task and it is improperly unlinked from tasklist in the backend
+  if (task === undefined) {
+    console.error("Could not find task at id " + ownProps.taskId)
+    return { task: task}
+  }
+
   const tasksWithColor = selectTasksWithColor(state)
 
-  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, ownProps.task['@id']) ?
-    tasksWithColor[ownProps.task['@id']] : '#ffffff'
+  const color = Object.prototype.hasOwnProperty.call(tasksWithColor, task['@id']) ?
+    tasksWithColor[task['@id']] : '#ffffff'
 
   const visibleTaskIds = selectVisibleTaskIds(state)
+  const selectedTasks = state.selectedTasks
+
+  const { showWeightAndVolumeUnit } = selectSettings(state)
 
   return {
-    selected: -1 !== state.selectedTasks.indexOf(ownProps.task['@id']),
+    task: task,
+    selectedTasks: selectedTasks,
+    selected: -1 !== selectedTasks.indexOf(task['@id']),
+    standaloneTasks: selectStandaloneTasks(state),
     color,
     date: selectSelectedDate(state),
-    isVisible: _.includes(visibleTaskIds, ownProps.task['@id']),
+    isVisible: _.includes(visibleTaskIds, task['@id']),
+    visibleTaskIds: visibleTaskIds,
+    showWeightAndVolumeUnit: showWeightAndVolumeUnit
   }
 }
 
@@ -265,7 +382,23 @@ function mapDispatchToProps (dispatch) {
     setCurrentTask: (task) => dispatch(setCurrentTask(task)),
     toggleTask: (task, multiple) => dispatch(toggleTask(task, multiple)),
     selectTask: (task) => dispatch(selectTask(task)),
+    selectTasksByIds: (taskIds) => dispatch(selectTasksByIds(taskIds)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(Task))
+function withHooks(ClassComponent) {
+  return function CompWithHook(props) {
+    const { show } = useContextMenu({
+      id: 'task-contextmenu',
+    })
+
+    return (
+      <ClassComponent
+        {...props}
+        show={show}
+      />
+    );
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withHooks(Task)))

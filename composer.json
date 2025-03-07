@@ -28,7 +28,7 @@
         }
     },
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.2",
         "symfony/symfony": "^5.3",
         "api-platform/core": "2.6.8",
         "doctrine/orm": "^2.7",
@@ -36,7 +36,7 @@
         "symfony/monolog-bundle": "^3.5",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
-        "jsor/doctrine-postgis": "^1.1",
+        "jsor/doctrine-postgis": "^2.3.0",
         "league/geotools": "@stable",
         "gedmo/doctrine-extensions": "^3.0.3",
         "snc/redis-bundle": "4.3.0",
@@ -45,7 +45,7 @@
         "gesdinet/jwt-refresh-token-bundle": "^1.0",
         "emcconville/google-map-polyline-encoding-tool": "^1.3",
         "stripe/stripe-php": "^7.7",
-        "vich/uploader-bundle": "^1.13",
+        "vich/uploader-bundle": "^1.23.1",
         "doctrine/doctrine-migrations-bundle": "^3.0",
         "guzzlehttp/guzzle": "^7.0",
         "myclabs/php-enum": "^1.8",
@@ -76,7 +76,7 @@
         "symfony/webpack-encore-bundle": "^1.6",
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.3",
-        "oneup/uploader-bundle": "^3.0",
+        "oneup/uploader-bundle": "^4.0.1",
         "sylius/promotion-bundle": "^1.7.5",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.3",
@@ -88,11 +88,11 @@
         "azuyalabs/yasumi": "^2.1",
         "hashids/hashids": "^4.0",
         "sylius/inventory": "^1.7.5",
-        "oneup/flysystem-bundle": "^3.1",
+        "oneup/flysystem-bundle": "^4.11.2",
         "drupal/core-vendor-hardening": "9.2.x-dev",
-        "league/flysystem-aws-s3-v3": "^1.0",
+        "league/flysystem-aws-s3-v3": "^3.0",
         "sylius/resource-bundle": "^1.7.1",
-        "kreait/firebase-bundle": "^2.2",
+        "kreait/firebase-bundle": "^5.0",
         "phpdocumentor/reflection-docblock": "^5.1",
         "sylius/customer-bundle": "^1.6",
         "mailjet/mailjet-apiv3-php": "^1.4",
@@ -100,7 +100,7 @@
         "twig/intl-extra": "^3.0",
         "odolbeau/phone-number-bundle": "^3.1",
         "league/omnipay": "^3.2.1",
-        "mercadopago/dx-php": "^2.4.1",
+        "mercadopago/dx-php": "^3.0.8",
         "egulias/email-validator": "^3.0",
         "twilio/sdk": "^6.10",
         "friendsofsymfony/rest-bundle": "^3.0",
@@ -133,9 +133,26 @@
         "sylius/calendar": "^0.3",
         "twig/markdown-extra": "^3.4",
         "league/commonmark": "^2.3",
-        "acseo/typesense-bundle": "dev-service-as-getter",
+        "acseo/typesense-bundle": "^0.7.6",
         "symfony/stimulus-bundle": "^2.10",
-        "symfony/ux-turbo": "^2.10"
+        "dflydev/base32-crockford": "^1.0",
+        "craue/formflow-bundle": "^3.6",
+        "proj4php/proj4php": "^2.0",
+        "mtdowling/jmespath.php": "^2.7",
+        "php-units-of-measure/php-units-of-measure": "^2.1",
+        "symfony/ux-turbo": "^2.10",
+        "twig/html-extra": "^3.7",
+        "symfony/ux-react": "2.10",
+        "league/flysystem": "^3.0",
+        "league/flysystem-ftp": "^3.0",
+        "coopcycle/transporter": "dev-master",
+        "league/flysystem-sftp-v3": "^3.0",
+        "paygreen/paygreen-php": "*",
+        "flow-php/parquet": "^0.9.2",
+        "flow-php/filesystem": "^0.9.2",
+        "picqer/php-barcode-generator": "^2.4",
+        "shipmonk/doctrine-entity-preloader": "^1.0",
+        "z4kn4fein/php-semver": "^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -153,7 +170,8 @@
         "friends-of-behat/mink-browserkit-driver": "^1.4",
         "rector/rector": "^0.17",
         "phpstan/phpstan-doctrine": "^1.0",
-        "aeon-php/calendar": "1.0.6"
+        "aeon-php/calendar": "1.0.6",
+        "league/flysystem-memory": "^3.0"
     },
     "repositories": [
         {
@@ -165,10 +183,20 @@
             "url": "git@github.com:rkeet/behatch-contexts.git"
         },
         {
-            "type": "vcs",
-            "url": "https://github.com/lucasferraro/TypesenseBundle"
+          "type": "vcs",
+          "url": "https://github.com/coopcycle/transporter"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/coopcycle/edifact-mapping"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/coopcycle/edifact-generator"
         }
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "scripts": {
         "post-install-cmd": [
             "@php bin/console cache:clear --no-warmup",

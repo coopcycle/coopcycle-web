@@ -16,19 +16,19 @@ final class DeliveryInput
 
     /**
      * @var int|null
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     public $weight;
 
     /**
      * @var Task|null
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     public $pickup;
 
     /**
      * @var Task
-     * @Groups({"delivery_create"})
+     * @Groups({"delivery_create", "pricing_deliveries"})
      */
     public $dropoff;
 
@@ -40,7 +40,7 @@ final class DeliveryInput
 
     /**
      * @var Task[]
-     * @Groups({"delivery_create", "delivery_create_from_tasks"})
+     * @Groups({"delivery_create", "delivery_create_from_tasks", "pricing_deliveries"})
      */
     public $tasks;
 }

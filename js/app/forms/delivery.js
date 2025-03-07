@@ -1,15 +1,29 @@
+import React from 'react'
 import moment from 'moment'
 import ClipboardJS from 'clipboard'
-import { createStore } from 'redux'
 import _ from 'lodash'
 import axios from 'axios'
+import { configureStore } from '@reduxjs/toolkit'
 import { createSelector } from 'reselect'
+import { createRoot } from 'react-dom/client'
+import { Provider } from 'react-redux'
+import { I18nextProvider } from 'react-i18next'
 
 import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 import DateRangePicker from '../widgets/DateRangePicker'
-import TagsInput from '../widgets/TagsInput'
 import { validateForm } from '../utils/address'
+import i18n from '../i18n'
+import { RecurrenceRules } from './components/RecurrenceRules'
+import tasksSlice from './redux/tasksSlice'
+import {
+  recurrenceSlice,
+  selectRecurrenceRule,
+} from './redux/recurrenceSlice'
+import { storeSlice } from './redux/storeSlice'
+import { suggestionsSlice, showSuggestions, acceptSuggestions, rejectSuggestions } from './redux/suggestionsSlice'
+import TagsSelect from '../components/TagsSelect'
+import SuggestionModal from './components/SuggestionModal'
 
 const selectTasks = state => state.tasks
 
@@ -20,22 +34,50 @@ const selectLastDropoff = createSelector(
   }
 )
 
+const collectionHolder = document.querySelector('#delivery_tasks')
+
+const domIndex = (el) => Array.prototype.indexOf.call(el.parentNode.children, el)
+
+let reduxStore
+
 class DeliveryForm {
   disable() {
-    $('#delivery-submit').attr('disabled', true)
+    // do not use `disabled` attribute to disable the buttons as it will prevent the button value from being sent to the server
+    $('button[type="submit"]').addClass('pointer-events-none')
     $('#loader').removeClass('hidden')
   }
   enable() {
-    $('#delivery-submit').attr('disabled', false)
+    $('button[type="submit"]').removeClass('pointer-events-none')
     $('#loader').addClass('hidden')
+  }
+  showSuggestions(suggestions) {
+    reduxStore.dispatch(showSuggestions(suggestions))
   }
 }
 
-let store
+function reorder(suggestedOrder) {
 
-function toPackages(name) {
+  // To reorder, we use the removeChild() function,
+  // which removes an element and returns it but preserves event listeners.
+  // Then, we re-add the elements in the expected order.
+
+  const taskEls = []
+  while (collectionHolder.firstElementChild) {
+    taskEls.push(collectionHolder.removeChild(collectionHolder.firstElementChild));
+  }
+
+  suggestedOrder.forEach((oldIndex) => {
+    collectionHolder.appendChild(taskEls[oldIndex])
+  })
+
+  collectionHolder.children.forEach((el, index) => {
+    el.querySelector('[data-position]').value = '' + index
+  })
+}
+
+function toPackages(el) {
   const packages = []
-  $(`#${name}_packages_list`).children().each(function() {
+  $(`#${el.id}_packages_list`).children().each(function() {
     packages.push({
       type: $(this).find('select').val(),
       quantity: $(this).find('input[type="number"]').val()
@@ -45,91 +87,102 @@ function toPackages(name) {
   return packages
 }
 
-function hideRememberAddress(name, type) {
-  const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
+function hideRememberAddress(el) {
+  const rememberAddr = document.querySelector(`#${el.id}_address_rememberAddress`)
   if (rememberAddr) {
-    rememberAddr.closest('.checkbox').classList.add('invisible')
+    rememberAddr.closest('.checkbox').classList.add('hidden')
   }
 }
 
-function showRememberAddress(name, type) {
-  const rememberAddr = document.querySelector(`#${name}_${type}_address_rememberAddress`)
+function showRememberAddress(el) {
+  const rememberAddr = document.querySelector(`#${el.id}_address_rememberAddress`)
   if (rememberAddr) {
-    rememberAddr.closest('.checkbox').classList.remove('invisible')
+    rememberAddr.closest('.checkbox').classList.remove('hidden')
   }
 }
 
-function createAddressWidget(name, type, cb) {
+function createAddressWidget(el, cb) {
 
-  new AddressBook(document.querySelector(`#${name}_${type}_address`), {
-    existingAddressControl: document.querySelector(`#${name}_${type}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${name}_${type}_address_isNewAddress`),
-    duplicateAddressControl: document.querySelector(`#${name}_${type}_address_duplicateAddress`),
+  new AddressBook(document.querySelector(`#${el.id}_address`), {
+    allowSearchSavedAddresses: true,
+    existingAddressControl: document.querySelector(
+      `#${el.id}_address_existingAddress`,
+    ), // sert à lui passer les adresses enregistées,
+    newAddressControl: document.querySelector(
+      `#${el.id}_address_newAddress_streetAddress`,
+    ), // champ pour saisir une adresse
+    isNewAddressControl: document.querySelector(
+      `#${el.id}_address_isNewAddress`, // sert à bind la nouvelle adresse entrée
+    ),
+    duplicateAddressControl: document.querySelector(
+      `#${el.id}_address_duplicateAddress`,
+    ),
     // Fields containing address details
-    nameControl: document.querySelector(`#${name}_${type}_address_name`),
-    telephoneControl: document.querySelector(`#${name}_${type}_address_telephone`),
-    contactNameControl: document.querySelector(`#${name}_${type}_address_contactName`),
+    nameControl: document.querySelector(`#${el.id}_address_name`),
+    telephoneControl: document.querySelector(`#${el.id}_address_telephone`),
+    contactNameControl: document.querySelector(`#${el.id}_address_contactName`),
     onReady: address => {
       cb(address)
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
-        hideRememberAddress(name, type)
+        hideRememberAddress(el)
       }
     },
     onChange: address => {
-
       if (Object.prototype.hasOwnProperty.call(address, '@id')) {
-        hideRememberAddress(name, type)
+        hideRememberAddress(el)
       } else {
-        showRememberAddress(name, type)
+        showRememberAddress(el)
       }
 
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_ADDRESS',
-        taskIndex: getTaskIndex(type),
-        value: address
+        taskIndex: domIndex(el),
+        value: address,
       })
     },
     onClear: () => {
-      showRememberAddress(name, type)
-      store.dispatch({
+      showRememberAddress(el)
+      reduxStore.dispatch({
         type: 'CLEAR_ADDRESS',
-        taskIndex: getTaskIndex(type),
+        taskIndex: domIndex(el),
       })
-    }
+    },
   })
 }
 
-function getDatePickerValue(name, type) {
-  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
+function getTimeWindowProps(el) {
 
+  const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
   if (timeSlotEl) {
-    return $(`#${name}_${type}_timeSlot`).val()
+    return {
+      timeSlot: $(timeSlotEl).val()
+    }
   }
 
-  const defaultValue = $(`#${name}_${type}_doneBefore`).val() || selectLastDropoff(store.getState()).before
+  const before = $(`#${el.id}_doneBefore`).val() || selectLastDropoff(reduxStore.getState()).before
 
-  return moment(defaultValue, 'YYYY-MM-DD HH:mm:ss').format()
-}
-
-function getDatePickerKey(name, type) {
-  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
-  if (timeSlotEl) {
-    return 'timeSlot'
+  const after = $(`#${el.id}_doneAfter`).val()
+  if (!after) {
+    return {
+      before: moment(before, 'YYYY-MM-DD HH:mm:ss').format(),
+    }
   }
 
-  return 'before'
+  return {
+    after: moment(after, 'YYYY-MM-DD HH:mm:ss').format(),
+    before: moment(before, 'YYYY-MM-DD HH:mm:ss').format(),
+  }
 }
 
-function getTaskType(name, type) {
-  return document.querySelector(`#${name}_${type}_type`).value.toUpperCase()
+function getTaskType(el) {
+  return document.querySelector(`#${el.id}_type`).value.toUpperCase()
 }
 
-function createDateRangePickerWidget(name, type) {
-  const doneBeforePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
-  const doneAfterPickerEl = document.querySelector(`#${name}_${type}_doneAfter`)
+function createDateRangePickerWidget(el) {
+  const doneBeforePickerEl = document.querySelector(`#${el.id}_doneBefore`)
+  const doneAfterPickerEl = document.querySelector(`#${el.id}_doneAfter`)
 
-  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(store.getState()).before
+  const beforeDefaultValue = doneBeforePickerEl.value || selectLastDropoff(reduxStore.getState()).before
   const afterDefaultValue = doneAfterPickerEl.value || moment().set({ hour: 0, minute: 0, second: 0 }).format('YYYY-MM-DD HH:mm:ss')
 
   // When adding a new task, initialize hidden input value
@@ -146,38 +199,38 @@ function createDateRangePickerWidget(name, type) {
     before: beforeDefaultValue,
   }
 
-  new DateRangePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
+  new DateRangePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
     showTime: true,
     onChange: function({after, before}) {
       doneAfterPickerEl.value = after.format('YYYY-MM-DD HH:mm:ss')
       doneBeforePickerEl.value = before.format('YYYY-MM-DD HH:mm:ss')
 
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_BEFORE',
-        taskIndex: getTaskIndex(type),
+        taskIndex: domIndex(el),
         value: before.format()
       })
 
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_AFTER',
-        taskIndex: getTaskIndex(type),
+        taskIndex: domIndex(el),
         value: after.format()
       })
     }
   })
 }
 
-function createDatePickerWidget(name, type, isAdmin = false) {
+function createDatePickerWidget(el, isAdmin = false) {
 
-  const datePickerEl = document.querySelector(`#${name}_${type}_doneBefore`)
-  const timeSlotEl = document.querySelector(`#${name}_${type}_timeSlot`)
+  const datePickerEl = document.querySelector(`#${el.id}_doneBefore`)
+  const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
 
   if (timeSlotEl) {
     timeSlotEl.addEventListener('change', e => {
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_TIME_SLOT',
-        taskIndex: getTaskIndex(type),
+        taskIndex: domIndex(el),
         value: e.target.value
       })
     })
@@ -185,44 +238,50 @@ function createDatePickerWidget(name, type, isAdmin = false) {
   }
 
   if (isAdmin) {
-    createDateRangePickerWidget(name, type)
+    createDateRangePickerWidget(el)
     return
   }
 
-  const defaultValue = datePickerEl.value || selectLastDropoff(store.getState()).before
+  const defaultValue = datePickerEl.value || selectLastDropoff(reduxStore.getState()).before
 
   // When adding a new task, initialize hidden input value
   if (!datePickerEl.value) {
     datePickerEl.value = moment(defaultValue).format('YYYY-MM-DD HH:mm:ss')
   }
 
-  new DateTimePicker(document.querySelector(`#${name}_${type}_doneBefore_widget`), {
+  new DateTimePicker(document.querySelector(`#${el.id}_doneBefore_widget`), {
     defaultValue,
     onChange: function(date) {
       datePickerEl.value = date.format('YYYY-MM-DD HH:mm:ss')
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_BEFORE',
-        taskIndex: getTaskIndex(type),
+        taskIndex: domIndex(el),
         value: date.format()
       })
     }
   })
 }
 
-function createTagsWidget(name, type, tags) {
-  new TagsInput(document.querySelector(`#${name}_${type}_tagsAsString_widget`), {
-    tags,
-    defaultValue: [],
-    onChange: function(tags) {
-      var slugs = tags.map(tag => tag.slug)
-      document.querySelector(`#${name}_${type}_tagsAsString`).value = slugs.join(' ')
-    }
-  })
+function createTagsWidget(el, tags) {
+  const initialValue = document.querySelector(`#${el.id}_tagsAsString`).value
+
+  const root = createRoot(document.querySelector(`#${el.id}_tagsAsString_widget`))
+  root.render(
+    <TagsSelect
+      defaultValue={initialValue ?? ''}
+      isMulti
+      onChange={tags => {
+        let slugs = tags.map(tag => tag.slug)
+        document.querySelector(`#${el.id}_tagsAsString`).value = slugs.join(' ')
+      }}
+      tags={tags}
+    />,
+  )
 }
 
-function createSwitchTimeSlotWidget(name, taskForm) {
-  const switchTimeSlotEl = document.querySelector(`#${name}_${taskForm}_switchTimeSlot`)
-  const timeSlotEl = document.querySelector(`#${name}_${taskForm}_timeSlot`)
+function createSwitchTimeSlotWidget(el) {
+  const switchTimeSlotEl = document.querySelector(`#${el.id}_switchTimeSlot`)
+  const timeSlotEl = document.querySelector(`#${el.id}_timeSlot`)
 
   if (switchTimeSlotEl && timeSlotEl) {
     switchTimeSlotEl.querySelectorAll('input[type="radio"]').forEach(rad => {
@@ -238,9 +297,9 @@ function createSwitchTimeSlotWidget(name, taskForm) {
           timeSlotEl.appendChild(opt)
         })
 
-        store.dispatch({
+        reduxStore.dispatch({
           type: 'SET_TIME_SLOT',
-          taskIndex: getTaskIndex(taskForm),
+          taskIndex: domIndex(el),
           value: timeSlotEl.value
         })
       })
@@ -248,7 +307,7 @@ function createSwitchTimeSlotWidget(name, taskForm) {
   }
 }
 
-function createPackageForm(name, $list, cb) {
+function createPackageForm(el, $list, cb) {
 
   var counter = $list.data('widget-counter') || $list.children().length
   var newWidget = $list.attr('data-prototype')
@@ -262,37 +321,37 @@ function createPackageForm(name, $list, cb) {
   newElem.find('input[type="number"]').val(1)
   newElem.find('input[type="number"]').on('change', () => {
     if (cb && typeof cb === 'function') {
-      cb(toPackages(name))
+      cb(toPackages(el))
     }
   })
   newElem.appendTo($list)
 }
 
-export function createPackagesWidget(name, packagesRequired, cb) {
+export function createPackagesWidget(el, packagesRequired, cb) {
 
-  const isNew = document.querySelectorAll(`#${name}_packages .delivery__form__packages__list-item`).length === 0
+  const isNew = document.querySelectorAll(`#${el.id}_packages .delivery__form__packages__list-item`).length === 0
 
   if (isNew && packagesRequired) {
     createPackageForm(
-      name,
-      $(`#${name}_packages_list`),
+      el,
+      $(`#${el.id}_packages_list`),
       cb
     )
   }
 
-  $(`#${name}_packages_add`).click(function() {
+  $(`#${el.id}_packages_add`).click(function() {
     const selector = $(this).attr('data-target')
     createPackageForm(
-      name,
+      el,
       $(selector),
       cb
     )
     if (cb && typeof cb === 'function') {
-      cb(toPackages(name))
+      cb(toPackages(el))
     }
   })
 
-  $(`#${name}_packages`).on('click', '[data-delete]', function() {
+  $(`#${el.id}_packages`).on('click', '[data-delete]', function() {
     const $target = $($(this).attr('data-target'))
 
     if ($target.length === 0) {
@@ -307,13 +366,13 @@ export function createPackagesWidget(name, packagesRequired, cb) {
 
     $target.remove()
     if (cb && typeof cb === 'function') {
-      cb(toPackages(name))
+      cb(toPackages(el))
     }
   })
 
-  $(`#${name}_packages`).on('change', 'select', function() {
+  $(`#${el.id}_packages`).on('change', 'select', function() {
     if (cb && typeof cb === 'function') {
-      cb(toPackages(name))
+      cb(toPackages(el))
     }
   })
 }
@@ -326,83 +385,6 @@ function parseWeight(value) {
   }
 
   return parseInt((floatValue * 1000), 10)
-}
-
-function replaceTasks(state, index, key, value) {
-  const newTasks = state.tasks.slice()
-  newTasks[index] = {
-    ...newTasks[index],
-    [key]: value
-  }
-
-  return newTasks
-}
-
-function removeTasks(state, index) {
-  const newTasks = state.tasks.slice()
-  newTasks.splice(index, 1)
-
-  return newTasks
-}
-
-const getTaskIndex = (key) => parseInt(key.replace('tasks_', ''), 10)
-
-function reducer(state = {}, action) {
-  switch (action.type) {
-  case 'SET_ADDRESS':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'address', action.value),
-    }
-  case 'SET_TIME_SLOT':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'timeSlot', action.value),
-    }
-  case 'SET_BEFORE':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'before', action.value),
-    }
-  case 'SET_AFTER':
-      return {
-        ...state,
-        tasks: replaceTasks(state, action.taskIndex, 'after', action.value),
-      }
-  case 'SET_WEIGHT':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'weight', action.value)
-    }
-  case 'SET_TASK_PACKAGES':
-    return {
-      ...state,
-      tasks: replaceTasks(state, action.taskIndex, 'packages', action.packages)
-    }
-  case 'CLEAR_ADDRESS':
-    return {
-      ...state,
-      tasks: state.tasks.map((task, index) => {
-        if (index === action.taskIndex) {
-          return _.omit({ ...task }, ['address'])
-        }
-
-        return task
-      }),
-    }
-  case 'ADD_DROPOFF':
-    return {
-      ...state,
-      tasks: state.tasks.concat([ action.value ]),
-    }
-  case 'REMOVE_DROPOFF':
-    return {
-      ...state,
-      tasks: removeTasks(state, action.taskIndex)
-    }
-  default:
-    return state
-  }
 }
 
 const loadTags = _.once(() => {
@@ -424,26 +406,24 @@ function createElementFromHTML(htmlString) {
 }
 
 function initSubForm(name, taskEl, preloadedState, userAdmin) {
-  const taskForm = taskEl.getAttribute('id').replace(name + '_', '')
-  const taskIndex = getTaskIndex(taskForm)
 
   const task = {
-    type: getTaskType(name, taskForm),
+    type: getTaskType(taskEl),
     address: null,
-    [ getDatePickerKey(name, taskForm) ]: getDatePickerValue(name, taskForm)
+    ...getTimeWindowProps(taskEl),
   }
 
   if (preloadedState) {
     preloadedState.tasks.push(task)
   } else {
-    store.dispatch({
+    reduxStore.dispatch({
       type: 'ADD_DROPOFF',
-      taskIndex,
+      taskIndex: domIndex(taskEl),
       value: task
     })
   }
 
-  createAddressWidget(name, taskForm, address => {
+  createAddressWidget(taskEl, address => {
     if (preloadedState) {
       const index = preloadedState.tasks.indexOf(task)
       if (-1 !== index) {
@@ -452,43 +432,51 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
     }
   })
 
-  createDatePickerWidget(name, taskForm, userAdmin)
+  createDatePickerWidget(taskEl, userAdmin)
 
-  const tagsEl = document.querySelector(`#${name}_${taskForm}_tagsAsString`)
+  const tagsEl = document.querySelector(`#${taskEl.id}_tagsAsString`)
   if (tagsEl) {
     loadTags().then(tags => {
-      createTagsWidget(name, taskForm, tags)
+      createTagsWidget(taskEl, tags)
     })
   }
 
-  createSwitchTimeSlotWidget(name, taskForm)
+  createSwitchTimeSlotWidget(taskEl)
 
   const deleteBtn = taskEl.querySelector('[data-delete="task"]')
 
   if (deleteBtn) {
-    if (taskIndex === 1) {
-      // No delete button for the 1rst dropoff,
-      // we want at least one dropoff
-      deleteBtn.remove()
-    } else {
-      deleteBtn.addEventListener('click', (e) => {
-        e.preventDefault()
-        taskEl.remove()
-        store.dispatch({
-          type: 'REMOVE_DROPOFF',
-          taskIndex,
-        })
-      })
+
+    // We want at least one dropoff
+    if (collectionHolder.children.length === 2) {
+      document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
     }
+
+    deleteBtn.addEventListener('click', (e) => {
+      e.preventDefault()
+      reduxStore.dispatch({
+        type: 'REMOVE_DROPOFF',
+        taskIndex: domIndex(taskEl),
+      })
+      taskEl.remove()
+      // We want at least one dropoff
+      if (collectionHolder.children.length === 2) {
+        document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.add('d-none'))
+      }
+      const indexes = Array
+        .from(collectionHolder.children)
+        .map(el => parseInt(el.id.replace(/^(.*_tasks_)([0-9]+)$/, '$2'), 10))
+      collectionHolder.dataset.index = Math.max(...indexes) + 1
+    })
   }
 
-  const packages = document.querySelector(`#${name}_${taskForm}_packages`)
+  const packages = document.querySelector(`#${taskEl.id}_packages`)
   if (packages) {
     const packagesRequired = JSON.parse(packages.dataset.packagesRequired)
-    createPackagesWidget(`${name}_${taskForm}`, packagesRequired, packages => store.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex, packages }))
+    createPackagesWidget(taskEl, packagesRequired, packages => reduxStore.dispatch({ type: 'SET_TASK_PACKAGES', taskIndex: domIndex(taskEl), packages }))
   }
 
-  const weightEl = document.querySelector(`#${name}_${taskForm}_weight`)
+  const weightEl = document.querySelector(`#${taskEl.id}_weight`)
 
   if (preloadedState) {
     const index = preloadedState.tasks.indexOf(task)
@@ -499,12 +487,28 @@ function initSubForm(name, taskEl, preloadedState, userAdmin) {
 
   if (weightEl) {
     weightEl.addEventListener('input', _.debounce(e => {
-      store.dispatch({
+      reduxStore.dispatch({
         type: 'SET_WEIGHT',
         value: parseWeight(e.target.value),
-        taskIndex,
+        taskIndex: domIndex(taskEl),
       })
     }, 350))
+  }
+}
+
+function createOnTasksChanged(onChange) {
+
+  return ({ getState }) => (next) => (action) => {
+
+    const prevState = getState()
+    const result = next(action)
+    const state = getState()
+
+    if (prevState.tasks !== state.tasks) {
+      onChange(state)
+    }
+
+    return result
   }
 }
 
@@ -516,20 +520,52 @@ export default function(name, options) {
 
   const onChange = options.onChange.bind(form)
   const onReady = options.onReady.bind(form)
+  const onSubmit = options.onSubmit.bind(form)
+
+  const handleSuggestionsAfterSubmit = () => (next) => (action) => {
+
+    const result = next(action)
+
+    if (acceptSuggestions.match(action) && action.payload.length > 0) {
+        // Reorder tasks in the DOM when suggestion is accepted
+      reorder(action.payload[0].order)
+    }
+
+    if (acceptSuggestions.match(action) || rejectSuggestions.match(action)) {
+      el.submit()
+    }
+
+    return result
+  }
 
   if (el) {
-
 
     // Intialize Redux store
     let preloadedState = {
       tasks: [],
-      packages: []
     }
 
     if (el.dataset.store) {
       preloadedState = {
         ...preloadedState,
-        store: el.dataset.store
+        [storeSlice.name]: el.dataset.store
+      }
+    }
+
+    if (el.dataset.subscription) {
+      const subscription = JSON.parse(el.dataset.subscription)
+
+      preloadedState = {
+        ...preloadedState,
+        [recurrenceSlice.name]: {
+          ...recurrenceSlice.getInitialState(),
+          rule: subscription.rule,
+          isCancelled: subscription.isCancelled,
+        }
+      }
+
+      if (subscription.isCancelled) {
+        $('button[type="submit"]').addClass('display-none');
       }
     }
 
@@ -537,13 +573,19 @@ export default function(name, options) {
     const taskForms = Array.from(el.querySelectorAll('[data-form="task"]'))
     taskForms.forEach((taskEl) => initSubForm(name, taskEl, preloadedState, !!el.dataset.userAdmin))
 
-    store = createStore(
-      reducer, preloadedState,
-      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-    )
+    reduxStore = configureStore({
+      reducer: {
+        [storeSlice.name]: storeSlice.reducer,
+        "tasks": tasksSlice.reducer,
+        [recurrenceSlice.name]: recurrenceSlice.reducer,
+        [suggestionsSlice.name]: suggestionsSlice.reducer,
+      },
+      preloadedState,
+      middleware: getDefaultMiddleware =>
+        getDefaultMiddleware().concat([createOnTasksChanged(onChange), handleSuggestionsAfterSubmit]),
+    })
 
     onReady(preloadedState)
-    store.subscribe(() => onChange(store.getState()))
 
     new ClipboardJS('#copy', {
       text: function() {
@@ -552,6 +594,8 @@ export default function(name, options) {
     })
 
     el.addEventListener('submit', (e) => {
+
+      e.preventDefault()
 
       const hasInvalidInput = _.find(taskForms, taskEl => {
 
@@ -562,7 +606,7 @@ export default function(name, options) {
           return false
         }
 
-        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"]`);
+        const searchInput = document.querySelector(`#${name}_${type}_address input[type="search"][data-is-address-picker="true"]`);
         const latInput = document.querySelector(`#${name}_${type}_address [data-address-prop="latitude"]`)
         const lngInput = document.querySelector(`#${name}_${type}_address [data-address-prop="longitude"]`)
         const streetAddrInput = document.querySelector(`#${name}_${type}_address_newAddress_streetAddress`)
@@ -576,15 +620,23 @@ export default function(name, options) {
         form.disable()
       }
 
+      const recurrenceField = document.querySelector('#delivery_recurrence')
+      if (recurrenceField) {
+        const recurrenceRule = selectRecurrenceRule(reduxStore.getState())
+        recurrenceField.value = JSON.stringify({
+          rule: recurrenceRule
+        })
+      }
+
+      onSubmit(el, reduxStore.getState())
+      return false
+
     }, false)
 
     // https://symfony.com/doc/current/form/form_collections.html#allowing-new-tags-with-the-prototype
     const addTaskButton = el.querySelector('[data-add="dropoff"]')
     if (addTaskButton) {
       addTaskButton.addEventListener('click', () => {
-
-        const collectionHolder =
-          document.querySelector('#delivery_tasks')
 
         const newHtml = collectionHolder
           .dataset
@@ -601,8 +653,31 @@ export default function(name, options) {
         initSubForm(name, item, null, !!el.dataset.userAdmin)
 
         collectionHolder.dataset.index++
+
+        if (collectionHolder.children.length > 2) {
+          document.querySelectorAll('[data-delete="task"]').forEach(el => el.classList.remove('d-none'))
+        }
       })
     }
+
+    const reactRoot = createRoot(document.getElementById('delivery-form-modal'))
+    reactRoot.render(
+      <Provider store={ reduxStore }>
+        <SuggestionModal />
+      </Provider>
+    )
+  }
+
+  const recurrenceRulesContainer = document.querySelector('#delivery_form__recurrence__container')
+  if (recurrenceRulesContainer) {
+    const root = createRoot(recurrenceRulesContainer);
+    root.render(
+      <Provider store={ reduxStore }>
+        <I18nextProvider i18n={ i18n }>
+          <RecurrenceRules />
+        </I18nextProvider>
+      </Provider>
+    )
   }
 
   return form

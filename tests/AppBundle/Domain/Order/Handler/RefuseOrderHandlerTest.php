@@ -15,6 +15,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Tests\AppBundle\StripeTrait;
 
 class RefuseOrderHandlerTest extends TestCase
@@ -61,30 +62,6 @@ class RefuseOrderHandlerTest extends TestCase
         $this->stripeManager
             ->refund($payment, null, true)
             ->shouldNotBeCalled();
-
-        $this->eventRecorder
-            ->record(Argument::type(OrderRefused::class))
-            ->shouldBeCalled();
-
-        $command = new RefuseOrder($order, 'Out of stock');
-
-        call_user_func_array($this->handler, [ $command ]);
-    }
-
-    public function testRefuseOrderWithGiropayRefundsCustomer()
-    {
-        $payment = new Payment();
-        $payment->setAmount(3000);
-        $payment->setState(PaymentInterface::STATE_COMPLETED);
-        $payment->setCurrencyCode('EUR');
-        $payment->setPaymentMethodTypes(['giropay']);
-
-        $order = new Order();
-        $order->addPayment($payment);
-
-        $this->stripeManager
-            ->refund($payment, null, true)
-            ->shouldBeCalled();
 
         $this->eventRecorder
             ->record(Argument::type(OrderRefused::class))

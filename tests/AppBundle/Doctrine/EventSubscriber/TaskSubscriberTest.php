@@ -9,23 +9,26 @@ use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskList\Item;
+use AppBundle\Entity\Tour;
+use AppBundle\Entity\TourRepository;
+use AppBundle\Entity\User;
 use AppBundle\Service\Geocoder;
-use Doctrine\Persistence\ObjectRepository;
+use AppBundle\Service\OrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use Prophecy\Argument;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 // Avoid error "Returning by reference not supported" with Prophecy
 class UnitOfWork
@@ -62,22 +65,30 @@ class TaskSubscriberTest extends TestCase
             ->getRepository(TaskList::class)
             ->willReturn($this->taskListRepository->reveal());
 
+        $this->tourRepository = $this->prophesize(TourRepository::class);
+
+        $this->entityManager
+            ->getRepository(Tour::class)
+            ->willReturn($this->tourRepository->reveal());
+
         $tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $requestStack = $this->prophesize(RequestStack::class);
 
         $eventStore = new EventStore($tokenStorage->reveal(), $requestStack->reveal());
 
         $taskListProvider = new TaskListProvider($this->entityManager->reveal());
-        $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider);
+        $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider, null, $this->entityManager->reveal());
 
         $this->geocoder = $this->prophesize(Geocoder::class);
+        $this->orderManager = $this->prophesize(OrderManager::class);
 
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $changeSetProcessor,
             new NullLogger(),
-            $this->geocoder->reveal()
+            $this->geocoder->reveal(),
+            $this->orderManager->reveal()
         );
     }
 
@@ -628,7 +639,15 @@ class TaskSubscriberTest extends TestCase
         $taskList = new TaskList();
         $taskList->setCourier($user);
         $taskList->setDate($date);
-        $taskList->setTasks([ $pickup, $dropoff ]);
+
+        $item1 = new Item();
+        $item1->setTask($pickup);
+
+        $item2 = new Item();
+        $item2->setTask($dropoff);
+
+        $taskList->addItem($item1);
+        $taskList->addItem($item2);
 
         $this->taskListRepository
             ->findOneBy([
@@ -650,13 +669,13 @@ class TaskSubscriberTest extends TestCase
 
         $this->eventBus
             ->handle(Argument::type(TaskUnassigned::class))
-            ->shouldHaveBeenCalledTimes(2);
+            ->shouldHaveBeenCalledTimes(1);
 
         $this->assertFalse($pickup->isAssigned());
-        $this->assertFalse($dropoff->isAssigned());
+        $this->assertTrue($dropoff->isAssigned());
 
         $this->assertFalse($taskList->containsTask($pickup));
-        $this->assertFalse($taskList->containsTask($dropoff));
+        $this->assertTrue($taskList->containsTask($dropoff));
 
         // Make sure it can be called several
         // times during the same request cycle
@@ -695,7 +714,6 @@ class TaskSubscriberTest extends TestCase
 
         $dropoff = new Task();
         $dropoff->setBefore($date);
-        // $dropoff->assignTo($user);
 
         $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
@@ -728,7 +746,6 @@ class TaskSubscriberTest extends TestCase
         $taskList = new TaskList();
         $taskList->setCourier($user);
         $taskList->setDate($date);
-        // $taskList->setTasks([ $pickup, $dropoff ]);
 
         $this->taskListRepository
             ->findOneBy([
@@ -750,13 +767,13 @@ class TaskSubscriberTest extends TestCase
 
         $this->eventBus
             ->handle(Argument::type(TaskAssigned::class))
-            ->shouldHaveBeenCalledTimes(2);
+            ->shouldHaveBeenCalledTimes(1);
 
         $this->assertTrue($pickup->isAssigned());
-        $this->assertTrue($dropoff->isAssigned());
+        $this->assertFalse($dropoff->isAssigned());
 
         $this->assertTrue($taskList->containsTask($pickup));
-        $this->assertTrue($taskList->containsTask($dropoff));
+        $this->assertFalse($taskList->containsTask($dropoff));
 
         // Make sure it can be called several
         // times during the same request cycle

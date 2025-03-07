@@ -29,9 +29,7 @@ class CloneStripePayment
             throw new BadRequestHttpException('Mandatory parameters are missing');
         }
 
-        $payment = $data->getLastPayment(PaymentInterface::STATE_CART);
-
-        $this->stripeManager->configure();
+        $payment = $data->getLastPaymentByMethod('CARD', PaymentInterface::STATE_CART);
 
         try {
             $payment->setPaymentMethod($request->attributes->get('paymentMethodId'));

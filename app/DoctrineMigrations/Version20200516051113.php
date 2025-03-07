@@ -23,10 +23,10 @@ final class Version20200516051113 extends AbstractMigration
         $stmts['fulfillment_methods'] =
             $this->connection->prepare('SELECT restaurant_id, type, opening_hours, opening_hours_behavior FROM restaurant_fulfillment_method');
 
-        $stmts['fulfillment_methods']->execute();
+        $result = $stmts['fulfillment_methods']->execute();
 
         $restaurantsFulfillmentMethods = [];
-        while ($fulfillmentMethod = $stmts['fulfillment_methods']->fetch()) {
+        while ($fulfillmentMethod = $result->fetchAssociative()) {
             $restaurantsFulfillmentMethods[$fulfillmentMethod['restaurant_id']][$fulfillmentMethod['type']]
                 = $fulfillmentMethod;
         }

@@ -1,0 +1,87 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+
+
+AppBundle\Entity\User:
+  admin:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'admin'
+        - '12345678'
+        - 'admin@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_ADMIN' ]
+
+AppBundle\Entity\PackageSet:
+  package_set_1:
+    name: 'Standard'
+  package_set_2:
+    name: 'Standard'
+
+AppBundle\Entity\Package:
+  package_xl2:
+    # it is important that it has the same name as package_xl
+    # we want to test for https://github.com/coopcycle/coopcycle-web/issues/4788
+    name: 'XL' 
+    maxVolumeUnits: 1.0
+    averageVolumeUnits: 1.0
+    packageSet: '@package_set_1'
+    description: ''
+    short_code: 'AB'
+    color: '#a91de0'
+  package_xl:
+    name: 'XL'
+    maxVolumeUnits: 3.0
+    averageVolumeUnits: 3.0
+    packageSet: '@package_set_2'
+    description: ''
+    short_code: 'AB'
+    color: '#a91de0'
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'packages.totalVolumeUnits() < 3'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+  pricing_rule_2:
+    expression: 'packages.totalVolumeUnits() < 9'
+    price: 699
+    position: 2
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_1"
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    openingHours:
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    packageSet: '@package_set_2'

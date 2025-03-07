@@ -10,10 +10,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
 
@@ -65,31 +67,56 @@ class EdenredController extends AbstractController
 
             $this->addFlash('error', 'There was an error while trying to connect your Edenred account.');
 
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            return $this->redirectToRoute('profile_edit');
         }
 
-        $data = $this->authentication->authorizationCode($request->query->get('code'));
+        try {
 
-        if (false === $data) {
+            $data = $this->authentication->authorizationCode($request->query->get('code'));
+
+            $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
+
+            Assert::isInstanceOf($customer, CustomerInterface::class);
+
+            $customer->setEdenredAccessToken($data['access_token']);
+            $customer->setEdenredRefreshToken($data['refresh_token']);
+
+            $entityManager->flush();
+
+            $this->addFlash('notice', $translator->trans('edenred.oauth_connect.success'));
+
+            return $this->redirectToRoute(
+                $subject instanceof Order ? 'order_payment' : 'profile_edit'
+            );
+
+        } catch (HttpExceptionInterface $e) {
+
             $this->addFlash('error', 'There was an error while trying to connect your Edenred account.');
 
             // TODO Redirect depending on context
-            return $this->redirectToRoute('nucleos_profile_profile_show');
+            return $this->redirectToRoute('profile_edit');
+        }
+    }
+
+    /**
+     * Proxies authorization_code requests to Edenred server, to avoid exposing the client secret.
+     * This is used on the app.
+     *
+     * @Route("/edenred/connect/token", name="edenred_connect_token")
+     */
+    public function connectTokenAction(Request $request)
+    {
+        $response = new JsonResponse();
+
+        // TODO Make sure client_id matches & grant_type == authorization_code
+
+        try {
+            $data = $this->authentication->authorizationCode($request->get('code'), $request->get('redirect_uri'));
+            $response->setData($data);
+        } catch (HttpExceptionInterface $e) {
+            $response->setJson($e->getResponse()->getContent());
         }
 
-        $customer = $subject instanceof Order ? $subject->getCustomer() : $subject;
-
-        Assert::isInstanceOf($customer, CustomerInterface::class);
-
-        $customer->setEdenredAccessToken($data['access_token']);
-        $customer->setEdenredRefreshToken($data['refresh_token']);
-
-        $entityManager->flush();
-
-        $this->addFlash('notice', $translator->trans('edenred.oauth_connect.success'));
-
-        return $this->redirectToRoute(
-            $subject instanceof Order ? 'order_payment' : 'nucleos_profile_profile_show'
-        );
+        return $response;
     }
 }

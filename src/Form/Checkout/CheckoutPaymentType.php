@@ -6,90 +6,95 @@ use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Edenred\Client as EdenredPayment;
 use AppBundle\Form\StripePaymentType;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
-use AppBundle\Sylius\Payment\Context as PaymentContext;
-use AppBundle\Utils\OrderTimeHelper;
-use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormError;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Webmozart\Assert\Assert;
 
 class CheckoutPaymentType extends AbstractType
 {
-    private $resolver;
-
     public function __construct(
-        GatewayResolver $resolver,
-        OrderTimeHelper $orderTimeHelper,
-        EdenredAuthentication $edenredAuthentication,
-        EdenredPayment $edenredPayment,
-        SettingsManager $settingsManager,
-        bool $cashEnabled)
-    {
-        $this->resolver = $resolver;
-        $this->edenredAuthentication = $edenredAuthentication;
-        $this->edenredPayment = $edenredPayment;
-        $this->settingsManager = $settingsManager;
-        $this->cashEnabled = $cashEnabled;
-
-        parent::__construct($orderTimeHelper);
-    }
+        private GatewayResolver $gatewayResolver,
+        private EdenredAuthentication $edenredAuthentication,
+        private EdenredPayment $edenredPayment,
+        private SettingsManager $settingsManager,
+        private PaygreenManager $paygreenManager,
+        private bool $cashEnabled)
+    { }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);
 
         $builder
-            ->add('stripePayment', StripePaymentType::class, [
-                'mapped' => false,
-            ]);
-
-        // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
-        if ('mercadopago' === $this->resolver->resolve()) {
-            $builder
-                ->add('paymentMethod', HiddenType::class, [
-                    'mapped' => false,
-                ])
-                ->add('installments', HiddenType::class, [
-                    'mapped' => false,
-                ]);
-        }
+            ->add('stripePayment', StripePaymentType::class, ['label' => false]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
-            $order = $event->getData();
+            $checkoutPayment = $event->getData();
+            $order = $checkoutPayment->getOrder();
 
             $choices = [];
 
             if ($this->settingsManager->supportsCardPayments()) {
+                // Card payment is supposedly always supported if gateway is configured, even for Paygreen
                 $choices['Credit card'] = 'card';
             }
 
-            if ($order->supportsGiropay()) {
-                $choices['Giropay'] = 'giropay';
-            }
-
+            $hasValidEdenredCredentials = false;
             if ($order->supportsEdenred()) {
-                if ($order->getCustomer()->hasEdenredCredentials()) {
-                    $amounts = $this->edenredPayment->splitAmounts($order);
-                    if ($amounts['edenred'] > 0) {
-                        if ($amounts['card'] > 0) {
-                            $choices['Edenred'] = PaymentContext::METHOD_EDENRED_PLUS_CARD;
-                        } else {
-                            $choices['Edenred'] = PaymentContext::METHOD_EDENRED;
-                        }
+                $hasValidEdenredCredentials = $this->edenredPayment->hasValidCredentials($order->getCustomer());
+                if ($hasValidEdenredCredentials) {
+                    $edenredAmount = $this->edenredPayment->getMaxAmount($order);
+                    if ($edenredAmount > 0) {
+                        $choices['Edenred'] = 'edenred';
                     }
                 } else {
                     // The customer will be presented with the button
                     // to connect his/her Edenred account
                     $choices['Edenred'] = 'edenred';
                 }
+            }
+
+            switch ($this->gatewayResolver->resolveForOrder($order)) {
+                case 'paygreen':
+                    if (!$order->isMultiVendor()) {
+                        $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($order->getRestaurant()->getPaygreenShopId());
+                        if (in_array('restoflash', $paygreenPlatforms)) {
+                            $choices['Restoflash'] = 'restoflash';
+                        }
+                        if (in_array('conecs', $paygreenPlatforms)) {
+                            $choices['Conecs'] = 'conecs';
+                        }
+                        if (in_array('swile', $paygreenPlatforms)) {
+                            $choices['Swile'] = 'swile';
+                        }
+                    }
+                    break;
+                case 'mercadopago':
+                    // @see https://www.mercadopago.com.br/developers/en/guides/payments/api/receiving-payment-by-card/
+                    $form
+                        ->add('paymentMethod', HiddenType::class, [
+                            'mapped' => false,
+                        ])
+                        ->add('installments', HiddenType::class, [
+                            'mapped' => false,
+                        ])
+                        ->add('issuer', HiddenType::class, [
+                            'mapped' => false,
+                        ])
+                        ->add('payerEmail', HiddenType::class, [
+                            'mapped' => false,
+                        ]);
+                    break;
             }
 
             if ($this->cashEnabled || $order->supportsCashOnDelivery()) {
@@ -100,17 +105,16 @@ class CheckoutPaymentType extends AbstractType
                 ->add('method', ChoiceType::class, [
                     'label' => count($choices) > 1 ? 'form.checkout_payment.method.label' : false,
                     'choices' => $choices,
-                    'choice_attr' => function($choice, $key, $value) use ($order) {
+                    'choice_attr' => function($choice, $key, $value) use ($order, $hasValidEdenredCredentials) {
 
                         if (null !== $order->getCustomer()) {
 
                             Assert::isInstanceOf($order->getCustomer(), CustomerInterface::class);
 
                             switch ($value) {
-                                case PaymentContext::METHOD_EDENRED:
-                                case PaymentContext::METHOD_EDENRED_PLUS_CARD:
+                                case 'edenred':
                                     return [
-                                        'data-edenred-is-connected' => $order->getCustomer()->hasEdenredCredentials(),
+                                        'data-edenred-is-connected' => $hasValidEdenredCredentials,
                                         'data-edenred-authorize-url' => $this->edenredAuthentication->getAuthorizeUrl($order)
                                     ];
                             }
@@ -124,5 +128,12 @@ class CheckoutPaymentType extends AbstractType
                     'data' => count($choices) === 1 ? 'card' : null
                 ]);
         });
+    }
+
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => CheckoutPayment::class,
+        ]);
     }
 }

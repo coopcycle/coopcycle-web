@@ -2,8 +2,22 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 
+/**
+ * A form to order deliveries, to be embedded anywhere.
+ *
+ * @ApiResource(
+ *   itemOperations={
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')"
+ *     }
+ *   }
+ * )
+ */
 class DeliveryForm
 {
     use Timestampable;
@@ -15,6 +29,12 @@ class DeliveryForm
     private $withVehicle = false;
     private $withWeight = false;
     private $showHomepage = false;
+    private $submissions;
+
+    public function __construct()
+    {
+        $this->submissions = new ArrayCollection();
+    }
 
     /**
      * @return mixed
@@ -142,5 +162,13 @@ class DeliveryForm
         $this->showHomepage = $showHomepage;
 
         return $this;
+    }
+
+    /**
+     * Get the value of submissions
+     */
+    public function getSubmissions()
+    {
+        return $this->submissions;
     }
 }

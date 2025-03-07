@@ -58,8 +58,8 @@ class TaxesInitializer
                 [ $old, $new ] = $migration;
                 $stmt->bindParam('old', $old);
                 $stmt->bindParam('new', $new);
-                $stmt->execute();
-                $this->logger->info(sprintf('Migrated %d Sylius adjustments from « %s » to « %s »', $stmt->rowCount(), $old, $new));
+                $result = $stmt->execute();
+                $this->logger->info(sprintf('Migrated %d Sylius adjustments from « %s » to « %s »', $result->rowCount(), $old, $new));
             }
 
             $this->conn->commit();

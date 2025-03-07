@@ -1,6 +1,7 @@
 import React from 'react'
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
+import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Pie } from 'react-chartjs-2';
 import chroma from 'chroma-js'
 
@@ -11,6 +12,7 @@ const commonOptions = {
 import { getCubeDateRange } from '../utils'
 
 const renderChart = ({ resultSet, error }) => {
+
   if (error) {
     return <div>{error.toString()}</div>;
   }
@@ -20,7 +22,7 @@ const renderChart = ({ resultSet, error }) => {
   }
 
   const data = {
-    labels: resultSet.categories().map((c) => c.category),
+    labels: resultSet.categories().map((c) => c.x),
     datasets: resultSet.series().map((s) => {
 
       const colorScale = chroma.scale(['#10ac84', '#feca57']).domain([ 0, s.series.length - 1 ])
@@ -34,6 +36,7 @@ const renderChart = ({ resultSet, error }) => {
       }
     }),
   };
+
 
   const options = {
     ...commonOptions,
@@ -52,30 +55,21 @@ const Chart = ({ cubejsApi, dateRange }) => {
   return (
     <QueryRenderer
       query={{
+        "dimensions": [
+          "OrderExport.restaurant"
+        ],
         "measures": [
-          "Restaurant.orderCount"
+          "OrderExport.count"
         ],
         "timeDimensions": [
           {
-            "dimension": "Order.shippingTimeRange",
+            "dimension": "OrderExport.completed_at",
             "dateRange": getCubeDateRange(dateRange)
           }
         ],
         "order": {
-          "Restaurant.orderCount": "desc"
+          "OrderExport.count": "desc"
         },
-        "filters": [
-          {
-            "member": "Order.state",
-            "operator": "equals",
-            "values": [
-              "fulfilled"
-            ]
-          }
-        ],
-        "dimensions": [
-          "Restaurant.name"
-        ],
         "limit": 10
       }}
       cubejsApi={cubejsApi}
@@ -85,7 +79,7 @@ const Chart = ({ cubejsApi, dateRange }) => {
         chartType: 'pie',
         pivotConfig: {
           "x": [
-            "Restaurant.name"
+            "OrderExport.restaurant"
           ],
           "y": [
             "measures"

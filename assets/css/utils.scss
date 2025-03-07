@@ -3,8 +3,20 @@
   flex-wrap: wrap;
 }
 
+.display-flex__items-centered {
+  align-items: center;
+}
+
 .display-inline-block {
   display: inline-block;
+}
+
+.display-none {
+  display: none;
+}
+
+.flex-1 {
+  flex: 1;
 }
 
 .nomargin {
@@ -21,4 +33,74 @@
 
 .nopadding {
   padding: 0;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #FFF;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotating 1.5s linear infinite;
+
+  &.loader--lg {
+    width: 40px;
+    height: 40px;
+  }
+
+  &.loader--dark {
+    border-color: $dark;
+    border-bottom-color: transparent;
+  }
+}
+
+.font-weight-semi-bold {
+  font-weight: 600 !important;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
+}
+
+.text-danger,
+li > a.text-danger // very specific selector for bootstrap dropdown
+{
+  color: $red;
+}
+
+.no-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button.no-number-input-arrow,
+input::-webkit-inner-spin-button.no-number-input-arrow {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number].no-number-input-arrow {
+  -moz-appearance: textfield;
 }

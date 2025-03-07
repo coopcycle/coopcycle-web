@@ -3,7 +3,7 @@ import axios from 'axios'
 export default function(token, refreshToken, refreshTokenCallback) {
 
   const client = axios.create({
-    baseURL: location.protocol + '//' + location.hostname
+    baseURL: location.protocol + '//' + location.host
   })
 
   let subscribers = []

@@ -80,12 +80,20 @@ AppBundle\Entity\PackageSet:
 AppBundle\Entity\Package:
   package_small:
     name: 'SMALL'
-    volumeUnits: 1.0
+    maxVolumeUnits: 1.0
+    averageVolumeUnits: 1.0
     packageSet: '@package_set_1'
+    description: ''
+    short_code: 'AB'
+    color: '#a91de0'
   package_xl:
     name: 'XL'
-    volumeUnits: 3.0
+    maxVolumeUnits: 3.0
+    averageVolumeUnits: 3.0
     packageSet: '@package_set_1'
+    description: ''
+    short_code: 'AB'
+    color: '#a91de0'
 
 AppBundle\Entity\Organization:
   org_1:

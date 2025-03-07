@@ -3,14 +3,13 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Nonprofit;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
-use AppBundle\LoopEat\GuestCheckoutAwareAdapter as LoopEatAdapter;
 use AppBundle\Dabba\Client as DabbaClient;
 use AppBundle\Dabba\Context as DabbaContext;
 use AppBundle\Dabba\GuestCheckoutAwareAdapter as DabbaAdapter;
-use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\DabbaOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder;
@@ -25,40 +24,25 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Form\AbstractType;
 
 class CheckoutAddressType extends AbstractType
 {
-    private $translator;
-    private $priceFormatter;
-    private $loopeatContext;
-    private $requestStack;
-
     public function __construct(
-        TranslatorInterface $translator,
-        PriceFormatter $priceFormatter,
-        OrderTimeHelper $orderTimeHelper,
-        LoopEatContext $loopeatContext,
-        LoopEatContextInitializer $loopeatContextInitializer,
-        RequestStack $requestStack,
-        DabbaClient $dabbaClient,
-        DabbaContext $dabbaContext,
-        bool $nonProfitsEnabled)
+        private readonly TranslatorInterface $translator,
+        private readonly PriceFormatter $priceFormatter,
+        private readonly LoopEatContext $loopeatContext,
+        private readonly LoopEatContextInitializer $loopeatContextInitializer,
+        private readonly RequestStack $requestStack,
+        private readonly DabbaClient $dabbaClient,
+        private readonly DabbaContext $dabbaContext,
+        private readonly bool $nonProfitsEnabled,
+        private readonly string $enBoitLePlatUrl)
     {
-        $this->translator = $translator;
-        $this->priceFormatter = $priceFormatter;
-        $this->loopeatContext = $loopeatContext;
-        $this->loopeatContextInitializer = $loopeatContextInitializer;
-        $this->requestStack = $requestStack;
-        $this->dabbaClient = $dabbaClient;
-        $this->dabbaContext = $dabbaContext;
-        $this->nonProfitsEnabled = $nonProfitsEnabled;
-
-        parent::__construct($orderTimeHelper);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -177,6 +161,9 @@ class CheckoutAddressType extends AbstractType
                     $form->add('reusablePackagingEnabled', CheckboxType::class, [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label',
+                        'label_translation_parameters' => [
+                            '%url%' => $this->enBoitLePlatUrl
+                        ],
                         'label_html' => true,
                         'attr' => [
                             'data-en-boite-le-plat' => 'true',
@@ -245,7 +232,9 @@ class CheckoutAddressType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::configureOptions($resolver);
+        $resolver->setDefaults(array(
+            'data_class' => Order::class,
+        ));
 
         $resolver->setDefault('constraints', [
             new LoopEatOrder(),

@@ -1,14 +1,29 @@
 import L from 'leaflet'
+
+import '@geoman-io/leaflet-geoman-free'
+import 'leaflet-arrowheads'
+
 import Polyline from '@mapbox/polyline'
+
+import ColorHash from 'color-hash'
+
 require('beautifymarker')
 
+export const mapColorHash = new ColorHash({
+  hash: 'bkdr'
+})
+
+
 let settings = {}
+
+let map
 
 function init(id, options = {}) {
 
   let center
   let zoom = 13
   let zoomControl = true
+  let singleton = options?.singleton || false
 
   if (settings.center) {
     center = settings.center
@@ -24,7 +39,36 @@ function init(id, options = {}) {
     }
   }
 
-  var map = L.map(id, { scrollWheelZoom: false, zoomControl })
+  // do not init twice the map when running in react's strict mode
+  if (map !== undefined && singleton) {
+    return map
+  }
+
+  map = L.map(id, { scrollWheelZoom: false, zoomControl })
+
+  if (options.polygonManagement) {
+    map.pm.addControls({
+      position: 'topleft',
+      drawCircleMarker: false,
+      rotateMode: false, //	Adds a button to rotate layers.
+      drawMarker: false, //	Adds button to draw Markers.
+      drawPolyline:	false,	// Adds button to draw Line.
+      drawRectangle: false, // Adds button to draw Rectangle.
+      drawPolygon:	true, // Adds button to draw Polygon.
+      drawCircle:	false,	// Adds button to draw Circle.
+      drawText:	false, //	Adds button to draw Text.
+      editMode:	false, //	Adds button to toggle Edit Mode for all layers.
+      dragMode:	false, //	Adds button to toggle Drag Mode for all layers.
+      cutPolygon:	false, //	Adds button to cut a hole in a Polygon or Line.
+      removalMode:	false, //	Adds a button to remove layers.
+      oneBlock:	false, //	All buttons will be displayed as one block Customize Controls.
+      drawControls:	true, //	Shows all draw buttons / buttons in the draw block.
+      editControls:	false, //	Shows all edit buttons / buttons in the edit block.
+      customControls:	false, //	Shows all buttons in the custom block.
+    });
+
+    map.pm.Toolbar.changeActionsOfControl("Polygon", []);
+  }
 
   if (options.onLoad) {
     map.whenReady(options.onLoad)
@@ -111,6 +155,14 @@ function getPolyline(origin, destination) {
     .then(route => decodePolyline(route.geometry))
 }
 
+function createPolylineWithArrows(polyline, color) {
+
+  return L.polyline(typeof polyline === 'string' ? decodePolyline(polyline) : polyline, {
+    opacity: 0.7,
+    color
+  }).arrowheads()
+}
+
 export default {
   init: init,
   createMarker: createMarker,
@@ -118,5 +170,6 @@ export default {
   fitToLayers: fitToLayers,
   decodePolyline: decodePolyline,
   getPolyline: getPolyline,
-  route
+  route,
+  createPolylineWithArrows,
 }

@@ -4,13 +4,17 @@ namespace Tests\AppBundle\Entity;
 
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskCollectionItem;
-use AppBundle\Entity\TaskList;
-use AppBundle\Entity\User;
+use AppBundle\Entity\Tour;
 use PHPUnit\Framework\TestCase;
 
-abstract class TaskCollectionTest extends TestCase
+class TaskCollectionTest extends TestCase
 {
     protected $taskCollection;
+
+    public function setUp(): void
+    {
+        $this->taskCollection = new Tour();
+    }
 
     private function assertAddTask($count)
     {

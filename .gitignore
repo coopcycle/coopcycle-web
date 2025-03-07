@@ -42,12 +42,18 @@
 
 # PHPStorm stuff
 .idea
+*.iml
 
 # docker-sync stuff
 .docker-sync
 
 .env
+*.env.local
+*.env.*.local
 
 /js/app/shared-js-lib-local
 
 .phpactor.json
+
+.vscode
+.tool-versions

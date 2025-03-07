@@ -14,16 +14,20 @@ const group = (value, bucketWidth) =>
 const groupDiffInMinutes = (value) => group(value, 10)
 
 cube(`Task`, {
-  sql: `SELECT id, type, done_after, done_before, status FROM public.task`,
+  sql_table: `public.task`,
 
   joins: {
     TaskDoneEvent: {
-      relationship: `hasOne`,
-      sql: `${CUBE.status} = 'DONE' AND ${CUBE.id} = ${TaskDoneEvent.taskId}`,
+      relationship: `one_to_one`,
+      sql: `${CUBE.status} = 'DONE' AND ${CUBE.id} = ${TaskDoneEvent}.task_id`,
     },
     Tagging: {
       relationship: `hasMany`,
       sql: `${CUBE.id} = ${Tagging.resourceId}`,
+    },
+    User: {
+      relationship: `one_to_one`,
+      sql: `${CUBE}.assigned_to = ${User}.id`,
     },
   },
 

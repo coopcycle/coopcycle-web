@@ -15,28 +15,23 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalculateRetailPrice implements TaxableInterface
 {
-	public function __construct(
-        DeliveryManager $deliveryManager,
-        CurrencyContextInterface $currencyContext,
-        SettingsManager $settingsManager,
-        TokenStoreExtractor $storeExtractor,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        TaxRateResolverInterface $taxRateResolver,
-        CalculatorInterface $calculator,
-        string $state)
-    {
-        $this->deliveryManager = $deliveryManager;
-        $this->currencyContext = $currencyContext;
-        $this->settingsManager = $settingsManager;
-        $this->storeExtractor = $storeExtractor;
+    private ?TaxCategoryInterface $taxCategory = null;
 
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->calculator = $calculator;
-        $this->state = $state;
+	public function __construct(
+        private readonly DeliveryManager $deliveryManager,
+        private readonly CurrencyContextInterface $currencyContext,
+        private readonly SettingsManager $settingsManager,
+        private readonly TokenStoreExtractor $storeExtractor,
+        private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private readonly TaxRateResolverInterface $taxRateResolver,
+        private readonly CalculatorInterface $calculator,
+        private readonly TranslatorInterface $translator,
+        private readonly string $state)
+    {
     }
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
@@ -59,7 +54,8 @@ class CalculateRetailPrice implements TaxableInterface
         $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
 
         if (null === $amount) {
-            throw new BadRequestHttpException('Price could not be calculated');
+            $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+            throw new BadRequestHttpException($message);
         }
 
         $subjectToVat = $this->settingsManager->get('subject_to_vat');

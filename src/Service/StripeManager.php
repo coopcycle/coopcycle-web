@@ -3,27 +3,29 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
-use Hashids\Hashids;
+use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class StripeManager
 {
-    private $settingsManager;
-    private $logger;
-
     const STRIPE_API_VERSION = '2019-09-09';
 
     public function __construct(
-        SettingsManager $settingsManager,
-        LoggerInterface $logger)
+        private readonly SettingsManager $settingsManager,
+        private readonly LoggerInterface $logger)
     {
-        $this->settingsManager = $settingsManager;
-        $this->logger = $logger;
     }
 
-    public function configure()
+    /**
+     * Please call this method before using the Stripe lib
+     *
+     * FIXME: legacy approach: https://github.com/stripe/stripe-php/wiki/Migration-to-StripeClient-and-services-in-7.33.0#legacy-approach
+     * 
+     * @return void
+     */
+    public function setupStripeApi(): void
     {
         Stripe\Stripe::setApiKey($this->settingsManager->get('stripe_secret_key'));
         Stripe\Stripe::setApiVersion(self::STRIPE_API_VERSION);
@@ -81,9 +83,9 @@ class StripeManager
 
         // If it is a complementary payment,
         // we do not take application fee
-        if ($payment->isEdenredWithCard()) {
+        if ($payment->isMealVoucherComplement()) {
 
-            return $payload;
+            return $this->addCustomerParameter($payment, $payload);
         }
 
         $attrs = [];
@@ -108,15 +110,12 @@ class StripeManager
         }
 
         if (null === $stripeAccount || !$restaurantPaysStripeFee) {
-            /** For payments done directly in the platform account
-             *  we send the Customer paramater to associate the payment to the customer.
-             * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
-             */
+
             if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
                 $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
 
                 if (null !== $stripeCustomer) {
-                    $attrs['customer'] = $stripeCustomer;
+                    $attrs = $this->addCustomerParameter($payment, $attrs);
                 }
             }
         }
@@ -125,16 +124,35 @@ class StripeManager
     }
 
     /**
+     * For payments done directly in the platform account
+     * we send the Customer paramater to associate the payment to the customer.
+     * (this param is mandatory when the payment method belongs to the customer, i.e. when user selects a saved pm)
+     */
+    private function addCustomerParameter(PaymentInterface $payment, array $payload): array
+    {
+        $order = $payment->getOrder();
+
+        if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
+            $stripeCustomer = $order->getCustomer()->getUser()->getStripeCustomerId();
+            if (null !== $stripeCustomer) {
+                $payload = array_merge($payload, ['customer' => $stripeCustomer]);
+            }
+        }
+
+        return $payload;
+    }
+
+    /**
      * @return Stripe\PaymentIntent
      */
     public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $order = $payment->getOrder();
 
         $payload = [
-            'amount' => $payment->getAmountForMethod('CARD'),
+            'amount' => $payment->getAmount(),
             'currency' => strtolower($payment->getCurrencyCode()),
             'description' => sprintf('Order %s', $order->getNumber()),
             'payment_method' => $payment->getPaymentMethod(),
@@ -157,40 +175,22 @@ class StripeManager
             sprintf('Order #%d | StripeManager::createIntent | %s', $order->getId(), json_encode($payload))
         );
 
-        return Stripe\PaymentIntent::create($payload, $stripeOptions);
-    }
+        try {
+            return Stripe\PaymentIntent::create($payload, $stripeOptions);
+        } catch (Stripe\Exception\InvalidRequestException $e) {
+            // Do not die on error "No such customer"
+            // Clear the stored customer, and retry
+            if (Stripe\ErrorObject::CODE_RESOURCE_MISSING === $e->getStripeCode() && 'customer' === $e->getStripeParam()) {
+                if ($order->getCustomer() && $order->getCustomer()->hasUser()) {
+                    $order->getCustomer()->getUser()->setStripeCustomerId(null);
 
-    /**
-     * @see https://stripe.com/docs/payments/giropay/accept-a-payment#create-payment-intent
-     *
-     * @param PaymentInterface $payment
-     * @return Stripe\PaymentIntent
-     */
-    public function createGiropayIntent(PaymentInterface $payment): Stripe\PaymentIntent
-    {
-        $this->configure();
+                    return $this->createIntent($payment, $savePaymentMethod);
+                }
+            }
 
-        $order = $payment->getOrder();
+            throw $e;
+        }
 
-        $payload = [
-            'amount' => $payment->getAmount(),
-            'currency' => strtolower($payment->getCurrencyCode()),
-            'description' => sprintf('Order %s', $order->getNumber()),
-            'payment_method_types' => ['giropay'],
-            // TODO Add statement descriptor
-            // 'statement_descriptor' => '...',
-        ];
-
-        $this->configurePayment($payment);
-
-        $payload = $this->configureCreateIntentPayload($payment, $payload);
-        $stripeOptions = $this->getStripeOptions($payment);
-
-        $this->logger->info(
-            sprintf('Order #%d | StripeManager::createGiropayIntent | %s', $order->getId(), json_encode($payload))
-        );
-
-        return Stripe\PaymentIntent::create($payload, $stripeOptions);
     }
 
     /**
@@ -198,7 +198,7 @@ class StripeManager
      */
     public function confirmIntent(PaymentInterface $payment): Stripe\PaymentIntent
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         $stripeOptions = $this->getStripeOptions($payment);
 
@@ -221,7 +221,7 @@ class StripeManager
      */
     public function capture(PaymentInterface $payment)
     {
-        $this->configure();
+        $this->setupStripeApi();
 
         // TODO Exception
         $intent = Stripe\PaymentIntent::retrieve(
@@ -230,10 +230,9 @@ class StripeManager
         );
 
         // Make sure the payment intent needs to be captured
-        // When using Giropay, it's not needed
         if ($intent->capture_method === 'manual' && $intent->amount_capturable > 0) {
             $intent->capture([
-                'amount_to_capture' => $payment->getAmountForMethod('CARD')
+                'amount_to_capture' => $payment->getAmount()
             ]);
         }
 
@@ -250,7 +249,7 @@ class StripeManager
         // Check if the charge was made in test or live mode
         // To achieve this, we need to store a "livemode" key in payment details
 
-        $this->configure();
+        $this->setupStripeApi();
 
         $stripeAccount = $payment->getStripeUserId();
         $stripeOptions = array();
@@ -280,6 +279,8 @@ class StripeManager
         if (!$order->hasVendor() || !$order->isMultiVendor()) {
             return;
         }
+
+        $this->setupStripeApi();
 
         $restaurants = $order->getRestaurants();
 
@@ -315,7 +316,7 @@ class StripeManager
     /**
      * @return Stripe\Customer
      */
-    public function createCustomer(User $user)
+    private function createCustomer(User $user)
     {
         if (null !== $user->getStripeCustomerId()) {
             return Stripe\Customer::retrieve($user->getStripeCustomerId());
@@ -337,6 +338,8 @@ class StripeManager
      */
     public function createSetupIntent(PaymentInterface $payment, $paymentMethod)
     {
+        $this->setupStripeApi();
+
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
 
@@ -356,6 +359,8 @@ class StripeManager
 
     public function attachPaymentMethodToCustomer(PaymentInterface $payment)
     {
+        $this->setupStripeApi();
+
         $user = $payment->getOrder()->getCustomer()->getUser();
         $customerId = $user->getStripeCustomerId();
 
@@ -377,13 +382,15 @@ class StripeManager
      * @see https://stripe.com/docs/connect/cloning-customers-across-accounts
      * @see https://stripe.com/docs/payments/payment-methods/connect#cloning-payment-methods
      *
-     * We clone the PaymentMethod in the connected account and then we use the clonned payment method id
+     * We clone the PaymentMethod in the connected account and then we use the cloned payment method id
      * when we create the PaymentIntent to create the direct charge in the connected account.
      *
      * @return Stripe\PaymentMethod
      */
     public function clonePaymentMethodToConnectedAccount(PaymentInterface $payment)
     {
+        $this->setupStripeApi();
+
         $payload = [
             'payment_method' => $payment->getPaymentMethod()
         ];
@@ -405,9 +412,21 @@ class StripeManager
         return Stripe\PaymentMethod::create($payload, $stripeOptions);
     }
 
-    public function getCustomerPaymentMethods($customerId)
+    public function getCustomerPaymentMethods($customerId): Stripe\Collection
     {
-        return Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
+        $this->setupStripeApi();
+
+        $response = Stripe\Customer::allPaymentMethods($customerId, ['type' => 'card']);
+
+        $nonExpiredCards = array_filter($response->toArray()['data'], function ($pm) {
+
+            $endOfCurrentMonth = Carbon::now()->endOfMonth();
+            $expDate = Carbon::createFromDate($pm['card']['exp_year'], $pm['card']['exp_month'])->endOfMonth();
+
+            return $expDate >= $endOfCurrentMonth;
+        });
+
+        return Stripe\Collection::constructFrom(['data' => array_values($nonExpiredCards)]);
     }
 
     /**

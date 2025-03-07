@@ -4,14 +4,13 @@ import {
 import {
   taskListAdapter
 } from './adapters'
-import { replaceTasksWithIds } from './taskListUtils'
 
 const initialState = taskListAdapter.getInitialState()
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case CREATE_TASK_LIST_SUCCESS:
-      return taskListAdapter.upsertOne(state, replaceTasksWithIds(action.payload))
+      return taskListAdapter.upsertOne(state, action.payload)
   }
 
   return state

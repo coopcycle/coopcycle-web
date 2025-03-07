@@ -4,10 +4,12 @@ namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
+use AppBundle\Payment\GatewayResolver;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
@@ -25,59 +27,29 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $channelContext;
-    private $productRepository;
-    private $variantResolver;
-    private $orderItemFactory;
-    private $orderItemQuantityModifier;
-    private $orderModifier;
-    private $promotionCouponRepository;
-    private $orderProcessor;
-    private $priceFormatter;
-    private $translator;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        ObjectNormalizer $objectNormalizer,
-        ChannelContextInterface $channelContext,
-        ProductRepositoryInterface $productRepository,
-        OptionsPayloadConverter $optionsPayloadConverter,
-        LazyProductVariantResolverInterface $variantResolver,
-        FactoryInterface $orderItemFactory,
-        OrderItemQuantityModifierInterface $orderItemQuantityModifier,
-        OrderModifierInterface $orderModifier,
-        IriConverterInterface $iriConverter,
-        PromotionCouponRepository $promotionCouponRepository,
-        OrderProcessorInterface $orderProcessor,
-        PriceFormatter $priceFormatter,
-        TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator,
-        LoopeatClient $loopeatClient,
-        LoopeatContextInitializer $loopeatContextInitializer)
-    {
-        $this->normalizer = $normalizer;
-        $this->channelContext = $channelContext;
-        $this->productRepository = $productRepository;
-        $this->optionsPayloadConverter = $optionsPayloadConverter;
-        $this->variantResolver = $variantResolver;
-        $this->orderItemFactory = $orderItemFactory;
-        $this->orderItemQuantityModifier = $orderItemQuantityModifier;
-        $this->orderModifier = $orderModifier;
-        $this->objectNormalizer = $objectNormalizer;
-        $this->iriConverter = $iriConverter;
-        $this->promotionCouponRepository = $promotionCouponRepository;
-        $this->orderProcessor = $orderProcessor;
-        $this->priceFormatter = $priceFormatter;
-        $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
-        $this->loopeatClient = $loopeatClient;
-        $this->loopeatContextInitializer = $loopeatContextInitializer;
-    }
+        private ItemNormalizer $normalizer,
+        private ObjectNormalizer $objectNormalizer,
+        private ChannelContextInterface $channelContext,
+        private ProductRepositoryInterface $productRepository,
+        private OptionsPayloadConverter $optionsPayloadConverter,
+        private LazyProductVariantResolverInterface $variantResolver,
+        private FactoryInterface $orderItemFactory,
+        private OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        private OrderModifierInterface $orderModifier,
+        private IriConverterInterface $iriConverter,
+        private PromotionCouponRepository $promotionCouponRepository,
+        private OrderProcessorInterface $orderProcessor,
+        private PriceFormatter $priceFormatter,
+        private TranslatorInterface $translator,
+        private LoopeatClient $loopeatClient,
+        private LoopeatContextInitializer $loopeatContextInitializer,
+        private GatewayResolver $paymentGatewayResolver,
+        private EdenredClient $edenredClient)
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -114,6 +86,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $restaurant = $object->getRestaurant();
 
+        if (null !== $restaurant && $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials()) {
+            $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
+        }
+
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
             $object->isEligibleToReusablePackaging() &&
@@ -125,7 +101,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();
 
-            if ($packagingAmount > 0) {
+            $packagingPrice = '';
+            if ($restaurant->isLoopeatEnabled()) {
+                $transKey = 'form.checkout_address.reusable_packaging_loopeat_enabled.label';
+            } elseif ($packagingAmount > 0) {
                 $packagingPrice = sprintf('+ %s', $this->priceFormatter->formatWithSymbol($packagingAmount));
             } else {
                 $packagingPrice = $this->translator->trans('basics.free');
@@ -140,16 +119,16 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             ];
 
             if ($restaurant->isLoopeatEnabled()) {
-                $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl([
+                $loopeatParams = [
                     'state' => $this->loopeatClient->createStateParamForOrder($object, $useDeepLink = true),
-                ]);
+                ];
+                if (isset($data['loopeatContext'])) {
+                    $loopeatParams['required_credits_cents'] = $data['loopeatContext']->requiredAmount;
+                }
+                $enableReusablePackagingAction['loopeatOAuthUrl'] = $this->loopeatClient->getOAuthAuthorizeUrl($loopeatParams);
             }
 
             $data['potentialAction'] = [ $enableReusablePackagingAction ];
-        }
-
-        if ($object->isReusablePackagingEnabled() && $object->getRestaurant()->isLoopeatEnabled()) {
-            $data['loopeatContext'] = $this->loopeatContextInitializer->initialize($object);
         }
 
         if (isset($context['is_web']) && $context['is_web']) {
@@ -162,9 +141,10 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             } else {
 
                 $vendor = $object->getVendor();
+                $vendorConditions = $object->getVendorConditions();
 
                 $fulfillmentMethods = [];
-                foreach ($vendor->getFulfillmentMethods() as $fulfillmentMethod) {
+                foreach ($vendorConditions->getFulfillmentMethods() as $fulfillmentMethod) {
                     if ($fulfillmentMethod->isEnabled()) {
                         $fulfillmentMethods[] = $fulfillmentMethod->getType();
                     }
@@ -173,7 +153,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 $data['vendor'] = [
                     'id' => $vendor->getId(),
                     'variableCustomerAmountEnabled' =>
-                        $vendor->getContract() !== null ? $vendor->getContract()->isVariableCustomerAmountEnabled() : false,
+                        $vendorConditions->getContract() !== null ? $vendorConditions->getContract()->isVariableCustomerAmountEnabled() : false,
                     'address' => [
                         'latlng' => [
                             $vendor->getAddress()->getGeo()->getLatitude(),
@@ -193,6 +173,13 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
             $data['invitation'] = $invitation->getSlug();
         }
 
+        $data['paymentGateway'] = $this->paymentGatewayResolver->resolveForOrder($object);
+
+        // Make sure the customer has *VALID* Edenred credentials
+        if (array_key_exists('hasEdenredCredentials', $data) && true === $data['hasEdenredCredentials']) {
+            $data['hasEdenredCredentials'] = $this->edenredClient->hasValidCredentials($object->getCustomer());
+        }
+
         return $data;
     }
 
@@ -208,6 +195,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         $order->setChannel($this->channelContext->getChannel());
 
         if ($order->getState() === Order::STATE_CART && isset($data['promotionCoupon'])) {
+            /** @phpstan-ignore method.notFound */
             if ($promotionCoupon = $this->promotionCouponRepository->findOneByCode($data['promotionCoupon'])) {
                 $order->setPromotionCoupon($promotionCoupon);
                 $this->orderProcessor->process($order);

@@ -1,0 +1,20 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_grid";
+
+.container-full-hd {
+  @media (min-width: 1920px) {
+    width: 1800px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+.container--extra-space-on-sides {
+  margin-right: auto;
+  margin-left: auto;
+  @include clearfix;
+
+  @media (min-width: $screen-md-min) {
+    margin-left: 3rem;
+    margin-right: 3rem;
+  }
+}

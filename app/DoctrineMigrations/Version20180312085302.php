@@ -22,14 +22,14 @@ class Version20180312085302 extends AbstractMigration
         $this->addSql('ALTER TABLE task_collection ADD updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
 
         $stmt = $this->connection->prepare('SELECT id, distance, duration, polyline, created_at, updated_at FROM task_list');
-        $stmt->execute();
-        while ($taskList = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($taskList = $result->fetchAssociative()) {
             $this->addSql('UPDATE task_collection SET distance = :distance, duration = :duration, polyline = :polyline, created_at = :created_at, updated_at = :updated_at WHERE id = :id', $taskList);
         }
 
         $stmt = $this->connection->prepare('SELECT id, distance, duration, polyline FROM delivery');
-        $stmt->execute();
-        while ($delivery = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($delivery = $result->fetchAssociative()) {
             $this->addSql('UPDATE task_collection SET distance = :distance, duration = :duration, polyline = :polyline WHERE id = :id', $delivery);
         }
 
@@ -72,8 +72,8 @@ class Version20180312085302 extends AbstractMigration
         $this->addSql('ALTER TABLE task_list ADD updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL');
 
         $stmt = $this->connection->prepare('SELECT id, distance, duration, polyline, created_at, updated_at FROM task_collection');
-        $stmt->execute();
-        while ($taskCollection = $stmt->fetch()) {
+        $result = $stmt->execute();
+        while ($taskCollection = $result->fetchAssociative()) {
             $this->addSql('UPDATE delivery SET distance = :distance, duration = :duration, polyline = :polyline WHERE id = :id', $taskCollection);
             $this->addSql('UPDATE task_list SET distance = :distance, duration = :duration, polyline = :polyline, created_at = :created_at, updated_at = :updated_at WHERE id = :id', $taskCollection);
         }

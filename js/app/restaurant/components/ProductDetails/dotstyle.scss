@@ -1,0 +1,13 @@
+.dotstyle li a {
+    background-color: #bdc3c7;
+    background-color: rgba(#bdc3c7, 0.3);
+}
+
+.dotstyle li a:hover,
+.dotstyle li a:focus {
+    background-color: darken(#bdc3c7, 10%);
+}
+
+.dotstyle li.current a {
+    background-color: darken(#bdc3c7, 10%);
+}

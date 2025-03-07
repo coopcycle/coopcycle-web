@@ -12,6 +12,6 @@
     <field name="updatedAt" type="datetime" column="updated_at">
       <gedmo:timestampable on="update"/>
     </field>
-    <many-to-one field="deliveryForm" target-entity="AppBundle\Entity\DeliveryForm" />
+    <many-to-one field="deliveryForm" target-entity="AppBundle\Entity\DeliveryForm" inversed-by="submissions"/>
   </entity>
 </doctrine-mapping>

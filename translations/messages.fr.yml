@@ -1,8 +1,8 @@
 global.changesSaved: Changements sauvegardés.
 navbar.login: Connexion
 navbar.myAccount: Mon compte
-navbar.proCart: Passer en pro
-navbar.lambdaCart: Passer en normal
+navbar.switch_to_business: Compte %name%
+navbar.switch_to_personal: Compte personnel
 base.footer.contactUs: Nous contacter
 base.footer.companyRegister: Devenir partenaire
 base.footer.RegisterMyRestaurant: Inscrire mon restaurant
@@ -12,7 +12,7 @@ base.footer.terms: Conditions générales
 base.footer.suggest: Suggérer un restaurant
 base.footer.privacy: Confidentialité
 button.suggest.submitted.label: Revenir à l'accueil
-adminDashboard.title: Panel d'administration
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuration
 adminDashboard.tooltip.orders: Gestion des commandes restaurateurs
 adminDashboard.tooltip.deliveries: Gestion des courses
@@ -88,9 +88,11 @@ adminDashboard.pledges.title: Suggestions
 delivery.createNew: Créer une livraison
 delivery.tracking_link: Lien de suivi
 delivery.with_id: 'Livraison #%id%'
+subscription.title: 'Règle de récurrence #%id%'
+subscription.generated_order: 'Cette commande a été générée par une règle de récurrence'
+subscription.view: 'Voir la règle de récurrence'
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
-restaurants.visible_by_you_only: Visible par vous seulement
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
 localBusiness.form.orderingDelayMinutes.help: Utilisez ces champs pour ajouter un
   délai avant la commande. N'influe pas sur le temps réservé à la préparation ni sur
@@ -116,7 +118,7 @@ restaurant.disabledWarning: "Ce restaurant n'est pas activé et n'est donc pas v
 restaurant.closedWarningWithDelay: Commandez dès maintenant pour plus tard ! Commande
   minimum %delay% à l'avance.
 restaurant.temporaryClosedWarning: Ce restaurant est indisponible à la livraison jusqu'au
-  <strong>%date%</strong>. Vous pouvez commander pour plus tard !
+  <strong>%date%</strong>.
 restaurant.noMenuWarning: "Ce restaurant n'a pas de menu pour l'instant\n"
 restaurant.quotes_disclaimer.authenticated: Ce restaurant accepte également des commandes
   sur devis. Pour créer des devis, vous devez être un client référencé. <a href="%contact_us%">Contactez-nous</a>
@@ -269,7 +271,7 @@ profile.accountType: Type de compte
 order.cart.title: Panier
 order.cart.donation: Dons aux associations
 order.items.products_with_count: Produits (%count%)
-order.summary.heading: Commande %number% (#%id%)
+order.summary.heading: Commande %number%
 order.total_excluding_tax: Total HT
 order.total_including_tax: Total TTC
 order.items_total: Total produits
@@ -360,6 +362,10 @@ checkout.breadcrumb.payment: Paiement
 checkout.breadcrumb.confirm: Confirmation
 form.geojson_upload.file: Fichier
 form.store_type.pricing_rule_set.label: Tarification
+form.store_type.pricing_rule_set.warning: Sans tarification,
+  le prix de livraison ne peut pas être calculé et suivi pour la facturation.
+  De plus, la contribution basée sur le montant de la commande ne sera pas disponible.
+form.store_type.pricing_rule_set.warning.list: La tarification n'est pas configurée
 form.store_type.prefill_pickup_address.label: Remplir automatiquement l'adresse de
   retrait
 form.store_type.create_orders.label: Créer des commandes
@@ -387,6 +393,8 @@ form.delivery.store.label: Magasin
 form.delivery.store.placeholder: Rechercher un magasin…
 form.delivery.confirm.label: Confirmer
 form.delivery.price.label: Prix
+form.delivery.price.missing: Contactez-nous pour plus de détails
+form.delivery.price.missing.incident: "Commande #%number%: Le prix de livraison n'a pas pu être calculé. Veuillez l'entrer manuellement et vérifier la tarification."
 form.delivery.to_be_confirmed.warning: Vous devez confirmer la commande
 form.delivery.has_order.info: Cette livraison est liée à une commande
 form.delivery.view_order: Voir la commande
@@ -426,6 +434,7 @@ form.address.company.function.label: Poste
 form.address.company.collaborator_number.label: Nombre de collaborateur-ices
 form.address.company.meal_estimate.label: Estimation du nombre de repas (par jour)
 form.company.make_the_request.label: Faire la demande
+pricing_rule_set.new: Nouvelle tarification
 form.pricing_rule_set.name.label: Nom
 form.pricing_rule_set.rules.label: Règles
 form.pricing_rule.price.label: Prix
@@ -455,7 +464,7 @@ form.settings.stripe_secret_key.help: "Créez un compte Stripe pour récupérer 
   \ <a href=\"https://stripe.com/docs/dashboard#api-keys\">clé secrète</a>\n"
 form.settings.stripe_connect_client_id.label: Identifiant Stripe Connect
 form.settings.stripe_connect_client_id.help: "Récupérez l'identifiant Stripe Connect\
-  \ sur la <a href=\"https://dashboard.stripe.com/account/applications/settings\"\
+  \ sur la <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
   >page des paramètres</a>\n"
 form.settings.latlng.label: Coordonnées géographiques
 form.settings.latlng.help: "Spécifiez la latitude et la longitude par défaut. Vous\
@@ -608,11 +617,11 @@ form.checkout_address.reusable_packaging.loopeat.add: Ajouter %missing% crédits
 form.checkout_address.reusable_packaging.loopeat.manage_account: Gérer mon compte zéro déchet
 form.checkout_address.reusable_packaging.loopeat.website: Site Internet %name%
 form.checkout_address.reusable_packaging.loopeat.how_it_works: Comment ça marche ?
-form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes consignées et lavables sur votre commande
+form.checkout_address.reusable_packaging.loopeat.enable_zero_waste: Activez l'option zéro déchet pour bénéficier d'un service de boîtes réutilisables consignées sur votre commande
 form.checkout_address.reusable_packaging.loopeat.connect: Veuillez créer ou connecter votre compte %name% à %brand_name% pour régler votre consigne, ou désactivez l'option zéro déchet.
 form.checkout_address.reusable_packaging.loopeat.connect_account: Se connecter à %name%
 form.checkout_address.reusable_packaging.loopeat.add_credits: Créditer ma cagnotte
-form.checkout_address.reusable_packaging.loopeat.return_containers: Rendre des boîtes
+form.checkout_address.reusable_packaging.loopeat.manage_deposit: Gérer ma consigne
 form.checkout_address.quote.label: Demander un devis
 form.checkout_address.add_promotion.label: Appliquer
 form.checkout_address.tip_amount.label: Pourboire
@@ -660,7 +669,7 @@ form.deposit_refund_settings.deposit_refund_optin.help: Lorsque le système de c
 form.new_order.variant_name.label: Nom du produit
 form.new_order.variant_name.help: Le nom qui apparaîtra dans le résumé de la commande
   et la facture
-form.new_order.variant_price.label: Prix
+form.new_order.variant_price.label: Prix TTC
 form.customize.about_us.label: Contenu de la page « à propos »
 promotion_coupon.used.label: Nombre d'utilisations
 product_option.strategy.free: Gratuit
@@ -690,10 +699,20 @@ stores.createNewDelivery: Créer une livraison
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
-stores.deliveries.heading: 'Livraison #%delivery_id% - %delivery_distance%'
+stores.deliveries.heading: 'Livraison %delivery_id% - %delivery_distance%'
+stores.deliveries.heading2: 'Livraison %delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
 stores.addresses: Adresses
+stores.deliveries.bookmarks: Commandes enregistrées
+stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
+stores.recurrence_rules: Règles de récurrence
+stores.recurrence_rules.empty_message: Lorsqu\'une commande récurrente est créée, les règles de récurrence apparaîtront ici
+recurrence_rules.table.repeat: Répéter
+recurrence_rules.table.generate_orders: Générer des tâches/commandes automatiquement
+recurrence_rules.table.created_at: Règle créée
+recurrence_rule.legacy: Supprimer cette règle dans le panneau de dispatch
+recurrence_rule.price.missing: Le prix de livraison n'a pas pu être calculé. Veuillez vérifier la tarification.
 suggest.submitted.title: Merci de nous avoir suggéré ce restaurant !
 meta.title: Plateforme de livraison pour les sociétés coopératives
 admin.settings.missing_mandatory_settings: "Des paramètres obligatoires sont manquants.\n\
@@ -711,6 +730,7 @@ basics.next: Suivant
 basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
+basics.editing: Édition
 basics.add: Ajouter
 basics.view: Voir
 basics.delete: Supprimer
@@ -736,6 +756,9 @@ basics.send_invitation.confirm: Votre invitation a bien été envoyée ! Vous po
 basics.send_invitation.invitated_user_after_password_confirmation: Votre compte a
   bien été créer, veuillez vérifier dès à présent vos <a target="_blank" href="%restaurantEditUrl%">informations
   personnelles</a>
+basics.address: Adresse
+warehouses.breadcrumb: Entrepôts
+warehouses.breadcrumb.help: Définir les entrepôts
 adminDashboard.embed.title: Formulaires
 embed.delivery.title: Formulaire de création de livraison
 embed.delivery.configure_pricing_rule_set: Vous devez d'abord configurer un règle
@@ -770,6 +793,7 @@ activity.order.dropped: "@%owner% a livré la commande #order/%aggregate_id%\n"
 activity.order.fulfilled: "La commande #order/%aggregate_id% est terminée\n"
 activity.order.cancelled: "La commande #order/%aggregate_id% est annulée\n"
 activity.order.delayed: "La commande #order/%aggregate_id% a été retardée\n"
+activity.order.restored: "La commande #order/%aggregate_id% a été restaurée"
 social.sign_in_with_facebook: Se connecter avec Facebook
 embed.delivery.summary: "Vous avez demandé une course qui vous sera déposée le <strong>%dropoff_date%</strong>\
   \ à l'adresse suivante : <strong>%dropoff_address%</strong><br>Nous avons calculé\
@@ -877,6 +901,17 @@ form.package.volume_units.label: Unité de volume
 form.package.name.label: Nom
 form.package_set.packages.label: Emballages
 form.package_set.name.label: Nom
+form.package_set.duplicatePackageNames: Les noms de paquets doivent être uniques
+form.package.description.label: Description pour le client
+form.package.enter_details: Masquer/afficher les détails
+form.package.average_volume_units.label: Unités de volume moyen (VU)
+form.package.max_volume_units.label: Unités de volume maximum (VU)
+form.package.average_estimation: Estimé à 75 % du maximum si non défini
+form.package.max_volume_units : Cette valeur sera utilisée pour calculer les prix en fonction du volume
+form.package.tags.label: Tags à appliquer automatiquement aux tâches
+form.package.average_weight.label: Poids moyen (kg)
+form.package.max_weight.label: Poids maximum (kg)
+form.package.shortCode.label: Code de 2 lettres
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
@@ -887,6 +922,7 @@ deliveries.sort.newest: Les plus récentes
 deliveries.sort.oldest: Les plus anciennes
 deliveries.filter.clear: Afficher tout
 orders.new: Nouvelle commande
+orders.duplicate: Dupliquer une commande
 organizations.new: Nouvelle organisation
 basics.copy: Copier
 orders.payment_link.send_by_email: Envoyer un lien de paiement
@@ -909,7 +945,7 @@ receipt.footer_item.total_products: Total produits
 receipt.footer_item.total_excl_tax: Total HT
 receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
-receipt.billing_details: Commande payée par carte de crédit le %date%
+receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte %name%
@@ -945,6 +981,8 @@ order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
 order.export.heading.refund_total: Remboursements
 order.export.heading.nonprofit: Association
+order.export.heading.incident_adjustments: Ajustements des incidents
+order.export.heading.incidents: Incidents
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher
@@ -1019,7 +1057,6 @@ restaurant.form.section.taxonomy: Taxonomie
 localBusiness.form.use_different_business_address.label: Utiliser une adresse commerciale
   différente
 localBusiness.form.business_address.label: Adresse commerciale
-restaurant.form.giropay_enabled.label: Activer Giropay
 form.settings.company_logo.help: Ce logo sera utilisé pour les factures et les preuves
   de livraison
 form.product_option.preview_title: Aperçu de l'option
@@ -1138,7 +1175,7 @@ form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case,
 form.fulfillment_method.options.range_duration.label: Durée des créneaux
 ordering_delay.disclaimer: Nous recevons actuellement beaucoup de commandes, les délais
   s'allongent !
-ordering_delay.admin_reminder: Vous avez défini un retard global pour les commandes
+ordering_delay.admin_reminder: Vous avez configuré un délai de pickup global pour les commandes foodtech
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
 notifications.tap_to_open: Appuyez pour ouvrir
@@ -1185,25 +1222,20 @@ restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réducti
   à partir d'un montant d'achat. Votre marge sera réduite du montant de la réduction.
   Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme.
 restaurant_promotion.items_total: À partir d'un montant d'achats
-restaurants.edenred_transactions.disclaimer: Cette page liste l'ensemble des commandes
-  payées avec Edenred, en partie ou en totalité. Pour ces commandes, l'ensemble de
+restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble des commandes
+  payées en titres-restaurant, en partie ou en totalité. Pour ces commandes, l'ensemble de
   l'argent a été perçu par le restaurant. Vous devez donc envoyer une facture à chaque
   restaurant, pour réclamer les commissions dûes.
-restaurants.edenred_transactions.edenred_amount: Montant payé avec Edenred
-restaurants.edenred_transactions.title: Transactions Edenred
+restaurants.meal_vouchers_transactions.amount: Montant payé en titres-restaurant
+restaurants.meal_vouchers_transactions.title: Transactions titres-restaurant
 form.product.alcohol.label: Ce produit est une boisson alcoolisée
 form.product.alcohol.help: Cochez cette case seulement si ce produit est une boisson
   alcoolisée, comme une bouteille de vin.
-form.payment.edenred_disclaimer: Cette commande a été payée avec Edenred et un complément
-  par carte bancaire. Le remboursement se fera en priorité sur le montant payé par
-  carte bancaire, et sur le montant Edenred le cas échéant.
-form.payment.refund_breakdown: Montant remboursable par carte %card%, montant remboursable
-  par Edenred %edenred%
 products.on_demand_delivery.name: Livraison à la demande
 index.view_all: Voir tout
 order.adjustment_type.reusable_packaging.loopeat: Service zéro déchet
-order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent le lavage,
-  le réapprovisionnement des restaurants et l’achat des sacs en tissu réutilisables
+order.adjustment_type.reusable_packaging.loopeat.help: Ces frais couvrent la course
+  pour rapporter les boîtes au dépôt, le lavage des boîtes et l’achat des sacs en tissu réutilisables
 promotion_rule.is_items_total_above: Le total des produits est supérieur à %amount%
 form.store_type.multi_drop_enabled.label: Activer les dépôts multiples
 form.store_type.multi_drop_enabled.help: Permet aux utilisateur·ice·s d'ajouter un
@@ -1233,7 +1265,7 @@ restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En
   Boîte Le Plat
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Je veux
-  des contenants consignés <a href="https://enboiteleplat.fr/rennes/" target="_blank">En
+  des contenants consignés <a href="%url%" target="_blank">En
   Boîte Le Plat</a>.'
 adminDashboard.users.confirmDeleteUser: Voulez-vous vraiment supprimer l'utilisateur
   avec l'email %email% ?
@@ -1243,14 +1275,16 @@ order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% de
   paierez pas plus cher.
 form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
 form.delivery.arbitrary_price.label: Definir le prix manuellement
+form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
 form.store_type.time_slots.set_as_default: Définir comme tranche horaire par défaut
+form.store_type.defaultCourier.label: Livreur·euse par défaut
+form.store_type.defaultCourier.placeholder: Aucun
+form.store_type.defaultCourier.help: Les commandes passées pour ce magasin seront automatiquement attribuées à ce·tte livreur·euse
 homepage.featured: À la une
 homepage.exclusive: Exclusivités
 homepage.shops.new: Nouveautés
 users.disabled: Désactivés
-admin.settings.stop_using_algolia: |
-  Vous utilisez le moteur de suggestions Algolia, qui <a href="https://www.algolia.com/blog/product/sunsetting-our-places-feature/">cessera de fonctionner à partir du 31 mai 2022</a>. Aller à la <a href="%settings_url%">page des paramètres</a> pour configurer un autre moteur, comme par exemple <a href="https://docs.coopcycle.org/en/admin/google/">Google Maps</a>
 shops.filters.clear_all: Effacer tout
 shops.filters.title.types: Type de commerce
 shops.filters.title.categories: Catégories
@@ -1283,20 +1317,306 @@ security.login.remember_me: Se souvenir de moi
 loopeat.how_it_works.title: |
   Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
 loopeat.how_it_works.step_1.title: Je m'inscris
-loopeat.how_it_works.step_1.text: Inscrivez-vous sur %name% lors de la finalisation de votre commande.
-loopeat.how_it_works.step_2.title: Je paie ma 1ère consigne
-loopeat.how_it_works.step_2.text: Créditez votre cagnotte pour emprunter vos premières boîtes consignées.
-loopeat.how_it_works.step_3.title: Je commande
-loopeat.how_it_works.step_3.text: Faites-vous livrer en boites consignées.
+loopeat.how_it_works.step_1.text: sur « %name% » et j'alimente ma cagnotte (UNE SEULE FOIS)
+loopeat.how_it_works.step_2.title: Je commande
+loopeat.how_it_works.step_2.text: et je me fais livrer en boîtes consignées
+loopeat.how_it_works.step_3.title: Je me régale
+loopeat.how_it_works.step_3.text: sans jeter d'emballage
 loopeat.how_it_works.step_4.title: Je rends mes boîtes
-loopeat.how_it_works.step_4.text: Restituez vos boîtes lors de votre prochaine commande et récupérez la consigne sur votre cagnotte.
+loopeat.how_it_works.step_4.text: chez un partenaire « %name% » ou à la prochaine livraison
 stores.filters.input.placeholder: "Recherche par adresse, nom ou #id"
 basics.filter: "Filtrer"
 stores.search.results_for: 'Résultats pour la recherche <mark>%query%</mark>'
 form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: Nous vous suggérons de rendre vos boîtes lors de la livraison
-loopeat.returns_modal.title: Je rends mes boîtes
+loopeat.manage_modal.title: Je règle ma consigne %name%
+loopeat.manage_modal.text: Vous pouvez régler la consigne avec une somme à charger sur votre cagnotte ou en rendant vos boîtes consignées.
 form.checkout_address.reusable_packaging.loopeat.returns.label: Vous allez rendre
   <strong>%count%</strong> boîte, pour un total de <strong>%amount%</strong>|Vous allez rendre
   <strong>%count%</strong> boîtes, pour un total de <strong>%amount%</strong>
 loopeat.task_comments.returns: Attention, vous devez récupérer des boîtes chez le client
 activity.task.rescheduled: "@%owner% a reprogrammé la tâche #task/%aggregate_id%\n"
+delivery.failure_reason:
+  default:
+    damaged: "Endommagé"
+    lost: "Perdu"
+    late: "Livraison en retard"
+    incorrect_address: "Adresse incorrecte"
+    customer_refused: "Refus du client"
+    item_missing: "Article manquant"
+    incorrect_item: "Article incorrect"
+    bad_weather: "Mauvaises conditions météorologiques"
+    vehicle_breakdown: "Panne de véhicule"
+    traffic_delays: "Retards de circulation"
+    routing_problems: "Problèmes de routage"
+    customs_issues: "Problèmes de dédouanement"
+    inventory_shortage: "Rupture de stock"
+    address_unreachable: "Adresse inaccessible"
+    insufficient_funds: "Fonds insuffisants"
+    data_entry_error: "Erreur de saisie des données"
+    packaging_problems: "Problèmes d'emballage"
+    holiday_closure: "Fermeture pour congé"
+    closed_store: "Magasin fermé"
+    address_review_needed: "Nécessité d'un réexamen de l'adresse"
+    not_at_home: "Client absent"
+adminDashboard.failureSet.title: "Motifs d'échec"
+adminDashboard.failureSet.help: "Définissez les motifs pour lesquelles vos livraisons peuvent échouer."
+adminDashboard.failureSet.nofailureSet: "Aucun motif d'échec"
+adminDashboard.failureSet.createNew: "Créer un nouveau motif"
+adminDashboard.failureSet.settings: "Paramétrer"
+adminDashboard.failureSet.cant_delete_failure_reason_used: "Ce motif ne peut pas être supprimé car il est utilisé dans des magasins."
+form.failure_reason_set.name.label: Nom
+form.failure_reason.code.label: Code
+form.failure_reason.description.label: Description
+basics.manage: Gérer
+basics.settings: Paramètres
+form.store_type.failure_reason_set.label: "Motifs d'échec"
+form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">raisons d\'échec</a> à utiliser dans ce %entity%.
+profile.delete_my_account: "Supprimer mon compte"
+profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
+form.pricing_rule_set.options.label: Options
+form.pricing_rule_set.options.map_all_tasks.label: Appliquer à toutes les tâches
+form.pricing_rule_set.options.map_all_tasks.help: À utiliser avec prudence! S'applique uniquement si la methode de calcul est "Toutes les tâches qui correspondent". Quand ce mode est activé, chaque règle sera evaluée sur chaque tâche, et non sur l'objet de livraison entier. Par exemple, la règle "distance" n'a aucun effet ici, car une tâche considéré seule n'a pas de distance associée.
+form.settings.notifications.title: Notifications
+form.settings.notifications.order.created: Commande créée
+form.settings.notifications.order.accepted: Commande acceptée
+form.settings.notifications.order.refused: Commande refusée
+form.settings.notifications.order.delayed: Commande retardée
+form.settings.notifications.order.cancelled: Commande annulée
+form.settings.notifications.order.picked: Commande récupérée
+form.settings.notifications.order.dropped: Commande déposée
+form.settings.notifications.order.fulfilled: Commande terminée
+form.settings.notifications.order.updated: Commande mise à jour
+form.settings.notifications.task.created: Tâche créée
+form.settings.notifications.task.assigned: Tâche assignée
+form.settings.notifications.task.unassigned: Tâche désassignée
+form.settings.notifications.task.started: Tâche commencée
+form.settings.notifications.task.done: Tâche terminée
+form.settings.notifications.task.failed: Tâche échouée
+form.settings.notifications.task.cancelled: Tâche annulée
+form.settings.notifications.task.rescheduled: Tâche reprogrammée
+form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous, les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
+tags.featured: À la une
+tags.exclusive: Exclusivités
+tags.shops.new: Nouveautés
+tags.zero_waste: Zéro déchet
+delivery.state:
+  pending: 'En attente, À récupérer'
+  in_delivery: 'Récupéré, en livraison'
+  delivered: 'Livré'
+  failed: 'Échoué'
+  cancelled: 'Annulé'
+order.export.heading.payment_method: Moyen de paiement
+payment_method:
+  card: Carte de crédit
+  edenred: Edenred
+  edenred+card: Edenred
+  cash_on_delivery: Contre remboursement
+profile.businessAccount: Compte professionnel
+adminDashboard.business_accounts.title: Comptes professionnels
+adminDashboard.business_accounts.createNew: Créer un nouveau compte professionnel
+form.business_account.hub.label: Hub
+form.business_account.hub.placeholder: Choisir un hub
+form.business_account.employees.label: Liste des employés
+form.business_account.restaurants.add: Ajouter un restaurant
+form.business_account.employees.add: Ajouter un employé
+form.business_account.manager.email.label: Courriel du gestionnaire de compte
+form.business_account.manager.email.help: Un email d'invitation à Coopcycle sera envoyé
+form.business_account.manager.email_sent.help: Un email d'invitation à Coopcycle a été envoyé
+form.business_account.save_and_send_invitation.label: Sauvegarder et envoyer l'invitation
+form.business_acount.send_invitation.confirm: Le courriel d'invitation à Coopcycle a été envoyé
+registration.navigation.title: "Création de compte personnel"
+registration.info.title: "C'est quoi CoopCycle ?"
+registration.info.text: "Sur CoopCycle, vous pouvez commander auprès des restaurants proches de chez vous et être livré par votre coopérative locale. Nous sommes fiers d'être une alternative éthique à l'ubérisation de notre société !"
+registration.info.business.account.attachment: "Vous serez rattaché au compte professionnel %businessAccountName%, mais vous pouvez également commander pour vous."
+registration.alert.text: "Vous avez été invité à créer votre compte sur %brandName% par %invitedBy%."
+registration.alert.business.account.text: "Bienvenue chez CoopCycle - %brandName% ! Veuillez créer votre compte professionnel avant de passer votre première commande."
+registration.form.title: "Vos informations"
+registration.step.personal: "Informations personnelles"
+registration.step.company: "Informations société"
+registration.step.company.name: "Nom de la société"
+registration.step.company.legal_name: "Nom légal de la société"
+registration.step.company.vat_number: "Numéro de TVA"
+registration.step.invitation: "Invitez vos collègues"
+registration.step.invitation.copy.link: "Copiez le lien ci-dessous et envoyez-le à vos collègues"
+registration.step.invitation.copy.button: "Copier le lien"
+registration.step.invitation.link.copied: "Copié !"
+registration.flow.next: "Suivant"
+registration.flow.back: "Précédent"
+registration.company.address: "Adresse"
+registration.company.address.different.for.billing: "Utiliser une adresse différente pour la facturation"
+registration.company.billing.address: "Adresse de facturation"
+business.account.settings.link: Lier avec mon compte
+registration.email.taken.use.another: Vous pouvez vous inscrire avec un autre email.
+registration.link.to.login: Veuillez cliquer ici pour vous connecter.
+registration.email.taken: Cet email est déjà prix, voulez vous vous connecter avec celui-ci ?
+error.404: Page non trouvée.
+error.502: Le serveur a dépassé sa capacité. Veuillez réessayer plus tard.
+error.504: Le serveur a mis trop de temps à répondre.
+error.return_to_homepage: Retourner à la page d'accueil
+deliveries.imports: Fichiers importés
+deliveries.importing: Le fichier %filename% va bientôt être importé.
+deliveries.imports.created_at: Créé le
+deliveries.imports.see_file: Voir le fichier
+deliveries.imports.see_errored_file: Voir les erreurs
+adminDashboard.business_restaurant_groups.title: Groupes de restaurants d'entreprise
+registration.flow.finish: "Terminer mon inscription"
+form.settings.company_legal_name.label: "Nom légal de l'entreprise"
+form.settings.company_legal_name.help: "Veuillez entrer le nom légal complet de l'entreprise tel qu'il apparaît sur ses documents officiels."
+form.settings.company_legal_id.label: "Numéro de SIRET"
+form.settings.company_legal_id.help: "Ce numéro est généralement disponible sur les documents officiels de l'entreprise, tels que les factures ou les contrats."
+restaurant.form.edenred_enabled.label: Activer Edenred
+restaurant.form.paygreen_shop_id.label: Identifiant de boutique Paygreen
+adminDashboard.users.export.optins.title: "Sélectionnez ce que vous souhaitez exporter"
+adminDashboard.users.export.optins.newsletter: "Utilisateurs qui acceptent de recevoir la newsletter"
+adminDashboard.users.export.optins.marketting: "Utilisateurs qui acceptent de recevoir des promotions"
+adminDashboard.pricing.duplicate: "Dupliquer"
+adminDashboard.pricing.copyOf: "Copie de %rule_set_name%"
+restaurant.form.allow_mercadopago_connect.label: "Permettre au restaurant de gérer son compte Mercadopago de manière autonome"
+restaurant.form.auto_accept_orders_enabled.label: "Accepter automatiquement les commandes"
+profile.orders: "Commandes"
+profile.configuration: "Configuration"
+order.payer.title: "Informations sur l'acheteur"
+order.payer.email: "E-mail"
+order.payer.identificationType: "Type d'identification"
+order.payer.identificationNumber: "Numéro d'identification"
+order.state.started: "En préparation"
+order.state.ready: "Prêt"
+form.payment.refund_liable.label: "Partie responsable"
+form.payment.refund_application_fee.help: "Si vous cochez cette case, la commission facturée par la plateforme au partenaire sera remboursée proportionnellement\n<br>\n<a href=\"https://stripe.com/docs/connect/direct-charges#issuing-refunds\">En savoir plus</a>\n"
+form.registration.terms.and.conditions.label: "J'accepte les Conditions Générales"
+form.registration.terms.and.conditions.help: "En cochant cette case, vous acceptez nos <a href=\"%terms_url%\">Conditions Générales</a>."
+form.registration.privacy.policy.label: "J'accepte la Politique de Confidentialité"
+form.registration.privacy.policy.help: "En cochant cette case, vous acceptez notre <a href=\"%privacy_url%\">Politique de Confidentialité</a>."
+form.credit_note.user_search.label: "Utilisateur"
+form.credit_note.type.label: "Type de réduction"
+form.credit_note.percentage.label: "Pourcentage"
+form.embed_settings.show_home_page.label: "Afficher sur la page d'accueil"
+form.package.color.label: "Couleur (cliquez pour sélectionner)"
+form.package.maxWeight.help: "(Non utilisé ailleurs sur la plateforme pour le moment)"
+roles.ROLE_DISPATCHER: "Dispatcheur"
+roles.ROLE_DISPATCHER.help: "Dispatcheur : Accès complet aux tâches\n"
+activity.order.updated: "La commande #order/%aggregate_id% a été mise à jour\n"
+basics.select_all: "Tout sélectionner"
+basics.delete_selected: "Supprimer la sélection"
+delivery.table.heading.owner: "Propriétaire"
+delivery.import.success_message: "Votre fichier a été traité avec succès, %count% livraisons ont été créées"
+form.delivery_import.file.label: "Fichier"
+notifications.restaurant.accepted_order: "Nouvelle commande"
+food_establishment.CAFE_OR_COFFEE_SHOP: "Café ou salon de thé"
+food_establishment.DISTILLERY: "Distillerie"
+food_establishment.FAST_FOOD_RESTAURANT: "Restaurant de restauration rapide"
+food_establishment.ICE_CREAM_SHOP: "Glacier"
+food_establishment.RESTAURANT: "Restaurant"
+store.DEPARTMENT_STORE: "Grand magasin"
+store.HARDWARE_STORE: "Quincaillerie"
+store.LIQUOR_STORE: "Magasin de spiritueux"
+store.MENS_CLOTHING_STORE: "Magasin de vêtements pour hommes"
+store.MOBILE_PHONE_STORE: "Magasin de téléphones mobiles"
+store.MOVIE_RENTAL_STORE: "Magasin de location de films"
+store.OFFICE_EQUIPMENT_STORE: "Magasin de matériel de bureau"
+store.OUTLET_STORE: "Magasin d'usine"
+store.PAWN_SHOP: "Prêteur sur gages"
+store.PET_STORE: "Magasin pour animaux"
+store.SPORTING_GOODS_STORE: "Magasin d'articles de sport"
+store.TIRE_SHOP: "Magasin de pneus"
+store.WHOLESALE_STORE: "Magasin de vente en gros"
+form.local_business_type.food_establishment: "Établissement alimentaire"
+form.local_business_type.store: "Magasin"
+form.local_business_type.label: "Type d'entreprise"
+form.local_business_type.help: "Les types utilisent le vocabulaire de <a href=\"https://schema.org/\">schema.org</a> pour les <a href=\"https://schema.org/FoodEstablishment\">établissements alimentaires</a> et les <a href=\"https://schema.org/Store\">magasins</a>"
+users.dispatchers: "Dispatcheurs"
+refund.list.disclaimer.admin: "Lorsque la plateforme est responsable de l'incident, cela signifie que la plateforme doit au commerçant le montant du remboursement, car le commerçant a effectivement remboursé le client."
+dabba.oauth_connect.success: "Compte Dabba connecté avec succès !"
+promotion_action.percentage_discount: "%percentage% de réduction"
+promotion_action.delivery_percentage_discount: "%percentage% de réduction sur les frais de livraison"
+promotion_action.fixed_discount: "%amount% de réduction"
+form.customize.order_confirm_enabled.label: Afficher un message de confirmation de commande personnalisé
+form.customize.order_confirm.label: "Ce message apparaîtra sur la page de confirmation de commande"
+order.export.heading.promotions: "Promotions"
+form.business_account.businessRestaurantGroup.label: "Groupe de restaurants d'affaires"
+form.business_account.businessRestaurantGroup.placeholder: "Choisissez un groupe de restaurants d'affaires"
+form.business_acount.resend_invitation.confirm: "L'email d'invitation à Coopcycle a été renvoyé"
+form.business_acount.resend_invitation.failed: "Une erreur s'est produite lors de la tentative de renvoi de l'email d'inscription au compte d'affaires"
+adminDashboard.business_restaurant_group_list.title: "Liste des groupes de restaurants d'affaires"
+adminDashboard.business_restaurant_group.title: "Groupe de restaurants d'affaires"
+adminDashboard.business_restaurant_group.createNew: "Créer un nouveau groupe de restaurants d'affaires"
+form.time_slot.preview_title: "Aperçu du créneau horaire"
+form.checkout_address.reusable_packaging_vytal_enabled.label: "Je veux utiliser des conteneurs Vytal"
+vytal.code.disclaimer: "Ouvrez l'application Vytal, générez un jeton de livraison, puis entrez-le ci-dessous. <a href=\"https://www.vytal.org/bestellen\" target=\"_blank\">En savoir plus</a>"
+restaurant.form.section.vytal: "Vytal"
+restaurant.form.vytal_enabled.label: "Activer le système de consigne Vytal"
+form.settings.addresses.title: "Adresses"
+form.settings.autocomplete_provider.label: "Fournisseur de suggestions"
+form.settings.google_api_key_custom.label: "Clé API Google"
+form.settings.geocoding_provider.label: "Fournisseur de géocodage"
+form.settings.geocoding_provider.help: "Utilisé par l'API et lors de l'importation de feuilles de calcul"
+form.vehicle.volume_units.label: "Unités de volume"
+form.vehicle.max_weight.label: "Poids maximum (kg)"
+vehicles.breadcrumb: "Véhicules"
+vehicles.breadcrumb.help: "Définir la flotte de véhicules"
+tasks.mark_as_done.has_previous: "La tâche #%failed_task% n'a pas pu être complétée car elle a une tâche précédente #%previous_task% qui doit être complétée en premier."
+import.errors.at.row: "Erreurs à la ligne %row_number%"
+import.address.geocode.error: "Impossible de géocoder l'adresse %failed_address%"
+import.time.range.error: "La plage horaire \"%value%\" dans %key% n'est pas valide"
+import.successful.rows: "Votre fichier a été traité et %count% livraisons ont été créées pour les lignes : %rows%"
+import.delivery.price.error.priceCalculation.row: "Le prix de la livraison n'a pas pu être calculé pour la ligne %row_number%"
+import.unsuccessful.rows: "Il y a eu des erreurs et les livraisons n'ont pas pu être créées pour les lignes : %rows%"
+adminDashboard.incidents.title: "Incidents"
+adminDashboard.incidents.help: "Gérer les incidents."
+adminDashboard.incidents.createNew: "Créer un nouvel incident"
+registration.confirm.invitation.link.title: "Utilisez le lien ci-dessous pour inviter des collègues à rejoindre"
+form.business_restaurant_group.restaurants_with_menu: "Restaurants avec menu"
+form.business_restaurant_group.restaurant: "Restaurant"
+form.business_restaurant_group.menu: "Menu"
+form.product.business_restaurant_group.price_definition.label: "Définir les prix pour les groupes de restaurants d'affaires"
+form.product.business_restaurant_group.price_definition.placeholder: "Veuillez en sélectionner un"
+business_restaurant_group.label: "Groupe de restaurants d'affaires"
+business_restaurant_group.form.invalid: "Il y a des erreurs ou des informations manquantes, veuillez vérifier toutes les sections de la configuration."
+business_restaurant_group.form.fill_all_pages: "Veuillez remplir les trois pages de paramètres."
+business_account.registration.title: Création de compte entreprise
+business_account.registration.user_with_same_email_exists: "Un compte avec votre email existe déjà. Veuillez vous connecter pour continuer la configuration de votre compte d'affaires."
+registration.business_account.loggin.warning_message: "Connectez-vous pour associer votre compte à l'entreprise %name%."
+registration.email.taken.loggin.warning_message: "Entrez votre mot de passe pour vous connecter."
+business_account.employee.associated: "Votre compte a été associé avec succès à l'entreprise %name%"
+business_account.loggedin_employee.association.text: "Vous êtes connecté avec l'email <strong>%user_email%</strong>. Voulez-vous associer votre compte à l'entreprise <strong>%business_account_name%</strong>?"
+business_account.loggedin_employee.association.title: "Invitation à associer votre compte à un compte d'affaires"
+topbar.action.admin_business_account: "Administrer mon compte d'affaires"
+basics.order_now: "Commander maintenant"
+restaurant.businessAccount.notAvilable: "Ce restaurant n'est pas inclus dans les restaurants de la configuration de votre entreprise. <br> Vous pouvez voir les restaurants disponibles pour votre entreprise <a href=\"%path%\">en cliquant ici</a>.\n"
+business_account.switch.order_with_business: "Commander avec mon entreprise"
+business_account.switch.ordering_with_business: "Commander avec mon entreprise"
+restaurants.edenred.add_restaurants: "Ajouter des restaurants Edenred"
+restaurants.edenred.add_list_title: "Liste des restaurants à envoyer à Edenred"
+restaurants.edenred.added_restaurants: "Restaurants ajoutés"
+restaurants.edenred.already_sent: "Les restaurants qui apparaissent barrés dans la liste sont ceux qui ont déjà été envoyés à Edenred pour incorporation. Veuillez <a href=\"%link%\">cliquer ici</a> pour vérifier leur statut."
+restaurants.edenred.added_list.name: "Nom"
+restaurants.edenred.added_list.merchant_id: "ID du commerçant"
+restaurants.edenred.added_list.tr_card_enabled: "Carte TR activée"
+restaurants.edenred.sending_success: "Les restaurants ont été envoyés avec succès à Edenred."
+restaurants.edenred.sending_failed: "Erreur lors de l'envoi des restaurants à Edenred. Veuillez réessayer plus tard."
+restaurants.edenred.sending_failed.errors: "Il y a des erreurs avec certains restaurants :"
+restaurants.edenred.sending_failed.no_siret: "Le restaurant '%restaurant_name%' n'a pas de Siret défini."
+restaurants.edenred.refresh.no_updates: "Le restaurant '%restaurant_name%' n'a pas encore de mises à jour sur les serveurs d'Edenred."
+restaurants.edenred.refresh.has_updates: "Le restaurant '%restaurant_name%' a eu une mise à jour des serveurs d'Edenred."
+restaurants.edenred.added_list.actions: "Actions"
+form.billing_method.label: "Méthode de facturation"
+form.billing_method.help: "Méthode de facturation utilisée"
+form.billing_method.unit: "Par unité"
+form.billing_method.percentage: "Pourcentage du montant de la commande"
+order.export.heading.billing_method: "Méthode de facturation"
+order.export.heading.applied_billing: "Facturation appliquée"
+deliveries.import_upload_error: "Le fichier n'a pas pu être téléchargé. Veuillez réessayer plus tard."
+form.task_export.colisactiv.label: Exporter au format ColivActiv
+form.task_export.colisactiv_all.label: Exporter au format ColivActiv incluant toutes les tâches non terminées
+form.local_business.iso_code.fr.siret.help: Trouvez le numéro SIRET sur <a href="https://annuaire-entreprises.data.gouv.fr/" target="_blank">l'Annuaire des Entreprises</a>
+form.payment.edenred.refund_amount.help: Les remboursements partiels ne sont pas supportés par Edenred.
+restaurant.meal_vouchers_transactions.emitter: Émetteur
+order.items_total_excluding_tax: Total des produits (hors TVA)
+basics.more: Plus
+adminDashboard.invoicing.title: Facturation [APERÇU]
+adminDashboard.invoicing.help: "Préparer les factures"
+adminDashboard.invoicing.line_item.order_number: "Commande #%number%"
+form.settings.on_demand_delivery_product_name.label: "Nom du produit"
+form.settings.on_demand_delivery_product_name.help: "Le nom qui apparaîtra dans le récapitulatif de commande et la facture"
+form.settings.accounting_account.label: "Code comptable"
+form.settings.accounting_account.help: "Le code comptable par défaut pour enregistrer les commandes de livraison à la demande dans le système comptable."

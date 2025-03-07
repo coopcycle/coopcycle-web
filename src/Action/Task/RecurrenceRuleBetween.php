@@ -4,19 +4,20 @@ namespace AppBundle\Action\Task;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
+use AppBundle\Pricing\PricingManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Recurr\Transformer\ArrayTransformer;
 use Recurr\Transformer\Constraint\BetweenConstraint;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class RecurrenceRuleBetween
 {
-    public function __construct(DenormalizerInterface $denormalizer, EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly DenormalizerInterface $denormalizer,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PricingManager $pricingManager)
     {
-        $this->denormalizer = $denormalizer;
-        $this->entityManager = $entityManager;
     }
 
     public function __invoke($data, Request $request)
@@ -66,9 +67,11 @@ class RecurrenceRuleBetween
 
         $tasks = [];
         foreach ($payloads as $payload) {
+
             $task = $this->denormalizer->denormalize($payload, Task::class, 'jsonld', [
                 'groups' => ['task_create']
             ]);
+
             $task->setOrganization($data->getStore()->getOrganization());
             $task->setRecurrenceRule($data);
             $this->entityManager->persist($task);
@@ -79,6 +82,7 @@ class RecurrenceRuleBetween
             $delivery = Delivery::createWithTasks(...$tasks);
             $data->getStore()->addDelivery($delivery);
             $this->entityManager->persist($delivery);
+            $this->pricingManager->createOrder($delivery);
         }
 
         $this->entityManager->flush();

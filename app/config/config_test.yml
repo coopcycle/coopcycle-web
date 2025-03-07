@@ -18,6 +18,10 @@ framework:
         app: cache.adapter.array
     mailer:
         dsn: 'null://null'
+    http_client:
+        scoped_clients:
+            cubejs.client:
+                base_uri: "http://host.docker.internal:4000/cubejs-api/v1/"
 
 doctrine:
     dbal:
@@ -40,28 +44,37 @@ oneup_flysystem:
     adapters:
         assets:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         product_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         restaurant_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         store_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         task_images:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         receipts:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         task_imports:
             local:
-                directory: '/tmp'
+                location: '/tmp'
         product_imports:
             local:
-                directory: '/tmp'
+                location: '/tmp'
+        delivery_imports:
+            local:
+                location: '/tmp'
+
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: '/tmp'
 
 services:
 
@@ -91,3 +104,10 @@ services:
             $baseUri: 'https://api.urbantz.com/v2/'
 
     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
+
+    AppBundle\CubeJs\TokenFactory:
+        arguments:
+          $databaseName: '%database_name%_test'
+          $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+          $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
+          $appName: '%env(COOPCYCLE_APP_NAME)%'

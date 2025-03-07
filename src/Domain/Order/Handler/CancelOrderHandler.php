@@ -9,12 +9,10 @@ use AppBundle\Exception\OrderNotCancellableException;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
-use Sylius\Component\Payment\Model\PaymentInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 
 class CancelOrderHandler
 {
-    private $stripeManager;
     private $eventRecorder;
     private $stateMachineFactory;
 
@@ -46,11 +44,6 @@ class CancelOrderHandler
             throw new OrderNotCancellableException(
                 sprintf('Order #%d cannot be cancelled for reason "%s"', $order->getId(), $reason)
             );
-        }
-
-        $completedPayment = $order->getLastPayment(PaymentInterface::STATE_COMPLETED);
-        if (null !== $completedPayment && $completedPayment->isGiropay()) {
-            $this->stripeManager->refund($completedPayment, null, true);
         }
 
         $this->eventRecorder->record(new Event\OrderCancelled($order, $reason));

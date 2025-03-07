@@ -1,0 +1,48 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>
+  <a href="{{ path('admin_restaurants') }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a>
+</li>
+<li>{% trans %}adminDashboard.business_restaurant_group_list.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+{# <div class="alert alert-info">
+  {{ 'adminDashboard.business_restaurant_group_list.help'|trans }}
+</div> #}
+
+<div class="text-right mb-4">
+  <a href="{{ path('admin_business_restaurant_group_new') }}" class="btn btn-success">
+    <i class="fa fa-plus mr-2"></i>
+    <span>{% trans %}adminDashboard.business_restaurant_group.createNew{% endtrans %}</span>
+  </a>
+</div>
+
+{% if business_restaurant_group_list|length > 0 %}
+  <table class="table">
+    <tbody>
+    {% for business_restaurant_group in business_restaurant_group_list %}
+      <tr>
+        <td width="5%"><a href="{{ path('admin_business_restaurant_group', { id: business_restaurant_group.id }) }}">#{{ business_restaurant_group.id }}</a></td>
+        <td width="50%">
+          <span>{{ business_restaurant_group.name }}</span>
+        </td>
+        <td width="40%">{{ business_restaurant_group.cutoffTime }}</td>
+        <td class="text-right" width="5%">
+          <a target="_blank" href="{{ path('business_restaurant_group', { id: business_restaurant_group.id, 'slug': business_restaurant_group.name|slugify }) }}">
+            <i class="fa fa-external-link" aria-hidden="true"></i>
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="alert alert-info">
+  {% trans %}basics.no_entries{% endtrans %}
+  </div>
+{% endif %}
+
+{% endblock %}

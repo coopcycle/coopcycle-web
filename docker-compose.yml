@@ -4,9 +4,11 @@ services:
 
   postgres:
     restart: always
-    image: mdillon/postgis:9.4-alpine
+    image: ${POSTGRES_IMAGE:-postgis/postgis:16-3.4-alpine}
     environment:
       - POSTGRES_DB=${COOPCYCLE_DB_NAME}
+      - POSTGRES_USER=${COOPCYCLE_DB_USER}
+      - POSTGRES_PASSWORD=${COOPCYCLE_DB_PASSWORD}
     ports:
       - '5432:5432'
     volumes:
@@ -44,7 +46,7 @@ services:
     build:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
-    image: coopcycle/php:8.1
+    image: coopcycle/php:${PHP_VERSION:-8.3}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -64,13 +66,12 @@ services:
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
       - STRIPE_CONNECT_CLIENT_ID
-      - ALGOLIA_PLACES_APP_ID
-      - ALGOLIA_PLACES_API_KEY
-      - ALGOLIA_PLACES_ADDRESS_TEMPLATE
+      - GEOCODE_EARTH_API_KEY
     volumes:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'
       - 'php_cache:/var/www/html/var/cache'
+      - 'php_public_images:/var/www/html/web/images'
     cap_add:
       - SYS_ADMIN
 
@@ -89,9 +90,10 @@ services:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'
       - 'php_cache:/var/www/html/var/cache'
+      - 'php_public_images:/var/www/html/web/images'
 
   nginx:
-    image: 'nginx:1.11-alpine'
+    image: 'nginx:1.25-alpine'
     depends_on:
       - php
       - centrifugo
@@ -101,9 +103,10 @@ services:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
       - './web:/var/www/html/web:ro'
       - './vendor:/var/www/html/vendor:ro'
+      - 'php_public_images:/var/www/html/web/images:ro'
 
   nginx_test:
-    image: 'nginx:1.11-alpine'
+    image: 'nginx:1.25-alpine'
     depends_on:
       - php
     ports:
@@ -112,6 +115,7 @@ services:
       - './docker/nginx_test/conf.d:/etc/nginx/conf.d:ro'
       - './web:/var/www/html/web:ro'
       - './vendor:/var/www/html/vendor:ro'
+      - 'php_public_images:/var/www/html/web/images:ro'
 
   smtp:
     image: namshi/smtp
@@ -164,6 +168,7 @@ services:
     entrypoint: >
       /bin/sh -c "
       /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/edifact/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products/;
@@ -213,11 +218,12 @@ services:
 
   # https://cube.dev/docs/getting-started-docker
   cube:
-    image: cubejs/cube:alpine
+    image: cubejs/cube:v0.34
     ports:
       - 4000:4000
     depends_on:
       - postgres
+      - minio
     environment:
       - CUBEJS_DB_TYPE=postgres
       - CUBEJS_DB_HOST=${COOPCYCLE_DB_HOST}
@@ -228,6 +234,14 @@ services:
       - CUBEJS_WEB_SOCKETS=true
       - CUBEJS_DEV_MODE=true
       - CUBEJS_API_SECRET
+      - CUBEJS_SCHEMA_PATH=schema
+      - CUBEJS_CACHE_AND_QUEUE_DRIVER=memory
+      - CUBEJS_DB_DUCKDB_S3_ENDPOINT=${CUBEJS_DUCKDB_S3_ENDPOINT}
+      - CUBEJS_DB_DUCKDB_S3_REGION=${CUBEJS_DUCKDB_S3_REGION}
+      - CUBEJS_DB_DUCKDB_S3_ACCESS_KEY_ID=${CUBEJS_DUCKDB_S3_ACCESS_KEY_ID}
+      - CUBEJS_DB_DUCKDB_S3_SECRET_ACCESS_KEY=${CUBEJS_DUCKDB_S3_SECRET_ACCESS_KEY}
+      - CUBEJS_DB_DUCKDB_S3_USE_SSL=false
+      - CUBEJS_DB_DUCKDB_S3_URL_STYLE=path
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
@@ -246,6 +260,65 @@ services:
     logging:
       driver: none
 
+  storybook-react:
+    build:
+      dockerfile: './docker/storybook-react/Dockerfile'
+      context: '.'
+    ports:
+      - '6007:6007'
+    depends_on:
+      - webpack
+    volumes:
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
+    profiles:
+      - devFrontend
+
+  storybook:
+    build:
+      dockerfile: './docker/storybook/Dockerfile'
+      context: '.'
+    ports:
+      - '6006:6006'
+    depends_on:
+      - webpack
+      - storybook-react
+    volumes:
+      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
+      - '.:/srv/coopcycle'
+      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
+    profiles:
+      - devFrontend
+
+  odoo-web:
+    image: odoo:17.0
+    depends_on:
+      - odoo-db
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=odoo-db
+      - PORT=5433
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+    profiles:
+      - devOdoo
+
+  odoo-db:
+    image: postgres:15
+    ports:
+      - "5433:5433"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGPORT=5433
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    profiles:
+      - devOdoo
+
 volumes:
   node_modules_webpack:
   pg_data:
@@ -254,3 +327,6 @@ volumes:
   typesense_data:
   webpack_php_cache:
   php_logs:
+  php_public_images:
+  odoo-web-data:
+  odoo-db-data:

@@ -5,7 +5,6 @@ namespace AppBundle\Action\Delivery;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\TaskManager;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Drop
 {

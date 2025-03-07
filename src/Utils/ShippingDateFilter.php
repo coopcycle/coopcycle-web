@@ -3,27 +3,28 @@
 namespace AppBundle\Utils;
 
 use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Sylius\OrderTimeline;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
+use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\Collection;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Spatie\OpeningHours\OpeningHours;
+use Redis;
 
 class ShippingDateFilter
 {
-    private $orderTimelineCalculator;
+    private $extraTime;
 
     public function __construct(
-        OrderTimelineCalculator $orderTimelineCalculator,
-        OrdersRateLimit         $ordersRateLimit,
-        LoggerInterface         $logger = null)
+        private Redis $redis,
+        private OrderTimelineCalculator $orderTimelineCalculator,
+        private OrdersRateLimit         $ordersRateLimit,
+        private FulfillmentMethodResolver $fulfillmentMethodResolver,
+        private LoggerInterface         $logger,
+        private LoggingUtils $loggingUtils
+    )
     {
-        $this->orderTimelineCalculator = $orderTimelineCalculator;
-        $this->ordersRateLimit = $ordersRateLimit;
-        $this->logger = $logger ?? new NullLogger();
     }
 
     /**
@@ -44,32 +45,75 @@ class ShippingDateFilter
         // Obviously, we can't ship in the past
         if ($dropoff <= $now) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - date "%s" is in the past',
-                $dropoff->format(\DateTime::ATOM))
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | dropoff "%s" is in the past',
+                $dropoff->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
         }
 
         $timeline = $this->orderTimelineCalculator->calculate($order, $range);
+
         $preparation = $timeline->getPreparationExpectedAt();
 
-        if ($preparation <= $now) {
+        $priorNoticeDelay = $this->fulfillmentMethodResolver->resolveForOrder($order)->getOrderingDelayMinutes();
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - preparation time "%s" is in the past',
-                $preparation->format(\DateTime::ATOM))
+        $preparationCanStartAt = clone $now;
+        if ($priorNoticeDelay > 0) {
+            $preparationCanStartAt = $preparationCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $priorNoticeDelay)));
+        }
+
+        if ($preparation <= $preparationCanStartAt) {
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | preparation time "%s" with prior notice "%s" is in the past',
+                $preparation->format(\DateTime::ATOM),
+                strval($priorNoticeDelay)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
         }
 
-        $vendor = $order->getVendor();
+
+        $pickup = $timeline->getPickupExpectedAt();
+        $dispatchDelayForPickup = $this->getDispatchDelayForPickup();
+
+        $pickupCanStartAt = clone $now;
+        if ($dispatchDelayForPickup > 0) {
+            $pickupCanStartAt = $pickupCanStartAt->add(date_interval_create_from_date_string(sprintf('%s minutes', $dispatchDelayForPickup)));
+        }
+
+        if ($pickup <= $pickupCanStartAt) {
+
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | pickup time "%s" with pickup delay "%s" minutes is in the past',
+                $pickup->format(\DateTime::ATOM),
+                strval($dispatchDelayForPickup)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
+            );
+
+            return false;
+        }
+
+        $vendorConditions = $order->getVendorConditions();
         $fulfillmentMethod = $order->getFulfillmentMethod();
 
-        if (!$this->isOpen($vendor->getOpeningHours($fulfillmentMethod), $preparation, $vendor->getClosingRules())) {
+        if (!$this->isOpen($vendorConditions->getOpeningHours($fulfillmentMethod), $preparation, $vendorConditions->getClosingRules())) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - closed at "%s"',
-                $preparation->format(\DateTime::ATOM))
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | vendor closed at expected preparation time "%s"',
+                $preparation->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
@@ -79,8 +123,12 @@ class ShippingDateFilter
 
         if ($diffInDays >= 7) {
 
-            $this->logger->info(sprintf('ShippingDateFilter::accept() - date "%s" is more than 7 days in the future',
-                $dropoff->format(\DateTime::ATOM))
+            $this->logger->debug(sprintf('ShippingDateFilter::accept | date "%s" is more than 7 days in the future',
+                $dropoff->format(\DateTime::ATOM)),
+                [
+                    'order' => $this->loggingUtils->getOrderId($order),
+                    'vendor' => $this->loggingUtils->getVendors($order),
+                ]
             );
 
             return false;
@@ -101,5 +149,19 @@ class ShippingDateFilter
         );
 
         return $oh->isOpenAt($date);
+    }
+
+    private function getDispatchDelayForPickup(): int
+    {
+        if (null === $this->extraTime) {
+            $extraTime = 0;
+            if ($value = $this->redis->get('foodtech:dispatch_delay_for_pickup')) {
+                $extraTime = intval($value);
+            }
+
+            $this->extraTime = $extraTime;
+        }
+
+        return $this->extraTime;
     }
 }

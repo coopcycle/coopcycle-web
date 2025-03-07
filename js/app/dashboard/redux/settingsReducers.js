@@ -3,30 +3,52 @@ import _ from 'lodash'
 import {
   SET_FILTER_VALUE,
   RESET_FILTERS,
-  SET_CLUSTERS_ENABLED,
-  SET_POLYLINE_STYLE,
   SHOW_RECURRENCE_RULES,
-  SET_USE_AVATAR_COLORS,
   SET_TOURS_ENABLED,
+  setGeneralSettings,
+  setMapFilterValue,
 } from './actions'
 
-const defaultFilters = {
+export const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
+  showIncidentReportedTasks: true,
   alwayShowUnassignedTasks: false,
   tags: [],
+  excludedTags: [],
+  excludedOrgs: [],
+  includedOrgs: [],
   hiddenCouriers: [],
   timeRange: [0, 24],
+  onlyFilter: null,
+  unassignedTasksFilters: {
+    excludedTags: [],
+    includedTags: [],
+    excludedOrgs: [],
+    includedOrgs: []
+  }
 }
 
-export const initialState = {
-  filters: defaultFilters,
-  isDefaultFilters: true,
+export const defaultSettings = {
   clustersEnabled: false,
   polylineStyle: 'normal',
   isRecurrenceRulesVisible: true,
   useAvatarColors: false,
-  toursEnabled: false,
+  showDistanceAndTime: true,
+  showWeightAndVolumeUnit: true,
+  toursEnabled: false // is the tour column expanded
+}
+
+export const defaultMapFilters = {
+  showUnassignedTours: true,
+  showAssigned: true
+}
+
+export const initialState = {
+  ...defaultSettings,
+  filters: defaultFilters,
+  isDefaultFilters: true,
+  mapFilters: defaultMapFilters
 }
 
 export default (state = initialState, action) => {
@@ -51,6 +73,17 @@ export default (state = initialState, action) => {
       isDefaultFilters: _.isEqual(newFilters, defaultFilters)
     }
 
+  case setMapFilterValue.type:
+    const newMapFilters = {
+      ...state.mapFilters,
+      [action.payload.key]: action.payload.value
+    }
+
+    return {
+      ...state,
+      mapFilters: newMapFilters
+    }
+
   case RESET_FILTERS:
 
     return {
@@ -59,25 +92,10 @@ export default (state = initialState, action) => {
       isDefaultFilters: true
     }
 
-  case SET_CLUSTERS_ENABLED:
-
+  case setGeneralSettings.type:
     return {
       ...state,
-      clustersEnabled: action.enabled
-    }
-
-  case SET_USE_AVATAR_COLORS:
-
-    return {
-      ...state,
-      useAvatarColors: action.useAvatarColors
-    }
-
-  case SET_POLYLINE_STYLE:
-
-    return {
-      ...state,
-      polylineStyle: action.style
+      ...action.payload
     }
 
   case SET_TOURS_ENABLED:
@@ -89,9 +107,6 @@ export default (state = initialState, action) => {
   }
 
   let isDefaultFilters = initialState.isDefaultFilters
-  if (Object.prototype.hasOwnProperty.call(state, 'filters') && !Object.prototype.hasOwnProperty.call(state, 'isDefaultFilters')) {
-    isDefaultFilters = _.isEqual(state.filters, defaultFilters)
-  }
 
   return {
     ...state,

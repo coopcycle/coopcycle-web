@@ -4,7 +4,7 @@ namespace AppBundle\Message;
 
 class Webhook
 {
-    public function __construct(string $object, string $event)
+    public function __construct(private string $object, private string $event)
     {
         $this->object = $object;
         $this->event = $event;

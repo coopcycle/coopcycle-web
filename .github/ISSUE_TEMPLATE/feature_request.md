@@ -1,8 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: In order to [achieve something] As a [role] I want [something to be added or
-  changed]
+title: A summary of what you want to be added or changed
 labels: enhancement
 assignees: ''
 
@@ -10,9 +9,6 @@ assignees: ''
 
 **In order to**  `achieve something`
 A clear description of a goal you want to archive
-
-**As a** `role`
-Who would benefit from this change, e.g. a dispatcher, a courier, a restaurant ...
 
 **I want** `something to be added or changed`
 A clear and concise description of what is to be added or changed in the software

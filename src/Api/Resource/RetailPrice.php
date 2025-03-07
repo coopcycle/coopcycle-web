@@ -24,8 +24,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  *       "controller"=CalculateController::class,
  *       "status"=200,
  *       "write"=false,
- *       "denormalization_context"={"groups"={"delivery_create", "pricing_deliveries"}},
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
+ *       "denormalization_context"={"groups"={"pricing_deliveries"}},
+ *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
  *       "openapi_context"={
  *         "summary"="Calculates price of a Delivery",
  *       }

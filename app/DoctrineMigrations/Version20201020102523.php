@@ -20,9 +20,9 @@ final class Version20201020102523 extends AbstractMigration
     private function createVendors()
     {
         $stmt = $this->connection->prepare('SELECT DISTINCT restaurant_id FROM sylius_order WHERE restaurant_id IS NOT NULL');
-        $stmt->execute();
+        $result = $stmt->execute();
 
-        while ($order = $stmt->fetch()) {
+        while ($order = $result->fetchAssociative()) {
             $this->addSql('INSERT INTO vendor (restaurant_id) VALUES (:restaurant_id)', [
                 'restaurant_id' => $order['restaurant_id'],
             ]);

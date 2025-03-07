@@ -7,10 +7,9 @@ import _ from 'lodash'
 import moment from 'moment'
 import classNames from 'classnames'
 
-import { setCurrentTask, assignAfter, selectTask, selectTasksByIds } from '../redux/actions'
+import { setCurrentTask, assignAfter, selectTask, selectTasksByIds, toggleTask } from '../redux/actions'
 import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
-import { selectVisibleTaskIds } from '../redux/selectors'
-import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
+
 
 const sortByBefore = task => moment(task.before)
 
@@ -118,7 +117,8 @@ class GroupPopupContent extends React.Component {
         { _.map(tasksByAddress, (tasks, key) =>
           <div key={ key } className="mb-3">
             <GroupHeading tasks={ tasks } />
-            <GroupTable tasks={ tasks }
+            <GroupTable
+              tasks={ tasks }
               onEditClick={ this.props.onEditClick }
               onMouseEnter={ this.props.onMouseEnter }
               onMouseLeave={ this.props.onMouseLeave } />
@@ -142,12 +142,16 @@ const MapProvider = (props) => {
   React.useEffect(() => {
 
     const LMap = MapHelper.init('map', {
-      onLoad: props.onLoad
+      onLoad: props.onLoad,
+      polygonManagement: true,
+      singleton: true,
     })
 
     const proxy = new MapProxy(LMap, {
       useAvatarColors: props.useAvatarColors,
       onEditClick: props.setCurrentTask,
+      toggleTaskOnMarkerClick: (task) => props.toggleTask(task),
+      selectTaskOnMarkerClick: (taskId) => props.selectTasksByIds([taskId]),
       onTaskMouseDown: task => {
         if (task.isAssigned) {
           proxy.disableDragging()
@@ -164,9 +168,6 @@ const MapProvider = (props) => {
         }
       },
       onTaskMouseOut: (task) => {
-        if (task.isAssigned) {
-          proxy.hidePolyline(task.assignedTo)
-        }
         toTask.current = null
         proxy.disableConnect(task)
       },
@@ -226,12 +227,6 @@ const MapProvider = (props) => {
 
   }, [])
 
-  React.useEffect(() => {
-    if (map) {
-      map.setUseAvatarColors(props.useAvatarColors)
-    }
-  }, [ props.useAvatarColors ])
-
   return (
     <MapContext.Provider value={ map }>
       <div id="map"></div>
@@ -248,12 +243,11 @@ class LeafletMap extends Component {
 
     return (
       <MapProvider
-        tasks={ this.props.tasks }
-        visibleTaskIds={ this.props.visibleTaskIds }
         onLoad={ this.props.onLoad }
         setCurrentTask={ this.props.setCurrentTask }
         assignAfter={ this.props.assignAfter }
         selectTasksByIds={ this.props.selectTasksByIds }
+        toggleTask={ this.props.toggleTask }
         useAvatarColors={ this.props.useAvatarColors }
       >
         <CourierMapLayer />
@@ -268,8 +262,6 @@ class LeafletMap extends Component {
 function mapStateToProps(state) {
 
   return {
-    tasks: selectAllTasks(state),
-    visibleTaskIds: selectVisibleTaskIds(state),
     useAvatarColors: state.settings.useAvatarColors,
   }
 }
@@ -281,6 +273,7 @@ function mapDispatchToProps (dispatch) {
     assignAfter: (username, task, after) => dispatch(assignAfter(username, task, after)),
     selectTask: task => dispatch(selectTask(task)),
     selectTasksByIds: taskIds => dispatch(selectTasksByIds(taskIds)),
+    toggleTask: task => dispatch(toggleTask(task, true)),
   }
 }
 

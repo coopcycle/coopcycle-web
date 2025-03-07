@@ -28,25 +28,24 @@ class CancelEdenredTransaction
             return;
         }
 
-        $lastAuthorizedPayment = $order->getLastPayment(PaymentInterface::STATE_AUTHORIZED);
+        $authorizedEdenredPayments = $order->getPayments()->filter(function (PaymentInterface $payment): bool {
+            return $payment->getMethod()->getCode() === 'EDENRED'
+                && $payment->getState() === PaymentInterface::STATE_AUTHORIZED;
+        });
 
-        if (null === $lastAuthorizedPayment) {
+        if (count($authorizedEdenredPayments) === 0) {
             return;
         }
 
-        $methods = ['EDENRED', 'EDENRED+CARD'];
+        foreach ($authorizedEdenredPayments as $payment) {
+            $cancelId = $this->edenred->cancelTransaction($payment);
 
-        if (!in_array($lastAuthorizedPayment->getMethod()->getCode(), $methods)) {
-            return;
-        }
+            $payment->setEdenredCancelId($cancelId);
 
-        $cancelId = $this->edenred->cancelTransaction($lastAuthorizedPayment);
-
-        $lastAuthorizedPayment->setEdenredCancelId($cancelId);
-
-        $stateMachine = $this->stateMachineFactory->get($lastAuthorizedPayment, PaymentTransitions::GRAPH);
-        if ($stateMachine->can(PaymentTransitions::TRANSITION_CANCEL)) {
-            $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
+            $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
+            if ($stateMachine->can(PaymentTransitions::TRANSITION_CANCEL)) {
+                $stateMachine->apply(PaymentTransitions::TRANSITION_CANCEL);
+            }
         }
     }
 }

@@ -1,0 +1,120 @@
+{% extends 'restaurant/layout.html.twig' %}
+
+{% block body %}
+<div class="container">
+  {% set tab_items = [
+    {
+      title: 'restaurants.edenred.add_restaurants'|trans,
+      active: (app.request.get('section', 'add') == 'add'),
+      path: path('admin_add_restaurants_edenred')
+    },
+    {
+      title: 'restaurants.edenred.added_restaurants'|trans,
+      active: (app.request.get('section', 'add') == 'added'),
+      path: path('admin_add_restaurants_edenred', { section: 'added' })
+    }
+  ] %}
+
+  <ul class="nav nav-tabs">
+    {% for tab_item in tab_items %}
+    <li role="presentation" class="{% if tab_item.active %}active{% endif %}">
+      <a href="{{ tab_item.path }}">
+        {{ tab_item.title }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  {% if app.request.query.get('section', 'add') == 'add' %}
+    {% form_theme form 'form/edenred_restaurants.html.twig' %}
+
+    {{ form_start(form) }}
+      {% if sending_result is defined %}
+        <div class="{{sending_result ? 'alert alert-success mt-4' : 'alert alert-danger mt-4'}}">
+          {{ sending_result ? 'restaurants.edenred.sending_success'|trans : 'restaurants.edenred.sending_failed'|trans }}
+        </div>
+      {% endif %}
+
+      {% if errors is defined and errors|length > 0 %}
+        <div class="alert alert-danger mt-4">
+          {{ 'restaurants.edenred.sending_failed.errors'|trans }}
+          <ul>
+            {% for error in errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      {{ form_row(form.restaurants) }}
+
+      <button type="submit" class="btn btn-block btn-primary">
+        {{ 'basics.save'|trans }}
+      </button>
+
+      <span class="help-block">
+        {% trans with { '%link%': path('admin_add_restaurants_edenred', { section: 'added' }) } %}restaurants.edenred.already_sent{% endtrans %}
+      </span>
+    {{ form_end(form) }}
+  {% else %}
+    <table class="table">
+      <thead>
+        <th> {{ 'restaurants.edenred.added_list.name'|trans }} </th>
+        <th> {{ 'restaurants.edenred.added_list.merchant_id'|trans }} </th>
+        <th> {{ 'restaurants.edenred.added_list.tr_card_enabled'|trans }} </th>
+        <th> {{ 'restaurants.edenred.added_list.actions'|trans }} </th>
+      </thead>
+      <tbody>
+        {% for restaurant in restaurants %}
+          <tr>
+            <td>{{ restaurant.name }}</td>
+            <td>{{ restaurant.edenredMerchantId ? restaurant.edenredMerchantId : '-'}}</td>
+            <td>{{ (restaurant.edenredTRCardEnabled ? 'basics.yes' : 'basics.no')|trans }}</td>
+            <th>
+              {% if restaurant.edenredMerchantId and restaurant.edenredTRCardEnabled %}
+                <i class="fa fa-check"></i> {% trans %}Up to date{% endtrans %}
+              {% else %}
+                <a href="{{ path('admin_refresh_restaurant_edenred', { restaurantId: restaurant.id }) }}" class="btn btn-success">
+                  <i class="fa fa-refresh"></i> {% trans %}Refresh{% endtrans %}
+                </a>
+              {% endif %}
+            </th>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    var $restaurants = $('#form_restaurants')
+    var restaurantURL = "{{ path('admin_restaurant', { id: '__ID__'}) }}"
+    new CoopCycle.Search(document.querySelector('#restaurant-search'), {
+      url: "{{ path('admin_restaurants_search', { format: 'json' }) }}",
+      placeholder: "{{ 'basics.search'|trans }}",
+      onSuggestionSelected: function(suggestion) {
+
+        var newRestaurant = $restaurants.attr('data-prototype');
+
+        newRestaurant = newRestaurant.replace(/__name__/g, $restaurants.find('tbody > tr').length);
+        newRestaurant = newRestaurant.replace(/__value__/g, suggestion.id);
+        newRestaurant = newRestaurant.replace(/__restaurant_name__/g, suggestion.name);
+
+        $.getJSON(restaurantURL.replace('__ID__', suggestion.id), {format: 'json'}, function (restaurant) {
+          if (restaurant && restaurant.edenredSyncSent) {
+            newRestaurant = newRestaurant.replace(/__restaurant_style__/g, `style="text-decoration: line-through;"`);
+          }
+          $restaurants.find('tbody').append($(newRestaurant));
+        });
+
+      }
+    });
+
+    $(document).on('click', '[data-remove="restaurant"]', function(e) {
+      e.preventDefault();
+      $(this).closest('tr').remove();
+    });
+  </script>
+{% endblock %}

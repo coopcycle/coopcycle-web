@@ -7,11 +7,15 @@ parameters:
     level: 4
     paths:
         - src
+        - tests/Behat/FeatureContext.php
+        - app/DoctrineMigrations
     excludePaths:
         # Class AppBundle\Api\DataProvider\RestaurantCollectionDataProvider extends final class ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider
-        - src/Api/DataProvider/RestaurantCollectionDataProvider
-        - src/Api/DataProvider/TaskListCollectionDataProvider
-        - src/Doctrine/EventSubscriber/TaskSubscriber/EntityChangeSetProcessor
+        - src/Api/DataProvider/RestaurantCollectionDataProvider (?)
+        - src/Api/DataProvider/TaskListCollectionDataProvider (?)
+        - src/Doctrine/EventSubscriber/TaskSubscriber/EntityChangeSetProcessor (?)
+        - app/DoctrineMigrations/Version20171202224801.php
+        - app/DoctrineMigrations/Version20171230131300.php
     ignoreErrors:
         - '#Access to an undefined property #'
         - '#Call to an undefined method Symfony\\Component\\Form\\FormInterface::getClickedButton\(\)#'
@@ -26,12 +30,9 @@ parameters:
         - '#Call to an undefined method Sylius\\Component\\Order\\Repository\\OrderRepositoryInterface::countByCustomerAndCoupon\(\)#'
         - '#Call to an undefined method Symfony\\Component\\DependencyInjection\\Extension\\ExtensionInterface::addSecurityListenerFactory\(\)#'
         - '#Strict comparison using === between null and Sylius\\Component\\Order\\Model\\OrderInterface will always evaluate to false#'
-        - '#Call to an undefined method [a-zA-Z\\]+::accessControl\(\)#'
         - '#Call to an undefined method League\\Geotools\\Distance\\DistanceInterface::flat\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Promotion\\Model\\PromotionSubjectInterface::getRestaurant\(\)#'
         - '#Call to an undefined method Sylius\\Component\\(.*)RepositoryInterface::findOneBy[a-zA-Z]+\(\)#'
-        - '#Property MercadoPago\\Payment::\$payer \(object\) does not accept array<string, mixed>#'
-        - '#Access to protected property MercadoPago\\Payment::\$[a-zA-Z_]#'
         - '#Method AppBundle\\Entity\\Sylius\\(Product|Taxon)::compareTo\(\) should return int but returns bool#'
         - '#Method [a-zA-Z\\:\(\)]+ should return Doctrine\\Common\\Collections\\Collection<\(int\|string\), [a-zA-Z\\]+> but returns Doctrine\\Common\\Collections\\ArrayCollection<\(int\|string\), [a-zA-Z\\\|]+>#'
         - '#Call to an undefined method Symfony\\Component\\Validator\\ConstraintViolationListInterface::findByCodes\(\)#'

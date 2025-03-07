@@ -92,7 +92,7 @@ class OrderTextEncoderTest extends KernelTestCase
         $output = $this->encoder->encode($order, 'txt');
 
         $expected = <<<EOT
-Commande ABC (#1)
+Commande ABC
 
 ---
 
@@ -122,7 +122,7 @@ EOT;
         $output = $this->encoder->encode($order, 'txt');
 
         $expected = <<<EOT
-Commande ABC (#1)
+Commande ABC
 
 ---
 

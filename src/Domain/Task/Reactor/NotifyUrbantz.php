@@ -24,7 +24,7 @@ class NotifyUrbantz
 
     public function __construct(
         HttpClientInterface $urbantzClient,
-        EntityManagerInterface $entityManager,
+        private EntityManagerInterface $entityManager,
         string $secret,
         LoggerInterface $logger = null)
     {

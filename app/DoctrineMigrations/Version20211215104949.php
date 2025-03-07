@@ -26,10 +26,10 @@ final class Version20211215104949 extends AbstractMigration
         $this->addSql('ALTER TABLE task_package ADD CONSTRAINT FK_C1894D7FF44CABFF FOREIGN KEY (package_id) REFERENCES package (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
 
         $stmt = $this->connection->prepare('SELECT t.delivery_id, t.id AS task_id, tci.position, dp.package_id, dp.quantity FROM delivery_package dp JOIN task_collection_item tci ON dp.delivery_id = tci.parent_id JOIN task t ON tci.task_id = t.id WHERE t.type = \'DROPOFF\'');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $deliveryPackages = [];
-        while ($deliveryPackage = $stmt->fetch()) {
+        while ($deliveryPackage = $result->fetchAssociative()) {
             if (!isset($deliveryPackages[$deliveryPackage['delivery_id']])) {
                 $deliveryPackages[$deliveryPackage['delivery_id']] = $deliveryPackage;
             } else {
@@ -60,11 +60,11 @@ final class Version20211215104949 extends AbstractMigration
         $this->addSql('ALTER TABLE delivery_package ADD CONSTRAINT fk_d476d84b12136921 FOREIGN KEY (delivery_id) REFERENCES delivery (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
 
         $stmt = $this->connection->prepare('SELECT t.delivery_id, t.id AS task_id, tci.position, tp.package_id, tp.quantity FROM task_package tp JOIN task_collection_item tci ON tp.task_id = tci.task_id JOIN task t ON tci.task_id = t.id');
-        $stmt->execute();
+        $result = $stmt->execute();
 
         $packagesByDelivery = [];
 
-        while ($taskPackage = $stmt->fetch()) {
+        while ($taskPackage = $result->fetchAssociative()) {
             $packagesByDelivery[$taskPackage['delivery_id']][] = $taskPackage;
         }
 

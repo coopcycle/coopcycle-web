@@ -444,3 +444,20 @@ profile_redirect_to_dashboard:
     defaults:
         _controller: AppBundle\Controller\ProfileController::redirectToDashboardAction
     methods:  [ GET ]
+
+dashboard_restaurant_image_from_url:
+    path: /dashboard/restaurants/{id}/image-from-url
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::restaurantImageFromUrlAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurants: dashboard_restaurants
+            restaurant: dashboard_restaurant
+    methods: [ POST ]
+
+profile_loopeat:
+    path:     /profile/loopeat
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::zeroWasteTransactionsAction
+        layout: 'profile.html.twig'
+    methods:  [ GET ]

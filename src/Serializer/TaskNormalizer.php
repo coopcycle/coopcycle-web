@@ -9,44 +9,26 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-    private $normalizer;
-    private $iriConverter;
-
     public function __construct(
-        ItemNormalizer $normalizer,
-        IriConverterInterface $iriConverter,
-        TagManager $tagManager,
-        UserManagerInterface $userManager,
-        Geocoder $geocoder,
-        EntityManagerInterface $entityManager)
-    {
-        $this->normalizer = $normalizer;
-        $this->iriConverter = $iriConverter;
-        $this->tagManager = $tagManager;
-        $this->userManager = $userManager;
-        $this->geocoder = $geocoder;
-        $this->entityManager = $entityManager;
-    }
-
-    private function _normalizeTaskPackages($packages) {
-        $packagesNormalized = [];
-        foreach ($packages as $package) {
-            $packagesNormalized[] = [
-                'type' => $package->getPackage()->getName(),
-                'name' => $package->getPackage()->getName(),
-                'quantity' => $package->getQuantity(),
-            ];
-        }
-        return $packagesNormalized;
-    }
+        private ItemNormalizer $normalizer,
+        private IriConverterInterface $iriConverter,
+        private TagManager $tagManager,
+        private UserManagerInterface $userManager,
+        private Geocoder $geocoder,
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator
+    )
+    {}
 
     public function normalize($object, $format = null, array $context = array())
     {
@@ -94,25 +76,96 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
-        if ($object->isPickup()) {
+        $barcode = BarcodeUtils::getRawBarcodeFromTask($object);
+        $barcode_token = BarcodeUtils::getToken($barcode);
+        $data['barcode'] = [
+            'barcode' => $barcode,
+            'label' => [
+                'token' => $barcode_token,
+                'url' => $this->urlGenerator->generate(
+                    'task_label_pdf',
+                    ['code' => $barcode, 'token' => $barcode_token],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                )
+            ]
+        ];
+
+        $data['packages'] = [];
+
+        if (!is_null($object->getPrefetchedPackagesAndWeight())) {
+            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
+            $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
+        } elseif ($object->isPickup()) {
+            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
             $delivery = $object->getDelivery();
 
             if (null !== $delivery) {
-                $data['packages'] = $this->_normalizeTaskPackages($delivery->getPackages());
-                $data['weight'] = $delivery->getWeight();
+                $deliveryId = $delivery->getId();
+
+                $qb =  $this->entityManager
+                    ->getRepository(Task::class)
+                    ->createQueryBuilder('t');
+
+                $query = $qb
+                    ->select('p.id', 'MAX(tp.id) as task_package_id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                    ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
+                    ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
+                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
+                    ->groupBy('p.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
+                    ->setParameter('deliveryId', $deliveryId)
+                    ->getQuery();
+
+                $data['packages'] = $query->getResult();
+
+                $qbWeight =  $this->entityManager
+                    ->getRepository(Task::class)
+                    ->createQueryBuilder('t');
+
+                $data['weight'] = $qbWeight
+                    ->select('sum(t.weight)')
+                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
+                    ->setParameter('deliveryId', $deliveryId)
+                    ->groupBy('d.id')
+                    ->getQuery()
+                    ->getResult()[0]["1"];
             }
         } else {
-            $data['packages'] = $this->_normalizeTaskPackages($object->getPackages());
+
+            $qb =  $this->entityManager
+                ->getRepository(Task::class)
+                ->createQueryBuilder('t');
+
+            $data['packages'] = $qb
+                ->select('p.id', 'tp.id as task_package_id', 'p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
+                ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
+                ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
+                ->andWhere('t.id = :taskId')
+                ->setParameter('taskId', $object->getId())
+                ->getQuery()
+                ->getResult();
         }
 
-        // FIXME Manage this with serialization groups
-        $data['tour'] = null;
-        if (null !== ($tour = $object->getTour())) {
-            $data['tour'] = [
-                '@id' => $this->iriConverter->getIriFromItem($tour),
-                'name' => $tour->getName(),
-                'position' => $tour->getTaskPosition($object),
-            ];
+        // Add labels
+        foreach ($data['packages'] as $i => $p) {
+
+            $data['packages'][$i]['labels'] = [];
+
+            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['task_package_id'], $p['quantity']);
+            foreach ($barcodes as $barcode) {
+                $labelUrl = $this->urlGenerator->generate(
+                    'task_label_pdf',
+                    ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                );
+                $data['packages'][$i]['labels'][] = $labelUrl;
+            }
+
+            unset($data['packages'][$i]['id']);
+            unset($data['packages'][$i]['task_package_id']);
+        }
+
+        if (isset($data['metadata']) && is_array($data['metadata'])) {
+            $data['metadata']['zero_waste'] = $object->isZeroWaste();
         }
 
         return $data;
@@ -218,7 +271,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
             foreach ($data['packages'] as $p) {
-                $package = $packageRepository->findOneByName($p['type']);
+                $package = $packageRepository->findOneByNameAndStore($p['type'], $task->getStore());
                 if ($package) {
                     $task->setQuantityForPackage($package, $p['quantity']);
                 }

@@ -9,32 +9,20 @@ use AppBundle\Message\WoopitDocumentWebhook;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class TaskListener
 {
-    private $messageBus;
-
     public function __construct(
-        MessageBusInterface $messageBus,
-        IriConverterInterface $iriConverter,
-        EntityManagerInterface $entityManager,
-        LoggerInterface $logger)
+        private readonly MessageBusInterface $messageBus,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly EntityManagerInterface $entityManager)
     {
-        $this->messageBus = $messageBus;
-        $this->iriConverter = $iriConverter;
-        $this->entityManager = $entityManager;
-        $this->logger = $logger;
     }
 
     public function prePersist(Task $task, LifecycleEventArgs $args)
     {
-        if (null === $task->getDoneAfter()) {
-            $doneAfter = clone $task->getDoneBefore();
-            $doneAfter->modify('-15 minutes');
-            $task->setDoneAfter($doneAfter);
-        }
+        Task::fixTimeWindow($task);
     }
 
     public function preUpdate(Task $task, PreUpdateEventArgs $event)

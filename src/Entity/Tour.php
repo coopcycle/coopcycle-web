@@ -9,10 +9,20 @@ use AppBundle\Api\Dto\TourInput;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
+use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Entity\TaskList\Item;
+use AppBundle\Vroom\Job as VroomJob;
+use AppBundle\Vroom\Shipment as VroomShipment;
 
 /**
  * @ApiResource(
  *   collectionOperations={
+ *     "get"={
+ *       "method"="GET",
+ *       "access_control"="is_granted('ROLE_DISPATCHER')",
+ *       "pagination_enabled"=false
+ *     },
  *     "post"={
  *       "method"="POST",
  *       "input"=TourInput::class,
@@ -28,17 +38,29 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "method"="PUT",
  *       "input"=TourInput::class,
  *       "security"="is_granted('ROLE_DISPATCHER')"
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_DISPATCHER')",
  *     }
  *   },
  *   attributes={
  *     "denormalization_context"={"groups"={"tour"}},
- *     "normalization_context"={"groups"={"task_collection", "task", "tour"}}
+ *     "normalization_context"={"groups"={"task_collection", "tour"}}
  *   }
  * )
+ * @ApiFilter(DateFilter::class, properties={"date"})
  */
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
+    private $date;
+
     protected $id;
+
+    /**
+     * @var Item
+     */
+    private $taskListItem;
 
     /**
      * @var string
@@ -74,19 +96,6 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         return $this;
     }
 
-    public function addTask(Task $task, $position = null)
-    {
-        $task->setTour($this);
-
-        return parent::addTask($task, $position);
-    }
-
-    public function removeTask(Task $task)
-    {
-        $task->setTour(null);
-        parent::removeTask($task);
-    }
-
     public function getTaskPosition(Task $task)
     {
         foreach ($this->getItems() as $item) {
@@ -96,5 +105,59 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         }
 
         return 0;
+    }
+
+    public function getDate()
+    {
+        return $this->date;
+    }
+
+    /**
+     * @SerializedName("date")
+     * @Groups({"task_collection", "task_collections"})
+     */
+    public function getDateString()
+    {
+        return $this->date->format('Y-m-d');
+    }
+
+    public function setDate(\DateTime $date)
+    {
+        $this->date = $date;
+
+        return $this;
+    }
+
+    public static function toVroomStep(Tour $tour, $tourIri) : VroomJob
+    {
+
+        $tasks = $tour->getTasks();
+        $job = Task::toVroomJob($tasks[0], $tourIri);
+        return $job;
+
+    }
+
+    /**
+     * Get the value of taskListItem
+     *
+     * @return Item
+     */
+    public function getTaskListItem()
+    {
+        return $this->taskListItem;
+    }
+
+    /**
+     * Set the value of taskListItem
+     *
+     * @param  Item  $taskListItem
+     *
+     * @return  self
+     */
+    public function setTaskListItem(Item $taskListItem)
+    {
+        $this->taskListItem = $taskListItem;
+
+        return $this;
     }
 }

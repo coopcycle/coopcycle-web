@@ -5,7 +5,7 @@ import { Form, Input, Button } from 'antd'
 
 import { createGroup } from '../redux/actions'
 
-const ModalContent = ({ createGroup }) => {
+const ModalContent = ({ createGroup, isCreateGroupButtonLoading }) => {
 
   const { t } = useTranslation()
 
@@ -31,7 +31,7 @@ const ModalContent = ({ createGroup }) => {
           <Input />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={isCreateGroupButtonLoading}>
             { t('ADMIN_DASHBOARD_TASK_FORM_SAVE') }
           </Button>
         </Form.Item>
@@ -40,9 +40,10 @@ const ModalContent = ({ createGroup }) => {
   )
 }
 
-function mapStateToProps() {
+function mapStateToProps(state) {
 
   return {
+    isCreateGroupButtonLoading: state.isCreateGroupButtonLoading
   }
 }
 

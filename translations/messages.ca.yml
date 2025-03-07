@@ -5,7 +5,7 @@ base.footer.contactUs: Contacta'ns
 base.footer.help: Ajuda
 base.footer.legal: Avís legal
 base.footer.suggest: Suggereix un establiment
-adminDashboard.title: Tauler d’administrador
+adminDashboard.title: Dispatch
 adminDashboard.configuration: Configuració
 adminDashboard.tooltip.orders: Gestiona les comandes del restaurant
 adminDashboard.tooltip.deliveries: Gestiona les entregues
@@ -94,7 +94,6 @@ help.title: Ajuda
 help.home: Inici
 restaurants.no_results: No hem trobat cap restaurant que coincideixi amb la cerca
   ☹ <br> Prova amb una adreça diferent
-restaurants.visible_by_you_only: Només és visible per a tu
 localBusiness.form.orderingDelayMinutes: Retard addicional abans de la comanda
 localBusiness.form.orderingDelayMinutes.help: Utilitza aquest camp per afegir un temps
   addicional abans de la comanda d'un usuari. Aquest paràmetre no canvia els temps
@@ -206,7 +205,7 @@ profile.managedRestaurants: Restaurants gestionats per l’usuari
 profile.accountType: Tipus de compte
 order.cart.title: Cistell de compra
 order.items.products_with_count: Productes (%count%)
-order.summary.heading: Comanda %number% (#%id%)
+order.summary.heading: Comanda %number%
 order.total_including_tax: Total (amb IVA)
 order.items_total: Total de productes
 order.total_tax: IVA
@@ -357,7 +356,7 @@ form.settings.stripe_secret_key.help: "Creeu un compte Stripe per obtenir-ne <a 
   https://stripe.com/docs/dashboard#api-keys\">clau publicable</a>\n"
 form.settings.stripe_connect_client_id.label: Stripe Connect identificador
 form.settings.stripe_connect_client_id.help: "Obteniu l'identificador a la secció\
-  \ <a href=\"https://dashboard.stripe.com/account/applications/settings\">pàgina\
+  \ <a href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\">pàgina\
   \ de paràmetres</a>\n"
 form.settings.latlng.label: Coordenades geogràfiques
 form.settings.latlng.help: "Especifiqueu la latitud i la longitud predeterminades.\
@@ -728,7 +727,7 @@ form.deposit_refund_settings.deposit_refund_optin.label: El sistema de reemborsa
 form.new_order.variant_name.label: Nom del producte
 form.new_order.variant_name.help: El nom que apareixerà en el resum de la comanda
   i la factura
-form.new_order.variant_price.label: Preu
+form.new_order.variant_price.label: Preu amb IVA inclòs
 restaurant.quotes_disclaimer.authenticated: Aquest restaurant també accepta comandes
   amb pressupost. Per fer un pressupost, ha de ser un client referenciat.<a href="%contact_us%">Contacta
   amb nosaltres </a>per a més informació.
@@ -880,7 +879,6 @@ store.PAWN_SHOP: Casa de préstecs
 store.PET_STORE: Botiga de mascotes
 food_establishment.BAKERY: Forn de pa
 form.time_slot.prior_notice_hours.label: Avís previ (hores)
-restaurant.form.giropay_enabled.label: Habilita Giropay
 activity.task.started: "@%owner% va començar tasca #task/%*aggregate_id%\n"
 form.min_max.infinity.label: Sense màxim
 receipt.billing_details: Comanda pagada amb targeta de crèdit el %date%
@@ -1026,8 +1024,7 @@ form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comiss
 form.store_type.packages_required.label: Requerir l'entrada de paquets
 form.store_type.package_set.placeholder: Triar un conjunt de paquets
 adminDashboard.customize.title: Personalitzar
-form.settings.mercadopago_testmode.help: "En mode « test », cal utilitzar <a href=\"\
-  https://www.mercadopago.com.ar/developers/es/guides/online-payments/checkout-api/testing#bookmark_tarjetas_de_prueba\"\
+form.settings.mercadopago_testmode.help: "En mode « test », cal utilitzar <a href=\"%url%\"\
   >prova els números de les targetes de crèdit </a> per pagar a la plataforma. <strong>No\
   \ s'intercanviaran diners.</strong> "
 homepage.form.content: <strong>%brand_name%</strong> funciona a nivell local i realitza
@@ -1102,15 +1099,15 @@ form.menu_editor.name.help: Això només us permet distingir els menús. Això n
   al client.
 form.settings.mercadopago.redirect_uri.help: 'Quan configuri la seva app, utilitzi
   la següent URL de redirecció: <code>%redirect_uri%</code>'
-form.settings.mercadopago.app_id.help: Necessita <a href="https://www.mercadopago.com.br/developers/es/guides/marketplace/api/create-marketplace/">crear
+form.settings.mercadopago.app_id.help: Necessita <a href="https://www.mercadopago.com/developers/es/guides/marketplace/api/create-marketplace/">crear
   una aplicació</a> para obtenir la seva ID.
 form.settings.mercadopago.app_id.label: ID de l'aplicació
-form.settings.mercadopago.access_token.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.access_token.help: Obtenir la <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank">fitxa d'accés</a>
 form.settings.mercadopago.access_token.label: Fitxa d'accés
 form.settings.mercadopago_enable_livemode.help: Per activar el mode « live », primer
   necessites configurar les claus del mode « live ».
-form.settings.mercadopago.publishable_key.help: Obtenir la <a href="https://www.mercadopago.com.%country%/developers/panel/credentials"
+form.settings.mercadopago.publishable_key.help: Obtenir la <a href="https://www.mercadopago.com/developers/panel/credentials"
   target="_blank">clau per publicar</a>
 form.mercadopago_livemode.disable.label: Utilitzar Mercado Pago en mode « test »
 form.local_business.mercadopago_account.success: El compte de Mercado Pago s'ha connectat

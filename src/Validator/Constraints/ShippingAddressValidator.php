@@ -4,8 +4,6 @@ namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\OrderTimeHelper;
-use AppBundle\Utils\ShippingDateFilter;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -54,6 +52,11 @@ class ShippingAddressValidator extends ConstraintValidator
             return;
         }
 
+        // Skip this validation in business context
+        if ($object->isBusiness()) {
+            return;
+        }
+
         if (null === $value) {
             $this->context->buildViolation($constraint->addressNotSetMessage)
                 ->setCode(ShippingAddress::ADDRESS_NOT_SET)
@@ -62,14 +65,14 @@ class ShippingAddressValidator extends ConstraintValidator
             return;
         }
 
-        $vendor = $object->getVendor();
+        $vendorConditions = $object->getVendorConditions();
 
         $distance = $this->routing->getDistance(
             $object->getPickupAddress()->getGeo(),
             $value->getGeo()
         );
 
-        if (!$vendor->canDeliverAddress($value, $distance, $this->expressionLanguage)) {
+        if (!$vendorConditions->canDeliverAddress($value, $distance, $this->expressionLanguage)) {
             $this->context->buildViolation($constraint->addressTooFarMessage)
                 ->setCode(ShippingAddress::ADDRESS_TOO_FAR)
                 ->addViolation();

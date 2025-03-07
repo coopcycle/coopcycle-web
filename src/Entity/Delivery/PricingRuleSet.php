@@ -2,12 +2,36 @@
 
 namespace AppBundle\Entity\Delivery;
 
-use AppBundle\Entity\Delivery;
+use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Action\PricingRuleSet\Applications;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+
+/**
+ * @ApiResource(
+ *   itemOperations={
+ *     "get"={
+ *        "controller"=NotFoundAction::class,
+ *     },
+ *     "delete"={
+ *       "method"="DELETE",
+ *       "security"="is_granted('ROLE_ADMIN')",
+ *     },
+ *     "applications"={
+ *        "method"="GET",
+ *        "path"="/pricing_rule_sets/{id}/applications",
+ *        "controller"=Applications::class,
+ *        "security"="is_granted('ROLE_ADMIN')",
+ *        "openapi_context"={
+ *          "summary"="Get the objects to which this pricing rule set is applied"
+ *        }
+ *     },
+ *   }
+ * )
+ */
 class PricingRuleSet
 {
     /**
@@ -23,6 +47,10 @@ class PricingRuleSet
     protected $name;
 
     protected $strategy = 'find';
+
+    protected array $options = [];
+
+    public const OPTION_MAP_ALL_TASKS = 'map_all_tasks';
 
     public function __construct()
     {
@@ -105,4 +133,18 @@ class PricingRuleSet
         return $ruleSet;
     }
 
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+
+    public function hasOption(string $option)
+    {
+        return in_array($option, $this->options);
+    }
 }

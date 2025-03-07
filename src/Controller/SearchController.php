@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\Geocoder;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -139,5 +140,15 @@ class SearchController extends AbstractController
         }
 
         return new JsonResponse([], 400);
+    }
+
+    /**
+     * @Route("/search/pixabay", name="search_pixabay")
+     */
+    public function pixabayAction(Request $request, PixabayClient $pixabay)
+    {
+        $results = $pixabay->search($request->query->get('q'), $request->query->getInt('page', 1));
+
+        return new JsonResponse(['hits' => $results]);
     }
 }

@@ -1,0 +1,27 @@
+<ul class="list-unstyled">
+    {% for task in delivery.getTasks() %}
+    <li>
+    <small>
+        <span class="mr-1">{% include "_partials/task/type_icon.html.twig" with { task: task } %}</span>
+        {% if task.isCancelled() %}<del>{% endif %}
+        {% if task.address.name is not empty %}
+            <span><b>{{ task.address.name }}</b> - {{ task.address.streetAddress }}</span>
+        {% else %}
+            {{ task.address.streetAddress }}
+        {% endif %}
+        {% if task.isCancelled() %}</del>{% endif %}
+        </span>
+    </small>
+    </li>
+    {% endfor %}
+</ul>
+{% set details = [ delivery.distance|meters_to_kilometers ] %}
+{% if delivery.weight is not empty %}
+    {% set details = details|merge([ delivery.weight|grams_to_kilos ]) %}
+{% endif %}
+{% if delivery.hasPackages() %}
+    {% for package_quantity in delivery.packages %}
+    {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
+    {% endfor %}
+{% endif %}
+<small>{{ details|join(' - ') }}</small>

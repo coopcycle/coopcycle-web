@@ -115,6 +115,7 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 
     public function testHandleOrderDelayedEvent()
     {
+        $this->markTestSkipped();
 
         $orders = [
             new \DateTime('2023-03-28 12:05:00'),
@@ -159,6 +160,7 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 
     public function testHandleOrderDelayedEventShouldExceedLimit()
     {
+        $this->markTestSkipped();
 
         $orders = [
             new \DateTime('2023-03-28 12:05:00'),

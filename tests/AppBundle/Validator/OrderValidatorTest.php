@@ -8,6 +8,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
+use AppBundle\Fulfillment\FulfillmentMethodResolver;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PriceFormatter;
@@ -29,6 +30,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
     public function setUp(): void
     {
         $this->priceFormatter = $this->prophesize(PriceFormatter::class);
+        $this->fulfillmentMethodResolver = $this->prophesize(FulfillmentMethodResolver::class);
 
         $this->priceFormatter
             ->formatWithSymbol(Argument::type('int'))
@@ -42,7 +44,8 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
     protected function createValidator()
     {
         return new OrderValidator(
-            $this->priceFormatter->reveal()
+            $this->priceFormatter->reveal(),
+            $this->fulfillmentMethodResolver->reveal()
         );
     }
 
@@ -112,7 +115,7 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
 
         $order
             ->getVendor()
-            ->willReturn(Vendor::withRestaurant($restaurant));
+            ->willReturn($restaurant);
 
         $order
             ->hasVendor()
@@ -137,8 +140,8 @@ class OrderValidatorTest extends ConstraintValidatorTestCase
         $fulfillmentMethod = new FulfillmentMethod();
         $fulfillmentMethod->setMinimumAmount($minimumCartAmount);
 
-        $order
-            ->getFulfillmentMethodObject()
+        $this->fulfillmentMethodResolver
+            ->resolveForOrder($order->reveal())
             ->willReturn($fulfillmentMethod);
 
         return $order;

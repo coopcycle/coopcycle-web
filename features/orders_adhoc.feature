@@ -38,6 +38,7 @@ Feature: Orders Adhoc
     And the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | products.yml        |
       | hubs.yml     |
     And the user "sarah" is loaded:
@@ -89,6 +90,7 @@ Feature: Orders Adhoc
         "shippingAddress":null,
         "reusablePackagingEnabled": false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange": null,
         "takeaway": false,
         "id": @integer@,
@@ -103,6 +105,7 @@ Feature: Orders Adhoc
               "unitPrice": 1200,
               "total": @integer@,
               "name": "3kg de patatas",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -120,6 +123,7 @@ Feature: Orders Adhoc
               "unitPrice": 400,
               "total": @integer@,
               "name": "2kg de tomates",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -147,13 +151,15 @@ Feature: Orders Adhoc
         "preparationTime": null,
         "shippingTime": null,
         "hasReceipt": false,
-        "paymentMethod": "",
+        "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
     """
 
@@ -162,6 +168,7 @@ Feature: Orders Adhoc
     And the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
       | products.yml        |
       | hubs.yml     |
     And the user "sarah" is loaded:
@@ -213,6 +220,7 @@ Feature: Orders Adhoc
         "shippingAddress":null,
         "reusablePackagingEnabled": false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange": null,
         "takeaway": false,
         "id": @integer@,
@@ -227,6 +235,7 @@ Feature: Orders Adhoc
               "unitPrice": 1200,
               "total": @integer@,
               "name": "3kg de patatas",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -244,6 +253,7 @@ Feature: Orders Adhoc
               "unitPrice": 400,
               "total": @integer@,
               "name": "2kg de tomates",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -271,13 +281,15 @@ Feature: Orders Adhoc
         "preparationTime": null,
         "shippingTime": null,
         "hasReceipt": false,
-        "paymentMethod": "",
+        "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
     """
     When the user "bob" is loaded:
@@ -324,6 +336,7 @@ Feature: Orders Adhoc
         "shippingAddress":null,
         "reusablePackagingEnabled": false,
         "reusablePackagingPledgeReturn": 0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange": null,
         "takeaway": false,
         "id": @integer@,
@@ -338,6 +351,7 @@ Feature: Orders Adhoc
               "unitPrice": 1200,
               "total": @integer@,
               "name": "3kg de patatas",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -355,6 +369,7 @@ Feature: Orders Adhoc
               "unitPrice": 400,
               "total": @integer@,
               "name": "2kg de tomates",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Nodaiwa"
@@ -372,6 +387,7 @@ Feature: Orders Adhoc
               "unitPrice": 4600,
               "total": @integer@,
               "name": "1kg de zanahorias",
+              "variantName": "@string@",
               "vendor": {
                 "@id": "@string@.startsWith('/api/restaurants')",
                 "name": "Wild Buffet"
@@ -394,12 +410,14 @@ Feature: Orders Adhoc
         "preparationTime": null,
         "shippingTime": null,
         "hasReceipt": false,
-        "paymentMethod": "",
+        "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
           "@*@":"@*@"
         },
         "invitation": "@string@||@null@",
-        "events":@array@
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
     """

@@ -4,6 +4,16 @@ import ColorHash from 'color-hash'
 const colorHash = new ColorHash()
 
 export function groupLinkedTasks(tasks) {
+  /*
+    Given a list of tasks objects, returns the list of linked taskIds for each task.
+    
+    Output
+    [
+      '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+      '/api/tasks/2': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
+      '/api/tasks/3': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ]
+    ]
+  */
 
   const copy = tasks.slice(0)
 

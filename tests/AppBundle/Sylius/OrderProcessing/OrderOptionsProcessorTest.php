@@ -6,6 +6,7 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor;
 use AppBundle\Sylius\Product\ProductOptionInterface;
@@ -14,6 +15,7 @@ use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Log\NullLogger;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -33,7 +35,11 @@ class OrderOptionsProcessorTest extends KernelTestCase
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
         $this->orderItemQuantityModifier = static::$kernel->getContainer()->get('sylius.order_item_quantity_modifier');
-        $this->orderOptionsProcessor = new OrderOptionsProcessor($this->adjustmentFactory);
+        $this->orderOptionsProcessor = new OrderOptionsProcessor(
+            $this->adjustmentFactory,
+            new NullLogger(),
+            new NullLoggingUtils()
+        );
     }
 
     private function createProductOption($strategy)
@@ -71,7 +77,10 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $productVariant
             ->getQuantityForOptionValue(Argument::type(ProductOptionValueInterface::class))
             ->willReturn(1);
-
+        $productVariant
+            ->getCode()
+            ->willReturn('code');
+        
         return $productVariant->reveal();
     }
 
@@ -189,6 +198,9 @@ class OrderOptionsProcessorTest extends KernelTestCase
         $variant
             ->getQuantityForOptionValue($salad)
             ->willReturn(2);
+        $variant
+            ->getCode()
+            ->willReturn('code');
 
         $order = new Order();
         $order->addItem($this->createOrderItem(700, $variant->reveal()));
