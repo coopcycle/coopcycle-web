@@ -11,6 +11,7 @@
   data-view="{{ app.request.query.get('view', 'marketplace') }}"
   data-date-range="{{ app.request.query.get('range', '30d') }}"
   data-zero-waste="{{ zero_waste|json_encode|e('html_attr') }}"
+  data-tags="{{ tags|json_encode|e('html_attr') }}"
   data-ui-tasks-metrics-enabled="{{ ui_tasks_metrics_enabled }}"></div>
 {% endblock %}
 
