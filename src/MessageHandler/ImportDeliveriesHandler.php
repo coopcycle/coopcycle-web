@@ -6,6 +6,8 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
 use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Tour;
+use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\PricingManager;
@@ -32,7 +34,9 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
         private PricingManager $pricingManager,
         private LiveUpdates $liveUpdates,
         private DeliveryManager $deliveryManager,
-        private LoggerInterface $logger)
+        private LoggerInterface $logger,
+        private TourRepository $tourRepository
+        )
     {
     }
 
@@ -65,7 +69,9 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
 
         $result = $this->spreadsheetParser->parse($tempnam, $message->getOptions());
 
-        foreach ($result->getData() as $rowNumber => $delivery) {
+        foreach ($result->getData() as $rowNumber => $deliveryImportData) {
+
+            $delivery = $deliveryImportData['delivery'];
 
             // Validate data
             $violations = $this->validator->validate($delivery);
@@ -94,6 +100,24 @@ class ImportDeliveriesHandler implements MessageHandlerInterface
             } catch (NoRuleMatchedException $e) {
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $result->addErrorToRow($rowNumber, $errorMessage);
+            }
+
+            if ($deliveryImportData['tourName']) {
+                foreach ($delivery->getTasks() as $task) {
+                    $tourName = $deliveryImportData['tourName'];
+                    $date = $task->getAfter();
+                    $tour = $this->tourRepository->findByNameAndDate($tourName, $date);
+
+                    if (is_null($tour)) {
+                        $tour = new Tour();
+                        $tour->setName($tourName);
+                        $tour->setDate($date);
+                        $this->entityManager->persist($tour);
+                        $this->entityManager->flush();
+                    }
+
+                    $tour->addTask($task);
+                }
             }
         }
 

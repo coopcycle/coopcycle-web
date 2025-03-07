@@ -12,7 +12,7 @@ const commonOptions = {
   }
 };
 
-import { getCubeDateRange } from '../utils'
+import { getCubeDateRange, getTasksFilters } from '../utils'
 
 const renderChart = ({ resultSet, error }) => {
   if (error) {
@@ -45,8 +45,7 @@ const renderChart = ({ resultSet, error }) => {
 
 };
 
-const Chart = ({ cubejsApi, dateRange }) => {
-
+const Chart = ({ cubejsApi, dateRange, tags }) => {
   return (
     <QueryRenderer
       query={{
@@ -60,15 +59,7 @@ const Chart = ({ cubejsApi, dateRange }) => {
             "dateRange": getCubeDateRange(dateRange)
           }
         ],
-        "filters": [
-          {
-            "member": "Task.status",
-            "operator": "notEquals",
-            "values": [
-              "CANCELLED"
-            ]
-          }
-        ],
+        "filters": getTasksFilters(tags),
         "order": {
           "Task.date": "asc"
         }

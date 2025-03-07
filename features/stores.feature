@@ -93,6 +93,47 @@ Feature: Stores
       }
       """
 
+  Scenario: List stores
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | stores.yml          |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/stores"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Store",
+        "@id": "/api/stores",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/stores/@string@",
+            "id": "@integer@.greaterThan(0)",
+            "@type": "http://schema.org/Store",
+            "name": "@string@",
+            "enabled": true,
+            "address": {"@*@":"@*@"},
+            "timeSlot": "/api/time_slots/1",
+            "timeSlots": @array@,
+            "prefillPickupAddress": @boolean@,
+            "weightRequired": @boolean@,
+            "packagesRequired": @boolean@,
+            "multiDropEnabled": @boolean@
+          },
+          @...@
+        ],
+        "hydra:totalItems": 9
+      }
+      """
+
   Scenario: Retrieve store
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -346,6 +387,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -364,6 +406,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -389,6 +432,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -408,6 +452,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -462,6 +507,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -480,6 +526,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -505,6 +552,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -523,6 +571,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -573,6 +622,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -591,6 +641,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -616,6 +667,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}
@@ -634,6 +686,7 @@ Feature: Stores
               "comments": "",
               "createdAt":"@string@.isDateTime()",
               "tags":[],
+              "metadata":{"@*@": "@*@"},
               "weight":null,
               "packages": [],
               "barcode":{"@*@":"@*@"}

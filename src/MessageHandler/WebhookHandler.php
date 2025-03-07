@@ -19,6 +19,8 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
+use function PHPUnit\Framework\isInstanceOf;
+
 class WebhookHandler implements MessageHandlerInterface
 {
     private $client;
@@ -95,7 +97,7 @@ class WebhookHandler implements MessageHandlerInterface
                         'headers' => [
                             'X-CoopCycle-Signature' => $signature,
                         ],
-                        'json' => $payload,
+                        'json' => $payload
                     ]);
 
                     // Need to invoke a method on the Response,
@@ -108,9 +110,10 @@ class WebhookHandler implements MessageHandlerInterface
 
                 } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
 
-                    $response = $e->getResponse();
-
-                    $this->logExecution($webhook, $response);
+                    if (is_a($e, HttpExceptionInterface::class)) {
+                        $response = $e->getResponse();
+                        $this->logExecution($webhook, $response);
+                    }
 
                     throw $e;
                 }

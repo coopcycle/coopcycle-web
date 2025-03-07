@@ -58,7 +58,10 @@ class LoggerSubscriber implements EventSubscriber
         $this->databaseLogger->info(sprintf('Entity %s: %d; %s',
             $action,
             count($list),
-            implode(', ', array_map(fn($entity) => $entity->format($uow), $list))));
+            implode(', ', array_map(fn($entity) => $entity->format($uow), $list))), [
+                'action' => $action,
+                'count' => count($list),
+        ]);
     }
 }
 

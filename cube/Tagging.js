@@ -1,5 +1,5 @@
-cube(`TaskDoneEvent`, {
-  sql: `SELECT * FROM public.task_event WHERE name='task:done'`,
+cube(`Tagging`, {
+  sql: `SELECT * FROM public.tagging`,
 
   preAggregations: {
     // Pre-Aggregations definitions go here
@@ -7,13 +7,16 @@ cube(`TaskDoneEvent`, {
   },
 
   joins: {
-
+    Tag: {
+      relationship: `hasOne`,
+      sql: `${CUBE.tagId} = ${Tag.id}`,
+    },
   },
 
   measures: {
     count: {
       type: `count`,
-      drillMembers: [id, name, createdAt]
+      drillMembers: [id]
     }
   },
 
@@ -24,29 +27,19 @@ cube(`TaskDoneEvent`, {
       primaryKey: true
     },
 
-    taskId: {
-      sql: `task_id`,
-      type: `string`
+    tagId: {
+      sql: `tag_id`,
+      type: `number`
     },
 
-    name: {
-      sql: `name`,
-      type: `string`
+    resourceId: {
+      sql: `resource_id`,
+      type: `number`
     },
 
-    data: {
-      sql: `data`,
+    resourceClass: {
+      sql: `resource_class`,
       type: `string`
-    },
-
-    metadata: {
-      sql: `metadata`,
-      type: `string`
-    },
-
-    createdAt: {
-      sql: `created_at`,
-      type: `time`
     }
   },
 

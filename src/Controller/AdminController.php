@@ -334,6 +334,9 @@ class AdminController extends AbstractController
 
                 if ('refund' === $form->getClickedButton()->getName()) {
                     foreach ($form->get('payments') as $paymentForm) {
+                        if (!$paymentForm->has('refund')) {
+                            continue;
+                        }
                         /** @var \Symfony\Component\Form\ClickableInterface $refundButton */
                         $refundButton = $paymentForm->get('refund');
                         if ($refundButton->isClicked()) {
@@ -2951,6 +2954,7 @@ class AdminController extends AbstractController
     public function metricsAction(
         LocalBusinessRepository $localBusinessRepository,
         CubeJsTokenFactory $tokenFactory,
+        TagManager $tagManager,
         Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2959,6 +2963,7 @@ class AdminController extends AbstractController
         return $this->render('admin/metrics.html.twig', [
             'cube_token' => $tokenFactory->createToken(),
             'zero_waste' => $zeroWasteCount > 0,
+            'tags' => $tagManager->getAllTags(),
         ]);
     }
 

@@ -21,6 +21,10 @@ cube(`Task`, {
       relationship: `one_to_one`,
       sql: `${CUBE.status} = 'DONE' AND ${CUBE.id} = ${TaskDoneEvent}.task_id`,
     },
+    Tagging: {
+      relationship: `hasMany`,
+      sql: `${CUBE.id} = ${Tagging.resourceId}`,
+    },
     User: {
       relationship: `one_to_one`,
       sql: `${CUBE}.assigned_to = ${User}.id`,
@@ -62,24 +66,6 @@ cube(`Task`, {
         sql: `id`,
         type: `count`,
         filters: [{ sql: `${CUBE.minutesAfterStart} >= 0 AND ${CUBE.minutesBeforeEnd} >= 0` }],
-      },
-      percentageTooEarly: {
-        type: `number`,
-        format: `percent`,
-        sql: `ROUND(${CUBE.countTooEarly}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
-        filters: [{ sql: `${CUBE.countDone} > 0` }],
-      },
-      percentageTooLate: {
-        type: `number`,
-        format: `percent`,
-        sql: `ROUND(${CUBE.countTooLate}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
-        filters: [{ sql: `${CUBE.countDone} > 0` }],
-      },
-      percentageOnTime: {
-        type: `number`,
-        format: `percent`,
-        sql: `ROUND(${CUBE.countOnTime}::numeric / ${CUBE.countDone}::numeric * 100.0, 2)`,
-        filters: [{ sql: `${CUBE.countDone} > 0` }],
       },
     },
   ),

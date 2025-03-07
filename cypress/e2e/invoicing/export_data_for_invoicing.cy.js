@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 context('Invoicing (role: admin)', () => {
   beforeEach(() => {
     const prefix = Cypress.env('COMMAND_PREFIX')
@@ -20,13 +22,12 @@ context('Invoicing (role: admin)', () => {
     cy.get('[data-testid="invoicing.toggleRangePicker"]').click()
 
     // Choose 1 month
+    const firstDayOfMonth = moment().startOf('month').format('YYYY-MM-DD')
+    const lastDayOfMonth = moment().endOf('month').format('YYYY-MM-DD')
     cy.get('.ant-picker-input-active > input').click()
-    cy.get(
-      ':nth-child(1) > .ant-picker-date-panel > .ant-picker-body > .ant-picker-content > tbody > :nth-child(1) > .ant-picker-cell-start > .ant-picker-cell-inner',
-    ).click()
-    cy.get(
-      ':nth-child(1) > .ant-picker-date-panel > .ant-picker-body > .ant-picker-content > tbody > :nth-child(5) > .ant-picker-cell-end > .ant-picker-cell-inner',
-    ).click()
+    cy.get('.ant-picker-input-active > input').type(firstDayOfMonth);
+    cy.get(':nth-child(3) > input').click();
+    cy.get('.ant-picker-input-active > input').type(`${lastDayOfMonth}{enter}`);
 
     cy.get('[data-testid="invoicing.refresh"]').click()
 
