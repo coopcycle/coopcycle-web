@@ -413,7 +413,7 @@ export default function({ storeId, deliveryId, order }) {
               }
 
               // Case 2: Time slot changed
-              if (prevFirstTask.timeSlotUrl !== firstTask.timeSlotUrl) {
+              if (prevFirstTask.timeSlotUrl && firstTask.timeSlotUrl && prevFirstTask.timeSlotUrl !== firstTask.timeSlotUrl) {
                 values.tasks.slice(1).forEach((_, idx) => {
                   const taskIndex = idx + 1;
                   setFieldValue(`tasks[${taskIndex}].timeSlotUrl`, firstTask.timeSlotUrl);
@@ -422,7 +422,7 @@ export default function({ storeId, deliveryId, order }) {
               }
 
               //Case 3: Time slot value changed
-              if (prevFirstTask.timeSlot !== firstTask.timeSlot) {
+              if (prevFirstTask.timeSlot &&firstTask.timeSlot && prevFirstTask.timeSlot !== firstTask.timeSlot) {
                 values.tasks.slice(1).forEach((task, idx) => {
                   const taskIndex = idx + 1;
                   if (task.timeSlot) {
