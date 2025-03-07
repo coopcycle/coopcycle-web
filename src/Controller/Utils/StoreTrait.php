@@ -66,10 +66,6 @@ trait StoreTrait
      */
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
-        if (!$request->query->getBoolean('deleted', false)) {
-            $this->entityManager->getFilters()->enable('soft_deleteable');
-        }
-
         $qb = $this->getDoctrine()
         ->getRepository(Store::class)
         ->createQueryBuilder('c')
