@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import RulePickerLine from './RulePickerLine'
-import { parseAST } from '../delivery/pricing-rule-parser'
+import { parseAST } from '../pricing-rule-parser'
 
 export const numericTypes = [
   'distance',

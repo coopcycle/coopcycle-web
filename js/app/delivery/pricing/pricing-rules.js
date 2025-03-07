@@ -1,12 +1,9 @@
 import React from 'react'
-import { render } from '../utils/react'
+import { render } from '../../utils/react'
 import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
 import { I18nextProvider, useTranslation } from 'react-i18next'
 
-import RulePicker from '../components/RulePicker'
-import PriceRangeEditor from '../components/PriceRangeEditor'
-import PricePerPackageEditor from '../components/PricePerPackageEditor'
 import './pricing-rules.scss'
 import {
   parsePriceAST,
@@ -14,9 +11,12 @@ import {
   FixedPrice,
   PricePerPackage,
 } from './pricing-rule-parser'
-import i18n from '../i18n'
+import i18n from '../../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
 import PricingRuleSetActions from './components/PricingRuleSetActions'
+import RulePicker from './components/RulePicker'
+import PriceRangeEditor from './components/PriceRangeEditor'
+import PricePerPackageEditor from './components/PricePerPackageEditor'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
   const { t } = useTranslation()
