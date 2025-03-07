@@ -104,12 +104,12 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
         .click()
       cy.get(
-        '.ant-picker-content:visible > :nth-child(2) > :nth-child(13) > .ant-picker-time-panel-cell-inner')
-        .click()
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
+        .type('{backspace}{backspace}12')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
       cy.get(
-        '.ant-picker-content:visible > :nth-child(2) > :nth-child(28) > .ant-picker-time-panel-cell-inner')
-        .click()
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
+        .type('{backspace}{backspace}27')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
 
       cy.get('#delivery_tasks_0_comments').type('Pickup comments')
@@ -122,12 +122,12 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
         .click()
       cy.get(
-        '.ant-picker-content:visible > :nth-child(2) > :nth-child(25) > .ant-picker-time-panel-cell-inner')
-        .click()
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
+        .type('{backspace}{backspace}24')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
       cy.get(
-        '.ant-picker-content:visible > :nth-child(2) > :nth-child(59) > .ant-picker-time-panel-cell-inner')
-        .click()
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input')
+        .type('{backspace}{backspace}58')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
 
       cy.get('#delivery_tasks_1_weight').clear()
