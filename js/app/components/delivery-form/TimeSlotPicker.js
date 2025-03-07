@@ -51,11 +51,11 @@ export default ({ index, timeSlotLabels }) => {
     const { response } = await httpClient.get(url)
 
     if (response['choices'].length === 0) {
-      console.log('no choices')
       setFieldValue(`tasks[${index}].timeSlot`, 'No choice')
     } else {
       const formattedSlots = extractTimeSlotsDateAndHour(response['choices'])
       setFormattedTimeslots(formattedSlots)
+
       const availableDates = Object.keys(formattedSlots)
       const firstDate = moment(availableDates[0])
       setSelectedValues({
@@ -72,12 +72,12 @@ export default ({ index, timeSlotLabels }) => {
   }, [values.tasks[index].timeSlotUrl])
 
   useEffect(() => {
-    console.log('slected changed', selectedValues)
     if (Object.keys(selectedValues).length !== 0) {
-      const date = selectedValues.date.format('YYYY-MM-DD')
       const range = selectedValues.hour
       const [first, second] = range.split('-')
-      const timeSlot = `${date}T${first}:00Z/${date}T${second}:00Z`
+      const startTime = selectedValues.date.clone().hours(first.split(':')[0]).minutes(first.split(':')[1])
+      const endTime = selectedValues.date.clone().hours(second.split(':')[0]).minutes(second.split(':')[1])
+      const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
       setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
     }
   }, [selectedValues])
@@ -95,7 +95,6 @@ export default ({ index, timeSlotLabels }) => {
   }
 
   const handleHourChange = hour => {
-    console.log(hour)
     setSelectedValues(prevState => ({ ...prevState, hour: hour }))
   }
 
@@ -117,9 +116,6 @@ export default ({ index, timeSlotLabels }) => {
 
   const selectedDate = moment(extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date)
   const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
-
-  console.log(values.tasks[index].timeSlot)
-  console.log(selectedHour)
 
   const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
 
