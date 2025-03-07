@@ -1,8 +1,8 @@
 import React from 'react'
 import { render } from '../utils/react'
+import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
 import { I18nextProvider, useTranslation } from 'react-i18next'
-import classNames from 'classnames'
 
 import RulePicker from '../components/RulePicker'
 import PriceRangeEditor from '../components/PriceRangeEditor'
@@ -74,9 +74,6 @@ const renderPriceChoice = item => {
 
   let priceType = 'fixed'
 
-  const rangeEditorRef = React.createRef()
-  const pricePerPackageEditorRef = React.createRef()
-
   let priceRangeDefaultValue = {}
   let pricePerPackageDefaultValue = {}
 
@@ -94,48 +91,9 @@ const renderPriceChoice = item => {
 
   const $parent = $input.parent()
 
-  const $priceRangeEditorContainer = $('<div />')
-  const $pricePerPackageEditorContainer = $('<div />')
-
-  $priceRangeEditorContainer.appendTo($parent)
-  $pricePerPackageEditorContainer.appendTo($parent)
-
-  render(
-    <I18nextProvider i18n={i18n}>
-      <div
-        ref={rangeEditorRef}
-        className={classNames({ 'd-none': priceType !== 'range' })}>
-        <PriceRangeEditor
-          defaultValue={priceRangeDefaultValue}
-          onChange={({ attribute, price, step, threshold }) => {
-            $input.val(
-              `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
-            )
-          }}
-        />
-      </div>
-    </I18nextProvider>,
-    $priceRangeEditorContainer[0],
-  )
-
-  render(
-    <I18nextProvider i18n={i18n}>
-      <div
-        ref={pricePerPackageEditorRef}
-        className={classNames({ 'd-none': priceType !== 'per_package' })}>
-        <PricePerPackageEditor
-          defaultValue={pricePerPackageDefaultValue}
-          onChange={({ packageName, unitPrice, offset, discountPrice }) => {
-            $input.val(
-              `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
-            )
-          }}
-          packages={packages}
-        />
-      </div>
-    </I18nextProvider>,
-    $pricePerPackageEditorContainer[0],
-  )
+  const editorContainer = $('<div />')
+  editorContainer.appendTo($parent)
+  const editorRoot = createRoot(editorContainer[0])
 
   render(
     <I18nextProvider i18n={i18n}>
@@ -145,20 +103,42 @@ const renderPriceChoice = item => {
           switch (value) {
             case 'range':
               $input.addClass('d-none')
-              pricePerPackageEditorRef.current.classList.add('d-none')
 
-              rangeEditorRef.current.classList.remove('d-none')
+              editorRoot.render(
+                <PriceRangeEditor
+                  defaultValue={priceRangeDefaultValue}
+                  onChange={({ attribute, price, step, threshold }) => {
+                    $input.val(
+                      `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
+                    )
+                  }}
+                />,
+              )
+
               break
             case 'per_package':
               $input.addClass('d-none')
-              rangeEditorRef.current.classList.add('d-none')
 
-              pricePerPackageEditorRef.current.classList.remove('d-none')
+              editorRoot.render(
+                <PricePerPackageEditor
+                  defaultValue={pricePerPackageDefaultValue}
+                  onChange={({
+                    packageName,
+                    unitPrice,
+                    offset,
+                    discountPrice,
+                  }) => {
+                    $input.val(
+                      `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
+                    )
+                  }}
+                  packages={packages}
+                />,
+              )
               break
             case 'fixed':
             default:
-              rangeEditorRef.current.classList.add('d-none')
-              pricePerPackageEditorRef.current.classList.add('d-none')
+              editorRoot.render(null)
 
               $input.removeClass('d-none')
           }
