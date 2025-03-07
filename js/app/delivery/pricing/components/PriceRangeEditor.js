@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { getCurrencySymbol } from '../i18n'
+import { getCurrencySymbol } from '../../../i18n'
 import { useTranslation } from 'react-i18next'
 
 const UnitLabel = ({ unit }) => {

@@ -80,7 +80,6 @@ adminDashboard.pricing.noPricings: 'Ez dago preziorik oraindik'
 adminDashboard.pricing.createNew: 'Sortu prezio berria'
 adminDashboard.pricing.noRuleFound: 'Ez da prezio-araurik aurkitu. Prezio-arauek banaketa-kostuak
   nola kalkulatzen diren definitzen dituzte.'
-adminDashboard.pricing.addRule: 'Gehitu araua'
 adminDashboard.tags.title: 'Etiketak'
 adminDashboard.tags.createNew: 'Sortu etiketa berria'
 adminDashboard.tags.name: 'Izena'

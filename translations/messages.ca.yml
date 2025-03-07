@@ -70,7 +70,6 @@ adminDashboard.pricing.noPricings: Encara no hi ha preus
 adminDashboard.pricing.createNew: Crea un preu nou
 adminDashboard.pricing.noRuleFound: No s'ha trobat cap regla de preus. Les regles
   de preus defineixen com es calcula el cost de lliurament.
-adminDashboard.pricing.addRule: Afegiu una regla
 adminDashboard.tags.title: Etiquetes
 adminDashboard.tags.createNew: Crea una etiqueta nova
 adminDashboard.tags.name: Nom

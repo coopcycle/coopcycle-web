@@ -42,10 +42,9 @@ class DeliveryManager
         }
 
         $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
-        $visitor->visitDelivery($delivery);
 
         // if the Pricing Rules are configured but none of them matched, the price is null
-        return $visitor->getPrice();
+        return $visitor->getPrice($delivery);
     }
 
     public function createFromOrder(OrderInterface $order)
