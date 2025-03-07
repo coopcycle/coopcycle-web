@@ -1,20 +1,10 @@
 include:
   - setup.yml
   - admin_user.yml
+  - user_courier.yml
   - addresses.yml
 
 AppBundle\Entity\User:
-  jane:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'jane'
-        - '12345678'
-        - 'jane@demo.coopcycle.org'
-        - true
-        - false
-    roles: [ 'ROLE_COURIER' ]
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
-
   dispatcher_01:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':

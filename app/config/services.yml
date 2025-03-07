@@ -941,6 +941,12 @@ services:
     autowire: false
     public: false
 
+  AppBundle\Api\DataProvider\TaskCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }

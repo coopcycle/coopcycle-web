@@ -42,5 +42,6 @@ AppBundle\Entity\Sylius\Order:
         - "@delivery_<current()>"
         - "@price_<current()>"
     __calls:
+#      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
       - setNumber: [ "A<current()>" ]
       - setState: [ 'new' ]
