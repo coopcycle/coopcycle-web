@@ -133,7 +133,6 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "O restaurante tem de confirmar o seu pedido. Em caso de recusa, nenhum valor lhe será debitado",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "O estafeta está a chegar!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Prepare-se!",
-        "PRICING_ADD_RULE": "Adicionar regra",
         "RULE_PICKER_ADD_CONDITION": "Adicionar uma condição",
         "RULE_PICKER_LINE_DISTANCE": "Distância (km)",
         "RULE_PICKER_LINE_WEIGHT": "Peso (kg)",

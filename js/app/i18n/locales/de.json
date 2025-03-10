@@ -225,7 +225,6 @@
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Zeige Wiederholungsregel",
         "ADMIN_DASHBOARD_INVALID_TASKS_SELECTION": "Diese Aufgabenauswahl ist zu komplex um Aktionen auszuführen. Bitte wähle nur Aufgaben aus \"nicht zugeordnet\", demselben Fahrer oder derselben Tour.",
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS": "Weise Lieferung/Auftrag zu",
-        "PRICING_ADD_RULE": "Regel hinzufügen",
         "RULE_PICKER_LINE_WEIGHT": "Gewicht (kg)",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Differenz (Tage)",
         "ORDER_LIST_TOTAL": "Gesamt",

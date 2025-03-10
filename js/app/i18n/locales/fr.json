@@ -160,7 +160,6 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "Le restaurateur doit valider votre commande. Dans le cas où votre commande serait refusée vous ne serez pas débité",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "Votre livreur arrive !",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Préparez-vous pour l'accueillir !",
-        "PRICING_ADD_RULE": "Ajouter une règle",
         "RULE_PICKER_ADD_CONDITION": "Add a condition",
         "RULE_PICKER_LINE_DISTANCE": "Distance (km)",
         "RULE_PICKER_LINE_WEIGHT": "Poids (kg)",

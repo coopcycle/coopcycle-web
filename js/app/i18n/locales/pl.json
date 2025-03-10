@@ -51,7 +51,6 @@
         "ORDER_LIST_PICKUP_TIME": "Czas odbioru",
         "ORDER_LIST_PREPARATION_TIME": "Czas przygotowania",
         "ORDER_LIST_STATE": "Status",
-        "PRICING_ADD_RULE": "Dodaj zasadę",
         "RULE_PICKER_LINE_DROPOFF_DOORSTEP": "Dostawa pod próg drzwi",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Różnica (dni)",
         "RULE_PICKER_LINE_DROPOFF_ADDRESS": "Adres dostawy",

@@ -75,7 +75,6 @@
         "ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION": "El restaurant ha de confirmar la teva comanda. En cas que sigui rebutjada, no rebràs cap càrrec en la teva targeta",
         "ORDER_TIMELINE_AFTER_PICKED_TITLE": "La mensaka ja ve de camí!",
         "ORDER_TIMELINE_AFTER_PICKED_DESCRIPTION": "Ves-te preparant!",
-        "PRICING_ADD_RULE": "Afegiu una regla",
         "RULE_PICKER_ADD_CONDITION": "Afegeix una condició",
         "RULE_PICKER_LINE_DISTANCE": "Distància (km)",
         "RULE_PICKER_LINE_WEIGHT": "Pes (kg)",
