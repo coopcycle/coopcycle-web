@@ -74,25 +74,19 @@ class PriceCalculationVisitor
         }
 
         if ($rule->getTarget() === PricingRule::TARGET_TASK) {
-            $matched = false;
-            $price = null;
+            return $this->visitTasks($rule, $delivery->getTasks());
+        }
 
-            foreach ($delivery->getTasks() as $task) {
-                $result = $this->visitTask($rule, $task);
-
-                if (!$matched && $result['matched']) {
-                    $matched = true;
-                }
-
-                if ($result['price'] !== null) {
-                    $price += $result['price'];
-                }
+        // LEGACY_TARGET_DYNAMIC is used for backward compatibility
+        // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
+        if ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC) {
+            $tasks = $delivery->getTasks();
+            
+            if (count($tasks) > 2) {
+                return $this->visitTasks($rule, $delivery->getTasks());
+            } else {
+                return $this->visitDelivery($rule, $delivery);
             }
-
-            return [
-                'matched' => $matched,
-                'price' => $price,
-            ];
         }
 
         $this->logger->warning(sprintf('Unknown target "%s"', $rule->getTarget()));
@@ -113,6 +107,29 @@ class PriceCalculationVisitor
         if ($rule->matches($deliveryAsExpressionLanguageValues, $this->expressionLanguage)) {
             $matched = true;
             $price = $rule->evaluatePrice($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
+        }
+
+        return [
+            'matched' => $matched,
+            'price' => $price,
+        ];
+    }
+
+    private function visitTasks(PricingRule $rule, array $tasks)
+    {
+        $matched = false;
+        $price = null;
+
+        foreach ($tasks as $task) {
+            $result = $this->visitTask($rule, $task);
+
+            if (!$matched && $result['matched']) {
+                $matched = true;
+            }
+
+            if ($result['price'] !== null) {
+                $price += $result['price'];
+            }
         }
 
         return [

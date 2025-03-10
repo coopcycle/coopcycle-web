@@ -21,13 +21,20 @@ final class Version20250304220001 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE pricing_rule ADD target TEXT NOT NULL DEFAULT \'DELIVERY\'');
-        // convert all rules from a pricing rule set with the 'map_all_tasks' option to TASK-based rules
+        // convert all rules from a pricing rule set with strategy 'map' and WITHOUT 'map_all_tasks' option to LEGACY_TARGET_DYNAMIC rules
+        $this->addSql('UPDATE pricing_rule pr
+                SET target = \'LEGACY_TARGET_DYNAMIC\'
+                FROM pricing_rule_set prs
+                WHERE pr.rule_set_id = prs.id
+                  AND prs.strategy = \'map\'
+                  AND NOT (prs.options::jsonb ?? \'map_all_tasks\')');
+        // convert all rules from a pricing rule set with strategy 'map' and 'map_all_tasks' option to TASK-based rules
         $this->addSql('UPDATE pricing_rule pr
                 SET target = \'TASK\'
                 FROM pricing_rule_set prs
                 WHERE pr.rule_set_id = prs.id
-                  AND prs.options::jsonb ?? \'map_all_tasks\'
-                  AND prs.strategy = \'map\'');
+                  AND prs.strategy = \'map\'
+                  AND prs.options::jsonb ?? \'map_all_tasks\'');
         $this->addSql('UPDATE pricing_rule_set SET options = options::jsonb - \'map_all_tasks\' WHERE options::jsonb ?? \'map_all_tasks\'');
     }
 

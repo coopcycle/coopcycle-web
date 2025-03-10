@@ -8,7 +8,7 @@ export default function FeaturePreviewTag() {
   return (
     <Tooltip title={t('FEATURE_PREVIEW_HELP')}>
       <Tag
-        icon={<i className="fa fa-flask" aria-hidden="true"></i>}
+        icon={<i className="fa fa-flask mr-1" aria-hidden="true"></i>}
         color="processing">
         {t('FEATURE_PREVIEW')}
       </Tag>

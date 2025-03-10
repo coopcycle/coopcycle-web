@@ -111,6 +111,14 @@ class DeliveryManagerTest extends KernelTestCase
         $rule3->setExpression('distance in 3000..5000');
         $rule3->setPrice(200);
 
+        foreach ([
+            $rule1,
+            $rule2,
+            $rule3,
+        ] as $rule) {
+            $rule->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        }
+
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
         $ruleSet->setRules(new ArrayCollection([
@@ -253,6 +261,13 @@ class DeliveryManagerTest extends KernelTestCase
         $rule2->setExpression('in_zone(dropoff.address, "Zone B")');
         $rule2->setPrice(200);
 
+        foreach ([
+            $rule1,
+            $rule2,
+        ] as $rule) {
+            $rule->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        }
+
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
         $ruleSet->setRules(new ArrayCollection([
@@ -336,6 +351,13 @@ class DeliveryManagerTest extends KernelTestCase
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
 
+        foreach ([
+            $rule1,
+            $rule2,
+        ] as $rule) {
+            $rule->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        }
+
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
         $ruleSet->setRules(new ArrayCollection([
@@ -384,6 +406,13 @@ class DeliveryManagerTest extends KernelTestCase
         $rule2->setExpression('task.type == "DROPOFF"');
         $rule2->setPrice(200);
 
+        foreach ([
+            $rule1,
+            $rule2,
+        ] as $rule) {
+            $rule->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        }
+
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
         $ruleSet->setRules(new ArrayCollection([
@@ -426,6 +455,13 @@ class DeliveryManagerTest extends KernelTestCase
         $rule2 = new PricingRule();
         $rule2->setExpression('task.type == "DROPOFF"');
         $rule2->setPrice('price_per_package(packages, "XXL", 100, 0, 0)');
+
+        foreach ([
+            $rule1,
+            $rule2,
+        ] as $rule) {
+            $rule->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        }
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -479,6 +515,13 @@ class DeliveryManagerTest extends KernelTestCase
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
+
+        foreach ([
+            $rule1,
+            $rule2,
+        ] as $rule) {
+            $rule->setTarget(PricingRule::LEGACY_TARGET_DYNAMIC);
+        }
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');

@@ -92,6 +92,23 @@ const TASK_TYPES = [
   { name: 'order.itemsTotal', deprecated: true }
 ]
 
+const LEGACY_TARGET_DYNAMIC_TYPES = [
+  { name: 'distance', deprecated: true },
+  { name: 'pickup.address', deprecated: true },
+  { name: 'dropoff.address', deprecated: true },
+  { name: 'diff_hours(pickup)', deprecated: true },
+  { name: 'diff_days(pickup)', deprecated: true },
+  { name: "time_range_length(pickup, 'hours')", deprecated: true },
+  { name: "time_range_length(dropoff, 'hours')", deprecated: true },
+  { name: 'weight', deprecated: true },
+  { name: 'packages', deprecated: true },
+  { name: 'packages.totalVolumeUnits()', deprecated: true },
+  { name: 'order.itemsTotal', deprecated: true },
+  { name: 'vehicle', deprecated: true },
+  { name: 'dropoff.doorstep', deprecated: true },
+  { name: 'task.type', deprecated: true }
+]
+
 function RulePickerType({ type }) {
   const { t } = useTranslation()
 
@@ -145,6 +162,8 @@ function RulePickerTypeSelect({ruleTarget, type, onTypeSelect}) {
         return DELIVERY_TYPES
       case 'TASK':
         return TASK_TYPES
+      case 'LEGACY_TARGET_DYNAMIC':
+        return LEGACY_TARGET_DYNAMIC_TYPES
       default:
         return []
     }

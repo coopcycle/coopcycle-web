@@ -43,9 +43,17 @@ class PricingRule
 
     const TARGET_DELIVERY = 'DELIVERY';
     const TARGET_TASK = 'TASK';
+    /**
+     * Backward compatibility with legacy logic
+     * if strategy is 'map' the rule is
+     * applied per delivery/order in standard (one pickup, one dropoff) deliveries
+     * applied per task/point in multi-point deliveries
+     * @deprecated
+     */
+    const LEGACY_TARGET_DYNAMIC = 'LEGACY_TARGET_DYNAMIC';
 
     /**
-     * @Assert\Choice({"DELIVERY", "TASK"})
+     * @Assert\Choice({"DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"})
      */
     protected string $target = self::TARGET_DELIVERY;
 
