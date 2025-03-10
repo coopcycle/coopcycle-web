@@ -26,7 +26,8 @@ final class Version20250304220001 extends AbstractMigration
                 SET target = \'TASK\'
                 FROM pricing_rule_set prs
                 WHERE pr.rule_set_id = prs.id
-                  AND prs.options::jsonb ?? \'map_all_tasks\'');
+                  AND prs.options::jsonb ?? \'map_all_tasks\'
+                  AND prs.strategy = \'map\'');
         $this->addSql('UPDATE pricing_rule_set SET options = options::jsonb - \'map_all_tasks\' WHERE options::jsonb ?? \'map_all_tasks\'');
     }
 
