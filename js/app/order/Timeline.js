@@ -46,7 +46,7 @@ export default class extends Component {
   }
 
   startPolling() {
-    this.pollInterval = setInterval(this.fetchEvents, 60000);
+    this.pollInterval = setInterval(this.fetchEvents, 15000);
   }
 
   stopPolling() {
