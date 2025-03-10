@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const dateRanges = {
   '30d': 'Last 30 days',
   'mo': 'This month',
@@ -21,4 +23,26 @@ export const getCubeDateRange = (key) => {
   }
 
   return 'Last 30 days'
+}
+
+export const getTasksFilters = (tags) => {
+  let filters = [
+    {
+      "member": "Task.status",
+      "operator": "notEquals",
+      "values": [
+        "CANCELLED"
+      ]
+    }
+  ]
+
+  if (tags.length > 0) {
+    filters.push({
+      "member": "Tag.slug",
+      "operator": "equals",
+      "values": _.map(tags, tag => tag.slug)
+    })
+  }
+
+  return filters
 }
