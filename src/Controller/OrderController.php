@@ -243,7 +243,7 @@ class OrderController extends AbstractController
             if ($shippingAddress = $order->getShippingAddress()) {
                 $shippingAddress->setTelephone(null);
             }
-            
+
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 
@@ -571,7 +571,7 @@ class OrderController extends AbstractController
             $this->checkoutLogger->error($e->getMessage());
         }
 
-        return $this->render('order/foodtech.html.twig', [
+        return $this->render('order/foodtech.html.twig', $this->auth([
             'order' => $order,
             'events' => (new OrderEventCollection($order))->toArray(),
             'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
@@ -585,7 +585,7 @@ class OrderController extends AbstractController
                 'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
                 'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
             ]
-        ]);
+        ]));
     }
 
     /**
