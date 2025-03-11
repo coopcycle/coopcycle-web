@@ -61,6 +61,52 @@ new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
   onUpdate: onListChange,
 })
 
+function renderPriceTypeItem(
+  $input,
+  editorRoot,
+  priceType,
+  priceRangeDefaultValue,
+  pricePerPackageDefaultValue,
+) {
+  switch (priceType) {
+    case 'range':
+      $input.addClass('d-none')
+
+      editorRoot.render(
+        <PriceRangeEditor
+          defaultValue={priceRangeDefaultValue}
+          onChange={({ attribute, price, step, threshold }) => {
+            $input.val(
+              `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
+            )
+          }}
+        />,
+      )
+
+      break
+    case 'per_package':
+      $input.addClass('d-none')
+
+      editorRoot.render(
+        <PricePerPackageEditor
+          defaultValue={pricePerPackageDefaultValue}
+          onChange={({ packageName, unitPrice, offset, discountPrice }) => {
+            $input.val(
+              `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
+            )
+          }}
+          packages={packages}
+        />,
+      )
+      break
+    case 'fixed':
+    default:
+      editorRoot.render(null)
+
+      $input.removeClass('d-none')
+  }
+}
+
 const renderPriceChoice = item => {
   const $label = $(item).find('label')
   const $input = $(item).find('input')
@@ -79,13 +125,11 @@ const renderPriceChoice = item => {
 
   if (price instanceof PriceRange) {
     priceType = 'range'
-    $input.addClass('d-none')
     priceRangeDefaultValue = price
   }
 
   if (price instanceof PricePerPackage) {
     priceType = 'per_package'
-    $input.addClass('d-none')
     pricePerPackageDefaultValue = price
   }
 
@@ -100,52 +144,25 @@ const renderPriceChoice = item => {
       <PriceChoice
         defaultValue={priceType}
         onChange={value => {
-          switch (value) {
-            case 'range':
-              $input.addClass('d-none')
-
-              editorRoot.render(
-                <PriceRangeEditor
-                  defaultValue={priceRangeDefaultValue}
-                  onChange={({ attribute, price, step, threshold }) => {
-                    $input.val(
-                      `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
-                    )
-                  }}
-                />,
-              )
-
-              break
-            case 'per_package':
-              $input.addClass('d-none')
-
-              editorRoot.render(
-                <PricePerPackageEditor
-                  defaultValue={pricePerPackageDefaultValue}
-                  onChange={({
-                    packageName,
-                    unitPrice,
-                    offset,
-                    discountPrice,
-                  }) => {
-                    $input.val(
-                      `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
-                    )
-                  }}
-                  packages={packages}
-                />,
-              )
-              break
-            case 'fixed':
-            default:
-              editorRoot.render(null)
-
-              $input.removeClass('d-none')
-          }
+          renderPriceTypeItem(
+            $input,
+            editorRoot,
+            value,
+            priceRangeDefaultValue,
+            pricePerPackageDefaultValue,
+          )
         }}
       />
     </I18nextProvider>,
     $label[0],
+  )
+
+  renderPriceTypeItem(
+    $input,
+    editorRoot,
+    priceType,
+    priceRangeDefaultValue,
+    pricePerPackageDefaultValue,
   )
 }
 
