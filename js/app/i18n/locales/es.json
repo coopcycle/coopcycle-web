@@ -617,7 +617,6 @@
         "DELIVERY_FORM_SUBMIT": "Guardar",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contacto",
         "DELIVERY_FORM_ERROR_PACKAGES": "Por favor seleccione al menos una mercancía",
-        "DELIVERY_FORM_ERROR_TELEPHONE": "Por favor ingrese un número de teléfono",
         "DELIVERY_FORM_ERROR_WEIGHT": "Por favor especifique un peso",
         "DELIVERY_FORM_ERROR_HOUR": "La recogida debe ser antes de la entrega",
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Recordar esta dirección",

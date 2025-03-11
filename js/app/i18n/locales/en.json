@@ -650,7 +650,6 @@
         "DELIVERY_FORM_SUBMIT": "Submit",
         "DELIVERY_FORM_CONTACT_PLACEHOLDER": "Contact",
         "DELIVERY_FORM_ERROR_PACKAGES": "Please select at least one package",
-        "DELIVERY_FORM_ERROR_TELEPHONE": "Please enter a phone number",
         "DELIVERY_FORM_ERROR_WEIGHT": "Please specify a weight",
         "DELIVERY_FORM_ERROR_HOUR": "Pickup must be before drop-off",        
         "DELIVERY_FORM_REMEMBER_ADDRESS": "Remember this address",

@@ -142,16 +142,23 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
     for (let i = 0; i < values.tasks.length; i++) {
 
       const taskErrors = {}
+      taskErrors.address = taskErrors.address || {};
 
-      /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
+      if (!isDispatcher) {
+        if (!values.tasks[i].address.formattedTelephone) {
+          taskErrors.address.formattedTelephone = t("FORM_REQUIRED")
+        }
 
-      // if (!values.tasks[i].address.formattedTelephone) {
-      //   taskErrors.address = taskErrors.address || {};
-      //   taskErrors.address.formattedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
-      // }
+        if (!values.tasks[i].address.contactName) {
+          taskErrors.address.contactName = t("FORM_REQUIRED")
+        }
+
+        if (!values.tasks[i].address.name) {
+          taskErrors.address.name = t("FORM_REQUIRED")
+        }
+      }
 
       if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
-        taskErrors.address = taskErrors.address || {};
         taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
       }
 
