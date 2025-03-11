@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class PriceCalculationVisitor
@@ -17,7 +18,8 @@ class PriceCalculationVisitor
     public function __construct(
         private PricingRuleSet $ruleSet,
         private ExpressionLanguage $expressionLanguage,
-        private LoggerInterface $logger)
+        private LoggerInterface $logger = new NullLogger()
+)
     {
     }
 
