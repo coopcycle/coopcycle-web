@@ -21,9 +21,6 @@ class PriceCalculationVisitor
     {
     }
 
-    /**
-     * @return int|null
-     */
     public function visit(Delivery $delivery): void
     {
         $this->price = null;
