@@ -185,6 +185,9 @@ function addPricingRule(ruleTarget) {
     .addClass('delivery-pricing-ruleset__rule')
     .html(newRule)
 
+  let targetInput = newLi.find('.delivery-pricing-ruleset__rule__target input')
+  targetInput.val(ruleTarget)
+
   hydrate(newLi, {
     ruleTarget,
     expression: undefined,
