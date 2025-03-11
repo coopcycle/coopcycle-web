@@ -12,6 +12,7 @@ use AppBundle\Serializer\TaskListNormalizer;
 use AppBundle\Service\TaskListManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,6 +33,9 @@ final class SetItems
         $user = $this->userManager->findUserByUsername($request->get('username'));
 
         $taskList = $this->taskListProvider->getTaskListForUserAndDate($date, $user);
+
+        $preloader = new EntityPreloader($this->entityManager);
+        $preloader->preload($taskList->getTasks(), 'assignedTo');
 
         // Tasks are sent as JSON payload
         $data = json_decode($request->getContent(), true);

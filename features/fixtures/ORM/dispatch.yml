@@ -107,8 +107,42 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2018-12-02 15:45:00'))>
     __calls:
       - addPackageWithQuantity: [ "@package_small2", 4 ]
-
+  task_11:
+    address: "@address_1"
+    type: PICKUP
+    doneAfter: <identity(new \DateTime('2024-11-30 10:30:00'))>
+    doneBefore: <identity(new \DateTime('2024-12-01 11:00:00'))>
+    __calls:
+      - assignTo: [ "@sarah", <identity(new \DateTime('2024-12-01'))> ]
+    metadata:
+      foo: bar
+      baz: bat
+  task_12:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2024-11-30 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2024-12-02 12:00:00'))>
+    previous: "@task_11"
+    __calls:
+      - addPackageWithQuantity: [ "@package_small", 4 ]
+      - assignTo: [ "@sarah", <identity(new \DateTime('2024-12-01'))> ]
+  task_13:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2024-12-01 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2024-12-01 12:30:00'))>
+  task_14:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('2024-12-01 12:00:00'))>
+    doneBefore: <identity(new \DateTime('2024-12-01 12:30:00'))>
+    __calls:
+      - assignTo: [ "@bob", <identity(new \DateTime('2024-12-01'))> ]
 AppBundle\Entity\Tag:
   tag_important:
     name: "Important"
     color: "#000000"
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithTasks:
+        - '@task_11'
+        - '@task_12'

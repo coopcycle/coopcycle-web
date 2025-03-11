@@ -71,6 +71,7 @@ services:
       - './:/var/www/html:cached'
       - 'php_logs:/var/www/html/var/logs'
       - 'php_cache:/var/www/html/var/cache'
+      - 'php_profiles:/var/www/html/var/profiles'
       - 'php_public_images:/var/www/html/web/images'
     cap_add:
       - SYS_ADMIN
@@ -323,6 +324,7 @@ volumes:
   node_modules_webpack:
   pg_data:
   php_cache:
+  php_profiles:
   minio_data:
   typesense_data:
   webpack_php_cache:

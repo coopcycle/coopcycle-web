@@ -1,7 +1,9 @@
 # 'excl_setup' means that the file does not include the 'setup.yml' file; see the 'setup.yml' file for more information.
 include:
   - admin_user.yml
+  - user_courier.yml
   - addresses.yml
+  - packages.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
   geo_warehouse:
@@ -61,6 +63,7 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
+    packageSet: '@package_set_1'
     __calls:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
