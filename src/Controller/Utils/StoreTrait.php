@@ -280,7 +280,9 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryAction($id, Request $request,
+    public function newStoreDeliveryAction(
+        $id,
+        Request $request,
         PricingManager $pricingManager,
         OrderManager $orderManager,
         EntityManagerInterface $entityManager,
@@ -375,7 +377,8 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryReactFormAction($id,
+    public function newStoreDeliveryReactFormAction(
+        $id,
         Request $request,
         EntityManagerInterface $entityManager
     ) {
@@ -404,6 +407,7 @@ trait StoreTrait
                 'store_route' => $routes['store'],
                 'back_route' => $routes['back'],
                 'show_left_menu' => true,
+                'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
         ]));
     }
 
