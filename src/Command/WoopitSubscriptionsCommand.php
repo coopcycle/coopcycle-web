@@ -122,7 +122,7 @@ class WoopitSubscriptionsCommand extends Command
                 'version' => $this->defaultVersion,
             ],
             "cancelQuote" => [
-                'url' => "${quoteUrl}/{quoteId}",
+                'url' => "{$quoteUrl}/{quoteId}",
                 'version' => $this->defaultVersion,
             ],
             "delivery" => [
@@ -130,11 +130,11 @@ class WoopitSubscriptionsCommand extends Command
                 'version' => $this->defaultVersion,
             ],
             "update" => [
-                'url' => "${deliveryUrl}/{deliveryId}",
+                'url' => "{$deliveryUrl}/{deliveryId}",
                 'version' => $this->defaultVersion,
             ],
             "cancelDelivery" => [
-                'url' => "${deliveryUrl}/{deliveryId}",
+                'url' => "{$deliveryUrl}/{deliveryId}",
                 'version' => $this->defaultVersion,
             ],
         ];
