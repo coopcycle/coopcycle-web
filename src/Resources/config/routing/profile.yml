@@ -340,16 +340,6 @@ dashboard_restaurant_promotion:
             restaurant_promotions: dashboard_restaurant_promotions
     methods: [ GET, POST ]
 
-dashboard_delivery:
-  path: /dashboard/deliveries/{id}
-  defaults:
-      _controller: AppBundle\Controller\DashboardController::deliveryAction
-      layout: 'dashboard.html.twig'
-      routes:
-          success: dashboard
-          back: dashboard
-  methods:  [ GET, POST ]
-
 dashboard_stores:
     path: /dashboard/stores
     defaults:
@@ -382,6 +372,18 @@ dashboard_store_deliveries:
             stores: dashboard_stores
             store: dashboard_store
     methods:  [ GET, POST ]
+
+dashboard_delivery:
+  path: /dashboard/deliveries/{id}
+  defaults:
+      _controller: AppBundle\Controller\DashboardController::deliveryItemReactFormAction
+      layout: 'dashboard.html.twig'
+      routes:
+        stores: admin_stores
+        store: admin_store
+        success: admin_store_deliveries
+        back: admin_deliveries
+  methods:  [ GET, POST ]
 
 dashboard_store_delivery_new:
     path: /dashboard/stores/{id}/deliveries/new
