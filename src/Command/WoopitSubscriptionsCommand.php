@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,15 +20,10 @@ class WoopitSubscriptionsCommand extends Command
     private $defaultVersion = '1.6.0'; // Current Woopit version available
 
     public function __construct(
-        OAuthHttpClient $woopitClient,
-        EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $urlGenerator
-    )
+        private OAuthHttpClient $woopitClient,
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $urlGenerator)
     {
-        $this->woopitClient = $woopitClient;
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
-
         parent::__construct();
     }
 
@@ -39,7 +35,12 @@ class WoopitSubscriptionsCommand extends Command
             ->addArgument(
                 'client_id',
                 InputArgument::REQUIRED
-            );
+            )
+            ->addOption(
+                'update',
+                'u',
+                InputOption::VALUE_NONE
+            );;
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -53,6 +54,7 @@ class WoopitSubscriptionsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $clientId = $input->getArgument('client_id');
+        $update = $input->getOption('update');
 
         $app = $this->entityManager->getRepository(ApiApp::class)
             ->findOneBy(['oauth2Client' => $clientId]);
@@ -79,7 +81,8 @@ class WoopitSubscriptionsCommand extends Command
 
         try {
 
-            $response = $this->woopitClient->request('POST', "subscriptions", [
+            $method = $update ? 'PATCH' : 'POST';
+            $response = $this->woopitClient->request($method, 'subscriptions', [
                 'headers' => [
                     'x-api-version' => $this->defaultVersion
                 ],
