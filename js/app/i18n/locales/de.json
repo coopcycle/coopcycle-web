@@ -148,6 +148,8 @@
         "STORE": "Geschäft",
         "RESTAURANTS_GROUP": "Restaurantgruppe",
         "DELIVERY_FORM": "Lieferformular",
+        "DELIVERY_FORM_ADMIN_PRICE_ERROR": "Der Preis konnte nicht berechnet werden. Sie können die Lieferung erstellen, vergessen Sie jedoch nicht, die mit diesem Geschäft verknüpfte Preisregel zu korrigieren.",
+        "DELIVERY_FORM_SHOP_PRICE_ERROR": "Der Preis konnte nicht berechnet werden. Sie können die Lieferung veranlassen, wir kontaktieren Sie mit dem korrigierten Preis.",
         "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "Konnte nicht gelöscht werden. Bitte trennen Sie dieses Paketset von den Geschäften oder Lieferformularen, auf die es zutreffen könnte.",
         "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Konnte nicht gelöscht werden. Bitte trennen Sie diese Preisgestaltung von den Geschäften, Restaurants oder Lieferformularen, auf die sie zutreffen könnte.",
         "SHOW_DETAILS": "Details anzeigen",

@@ -386,7 +386,7 @@ dashboard_store_deliveries:
 dashboard_store_delivery_new:
     path: /dashboard/stores/{id}/deliveries/new
     defaults:
-        _controller: AppBundle\Controller\DashboardController::newStoreDeliveryAction
+        _controller: AppBundle\Controller\DashboardController::newStoreDeliveryReactFormAction
         layout: 'dashboard.html.twig'
         routes:
             stores: dashboard_stores

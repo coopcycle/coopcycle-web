@@ -492,6 +492,8 @@
         "STORE": "Magasin",
         "RESTAURANTS_GROUP": "Groupe de restaurants",
         "DELIVERY_FORM": "Formulaire de livraison",
+        "DELIVERY_FORM_ADMIN_PRICE_ERROR": "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
+        "DELIVERY_FORM_SHOP_PRICE_ERROR": "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, nous vous recontacterons avec le prix corrigé.",
         "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "Impossible de supprimer. Veuillez désassocier cet ensemble de packages des magasins ou des formulaires de livraison auxquels il peut s'appliquer.",
         "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "Impossible de supprimer. Veuillez désassocier cette tarification des magasins, restaurants ou formulaires de livraison auxquels elle peut s'appliquer.",
         "SHOW_DETAILS": "Afficher les détails",

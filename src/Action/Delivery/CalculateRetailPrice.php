@@ -54,7 +54,7 @@ class CalculateRetailPrice implements TaxableInterface
         $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
 
         if (null === $amount) {
-            $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+            $message = 'delivery.price.error.priceCalculation';
             throw new BadRequestHttpException($message);
         }
 

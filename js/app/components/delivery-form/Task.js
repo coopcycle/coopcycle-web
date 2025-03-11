@@ -129,7 +129,7 @@ export default ({
 
         {task.type === 'DROPOFF' ? (
           <div className="mt-4">
-            {packages ? (
+            {packages && packages.length ? (
               <Packages
                 storeId={storeId}
                 index={index}

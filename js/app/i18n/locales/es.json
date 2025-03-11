@@ -418,6 +418,8 @@
         "STORE": "Tienda",
         "RESTAURANTS_GROUP": "Grupo de restaurantes",
         "DELIVERY_FORM": "Formulario de entrega",
+        "DELIVERY_FORM_ADMIN_PRICE_ERROR": "No se pudo calcular el precio. Puede crear el envío, pero no olvide corregir la regla de precio asociada a esta tienda.",
+        "DELIVERY_FORM_SHOP_PRICE_ERROR": "No se pudo calcular el precio. Puede crear el envío y le contactaremos con el precio correcto.",
         "ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION": "No se pudo eliminar. Por favor, desvincule este conjunto de paquetes de las tiendas o formularios de entrega a los que pueda aplicarse.",
         "ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION": "No se pudo eliminar. Por favor, desvincule esta tarifa de los establecimientos, restaurantes o formularios de entrega a los que pueda aplicarse.",
         "SHOW_DETAILS": "Mostrar detalles",
