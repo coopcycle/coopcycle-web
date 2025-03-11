@@ -13,11 +13,12 @@ Feature: Pricing rules set
     And I add "Accept" header equal to "application/ld+json"
     And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
     Then the response status code should be 400
+    And print last JSON response
     And the response should be in JSON
     And the JSON should match:
-      """
-      {"error": [{"entity": "AppBundle\\Entity\\Store", "name": "Acme","id": 1}]}
-      """
+    """
+    {"error": [{"entity": "AppBundle\\Entity\\Store", "name": "Acme","id": 1}]}
+    """
     And the user "admin" sends a "DELETE" request to "/api/stores/1"
     And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
     Then the response status code should be 204
@@ -37,9 +38,18 @@ Feature: Pricing rules set
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
         Then the response status code should be 400
         And the response should be in JSON
+        And the JSON node "error" should exist
         And the JSON should match:
         """
-         {"error": [{"entity": "AppBundle\\Entity\\LocalBusiness", "name": "Good Old Times with variables pricing","id": 7}]}
+         {
+            "error": [
+                {
+                    "entity": "AppBundle\\Entity\\LocalBusiness",
+                    "name": "Good Old Times with variables pricing",
+                    "id": 7
+                }
+            ]
+        }       
         """
         And the user "admin" sends a "DELETE" request to "/api/restaurants/7"
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"

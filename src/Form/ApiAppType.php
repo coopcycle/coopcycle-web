@@ -66,7 +66,7 @@ class ApiAppType extends AbstractType
                     case 'api_key':
                         $form->add('apiKey', TextType::class, [
                             'label' => 'form.api_app.client_id.label',
-                            'data' => 'ak_' . $apiApp->getApiKey(),
+                            'data' => $apiApp->getApiKey(),
                             'disabled' => true,
                             'mapped' => false,
                         ]);
@@ -121,7 +121,7 @@ class ApiAppType extends AbstractType
 
             switch ($apiApp->getType()) {
                 case 'api_key':
-                    $key = hash('sha1', random_bytes(32));
+                    $key = sprintf('ak_%s', hash('sha1', random_bytes(32)));
                     $apiApp->setApiKey($key);
                     break;
                 case 'oauth':

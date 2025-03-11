@@ -460,4 +460,4 @@ profile_loopeat:
     defaults:
         _controller: AppBundle\Controller\ProfileController::zeroWasteTransactionsAction
         layout: 'profile.html.twig'
-    methods:  [ GET ]
+    methods:  [ GET, POST ]

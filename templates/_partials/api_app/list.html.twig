@@ -44,9 +44,9 @@
       </td>
       {% elseif api_app.type == 'api_key' %}
       <td colspan="2">
-        <span class="mr-4">{{ 'ak_' ~ api_app.apiKey }}</span>
+        <span class="mr-4">{{ api_app.apiKey }}</span>
         <button type="button" class="btn btn-default btn-xs"
-          data-toggle="copy" data-clipboard-text="{{ ('ak_' ~ api_app.apiKey) }}">
+          data-toggle="copy" data-clipboard-text="{{ api_app.apiKey }}">
           <i class="fa fa-copy mr-1"></i>{{ 'basics.copy'|trans }}
         </button>
       </td>

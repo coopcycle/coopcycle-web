@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormikContext, Field } from 'formik'
 import AddressBookNew from './AddressBook'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
@@ -13,6 +13,34 @@ import TimeSlotPicker from './TimeSlotPicker'
 import './Task.scss'
 import TagsSelect from '../TagsSelect'
 
+const renderTimeSlotPicker = ({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => 
+  isDispatcher ? 
+    (<SwitchTimeSlotFreePicker
+      storeDeliveryInfos={storeDeliveryInfos}
+      index={index}
+      format={format}
+      isTimeSlotSelect={isTimeSlotSelect}
+      setIsTimeSlotSelect={setIsTimeSlotSelect}
+      isDispatcher={isDispatcher}
+      timeSlotLabels={timeSlotLabels}
+    />)
+  :  (<TimeSlotPicker
+        storeDeliveryInfos={storeDeliveryInfos}
+        index={index}
+        timeSlotLabels={timeSlotLabels}
+      />)
+
+
+const renderDatePart = ({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => {
+    if (!Array.isArray(storeDeliveryInfos.timeSlots)) { // not loaded yet
+      return <Spinner />
+    } else if (storeDeliveryInfos.timeSlots.length > 1 && !isEdit) {
+      return renderTimeSlotPicker({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels})
+    } else {
+      return <DateRangePicker format={format} index={index} isDispatcher={isDispatcher} />
+    }
+}
+
 export default ({
   addresses,
   storeId,
@@ -24,6 +52,7 @@ export default ({
   packages,
   isDispatcher,
   tags,
+  timeSlotLabels
 }) => {
   const { t } = useTranslation()
 
@@ -55,14 +84,6 @@ export default ({
       index !== values.tasks.length - 1
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
-
-  const areDefinedTimeSlots = useCallback(() => {
-    return (
-      storeDeliveryInfos &&
-      Array.isArray(storeDeliveryInfos.timeSlots) &&
-      storeDeliveryInfos.timeSlots.length > 0
-    )
-  }, [storeDeliveryInfos])
 
   return (
     <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
@@ -104,41 +125,7 @@ export default ({
           shallPrefillAddress={Boolean(task.type === 'PICKUP' && !isEdit && storeDeliveryInfos.prefillPickupAddress)}
         />
 
-        {/* Spinner is used to avoid double renders. We wait for storeDeliveryInfos. It avoids to have double values : timeslots and after/before */}
-        {isDispatcher ? (
-          storeDeliveryInfos.timeSlots ? (
-            areDefinedTimeSlots() & !isEdit ? (
-              <SwitchTimeSlotFreePicker
-                storeId={storeId}
-                storeDeliveryInfos={storeDeliveryInfos}
-                index={index}
-                format={format}
-                isTimeSlotSelect={isTimeSlotSelect}
-                setIsTimeSlotSelect={setIsTimeSlotSelect}
-              />
-            ) : (
-              <DateRangePicker
-                format={format}
-                index={index}
-                isDispatcher={isDispatcher}
-              />
-            )
-          ) : (
-            <Spinner />
-          ) // case store
-        ) : storeDeliveryInfos.timeSlots ? (
-          areDefinedTimeSlots() & !isEdit ? (
-            <TimeSlotPicker
-              storeId={storeId}
-              storeDeliveryInfos={storeDeliveryInfos}
-              index={index}
-            />
-          ) : (
-            <DateRangePicker format={format} index={index} />
-          )
-        ) : (
-          <Spinner />
-        )}
+        { renderDatePart({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) }
 
         {task.type === 'DROPOFF' ? (
           <div className="mt-4">
