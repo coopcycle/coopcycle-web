@@ -314,7 +314,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
       }
 
       // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
-      // window.location = isDispatcher ? "/admin/deliveries" : "/dashboard";
+      window.location = isDispatcher ? "/admin/deliveries" : "/dashboard";
     }
   }, [storeDeliveryInfos])
 
@@ -500,7 +500,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
                               );
                             })}
 
-                          {storeDeliveryInfos.multiDropEnabled ? <div
+                          {storeDeliveryInfos.multiDropEnabled && !(deliveryId && !isDispatcher) ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
