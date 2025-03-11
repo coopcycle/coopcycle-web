@@ -1453,7 +1453,7 @@ Feature: Tasks
         }
       }
       """
-    
+
   Scenario: Retrieve tasks filtered by date for dispatcher without pagination
     Given the fixtures files are loaded:
       | sylius_channels.yml |
