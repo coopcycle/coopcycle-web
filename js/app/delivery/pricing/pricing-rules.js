@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { StrictMode } from 'react'
 import { render } from '../../utils/react'
 import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
@@ -17,6 +17,7 @@ import PricingRuleSetActions from './components/PricingRuleSetActions'
 import RulePicker from './components/RulePicker'
 import PriceRangeEditor from './components/PriceRangeEditor'
 import PricePerPackageEditor from './components/PricePerPackageEditor'
+import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
   const { t } = useTranslation()
@@ -108,8 +109,8 @@ function renderPriceTypeItem(
 }
 
 const renderPriceChoice = item => {
-  const $label = $(item).find('label')
-  const $input = $(item).find('input')
+  const $label = $(item).find('.delivery-pricing-ruleset__rule__price__label')
+  const $input = $(item).find('.delivery-pricing-ruleset__rule__price__input')
 
   const priceAST = $(item).data('priceExpression')
   const expression = $input.val()
@@ -135,8 +136,13 @@ const renderPriceChoice = item => {
 
   const $parent = $input.parent()
 
-  const editorContainer = $('<div />')
-  editorContainer.appendTo($parent)
+  // Check if parent already has a React root container
+  let editorContainer = $parent.find('[data-react-root-container="true"]')
+  if (editorContainer.length === 0) {
+    // Create a new container if none exists
+    editorContainer = $('<div data-react-root-container="true" />')
+    editorContainer.appendTo($parent)
+  }
   const editorRoot = createRoot(editorContainer[0])
 
   render(
@@ -241,6 +247,64 @@ $('.delivery-pricing-ruleset__rule').each(function (index, item) {
   hydrate(item, { ruleTarget, expression, expressionAST })
 })
 
-$('#pricing-rule-set-actions').each(function (index, item) {
+function migrateToTarget(ruleTarget) {
+  $('.delivery-pricing-ruleset__rule').each(function (index, item) {
+    const ruleTargetInput = $(item).find(
+      '.delivery-pricing-ruleset__rule__target input',
+    )
+
+    const currentRuleTarget = ruleTargetInput.val()
+
+    if (currentRuleTarget === 'LEGACY_TARGET_DYNAMIC') {
+      ruleTargetInput.val(ruleTarget)
+
+      const expression = $(item)
+        .find('.delivery-pricing-ruleset__rule__expression input')
+        .val()
+      const expressionAST = $(item)
+        .find('.delivery-pricing-ruleset__rule__expression')
+        .data('expression')
+
+      hydrate(item, { ruleTarget, expression, expressionAST })
+    }
+  })
+}
+
+function hasLegacyRules() {
+  let targets = []
+
+  $('.delivery-pricing-ruleset__rule').each(function (index, item) {
+    const ruleTarget = $(item)
+      .find('.delivery-pricing-ruleset__rule__target input')
+      .val()
+    targets.push(ruleTarget)
+  })
+
+  const legacyRuleTarget = targets.find(
+    target => target === 'LEGACY_TARGET_DYNAMIC',
+  )
+
+  return legacyRuleTarget !== undefined
+}
+
+$('#pricing-rule-set-header').each(function (index, item) {
+  if (!hasLegacyRules()) {
+    return
+  }
+
+  const root = createRoot(item)
+  root.render(
+    <StrictMode>
+      <LegacyPricingRulesWarning
+        migrateToTarget={ruleTarget => {
+          root.unmount()
+          migrateToTarget(ruleTarget)
+        }}
+      />
+    </StrictMode>,
+  )
+})
+
+$('#pricing-rule-set-footer').each(function (index, item) {
   render(<PricingRuleSetActions onAddRule={addPricingRule} />, item)
 })

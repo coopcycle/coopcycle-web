@@ -45,6 +45,10 @@
 
     {{ form_label(form.rules) }}
 
+    <div class="form-group" id="pricing-rule-set-header">
+      {# rendered by React #}
+    </div>
+
     <ul
         id="rule-set"
         class="delivery-pricing-ruleset"
@@ -70,7 +74,7 @@
         {% endfor %}
     </ul>
 
-    <div class="form-group" id="pricing-rule-set-actions">
+    <div class="form-group" id="pricing-rule-set-footer">
       {# rendered by React #}
     </div>
 
