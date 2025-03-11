@@ -10,6 +10,7 @@ import Spinner from '../../../../js/app/components/core/Spinner.js'
 import BarcodesModal from '../BarcodesModal.jsx'
 import ShowPrice from '../../../../js/app/components/delivery-form/ShowPrice.js'
 import Task from '../../../../js/app/components/delivery-form/Task.js'
+import { usePrevious } from '../../../../js/app/dashboard/redux/utils'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
 import { getCountry } from '../../../../js/app/i18n'
@@ -39,7 +40,7 @@ const getNextRoundedTime = () => {
   return now
 }
 
-/** Te be revamp for store as telephone is needed */
+/** TODO : use this validation when we port the form for store owners for which the phone is required */
 const validatePhoneNumber = (telephone) => {
   if (telephone) {
     try {
@@ -69,26 +70,28 @@ function getFormattedValue(value) {
 const dropoffSchema = {
   type: 'DROPOFF',
   after: getNextRoundedTime().toISOString(),
-  before: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  before: getNextRoundedTime().add(10, 'minutes').toISOString(),
   timeSlot: null,
+  timeSlotUrl: null,
   comments: '',
   address: {
     streetAddress: '',
     name: '',
     contactName: '',
     telephone: '',
-    },
+  },
   updateInStoreAddresses: false,
   packages: [],
   weight: 0,
   tags: [],
-  };
+};
 
 const pickupSchema = {
   type: 'PICKUP',
   after: getNextRoundedTime().toISOString(),
-  before: getNextRoundedTime().add(60, 'minutes').toISOString(),
+  before: getNextRoundedTime().add(10, 'minutes').toISOString(),
   timeSlot: null,
+  timeSlotUrl: null,
   comments: '',
   address: {
     streetAddress: '',
@@ -105,9 +108,9 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function ({ storeId, deliveryId, order }) {
+export default function({ storeId, deliveryId, order }) {
 
-  // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work. 
+  // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work.
   const isDispatcher = true
 
   const httpClient = new window._auth.httpClient()
@@ -119,48 +122,44 @@ export default function ({ storeId, deliveryId, order }) {
   const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
+  const [timeSlotLabels, setTimeSlotLabels] = useState([])
   const [trackingLink, setTrackingLink] = useState('#')
-  const [initialValues, setInitialValues] = useState({
-    tasks: [
-      pickupSchema,
-      dropoffSchema,
-    ],
-  })
-  const [isLoading, setIsLoading] = useState(Boolean(deliveryId))
+  const [initialValues, setInitialValues] = useState({tasks: []})
+  const [isLoading, setIsLoading] = useState(true)
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
- 
+
   let deliveryPrice
 
   if (deliveryId && order) {
     const orderInfos = JSON.parse(order)
-    deliveryPrice = {exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal,}
+    deliveryPrice = { exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal, }
   }
 
   const { t } = useTranslation()
-  
+
   const validate = (values) => {
     const errors = { tasks: [] };
-    
+
     for (let i = 0; i < values.tasks.length; i++) {
-      
+
       const taskErrors = {}
 
       /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
 
       // if (!values.tasks[i].address.formattedTelephone) {
-      //   taskErrors.address = taskErrors.address || {}; 
+      //   taskErrors.address = taskErrors.address || {};
       //   taskErrors.address.formattedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
-      // } 
-      
+      // }
+
       if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
-        taskErrors.address = taskErrors.address || {}; 
+        taskErrors.address = taskErrors.address || {};
         taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
       }
 
       if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
-        taskErrors.packages= t("DELIVERY_FORM_ERROR_PACKAGES")
+        taskErrors.packages = t("DELIVERY_FORM_ERROR_PACKAGES")
       }
 
       if (values.tasks[i].type === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
@@ -181,69 +180,80 @@ export default function ({ storeId, deliveryId, order }) {
     const storeURL = `${baseURL}/api/stores/${storeId}`
     const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
     const tagsURL = `${baseURL}/api/tags`
+    const timeSlotLabelsUrl = `${baseURL}/api/stores/${storeId}/time_slots`
 
     if (deliveryId) {
-        Promise.all([
+      Promise.all([
         httpClient.get(deliveryURL),
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
         httpClient.get(packagesURL),
-        httpClient.get(tagsURL)
-        ]).then(values => {
-          const [delivery, addresses, storeInfos, packages, tags] = values
+        httpClient.get(tagsURL),
+        httpClient.get(timeSlotLabelsUrl)
+      ]).then(values => {
+        const [delivery, addresses, storeInfos, packages, tags, timeSlotLabels] = values
 
-          const storePackages = packages.response['hydra:member']
+        const storePackages = packages.response['hydra:member']
 
-          if (storePackages.length > 0) {
-            setStorePackages(storePackages)
+        if (storePackages.length > 0) {
+          setStorePackages(storePackages)
+        }
+
+        //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
+        delete delivery.response.dropoff
+        delete delivery.response.pickup
+
+        delivery.response.tasks.forEach(task => {
+          const formattedTelephone = getFormattedValue(task.address.telephone)
+          task.address.formattedTelephone = formattedTelephone
+          if (task.tags.length > 0) {
+            const tags = task.tags.map(tag => tag.name)
+            task.tags = tags
           }
+        })
 
-          //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
-          delete delivery.response.dropoff
-          delete delivery.response.pickup
-
-          delivery.response.tasks.forEach(task => {
-            const formattedTelephone = getFormattedValue(task.address.telephone)
-            task.address.formattedTelephone = formattedTelephone
-            if (task.tags.length > 0) {
-              const tags = task.tags.map(tag => tag.name)
-              task.tags = tags
-            }
-          })
-          
-          setInitialValues(delivery.response)
-          setTrackingLink(delivery.response.trackingUrl)
-          setAddresses(addresses.response['hydra:member'])
-          setStoreDeliveryInfos(storeInfos.response)
-          setTags(tags.response['hydra:member'])
-          setIsLoading(false)
+        setInitialValues(delivery.response)
+        setTrackingLink(delivery.response.trackingUrl)
+        setAddresses(addresses.response['hydra:member'])
+        setStoreDeliveryInfos(storeInfos.response)
+        setTags(tags.response['hydra:member'])
+        setTimeSlotLabels(timeSlotLabels.response['hydra:member'])
+        setIsLoading(false)
       })
     } else {
-        Promise.all([
+      Promise.all([
         httpClient.get(addressesURL),
         httpClient.get(storeURL),
-        httpClient.get(packagesURL), 
-        httpClient.get(tagsURL)
-        ]).then(values => {
-          const [addresses, storeInfos, packages, tags] = values
-          
-          const storePackages = packages.response['hydra:member']
-          if (storePackages.length > 0) {
-            setStorePackages(storePackages)
-          }
+        httpClient.get(packagesURL),
+        httpClient.get(tagsURL),
+        httpClient.get(timeSlotLabelsUrl)
+      ]).then(values => {
+        const [addresses, storeInfos, packages, tags, timeSlotLabels] = values
 
-          setAddresses(addresses.response['hydra:member'])
-          setStoreDeliveryInfos(storeInfos.response)
-          setTags(tags.response['hydra:member'])
-          setIsLoading(false)
+        const storePackages = packages.response['hydra:member']
+        if (storePackages.length > 0) {
+          setStorePackages(storePackages)
+        }
+
+        setInitialValues({
+          tasks: [
+            {...pickupSchema, timeSlotUrl: storeInfos.response.timeSlot},
+            {...dropoffSchema, timeSlotUrl: storeInfos.response.timeSlot}
+          ],
+        })
+        setAddresses(addresses.response['hydra:member'])
+        setStoreDeliveryInfos(storeInfos.response)
+        setTags(tags.response['hydra:member'])
+        setTimeSlotLabels(timeSlotLabels.response['hydra:member'])
+        setIsLoading(false)
       })
     }
-  }, [deliveryId, storeId])
+  }, [])
 
 
   const handleSubmit = useCallback(async (values) => {
     const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
-    
+
     const getUrl = (deliveryId) => {
       if (deliveryId) {
         const editDeliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
@@ -272,11 +282,11 @@ export default function ({ storeId, deliveryId, order }) {
           }
         }
       }
-      
+
       return await httpClient[method](url, data);
     }
 
-    const {response, error} = await createOrEditADelivery(deliveryId)
+    const { response, error } = await createOrEditADelivery(deliveryId)
 
     if (error) {
       setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
@@ -312,48 +322,48 @@ export default function ({ storeId, deliveryId, order }) {
 
       const tasksCopy = structuredClone(values.tasks)
       const tasksWithoutId = tasksCopy.map(task => {
-            if (task["@id"]) {
-              delete task["@id"]
-            }
-            return task
-          })
-        
-        const infos = {
-          store: storeDeliveryInfos["@id"],
-          tasks: tasksWithoutId,
-        };
-
-        const calculatePrice = async () => {
-
-          setPriceLoading(true)
-
-          const url = `${baseURL}/api/retail_prices/calculate`
-          const { response, error } = await httpClient.post(url, infos)
-
-          if (error) {
-            setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
-            setCalculatePrice(0)
-          }
-
-          if (response) {
-            setCalculatePrice(response)
-            setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
-          }
-
-          setPriceLoading(false)
-
+        if (task["@id"]) {
+          delete task["@id"]
         }
-        
-        if (values.tasks.every(task => task.address.streetAddress)) {
-          calculatePrice()
+        return task
+      })
+
+      const infos = {
+        store: storeDeliveryInfos["@id"],
+        tasks: tasksWithoutId,
+      };
+
+      const calculatePrice = async () => {
+
+        setPriceLoading(true)
+
+        const url = `${baseURL}/api/retail_prices/calculate`
+        const { response, error } = await httpClient.post(url, infos)
+
+        if (error) {
+          setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+          setCalculatePrice(0)
         }
+
+        if (response) {
+          setCalculatePrice(response)
+          setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+        }
+
+        setPriceLoading(false)
+
+      }
+
+      if (values.tasks.every(task => task.address.streetAddress)) {
+        calculatePrice()
+      }
 
     },
-    1000
+    800
   )
   
   return (
-    isLoading ? 
+    isLoading ?
       <div className="delivery-spinner">
         <Spinner />
       </div>
@@ -366,10 +376,68 @@ export default function ({ storeId, deliveryId, order }) {
           validateOnChange={false}
           validateOnBlur={false}
         >
-          {({ values, isSubmitting }) => {
+          {({ values, isSubmitting, setFieldValue }) => {
+
+            const previousValues = usePrevious(values)
 
             useEffect(() => {
-                if(!overridePrice && !deliveryId) getPrice(values)
+              if (!overridePrice && !deliveryId) {
+                getPrice(values)
+              }
+            }, [values.tasks, overridePrice, deliveryId]);
+
+            useEffect(() => {
+
+              // Skip if no or 1 task
+              if (!values.tasks || values.tasks.length <= 1) return;
+              const firstTask = values.tasks[0]
+              const prevFirstTask = previousValues?.tasks?.[0]
+              // Skip if no previous tasks
+              if (!prevFirstTask) return;
+
+              const newPickupAfter = firstTask.after
+              const hasAfterChanged = prevFirstTask.after !== newPickupAfter
+              const isOnSameDay = moment(newPickupAfter)
+                .isSame(moment(prevFirstTask.before), 'day')
+
+              // Case 1: "after" time changed and is on the same day as "before"
+              if (hasAfterChanged && isOnSameDay) {
+                values.tasks.slice(1).forEach((task, idx) => {
+                  const taskIndex = idx + 1;
+                  if (moment(newPickupAfter).isAfter(moment(task.after))) {
+                    setFieldValue(`tasks[${taskIndex}].after`, firstTask.after);
+                    setFieldValue(`tasks[${taskIndex}].before`, firstTask.before);
+                  }
+                });
+                return;
+              }
+
+              // Case 2: Time slot changed
+              if (prevFirstTask.timeSlotUrl && firstTask.timeSlotUrl && prevFirstTask.timeSlotUrl !== firstTask.timeSlotUrl) {
+                values.tasks.slice(1).forEach((_, idx) => {
+                  const taskIndex = idx + 1;
+                  setFieldValue(`tasks[${taskIndex}].timeSlotUrl`, firstTask.timeSlotUrl);
+                });
+                return;
+              }
+
+              //Case 3: Time slot value changed
+              if (prevFirstTask.timeSlot &&firstTask.timeSlot && prevFirstTask.timeSlot !== firstTask.timeSlot) {
+                values.tasks.slice(1).forEach((task, idx) => {
+                  const taskIndex = idx + 1;
+                  if (task.timeSlot) {
+                    const pickupAfter = moment(firstTask.timeSlot.split('/')[0]);
+                    const dropAfter = moment(task.timeSlot.split('/')[0]);
+
+                    if (pickupAfter.isAfter(dropAfter)) {
+                      setFieldValue(`tasks[${taskIndex}].timeSlot`, firstTask.timeSlot);
+                    }
+                  }
+                });
+                return;
+              }
+
+
             }, [values.tasks, overridePrice, deliveryId]);
 
             return (
@@ -379,7 +447,7 @@ export default function ({ storeId, deliveryId, order }) {
                   <FieldArray name="tasks">
                     {(arrayHelpers) => (
                       <div className="new-order">
-                       
+
                         <div className="new-order__pickups">
                           {values.tasks
                             .filter((task) => task.type === 'PICKUP')
@@ -398,13 +466,14 @@ export default function ({ storeId, deliveryId, order }) {
                                     packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
                             })}
                         </div>
 
-                        
+
                         <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
                           {values.tasks
                             .filter((task) => task.type === 'DROPOFF')
@@ -423,19 +492,27 @@ export default function ({ storeId, deliveryId, order }) {
                                     packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
                             })}
-                          
+
                           {storeDeliveryInfos.multiDropEnabled ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
                               disabled={false}
                               onClick={() => {
-                                arrayHelpers.push(dropoffSchema)
-                                }}>
+                                const newDeliverySchema = {
+                                  ...dropoffSchema,
+                                  before: values.tasks.slice(-1)[0].before,
+                                  after: values.tasks.slice(-1)[0].after,
+                                  timeSlot: values.tasks.slice(-1)[0].timeSlot,
+                                  timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
+                                }
+                                arrayHelpers.push(newDeliverySchema)
+                              }}>
                               {t('DELIVERY_FORM_ADD_DROPOFF')}
                             </Button>
                           </div> : null}
@@ -447,16 +524,16 @@ export default function ({ storeId, deliveryId, order }) {
                   <div className="order-informations">
 
                     {deliveryId && (
-                  
+
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
-                         {t("DELIVERY_FORM_TRACKING_LINK")}
+                          {t("DELIVERY_FORM_TRACKING_LINK")}
                         </a>{'  '}
                         <i className="fa fa-external-link"></i>
                         <a href="#" className="pull-right"><i className="fa fa-clipboard" title={t("DELIVERY_FROM_TRACKING_LINK_COPY")} aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
                         <div className='mt-2'><BarcodesModal deliveryId={deliveryId} /></div>
                       </div>
-                      
+
                     )}
 
                     <div className="order-informations__map">
@@ -480,7 +557,7 @@ export default function ({ storeId, deliveryId, order }) {
                       />
                     </div>
 
-                    { !(deliveryId && !isDispatcher) ?
+                    {!(deliveryId && !isDispatcher) ?
                       <div className='order-informations__complete-order'>
                         <Button
                           type="primary"

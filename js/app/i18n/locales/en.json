@@ -672,6 +672,7 @@
         "DELIVERY_FORM_VAT_PRICE": "Price including VAT",
         "SHOW_BARCODES": "View barcodes",
         "DELIVERY_FORM_EXVAT_PRICE" : "Price excluding VAT",
-        "SWITCH_TIMESLOTPICKER": "Select a custom time slot"
+        "SWITCH_TIMESLOTPICKER": "Select a custom time slot",
+        "SWITCH_BACK_TIMESLOTPICKER": "Back to timeslot picker"
       }
 }

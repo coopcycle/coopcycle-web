@@ -1,208 +1,171 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
 import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
+import Spinner from '../core/Spinner'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default ({ storeId, storeDeliveryInfos, index }) => {
+export default ({ index, timeSlotLabels }) => {
+
   const httpClient = new window._auth.httpClient()
 
   const { t } = useTranslation()
 
-  const { setFieldValue } = useFormikContext()
+  const { setFieldValue, values } = useFormikContext()
 
-  const [storeDeliveryLabels, setStoreDeliveryLabels] = useState([])
+  const [formattedTimeslots, setFormattedTimeslots] = useState(null)
+  const [isLoadingChoices, setIsLoadingChoices] = useState(false)
 
-  useEffect(() => {
-    const getTimeSlotsLabels = async () => {
-      const url = `${baseURL}/api/stores/${storeId}/time_slots`
+  const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
+    let [first, second] = timeSlotChoice.split('/')
+    first = moment(first)
+    second = moment(second)
+    const date = moment(first)
+    const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
+    return { date, hour }
+  }
 
-      const { response } = await httpClient.get(url)
-
-      if (response) {
-        const timeSlotsLabel = response['hydra:member']
-        setStoreDeliveryLabels(timeSlotsLabel)
+  const formatSlots = (timeSlotChoices) => {
+    const formattedSlots = {}
+    timeSlotChoices.forEach(choice => {
+      const { date, hour } = extractDateAndRangeFromTimeSlot(choice.value)
+      const formattedDate = date.format('YYYY-MM-DD')
+      if (formattedSlots[formattedDate]) {
+        formattedSlots[formattedDate].push(hour)
+      } else {
+        formattedSlots[formattedDate] = [hour]
       }
-    }
-    if (storeId) {
-      getTimeSlotsLabels()
-    }
-  }, [storeId])
+    })
 
-  /** We get the labels available and the default label for the radio buttons */
+    return formattedSlots
+  }
 
-  const getLabels = useCallback(() => {
-    const timeSlotsLabels = []
-    for (const label of storeDeliveryLabels) {
-      timeSlotsLabels.push(label.name)
-    }
+  const setTimeSlotFromDateAndRange = (date, hourRange) => {
+    const [first, second] = hourRange.split('-')
+    const startTime = date.clone().hours(first.split(':')[0]).minutes(first.split(':')[1])
+    const endTime = date.clone().hours(second.split(':')[0]).minutes(second.split(':')[1])
+    const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
+    setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
+  }
 
-    return timeSlotsLabels
-  }, [storeDeliveryLabels])
+  const getTimeSlotChoices = async timeSlotUrl => {
+    setIsLoadingChoices(true)
 
-  const timeSlotsLabels = getLabels()
-
-  const getDefaultLabels = useCallback(() => {
-    return storeDeliveryLabels.find(
-      label => label['@id'] === storeDeliveryInfos.timeSlot,
-    )
-  }, [storeDeliveryLabels, storeDeliveryInfos])
-
-  const defaultLabel = getDefaultLabels()
-
-  /** We initialize with the default timesSlots, then changed when user selects a different option */
-
-  const [timeSlotChoices, setTimeSlotChoices] = useState([])
-
-  const getTimeSlotOptions = async timeSlotUrl => {
     const url = `${baseURL}${timeSlotUrl}/choices`
     const { response } = await httpClient.get(url)
-    if (response) {
-      setTimeSlotChoices(response['choices'])
-    }
-  }
 
-  useEffect(() => {
-    const timeSlotUrl = storeDeliveryInfos.timeSlot
-    getTimeSlotOptions(timeSlotUrl)
-  }, [storeDeliveryInfos])
-
-  /** We format the data in order for them to fit in a datepicker and a select
-   * We initialize the datepicker's and the select's values
-   */
-
-  const [datesWithTimeslots, setDatesWithTimeslots] = useState({})
-  const [selectedValues, setSelectedValues] = useState({})
-  const [options, setOptions] = useState([])
-
-  useEffect(() => {
-    const formatTimeSlots = () => {
-      const formattedSlots = {}
-      timeSlotChoices.forEach(choice => {
-        let [first, second] = choice.value.split('/')
-        first = moment(first)
-        second = moment(second)
-        const date = moment(first).format('YYYY-MM-DD')
-        const hour = `${first.format('HH:mm')}-${second.format('HH:mm')}`
-        if (formattedSlots[date]) {
-          formattedSlots[date].push(hour)
-        } else {
-          formattedSlots[date] = [hour]
-        }
-      })
-      setDatesWithTimeslots(formattedSlots)
+    if (response['choices'].length === 0) {
+      setFieldValue(`tasks[${index}].timeSlot`, 'No choice')
+    } else {
+      const formattedSlots = formatSlots(response['choices'])
+      setFormattedTimeslots(formattedSlots)
 
       const availableDates = Object.keys(formattedSlots)
-      if (availableDates.length > 0) {
-        const firstDate = moment(availableDates[0])
-        setOptions(formattedSlots[availableDates[0]])
-        setSelectedValues({
-          date: firstDate,
-          option: formattedSlots[availableDates[0]][0],
-        })
-      }
+      const firstDate = moment(availableDates[0])
+      setTimeSlotFromDateAndRange(firstDate, formattedSlots[availableDates[0]][0])
     }
-    formatTimeSlots()
-  }, [timeSlotChoices])
 
-  useEffect(() => {
-    if (Object.keys(selectedValues).length !== 0) {
-      const date = selectedValues.date.format('YYYY-MM-DD')
-      const range = selectedValues.option
-      const [first, second] = range.split('-')
-      const timeSlot = `${date}T${first}:00Z/${date}T${second}:00Z`
-      setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
-    }
-  }, [selectedValues])
-
-  /** disabled dates */
-
-  const dates = Object.keys(datesWithTimeslots || {}).map(date => moment(date))
-
-  function disabledDate(current) {
-    return !dates.some(date => date.isSame(current, 'day'))
+    setIsLoadingChoices(false)
   }
 
+  useEffect(() => {
+    getTimeSlotChoices(values.tasks[index].timeSlotUrl)
+  }, [values.tasks[index].timeSlotUrl])
+
   const handleTimeSlotLabelChange = e => {
-    const label = storeDeliveryLabels.find(
-      label => label.name === e.target.value,
-    )
-    const timeSlotUrl = label['@id']
-    getTimeSlotOptions(timeSlotUrl)
+    setFieldValue(`tasks[${index}].timeSlot`, null)
+    setFieldValue(`tasks[${index}].timeSlotUrl`, e.target.value)
   }
 
   const handleDateChange = newDate => {
-    if (!newDate) return
-
-    setSelectedValues({
-      date: newDate,
-      option: datesWithTimeslots[newDate.format('YYYY-MM-DD')][0],
-    })
-    setOptions(datesWithTimeslots[newDate.format('YYYY-MM-DD')])
+    const { hour } = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot)
+    setTimeSlotFromDateAndRange(newDate, hour)
   }
 
-  const handleTimeSlotChange = newTimeslot => {
-    if (!newTimeslot) return
-    setSelectedValues(prevState => ({ ...prevState, option: newTimeslot }))
+  const handleHourChange = hourRange => {
+    const { date } = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot)
+    setTimeSlotFromDateAndRange(date, hourRange)
   }
+
+  const inputLabel = () => <div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>
+
+  if (isLoadingChoices || !values.tasks[index].timeSlot) {
+    return (
+      <>
+        {inputLabel()}
+        <Spinner />
+      </>)
+  }
+
+  const availableDates = Object.keys(formattedTimeslots || {}).map(date => moment(date))
+
+  function isDateDisabled(current) {
+    return !availableDates.some(date => date.isSame(current, 'day'))
+  }
+
+  const selectedDate = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).date
+  const selectedHour = extractDateAndRangeFromTimeSlot(values.tasks[index].timeSlot).hour
+
+  const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
 
   return (
     <>
-      <div className="mb-2 font-weight-bold title-slot">
-        {t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}
-      </div>
-      {defaultLabel && timeSlotsLabels ? (
+      {inputLabel()}
+
+      {timeSlotLabels.length > 1 ?
         <Radio.Group
           className="timeslot__container mb-2"
-          defaultValue={defaultLabel.name}>
-          {timeSlotsLabels.map(label => (
+          value={values.tasks[index].timeSlotUrl}
+        >
+          {timeSlotLabels.map(label => (
             <Radio.Button
-              key={label}
-              value={label}
-              onChange={timeSlot => {
-                handleTimeSlotLabelChange(timeSlot)
+              key={label.name}
+              value={label['@id']}
+              onChange={timeSlotUrl => {
+                handleTimeSlotLabelChange(timeSlotUrl)
               }}>
-              {label}
+              {label.name}
             </Radio.Button>
           ))}
         </Radio.Group>
-      ) : null}
+        : null
+      }
 
-      <div style={{ display: 'flex', marginTop: '0.5em' }}>
-        {selectedValues.date ? (
+      { hourOptions.length > 0 ? 
+        <div style={{ display: 'flex', marginTop: '0.5em' }}>
           <DatePicker
             format="LL"
             style={{ width: '60%' }}
             className="mr-2"
-            disabledDate={disabledDate}
-            disabled={dates.length > 1 ? false : true}
-            value={selectedValues.date}
+            disabledDate={isDateDisabled}
+            disabled={availableDates.length > 1 ? false : true}
+            value={selectedDate}
             onChange={date => {
               handleDateChange(date)
             }}
           />
-        ) : null}
-
-        {selectedValues.option && options ? (
           <Select
             style={{ width: '35%' }}
             onChange={option => {
-              handleTimeSlotChange(option)
+              handleHourChange(option)
             }}
-            value={selectedValues.option}>
-            {options.length >= 1 &&
-              options.map(option => (
+            value={selectedHour}
+          >
+            {
+              hourOptions.map(option => (
                 <Select.Option key={option} value={option}>
                   {option}
                 </Select.Option>
-              ))}
+              ))
+            }
           </Select>
-        ) : null}
-      </div>
+        </div>
+        : <p>{t('ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE')}</p>
+      }
     </>
   )
 }
