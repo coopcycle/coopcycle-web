@@ -7,10 +7,7 @@ cube(`Loopeat`, {
       c.email_canonical AS customer_email,
       u.username AS delivered_by,
       SUM(COALESCE(rpa.amount, 0)) AS packaging_fee
-  FROM ${OrderItem.sql()} i
-  JOIN sylius_product_variant v ON i.variant_id = v.id
-  JOIN sylius_product p on v.product_id = p.id
-  JOIN ${Order.sql()} o on i.order_id = o.id
+  FROM ${Order.sql()} o
   JOIN sylius_customer c on o.customer_id = c.id
   JOIN ${OrderVendor.sql()} sov ON o.id = sov.order_id
   JOIN ${Restaurant.sql()} r ON sov.restaurant_id = r.id
@@ -21,7 +18,6 @@ cube(`Loopeat`, {
   WHERE
       o.state = 'fulfilled'
   AND o.reusable_packaging_enabled = 't'
-  AND p.reusable_packaging_enabled = 't'
   GROUP BY
       r.name,
       o.number,
