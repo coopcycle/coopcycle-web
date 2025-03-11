@@ -24,8 +24,10 @@ class PriceCalculationVisitor
     /**
      * @return int|null
      */
-    public function getPrice(Delivery $delivery): ?int
+    public function visit(Delivery $delivery): void
     {
+        $this->price = null;
+        $this->matchedRules = [];
 
         if ($this->ruleSet->getStrategy() === 'find') {
             foreach ($this->ruleSet->getRules() as $rule) {
@@ -63,8 +65,16 @@ class PriceCalculationVisitor
                 'strategy' => $this->ruleSet->getStrategy(),
             ]);
         }
+    }
 
+    public function getPrice(): ?int
+    {
         return $this->price;
+    }
+
+    public function getMatchedRules(): array
+    {
+        return $this->matchedRules;
     }
 
     private function apply(PricingRule $rule, Delivery $delivery)
@@ -81,7 +91,7 @@ class PriceCalculationVisitor
         // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
         if ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC) {
             $tasks = $delivery->getTasks();
-            
+
             if (count($tasks) > 2) {
                 return $this->visitTasks($rule, $delivery->getTasks());
             } else {
