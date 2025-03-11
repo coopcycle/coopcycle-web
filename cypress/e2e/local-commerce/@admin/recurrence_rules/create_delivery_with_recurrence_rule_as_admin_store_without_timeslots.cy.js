@@ -91,6 +91,35 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Delivery page
       cy.get('#delivery_form__recurrence__container').should('not.exist')
+
+      //pickup time range:
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':12')
+      })
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':27')
+      })
+
+      //dropoff time range:
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':24')
+      })
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':58')
+      })
+
       cy.get('[data-testid="breadcrumb"]')
         .find('[data-testid="order_id"]')
         .click()
