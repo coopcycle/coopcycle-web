@@ -44,7 +44,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
   const [isModalOpen, setModalOpen] = useState(false)
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
     useState(false)
-  const [selectValue, setSelectValue] = useState(null)
+  const [selectValue, setSelectValue] = useState(values.tasks[index].address.name)
 
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
   const handleModifyAddress = () => {
