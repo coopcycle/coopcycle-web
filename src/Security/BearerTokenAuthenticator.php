@@ -96,7 +96,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         $apiApp = $this->entityManager
             ->getRepository(ApiApp::class)
             ->findOneBy([
-                'apiKey' => substr($token->getCredentials(), 3),
+                'apiKey' => $token->getCredentials(),
                 'type' => 'api_key'
             ]);
 
