@@ -24,40 +24,40 @@ context('Delivery (role: store)', () => {
 
     // Pickup
 
-    cy.newPickupAddress(
-      '[data-form="task"]:nth-of-type(1)',
+    cy.betaEnterAddressAtPosition(
+      0,
       '23 Avenue Claude Vellefaux, 75010 Paris, France',
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
       'Office',
       '+33112121212',
       'John Doe',
+      'Pickup comments'
     )
-
-    cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
 
-    cy.newDropoff1Address(
-      '[data-form="task"]:nth-of-type(2)',
+    cy.betaEnterAddressAtPosition(
+      1,
       '72 Rue Saint-Maur, 75011 Paris, France',
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
       'Office',
       '+33112121212',
       'Jane smith',
+      'Dropoff comments'
     )
 
-    cy.get('#delivery_tasks_1_weight').clear()
-    cy.get('#delivery_tasks_1_weight').type(2.5)
+    cy.get(`[name="tasks[${1}].weight"]`).clear()
+    cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
 
-    cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.wait('@apiRoutingRoute')
 
-    cy.get('#delivery_distance')
+    cy.get('[data-testid="delivery-distance"]')
       .invoke('text')
-      .should('match', /[0-9.]+ Km/)
+      .should('contains', 'Distance: 1.50 kms')
 
-    cy.get('#delivery-submit').click()
+      cy.get('button[type="submit"]').click()
 
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
