@@ -43,8 +43,10 @@ class Geocoder
         private readonly string $country,
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
+        private readonly RateLimiterStore $geocodeEarthRateLimiterStore,
         private readonly bool $autoconfigure = true,
-        private readonly LoggerInterface $logger = new NullLogger())
+        private readonly LoggerInterface $logger = new NullLogger()
+    )
     {
     }
 
@@ -82,7 +84,8 @@ class Geocoder
     }
 
     private function createGeocodeEarthProvider() {
-        $rateLimiter = RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
+        // see https://geocode.earth/#pricing for limit
+        $rateLimiter = RateLimiterMiddleware::perSecond(10, $this->geocodeEarthRateLimiterStore);
 
         $stack = HandlerStack::create();
         $stack->push($rateLimiter);
