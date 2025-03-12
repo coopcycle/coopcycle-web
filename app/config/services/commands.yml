@@ -152,6 +152,8 @@ services:
       - { name: 'console.command', command: 'coopcycle:avatars:regenerate' }
 
   AppBundle\Command\WoopitSubscriptionsCommand:
+    arguments:
+      $apiVersion: '%env(WOOPIT_API_VERSION)%'
     tags:
       - { name: 'console.command', command: 'woopit:subscriptions:create' }
 

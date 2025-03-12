@@ -1,5 +1,6 @@
 Feature: Woopit
 
+  @debug
   Scenario: Receive & confirm quote
     Given the fixtures files are loaded:
       | sylius_channels.yml |
