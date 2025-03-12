@@ -258,6 +258,15 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         return $this->stores->contains($store);
     }
 
+    public function ownsAddress(Address $address) {
+        foreach ($this->getStores() as $store) {
+            if ($store->getAddresses()->contains($address)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function getStores()
     {
         return $this->stores;
