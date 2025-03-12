@@ -424,14 +424,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
 
-        $secret = hash('sha512', random_bytes(32));
-
-        $apiKey = 'ak_'.$secret;
+        $apiKey = sprintf('ak_%s', hash('sha512', random_bytes(32)));
 
         $apiApp = new ApiApp();
         $apiApp->setName($storeName);
         $apiApp->setStore($store);
-        $apiApp->setApiKey($secret);
+        $apiApp->setApiKey($apiKey);
         $apiApp->setType('api_key');
 
         $this->doctrine->getManagerForClass(ApiApp::class)->persist($apiApp);
