@@ -142,18 +142,20 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
     for (let i = 0; i < values.tasks.length; i++) {
 
       const taskErrors = {}
-      taskErrors.address = taskErrors.address || {};
 
       if (!isDispatcher) {
         if (!values.tasks[i].address.formattedTelephone) {
+          taskErrors.address = taskErrors.address || {};
           taskErrors.address.formattedTelephone = t("FORM_REQUIRED")
         }
 
         if (!values.tasks[i].address.contactName) {
+          taskErrors.address = taskErrors.address || {};
           taskErrors.address.contactName = t("FORM_REQUIRED")
         }
 
         if (!values.tasks[i].address.name) {
+          taskErrors.address = taskErrors.address || {};
           taskErrors.address.name = t("FORM_REQUIRED")
         }
       }
@@ -321,7 +323,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
       }
 
       // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
-      window.location = isDispatcher ? "/admin/deliveries" : "/dashboard";
+      window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
     }
   }, [storeDeliveryInfos])
 
