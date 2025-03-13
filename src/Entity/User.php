@@ -41,7 +41,8 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
  *     "get"={
  *       "method"="GET",
  *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "pagination_enabled"=false
+ *       "pagination_enabled"=false,
+ *       "pagination_client_enabled"=true
  *     },
  *     "get_stripe_payment_methods"={
  *       "method"="GET",
