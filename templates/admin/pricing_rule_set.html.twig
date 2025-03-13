@@ -9,6 +9,10 @@
   {% endif %}
 {% endblock %}
 
+{% block docs %}
+  {% include '_partials/docs.html.twig' with { docsPath: 'adminDashboard.pricing.docs_path' } %}
+{% endblock %}
+
 {% form_theme form 'form/pricing_rule_set.html.twig' %}
 
 {% block breadcrumb %}
