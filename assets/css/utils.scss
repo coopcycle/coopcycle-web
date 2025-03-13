@@ -101,6 +101,10 @@
   cursor: grabbing;
 }
 
+.color-main {
+  color: $main-blue;
+}
+
 .text-danger,
 li > a.text-danger // very specific selector for bootstrap dropdown
 {
