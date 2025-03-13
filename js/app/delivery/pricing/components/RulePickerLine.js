@@ -72,7 +72,7 @@ const DELIVERY_TYPES = [
   { name: 'order.itemsTotal' },
   { name: 'vehicle', deprecated: true },
   { name: 'dropoff.doorstep', deprecated: true },
-  { name: 'task.type', deprecated: true }
+  { name: 'task.type', deprecated: true },
 ]
 
 const TASK_TYPES = [
@@ -89,24 +89,24 @@ const TASK_TYPES = [
   { name: 'vehicle', deprecated: true },
   { name: 'dropoff.doorstep', deprecated: true },
   { name: 'distance', deprecated: true },
-  { name: 'order.itemsTotal', deprecated: true }
+  { name: 'order.itemsTotal', deprecated: true },
 ]
 
 const LEGACY_TARGET_DYNAMIC_TYPES = [
-  { name: 'distance', deprecated: true },
-  { name: 'pickup.address', deprecated: true },
-  { name: 'dropoff.address', deprecated: true },
-  { name: 'diff_hours(pickup)', deprecated: true },
-  { name: 'diff_days(pickup)', deprecated: true },
-  { name: "time_range_length(pickup, 'hours')", deprecated: true },
-  { name: "time_range_length(dropoff, 'hours')", deprecated: true },
-  { name: 'weight', deprecated: true },
-  { name: 'packages', deprecated: true },
-  { name: 'packages.totalVolumeUnits()', deprecated: true },
-  { name: 'order.itemsTotal', deprecated: true },
-  { name: 'vehicle', deprecated: true },
-  { name: 'dropoff.doorstep', deprecated: true },
-  { name: 'task.type', deprecated: true }
+  { name: 'distance' },
+  { name: 'pickup.address' },
+  { name: 'dropoff.address' },
+  { name: 'diff_hours(pickup)' },
+  { name: 'diff_days(pickup)' },
+  { name: "time_range_length(pickup, 'hours')" },
+  { name: "time_range_length(dropoff, 'hours')" },
+  { name: 'weight' },
+  { name: 'packages' },
+  { name: 'packages.totalVolumeUnits()' },
+  { name: 'order.itemsTotal' },
+  { name: 'vehicle' },
+  { name: 'dropoff.doorstep' },
+  { name: 'task.type' },
 ]
 
 function RulePickerType({ type }) {
@@ -178,16 +178,21 @@ function RulePickerTypeSelect({ruleTarget, type, onTypeSelect}) {
   }, [types])
 
   return (
-    <select value={type} onChange={onTypeSelect} className="form-control input-sm">
+    <select
+      value={type}
+      onChange={onTypeSelect}
+      className="form-control input-sm">
       <option value="">-</option>
-      { nonDeprecatedTypes.map((type, index) => (
+      {nonDeprecatedTypes.map((type, index) => (
         <RulePickerType type={type} key={`nonDeprecatedTypes-${index}`} />
-      )) }
-      <optgroup label={ t('RULE_PICKER_LINE_OPTGROUP_DEPRECATED') }>
-        { deprecatedTypes.map((type, index) => (
-          <RulePickerType type={type} key={`deprecatedTypes-${index}`} />
-        )) }
-      </optgroup>
+      ))}
+      {deprecatedTypes.length > 0 && (
+        <optgroup label={t('RULE_PICKER_LINE_OPTGROUP_DEPRECATED')}>
+          {deprecatedTypes.map((type, index) => (
+            <RulePickerType type={type} key={`deprecatedTypes-${index}`} />
+          ))}
+        </optgroup>
+      )}
     </select>
   )
 }
