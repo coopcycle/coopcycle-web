@@ -34,8 +34,7 @@ class Me
 
         if ($token instanceof ApiKeyToken) {
 
-            $rawToken = $token->getCredentials();
-            $rawApiKey = substr($rawToken, 3);
+            $rawApiKey = $token->getCredentials();
 
             return $this->doctrine->getRepository(ApiApp::class)
                 ->findOneBy(['apiKey' => $rawApiKey, 'type' => 'api_key']);

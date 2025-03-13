@@ -17,12 +17,11 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class WoopitSubscriptionsCommand extends Command
 {
-    private $defaultVersion = '1.6.0'; // Current Woopit version available
-
     public function __construct(
         private OAuthHttpClient $woopitClient,
         private EntityManagerInterface $entityManager,
-        private UrlGeneratorInterface $urlGenerator)
+        private UrlGeneratorInterface $urlGenerator,
+        private string $apiVersion)
     {
         parent::__construct();
     }
@@ -83,9 +82,6 @@ class WoopitSubscriptionsCommand extends Command
 
             $method = $update ? 'PATCH' : 'POST';
             $response = $this->woopitClient->request($method, 'subscriptions', [
-                'headers' => [
-                    'x-api-version' => $this->defaultVersion
-                ],
                 'json' => $body
             ]);
 
@@ -122,23 +118,23 @@ class WoopitSubscriptionsCommand extends Command
         return [
             "quote" => [
                 'url' => $quoteUrl,
-                'version' => $this->defaultVersion,
+                'version' => $this->apiVersion,
             ],
             "cancelQuote" => [
                 'url' => "{$quoteUrl}/{quoteId}",
-                'version' => $this->defaultVersion,
+                'version' => $this->apiVersion,
             ],
             "delivery" => [
                 'url' => $deliveryUrl,
-                'version' => $this->defaultVersion,
+                'version' => $this->apiVersion,
             ],
             "update" => [
                 'url' => "{$deliveryUrl}/{deliveryId}",
-                'version' => $this->defaultVersion,
+                'version' => $this->apiVersion,
             ],
             "cancelDelivery" => [
                 'url' => "{$deliveryUrl}/{deliveryId}",
-                'version' => $this->defaultVersion,
+                'version' => $this->apiVersion,
             ],
         ];
     }

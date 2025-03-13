@@ -17,8 +17,6 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class WoopitWebhookHandler implements MessageHandlerInterface
 {
-    private $apiVersion = '1.6.0';
-
     public function __construct(
         OAuthHttpClient $woopitClient,
         IriConverterInterface $iriConverter,
@@ -88,9 +86,6 @@ class WoopitWebhookHandler implements MessageHandlerInterface
             );
 
             $response = $this->woopitClient->request('PUT', "deliveries/${deliveryId}/status", [
-                'headers' => [
-                    'x-api-version' => $this->apiVersion
-                ],
                 'json' => array_merge(
                     [
                         'date' => Carbon::now(),

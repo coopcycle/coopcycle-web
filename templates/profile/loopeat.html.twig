@@ -1,17 +1,17 @@
 {% extends "profile.html.twig" %}
 
 {% block content %}
-  <div class="text-right mb-2">
-    <div id="month-picker" class="d-inline-block" data-default-value="{{ month|date('Y-m') }}"></div>
-  </div>
-  <div id="cubejs"
-    data-api-url="{{ cubejs_api_url }}"
-    data-token="{{ cube_token }}"
-    data-query="{{ query|json_encode|e('html_attr') }}"
-    class="my-2"></div>
-  <form method="post">
-    <button type="submit" class="btn btn-success">{{ 'basics.export'|trans }}</button>
+<div class="d-flex align-items-center justify-content-end mb-4">
+  <form method="post" class="mr-2">
+    <button type="submit" class="btn btn-sm btn-success">{{ 'basics.export'|trans }}</button>
   </form>
+  <div id="month-picker" data-default-value="{{ month|date('Y-m') }}"></div>
+</div>
+<div id="cubejs"
+  data-api-url="{{ cubejs_api_url }}"
+  data-token="{{ cube_token }}"
+  data-query="{{ query|json_encode|e('html_attr') }}"
+  class="mb-4"></div>
 {% endblock %}
 
 {% block styles %}

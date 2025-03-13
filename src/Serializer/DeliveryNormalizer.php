@@ -184,7 +184,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
             $task->setWeight($data['weight']);
         }
 
-        if (isset($data['metadata'])) {
+        if (isset($data['metadata']) && is_string($data['metadata'])) { // we support here metadata send as a string from a CSV file
             $this->parseAndApplyMetadata($task, $data['metadata']);
         }
     }

@@ -42,7 +42,7 @@ class QuoteRequest
                 "reasons" => [
                     "REFUSED_EXCEPTION"
                 ],
-                "comment" => sprintf('The store with ID %s does not exist', $data->retailer['store']['id'])
+                "comment" => sprintf('The store with ID "%s" does not exist', $data->retailer['store']['id'])
             ], 202);
         }
 
@@ -64,6 +64,15 @@ class QuoteRequest
         $pricingRuleSet = $store->getPricingRuleSet();
 
         $price = $this->deliveryManager->getPrice($delivery, $pricingRuleSet);
+
+        if (null === $price) {
+            return new JsonResponse([
+                'reasons' => [
+                    'REFUSED_EXCEPTION'
+                ],
+                'comment' => 'Price could not be calculated'
+            ], 400);
+        }
 
         $data->price = $price;
         $data->priceDetails = $this->priceHelper->fromTaxIncludedAmount($price);
