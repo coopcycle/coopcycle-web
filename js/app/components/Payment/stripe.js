@@ -1,7 +1,9 @@
+/* eslint-disable */
+
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { render, unmountComponentAtNode } from 'react-dom'
-import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js'
+import { Elements, CardElement, ElementsConsumer, PaymentElement } from '@stripe/react-stripe-js'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 
@@ -125,6 +127,8 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
 
   const { t } = useTranslation()
 
+  console.log('OPTIONS', options)
+
   const [addNewCard, setAddNewCard] = useState(false)
 
   const edenred = !!options && _.find(options.payments, p => p.method.code === 'EDENRED')
@@ -187,16 +191,18 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
       {
         (addNewCard || !thereAreCardsToShow || isGuest(formOptions)) ?
         <div id="card-form">
-          <div className="form-group">
+          {/*<div className="form-group">
             <CardholderNameInput onChange={ onCardholderNameChange } />
-          </div>
-          <div className="form-group">
+          </div>*/}
+          {/*<div className="form-group">
             <label className="control-label hidden">
               { t('PAYMENT_FORM_TITLE') }
             </label>
             <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
-          </div>
-          {
+            <PaymentElement />
+          </div>*/}
+          <PaymentElement />
+          {/*{
             !isGuest(formOptions) ?
             <div className="form-group">
               <div className="checkbox">
@@ -206,7 +212,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
                 </label>
               </div>
             </div> : null
-          }
+          }*/}
         </div> : null
       }
     </React.Fragment>
@@ -234,10 +240,20 @@ export default {
       resultCards = await axios.get(this.config.gatewayConfig.customerPaymentMethodsURL)
     }
 
+    console.log(options, formOptions)
+
     return new Promise((resolve) => {
 
       render(
-        <Elements stripe={ this.stripe }>
+        <Elements stripe={ this.stripe } options={{
+          mode: 'payment',
+          currency: 'eur',
+          amount: 1099,
+          appearance: {
+            theme: 'stripe'
+          },
+          // externalPaymentMethodTypes: ['external_divido']
+        }}>
           <ElementsConsumer>
           {({ elements }) => {
 
