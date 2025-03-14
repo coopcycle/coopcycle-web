@@ -85,7 +85,6 @@ adminDashboard.pricing.noPricings: 'Még nincsenek árak'
 adminDashboard.pricing.createNew: 'Új árazás létrehozása'
 adminDashboard.pricing.noRuleFound: 'Nincs árképzési szabály. Az árképzési szabályok
   határozzák meg a szállítási költség kiszámításának módját.'
-adminDashboard.pricing.addRule: 'Szabály hozzáadása'
 adminDashboard.tags.title: 'Címkék'
 adminDashboard.tags.createNew: 'Új címke létrehozása'
 adminDashboard.tags.name: 'Név'
