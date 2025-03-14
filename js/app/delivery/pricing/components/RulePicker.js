@@ -143,7 +143,7 @@ class RulePicker extends React.Component {
           </tbody>
         </table>
         <div className="text-right">
-          <button className="btn btn-xs btn-default" onClick={this.addLine}>
+          <button className="btn btn-xs btn-default" onClick={this.addLine} data-testid="rule-picker-add-condition">
             <i className="fa fa-plus"></i> { this.props.t('RULE_PICKER_ADD_CONDITION') }
           </button>
         </div>

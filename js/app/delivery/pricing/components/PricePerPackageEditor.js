@@ -48,7 +48,7 @@ export default ({ packages, defaultValue, onChange }) => {
   const [ withDiscount, setWithDiscount ] = useState(defaultValue.offset > 0)
 
   return (
-    <div>
+    <div data-testid="price_rule_price_per_package_editor">
       <div>
         <label className="mr-2">
           <input

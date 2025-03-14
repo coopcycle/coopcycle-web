@@ -15,7 +15,7 @@
 
 {% block content %}
 <div class="text-right mb-4">
-  <a class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
+  <a data-testid="pricing_rule_sets_add" class="btn btn-success" href="{{ path('admin_deliveries_pricing_ruleset_new') }}"><i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.createNew{% endtrans %}</a>
 </div>
 <table class="table">
   <tbody>

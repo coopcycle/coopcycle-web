@@ -91,7 +91,7 @@ export default ({ defaultValue, onChange }) => {
   }, [price, threshold, attribute, step])
 
   return (
-    <div>
+    <div data-testid="price_rule_price_range_editor">
       <label className="mr-2">
         <input type="number" size="4"
           defaultValue={ price / 100 } min="0" step=".001"

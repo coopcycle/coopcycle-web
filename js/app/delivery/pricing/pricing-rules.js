@@ -24,6 +24,7 @@ const PriceChoice = ({ defaultValue, onChange }) => {
 
   return (
     <select
+      data-testid="pricing_rule_price_type_choice"
       onChange={e => onChange(e.target.value)}
       defaultValue={defaultValue}>
       <option value="fixed">{t('PRICE_RANGE_EDITOR.TYPE_FIXED')}</option>
