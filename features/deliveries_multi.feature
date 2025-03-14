@@ -309,7 +309,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "streetAddress":"Rue De La Paix 24, 75002 Paris",
+            "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
