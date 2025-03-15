@@ -3,10 +3,12 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\Events;
-use Doctrine\ORM\UnitOfWork;
+use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Exception;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
@@ -22,62 +24,68 @@ class LoggerSubscriber implements EventSubscriber
     private array $entityDeletions = [];
 
     public function __construct(
-        private readonly LoggerInterface $databaseLogger)
+        private readonly LoggerInterface $databaseLogger
+    )
     {
     }
 
     public function getSubscribedEvents(): array
     {
         return array(
-            Events::onFlush,
+            Events::postPersist,
+            Events::postUpdate,
+            Events::preRemove,
             Events::postFlush,
         );
     }
 
-    public function onFlush(OnFlushEventArgs $args): void
+    public function postPersist(PostPersistEventArgs $args): void
     {
-        $em = $args->getObjectManager();
-        $uow = $em->getUnitOfWork();
+        // use postPersist to have access to entity ID
+        $this->entityInsertions[] = EntityItem::create($args);
+    }
 
-        $this->entityInsertions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions());
-        $this->entityUpdates = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates());
-        $this->entityDeletions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions());
-        //TODO; there are also collectionUpdates and collectionDeletions that can be logged
+    public function postUpdate(PostUpdateEventArgs $args): void
+    {
+        $this->entityUpdates[] = EntityItem::create($args);
+    }
+
+    public function preRemove(PreRemoveEventArgs $args): void
+    {
+        // use preRemove to have access to entity ID
+        $this->entityDeletions[] = EntityItem::create($args);
     }
 
     public function postFlush(PostFlushEventArgs $args): void
     {
-        $em = $args->getObjectManager();
-        $uow = $em->getUnitOfWork();
+        $this->log('insertions', $this->entityInsertions);
+        $this->log('updates', $this->entityUpdates);
+        $this->log('deletions', $this->entityDeletions);
 
-        $this->log($uow, 'insertions', $this->entityInsertions);
-        $this->log($uow, 'updates', $this->entityUpdates);
-        $this->log($uow, 'deletions', $this->entityDeletions);
+        $this->entityInsertions = [];
+        $this->entityUpdates = [];
+        $this->entityDeletions = [];
     }
 
     /**
      * @param EntityItem[] $list
      */
-    private function log(UnitOfWork $uow, string $action, array $list): void
+    private function log(string $action, array $list): void
     {
         if (count($list) === 0) {
             return;
         }
 
-        $entities = array_map(fn($entity) => [
-            'class' => $entity->getClassName(),
-            'id' => implode(',', $entity->getDatabaseIdentifier($uow)),
-        ], $list);
-
         $this->databaseLogger->info(sprintf('Entities %s: %s',
             $action,
             implode(', ', array_map(fn($entity) => sprintf('%s#%s',
-                $entity['class'],
-                $entity['id']), $entities))),
+                $entity->getClassName(),
+                $entity->getDatabaseIdentifier()), $list))),
             [
                 'action' => $action,
-                'entities' => array_reduce($entities, function ($carry, $item) {
-                    $className = $item['class'];
+                // log the number of entities per class
+                'entities' => array_reduce($list, function ($carry, $item) {
+                    $className = $item->getClassName();
                     if (!isset($carry[$className])) {
                         $carry[$className] = 0;
                     }
@@ -90,35 +98,39 @@ class LoggerSubscriber implements EventSubscriber
 
 class EntityItem
 {
-    private array $initialIdentifier;
+    static function create(LifecycleEventArgs $args): EntityItem
+    {
+        $em = $args->getObjectManager();
+        $uow = $em->getUnitOfWork();
+
+        $entity = $args->getObject();
+
+        $className = (new ReflectionClass($entity))->getShortName();
+
+        try {
+            $identifier = $uow->getEntityIdentifier($entity);
+        } catch (Exception $e) {
+            // should not happen (could happen if called before an entity is inserted)
+            $identifier = [];
+        }
+
+        return new self($className, $identifier);
+    }
 
     public function __construct(
-        UnitOfWork $unitOfWork,
-        private $entity,
+        private readonly string $className,
+        private readonly array $identifier
     )
     {
-        try {
-            $this->initialIdentifier = $unitOfWork->getEntityIdentifier($entity);
-        } catch (Exception $e) {
-            // happens for entities that are not inserted yet
-            $this->initialIdentifier = [];
-        }
     }
 
     function getClassName(): string
     {
-        return (new ReflectionClass($this->entity))->getShortName();
+        return $this->className;
     }
 
-    function getDatabaseIdentifier($unitOfWork): array
+    function getDatabaseIdentifier(): string
     {
-        $isPersisted = count($this->initialIdentifier) !== 0;
-
-        if ($isPersisted) {
-            // a way to know the id of an entity that was deleted
-            return $this->initialIdentifier;
-        } else {
-            return $unitOfWork->getEntityIdentifier($this->entity);
-        }
+        return implode(',', $this->identifier);
     }
 }
