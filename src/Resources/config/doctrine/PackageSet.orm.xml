@@ -16,6 +16,9 @@
         <!-- a package can be not linked to a packageSet if it is linked to TaskPackage/task and we delete the PackageSet -->
         <cascade-persist/>
       </cascade>
+      <order-by>
+        <order-by-field name="maxVolumeUnits" direction="ASC" />
+      </order-by>
     </one-to-many>
   </entity>
 </doctrine-mapping>
