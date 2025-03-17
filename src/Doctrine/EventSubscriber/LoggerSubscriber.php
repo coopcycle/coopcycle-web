@@ -39,9 +39,9 @@ class LoggerSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->entityInsertions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions());
-        $this->entityUpdates = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates());
-        $this->entityDeletions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions());
+        $this->entityInsertions = array_merge($this->entityInsertions, array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions()));
+        $this->entityUpdates = array_merge($this->entityUpdates, array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates()));
+        $this->entityDeletions = array_merge($this->entityDeletions, array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions()));
         //TODO; there are also collectionUpdates and collectionDeletions that can be logged
     }
 
@@ -53,6 +53,10 @@ class LoggerSubscriber implements EventSubscriber
         $this->log($uow, 'insertions', $this->entityInsertions);
         $this->log($uow, 'updates', $this->entityUpdates);
         $this->log($uow, 'deletions', $this->entityDeletions);
+
+        $this->entityInsertions = [];
+        $this->entityUpdates = [];
+        $this->entityDeletions = [];
     }
 
     /**
