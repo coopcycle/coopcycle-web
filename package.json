@@ -63,6 +63,7 @@
     "@symfony/ux-react": "file:vendor/symfony/ux-react/assets",
     "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
     "@symfony/webpack-encore": "^1.1.2",
+    "animate.css": "^4.1.1",
     "antd": "^4.24.5",
     "autoprefixer": "^10.4.13",
     "axios": "^0.25.0",
