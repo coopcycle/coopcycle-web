@@ -15,10 +15,8 @@ if (version !== 'dev-master') {
     versionEl.addEventListener('click', () => Cookies.set('__changelog_latest', version));
 
     if (shouldHighlight) {
-        setTimeout(() => {
-            versionEl.classList.add('font-weight-bold');
-            versionEl.classList.add('text-warning');
-            versionEl.classList.add('animate__animated', 'animate__shakeX');
-        }, 400);
+        versionEl.classList.add('font-weight-bold');
+        versionEl.classList.add('text-warning');
+        versionEl.classList.add('animate__animated', 'animate__delay-2s', 'animate__repeat-3', 'animate__headShake');
     }
 }
