@@ -6,13 +6,19 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
+use Doctrine\ORM\UnitOfWork;
+use Exception;
 use Psr\Log\LoggerInterface;
+use ReflectionClass;
 
 class LoggerSubscriber implements EventSubscriber
 {
 
+    /** @var EntityItem[] */
     private array $entityInsertions = [];
+    /** @var EntityItem[] */
     private array $entityUpdates = [];
+    /** @var EntityItem[] */
     private array $entityDeletions = [];
 
     public function __construct(
@@ -33,9 +39,9 @@ class LoggerSubscriber implements EventSubscriber
         $em = $args->getObjectManager();
         $uow = $em->getUnitOfWork();
 
-        $this->entityInsertions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions());
-        $this->entityUpdates = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates());
-        $this->entityDeletions = array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions());
+        $this->entityInsertions = array_merge($this->entityInsertions, array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityInsertions()));
+        $this->entityUpdates = array_merge($this->entityUpdates, array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityUpdates()));
+        $this->entityDeletions = array_merge($this->entityDeletions, array_map(fn($entity) => new EntityItem($uow, $entity), $uow->getScheduledEntityDeletions()));
         //TODO; there are also collectionUpdates and collectionDeletions that can be logged
     }
 
@@ -47,21 +53,42 @@ class LoggerSubscriber implements EventSubscriber
         $this->log($uow, 'insertions', $this->entityInsertions);
         $this->log($uow, 'updates', $this->entityUpdates);
         $this->log($uow, 'deletions', $this->entityDeletions);
+
+        $this->entityInsertions = [];
+        $this->entityUpdates = [];
+        $this->entityDeletions = [];
     }
 
-    private function log($uow, string $action, array $list): void
+    /**
+     * @param EntityItem[] $list
+     */
+    private function log(UnitOfWork $uow, string $action, array $list): void
     {
         if (count($list) === 0) {
             return;
         }
 
-        $this->databaseLogger->info(sprintf('Entity %s: %d; %s',
+        $entities = array_map(fn($entity) => [
+            'class' => $entity->getClassName(),
+            'id' => implode(',', $entity->getDatabaseIdentifier($uow)),
+        ], $list);
+
+        $this->databaseLogger->info(sprintf('Entities %s: %s',
             $action,
-            count($list),
-            implode(', ', array_map(fn($entity) => $entity->format($uow), $list))), [
+            implode(', ', array_map(fn($entity) => sprintf('%s#%s',
+                $entity['class'],
+                $entity['id']), $entities))),
+            [
                 'action' => $action,
-                'count' => count($list),
-        ]);
+                'entities' => array_reduce($entities, function ($carry, $item) {
+                    $className = $item['class'];
+                    if (!isset($carry[$className])) {
+                        $carry[$className] = 0;
+                    }
+                    $carry[$className]++;
+                    return $carry;
+                }, []),
+            ]);
     }
 }
 
@@ -70,19 +97,24 @@ class EntityItem
     private array $initialIdentifier;
 
     public function __construct(
-        $unitOfWork,
+        UnitOfWork $unitOfWork,
         private $entity,
     )
     {
         try {
             $this->initialIdentifier = $unitOfWork->getEntityIdentifier($entity);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // happens for entities that are not inserted yet
             $this->initialIdentifier = [];
         }
     }
 
-    private function getDatabaseIdentifier($unitOfWork)
+    function getClassName(): string
+    {
+        return (new ReflectionClass($this->entity))->getShortName();
+    }
+
+    function getDatabaseIdentifier($unitOfWork): array
     {
         $isPersisted = count($this->initialIdentifier) !== 0;
 
@@ -92,12 +124,5 @@ class EntityItem
         } else {
             return $unitOfWork->getEntityIdentifier($this->entity);
         }
-    }
-
-    function format($unitOfWork): string
-    {
-        return sprintf('%s#%s',
-            (new \ReflectionClass($this->entity))->getShortName(),
-            implode(',', $this->getDatabaseIdentifier($unitOfWork)));
     }
 }

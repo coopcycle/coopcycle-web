@@ -757,9 +757,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  # needs to be run last to take into account all changes
   AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
     tags:
-      - { name: doctrine.event_subscriber }
+      - { name: doctrine.event_subscriber, priority: -100 }
 
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
