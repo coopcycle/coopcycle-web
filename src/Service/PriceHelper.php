@@ -13,21 +13,13 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 final class PriceHelper implements TaxableInterface
 {
     public function __construct(
-        CurrencyContextInterface $currencyContext,
-        SettingsManager $settingsManager,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        TaxRateResolverInterface $taxRateResolver,
-        CalculatorInterface $calculator,
-        string $state)
-    {
-        $this->currencyContext = $currencyContext;
-        $this->settingsManager = $settingsManager;
-
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->calculator = $calculator;
-        $this->state = $state;
-    }
+        private CurrencyContextInterface $currencyContext,
+        private SettingsManager $settingsManager,
+        private TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private TaxRateResolverInterface $taxRateResolver,
+        private CalculatorInterface $calculator,
+        private string $state)
+    {}
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
     {
