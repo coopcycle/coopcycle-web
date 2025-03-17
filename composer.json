@@ -152,7 +152,8 @@
         "flow-php/filesystem": "^0.9.2",
         "picqer/php-barcode-generator": "^2.4",
         "shipmonk/doctrine-entity-preloader": "^1.0",
-        "z4kn4fein/php-semver": "^3.0"
+        "z4kn4fein/php-semver": "^3.0",
+        "invenso/rector": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -168,10 +169,10 @@
         "friends-of-behat/mink": "^1.8",
         "friends-of-behat/mink-extension": "^2.5",
         "friends-of-behat/mink-browserkit-driver": "^1.4",
-        "rector/rector": "^0.17",
         "phpstan/phpstan-doctrine": "^1.0",
         "aeon-php/calendar": "1.0.6",
-        "league/flysystem-memory": "^3.0"
+        "league/flysystem-memory": "^3.0",
+        "rector/rector": "^1.2"
     },
     "repositories": [
         {

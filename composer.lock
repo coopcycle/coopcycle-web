@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c09bd8a83c55d73a673905f48bcb768",
+    "content-hash": "24126f9c3633eb9de9da341b89c50af2",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -6882,6 +6882,60 @@
                 }
             ],
             "time": "2022-05-21T17:30:32+00:00"
+        },
+        {
+            "name": "invenso/rector",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/InvensoGroup/invenso-rector.git",
+                "reference": "ab3032abd5ec13c5e510422715d5c1936c38cf85"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/InvensoGroup/invenso-rector/zipball/ab3032abd5ec13c5e510422715d5c1936c38cf85",
+                "reference": "ab3032abd5ec13c5e510422715d5c1936c38cf85",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0",
+                "symfony/config": "5.4.* | ^6.0",
+                "symfony/console": "5.4.* | ^6.0",
+                "symfony/dependency-injection": "5.4.* | ^6.0",
+                "symfony/http-kernel": "5.4.* | ^6.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.16",
+                "phpstan/phpstan": "^1.10",
+                "rector/rector": "^0.18.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Invenso\\Rector\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Jeroen Aalders",
+                    "email": "jeroen.aalders@invenso.nl"
+                }
+            ],
+            "description": "Invenso Rector Bundle to update API Platform Annotations to Attributes",
+            "homepage": "https://www.invenso.nl",
+            "support": {
+                "email": "info@invenso.nl",
+                "issues": "https://github.com/InvensoGroup/invenso-rector/issues",
+                "source": "https://github.com/InvensoGroup/invenso-rector/tree/1.0.2"
+            },
+            "time": "2024-01-18T14:13:22+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -23727,21 +23781,21 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.17.10",
+            "version": "1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "f4c0627d5e157272cf4783099730ef7241fddb14"
+                "reference": "42a4aa23b48b4cfc8ebfeac2b570364e27744381"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/f4c0627d5e157272cf4783099730ef7241fddb14",
-                "reference": "f4c0627d5e157272cf4783099730ef7241fddb14",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/42a4aa23b48b4cfc8ebfeac2b570364e27744381",
+                "reference": "42a4aa23b48b4cfc8ebfeac2b570364e27744381",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.2|^8.0",
-                "phpstan/phpstan": "^1.10.26"
+                "phpstan/phpstan": "^1.11.11"
             },
             "conflict": {
                 "rector/rector-doctrine": "*",
@@ -23749,15 +23803,13 @@
                 "rector/rector-phpunit": "*",
                 "rector/rector-symfony": "*"
             },
+            "suggest": {
+                "ext-dom": "To manipulate phpunit.xml via the custom-rule command"
+            },
             "bin": [
                 "bin/rector"
             ],
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-main": "0.15-dev"
-                }
-            },
             "autoload": {
                 "files": [
                     "bootstrap.php"
@@ -23776,7 +23828,7 @@
             ],
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.17.10"
+                "source": "https://github.com/rectorphp/rector/tree/1.2.4"
             },
             "funding": [
                 {
@@ -23784,7 +23836,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-08-03T14:19:51+00:00"
+            "time": "2024-08-23T09:03:01+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -24627,5 +24679,5 @@
         "php": ">=8.2"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
