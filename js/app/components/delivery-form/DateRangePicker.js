@@ -24,7 +24,7 @@ function getNextRoundedTime() {
 
 const { Option } = Select
 
-function generateTimeSlots(afterHour = null) {
+function generateTimeSlots(after = null) {
   const items = []
   const minutes = [0, 10, 20, 30, 40, 50]
 
@@ -37,13 +37,13 @@ function generateTimeSlots(afterHour = null) {
     })
   })
 
-  if (!afterHour) return items
+  if (!after) { return items }
 
   return items.map(option => {
     const isBefore =
-      option.time.hour() > afterHour.hour() ||
-      (option.time.hour() === afterHour.hour() &&
-        option.time.minute() > afterHour.minute())
+      option.time.hour() > after.hour() ||
+      (option.time.hour() === after.hour() &&
+        option.time.minute() > after.minute())
     return {
       ...option,
       disabled: !isBefore,
@@ -57,26 +57,16 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
 
   const task = values.tasks[index]
 
-  /** we initialize defaultValues in case we use the switch from timeslots to free picker
-   * as we automatically set after and before to null when we use timeslots
-   */
-
-  const defaultAfterValue = React.useMemo(() => getNextRoundedTime(), [])
-  const defaultBeforeValue = React.useMemo(
-    () => defaultAfterValue.clone().add(10, 'minutes'),
-    [defaultAfterValue],
+  useEffect(() => { 
+    if (!values.tasks[index].after && !values.tasks[index].before) {
+        const after = getNextRoundedTime()
+        const before = after.clone().add(10, 'minutes')
+        setFieldValue(`tasks[${index}].after`, after.toISOString(true))
+        setFieldValue(`tasks[${index}].before`, before.toISOString(true))
+      }
+    },
+    [values.tasks[index].after, values.tasks[index].before]
   )
-
-  /** we use internal state and then synchronize it with the form values */
-  const [afterValue, setAfterValue] = useState(() => {
-    const formValue = values.tasks[index].after
-    return formValue ? moment(formValue) : defaultAfterValue
-  })
-
-  const [beforeValue, setBeforeValue] = useState(() => {
-    const formValue = values.tasks[index].before
-    return formValue ? moment(formValue) : defaultBeforeValue
-  })
 
   const [isComplexPicker, setIsComplexPicker] = useState(
     moment(values.tasks[index].after).isBefore(
@@ -88,64 +78,47 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   const firstSelectOptions = generateTimeSlots()
   const [secondSelectOptions, setSecondSelectOptions] = useState([])
 
-  useEffect(() => {
-    setFieldValue(`tasks[${index}].after`, afterValue.toISOString(true))
-    setFieldValue(`tasks[${index}].before`, beforeValue.toISOString(true))
-  }, [afterValue, beforeValue, index, setFieldValue])
 
   useEffect(() => {
-    if (afterValue) {
-      const updatedSecondOptions = generateTimeSlots(afterValue)
-      setSecondSelectOptions(updatedSecondOptions)
-    } else if (defaultAfterValue) {
-      const updatedSecondOptions = generateTimeSlots(defaultAfterValue)
-      setSecondSelectOptions(updatedSecondOptions)
+    if (values.tasks[index].after) {
+      setSecondSelectOptions(generateTimeSlots(moment(values.tasks[index].after)))
     }
-  }, [afterValue, defaultAfterValue])
+  }, [values.tasks[index].after])
 
   const handleDateChange = newValue => {
-    if (!newValue) return
-
-    const afterHour =
-      afterValue?.format('HH:mm:ss') || defaultAfterValue.format('HH:mm:ss')
-    const beforeHour =
-      beforeValue?.format('HH:mm:ss') || defaultBeforeValue.format('HH:mm:ss')
-
+    const afterHour = moment(values.tasks[index].after).format('HH:mm:ss')
+    const beforeHour = moment(values.tasks[index].before).format('HH:mm:ss')
     const newDate = newValue.format('YYYY-MM-DD')
 
-    setAfterValue(moment(`${newDate} ${afterHour}`))
-    setBeforeValue(moment(`${newDate} ${beforeHour}`))
+    setFieldValue(`tasks[${index}].after`, moment(`${newDate} ${afterHour}`).toISOString(true))
+    setFieldValue(`tasks[${index}].before`, moment(`${newDate} ${beforeHour}`).toISOString(true))
   }
 
   const handleAfterHourChange = newValue => {
-    const date =
-      afterValue?.format('YYYY-MM-DD') || defaultAfterValue.format('YYYY-MM-DD')
-    const newAfterHour = moment(`${date} ${newValue}:00`)
-    const newBeforeHour = newAfterHour.clone().add(10, 'minutes')
+    const date = moment(values.tasks[index].after).format('YYYY-MM-DD')
+    const newAfter = moment(`${date} ${newValue}:00`)
+    const newBefore = newAfter.clone().add(10, 'minutes')
 
-    setAfterValue(newAfterHour)
-    setBeforeValue(newBeforeHour)
+    setFieldValue(`tasks[${index}].after`, newAfter.toISOString(true))
+    setFieldValue(`tasks[${index}].before`, newBefore.toISOString(true))
   }
 
   const handleBeforeHourChange = newValue => {
-    const date =
-      beforeValue?.format('YYYY-MM-DD') ||
-      defaultAfterValue.format('YYYY-MM-DD')
-    const newBeforeValue = moment(`${date} ${newValue}:00`)
-    setBeforeValue(newBeforeValue)
+    const date = moment(values.tasks[index].after).format('YYYY-MM-DD')
+    const newBefore = moment(`${date} ${newValue}:00`)
+    setFieldValue(`tasks[${index}].before`, newBefore.toISOString(true))
   }
 
   const handleComplexPickerDateChange = newValues => {
-    if (!newValues) return
-    setAfterValue(newValues[0])
-    setBeforeValue(newValues[1])
+    setFieldValue(`tasks[${index}].after`, newValues[0].toISOString(true))
+    setFieldValue(`tasks[${index}].before`, newValues[1].toISOString(true))
   }
 
   // When we switch back to simple picker, we need to set back after and before at the same day
   const handleSwitchComplexAndSimplePicker = () => {
     if (isComplexPicker === true) {
-      const before = afterValue.clone().add(1, 'hours')
-      setBeforeValue(before)
+      const before = moment(values.tasks[index].after).clone().add(1, 'hours')
+      setFieldValue(`tasks[${index}].before`, before.toISOString(true))
     }
     setIsComplexPicker(!isComplexPicker)
   }
@@ -165,11 +138,11 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         <DatePicker.RangePicker
           style={{ width: '95%' }}
           format={'DD MMMM YYYY HH:mm'}
-          defaultValue={
-            afterValue && beforeValue
-              ? [afterValue, beforeValue]
-              : [defaultAfterValue, defaultBeforeValue]
-          }
+          // defaultValue={
+          //   afterValue && beforeValue
+          //     ? [afterValue, beforeValue]
+          //     : [defaultAfterValue, defaultBeforeValue]
+          // }
           value={[moment(values.tasks[index].after), moment(values.tasks[index].before)]}
           onChange={handleComplexPickerDateChange}
           showTime={{
@@ -203,7 +176,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         <DatePicker
           className="picker-container__datepicker mr-2"
           format={format}
-          defaultValue={afterValue || defaultAfterValue}
+          // defaultValue={afterValue || defaultAfterValue}
           value={moment(values.tasks[index].after)}
           onChange={newDate => {
             handleDateChange(newDate)
