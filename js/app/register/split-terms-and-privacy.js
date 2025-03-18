@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 
@@ -19,13 +19,12 @@ const init = async () => {
 
   Modal.setAppElement(container)
 
-  render(
+  createRoot(container).render(
     <I18nextProvider i18n={i18n}>
       <LegalTextModal
         termsAndConditionsCheck={termsAndConditionsCheck}
         privacyPolicyCheck={privacyPolicyCheck} />
-    </I18nextProvider>,
-    container
+    </I18nextProvider>
   )
 }
 
