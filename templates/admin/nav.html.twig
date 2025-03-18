@@ -21,8 +21,13 @@
         </li>
         <li>
           <a href="{{ coopcycle_github_release_link() }}"
-            class="text-monospace"
-            target="_blank" id="coopcycle-version">{{ coopcycle_version() }}</a>
+            target="_blank"
+            id="coopcycle-version"
+            data-version="{{ coopcycle_version() }}"
+            class="d-flex align-items-center">
+            <span class="text-monospace mr-1">{{ coopcycle_version() }}</span>
+            <span class="d-none" data-highlight="true">✨</span>
+          </a>
         </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
