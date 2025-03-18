@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Timeline } from 'antd'
 import moment from 'moment'
 
@@ -35,7 +35,7 @@ export default function(ul, options) {
   ul.parentNode.insertBefore(el, ul)
   ul.parentNode.removeChild(ul)
 
-  render(
+  createRoot(el).render(
     <Timeline>
       { events.map(event => (
         <Timeline.Item key={ event.timestamp + '-' + event.name } color={ event.color }>
@@ -45,7 +45,6 @@ export default function(ul, options) {
           ) }
         </Timeline.Item>
       )) }
-    </Timeline>,
-    el
+    </Timeline>
   )
 }

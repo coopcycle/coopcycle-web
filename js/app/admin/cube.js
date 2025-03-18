@@ -22,6 +22,6 @@ if (el) {
       initialVizState={{
         query
       }}
-    />, el)
+    />)
 
 }

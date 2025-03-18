@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import OpeningHours from '../components/OpeningHours'
 import _ from 'lodash'
 
@@ -35,7 +35,7 @@ export default function(el, options) {
 
   const value = _.map(el.querySelectorAll('input[type="hidden"]'), input => input.getAttribute('value'))
 
-  render(<OpeningHours
+  createRoot(el).render(<OpeningHours
     ref={ ref }
     behavior={ options.behavior }
     withBehavior={ options.withBehavior }
@@ -60,7 +60,7 @@ export default function(el, options) {
       _.each(values, (value, index) => addRow(index, value))
       if (typeof options.onRowRemove === 'function') options.onRowRemove(index)
     }}
-    onChangeBehavior={ behavior => options.onChangeBehavior(behavior) } />, el)
+    onChangeBehavior={ behavior => options.onChangeBehavior(behavior) } />)
 
   return {
     setBehavior: behavior => ref.current.setBehavior(behavior),

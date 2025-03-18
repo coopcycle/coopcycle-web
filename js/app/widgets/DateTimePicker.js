@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Form, TimePicker } from 'antd';
 
@@ -145,8 +145,8 @@ export default function(el, options) {
 
   const props = { ...defaultProps, ...options }
 
-  render(
+  createRoot(el).render(
     <ConfigProvider locale={ antdLocale }>
       <DateTimePicker { ...props } />
-    </ConfigProvider>, el)
+    </ConfigProvider>)
 }
