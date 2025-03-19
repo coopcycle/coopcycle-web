@@ -38,7 +38,7 @@ class SearchInput extends React.Component {
     // 114: F3, 70: f
     if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
       e.preventDefault()
-      this.searchRef.focus()
+      this.searchRef.current.focus()
     }
     // 27 : escape
     if (e.keyCode === 27) {
@@ -46,7 +46,7 @@ class SearchInput extends React.Component {
         q: '',
         results: [],
       })
-      this.searchRef.blur && this.searchRef.blur()
+      this.searchRef.current.blur && this.searchRef.current.blur()
     }
   }
 
