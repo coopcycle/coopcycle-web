@@ -1,11 +1,37 @@
 import React from 'react'
-import { Tooltip } from 'antd'
+import { useTranslation } from 'react-i18next'
+import { Popover } from 'antd'
 import { QuestionCircleFilled } from '@ant-design/icons'
 
-export default function HelpIcon({ tooltipText, className }) {
+import './help-icon.scss'
+
+function Content({ tooltipText, docsPath }) {
+  const { t } = useTranslation()
+
   return (
-    <Tooltip title={tooltipText} className={className}>
+    <div className="help-icon-content">
+      {tooltipText}
+      {Boolean(docsPath) && (
+        <div>
+          <a
+            href={`https://docs.coopcycle.org${docsPath}`}
+            target="_blank"
+            rel="noopener noreferrer">
+            {t('VIEW_DOCUMENTATION')} <i className="fa fa-external-link"></i>
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function HelpIcon({ className, tooltipText, docsPath }) {
+  return (
+    <Popover
+      content={<Content tooltipText={tooltipText} docsPath={docsPath} />}
+      className={className}
+      placement="right">
       <QuestionCircleFilled className="color-main" />
-    </Tooltip>
+    </Popover>
   )
 }

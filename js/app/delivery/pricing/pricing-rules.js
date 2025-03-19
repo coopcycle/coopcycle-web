@@ -18,6 +18,7 @@ import RulePicker from './components/RulePicker'
 import PriceRangeEditor from './components/PriceRangeEditor'
 import PricePerPackageEditor from './components/PricePerPackageEditor'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
+import HelpIcon from '../../components/HelpIcon'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
   const { t } = useTranslation()
@@ -287,6 +288,26 @@ function hasLegacyRules() {
 
   return legacyRuleTarget !== undefined
 }
+
+function PricingRuleHelpIcon() {
+  const { t } = useTranslation()
+
+  return (
+    <HelpIcon
+      tooltipText={t('PRICING_PRICING_RULE_HELP')}
+      docsPath={t('PRICING_PRICING_RULE_DOCS_PATH')}
+    />
+  )
+}
+
+$('#pricing-rule-set-label').each(function (index, item) {
+  const root = createRoot(item)
+  root.render(
+    <StrictMode>
+      <PricingRuleHelpIcon />
+    </StrictMode>,
+  )
+})
 
 $('#pricing-rule-set-header').each(function (index, item) {
   if (!hasLegacyRules()) {
