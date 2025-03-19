@@ -124,12 +124,7 @@ html, body {
     }
   }
 
-  &__search-result {
-    padding: 2px;
-    text-wrap: wrap;
-  }
-
-  &__search-result .ant-select-item-option-content {
+  &__search-results .ant-select-item-option-content {
     overflow: unset;
     white-space: unset;
     text-overflow: unset;
