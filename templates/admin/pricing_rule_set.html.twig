@@ -47,12 +47,7 @@
       {% do form.rules.setRendered %}
     {% endif %}
 
-    <div>
-      {{ form_label(form.rules) }}
-      <span id="pricing-rule-set-label">
-        {# rendered by React #}
-      </span>
-    </div>
+    {{ form_label(form.rules) }}
 
     <div class="form-group" id="pricing-rule-set-header">
       {# rendered by React #}
