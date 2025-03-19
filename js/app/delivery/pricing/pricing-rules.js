@@ -18,7 +18,6 @@ import RulePicker from './components/RulePicker'
 import PriceRangeEditor from './components/PriceRangeEditor'
 import PricePerPackageEditor from './components/PricePerPackageEditor'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
-import HelpIcon from '../../components/HelpIcon'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
   const { t } = useTranslation()
