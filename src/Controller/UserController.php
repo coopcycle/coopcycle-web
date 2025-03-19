@@ -159,7 +159,7 @@ class UserController extends AbstractController
         $avatar
             ->create($username)
             ->setBackground($colorHash->hex($username))
-            ->save($dir . "${username}.png");
+            ->save($dir . "{$username}.png");
 
         list($type, $data) = explode(';', (string) $avatar->toBase64());
         list(, $data)      = explode(',', $data);
