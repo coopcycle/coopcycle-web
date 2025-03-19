@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import SketchPicker from 'react-color/lib/Sketch'
 
 const ColorPicker = ({ value, onChange }) => {
@@ -28,5 +28,5 @@ export default function(el) {
     .attr('type', 'hidden')
     .insertBefore($div)
 
-  render(<ColorPicker value={ $(el).val() || '#fff' } onChange={ hex => $(el).val(hex) } />, $div.get(0))
+  createRoot($div.get(0)).render(<ColorPicker value={ $(el).val() || '#fff' } onChange={ hex => $(el).val(hex) } />)
 }

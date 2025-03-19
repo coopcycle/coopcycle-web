@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { ConfigProvider, DatePicker } from 'antd'
 import moment from 'moment'
 
@@ -12,12 +12,12 @@ export default function(el, options) {
     onChange: () => {}
   }
 
-  render(
+  createRoot(el).render(
     <ConfigProvider locale={ antdLocale }>
       <DatePicker
         defaultValue={ moment(options.defaultValue) }
         onChange={ options.onChange }
         picker="month" />
-    </ConfigProvider>, el)
+    </ConfigProvider>)
 
 }

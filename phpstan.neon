@@ -19,6 +19,7 @@ parameters:
     ignoreErrors:
         - '#Access to an undefined property #'
         - '#Call to an undefined method Symfony\\Component\\Form\\FormInterface::getClickedButton\(\)#'
+        - '#Call to an undefined method Symfony\\Component\\Form\\FormInterface<mixed>::getClickedButton\(\)#'
         - '#Call to an undefined method Sylius\\Component\\Order\\Model\\OrderInterface::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Doctrine\\ORM\\EntityRepository<[a-zA-Z\\]+>::[a-zA-Z]+\(\)#'
         - '#Call to an undefined method Sylius\\Component\\(Order|Payment|Product)\\Model\\[a-zA-Z]+Interface::[a-zA-Z]+\(\)#'
