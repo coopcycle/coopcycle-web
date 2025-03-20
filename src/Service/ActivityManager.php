@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event as OrderEvents;
 use AppBundle\Domain\Task\Event as TaskEvents;
+use AppBundle\Domain\Tour\Event as TourEvents;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Type;
@@ -31,6 +32,8 @@ class ActivityManager
         TaskEvents\TaskFailed::class,
         TaskEvents\TaskCancelled::class,
         TaskEvents\TaskRescheduled::class,
+        TourEvents\TourCreated::class,
+        TourEvents\TourUpdated::class
     ];
 
     public function __construct(

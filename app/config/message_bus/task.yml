@@ -147,6 +147,10 @@ services:
         subscribes_to: task:incident-reported
       - name: event_subscriber
         subscribes_to: task:updated
+      - name: event_subscriber
+        subscribes_to: tour:created
+      - name: event_subscriber
+        subscribes_to: tour:updated
 
   coopcycle.domain.task.reactor.send_email:
     class: AppBundle\Domain\Task\Reactor\SendEmail

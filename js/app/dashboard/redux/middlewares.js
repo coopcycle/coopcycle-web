@@ -13,6 +13,7 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   setOptimResult,
   setMapFilterValue,
+  updateTour,
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
@@ -54,6 +55,7 @@ export const socketIO = ({ dispatch, getState }) => {
 
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
       const { event } = message.data
+      const currentDate = selectSelectedDate(getState())
 
       console.debug('Received event : ' + event.name)
 
@@ -66,8 +68,6 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:rescheduled':
         case 'task:incident-reported':
         case 'task:updated':
-          dispatch(updateTask(event.data.task))
-          break
         case 'task:assigned':
         case 'task:unassigned':
           dispatch(updateTask(event.data.task))
@@ -78,14 +78,18 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
+        case 'tour:created':
+        case 'tour:updated':
+            if (event.data.tour.date === currentDate.format('YYYY-MM-DD')) {
+              dispatch(updateTour(event.data.tour))
+            }
+            break
         case 'v2:task_list:updated':
-          const currentDate = selectSelectedDate(getState())
           if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
             dispatch(taskListsUpdated(event.data.task_list))
           } else {
             console.debug('Discarding tasklist event for other day ' + event.data.task_list.date)
           }
-
           break
       }
     })
