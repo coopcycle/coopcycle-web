@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
+use AppBundle\ExpressionLanguage\TimeSlotResolver;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -21,6 +22,7 @@ class PriceCalculationVisitor
         private LoggerInterface $logger = new NullLogger()
 )
     {
+        TimeSlotResolver::setLogger($logger);
     }
 
     public function visit(Delivery $delivery): void

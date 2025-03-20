@@ -43,7 +43,9 @@ use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
+use AppBundle\Entity\TimeSlot\TimeSlotAwareInterface;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\ExpressionLanguage\TimeSlotResolver;
 use AppBundle\Utils\Barcode\Barcode;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use AppBundle\Validator\Constraints\Task as AssertTask;
@@ -334,7 +336,7 @@ use stdClass;
  * @ApiFilter(OrganizationFilter::class, properties={"organization"})
  * @UniqueEntity(fields={"organization", "ref"}, errorPath="ref")
  */
-class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, TimeSlotAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -1227,6 +1229,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $values['pickup'] = $this->isPickup() ? $thisObj : $emptyObject;
         $values['dropoff'] = $this->isDropoff() ? $thisObj : $emptyObject;
         $values['packages'] = new PackagesResolver($this);
+        $values['time_slot'] = new TimeSlotResolver($this);
 
         $values['task'] = $thisObj;
 
@@ -1417,5 +1420,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $metadata['iub_code'] = $iub_code;
         $this->setMetadata($metadata);
         return $this;
+    }
+
+
+    public function getTimeSlot(): string
+    {
+        // TODO: Implement getTimeSlot() method.
+        return '/api/time_slots/1';
     }
 }
