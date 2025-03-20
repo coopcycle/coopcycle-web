@@ -107,6 +107,15 @@ AppBundle\Entity\Store:
       - addAddress: [ "@client_1" ]
 
 AppBundle\Entity\User:
+  admin:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'admin'
+        - 'admin'
+        - 'admin@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_ADMIN', 'ROLE_COURIER', 'ROLE_DISPATCHER' ]
   store1Owner:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':

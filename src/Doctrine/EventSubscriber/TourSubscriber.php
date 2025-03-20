@@ -2,21 +2,27 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-
+use AppBundle\Domain\Tour\Event\TourUpdated;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\Tour;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
-
+use SimpleBus\Message\Bus\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class TourSubscriber implements EventSubscriber
 {
     private $logger;
+    private $tours = [];
 
     public function __construct(
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        private readonly MessageBus $eventBus,
+        private readonly MessageBusInterface $messageBus,
+    )
     {
         $this->logger = $logger;
     }
@@ -24,7 +30,8 @@ class TourSubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return array(
-            Events::onFlush
+            Events::onFlush,
+            Events::postFlush,
         );
     }
 
@@ -69,6 +76,39 @@ class TourSubscriber implements EventSubscriber
         $uow->computeChangeSets();
     }
 
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        $this->logger->debug(sprintf('Tours updated = %d', count($this->tours)));
+        $this->eventBus->handle(new TourUpdated());
+
+        // if (count($this->tours) === 0) {
+        //     return;
+        // }
+
+        // foreach ($this->tours as $tour) {
+        //     $myTaskListDto = $this->taskListRepository->findMyTaskListAsDto($taskList->getCourier(), $taskList->getDate());
+        //     $this->eventBus->handle(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
+        //     $this->eventBus->handle(new TaskListUpdatedv2($taskList));
+
+        //     $date = $taskList->getDate();
+        //     $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];
+
+        //     $usersByDate[$date] = array_merge($users, [
+        //         $taskList->getCourier()
+        //     ]);
+        // }
+    }
+
+    private function addTour(Tour $tour) {
+        // WARNING
+        // Do not use in_array() or array_search()
+        // It causes error "Nesting level too deep - recursive dependency?"
+        $oid = spl_object_hash($tour);
+        if (!isset($this->taskLists[$oid])) {
+            $this->tours[$oid] = $tour;
+        }
+    }
+
     private function processTourItem (TaskCollectionItem $taskCollectionItem, bool $removed, Tour $taskCollection) {
 
         $this->logger->debug(sprintf('Tour modification: processing TaskCollectionItem #%d', $taskCollectionItem->getId()));
@@ -88,6 +128,10 @@ class TourSubscriber implements EventSubscriber
                 $this->logger->debug(sprintf('Tour modification: Task #%d needs to be unassigned', $taskCollectionItem->getTask()->getId()));
                 $taskCollectionItem->getTask()->unassign();
             }
+        }
+
+        if ($taskCollectionItem instanceof Tour) {
+            $this->addTour($taskCollectionItem);
         }
     }
 }
