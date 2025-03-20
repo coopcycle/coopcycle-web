@@ -55,6 +55,7 @@ export const socketIO = ({ dispatch, getState }) => {
 
     centrifuge.subscribe(getState().config.centrifugoEventsChannel, function(message) {
       const { event } = message.data
+      const currentDate = selectSelectedDate(getState())
 
       console.debug('Received event : ' + event.name)
 
@@ -79,16 +80,16 @@ export const socketIO = ({ dispatch, getState }) => {
           break
         case 'tour:created':
         case 'tour:updated':
-            dispatch(updateTour(event.data.tour))
+            if (event.data.tour.date === currentDate.format('YYYY-MM-DD')) {
+              dispatch(updateTour(event.data.tour))
+            }
             break
         case 'v2:task_list:updated':
-          const currentDate = selectSelectedDate(getState())
           if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
             dispatch(taskListsUpdated(event.data.task_list))
           } else {
             console.debug('Discarding tasklist event for other day ' + event.data.task_list.date)
           }
-
           break
       }
     })
