@@ -190,7 +190,7 @@ class PriceCalculationVisitor
             $priceMultiplier = $productVariant->getPriceMultiplier();
 
             $totalPrice += $priceAdditive;
-            $totalPrice *= $priceMultiplier;
+            $totalPrice = (int) ceil($totalPrice * ($priceMultiplier / 100 / 100));
         }
 
         // Later on: group the same product variants into one OrderItem

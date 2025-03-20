@@ -169,10 +169,20 @@ class PricingRule
             $language = new ExpressionLanguage();
         }
 
-        return new ProductVariant(
-            $this->getExpression(),
-            $language->evaluate($this->getPrice(), $values),
-            1
-        );
+        $priceExpression = $this->getPrice();
+        $result = $language->evaluate($priceExpression, $values);
+
+        if (str_contains($priceExpression, 'price_percentage')) {
+            return new ProductVariant(
+                $priceExpression,
+                0,
+                $result
+            );
+        } else {
+            return new ProductVariant(
+                $priceExpression,
+                $result,
+            );
+        }
     }
 }

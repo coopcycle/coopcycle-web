@@ -8,8 +8,9 @@ class ProductVariant
 {
     public function __construct(
         private readonly string $matchedRule,
-        private readonly int $priceAdditive,
-        private readonly int $priceMultiplier)
+        private readonly int $priceAdditive, // in cents
+        private readonly int $priceMultiplier = 10000 // 0.01% - 1; 100% - 10000
+    )
     {
     }
 
