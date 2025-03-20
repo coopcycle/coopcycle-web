@@ -13,6 +13,7 @@ import {
   MODIFY_TASK_LIST_REQUEST,
   setOptimResult,
   setMapFilterValue,
+  updateTour,
 } from './actions'
 import _ from 'lodash'
 import Centrifuge from 'centrifuge'
@@ -66,8 +67,6 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task:rescheduled':
         case 'task:incident-reported':
         case 'task:updated':
-          dispatch(updateTask(event.data.task))
-          break
         case 'task:assigned':
         case 'task:unassigned':
           dispatch(updateTask(event.data.task))
@@ -78,6 +77,10 @@ export const socketIO = ({ dispatch, getState }) => {
         case 'task_import:failure':
           dispatch(importError(event.data.token, event.data.message))
           break
+        case 'tour:created':
+        case 'tour:updated':
+            dispatch(updateTour(event.data.tour))
+            break
         case 'v2:task_list:updated':
           const currentDate = selectSelectedDate(getState())
           if (event.data.task_list.date === currentDate.format('YYYY-MM-DD')) {
