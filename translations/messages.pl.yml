@@ -46,7 +46,6 @@ adminDashboard.pricing.createNew: Dodaj nową wycenę
 adminDashboard.pricing.noPricings: Brak wycen
 adminDashboard.pricing.noRuleFound: Brak zasad wyceny. Zasady wyceny pozwalają wyliczyć
   koszt dostawy.
-adminDashboard.pricing.addRule: Dodaj zasadę
 adminDashboard.pricing.title: Cennik
 adminDashboard.pricing.settings: Ustawienia
 adminDashboard.settings.title: Ustawienia

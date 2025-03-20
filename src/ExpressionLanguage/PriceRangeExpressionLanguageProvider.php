@@ -3,8 +3,6 @@
 namespace AppBundle\ExpressionLanguage;
 
 use AppBundle\Entity\Address;
-use Carbon\Carbon;
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 

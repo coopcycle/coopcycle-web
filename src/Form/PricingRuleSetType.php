@@ -3,6 +3,7 @@
 namespace AppBundle\Form;
 
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Service\FormFieldUtils;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,6 +17,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PricingRuleSetType extends AbstractType
 {
+
+    public function __construct(
+        private readonly FormFieldUtils $formFieldUtils,
+    )
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -28,23 +36,22 @@ class PricingRuleSetType extends AbstractType
                     'form.pricing_rule_set.strategy.find.label' => 'find',
                     'form.pricing_rule_set.strategy.map.label' => 'map',
                 ],
-                'label' => 'form.pricing_rule_set.strategy.label',
+                ...$this->formFieldUtils->getLabelWithLinkToDocs('form.pricing_rule_set.strategy.label', 'form.pricing_rule_set.strategy.docs_path'),
                 'help' => 'form.pricing_rule_set.strategy.help',
                 'multiple' => false,
                 'expanded' => true,
             ])
-            ->add('options', ChoiceType::class, [
-                'required' => false,
-                'choices'  => [
-                    'form.pricing_rule_set.options.map_all_tasks.label' => PricingRuleSet::OPTION_MAP_ALL_TASKS,
-                ],
-                'label' => 'form.pricing_rule_set.options.label',
-                'help' => 'form.pricing_rule_set.options.map_all_tasks.help',
-                'multiple' => true,
-                'expanded' => true,
-            ])
+            // There is no options for now
+//            ->add('options', ChoiceType::class, [
+//                'required' => false,
+//                'choices'  => [
+//                ],
+//                'label' => 'form.pricing_rule_set.options.label',
+//                'multiple' => true,
+//                'expanded' => true,
+//            ])
             ->add('rules', CollectionType::class, array(
-                'label' => 'form.pricing_rule_set.rules.label',
+                ...$this->formFieldUtils->getLabelWithLinkToDocs('form.pricing_rule_set.rules.label', 'form.pricing_rule_set.rules.docs_path'),
                 'entry_type' => PricingRuleType::class,
                 'allow_add' => true,
                 'allow_delete' => true,

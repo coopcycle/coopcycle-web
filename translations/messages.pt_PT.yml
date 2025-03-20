@@ -74,7 +74,6 @@ adminDashboard.pricing.noPricings: Ainda não existem preços
 adminDashboard.pricing.createNew: Criar um novo preço
 adminDashboard.pricing.noRuleFound: Regras de preços não encontradas. As regras de
   preços definem como é que os custos de entrega são calculados.
-adminDashboard.pricing.addRule: Adicionar regra
 adminDashboard.tags.title: Marcadores
 adminDashboard.tags.createNew: Criar um marcador novo
 adminDashboard.tags.name: Nome

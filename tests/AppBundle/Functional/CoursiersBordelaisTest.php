@@ -11,6 +11,9 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class CoursiersBordelaisTest extends TestCase
 {
+    /**
+     * @var PricingRule[]
+     */
     private $pricingRules = [];
 
     public function setUp(): void
@@ -28,7 +31,7 @@ class CoursiersBordelaisTest extends TestCase
         ];
     }
 
-    private static function createPricingRule($expression, $price)
+    private static function createPricingRule($expression, $price): PricingRule
     {
         $rule = new PricingRule();
         $rule->setExpression($expression);
@@ -70,8 +73,8 @@ class CoursiersBordelaisTest extends TestCase
         $expressionLanguage->addFunction(ExpressionFunction::fromPhp('ceil'));
 
         foreach ($this->pricingRules as $pricingRule) {
-            if ($pricingRule->matches($delivery)) {
-                $actualPrice = $pricingRule->evaluatePrice($delivery, $expressionLanguage);
+            if ($pricingRule->matches(Delivery::toExpressionLanguageValues($delivery), $expressionLanguage)) {
+                $actualPrice = $pricingRule->evaluatePrice(Delivery::toExpressionLanguageValues($delivery), $expressionLanguage);
                 $this->assertEquals($expectedPrice, $actualPrice);
             }
         }
