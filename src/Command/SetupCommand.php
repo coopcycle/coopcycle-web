@@ -312,8 +312,14 @@ class SetupCommand extends Command
             $product->setFallbackLocale($locale);
             $translation = $product->getTranslation($locale);
 
-            $translation->setName($name);
-            $translation->setSlug($this->slugify->slugify($name));
+            if (null === $translation->getName()) {
+                $output->writeln(sprintf('Setting name for product « on demand delivery » in locale "%s"', $locale));
+
+                $translation->setName($name);
+                $translation->setSlug($this->slugify->slugify($name));
+            } else {
+                $output->writeln(sprintf('Product « on demand delivery » already has a name in locale "%s"', $locale));
+            }
         }
 
         $this->productManager->flush();
