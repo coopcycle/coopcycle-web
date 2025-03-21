@@ -9,6 +9,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
+use Exception;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -79,7 +80,13 @@ class TourSubscriber implements EventSubscriber
     public function postFlush(PostFlushEventArgs $args)
     {
         $this->logger->debug(sprintf('Tours updated = %d', count($this->tours)));
-        $this->eventBus->handle(new TourUpdated());
+        try {
+            $message = new TourUpdated();
+            $this->eventBus->handle($message);
+        }
+        catch (Exception $e) {
+            var_dump($e);
+        }
 
         // if (count($this->tours) === 0) {
         //     return;
