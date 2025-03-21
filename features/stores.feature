@@ -118,7 +118,7 @@ Feature: Stores
             "@id": "/api/stores/@string@",
             "id": "@integer@.greaterThan(0)",
             "@type": "http://schema.org/Store",
-            "name": "@string@",
+            "name": "@string@.notContains('Deleted store')",
             "enabled": true,
             "address": {"@*@":"@*@"},
             "timeSlot": "/api/time_slots/1",
@@ -128,7 +128,7 @@ Feature: Stores
             "packagesRequired": @boolean@,
             "multiDropEnabled": @boolean@
           },
-          @...@
+          "@array_previous_repeat@"
         ],
         "hydra:totalItems": 9
       }
