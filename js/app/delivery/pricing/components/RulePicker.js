@@ -4,7 +4,7 @@ import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 
 import RulePickerLine from './RulePickerLine'
-import { parseAST } from '../delivery/pricing-rule-parser'
+import { parseAST } from '../pricing-rule-parser'
 
 export const numericTypes = [
   'distance',
@@ -131,6 +131,7 @@ class RulePicker extends React.Component {
             <RulePickerLine
               key={ `${index}-${this.state.rev}` }
               index={ index }
+              ruleTarget={ this.props.ruleTarget }
               type={ line.left }
               operator={ line.operator }
               value={ line.right }
@@ -142,7 +143,7 @@ class RulePicker extends React.Component {
           </tbody>
         </table>
         <div className="text-right">
-          <button className="btn btn-xs btn-default" onClick={this.addLine}>
+          <button className="btn btn-xs btn-default" onClick={this.addLine} data-testid="rule-picker-add-condition">
             <i className="fa fa-plus"></i> { this.props.t('RULE_PICKER_ADD_CONDITION') }
           </button>
         </div>
@@ -157,6 +158,7 @@ class RulePicker extends React.Component {
 }
 
 RulePicker.defaultProps = {
+  ruleTarget: 'DELIVERY',
   expression: '',
   onExpressionChange: () => {},
   zones: [],
@@ -164,6 +166,7 @@ RulePicker.defaultProps = {
 }
 
 RulePicker.propTypes = {
+  ruleTarget: PropTypes.string,
   expression: PropTypes.string.isRequired,
   onExpressionChange: PropTypes.func.isRequired,
   zones: PropTypes.arrayOf(PropTypes.string),
