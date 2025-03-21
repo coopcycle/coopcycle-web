@@ -35,6 +35,7 @@ use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\Task\RecurrenceRule;
@@ -496,6 +497,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     */
     private $traveledDistanceMeter = 0;
 
+    /**
+     * @Groups({"delivery_create"})
+     */
+    private ?string $timeSlotUrl = null;
 
     public function __construct()
     {
@@ -1423,9 +1428,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
 
-    public function getTimeSlot(): string
+    public function getTimeSlot(): ?string
     {
         // TODO: Implement getTimeSlot() method.
-        return '/api/time_slots/1';
+        return $this->timeSlotUrl;
     }
 }

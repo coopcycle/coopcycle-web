@@ -23,7 +23,7 @@ class TimeSlotResolver
     public function equal($name)
     {
         TimeSlotResolver::$logger->info('TimeSlotResolver::equal', [
-            'entity' => $this->entity,
+            'entity' => $this->entity->getTimeSlot(),
             'name' => $name,
         ]);
 
