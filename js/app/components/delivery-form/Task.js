@@ -34,7 +34,7 @@ const renderTimeSlotPicker = ({isDispatcher, storeDeliveryInfos, index,  format,
 const renderDatePart = ({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => {
     if (!Array.isArray(storeDeliveryInfos.timeSlots)) { // not loaded yet
       return <Spinner />
-    } else if (storeDeliveryInfos.timeSlots.length > 1 && !isEdit) {
+    } else if (storeDeliveryInfos.timeSlots.length > 0 && !isEdit) {
       return renderTimeSlotPicker({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels})
     } else {
       return <DateRangePicker format={format} index={index} isDispatcher={isDispatcher} />

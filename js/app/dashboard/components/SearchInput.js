@@ -7,7 +7,7 @@ import { selectFuseSearch } from '../redux/selectors'
 
 import Task from './Task'
 
-import { AutoComplete, Input, Select } from 'antd'
+import { AutoComplete, Input } from 'antd'
 
 
 class SearchInput extends React.Component {
@@ -38,7 +38,7 @@ class SearchInput extends React.Component {
     // 114: F3, 70: f
     if (e.keyCode === 114 || (isCtrl && e.keyCode === 70)) {
       e.preventDefault()
-      this.searchRef.focus()
+      this.searchRef.current.focus()
     }
     // 27 : escape
     if (e.keyCode === 27) {
@@ -46,7 +46,7 @@ class SearchInput extends React.Component {
         q: '',
         results: [],
       })
-      this.searchRef.blur && this.searchRef.blur()
+      this.searchRef.current.blur && this.searchRef.current.blur()
     }
   }
 
@@ -59,8 +59,9 @@ class SearchInput extends React.Component {
 
   render () {
     const resultsDisplay = _.map(this.state.results, (task, index) => {
-      return (
-        <Select.Option key={index} className="dashboard__search-result">
+      return {
+        value: task['@id'],
+        label:(
           <Task
             key={ index }
             taskId={ task['@id'] }
@@ -68,8 +69,9 @@ class SearchInput extends React.Component {
             selectTask={ this.props.selectTask }
             taskWithoutDrag
           />
-        </Select.Option>
-      )})
+        )
+      }
+    })
 
     return (
       <AutoComplete
@@ -80,8 +82,9 @@ class SearchInput extends React.Component {
           this.setState({ q: value })
           this.search(value)
         }}
-        dataSource={resultsDisplay}
-        dropdownStyle={{zIndex: 1, height: "30vh"}}
+        options={resultsDisplay}
+        dropdownStyle={{ zIndex: 1 }}
+        popupClassName="dashboard__search-results"
       >
         <Input.Search placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') } />
       </AutoComplete>

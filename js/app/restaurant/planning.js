@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { ConfigProvider, Calendar, DatePicker } from 'antd'
 import moment from 'moment'
 import _ from 'lodash'
@@ -150,12 +150,10 @@ class ClosingRulesCalendar extends React.Component {
 $.getJSON(window.Routing.generate('profile_jwt'))
   .then(result => {
     token = result.jwt
-    render(
-      <ClosingRulesCalendar rules={closingRules} />,
-      document.getElementById('calendar-planning')
+    createRoot(document.getElementById('calendar-planning')).render(
+      <ClosingRulesCalendar rules={closingRules} />
     )
-    render(
-      <ClosingRuleRangePicker />,
-      document.getElementById('closing-rules-range-picker')
+    createRoot(document.getElementById('closing-rules-range-picker')).render(
+      <ClosingRuleRangePicker />
     )
   })

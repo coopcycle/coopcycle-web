@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import ReactMarkdown from 'react-markdown'
 import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/markdown/markdown'
@@ -25,11 +25,13 @@ document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
     theme: "monokai"
   })
 
+  const root = createRoot(preview)
+
   cm.on('change', (editor) => {
-    render(<ReactMarkdown>{ editor.getValue() }</ReactMarkdown>, preview)
+    root.render(<ReactMarkdown>{ editor.getValue() }</ReactMarkdown>)
   })
 
-  render(<ReactMarkdown>{ textarea.value }</ReactMarkdown>, preview)
+  root.render(<ReactMarkdown>{ textarea.value }</ReactMarkdown>)
 
 })
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 import { Provider } from 'react-redux'
@@ -21,12 +21,11 @@ if (container) {
 
   const store = createStoreFromPreloadedState(preloadedState)
 
-  render(
+  createRoot(container).render(
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <AdhocOrderStart />
       </I18nextProvider>
-    </Provider>,
-    container
+    </Provider>
   )
 }

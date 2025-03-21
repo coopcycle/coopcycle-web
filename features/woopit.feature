@@ -1,6 +1,5 @@
 Feature: Woopit
 
-  @debug
   Scenario: Receive & confirm quote
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1078,7 +1077,7 @@ Feature: Woopit
         "reasons": [
           "REFUSED_EXCEPTION"
         ],
-        "comment": "The store with ID store456 does not exist"
+        "comment": "The store with ID \"store456\" does not exist"
       }
       """
 

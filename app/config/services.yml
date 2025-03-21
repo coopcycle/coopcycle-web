@@ -690,18 +690,29 @@ services:
 
   AppBundle\Service\RemotePushNotificationManager: ~
 
-  AppBundle\Service\Geocoder:
-    arguments:
-      $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
-      $country: "%country_iso%"
-      $locale: "%env(COOPCYCLE_LOCALE)%"
-      $rateLimitPerSecond: 15
-      $autoconfigure: "%env(bool:COOPCYCLE_GEOCODER_AUTOCONF_ENABLED)%"
-
   AppBundle\Geocoder\RateLimiterStore:
     arguments:
       $redis: '@snc_redis.shared'
       $service: opencage
+
+  geocode_earth.rate_limiter_store:
+    class: AppBundle\Geocoder\RateLimiterStore
+    autowire: false
+    arguments:
+      $redis: '@snc_redis.shared'
+      $service: geocode_earth
+
+  App\Service\GeocodeEarthRateLimiter: '@geocode_earth.rate_limiter_store'
+
+  AppBundle\Service\Geocoder:
+    arguments:
+      $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
+      $geocodeEarthApiKey: '%env(GEOCODE_EARTH_API_KEY)%'
+      $country: "%country_iso%"
+      $locale: "%env(COOPCYCLE_LOCALE)%"
+      $rateLimitPerSecond: 15
+      $autoconfigure: "%env(bool:COOPCYCLE_GEOCODER_AUTOCONF_ENABLED)%"
+      $geocodeEarthRateLimiterStore : "@geocode_earth.rate_limiter_store"
 
   # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
@@ -746,9 +757,10 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
+  # needs to be run last to take into account all changes
   AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
     tags:
-      - { name: doctrine.event_subscriber }
+      - { name: doctrine.event_subscriber, priority: -100 }
 
   AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
     arguments:
