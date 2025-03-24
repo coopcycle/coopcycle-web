@@ -43,7 +43,7 @@ class PriceCalculationVisitor
         // Apply the rules to the whole delivery/order
         $result = $this->visitDelivery($this->ruleSet, $delivery);
 
-        if (array_count_values($result['matchedRules']) > 0) {
+        if (count($result['matchedRules']) > 0) {
             $this->matchedRules = array_merge($this->matchedRules, $result['matchedRules']);
             $this->price += $result['price'];
         }
