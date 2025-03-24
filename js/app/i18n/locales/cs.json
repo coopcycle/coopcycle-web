@@ -39,7 +39,7 @@
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Kliknutím na objednávku zobrazíte podrobnosti",
         "ADMIN_DASHBOARD_DISPLAY": "Zobrazit",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Přidat do plánování",
-        "ADMIN_DASHBOARD_DISTANCE": "Vzdálenost",
+        "ADMIN_DASHBOARD_DISTANCE": "Vzdálenost: {{ distance }} kms",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Přetáhněte dodávky sem",
         "ADMIN_DASHBOARD_DURATION": "Trvání",
         "ADMIN_DASHBOARD_ADD": "Přidat",

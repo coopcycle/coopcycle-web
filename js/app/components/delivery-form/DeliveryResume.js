@@ -16,7 +16,7 @@ export default ({ distance, tasks }) => {
     <div className="resume mb-4">
       <div className="resume__distance mt-2 mb-4">
         <span className="font-weight-bold" data-testid="delivery-distance">
-          {t('ADMIN_DASHBOARD_DISTANCE')}: {distance} kms
+          {t('ADMIN_DASHBOARD_DISTANCE', {distance})}
         </span>
       </div>
 

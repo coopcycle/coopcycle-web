@@ -36,7 +36,7 @@
         "ADMIN_DASHBOARD_ADD": "Hinzufügen",
         "ADMIN_DASHBOARD_DURATION": "Dauer",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Ziehe Lieferungen hierhin",
-        "ADMIN_DASHBOARD_DISTANCE": "Entfernung",
+        "ADMIN_DASHBOARD_DISTANCE": "Entfernung: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Nutzer hinzufügen",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Klicke auf eine Bestellung um die Details zu visualisieren",
         "ADMIN_DASHBOARD_ORDERS_REFUSE": "Ablehnen",

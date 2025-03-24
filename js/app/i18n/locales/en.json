@@ -56,7 +56,7 @@
         "ADMIN_DASHBOARD_ADD": "Add",
         "ADMIN_DASHBOARD_DURATION": "Duration",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Drag deliveries here",
-        "ADMIN_DASHBOARD_DISTANCE": "Distance",
+        "ADMIN_DASHBOARD_DISTANCE": "Distance: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Add to planning",
         "ADMIN_DASHBOARD_DISPLAY": "Display",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Click on an order to display details",

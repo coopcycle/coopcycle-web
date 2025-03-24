@@ -41,7 +41,7 @@
         "ADMIN_DASHBOARD_ADD": "Añadir",
         "ADMIN_DASHBOARD_DURATION": "Duración",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Arrastra las entregas aquí",
-        "ADMIN_DASHBOARD_DISTANCE": "Distancia",
+        "ADMIN_DASHBOARD_DISTANCE": "Distancia: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Añadir al programa",
         "ADMIN_DASHBOARD_DISPLAY": "Mostrar",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Haz clic en un pedido para mostrar los detalles",

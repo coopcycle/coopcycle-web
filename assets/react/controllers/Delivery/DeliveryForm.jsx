@@ -278,7 +278,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
     const createOrEditADelivery = async (deliveryId) => {
       const url = getUrl(deliveryId);
       const method = deliveryId ? 'put' : 'post';
-
+      deliveryId && !isDispatcher
       let data = {
         store: storeDeliveryInfos['@id'],
         tasks: values.tasks
@@ -327,6 +327,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
     }
   }, [storeDeliveryInfos])
 
+  const isStoreOwnerAndEdit = deliveryId && !isDispatcher
 
   const getPrice = _.debounce(
     (values) => {
@@ -509,7 +510,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
                               );
                             })}
 
-                          {storeDeliveryInfos.multiDropEnabled && !(deliveryId && !isDispatcher) ? <div
+                          {storeDeliveryInfos.multiDropEnabled && !(isStoreOwnerAndEdit) ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button

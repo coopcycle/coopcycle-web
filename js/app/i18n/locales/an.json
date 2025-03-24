@@ -33,7 +33,7 @@
         "ADMIN_DASHBOARD_ADD": "Anyadir",
         "ADMIN_DASHBOARD_DURATION": "Durada",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Arrociega las entregas aquí",
-        "ADMIN_DASHBOARD_DISTANCE": "Distancia",
+        "ADMIN_DASHBOARD_DISTANCE": "Distancia: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Anyadir a lo programa",
         "ADMIN_DASHBOARD_DISPLAY": "Amostrar",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Fe clic en un pediu pa amostrar los detalles",
