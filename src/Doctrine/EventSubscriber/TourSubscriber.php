@@ -115,9 +115,11 @@ class TourSubscriber implements EventSubscriber
         foreach ($this->insertedTours as $insertedTour) {
             $this->eventBus->handle(new TourCreated($insertedTour));
         }
+        $this->insertedTours = [];
 
         foreach($this->updatedTours as $updatedTour) {
             $this->eventBus->handle(new TourUpdated($updatedTour));
         }
+        $this->updatedTours = [];
     }
 }
