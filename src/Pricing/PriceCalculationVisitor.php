@@ -39,17 +39,19 @@ class PriceCalculationVisitor
             // Apply the rules to each task/point
             foreach ($tasks as $task) {
                 $result = $this->visitTask($this->ruleSet, $delivery, $task);
-
-                $this->matchedRules = array_merge($this->matchedRules, $result['matchedRules']);
-                $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
+                $matchedRulesPerTask = $result['matchedRules'];
+                if (count($matchedRulesPerTask) > 0) {
+                    $this->matchedRules = array_merge($this->matchedRules, $matchedRulesPerTask);
+                    $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
+                }
             }
         }
 
         // Apply the rules to the whole delivery/order
         $result = $this->visitDelivery($this->ruleSet, $delivery);
-
-        if (count($result['matchedRules']) > 0) {
-            $this->matchedRules = array_merge($this->matchedRules, $result['matchedRules']);
+        $matchedRulesPerDelivery = $result['matchedRules'];
+        if (count($matchedRulesPerDelivery) > 0) {
+            $this->matchedRules = array_merge($this->matchedRules, $matchedRulesPerDelivery);
             $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
         }
 
