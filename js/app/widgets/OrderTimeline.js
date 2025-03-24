@@ -21,7 +21,7 @@ function handleEvent(name, event, order, timeline) {
 
 export default function(el, options) {
 
-  const timeline = render(<OrderTimeline order={ options.order } events={ options.events } />, el)
+  const timeline = render(<OrderTimeline order={ options.order } orderAccessToken={ options.orderAccessToken } events={ options.events } />, el)
 
   if (!_.includes(['cancelled', 'fulfilled', 'refused'], options.order.state)) {
 

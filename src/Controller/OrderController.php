@@ -571,8 +571,9 @@ class OrderController extends AbstractController
             $this->checkoutLogger->error($e->getMessage());
         }
 
-        return $this->render('order/foodtech.html.twig', $this->auth([
+        return $this->render('order/foodtech.html.twig', [
             'order' => $order,
+            'orderAccessToken' => $this->orderAccessTokenManager->create($order), // token to pull order state from the api
             'events' => (new OrderEventCollection($order))->toArray(),
             'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
                 'groups' => ['order'],
@@ -585,7 +586,7 @@ class OrderController extends AbstractController
                 'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
                 'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
             ]
-        ]));
+        ]);
     }
 
     /**

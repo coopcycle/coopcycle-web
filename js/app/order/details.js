@@ -10,9 +10,11 @@ if (timelineEl) {
 
   const order = JSON.parse(timelineEl.dataset.order)
   const events = JSON.parse(timelineEl.dataset.events)
+  const orderAccessToken = timelineEl.dataset.orderAccessToken
 
   new OrderTimeline(timelineEl, {
     order,
+    orderAccessToken,
     events,
     centrifugo: {
       channel: timelineEl.dataset.centrifugoChannel,
