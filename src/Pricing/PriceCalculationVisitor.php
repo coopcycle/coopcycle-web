@@ -33,17 +33,15 @@ class PriceCalculationVisitor
         $this->productVariants = [];
         $this->price = null;
 
-        if ($this->ruleSet->getStrategy() === 'map') {
-            $tasks = $delivery->getTasks();
+        $tasks = $delivery->getTasks();
 
-            // Apply the rules to each task/point
-            foreach ($tasks as $task) {
-                $result = $this->visitTask($this->ruleSet, $delivery, $task);
-                $matchedRulesPerTask = $result['matchedRules'];
-                if (count($matchedRulesPerTask) > 0) {
-                    $this->matchedRules = array_merge($this->matchedRules, $matchedRulesPerTask);
-                    $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
-                }
+        // Apply the rules to each task/point
+        foreach ($tasks as $task) {
+            $result = $this->visitTask($this->ruleSet, $delivery, $task);
+            $matchedRulesPerTask = $result['matchedRules'];
+            if (count($matchedRulesPerTask) > 0) {
+                $this->matchedRules = array_merge($this->matchedRules, $matchedRulesPerTask);
+                $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
             }
         }
 
@@ -148,9 +146,32 @@ class PriceCalculationVisitor
         $matchedRules = [];
         $productVariants = [];
 
-        if ($ruleSet->getStrategy() === 'map') {
-            $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
+        $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
 
+        if ($ruleSet->getStrategy() === 'find') {
+            foreach ($ruleSet->getRules() as $rule) {
+                if ($rule->getTarget() === PricingRule::TARGET_TASK) {
+                    if ($rule->matches($taskAsExpressionLanguageValues, $this->expressionLanguage)) {
+                        $price = $rule->evaluatePrice($taskAsExpressionLanguageValues, $this->expressionLanguage);
+
+                        $this->logger->info(sprintf('Matched rule "%s", price: %d', $rule->getExpression(), $price), [
+                            'strategy' => $ruleSet->getStrategy(),
+                            'target' => $rule->getTarget(),
+                        ]);
+
+                        $matchedRules[] = $rule;
+                        $pricePerTask = $price;
+
+                        return [
+                            'matchedRules' => $matchedRules,
+                            'price' => $pricePerTask,
+                        ];
+                    }
+                }
+            }
+        }
+
+        if ($ruleSet->getStrategy() === 'map') {
             foreach ($ruleSet->getRules() as $rule) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
