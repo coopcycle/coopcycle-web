@@ -39,7 +39,6 @@ class TourSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args)
     {
-
         // init
         $this->insertedTours = [];
         $this->updatedTours = [];
@@ -47,10 +46,12 @@ class TourSubscriber implements EventSubscriber
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
+        $deletedEntities = $uow->getScheduledEntityDeletions();
+
         $entities = array_merge(
             $uow->getScheduledEntityInsertions(),
             $uow->getScheduledEntityUpdates(),
-            $uow->getScheduledEntityDeletions()
+            $deletedEntities
         );
 
         $insertedTours = array_filter($uow->getScheduledEntityInsertions(), function ($entity) {
@@ -78,7 +79,7 @@ class TourSubscriber implements EventSubscriber
                 $removed = false;
             }
 
-            if ($taskCollection instanceof Tour) {
+            if ($taskCollection instanceof Tour && !in_array($taskCollection, $deletedEntities)) {
                 $this->processTourItem($taskCollectionItem, $removed, $taskCollection);
                 $this->updatedTours[] = $taskCollection;
             }
