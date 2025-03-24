@@ -2,29 +2,34 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-
+use AppBundle\Domain\Tour\Event\TourCreated;
+use AppBundle\Domain\Tour\Event\TourUpdated;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\Tour;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
-
+use SimpleBus\Message\Bus\MessageBus;
 
 class TourSubscriber implements EventSubscriber
 {
-    private $logger;
+
+    private $insertedTours = [];
+
+    private $updatedTours = [];
 
     public function __construct(
-        LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
+        private LoggerInterface $logger,
+        private MessageBus $eventBus
+    ) {}
 
     public function getSubscribedEvents()
     {
         return array(
-            Events::onFlush
+            Events::onFlush,
+            Events::postFlush
         );
     }
 
@@ -34,6 +39,11 @@ class TourSubscriber implements EventSubscriber
      */
     public function onFlush(OnFlushEventArgs $args)
     {
+
+        // init
+        $this->insertedTours = [];
+        $this->updatedTours = [];
+
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
 
@@ -42,6 +52,14 @@ class TourSubscriber implements EventSubscriber
             $uow->getScheduledEntityUpdates(),
             $uow->getScheduledEntityDeletions()
         );
+
+        $insertedTours = array_filter($uow->getScheduledEntityInsertions(), function ($entity) {
+            return $entity instanceof Tour;
+        });
+
+        foreach ($insertedTours as $insertedTour) {
+            $this->insertedTours[] = $insertedTour;
+        }
 
         $taskCollectionItems = array_filter($entities, function ($entity) {
             return $entity instanceof TaskCollectionItem;
@@ -62,6 +80,7 @@ class TourSubscriber implements EventSubscriber
 
             if ($taskCollection instanceof Tour) {
                 $this->processTourItem($taskCollectionItem, $removed, $taskCollection);
+                $this->updatedTours[] = $taskCollection;
             }
 
         }
@@ -89,5 +108,18 @@ class TourSubscriber implements EventSubscriber
                 $taskCollectionItem->getTask()->unassign();
             }
         }
+    }
+
+    public function postFlush(PostFlushEventArgs $args) {
+
+        foreach ($this->insertedTours as $insertedTour) {
+            $this->eventBus->handle(new TourCreated($insertedTour));
+        }
+        $this->insertedTours = [];
+
+        foreach($this->updatedTours as $updatedTour) {
+            $this->eventBus->handle(new TourUpdated($updatedTour));
+        }
+        $this->updatedTours = [];
     }
 }
