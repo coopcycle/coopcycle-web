@@ -12,7 +12,7 @@ use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 // a simplified version of Sylius OrderProcessor structure
-// migration to Sylius later on
+// migrate to Sylius later on?
 class PriceCalculationVisitor
 {
     private array $matchedRules = [];
@@ -23,7 +23,7 @@ class PriceCalculationVisitor
         private PricingRuleSet $ruleSet,
         private ExpressionLanguage $expressionLanguage,
         private LoggerInterface $logger = new NullLogger()
-)
+    )
     {
     }
 
@@ -33,37 +33,26 @@ class PriceCalculationVisitor
         $this->productVariants = [];
         $this->price = null;
 
-        if ($this->ruleSet->getStrategy() === 'find') {
-            foreach ($this->ruleSet->getRules() as $rule) {
-                $result = $this->apply($rule, $delivery);
-                if ($result['matched']) {
-                    $this->matchedRules[] = $rule;
-                    $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
-
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
-                            'strategy' => $this->ruleSet->getStrategy(),
-                            'target' => $rule->getTarget(),
-                        ]
-                    );
-                    break;
-                }
-            }
-        }
-
         if ($this->ruleSet->getStrategy() === 'map') {
-            foreach ($this->ruleSet->getRules() as $rule) {
-                $result = $this->apply($rule, $delivery);
-                if ($result['matched']) {
-                    $this->matchedRules[] = $rule;
-                    $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
+            $tasks = $delivery->getTasks();
 
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
-                        'strategy' => $this->ruleSet->getStrategy(),
-                        'target' => $rule->getTarget(),
-                    ]);
-                }
+            // Apply the rules to each task/point
+            foreach ($tasks as $task) {
+                $result = $this->visitTask($this->ruleSet, $delivery, $task);
+
+                $this->matchedRules = array_merge($this->matchedRules, $result['matchedRules']);
+                $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
             }
         }
+
+        // Apply the rules to the whole delivery/order
+        $result = $this->visitDelivery($this->ruleSet, $delivery);
+
+        if (count($result['matchedRules']) > 0) {
+            $this->matchedRules = array_merge($this->matchedRules, $result['matchedRules']);
+            $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
+        }
+
 
         if (count($this->productVariants) === 0) {
             $this->logger->info(sprintf('No rule matched'), [
@@ -88,91 +77,97 @@ class PriceCalculationVisitor
         return $this->matchedRules;
     }
 
-    private function apply(PricingRule $rule, Delivery $delivery)
+
+    private function visitDelivery(PricingRuleSet $ruleSet, Delivery $delivery)
     {
-        if ($rule->getTarget() === PricingRule::TARGET_DELIVERY) {
-            return $this->visitDelivery($rule, $delivery);
-        }
-
-        if ($rule->getTarget() === PricingRule::TARGET_TASK) {
-            return $this->visitTasks($rule, $delivery->getTasks());
-        }
-
-        // LEGACY_TARGET_DYNAMIC is used for backward compatibility
-        // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
-        if ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC) {
-            $tasks = $delivery->getTasks();
-
-            if (count($tasks) > 2) {
-                return $this->visitTasks($rule, $delivery->getTasks());
-            } else {
-                return $this->visitDelivery($rule, $delivery);
-            }
-        }
-
-        $this->logger->warning(sprintf('Unknown target "%s"', $rule->getTarget()));
-
-        return [
-            'matched' => false,
-            'productVariants' => [],
-        ];
-    }
-
-    private function visitDelivery(PricingRule $rule, Delivery $delivery)
-    {
-        $matched = false;
+        $matchedRules = [];
         $productVariants = [];
 
         $deliveryAsExpressionLanguageValues = Delivery::toExpressionLanguageValues($delivery);
 
-        if ($rule->matches($deliveryAsExpressionLanguageValues, $this->expressionLanguage)) {
-            $matched = true;
-            $productVariants[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
+        if ($ruleSet->getStrategy() === 'find') {
+            foreach ($ruleSet->getRules() as $rule) {
+                // LEGACY_TARGET_DYNAMIC is used for backward compatibility
+                // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
+                if ($rule->getTarget() === PricingRule::TARGET_DELIVERY || $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC) {
+                    if ($rule->matches($deliveryAsExpressionLanguageValues, $this->expressionLanguage)) {
+                        $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
+                            'strategy' => $ruleSet->getStrategy(),
+                            'target' => $rule->getTarget(),
+                        ]);
+
+                        $matchedRules[] = $rule;
+                        $productVariants[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
+
+                        return [
+                            'matchedRules' => $matchedRules,
+                            'productVariants' => $productVariants,
+                        ];
+                    }
+                }
+            }
+        }
+
+        if ($ruleSet->getStrategy() === 'map') {
+            $tasks = $delivery->getTasks();
+
+            foreach ($ruleSet->getRules() as $rule) {
+                // LEGACY_TARGET_DYNAMIC is used for backward compatibility
+                // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
+                if ($rule->getTarget() === PricingRule::TARGET_DELIVERY || (count($tasks) <= 2 && $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC)) {
+                    if ($rule->matches($deliveryAsExpressionLanguageValues, $this->expressionLanguage)) {
+                        $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
+                            'strategy' => $ruleSet->getStrategy(),
+                            'target' => $rule->getTarget(),
+                        ]);
+
+                        $matchedRules[] = $rule;
+                        $productVariants[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
+                    }
+                }
+            }
+
+            return [
+                'matchedRules' => $matchedRules,
+                'productVariants' => $productVariants,
+            ];
         }
 
         return [
-            'matched' => $matched,
+            'matchedRules' => $matchedRules,
             'productVariants' => $productVariants,
         ];
     }
 
-    private function visitTasks(PricingRule $rule, array $tasks)
+    private function visitTask(PricingRuleSet $ruleSet, Delivery $delivery, Task $task)
     {
-        $matched = false;
+        $tasks = $delivery->getTasks();
+
+        $matchedRules = [];
         $productVariants = [];
 
-        foreach ($tasks as $task) {
-            $result = $this->visitTask($rule, $task);
+        if ($ruleSet->getStrategy() === 'map') {
+            $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
 
-            if (!$matched && $result['matched']) {
-                $matched = true;
-            }
+            foreach ($ruleSet->getRules() as $rule) {
+                // LEGACY_TARGET_DYNAMIC is used for backward compatibility
+                // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
+                if ($rule->getTarget() === PricingRule::TARGET_TASK || (count($tasks) > 2 && $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC)) {
+                    if ($rule->matches($taskAsExpressionLanguageValues, $this->expressionLanguage)) {
+                        $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
+                            'strategy' => $ruleSet->getStrategy(),
+                            'target' => $rule->getTarget(),
+                        ]);
 
-            if ($result['matched']) {
-                $productVariants = array_merge($productVariants, $result['productVariants']);
+                        $matchedRules[] = $rule;
+                        $productVariants[] = $rule->apply($taskAsExpressionLanguageValues, $this->expressionLanguage);
+                    }
+                }
             }
         }
 
         return [
-            'matched' => $matched,
-            'productVariants' => $productVariants,
-        ];
-    }
-
-    private function visitTask(PricingRule $rule, Task $task)
-    {
-        $matched = false;
-        $productVariants = [];
-
-        $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
-
-        if ($rule->matches($taskAsExpressionLanguageValues, $this->expressionLanguage)) {
-            $matched = true;
-            $productVariants[] = $rule->apply($taskAsExpressionLanguageValues, $this->expressionLanguage);
-        }
-
-        return [
-            'matched' => $matched,
+            'matchedRules' => $matchedRules,
             'productVariants' => $productVariants,
         ];
     }
