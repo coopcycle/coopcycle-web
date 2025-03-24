@@ -22,11 +22,11 @@ class FormFieldUtils
             $url = 'https://docs.coopcycle.org' . $localizedDocsPath;
             if (filter_var($url, FILTER_VALIDATE_URL)) {
                 return [
-                    'label' => '%label%. <a href="%url%" target="_blank" rel="noopener"><i class="fa fa-question-circle"></i> %docs_label% <i class="fa fa-external-link"></i></a>',
+                    'label' => '%label%. <a href="%url%" title="%hint%" target="_blank" rel="noopener"><i class="fa fa-question-circle"></i></a>',
                     'label_translation_parameters' => [
                         '%label%' => $this->translator->trans($label),
                         '%url%' => $url,
-                        '%docs_label%' => $this->translator->trans('docs.label'),
+                        '%hint%' => $this->translator->trans('visitDocumentation.label'),
                     ],
                     'label_html' => true,
                 ];

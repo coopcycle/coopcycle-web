@@ -1,5 +1,6 @@
 global.changesSaved: Your changes have been saved.
 docs.label: Docs
+visitDocumentation.label: Visit documentation
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
