@@ -417,6 +417,7 @@
             "FOR_EVERY": "for every",
             "ABOVE": "above",
             "TYPE_FIXED": "Fixed price incl. VAT",
+            "TYPE_PERCENTAGE": "Percentage",
             "TYPE_RANGE": "Price by ranges incl. VAT",
             "TYPE_PER_PACKAGE": "Price per package incl. VAT",
             "PER_PACKAGE": "per package",

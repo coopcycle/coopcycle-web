@@ -2,7 +2,7 @@ import React, { StrictMode } from 'react'
 import { render } from '../../utils/react'
 import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
-import { I18nextProvider, useTranslation } from 'react-i18next'
+import { I18nextProvider } from 'react-i18next'
 
 import './pricing-rules.scss'
 import {
@@ -10,6 +10,7 @@ import {
   PriceRange,
   FixedPrice,
   PricePerPackage,
+  PercentagePrice,
 } from './pricing-rule-parser'
 import i18n from '../../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
@@ -18,23 +19,8 @@ import RulePicker from './components/RulePicker'
 import PriceRangeEditor from './components/PriceRangeEditor'
 import PricePerPackageEditor from './components/PricePerPackageEditor'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
-
-const PriceChoice = ({ defaultValue, onChange }) => {
-  const { t } = useTranslation()
-
-  return (
-    <select
-      data-testid="pricing_rule_price_type_choice"
-      onChange={e => onChange(e.target.value)}
-      defaultValue={defaultValue}>
-      <option value="fixed">{t('PRICE_RANGE_EDITOR.TYPE_FIXED')}</option>
-      <option value="range">{t('PRICE_RANGE_EDITOR.TYPE_RANGE')}</option>
-      <option value="per_package">
-        {t('PRICE_RANGE_EDITOR.TYPE_PER_PACKAGE')}
-      </option>
-    </select>
-  )
-}
+import { PriceChoice } from './components/PriceChoice'
+import PercentageEditor from './components/PercentageEditor'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -63,20 +49,27 @@ new Sortable(document.querySelector('.delivery-pricing-ruleset'), {
   onUpdate: onListChange,
 })
 
-function renderPriceTypeItem(
-  $input,
-  editorRoot,
-  priceType,
-  priceRangeDefaultValue,
-  pricePerPackageDefaultValue,
-) {
+function renderPriceTypeItem($input, editorRoot, priceType, defaultValue) {
   switch (priceType) {
+    case 'percentage':
+      $input.addClass('d-none')
+
+      editorRoot.render(
+        <PercentageEditor
+          defaultValue={defaultValue}
+          onChange={({ percentage }) => {
+            $input.val(`price_percentage(${percentage})`)
+          }}
+        />,
+      )
+
+      break
     case 'range':
       $input.addClass('d-none')
 
       editorRoot.render(
         <PriceRangeEditor
-          defaultValue={priceRangeDefaultValue}
+          defaultValue={defaultValue}
           onChange={({ attribute, price, step, threshold }) => {
             $input.val(
               `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
@@ -91,7 +84,7 @@ function renderPriceTypeItem(
 
       editorRoot.render(
         <PricePerPackageEditor
-          defaultValue={pricePerPackageDefaultValue}
+          defaultValue={defaultValue}
           onChange={({ packageName, unitPrice, offset, discountPrice }) => {
             $input.val(
               `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
@@ -122,17 +115,12 @@ const renderPriceChoice = item => {
 
   let priceType = 'fixed'
 
-  let priceRangeDefaultValue = {}
-  let pricePerPackageDefaultValue = {}
-
-  if (price instanceof PriceRange) {
+  if (price instanceof PercentagePrice) {
+    priceType = 'percentage'
+  } else if (price instanceof PriceRange) {
     priceType = 'range'
-    priceRangeDefaultValue = price
-  }
-
-  if (price instanceof PricePerPackage) {
+  } else if (price instanceof PricePerPackage) {
     priceType = 'per_package'
-    pricePerPackageDefaultValue = price
   }
 
   const $parent = $input.parent()
@@ -151,26 +139,14 @@ const renderPriceChoice = item => {
       <PriceChoice
         defaultValue={priceType}
         onChange={value => {
-          renderPriceTypeItem(
-            $input,
-            editorRoot,
-            value,
-            priceRangeDefaultValue,
-            pricePerPackageDefaultValue,
-          )
+          renderPriceTypeItem($input, editorRoot, value, price)
         }}
       />
     </I18nextProvider>,
     $label[0],
   )
 
-  renderPriceTypeItem(
-    $input,
-    editorRoot,
-    priceType,
-    priceRangeDefaultValue,
-    pricePerPackageDefaultValue,
-  )
+  renderPriceTypeItem($input, editorRoot, priceType, price)
 }
 
 function hydrate(item, { ruleTarget, expression, expressionAST }) {
