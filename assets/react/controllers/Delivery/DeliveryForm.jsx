@@ -360,6 +360,7 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
         if (response) {
           setCalculatePrice(response)
           setPriceErrorMessage('')
+
         }
 
         setPriceLoading(false)

@@ -119,7 +119,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
             style={{ width: '100%' }}
             showSearch
             placeholder={t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}
-            value={selectValue}
+            value={selectValue || null}
             optionFilterProp="label"
             onChange={value => {
               handleAddressSelected(value)
