@@ -147,7 +147,7 @@ export default ({
               {t('DELIVERY_FORM_TOTAL_PRICE')}
             </div>
             {
-              priceErrorMessage ? (
+              priceErrorMessage && !overridePrice ? (
                 <div className="alert alert-danger" role="alert">
                   {isDispatcher ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR') : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
                 </div>
