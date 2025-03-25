@@ -22,10 +22,8 @@ abstract class TaskCollection
 
     protected $id;
 
-    /**
-     * @Assert\Valid()
-     * @Groups({"task_collection", "task"})
-     */
+    #[Assert\Valid]
+    #[Groups(['task_collection', 'task'])]
     protected $items;
 
     public function __construct()
@@ -133,8 +131,8 @@ abstract class TaskCollection
 
     /**
      * @return Task[]
-     * @Groups({"delivery"})
      */
+    #[Groups(['delivery'])]
     public function getTasks(string $expression = '')
     {
 
@@ -232,7 +230,6 @@ abstract class TaskCollection
 
     /**
      * Returns true if all tasks are cancelled
-     * @return bool
      */
     public function computeCancelled(): bool
     {

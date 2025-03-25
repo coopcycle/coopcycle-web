@@ -10,17 +10,9 @@ use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 
 /**
- * @ApiResource(
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={"method"="GET"}
- *   },
- *   attributes={
- *     "normalization_context"={"groups"={"product_option"}}
- *   }
- * )
  * @AssertProductOption
  */
+#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET']], attributes: ['normalization_context' => ['groups' => ['product_option']]])]
 class ProductOption extends BaseProductOption implements ProductOptionInterface
 {
     /**

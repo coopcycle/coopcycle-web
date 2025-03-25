@@ -11,20 +11,8 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 
 /**
  * @see https://schema.org/SoftwareApplication Documentation on Schema.org
- *
- * @ApiResource(iri="http://schema.org/SoftwareApplication",
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     }
- *   },
- *   collectionOperations={},
- *   attributes={
- *     "normalization_context"={"groups"={"api_app"}},
- *   }
- * )
  */
+#[ApiResource(iri: 'http://schema.org/SoftwareApplication', itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_ADMIN')"]], collectionOperations: [], attributes: ['normalization_context' => ['groups' => ['api_app']]])]
 class ApiApp
 {
     use Timestampable;
@@ -33,8 +21,8 @@ class ApiApp
 
     /**
      * @var string
-     * @Groups({"api_app"})
      */
+    #[Groups(['api_app'])]
     private $name;
 
     /**
@@ -44,14 +32,14 @@ class ApiApp
 
     /**
      * @var Store|null
-     * @Groups({"api_app"})
      */
+    #[Groups(['api_app'])]
     private $store;
 
     /**
      * @var LocalBusiness|null
-     * @Groups({"api_app"})
      */
+    #[Groups(['api_app'])]
     private $shop;
 
     /**

@@ -7,19 +7,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class FailureReason
 {
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     protected string $code;
 
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     protected string $description;
 
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     protected array $metadata = [];
 
     protected $failureReasonSet;

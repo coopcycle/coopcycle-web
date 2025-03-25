@@ -11,45 +11,24 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * @ApiResource(iri="http://schema.org/MediaObject",
- *   attributes={
- *     "normalization_context"={"groups"={"task_image"}}
- *   },
- *   itemOperations={
- *     "get"
- *   },
- *   collectionOperations={
- *     "post"={
- *         "method"="POST",
- *         "controller"=CreateImage::class,
- *         "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *         "defaults"={"_api_receive"=false},
- *     },
- * })
  * @Vich\Uploadable
  */
+#[ApiResource(iri: 'http://schema.org/MediaObject', attributes: ['normalization_context' => ['groups' => ['task_image']]], itemOperations: ['get'], collectionOperations: ['post' => ['method' => 'POST', 'controller' => CreateImage::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')", 'defaults' => ['_api_receive' => false]]])]
 class TaskImage
 {
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     private $id;
 
     private $task;
 
     /**
      * @Vich\UploadableField(mapping="task_image", fileNameProperty="imageName")
-     * @Assert\File(
-     *   maxSize = "5M",
-     *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
-     * )
      * @var File
      */
+    #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $file;
 
-    /**
-     * @Groups({"task_image"})
-     */
+    #[Groups(['task_image'])]
     private $imageName;
 
     private $createdAt;

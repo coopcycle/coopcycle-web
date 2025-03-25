@@ -18,10 +18,8 @@ interface ShippingOptionsInterface
     public function getDeliveryPerimeterExpression();
 
     /**
-     * @param Address $address
      * @param int $distance
      * @param ExpressionLanguage|null $language
-     *
      * @return bool
      */
     public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null);

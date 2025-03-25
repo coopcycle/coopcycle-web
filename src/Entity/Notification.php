@@ -4,14 +4,8 @@ namespace AppBundle\Entity;
 
 class Notification
 {
-    /**
-     * @var string
-     */
     private string $name;
 
-    /**
-     * @var bool
-     */
     private bool $enabled;
 
     public function getName()

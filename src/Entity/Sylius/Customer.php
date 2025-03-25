@@ -23,24 +23,7 @@ use Webmozart\Assert\Assert;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 
-/**
- * @ApiResource(
- *   shortName="Customer",
- *   normalizationContext={"groups"={"customer"}},
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or user.getCustomer() == object"
- *     },
- *     "put"={
- *       "method"="PUT",
- *       "access_control"="is_granted('ROLE_ADMIN') or user.getCustomer() == object",
- *       "denormalization_context"={"groups"={"customer_update"}},
- *     }
- *   },
- *   collectionOperations={}
- * )
- */
+#[ApiResource(shortName: 'Customer', normalizationContext: ['groups' => ['customer']], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN') or user.getCustomer() == object"], 'put' => ['method' => 'PUT', 'access_control' => "is_granted('ROLE_ADMIN') or user.getCustomer() == object", 'denormalization_context' => ['groups' => ['customer_update']]]], collectionOperations: [])]
 class Customer extends BaseCustomer implements TaggableInterface, CustomerInterface
 {
     use TaggableTrait;
@@ -175,9 +158,7 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
         return null !== $this->user;
     }
 
-    /**
-     * @SerializedName("telephone")
-     */
+    #[SerializedName('telephone')]
     public function getTelephone(): ?string
     {
         return $this->getPhoneNumber();
@@ -185,8 +166,8 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
     /**
      * @param PhoneNumber|string $telephone
-     * @SerializedName("telephone")
      */
+    #[SerializedName('telephone')]
     public function setTelephone($telephone)
     {
         if ($telephone instanceof PhoneNumber) {
@@ -271,9 +252,6 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
         $this->setLastName('');
     }
 
-    /**
-     * @return EdenredCustomerCredentials|null
-     */
     public function getEdenredCredentials(): ?EdenredCustomerCredentials
     {
         return $this->edenredCredentials;

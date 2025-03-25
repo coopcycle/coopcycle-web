@@ -38,9 +38,6 @@ trait EDIFACTMessageAwareTrait
         return $this->getReports()->count() > 0;
     }
 
-    /**
-     * @param EDIFACTMessage $edifactMessage
-     */
     public function addEdifactMessage(EDIFACTMessage $edifactMessage): self
     {
         $this->edifactMessages[] = $edifactMessage;

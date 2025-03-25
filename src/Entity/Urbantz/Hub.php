@@ -15,17 +15,12 @@ class Hub
         return $this->id;
     }
 
-    /**
-     * @return Store
-     */
     public function getStore(): Store
     {
         return $this->store;
     }
 
     /**
-     * @param Store $store
-     *
      * @return self
      */
     public function setStore(Store $store)
@@ -35,17 +30,12 @@ class Hub
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getHub(): string
     {
         return $this->hub;
     }
 
     /**
-     * @param string $hub
-     *
      * @return self
      */
     public function setHub(string $hub)

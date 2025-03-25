@@ -4,16 +4,7 @@ namespace AppBundle\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 
-/**
- * @ApiResource(
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *     },
- *   }
- * )
- */
+#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET']])]
 class Hub extends LocalBusinessGroup
 {
     private $address;
@@ -38,9 +29,6 @@ class Hub extends LocalBusinessGroup
         return $this;
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public function addRestaurant(LocalBusiness $restaurant)
     {
         if (!$this->restaurants->contains($restaurant)) {
@@ -49,9 +37,6 @@ class Hub extends LocalBusinessGroup
         }
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public function removeRestaurant(LocalBusiness $restaurant): void
     {
         $this->restaurants->removeElement($restaurant);

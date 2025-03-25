@@ -11,12 +11,7 @@ class ReusablePackagings
     protected $reusablePackaging;
     protected $product;
 
-    /**
-     * @Assert\Expression(
-     *   "!this.getProduct().isReusablePackagingEnabled() or (this.getProduct().isReusablePackagingEnabled() and this.getUnits() > 0)",
-     *   message="product.reusablePackagingUnit.mustBeGreaterThanZero"
-     * )
-     */
+    #[Assert\Expression('!this.getProduct().isReusablePackagingEnabled() or (this.getProduct().isReusablePackagingEnabled() and this.getUnits() > 0)', message: 'product.reusablePackagingUnit.mustBeGreaterThanZero')]
     protected $units = 0;
 
     public function getId()
@@ -33,8 +28,6 @@ class ReusablePackagings
     }
 
     /**
-     * @param ReusablePackaging|null $reusablePackaging
-     *
      * @return self
      */
     public function setReusablePackaging(?ReusablePackaging $reusablePackaging)
@@ -53,8 +46,6 @@ class ReusablePackagings
     }
 
     /**
-     * @param Product|null $product
-     *
      * @return self
      */
     public function setProduct(?Product $product)
@@ -64,17 +55,11 @@ class ReusablePackagings
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getUnits(): float
     {
         return $this->units;
     }
 
-    /**
-     * @param float $units
-     */
     public function setUnits(float $units)
     {
         $this->units = $units;
