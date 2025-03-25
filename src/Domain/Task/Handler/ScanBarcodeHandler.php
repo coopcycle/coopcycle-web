@@ -11,8 +11,7 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 class ScanBarcodeHandler
 {
     public function __construct(
-        // @phpstan-ignore-line
-        private RecordsMessages $eventRecorder // @phpstan-ignore-line
+        private RecordsMessages $eventRecorder
     )
     { }
 
