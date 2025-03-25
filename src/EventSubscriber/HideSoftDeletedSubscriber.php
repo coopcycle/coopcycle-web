@@ -29,15 +29,21 @@ class HideSoftDeletedSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $class = new \ReflectionClass($controller[0]);
+
         $hasClassAnnotation = in_array(
             HideSoftDeleted::class,
-            $this->attributeReader->getClassAttributes(new \ReflectionClass($controller[0]))
+            array_map(fn($attribute) => $attribute->getName(), $class->getAttributes())
         );
+
+        $method = new \ReflectionMethod($controller[0], $controller[1]);
 
         $hasMethodAnnotation = in_array(
             HideSoftDeleted::class,
-            $this->attributeReader->getMethodAttributes(new \ReflectionMethod($controller[0], $controller[1]))
+            array_map(fn($attribute) => $attribute->getName(), $method->getAttributes())
         );
+
+        // var_dump(count($method->getAttributes()));
 
         if (!$hasClassAnnotation && !$hasMethodAnnotation) {
             return;
