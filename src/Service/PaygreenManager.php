@@ -105,6 +105,10 @@ class PaygreenManager
             $response = $this->paygreenClient->createBuyer($buyer);
             $data = json_decode($response->getBody()->getContents(), true);
 
+            if ($response->getStatusCode() !== 200) {
+                throw new PaygreenException($data['detail'] ?? $data['message']);
+            }
+
             $order->getCustomer()->setPaygreenBuyerId($data['data']['id']);
         }
 
