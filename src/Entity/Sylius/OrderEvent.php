@@ -3,21 +3,24 @@
 namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use Gedmo\Timestampable\Traits\Timestampable;
 
 class OrderEvent
 {
+    use Timestampable;
+
+    private $id;
     private $order;
     private $type;
     private array $data = [];
     private array $metadata = [];
-    private $createdAt;
 
     public function __construct(
         OrderInterface $order,
         $type,
         array $data = [],
         array $metadata = [],
-        \DateTime $createdAt = null)
+        \DateTime|null $createdAt = null)
     {
         if (null === $createdAt) {
             $createdAt = new \DateTime();
