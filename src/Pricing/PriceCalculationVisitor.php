@@ -3,6 +3,8 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\Order;
+use AppBundle\Entity\Delivery\OrderItem;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Delivery\ProductVariant;
@@ -16,8 +18,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class PriceCalculationVisitor
 {
     private array $matchedRules = [];
-    private array $productVariants = [];
-    private ?int $price = null;
+    private ?Order $order = null;
 
     public function __construct(
         private PricingRuleSet $ruleSet,
@@ -30,8 +31,9 @@ class PriceCalculationVisitor
     public function visit(Delivery $delivery): void
     {
         $this->matchedRules = [];
-        $this->productVariants = [];
-        $this->price = null;
+        $taskProductVariants = [];
+        $deliveryProductVariant = null;
+        $this->order = null;
 
         $tasks = $delivery->getTasks();
 
@@ -41,7 +43,7 @@ class PriceCalculationVisitor
             $matchedRulesPerTask = $result['matchedRules'];
             if (count($matchedRulesPerTask) > 0) {
                 $this->matchedRules = array_merge($this->matchedRules, $matchedRulesPerTask);
-                $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
+                $taskProductVariants[] = $result['productVariant'];
             }
         }
 
@@ -50,18 +52,18 @@ class PriceCalculationVisitor
         $matchedRulesPerDelivery = $result['matchedRules'];
         if (count($matchedRulesPerDelivery) > 0) {
             $this->matchedRules = array_merge($this->matchedRules, $matchedRulesPerDelivery);
-            $this->productVariants = array_merge($this->productVariants, $result['productVariants']);
+            $deliveryProductVariant = $result['productVariant'];
         }
 
 
-        if (count($this->productVariants) === 0) {
+        if (count($this->matchedRules) === 0) {
             $this->logger->info(sprintf('No rule matched'), [
                 'strategy' => $this->ruleSet->getStrategy(),
             ]);
         } else {
-            $this->price = $this->process($this->productVariants);
+            $this->order = $this->process($taskProductVariants, $deliveryProductVariant);
 
-            $this->logger->info(sprintf('Calculated price: %d', $this->price), [
+            $this->logger->info(sprintf('Calculated price: %d', $this->getPrice()), [
                 'strategy' => $this->ruleSet->getStrategy(),
             ]);
         }
@@ -69,7 +71,12 @@ class PriceCalculationVisitor
 
     public function getPrice(): ?int
     {
-        return $this->price;
+        return $this->order->getItemsTotal();
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
     }
 
     public function getMatchedRules(): array
@@ -77,11 +84,10 @@ class PriceCalculationVisitor
         return $this->matchedRules;
     }
 
-
     private function visitDelivery(PricingRuleSet $ruleSet, Delivery $delivery)
     {
         $matchedRules = [];
-        $productVariants = [];
+        $productOptions = [];
 
         $deliveryAsExpressionLanguageValues = Delivery::toExpressionLanguageValues($delivery);
 
@@ -97,11 +103,11 @@ class PriceCalculationVisitor
                         ]);
 
                         $matchedRules[] = $rule;
-                        $productVariants[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
+                        $productOptions[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
 
                         return [
                             'matchedRules' => $matchedRules,
-                            'productVariants' => $productVariants,
+                            'productVariant' => new ProductVariant($productOptions),
                         ];
                     }
                 }
@@ -122,20 +128,15 @@ class PriceCalculationVisitor
                         ]);
 
                         $matchedRules[] = $rule;
-                        $productVariants[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
+                        $productOptions[] = $rule->apply($deliveryAsExpressionLanguageValues, $this->expressionLanguage);
                     }
                 }
             }
-
-            return [
-                'matchedRules' => $matchedRules,
-                'productVariants' => $productVariants,
-            ];
         }
 
         return [
             'matchedRules' => $matchedRules,
-            'productVariants' => $productVariants,
+            'productVariant' => new ProductVariant($productOptions),
         ];
     }
 
@@ -144,7 +145,7 @@ class PriceCalculationVisitor
         $tasks = $delivery->getTasks();
 
         $matchedRules = [];
-        $productVariants = [];
+        $productOptions = [];
 
         $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
 
@@ -164,7 +165,7 @@ class PriceCalculationVisitor
 
                         return [
                             'matchedRules' => $matchedRules,
-                            'price' => $pricePerTask,
+                            'productVariant' => new ProductVariant($productOptions),
                         ];
                     }
                 }
@@ -183,7 +184,7 @@ class PriceCalculationVisitor
                         ]);
 
                         $matchedRules[] = $rule;
-                        $productVariants[] = $rule->apply($taskAsExpressionLanguageValues, $this->expressionLanguage);
+                        $productOptions[] = $rule->apply($taskAsExpressionLanguageValues, $this->expressionLanguage);
                     }
                 }
             }
@@ -191,28 +192,66 @@ class PriceCalculationVisitor
 
         return [
             'matchedRules' => $matchedRules,
-            'productVariants' => $productVariants,
+            'productVariant' => new ProductVariant($productOptions),
         ];
     }
 
     /**
-     * @param ProductVariant[] $productVariants
-     * @return int
+     * @param ProductVariant[] $taskProductVariants
      */
-    private function process(array $productVariants): int
+    private function process(array $taskProductVariants, ?ProductVariant $deliveryProductVariant): Order
     {
-        $totalPrice = 0;
+        $taskItems = [];
+        $taskItemsTotal = 0;
 
-        foreach ($productVariants as $productVariant) {
-            $priceAdditive = $productVariant->getPriceAdditive();
-            $priceMultiplier = $productVariant->getPriceMultiplier();
+        foreach ($taskProductVariants as $productVariant) {
+            $this->processProductVariant($productVariant, 0);
 
-            $totalPrice += $priceAdditive;
-            $totalPrice = (int) ceil($totalPrice * ($priceMultiplier / 100 / 100));
+            $orderItem = new OrderItem($productVariant);
+
+            // Later on: group the same product variants into one OrderItem
+            $orderItem->setTotal($productVariant->getPrice());
+
+            $taskItems[] = $orderItem;
+            $taskItemsTotal += $orderItem->getTotal();
         }
 
-        // Later on: group the same product variants into one OrderItem
 
-        return $totalPrice;
+        $items = $taskItems;
+        $itemsTotal = $taskItemsTotal;
+
+        if ($deliveryProductVariant) {
+            $this->processProductVariant($deliveryProductVariant, $taskItemsTotal);
+
+            $orderItem = new OrderItem($deliveryProductVariant);
+            $orderItem->setTotal($deliveryProductVariant->getPrice());
+
+            $items[] = $orderItem;
+            $itemsTotal += $orderItem->getTotal();
+        }
+
+        $order = new Order($items);
+        $order->setItemsTotal($itemsTotal);
+
+        return $order;
+    }
+
+    private function processProductVariant(ProductVariant $productVariant, int $previousItemsTotal): void
+    {
+        $subtotal = $previousItemsTotal;
+
+        foreach ($productVariant->getProductOptions() as $productOption) {
+            $priceAdditive = $productOption->getPriceAdditive();
+            $priceMultiplier = $productOption->getPriceMultiplier();
+
+            $previousSubtotal = $subtotal;
+
+            $subtotal += $priceAdditive;
+            $subtotal = (int)ceil($subtotal * ($priceMultiplier / 100 / 100));
+
+            $productOption->setPrice($subtotal - $previousSubtotal);
+        }
+
+        $productVariant->setPrice($subtotal - $previousItemsTotal);
     }
 }

@@ -163,7 +163,7 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ExpressionLanguage $language = null): ProductVariant
+    public function apply(array $values, ExpressionLanguage $language = null): ProductOption
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -173,13 +173,15 @@ class PricingRule
         $result = $language->evaluate($priceExpression, $values);
 
         if (str_contains($priceExpression, 'price_percentage')) {
-            return new ProductVariant(
+            return new ProductOption(
+                $this->getExpression(),
                 $priceExpression,
                 0,
                 $result
             );
         } else {
-            return new ProductVariant(
+            return new ProductOption(
+                $this->getExpression(),
                 $priceExpression,
                 $result,
             );

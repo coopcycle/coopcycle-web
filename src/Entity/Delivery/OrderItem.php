@@ -8,39 +8,38 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * a simplified version of Sylius OrderItem/ProductVariant/ProductOptions structure
  * migrate to Sylius later on
  */
-class ProductVariant
+class OrderItem
 {
 
     /**
      * Set after the order is 'processed' and the price for each ProductVariant is calculated
      */
-    private ?int $price = null;
+    private ?int $total = null;
 
     public function __construct(
-        private readonly array $productOptions
+        private readonly ProductVariant $productVariant,
     )
     {
     }
 
     /**
-     * @return ProductOption[]
      * @Groups({"pricing_deliveries"})
      */
-    public function getProductOptions(): array
+    public function getProductVariant(): ProductVariant
     {
-        return $this->productOptions;
+        return $this->productVariant;
     }
 
     /**
      * @Groups({"pricing_deliveries"})
      */
-    public function getPrice(): ?int
+    public function getTotal(): ?int
     {
-        return $this->price;
+        return $this->total;
     }
 
-    public function setPrice(int $price): void
+    public function setTotal(?int $total): void
     {
-        $this->price = $price;
+        $this->total = $total;
     }
 }

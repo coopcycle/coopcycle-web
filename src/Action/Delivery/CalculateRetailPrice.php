@@ -51,13 +51,16 @@ class CalculateRetailPrice implements TaxableInterface
             $store = $this->storeExtractor->extractStore();
         }
 
-        $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
+        $priceCalculation = $this->deliveryManager->getPriceCalculation($data, $store->getPricingRuleSet());
 
-        if (null === $amount) {
+        if (null === $priceCalculation) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
             throw new BadRequestHttpException($message);
         }
 
+        $order = $priceCalculation->getOrder();
+
+        $amount = $order->getItemsTotal();
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
 
         $this->setTaxCategory(
@@ -70,6 +73,7 @@ class CalculateRetailPrice implements TaxableInterface
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
         $retailPrice = new RetailPrice(
+            $order->getItems(),
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount,
