@@ -61,9 +61,7 @@ trait StoreTrait
 {
     use InjectAuthTrait;
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
         $qb = $this->getDoctrine()

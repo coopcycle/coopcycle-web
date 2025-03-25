@@ -2674,9 +2674,7 @@ class AdminController extends AbstractController
     }
 
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function restaurantListAction(Request $request, SettingsManager $settingsManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');

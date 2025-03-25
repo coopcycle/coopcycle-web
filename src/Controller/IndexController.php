@@ -74,9 +74,7 @@ class IndexController extends AbstractController
         return [ $items, $count ];
     }
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache,
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
