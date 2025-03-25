@@ -47,7 +47,7 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
                 $extension->supportsResult($resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
             ) {
                 return $this->postProcessResult(
-                    $extension->getResult($qb, $resourceClass, $operationName, $context)
+                    $extension->getResult($qb, $resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
                 );
             }
         }
