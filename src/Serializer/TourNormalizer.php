@@ -17,8 +17,7 @@ class TourNormalizer implements NormalizerInterface
     private function flattenItems(array $items)
     {
         return array_values(array_map(function ($item) {
-            $task = $item['task'];
-            return $task;
+            return $item['task'];
         }, $items));
     }
 

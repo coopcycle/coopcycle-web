@@ -43,7 +43,7 @@ class LocalBusinessTypeChoiceType extends AbstractType
 
         $choices = [];
 
-        $foodEstablishmentValues = FoodEstablishment::values();
+        FoodEstablishment::values();
 
         foreach (FoodEstablishment::values() as $value) {
             $key = sprintf('food_establishment.%s', $value->getKey());

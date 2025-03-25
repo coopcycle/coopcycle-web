@@ -17,9 +17,7 @@ class RestaurantMercadopagoController extends AbstractController
         $this->settingsManager = $settingsManager;
     }
 
-    /**
-     * @Route("/restaurant/{id}/mercadopago-account", name="restaurant-mercadopago-account", methods={"GET"})
-     */
+    #[Route(path: '/restaurant/{id}/mercadopago-account', name: 'restaurant-mercadopago-account', methods: ['GET'])]
     public function getMercadopagoAccount($id)
     {
         $restaurant = $this->getDoctrine()

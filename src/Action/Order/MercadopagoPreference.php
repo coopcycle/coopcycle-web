@@ -14,7 +14,6 @@ class MercadopagoPreference
 {
     /**
      * @see https://www.mercadopago.com/developers/en/reference/preferences/_checkout_preferences/post
-     * @return Preference
      */
     public function __invoke($data, Request $request): Preference
     {

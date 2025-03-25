@@ -31,7 +31,7 @@ class PublishLiveUpdate
 
         $this->liveUpdates->toOrderWatchers($order, $event);
 
-        if (null !== $customer && $customer->hasUser()) {
+        if ($customer->hasUser()) {
             $this->liveUpdates->toUserAndAdmins($customer->getUser(), $event);
         } else {
             $this->liveUpdates->toAdmins($event);

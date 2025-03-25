@@ -55,9 +55,6 @@ class TokenStoreExtractor
         }
     }
 
-    /**
-     * @return LocalBusiness|null
-     */
     public function extractShop(): ?LocalBusiness
     {
         if (null === ($token = $this->tokenStorage->getToken())) {

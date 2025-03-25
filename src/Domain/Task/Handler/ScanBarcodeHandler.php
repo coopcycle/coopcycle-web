@@ -11,9 +11,8 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 class ScanBarcodeHandler
 {
     public function __construct(
-        private EntityManager $doctrine, // @phpstan-ignore-line
-        private RecordsMessages $eventRecorder,
-        private LoggerInterface $logger // @phpstan-ignore-line
+        // @phpstan-ignore-line
+        private RecordsMessages $eventRecorder // @phpstan-ignore-line
     )
     { }
 

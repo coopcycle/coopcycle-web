@@ -41,8 +41,6 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
     /**
      * Set the options.
      * This is injected by CustomAuthenticationSuccessHandler.
-     *
-     * @param array $options
      */
     public function setOptions(array $options)
     {

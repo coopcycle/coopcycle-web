@@ -47,16 +47,15 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
                 $extension->supportsResult($resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
             ) {
                 return $this->postProcessResult(
-                    $extension->getResult($qb, $resourceClass, $operationName, $context), // @phpstan-ignore arguments.count
-                    $operationName
+                    $extension->getResult($qb, $resourceClass, $operationName, $context)
                 );
             }
         }
 
-        return $this->postProcessResult($qb->getQuery()->getResult(), $operationName);
+        return $this->postProcessResult($qb->getQuery()->getResult());
     }
 
-    private function postProcessResult(iterable $data, string $operationName): iterable
+    private function postProcessResult(iterable $data): iterable
     {
         $tasks = iterator_to_array($data);
 
@@ -130,7 +129,7 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
     {
         $preloader = new EntityPreloader($this->entityManager);
 
-        $incidents = $preloader->preload($tasks, 'incidents');
+        $preloader->preload($tasks, 'incidents');
 
         $delivery = $preloader->preload($tasks, 'delivery');
 

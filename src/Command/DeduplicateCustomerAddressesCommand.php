@@ -142,7 +142,7 @@ Class DeduplicateCustomerAddressesCommand extends Command
                 $sortedDuplicates[$coords] = $addresses;
             }
 
-            foreach ($sortedDuplicates as $coords => $addresses) {
+            foreach ($sortedDuplicates as $addresses) {
                 foreach ($addresses as $addr) {
                     $tableData[] = [
                         $email,
@@ -167,7 +167,7 @@ Class DeduplicateCustomerAddressesCommand extends Command
 
             try {
 
-                foreach ($sortedDuplicates as $coords => $addresses) {
+                foreach ($sortedDuplicates as $addresses) {
 
                     $bestAddress = array_shift($addresses);
                     $otherAddressesIds = array_map(fn($address) => $address['id'], $addresses);

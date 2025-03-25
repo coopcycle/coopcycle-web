@@ -24,9 +24,7 @@ class StorybookController extends AbstractController
     {
     }
 
-	/**
-     * @Route("/storybook/component/{id}", name="storybook_component")
-     */
+	#[Route(path: '/storybook/component/{id}', name: 'storybook_component')]
     public function componentAction($id, Request $request, DenormalizerInterface $denormalizer)
     {
         if (array_key_exists($id, $this->mapping)) {

@@ -122,8 +122,8 @@ class PaygreenManager
         $paymentOrder->setShippingAddress($address);
         $paymentOrder->setDescription(sprintf('Order %s', $order->getNumber()));
         $paymentOrder->setShopId($shopId);
-        $paymentOrder->setReturnUrl($this->getCallbackUrl($order, 'paygreen_return'));
-        $paymentOrder->setCancelUrl($this->getCallbackUrl($order, 'paygreen_cancel'));
+        $paymentOrder->setReturnUrl($this->getCallbackUrl('paygreen_return'));
+        $paymentOrder->setCancelUrl($this->getCallbackUrl('paygreen_cancel'));
         $paymentOrder->setEligibleAmounts($this->getEligibleAmounts($order));
 
         // We can set platforms fees *ONLY* when the order is paid 100% by credit card
@@ -260,7 +260,7 @@ class PaygreenManager
         ];
     }
 
-    private function getCallbackUrl(OrderInterface $order, string $route): string
+    private function getCallbackUrl(string $route): string
     {
         $channel = $this->channelContext->getChannel();
 

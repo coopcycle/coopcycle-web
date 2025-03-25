@@ -13,9 +13,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class SitemapController extends AbstractController
 {
-    /**
-     * @Route("/sitemap.xml", name="sitemap")
-     */
+    #[Route(path: '/sitemap.xml', name: 'sitemap')]
     public function indexAction(SlugifyInterface $slugify)
     {
         $restaurants = $this->getDoctrine()

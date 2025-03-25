@@ -36,7 +36,6 @@ class RouteOptimizer
     /**
      * return a list of tasks sorted into an optimal route as obtained from the vroom api
      *
-     * @param TaskList $taskCollection
      * @return array
      */
     public function optimize(TaskList $taskCollection)
@@ -54,7 +53,7 @@ class RouteOptimizer
             'body' => json_encode($normalizer->normalize($routingProblem)),
         ]);
 
-        $data = json_decode((string) $response->getContent(), true);
+        $data = json_decode($response->getContent(), true);
 
         $firstRoute = $data['routes'][0];
         // remove the first result which is the starting point, for now equal of the first task of the list
@@ -101,7 +100,6 @@ class RouteOptimizer
     }
 
     /**
-     * @param TaskList $taskCollection
      * @return RoutingProblem
      */
     public function createRoutingProblem(TaskList $taskCollection)
@@ -158,8 +156,6 @@ class RouteOptimizer
      * @see https://github.com/VROOM-Project/vroom/issues/313
      *
      * @param Address[] $pickups
-     * @param Address $delivery
-     * @param \SplObjectStorage $registry
      *
      * @return RoutingProblem
      */
@@ -212,7 +208,7 @@ class RouteOptimizer
             $routingProblem->addShipment($shipment);
         }
 
-        $shipments = $routingProblem->getShipments();
+        $routingProblem->getShipments();
 
         // FIXME
         // Would make more sense to start from the warehouse/hub once this concept is introduced
@@ -229,7 +225,6 @@ class RouteOptimizer
 
     /**
      * @param Address[] $pickups
-     * @param Address $delivery
      *
      * @return Address[]
      */
@@ -266,7 +261,6 @@ class RouteOptimizer
     }
 
     /**
-     * @param RoutingProblem $problem
      * @return array
      */
     public function execute(RoutingProblem $problem)
@@ -278,6 +272,6 @@ class RouteOptimizer
             'body' => json_encode($normalizer->normalize($problem)),
         ]);
 
-        return json_decode((string) $response->getContent(), true);
+        return json_decode($response->getContent(), true);
     }
 }

@@ -36,7 +36,6 @@ class MercadopagoManager
 
     /**
      * @see https://mercadopago.com/developers/en/docs/checkout-bricks/card-payment-brick/payment-submission
-     * @return Payment
      */
     public function authorize(PaymentInterface $payment): Payment
     {
@@ -96,7 +95,6 @@ class MercadopagoManager
 
     /**
      * @see https://www.mercadopago.com/developers/en/docs/checkout-api/payment-management/capture-authorized-payment
-     * @return Payment
      */
     public function capture(PaymentInterface $payment): Payment
     {
@@ -128,9 +126,6 @@ class MercadopagoManager
         return $client->capture($payment->getMercadopagoPaymentId(), ($payment->getAmount() / 100), $requestOptions);
     }
 
-    /**
-     * @return Payment
-     */
     public function getPayment(PaymentInterface $payment): Payment
     {
         $order = $payment->getOrder();
@@ -154,9 +149,6 @@ class MercadopagoManager
         return $client->get($payment->getMercadopagoPaymentId());
     }
 
-    /**
-     * @return PaymentMethodListResult|null
-     */
     public function getPaymentMethod(PaymentInterface $payment): ?PaymentMethodListResult
     {
         try {

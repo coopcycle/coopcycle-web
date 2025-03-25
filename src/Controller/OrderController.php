@@ -80,9 +80,7 @@ class OrderController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/order/", name="order")
-     */
+    #[Route(path: '/order/', name: 'order')]
     public function indexAction(Request $request,
         OrderManager $orderManager,
         CartContextInterface $cartContext,
@@ -321,9 +319,7 @@ class OrderController extends AbstractController
         return $shippingTimeRange;
     }
 
-    /**
-     * @Route("/order/payment", name="order_payment")
-     */
+    #[Route(path: '/order/payment', name: 'order_payment')]
     public function paymentAction(Request $request,
         OrderManager $orderManager,
         CartContextInterface $cartContext,
@@ -422,9 +418,7 @@ class OrderController extends AbstractController
         return $this->render('order/payment.html.twig', $parameters);
     }
 
-    /**
-     * @Route("/order/payment-method", name="order_select_payment_method", methods={"POST"})
-     */
+    #[Route(path: '/order/payment-method', name: 'order_select_payment_method', methods: ['POST'])]
     public function selectPaymentMethodAction(Request $request,
         CartContextInterface $cartContext,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
@@ -458,9 +452,7 @@ class OrderController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/order/{hashid}/payment-method", name="order_by_hashid16_select_payment_method", methods={"POST"})
-     */
+    #[Route(path: '/order/{hashid}/payment-method', name: 'order_by_hashid16_select_payment_method', methods: ['POST'])]
     public function selectPaymentMethodByHashid16Action($hashid, Request $request,
         OrderRepository $orderRepository,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
@@ -503,9 +495,7 @@ class OrderController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/order/confirm/{hashid}", name="order_confirm")
-     */
+    #[Route(path: '/order/confirm/{hashid}', name: 'order_confirm')]
     public function confirmAction($hashid,
         OrderRepository $orderRepository,
         FlashBagInterface $flashBag,
@@ -588,9 +578,7 @@ class OrderController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/order/{hashid}/reorder", name="order_reorder")
-     */
+    #[Route(path: '/order/{hashid}/reorder', name: 'order_reorder')]
     public function reorderAction($hashid,
         OrderRepository $orderRepository,
         OrderProcessorInterface $orderProcessor,
@@ -637,9 +625,7 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('order');
     }
 
-    /**
-     * @Route("/order/continue", name="order_continue")
-     */
+    #[Route(path: '/order/continue', name: 'order_continue')]
     public function continueAction(Request $request,
         CartContextInterface $cartContext)
     {
@@ -660,9 +646,7 @@ class OrderController extends AbstractController
         return $this->redirectToRoute('restaurant', ['id' => $restaurants->first()->getId()]);
     }
 
-    /**
-     * @Route("/order/{hashid}/preview", name="order_preview")
-     */
+    #[Route(path: '/order/{hashid}/preview', name: 'order_preview')]
     public function dataPreviewAction($hashid, OrderRepository $orderRepository)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
@@ -690,9 +674,7 @@ class OrderController extends AbstractController
         return new JsonResponse($orderNormalized, 200);
     }
 
-    /**
-     * @Route("/order/share/{slug}", name="public_share_order")
-     */
+    #[Route(path: '/order/share/{slug}', name: 'public_share_order')]
     public function shareOrderAction($slug, Request $request,
         OrderTimeHelper $orderTimeHelper,
         CartStorage $cartStorage)

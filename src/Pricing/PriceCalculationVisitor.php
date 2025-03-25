@@ -90,9 +90,6 @@ class PriceCalculationVisitor
         }
     }
 
-    /**
-     * @return int|null
-     */
     public function getPrice(): ?int
     {
         return $this->price;

@@ -22,8 +22,6 @@ final class OrderInvitationContext
 
     /**
      * Check if the valid provided player token is matching with the order in parameter
-     * @param OrderInterface $order
-     * @return bool
      */
     public function isPlayerOf(OrderInterface $order): bool
     {
@@ -39,7 +37,6 @@ final class OrderInvitationContext
 
     /**
      * Get `Customer` from player token
-     * @return CustomerInterface|null
      */
     public function getCustomer(): ?CustomerInterface
     {
@@ -51,9 +48,6 @@ final class OrderInvitationContext
         return $this->iriConverter->getItemFromIri($payload['player']);
     }
 
-    /**
-     * @return array|null
-     */
     private function getPayload(): ?array
     {
         $request = $this->requestStack->getCurrentRequest();

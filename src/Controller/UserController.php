@@ -69,9 +69,7 @@ class UserController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/register/suggest", name="register_suggest")
-     */
+    #[Route(path: '/register/suggest', name: 'register_suggest')]
     public function usernameExistsAction(Request $request, UserManagerInterface $userManager, SlugifyInterface $slugify)
     {
         if (!$request->query->has('username')) {
@@ -105,9 +103,7 @@ class UserController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/register/check-email-exists", name="register_check_email_exists")
-     */
+    #[Route(path: '/register/check-email-exists', name: 'register_check_email_exists')]
     public function emailExistsAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator)
     {
         if (!$request->query->has('email')) {
@@ -127,9 +123,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/users/{username}", name="user")
-     */
+    #[Route(path: '/users/{username}', name: 'user')]
     public function indexAction($username, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
@@ -139,9 +133,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/images/avatars/{username}.png", name="user_avatar")
-     */
+    #[Route(path: '/images/avatars/{username}.png', name: 'user_avatar')]
     public function avatarAction($username, Request $request)
     {
         $dir = $this->getParameter('avatar_dir');
@@ -171,9 +163,7 @@ class UserController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/register/resend-email", name="register_resend_email", methods={"POST"})
-     */
+    #[Route(path: '/register/resend-email', name: 'register_resend_email', methods: ['POST'])]
     public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, RegistrationMailer $mailer, SessionInterface $session)
     {
         if ($request->request->has('email')) {
@@ -188,9 +178,7 @@ class UserController extends AbstractController
         return $this->redirectToRoute('nucleos_user_security_login');
     }
 
-    /**
-     * @Route("/invitation/define-password/{code}", name="invitation_define_password")
-     */
+    #[Route(path: '/invitation/define-password/{code}', name: 'invitation_define_password')]
     public function confirmInvitationAction(Request $request, string $code,
         EntityManagerInterface $objectManager,
         UserManagerInterface $userManager,
@@ -256,9 +244,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/invitation/associate-loggedin-user-to-business-account/{code}", name="associate-loggedin-user-to-business-account")
-     */
+    #[Route(path: '/invitation/associate-loggedin-user-to-business-account/{code}', name: 'associate-loggedin-user-to-business-account')]
     public function associateLoggedinUserToBusinessAccount(
         string $code,
         EntityManagerInterface $objectManager,

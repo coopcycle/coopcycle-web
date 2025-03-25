@@ -386,12 +386,7 @@ trait StoreTrait
             ->find($id);
 
         $this->accessControl($store, 'edit_delivery');
-
-        $delivery = null;
-
-        if (null === $delivery) {
-            $delivery = $store->createDelivery();
-        }
+        $delivery = $store->createDelivery();
 
         return $this->render(
             'store/deliveries/beta_new.html.twig',

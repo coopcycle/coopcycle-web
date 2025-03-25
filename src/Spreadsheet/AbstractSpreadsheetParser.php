@@ -73,16 +73,10 @@ abstract class AbstractSpreadsheetParser
 
     abstract public function getExampleData(): array;
 
-    /**
-     * @param array $data
-     * @param array $options
-     * @return array|SpreadsheetParseResult
-     */
     abstract public function parseData(array $data, array $options = []): array | SpreadsheetParseResult;
 
     /**
      * @param FlysystemFile|HttpFoundation\File\File|string $file
-     * @param array $options
      * @throws \Exception
      */
     public function parse($file, array $options = [])
@@ -129,7 +123,6 @@ abstract class AbstractSpreadsheetParser
 
     /**
      * @param FlysystemFile|HttpFoundation\File\File|string $file
-     * @return Spreadsheet
      * @throws \Exception
      */
     public function loadSpreadsheet($file): Spreadsheet
@@ -169,7 +162,6 @@ abstract class AbstractSpreadsheetParser
 
     /**
      * @param FlysystemFile|HttpFoundation\File\File|string $file
-     * @return string
      */
     public function toCsv($file): string
     {
@@ -186,7 +178,6 @@ abstract class AbstractSpreadsheetParser
 
     /**
      * @param FlysystemFile|HttpFoundation\File\File|string $file
-     * @return array
      */
     public function toRawData($file): array
     {
@@ -195,10 +186,6 @@ abstract class AbstractSpreadsheetParser
         return $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex())->toArray();
     }
 
-    /**
-     * @param Spreadsheet $spreadsheet
-     * @return array
-     */
     public function getHeaderRow(Spreadsheet $spreadsheet): array
     {
         foreach ($spreadsheet->getWorksheetIterator() as $sheet) {

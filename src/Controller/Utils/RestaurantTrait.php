@@ -1254,7 +1254,7 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        $routes = $request->attributes->get('routes');
+        $request->attributes->get('routes');
 
         [ $start, $end ] = $this->extractRange($request);
 

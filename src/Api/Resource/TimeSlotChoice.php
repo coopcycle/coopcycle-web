@@ -10,43 +10,25 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @ApiResource(
- *   attributes={
- *     "jsonld_context"={}
- *   },
- *   collectionOperations={},
- *   itemOperations={
- *     "get": {
- *       "method"="GET",
- *       "controller"=NotFoundAction::class,
- *       "read"=false,
- *       "output"=false
- *     }
- *   }
- * )
- */
+#[ApiResource(attributes: ['jsonld_context' => []], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false]])]
 final class TimeSlotChoice
 {
     /**
      * @var string
-     *
-     * @ApiProperty(identifier=true)
      */
+    #[ApiProperty(identifier: true)]
     public $id;
 
     /**
      * @var string
-     *
-     * @Groups({"time_slot_choices"})
      */
+    #[Groups(['time_slot_choices'])]
     public $value;
 
     /**
      * @var string
-     *
-     * @Groups({"time_slot_choices"})
      */
+    #[Groups(['time_slot_choices'])]
     public $label;
 
     public function __construct(\DatePeriod $period, TranslatorInterface $translator, string $locale)

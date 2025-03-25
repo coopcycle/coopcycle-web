@@ -35,9 +35,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
- */
+#[Route(path: '/{_locale}', requirements: ['_locale' => '%locale_regex%'])]
 class EmbedController extends AbstractController
 {
     use AccessControlTrait;
@@ -120,9 +118,7 @@ class EmbedController extends AbstractController
         return $deliveryForm;
     }
 
-    /**
-     * @Route("/embed/delivery/start", name="embed_delivery_start_legacy")
-     */
+    #[Route(path: '/embed/delivery/start', name: 'embed_delivery_start_legacy')]
     public function deliveryStartLegacyAction()
     {
         $qb = $this->getDoctrine()
@@ -145,9 +141,7 @@ class EmbedController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/forms/{hashid}", name="embed_delivery_start")
-     */
+    #[Route(path: '/forms/{hashid}', name: 'embed_delivery_start')]
     public function deliveryStartAction($hashid, Request $request,
         DeliveryManager $deliveryManager,
         EntityManagerInterface $entityManager)
@@ -197,9 +191,7 @@ class EmbedController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/forms/{hashid}/summary", name="embed_delivery_summary")
-     */
+    #[Route(path: '/forms/{hashid}/summary', name: 'embed_delivery_summary')]
     public function deliverySummaryAction($hashid, Request $request,
         OrderRepositoryInterface $orderRepository,
         OrderManager $orderManager,
@@ -373,9 +365,6 @@ class EmbedController extends AbstractController
         return $this->decode($request->get('hashid'));
     }
 
-    /**
-     * @return Delivery|null
-     */
     private function getDeliveryFromRequest(Request $request): ?Delivery
     {
         $submission = $this->getDeliverySubmissionFromRequest($request);
@@ -403,9 +392,6 @@ class EmbedController extends AbstractController
         return $this->getDeliveryForm($request)->getPricingRuleSet();
     }
 
-    /**
-     * @return DeliveryFormSubmission|null
-     */
     private function getDeliverySubmissionFromRequest(Request $request): ?DeliveryFormSubmission
     {
         $hashids = new Hashids($this->getParameter('secret'), 12);

@@ -12,10 +12,6 @@ class OrderTimelineCalculator
     private $preparationTimeCalculator;
     private $shippingTimeCalculator;
 
-    /**
-     * @param PreparationTimeCalculator $preparationTimeCalculator
-     * @param ShippingTimeCalculator $shippingTimeCalculator
-     */
     public function __construct(
         PreparationTimeCalculator $preparationTimeCalculator,
         ShippingTimeCalculator $shippingTimeCalculator)

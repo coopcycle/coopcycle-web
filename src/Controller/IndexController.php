@@ -201,9 +201,7 @@ class IndexController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/cart.json", name="cart_json")
-     */
+    #[Route(path: '/cart.json', name: 'cart_json')]
     public function cartAsJsonAction(CartContextInterface $cartContext)
     {
         $cart = $cartContext->getCart();
@@ -216,9 +214,7 @@ class IndexController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/CHANGELOG.md", name="changelog")
-     */
+    #[Route(path: '/CHANGELOG.md', name: 'changelog')]
     public function changelogAction()
     {
         $response = new Response(file_get_contents($this->getParameter('kernel.project_dir') . '/CHANGELOG.md'));

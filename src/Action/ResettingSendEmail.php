@@ -34,13 +34,7 @@ class ResettingSendEmail
         $this->retryTtl = $retryTtl;
     }
 
-    /**
-     * @Route(
-     *     path="/resetting/send-email",
-     *     name="api_resetting_send_email",
-     *     methods={"POST"}
-     * )
-     */
+    #[Route(path: '/resetting/send-email', name: 'api_resetting_send_email', methods: ['POST'])]
     public function sendEmailAction(Request $request)
     {
         $username = $request->request->get('username');

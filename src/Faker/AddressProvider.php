@@ -13,12 +13,6 @@ class AddressProvider extends BaseProvider
     protected $geocoder;
     protected $center;
 
-    /**
-     * @param Generator $generator
-     * @param Geocoder $geocoder
-     * @param Coordinate $center
-     * @param int $distance
-     */
     public function __construct(Generator $generator, Geocoder $geocoder, Coordinate $center, int $distance = 6)
     {
         parent::__construct($generator);

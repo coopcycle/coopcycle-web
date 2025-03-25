@@ -38,9 +38,6 @@ final class SessionSubscriber implements EventSubscriberInterface
         $this->logger = $logger ?? new NullLogger();
     }
 
-    /**
-     * @return array
-     */
     public static function getSubscribedEvents(): array
     {
         return [

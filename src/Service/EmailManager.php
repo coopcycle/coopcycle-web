@@ -108,7 +108,6 @@ class EmailManager
     }
 
     /**
-     * @param Email $message
      * @param Address|string ...$to
      */
     public function sendTo(Email $message, ...$to)

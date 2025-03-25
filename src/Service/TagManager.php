@@ -45,9 +45,6 @@ class TagManager
         });
     }
 
-    /**
-     * @return callable
-     */
     private function addTag(TaggableInterface $taggable, string $tag): callable
     {
         return function (TaggableInterface $taggable) use ($tag): ?Tagging {
@@ -72,9 +69,6 @@ class TagManager
         };
     }
 
-    /**
-     * @return callable
-     */
     private function removeTag(TaggableInterface $taggable, string $tag): callable
     {
         return function (TaggableInterface $taggable) use ($tag): ?Tagging {

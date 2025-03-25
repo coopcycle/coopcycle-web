@@ -23,9 +23,7 @@ class WoopitDeliveryRequestNormalizer implements NormalizerInterface
     {
         $object->deliveryId = $this->hashids12->encode($object->deliveryObject->getId());
 
-        $data = $this->normalizer->normalize($object, $format, $context);
-
-        return $data;
+        return $this->normalizer->normalize($object, $format, $context);
     }
 
     public function supportsNormalization($data, $format = null)

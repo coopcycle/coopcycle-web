@@ -24,8 +24,6 @@ class StripeAccount
 
     private $createdAt;
 
-    private $updatedAt;
-
     public function getId()
     {
         return $this->id;

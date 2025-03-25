@@ -58,7 +58,7 @@ trait OrderTrait
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
-        $routes = $request->attributes->get('routes');
+        $request->attributes->get('routes');
 
         $parameters = [
             'orders' => $this->getOrderList($request, $paginator, $showCanceled),
@@ -144,7 +144,7 @@ trait OrderTrait
             throw $this->createNotFoundException(sprintf('File %s.pdf does not exist', $orderNumber));
         }
 
-        return new Response((string) $receiptsFilesystem->read($filename), 200, [
+        return new Response($receiptsFilesystem->read($filename), 200, [
             'Content-Type' => 'application/pdf',
         ]);
     }

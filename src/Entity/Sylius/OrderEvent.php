@@ -6,7 +6,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 
 class OrderEvent
 {
-    private $id;
     private $order;
     private $type;
     private array $data = [];

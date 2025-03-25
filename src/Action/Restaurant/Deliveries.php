@@ -18,8 +18,6 @@ class Deliveries
 
     public function __invoke($data, Request $request)
     {
-        $restaurant = $data;
-
         $qb = $this->objectManager->getRepository(Delivery::class)->createQueryBuilder('d');
 
         $date = new \DateTime($request->get('date'));

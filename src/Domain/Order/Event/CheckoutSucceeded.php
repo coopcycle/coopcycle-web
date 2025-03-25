@@ -17,7 +17,6 @@ class CheckoutSucceeded extends Event implements DomainEvent
     }
 
     /**
-     * @param OrderInterface $order
      * @param PaymentInterface|array|\Traversable|null $payment
      */
     public function __construct(OrderInterface $order, $payment = null)
