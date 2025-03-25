@@ -128,9 +128,9 @@ abstract class PostalAddress
     /**
      * Gets addressLocality.
      *
-     * @return string
+     * @return string|null
      */
-    public function getAddressLocality()
+    public function getAddressLocality(): ?string
     {
         return $this->addressLocality;
     }
@@ -200,9 +200,9 @@ abstract class PostalAddress
     /**
      * Gets postalCode.
      *
-     * @return string
+     * @return string|null
      */
-    public function getPostalCode()
+    public function getPostalCode(): ?string
     {
         return $this->postalCode;
     }

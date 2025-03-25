@@ -1576,3 +1576,4 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
+  AppBundle\Utils\Defaults: ~

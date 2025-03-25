@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Exception\PaygreenException;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\Defaults;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
@@ -28,6 +29,7 @@ class PaygreenManager
         private UrlGeneratorInterface $urlGenerator,
         private ChannelContextInterface $channelContext,
         private AdjustmentFactoryInterface $adjustmentFactory,
+        private Defaults $defaults,
         private string $country)
     {}
 
@@ -237,9 +239,9 @@ class PaygreenManager
 
         $address = new PaygreenModel\Address();
         $address->setStreetLineOne($shippingAddress->getStreetAddress());
-        $address->setCity($shippingAddress->getAddressLocality());
+        $address->setCity($shippingAddress->getAddressLocality() ?? $this->defaults->getAddressLocality());
         $address->setCountryCode(strtoupper($this->country));
-        $address->setPostalCode($shippingAddress->getPostalCode());
+        $address->setPostalCode($shippingAddress->getPostalCode() ?? $this->defaults->getPostalCode());
 
         return $address;
     }
