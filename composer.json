@@ -153,7 +153,8 @@
         "picqer/php-barcode-generator": "^2.4",
         "shipmonk/doctrine-entity-preloader": "^1.0",
         "z4kn4fein/php-semver": "^3.0",
-        "invenso/rector": "^1.0"
+        "invenso/rector": "^1.0",
+        "doctrine/annotations": "^1.13"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
