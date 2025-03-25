@@ -76,7 +76,7 @@ class PaygreenManager
 
         $order = $payment->getOrder();
 
-        if (null === $order->getId() || null === $order->getShippingAddress()) {
+        if (null === $order->getId() || null === $order->getShippingAddress() || null === $order->getCustomer()) {
             return;
         }
 
