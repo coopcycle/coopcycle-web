@@ -38,7 +38,7 @@
         "lexik/jwt-authentication-bundle": "^2.8",
         "jsor/doctrine-postgis": "^2.3.0",
         "league/geotools": "@stable",
-        "gedmo/doctrine-extensions": "^3.0.3",
+        "gedmo/doctrine-extensions": "^3.19",
         "snc/redis-bundle": "4.3.0",
         "knplabs/knp-time-bundle": "^2.0",
         "cocur/slugify": "^4.0",
