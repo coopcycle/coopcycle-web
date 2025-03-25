@@ -1,29 +1,31 @@
 import React from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Switch } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import SpreadsheetDropzone from '../components/SpreadsheetDropzone'
 import createHttpClient from '../client'
 
+const dropzoneEl = document.getElementById('products-import-modal').querySelector('[data-spreadsheet-dropzone]')
+let dropzoneRoot
+
 $('#products-import-modal').on('show.bs.modal', function () {
 
-  const el = this.querySelector('[data-spreadsheet-dropzone]')
+  dropzoneRoot = createRoot(dropzoneEl)
 
-  const { url, ...props } = el.dataset
+  const { url, ...props } = dropzoneEl.dataset
 
   const params = props.params ? JSON.parse(props.params) : {}
 
-  render(
+  dropzoneRoot.render(
     <SpreadsheetDropzone
       url={ url }
       params={ params }
-      onSuccess={ () => window.document.location.reload() } />, el)
+      onSuccess={ () => window.document.location.reload() } />)
 })
 
 $('#products-import-modal').on('hidden.bs.modal', function () {
-  const el = this.querySelector('[data-spreadsheet-dropzone]')
-  unmountComponentAtNode(el)
+  dropzoneRoot.unmount();
 })
 
 const fetchToken = window.Routing.generate('profile_jwt')
@@ -50,18 +52,18 @@ $.getJSON(fetchToken)
       const container = document.createElement('div')
       cell.appendChild(container)
 
-      render(
+      createRoot(container).render(
         <Switch
           size="small"
           onChange={ checked => {
             httpClient.put(iri, { enabled: checked })
           }}
           defaultChecked={ enabled }
-        />, container)
+        />)
 
       const deleteCell = row.querySelector('[data-cell="delete"]')
 
-      render(
+      createRoot(deleteCell).render(
         <Popconfirm
           placement="left"
           title="Are you sure？"
@@ -77,8 +79,7 @@ $.getJSON(fetchToken)
           <a href="#">
             <span className="glyphicon glyphicon-trash"></span>
           </a>
-        </Popconfirm>,
-        deleteCell,
+        </Popconfirm>
       )
 
     })

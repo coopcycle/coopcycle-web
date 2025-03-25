@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import Autocomplete from '../components/Autocomplete'
 
@@ -11,7 +11,7 @@ const search = document.getElementById('search-restaurants')
 
 if (search) {
 
-  render(
+  createRoot(search).render(
     <Autocomplete
       baseURL="/admin/restaurants/search?format=json"
       placeholder="Search restaurants…"
@@ -21,5 +21,5 @@ if (search) {
         })
       }}
       clearOnSelect={ true } />
-  , search)
+  )
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { ConfigProvider, DatePicker } from 'antd'
 import moment from 'moment'
 
@@ -12,7 +12,7 @@ export default function(el, options) {
     onChange: () => {}
   }
 
-  render(
+  createRoot(el).render(
     <ConfigProvider locale={ antdLocale }>
       <DatePicker
         format={ 'll' }
@@ -20,6 +20,6 @@ export default function(el, options) {
         onChange={ options.onChange }
         /* This is needed to work with Bootstrap modal */
         getCalendarContainer={ trigger => trigger.parentNode } />
-    </ConfigProvider>, el)
+    </ConfigProvider>)
 
 }

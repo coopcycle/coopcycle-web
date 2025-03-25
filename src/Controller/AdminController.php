@@ -90,6 +90,7 @@ use AppBundle\Service\TagManager;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Utils\Settings;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -1528,8 +1529,12 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
+            /** @var Settings $data */
             $data = $form->getData();
 
+            // https://github.com/phpstan/phpstan/issues/1060
+            /** @phpstan-ignore foreach.nonIterable */
             foreach ($data as $name => $value) {
                 $settingsManager->set($name, $value);
             }

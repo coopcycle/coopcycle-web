@@ -1,25 +1,22 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Task\Reactor;
+namespace Tests\AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Doctrine\EventSubscriber\TaskListSubscriber;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Message\CalculateTaskDistance;
+use AppBundle\MessageHandler\CalculateTaskDistanceHandler;
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Service\TaskListManager;
 use AppBundle\Service\TaskManager;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Prophecy\PhpUnit\ProphecyTrait;
-use Psr\Log\NullLogger;
-use SimpleBus\Message\Bus\MessageBus;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaskDoneHandlerTest extends KernelTestCase
+
+class CalculateTaskDistanceHandlerTest extends KernelTestCase
 {
 
     protected $subscriber;
@@ -28,6 +25,7 @@ class TaskDoneHandlerTest extends KernelTestCase
     protected $iriConverter;
     protected $fixturesLoader;
     protected $taskManager;
+    protected $handler;
 
     use ProphecyTrait;
 
@@ -43,6 +41,13 @@ class TaskDoneHandlerTest extends KernelTestCase
         $this->taskManager = self::getContainer()->get(TaskManager::class);
         $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
 
+        $this->handler = new CalculateTaskDistanceHandler(
+            $this->entityManager,
+            self::getContainer()->get(RoutingInterface::class),
+            $taskListRepository,
+            self::getContainer()->get(LoggerInterface::class)
+        );
+
         $purger = new ORMPurger($this->entityManager);
         $purger->purge();
     }
@@ -57,7 +62,7 @@ class TaskDoneHandlerTest extends KernelTestCase
     public function testCO2CalculationOnSetVehicle() {
 
         $this->fixturesLoader->load([
-            __DIR__.'/../../../../../features/fixtures/ORM/task_list.yml'
+            __DIR__.'/../../../features/fixtures/ORM/task_list.yml'
         ]);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
@@ -78,7 +83,8 @@ class TaskDoneHandlerTest extends KernelTestCase
         $task = $taskList->getTasks()[0];
         $task = $this->entityManager->getRepository(Task::class)->findOneBy(['id' => $task->getId()]);
 
-        $this->taskManager->markAsDone($task);
+        $msg = new CalculateTaskDistance($task->getId());
+        call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(41, $task->getEmittedCo2());
         $this->assertEquals(4175, $task->getTraveledDistanceMeter());
@@ -87,7 +93,8 @@ class TaskDoneHandlerTest extends KernelTestCase
         $task = $taskList->getTasks()[4];
         $task = $this->entityManager->getRepository(Task::class)->findOneBy(['id' => $task->getId()]);
 
-        $this->taskManager->markAsDone($task);
+        $msg = new CalculateTaskDistance($task->getId());
+        call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(40, $task->getEmittedCo2());
         $this->assertEquals(4045, $task->getTraveledDistanceMeter());
@@ -97,7 +104,7 @@ class TaskDoneHandlerTest extends KernelTestCase
     public function testCO2CalculationWithoutVehicle() {
 
         $this->fixturesLoader->load([
-            __DIR__.'/../../../../../features/fixtures/ORM/task_list.yml'
+            __DIR__.'/../../../features/fixtures/ORM/task_list.yml'
         ]);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
@@ -111,7 +118,8 @@ class TaskDoneHandlerTest extends KernelTestCase
         $task = $taskList->getTasks()[0];
         $task = $this->entityManager->getRepository(Task::class)->findOneBy(['id' => $task->getId()]);
 
-        $this->taskManager->markAsDone($task);
+        $msg = new CalculateTaskDistance($task->getId());
+        call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(0, $task->getEmittedCo2());
         $this->assertEquals(0, $task->getTraveledDistanceMeter());
@@ -120,7 +128,8 @@ class TaskDoneHandlerTest extends KernelTestCase
         $task = $taskList->getTasks()[4];
         $task = $this->entityManager->getRepository(Task::class)->findOneBy(['id' => $task->getId()]);
 
-        $this->taskManager->markAsDone($task);
+        $msg = new CalculateTaskDistance($task->getId());
+        call_user_func_array($this->handler, [ $msg ]);
 
         $this->assertEquals(0, $task->getEmittedCo2());
         $this->assertEquals(4045, $task->getTraveledDistanceMeter());
