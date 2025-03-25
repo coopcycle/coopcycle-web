@@ -61,10 +61,21 @@ class PaygreenManager
 
         $order->removeAdjustments(AdjustmentInterface::STRIPE_FEE_ADJUSTMENT);
 
+        $paygreenFee = 0;
+        foreach ($po['transactions'] as $transaction) {
+            if ($transaction['status'] === 'transaction.captured') {
+                foreach ($transaction['operations'] as $operation) {
+                    if ($operation['status'] === 'operation.captured') {
+                        $paygreenFee += $operation['cost'] + $operation['fees'];
+                    }
+                }
+            }
+        }
+
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::STRIPE_FEE_ADJUSTMENT,
             'Paygreen fee',
-            $po['paygreen_fees'],
+            $paygreenFee,
             $neutral = true
         );
         $order->addAdjustment($feeAdjustment);
