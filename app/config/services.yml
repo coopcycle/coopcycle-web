@@ -1125,6 +1125,8 @@ services:
 
   AppBundle\MessageHandler\ImportTasksHandler: ~
 
+  AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
+
   AppBundle\MessageHandler\CalculateRouteHandler:
     arguments:
       $eventBus: '@simple_bus.event_bus'
@@ -1574,3 +1576,4 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
+  AppBundle\Utils\Defaults: ~

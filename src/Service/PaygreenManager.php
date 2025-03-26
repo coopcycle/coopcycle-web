@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Exception\PaygreenException;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\Defaults;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
@@ -28,6 +29,7 @@ class PaygreenManager
         private UrlGeneratorInterface $urlGenerator,
         private ChannelContextInterface $channelContext,
         private AdjustmentFactoryInterface $adjustmentFactory,
+        private Defaults $defaults,
         private string $country)
     {}
 
@@ -61,10 +63,21 @@ class PaygreenManager
 
         $order->removeAdjustments(AdjustmentInterface::STRIPE_FEE_ADJUSTMENT);
 
+        $paygreenFee = 0;
+        foreach ($po['transactions'] as $transaction) {
+            if ($transaction['status'] === 'transaction.captured') {
+                foreach ($transaction['operations'] as $operation) {
+                    if ($operation['status'] === 'operation.captured') {
+                        $paygreenFee += $operation['cost'] + $operation['fees'];
+                    }
+                }
+            }
+        }
+
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::STRIPE_FEE_ADJUSTMENT,
             'Paygreen fee',
-            $po['paygreen_fees'],
+            $paygreenFee,
             $neutral = true
         );
         $order->addAdjustment($feeAdjustment);
@@ -76,7 +89,7 @@ class PaygreenManager
 
         $order = $payment->getOrder();
 
-        if (null === $order->getId() || null === $order->getShippingAddress()) {
+        if (null === $order->getId() || null === $order->getShippingAddress() || null === $order->getCustomer()) {
             return;
         }
 
@@ -104,6 +117,10 @@ class PaygreenManager
 
             $response = $this->paygreenClient->createBuyer($buyer);
             $data = json_decode($response->getBody()->getContents(), true);
+
+            if ($response->getStatusCode() !== 200) {
+                throw new PaygreenException($data['detail'] ?? $data['message']);
+            }
 
             $order->getCustomer()->setPaygreenBuyerId($data['data']['id']);
         }
@@ -222,9 +239,9 @@ class PaygreenManager
 
         $address = new PaygreenModel\Address();
         $address->setStreetLineOne($shippingAddress->getStreetAddress());
-        $address->setCity($shippingAddress->getAddressLocality());
+        $address->setCity($shippingAddress->getAddressLocality() ?? $this->defaults->getAddressLocality());
         $address->setCountryCode(strtoupper($this->country));
-        $address->setPostalCode($shippingAddress->getPostalCode());
+        $address->setPostalCode($shippingAddress->getPostalCode() ?? $this->defaults->getPostalCode());
 
         return $address;
     }

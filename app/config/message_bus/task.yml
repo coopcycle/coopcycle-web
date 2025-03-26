@@ -25,10 +25,9 @@ services:
     arguments:
       - '@event_recorder'
       - '@translator'
-      - '@AppBundle\Entity\TaskListRepository'
-      - '@routing_service'
       - '@logger'
       - '@AppBundle\Integration\Standtrack\StandtrackClient'
+      - '@messenger.default_bus'
     tags:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\MarkAsDone
