@@ -12,8 +12,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class HideSoftDeletedSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private ManagerRegistry $doctrine,
-        private AttributeReader $attributeReader
+        private ManagerRegistry $doctrine
     ) {}
 
     public function onKernelController(ControllerEvent $event)
