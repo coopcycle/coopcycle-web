@@ -33,10 +33,29 @@
     },
     "require": {
         "php": ">=8.2",
+
+        "symfony/flex": "*",
+        "symfony/asset": "*",
+        "symfony/mailer": "*",
+        "symfony/form": "*",
+        "symfony/security-bundle": "*",
+        "symfony/translation": "5.4.*",
+        "symfony/dotenv": "*",
+        "symfony/twig-bundle": "*",
+        "symfony/redis-messenger": "*",
+        "symfony/amqp-messenger": "*",
+        "symfony/doctrine-messenger": "*",
+        "symfony/monolog-bundle": "*",
+        "symfony/ux-react": "2.10",
+        "symfony/ux-turbo": "^2.10",
+        "symfony/stimulus-bundle": "^2.10",
+        "symfony/webpack-encore-bundle": "^1.6",
+        "friendsofsymfony/rest-bundle": "^3.0",
+        "friendsofsymfony/jsrouting-bundle": "^2.2",
+
         "api-platform/core": "2.6.8",
         "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^2.4",
-        "symfony/monolog-bundle": "*",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
         "jsor/doctrine-postgis": "^2.3.0",
@@ -75,8 +94,6 @@
         "geocoder-php/nominatim-provider": "^5.0",
         "jmikola/geojson": "~1.0",
         "simple-bus/symfony-bridge": "^6.0",
-        "friendsofsymfony/jsrouting-bundle": "^2.2",
-        "symfony/webpack-encore-bundle": "^1.6",
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.3",
         "oneup/uploader-bundle": "^4.0.1",
@@ -106,7 +123,6 @@
         "mercadopago/dx-php": "^3.0.8",
         "egulias/email-validator": "^3.0",
         "twilio/sdk": "^6.10",
-        "friendsofsymfony/rest-bundle": "^3.0",
         "geocoder-php/open-cage-provider": "^4.4",
         "spatie/guzzle-rate-limiter-middleware": "^2.0",
         "geocoder-php/photon-provider": "^0.6.0",
@@ -121,9 +137,6 @@
         "nucleos/profile-bundle": "2.3.x-dev",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
-        "symfony/redis-messenger": "^5.3",
-        "symfony/amqp-messenger": "^5.3",
-        "symfony/doctrine-messenger": "^5.3",
         "azimolabs/apple-sign-in-php-sdk": "^2.0",
         "google/apiclient": "^2.11",
         "theofidry/alice-data-fixtures": "^1.6.0",
@@ -137,15 +150,12 @@
         "twig/markdown-extra": "^3.4",
         "league/commonmark": "^2.3",
         "acseo/typesense-bundle": "^0.7.6",
-        "symfony/stimulus-bundle": "^2.10",
         "dflydev/base32-crockford": "^1.0",
         "craue/formflow-bundle": "^3.6",
         "proj4php/proj4php": "^2.0",
         "mtdowling/jmespath.php": "^2.7",
         "php-units-of-measure/php-units-of-measure": "^2.1",
-        "symfony/ux-turbo": "^2.10",
         "twig/html-extra": "^3.7",
-        "symfony/ux-react": "2.10",
         "league/flysystem": "^3.0",
         "league/flysystem-ftp": "^3.0",
         "coopcycle/transporter": "dev-master",
@@ -159,20 +169,15 @@
         "invenso/rector": "^1.0",
         "doctrine/annotations": "^1.13",
         "geocoder-php/geocode-earth-provider": "^1.4",
-        "symfony/flex": "*",
         "sensio/framework-extra-bundle": "*",
-        "symfony/asset": "*",
-        "symfony/mailer": "*",
-        "symfony/form": "*",
-        "symfony/security-bundle": "*",
-        "symfony/translation": "*",
-        "symfony/validator": "*",
-        "symfony/dotenv": "*",
         "doctrine/dbal": "^3",
-        "symfony/twig-bundle": "^5.4",
-        "twig/extra-bundle": "^2.12|^3.0"
+        "twig/extra-bundle": "^2.12|^3.0",
+        "symfony/workflow": "5.4.*"
     },
     "require-dev": {
+        "symfony/debug-bundle": "*",
+        "symfony/stopwatch": "^6.4",
+        "symfony/web-profiler-bundle": "^6.1",
         "symfony/phpunit-bridge": "^5.0",
         "phpunit/phpunit": "^9.0",
         "behat/behat": "^3.7",
@@ -190,10 +195,7 @@
         "aeon-php/calendar": "1.0.6",
         "league/flysystem-memory": "^3.0",
         "rector/rector": "^1.2",
-        "doctrine/doctrine-fixtures-bundle": "*",
-        "symfony/debug-bundle": "*",
-        "symfony/stopwatch": "^6.4",
-        "symfony/web-profiler-bundle": "^6.1"
+        "doctrine/doctrine-fixtures-bundle": "*"
     },
     "repositories": [
         {
@@ -221,16 +223,12 @@
     "prefer-stable": true,
     "scripts": {
         "post-install-cmd": [
-            "@php bin/console cache:clear --no-warmup",
-            "@php bin/console assets:install --symlink --relative web"
+            "@auto-scripts"
         ],
         "post-update-cmd": [
-            "@php bin/console cache:clear --no-warmup",
-            "@php bin/console assets:install --symlink --relative web"
+            "@auto-scripts"
         ],
         "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
         }
     },
     "extra": {
@@ -240,6 +238,10 @@
         "symfony-web-dir": "web",
         "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
+        "symfony": {
+            "allow-contrib": true,
+            "require": "5.4.*"
+        },
         "drupal-core-vendor-hardening": {
             "api-platform/core": ["features", "tests"],
             "aws/aws-sdk-php": [".changes"],
