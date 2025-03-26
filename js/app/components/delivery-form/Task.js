@@ -80,8 +80,7 @@ export default ({
   useEffect(() => {
     const shouldShowLess =
       task.type === 'DROPOFF' &&
-      values.tasks.length > 2 &&
-      index !== values.tasks.length - 1
+      values.tasks.length > 2
     setShowLess(shouldShowLess)
   }, [task.type, values.tasks.length, index])
 
@@ -93,17 +92,21 @@ export default ({
             ? 'task__header task__header--pickup'
             : 'task__header task__header--dropoff'
         }
-        onClick={() => setShowLess(!showLess)}>
+        onClick={() => setShowLess(!showLess)}
+      >
         {task.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
           <i className="fa fa-arrow-down"></i>
         )}
-        <h3 className="task__header__title mb-4">
-          {task.type === 'PICKUP'
-            ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
-            : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
-        </h3>
+        <h4 className="task__header__title ml-2 mb-4">
+          { task.address?.streetAddress ?
+              task.address.streetAddress :
+              task.type === 'PICKUP' ?
+                t('DELIVERY_FORM_PICKUP_INFORMATIONS') :
+                t('DELIVERY_FORM_DROPOFF_INFORMATIONS')
+          }
+        </h4>
 
         <button type="button" className="task__button">
           <i
