@@ -1,4 +1,13 @@
 lexik_jwt_authentication:
-    secret_key: '%env(resolve:JWT_SECRET_KEY)%'
-    public_key: '%env(resolve:JWT_PUBLIC_KEY)%'
-    pass_phrase: '%env(JWT_PASSPHRASE)%'
+    secret_key:  "%jwt_private_key_path%"
+    public_key:  "%jwt_public_key_path%"
+    pass_phrase: "%env(COOPCYCLE_PRIVATE_KEY_PASSPHRASE)%"
+    token_ttl:   "%env(COOPCYCLE_JWT_TTL)%"
+    token_extractors:
+        authorization_header:      # look for a token as Authorization Header
+            enabled: true
+            prefix:  Bearer
+            name:    Authorization
+        query_parameter:           # check token in query string parameter
+            enabled: true
+            name:    token

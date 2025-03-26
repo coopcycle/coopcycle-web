@@ -1,0 +1,5 @@
+nucleos_profile:
+    registration:
+        confirmation:
+            from_email: "%transactional_sender_name% <%transactional_address%>"
+            enabled: "%nucleos_profile.registration.confirmation.enabled%"

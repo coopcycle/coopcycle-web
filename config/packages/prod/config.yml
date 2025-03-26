@@ -1,6 +1,3 @@
-imports:
-    - { resource: config.yml }
-
 framework:
     php_errors:
         log: true

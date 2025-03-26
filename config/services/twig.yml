@@ -5,7 +5,7 @@ services:
     autoconfigure: true
 
   AppBundle\Twig\:
-    resource: '../../../src/Twig/*'
+    resource: '../../src/Twig/*'
 
   AppBundle\Twig\AppearanceRuntime:
     arguments:

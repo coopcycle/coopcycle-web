@@ -1,3 +1,7 @@
+nelmio_alice:
+    # FIXME Do not hardcode this
+    locale: 'fr_FR'
+
 when@dev: &dev
     nelmio_alice:
         functions_blacklist:

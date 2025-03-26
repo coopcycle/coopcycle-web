@@ -1,7 +1,32 @@
 api_platform:
+    defaults:
+        pagination_client_items_per_page: true
+        pagination_maximum_items_per_page: 100
+    version: 1.0.0
+    title: CoopCycle
+    show_webby: false
+    enable_swagger_ui: true
+    enable_re_doc: false
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity']
+        paths:
+            - '%kernel.project_dir%/src/Api/Dto'
+            - '%kernel.project_dir%/src/Api/Resource'
+    exception_to_status:
+        Symfony\Component\Serializer\Exception\ExceptionInterface: 400
+        ApiPlatform\Core\Exception\InvalidArgumentException: 400
+        ApiPlatform\Core\Validator\Exception\ValidationException: 400
+        AppBundle\Api\Exception\BadRequestHttpException: 400
+        AppBundle\Exception\LoopeatInsufficientStockException: 400
+    # see https://github.com/api-platform/core/pull/2721
+    messenger:
+        enabled: false
+    formats:
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
+        json: ['application/json']
+        csv: ['text/csv']
+        html: ['text/html']
     patch_formats:
-        json: ['application/merge-patch+json']
+        jsonld: ['application/ld+json', 'application/merge-patch+json']
+        json: ['application/json']
     swagger:
-        versions: [3]
+        versions: [3, 2]

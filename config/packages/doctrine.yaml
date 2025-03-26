@@ -1,54 +1,75 @@
 doctrine:
     dbal:
-        url: '%env(resolve:DATABASE_URL)%'
+        driver:   pdo_pgsql
+        host:     "%env(COOPCYCLE_DB_HOST)%"
+        port:     "%env(COOPCYCLE_DB_PORT)%"
+        dbname:   "%env(COOPCYCLE_DB_NAME)%"
+        user:     "%env(COOPCYCLE_DB_USER)%"
+        password: "%env(COOPCYCLE_DB_PASSWORD)%"
+        sslmode: "%env(COOPCYCLE_POSTGRES_SSLMODE)%"
+        charset:  UTF8
+        types:
+            geography: Jsor\Doctrine\PostGIS\Types\GeographyType
+            geometry: Jsor\Doctrine\PostGIS\Types\GeometryType
+            geojson: AppBundle\Doctrine\DBAL\Types\GeoJSONType
+            uuid: Ramsey\Uuid\Doctrine\UuidType
+            phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
+            numrange: AppBundle\Doctrine\DBAL\Types\NumRangeType
+            tsrange: AppBundle\Doctrine\DBAL\Types\TsRangeType
+            rrule: AppBundle\Doctrine\DBAL\Types\RRuleType
+        mapping_types:
+            _text: string
+            numrange: string
+            tsrange: string
 
-        # IMPORTANT: You MUST configure your server version,
-        # either here or in the DATABASE_URL env var (see .env file)
-        #server_version: '16'
+        # Tells Doctrine what database features are supported
+        # Make sure that your production database uses this version or higher.
+        # If you don't define this option and you haven't created your database yet,
+        # you may get PDOException errors because Doctrine will try to guess
+        # the database server version automatically and none is available.
+        # http://symfony.com/doc/current/reference/configuration/doctrine.html
+        # Should be fixed in next Doctrine version
+        # https://github.com/doctrine/dbal/pull/2671
+        server_version: '13'
 
-        profiling_collect_backtrace: '%kernel.debug%'
-        use_savepoints: true
+        # Add a schema filter to avoid having PostGIS tables tiger.* & topology.* in migrations diff
+        # https://symfony.com/doc/master/bundles/DoctrineMigrationsBundle/index.html#manual-tables
+        schema_filter: ~^(?!((tiger|topology)\.)|view_)~
+
     orm:
-        auto_generate_proxy_classes: true
-        enable_lazy_ghost_objects: true
-        report_fields_where_declared: true
-        validate_xml_mapping: true
-        naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        identity_generation_preferences:
-            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
         auto_mapping: true
         mappings:
-            App:
-                type: attribute
+            AppBundle:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
-        controller_resolver:
-            auto_mapping: false
-
-when@test:
-    doctrine:
-        dbal:
-            # "TEST_TOKEN" is typically set by ParaTest
-            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
-
-when@prod:
-    doctrine:
-        orm:
-            auto_generate_proxy_classes: false
-            proxy_dir: '%kernel.build_dir%/doctrine/orm/Proxies'
-            query_cache_driver:
-                type: pool
-                pool: doctrine.system_cache_pool
-            result_cache_driver:
-                type: pool
-                pool: doctrine.result_cache_pool
-
-    framework:
-        cache:
-            pools:
-                doctrine.result_cache_pool:
-                    adapter: cache.app
-                doctrine.system_cache_pool:
-                    adapter: cache.system
+                prefix: 'AppBundle\Entity'
+                alias: AppBundle
+                type: xml
+        dql:
+            string_functions:
+                ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin
+                ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
+                ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
+                ST_GeomFromGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON
+                ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
+                similarity: AppBundle\Doctrine\Functions\Similarity
+                TSRANGE: AppBundle\Doctrine\Functions\TsRange
+                OVERLAPS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Overlaps
+                CAST: DoctrineExtensions\Query\Mysql\Cast
+                JSON_GET_FIELD_AS_TEXT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetFieldAsText
+                JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
+                JSON_AGG: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonAgg
+                JSON_BUILD_OBJECT: AppBundle\Doctrine\Functions\JsonBuildObject
+            datetime_functions:
+                date: DoctrineExtensions\Query\Mysql\Date
+        filters:
+            soft_deleteable:
+                class:   Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+                enabled: false
+            disabled_filter:
+                class:   AppBundle\Doctrine\Filter\DisabledFilter
+                enabled: true
+        resolve_target_entities:
+            Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface

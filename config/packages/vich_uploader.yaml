@@ -1,8 +1,58 @@
 vich_uploader:
     db_driver: orm
-
-    #mappings:
-    #    products:
-    #        uri_prefix: /images/products
-    #        upload_destination: '%kernel.project_dir%/public/images/products'
-    #        namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+    storage: flysystem
+    mappings:
+        restaurant_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        restaurant_banner_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.restaurant_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        store_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.store_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        task_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.task_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        product_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.product_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2
+        incident_image:
+            uri_prefix: ''
+            upload_destination: oneup_flysystem.incident_images_filesystem
+            namer: vich_uploader.namer_uniqid
+            directory_namer:
+                service: vich_uploader.directory_namer_subdir
+                options:
+                    chars_per_dir: 2
+                    dirs: 2

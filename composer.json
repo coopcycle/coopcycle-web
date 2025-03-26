@@ -14,8 +14,7 @@
         "psr-4": {
             "AppBundle\\": "src/",
             "Application\\Migrations\\": "app/DoctrineMigrations"
-        },
-        "classmap": [ "app/AppKernel.php", "app/AppCache.php" ]
+        }
     },
     "autoload-dev": {
         "psr-4": { "Tests\\": "tests/" }
@@ -25,7 +24,8 @@
         "allow-plugins": {
             "drupal/core-vendor-hardening": true,
             "php-http/discovery": true,
-            "symfony/flex": true
+            "symfony/flex": true,
+            "symfony/runtime": true
         }
     },
     "conflict": {
@@ -39,13 +39,14 @@
         "symfony/mailer": "*",
         "symfony/form": "*",
         "symfony/security-bundle": "*",
-        "symfony/translation": "5.4.*",
+        "symfony/translation": "*",
         "symfony/dotenv": "*",
         "symfony/twig-bundle": "*",
         "symfony/redis-messenger": "*",
         "symfony/amqp-messenger": "*",
         "symfony/doctrine-messenger": "*",
         "symfony/monolog-bundle": "*",
+        "symfony/runtime": "5.4.*",
         "symfony/ux-react": "2.10",
         "symfony/ux-turbo": "^2.10",
         "symfony/stimulus-bundle": "^2.10",
@@ -171,8 +172,7 @@
         "geocoder-php/geocode-earth-provider": "^1.4",
         "sensio/framework-extra-bundle": "*",
         "doctrine/dbal": "^3",
-        "twig/extra-bundle": "^2.12|^3.0",
-        "symfony/workflow": "5.4.*"
+        "twig/extra-bundle": "^2.12|^3.0"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
@@ -229,6 +229,7 @@
             "@auto-scripts"
         ],
         "auto-scripts": {
+
         }
     },
     "extra": {

@@ -1,6 +1,62 @@
-# Read the documentation: https://github.com/1up-lab/OneupUploaderBundle/blob/master/Resources/doc/index.md
 oneup_uploader:
     mappings:
-        # This is a mapping example, remove it and create your own mappings.
-        gallery:
-            frontend: dropzone # or any uploader you use in the frontend
+        restaurant:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.restaurant_images_filesystem
+            allowed_mimetypes:
+                image/jpg: []
+                image/jpeg: []
+                image/png: []
+        product:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.product_images_filesystem
+            allowed_mimetypes:
+                image/jpg: []
+                image/jpeg: []
+                image/png: []
+        logo:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.assets_filesystem
+            namer: AppBundle\Utils\LogoNamer
+            allowed_mimetypes:
+                image/png: []
+        tasks:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.task_imports_filesystem
+            allowed_mimetypes:
+                application/vnd.oasis.opendocument.spreadsheet: []
+                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet: []
+                application/vnd.ms-excel: []
+                application/octet-stream: []
+                text/csv: []
+                text/plain: []
+        products:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.product_imports_filesystem
+            allowed_mimetypes:
+                application/vnd.oasis.opendocument.spreadsheet: []
+                application/vnd.openxmlformats-officedocument.spreadsheetml.sheet: []
+                application/vnd.ms-excel: []
+                application/octet-stream: []
+                text/csv: []
+                text/plain: []
+        banner:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.assets_filesystem
+            namer: AppBundle\Utils\BannerNamer
+            allowed_mimetypes:
+                text/html: ['svg']
+                image/svg+xml: ['svg']
+                image/svg: ['svg']
