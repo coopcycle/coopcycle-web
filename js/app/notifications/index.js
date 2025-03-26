@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { render } from 'react-dom'
+import { render } from '../utils/react'
 import { Badge, Popover } from 'antd'
 import Centrifuge from 'centrifuge'
 

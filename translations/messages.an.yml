@@ -81,7 +81,6 @@ adminDashboard.pricing.noPricings: 'Encara no i hai tarifas'
 adminDashboard.pricing.createNew: 'Creyar nueva tarifa'
 adminDashboard.pricing.noRuleFound: 'No se troba garra regla de tarificación. Estas
   definen como se calcula lo coste d''a entrega.'
-adminDashboard.pricing.addRule: 'Anyadir regla'
 adminDashboard.tags.title: 'Etiquetas'
 adminDashboard.tags.createNew: 'Creyar nueva etiqueta'
 adminDashboard.tags.name: 'Nombre'

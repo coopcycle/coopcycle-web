@@ -39,6 +39,26 @@
   pointer-events: none;
 }
 
+.gap-0 {
+  gap: 0;
+}
+
+.gap-1 {
+  gap: 0.25rem;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}
+
+.gap-3 {
+  gap: 1rem;
+}
+
+.gap-4 {
+  gap: 1.5rem;
+}
+
 @keyframes rotating {
   from {
     transform: rotate(0deg);
@@ -79,6 +99,10 @@
 
 .cursor-grabbing {
   cursor: grabbing;
+}
+
+.color-main {
+  color: $main-blue;
 }
 
 .text-danger,

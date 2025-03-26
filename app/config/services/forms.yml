@@ -311,3 +311,6 @@ services:
 
   AppBundle\Form\BusinessRestaurantGroupPriceType:
     tags: [ form.type ]
+
+  AppBundle\Form\PricingRuleSetType:
+    tags: [ form.type ]
