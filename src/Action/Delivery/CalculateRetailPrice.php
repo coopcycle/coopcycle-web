@@ -29,10 +29,8 @@ class CalculateRetailPrice implements TaxableInterface
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
-        private readonly TranslatorInterface $translator,
-        private readonly string $state)
-    {
-    }
+        private readonly string $state
+    ) {}
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
     {
