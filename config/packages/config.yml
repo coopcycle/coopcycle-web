@@ -26,21 +26,6 @@ framework:
     fragments:       ~
     http_method_override: true
     assets: ~
-    cache:
-        prefix_seed: "%env(APP_VERSION)%"
-        app: cache.adapter.redis
-        default_redis_provider: "snc_redis.default"
-        pools:
-            twig.cache:
-                adapter: cache.app
-            s3_flysystem.cache:
-                adapter: cache.app
-            project.cache:
-                adapter: cache.app
-            tag_manager.cache:
-                adapters:
-                  - cache.adapter.array
-                  - cache.app
     messenger:
         buses:
             messenger.bus.default:
