@@ -61,7 +61,7 @@ export default ({
 
   const format = 'LL'
 
-  const [showLess, setShowLess] = useState(false)
+  const [showLess, setShowLess] = useState(task.type === 'DROPOFF' && values.tasks.length > 2)
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
   useEffect(() => {
@@ -76,13 +76,6 @@ export default ({
       setFieldValue(`tasks[${index}].timeSlot`, null)
     }
   }, [isTimeSlotSelect, storeDeliveryInfos])
-
-  useEffect(() => {
-    const shouldShowLess =
-      task.type === 'DROPOFF' &&
-      values.tasks.length > 2
-    setShowLess(shouldShowLess)
-  }, [task.type, values.tasks.length, index])
 
   return (
     <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
@@ -117,6 +110,14 @@ export default ({
                 : t('DELIVERY_FORM_SHOW_LESS')
             }></i>
         </button>
+
+        { showRemoveButton && (
+          <i
+            className="fa fa-trash cursor-pointer"
+            onClick={() => onRemove(index)}
+            type="button"
+          />
+        )}
       </div>
 
       <div
