@@ -1,0 +1,7 @@
+sylius_crud_routes:
+    resource: 'sylius.routing.loader.crud_routes_attributes'
+    type: service
+
+sylius_routes:
+    resource: 'sylius.routing.loader.routes_attributes'
+    type: service

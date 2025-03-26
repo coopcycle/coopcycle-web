@@ -1,0 +1,10 @@
+# Read the documentation: https://github.com/1up-lab/OneupFlysystemBundle
+oneup_flysystem:
+    adapters:
+        default_adapter:
+            local:
+                location: '%kernel.cache_dir%/flysystem'
+    filesystems:
+        default_filesystem:
+            adapter: default_adapter
+            alias: League\Flysystem\Filesystem

@@ -1,0 +1,6 @@
+# Read the documentation: https://github.com/1up-lab/OneupUploaderBundle/blob/master/Resources/doc/index.md
+oneup_uploader:
+    mappings:
+        # This is a mapping example, remove it and create your own mappings.
+        gallery:
+            frontend: dropzone # or any uploader you use in the frontend

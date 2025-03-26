@@ -1,0 +1,9 @@
+# Read the documentation: https://github.com/acseo/TypesenseBundle/blob/master/README.md
+acseo_typesense:
+    typesense:
+        url: '%env(resolve:TYPESENSE_URL)%'
+        key: '%env(resolve:TYPESENSE_KEY)%'
+        # Optional : add prefix to all collection names in Typesense
+        #collection_prefix: 'app_'
+    # Collection settings
+    collections: null

@@ -1,0 +1,9 @@
+nucleos_user:
+    firewall_name: main
+
+    from_email: '%env(MAIL_SENDER)%'
+
+    user_class: 'App\Entity\User\User'
+
+    group:
+        group_class: 'App\Entity\User\Group'

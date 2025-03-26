@@ -1,0 +1,14 @@
+hwi_oauth:
+    # list of names of the firewalls in which this bundle is active, this setting MUST be set
+    firewall_names: [main]
+
+    # https://github.com/hwi/HWIOAuthBundle/blob/master/Resources/doc/2-configuring_resource_owners.md
+    resource_owners:
+        facebook:
+            type:                facebook
+            client_id:           '%env(FB_ID)%'
+            client_secret:       '%env(FB_SECRET)%'
+            scope:               "email"
+            options:
+                display: popup
+                csrf: true

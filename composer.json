@@ -24,16 +24,19 @@
         "process-timeout":0,
         "allow-plugins": {
             "drupal/core-vendor-hardening": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "symfony/flex": true
         }
+    },
+    "conflict": {
+       "symfony/symfony": "*"
     },
     "require": {
         "php": ">=8.2",
-        "symfony/symfony": "^5.3",
         "api-platform/core": "2.6.8",
         "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^2.4",
-        "symfony/monolog-bundle": "^3.5",
+        "symfony/monolog-bundle": "*",
         "nelmio/cors-bundle": "~2.0",
         "lexik/jwt-authentication-bundle": "^2.8",
         "jsor/doctrine-postgis": "^2.3.0",
@@ -155,7 +158,19 @@
         "z4kn4fein/php-semver": "^3.0",
         "invenso/rector": "^1.0",
         "doctrine/annotations": "^1.13",
-        "geocoder-php/geocode-earth-provider": "^1.4"
+        "geocoder-php/geocode-earth-provider": "^1.4",
+        "symfony/flex": "*",
+        "sensio/framework-extra-bundle": "*",
+        "symfony/asset": "*",
+        "symfony/mailer": "*",
+        "symfony/form": "*",
+        "symfony/security-bundle": "*",
+        "symfony/translation": "*",
+        "symfony/validator": "*",
+        "symfony/dotenv": "*",
+        "doctrine/dbal": "^3",
+        "symfony/twig-bundle": "^5.4",
+        "twig/extra-bundle": "^2.12|^3.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^5.0",
@@ -174,7 +189,11 @@
         "phpstan/phpstan-doctrine": "^1.0",
         "aeon-php/calendar": "1.0.6",
         "league/flysystem-memory": "^3.0",
-        "rector/rector": "^1.2"
+        "rector/rector": "^1.2",
+        "doctrine/doctrine-fixtures-bundle": "*",
+        "symfony/debug-bundle": "*",
+        "symfony/stopwatch": "^6.4",
+        "symfony/web-profiler-bundle": "^6.1"
     },
     "repositories": [
         {
@@ -208,7 +227,11 @@
         "post-update-cmd": [
             "@php bin/console cache:clear --no-warmup",
             "@php bin/console assets:install --symlink --relative web"
-        ]
+        ],
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        }
     },
     "extra": {
         "symfony-app-dir": "app",
