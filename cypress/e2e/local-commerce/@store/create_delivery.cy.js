@@ -55,7 +55,7 @@ context('Delivery (role: store)', () => {
 
     cy.get('[data-testid="delivery-distance"]')
       .invoke('text')
-      .should('contains', 'Distance: 1.50 kms')
+      .should('contains', 'Distance : 1.50 kms')
 
       cy.get('button[type="submit"]').click()
 

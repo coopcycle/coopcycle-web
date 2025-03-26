@@ -53,7 +53,7 @@ context('store with invalid pricing (role: store)', () => {
 
     cy.get('.alert-danger', { timeout: 10000 }).should(
       'contain',
-      "Le prix de la course n'a pas pu être calculé.",
+      "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, nous vous recontacterons avec le prix corrigé.",
     )
 
     cy.get('button[type="submit"]').click()
