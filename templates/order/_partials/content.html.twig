@@ -19,7 +19,6 @@
     {% endif %}
     <div id="order-timeline"
       data-order="{{ order_normalized|json_encode|e('html_attr') }}"
-      data-events="{{ events|json_encode|e('html_attr') }}"
       data-order-access-token="{{ orderAccessToken }}"
       data-centrifugo-channel="{{ centrifugo.channel|e('html_attr') }}"
       data-centrifugo-token="{{ centrifugo.token|e('html_attr') }}"></div>

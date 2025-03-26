@@ -1,25 +1,16 @@
-import React from 'react';
+import React, { useMemo } from 'react'
 import moment from 'moment';
 import _ from 'lodash';
+import { useSelector } from 'react-redux'
 
-import i18n from '../i18n';
+import i18n from '../../i18n';
 import TimelineStep from './TimelineStep';
-import ShippingTimeRange from '../components/ShippingTimeRange';
-import { ApiProvider } from '@reduxjs/toolkit/dist/query/react';
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import ShippingTimeRange from '../../components/ShippingTimeRange';
+import { useGetOrderQuery } from '../../api/slice'
+import { selectOrderEvents } from '../../entities/order/reduxSlice'
 
 moment.locale($('html').attr('lang'));
 
-const api = createApi({
-  baseQuery: fetchBaseQuery({
-    jsonContentType: 'application/ld+json'
-  }),
-  endpoints: (build) => ({
-    getOrderState: build.query({
-      query: args => ({url:  args.order['@id'], headers: { 'Authorization': `Bearer ${args.orderAccessToken}` }}),
-    }),
-  }),
-})
 
 const dateComparator = (a, b) => moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1;
 
@@ -32,10 +23,17 @@ const allowedEvents = [
   'order:dropped'
 ];
 
-const OrderTimeline = ({ order, orderAccessToken, events: initialEvents }) => {
+export default ({ order }) => {
 
-  const { data, isFetching, refetch } = api.useGetOrderStateQuery({order, orderAccessToken}, { pollingInterval: 6000, skipPollingIfUnfocused: true})
-  const events = data ? data.events.filter(event => allowedEvents.includes(event.type)).map(event => ({ name: event.type, createdAt: event.createdAt })).sort(dateComparator) : initialEvents.sort(dateComparator)
+  // poll order status updates in case Centrifugo fails
+  // response is handled by the listener middleware
+  const { isFetching, refetch } = useGetOrderQuery(order['@id'], { pollingInterval: 30000, skipPollingIfUnfocused: true})
+
+  const allEvents = useSelector(selectOrderEvents)
+
+  const events = useMemo(() => {
+    return allEvents.filter(event => allowedEvents.includes(event.type)).map(event => ({ name: event.type, createdAt: event.createdAt })).sort(dateComparator)
+  }, [allEvents])
 
   const renderEvent = (event, key) => {
     const date = moment(event.createdAt).format('LT');
@@ -54,7 +52,7 @@ const OrderTimeline = ({ order, orderAccessToken, events: initialEvents }) => {
 
   const renderNextEvent = () => {
     const last = _.last(events);
-    
+
     const nextEventMapping = {
       'order:created': { active: true, spinner: true, title: i18n.t('ORDER_TIMELINE_AFTER_CREATED_TITLE'), description: i18n.t('ORDER_TIMELINE_AFTER_CREATED_DESCRIPTION') },
       'order:accepted': { active: true, title: i18n.t('ORDER_TIMELINE_AFTER_ACCEPTED_TITLE'), description: i18n.t('ORDER_TIMELINE_AFTER_ACCEPTED_DESCRIPTION') },
@@ -84,12 +82,4 @@ const OrderTimeline = ({ order, orderAccessToken, events: initialEvents }) => {
       </div>
     </div>
   );
-};
-
-export default (props) => {
-  return (
-    <ApiProvider api={api}>
-      <OrderTimeline {...props} />
-    </ApiProvider>
-  )
 };
