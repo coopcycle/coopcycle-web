@@ -656,6 +656,7 @@ restricted_diets.LOW_LACTOSE_DIET: Baja lactosa
 restricted_diets.LOW_SALT_DIET: Bajo en sal
 restricted_diets.VEGAN_DIET: Vegano
 restricted_diets.VEGETARIAN_DIET: Vegetariano
+restricted_diets.EGG_FREE_DIET: Sin huevos
 sylius.ui.code: Código
 sylius.form.promotion_coupon.per_customer_usage_limit: Límite de uso por cliente
 embed.delivery.title: Formulario de creación de entrega
@@ -1047,6 +1048,7 @@ store.SHOE_STORE: Zapatería
 store.TIRE_SHOP: Tienda de neumáticos
 store.TOY_STORE: Juguetería
 store.WHOLESALE_STORE: Almacén al por mayor
+store.PHARMACY: Farmacia
 form.local_business_type.food_establishment: Establecimiento de comida
 form.local_business_type.store: Tienda
 form.local_business_type.label: Tipo de negocio

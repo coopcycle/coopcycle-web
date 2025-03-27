@@ -747,6 +747,7 @@ allergens.MILK: 'Esnea'
 allergens.SESAME_SEEDS: 'Sesamo haziak'
 restricted_diets.DIABETIC_DIET: 'Diabetikoa'
 restricted_diets.HALAL_DIET: 'Halal'
+restricted_diets.EGG_FREE_DIET: 'Arrautzarik gabe'
 time_range.same_day: '[Gaur] [%range%]'
 time_range.next_day: '[Bihar] [%range%]'
 time_range.last_day: '[Atzo] [%range%]'
@@ -1064,6 +1065,7 @@ form.menu_editor.name.help: Hau zure menu ezberdinak identifikatzeko da. Ez zaio
   erakusten.
 restaurant_promotion.offer_delivery: Banaketa-prezioa eskaini
 store.WHOLESALE_STORE: Handizkako biltegia
+store.PHARMACY: Farmazia
 restaurant.embed.disclaimer: Eskaera zure webgunean erantsi dezakezu zuzenean. Jarraitu
   azpiko argibideak hasteko.
 form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu, bezeroak
