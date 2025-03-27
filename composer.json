@@ -45,11 +45,11 @@
         "symfony/amqp-messenger": "*",
         "symfony/doctrine-messenger": "*",
         "symfony/monolog-bundle": "*",
-        "symfony/runtime": "5.4.*",
+        "symfony/runtime": "*",
         "symfony/ux-react": "2.10",
         "symfony/ux-turbo": "^2.10",
         "symfony/stimulus-bundle": "^2.10",
-        "symfony/cache": "5.4.*",
+        "symfony/cache": "*",
         "symfony/webpack-encore-bundle": "^1.6",
         "friendsofsymfony/rest-bundle": "^3.0",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
@@ -171,7 +171,8 @@
         "geocoder-php/geocode-earth-provider": "^1.4",
         "sensio/framework-extra-bundle": "*",
         "doctrine/dbal": "^3",
-        "twig/extra-bundle": "^2.12|^3.0"
+        "twig/extra-bundle": "^2.12|^3.0",
+        "symfony/workflow": "5.4.*"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
