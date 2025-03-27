@@ -14,7 +14,7 @@
   <php>
     <ini name="error_reporting" value="-1"/>
     <server name="APP_ENV" value="test" force="true"/>
-    <server name="KERNEL_CLASS" value="AppKernel"/>
+    <server name="KERNEL_CLASS" value="AppBundle\Kernel"/>
     <!-- https://symfony.com/blog/new-in-symfony-3-1-deprecation-helper-improvements -->
     <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
   </php>
