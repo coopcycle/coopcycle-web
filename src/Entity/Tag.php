@@ -4,46 +4,27 @@ namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"tag"}}
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
- *       "pagination_enabled"=false,
- *     },
- *  })
- */
+#[ApiResource(attributes: ['normalization_context' => ['groups' => ['tag']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')", 'pagination_enabled' => false]])]
 class Tag
 {
+    use Timestampable;
+
     const ADDRESS_NEED_REVIEW_TAG = 'review-needed';
 
     protected $id;
 
-    /**
-     * @Groups({"task", "tag"})
-     */
+    #[Groups(['task', 'tag'])]
     protected $name;
 
-    /**
-     * @Groups({"task", "tag"})
-     */
+    #[Groups(['task', 'tag'])]
     private $slug;
 
-    /**
-     * @Groups({"task", "tag"})
-     * @Assert\NotBlank()
-     */
+    #[Groups(['task', 'tag'])]
+    #[Assert\NotBlank]
     private $color;
-
-    private $createdAt;
-
-    private $updatedAt;
 
     public function __construct($slug = null)
     {

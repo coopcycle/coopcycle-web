@@ -19,16 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class BrokenImageController extends AbstractController
 {
-    /**
-     * @Route("/{dir}/{subdir}/{filename}.{extension}", name="legacy_image",
-     *   requirements={
-     *     "dir"="[a-z0-9]{2}",
-     *     "subdir"="[a-z0-9]{2}",
-     *     "filename"="[a-z0-9]+",
-     *     "extension"="(?i:jpg|png|jpeg|gif|webp|tif)"
-     *   }
-     * )
-     */
+    #[Route(path: '/{dir}/{subdir}/{filename}.{extension}', name: 'legacy_image', requirements: ['dir' => '[a-z0-9]{2}', 'subdir' => '[a-z0-9]{2}', 'filename' => '[a-z0-9]+', 'extension' => '(?i:jpg|png|jpeg|gif|webp|tif)'])]
     public function redirectAction($dir, $subdir, $filename, $extension, FilterService $imagineFilter)
     {
         $imageName = sprintf('%s.%s', $filename, $extension);

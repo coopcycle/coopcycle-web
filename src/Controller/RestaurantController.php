@@ -60,10 +60,8 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
- * @HideSoftDeleted
- */
+#[HideSoftDeleted]
+#[Route(path: '/{_locale}', requirements: ['_locale' => '%locale_regex%'])]
 class RestaurantController extends AbstractController
 {
     use UserTrait;
@@ -139,9 +137,7 @@ class RestaurantController extends AbstractController
         return $business->getContext() === Store::class ? 'store' : 'restaurant';
     }
 
-    /**
-     * @Route("/restaurants/cuisines/{cuisineName}", name="restaurants_by_cuisine")
-     */
+    #[Route(path: '/restaurants/cuisines/{cuisineName}', name: 'restaurants_by_cuisine')]
     public function listByCuisineAction($cuisineName)
     {
         return $this->redirectToRoute(
@@ -153,9 +149,7 @@ class RestaurantController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/restaurants", name="restaurants")
-     */
+    #[Route(path: '/restaurants', name: 'restaurants')]
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
@@ -168,9 +162,7 @@ class RestaurantController extends AbstractController
         return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
     }
 
-    /**
-     * @Route("/shops", name="shops")
-     */
+    #[Route(path: '/shops', name: 'shops')]
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
@@ -318,17 +310,7 @@ class RestaurantController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/hub/{id}-{slug}", name="hub",
-     *   requirements={
-     *     "id"="(\d+)",
-     *     "slug"="([a-z0-9-]+)"
-     *   },
-     *   defaults={
-     *     "slug"=""
-     *   }
-     * )
-     */
+    #[Route(path: '/hub/{id}-{slug}', name: 'hub', requirements: ['id' => '(\d+)', 'slug' => '([a-z0-9-]+)'], defaults: ['slug' => ''])]
     public function hubAction($id, $slug, Request $request,
         SlugifyInterface $slugify)
     {
@@ -355,17 +337,7 @@ class RestaurantController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/business-restaurant-group/{id}-{slug}", name="business_restaurant_group",
-     *   requirements={
-     *     "id"="(\d+)",
-     *     "slug"="([a-z0-9-]+)"
-     *   },
-     *   defaults={
-     *     "slug"=""
-     *   }
-     * )
-     */
+    #[Route(path: '/business-restaurant-group/{id}-{slug}', name: 'business_restaurant_group', requirements: ['id' => '(\d+)', 'slug' => '([a-z0-9-]+)'], defaults: ['slug' => ''])]
     public function businessRestaurantGroupAction($id, $slug, Request $request,
         SlugifyInterface $slugify)
     {
@@ -398,23 +370,10 @@ class RestaurantController extends AbstractController
      * @param string $type
      * @param int $id
      * @param string $slug
-     * @param Request $request
-     * @param SlugifyInterface $slugify
-     * @param CartContextInterface $cartContext
      * @param Address|null $address
      *
-     * @Route("/{type}/{id}-{slug}", name="restaurant",
-     *   requirements={
-     *     "type"="(restaurant|store)",
-     *     "id"="(\d+|__RESTAURANT_ID__)",
-     *     "slug"="([a-z0-9-]+)"
-     *   },
-     *   defaults={
-     *     "slug"="",
-     *     "type"="restaurant"
-     *   }
-     * )
      */
+    #[Route(path: '/{type}/{id}-{slug}', name: 'restaurant', requirements: ['type' => '(restaurant|store)', 'id' => '(\d+|__RESTAURANT_ID__)', 'slug' => '([a-z0-9-]+)'], defaults: ['slug' => '', 'type' => 'restaurant'])]
     public function indexAction($type, $id, $slug, Request $request,
         SlugifyInterface $slugify,
         CartContextInterface $cartContext,
@@ -516,9 +475,7 @@ class RestaurantController extends AbstractController
         ]));
     }
 
-    /**
-     * @Route("/restaurant/{id}/cart/address", name="restaurant_cart_address", methods={"POST"})
-     */
+    #[Route(path: '/restaurant/{id}/cart/address', name: 'restaurant_cart_address', methods: ['POST'])]
     public function changeAddressAction($id, Request $request,
         CartContextInterface $cartContext,
         IriConverterInterface $iriConverter)
@@ -565,9 +522,7 @@ class RestaurantController extends AbstractController
         return $this->jsonResponse($cart, $errors);
     }
 
-    /**
-     * @Route("/restaurant/{id}/cart", name="restaurant_cart", methods={"POST"})
-     */
+    #[Route(path: '/restaurant/{id}/cart', name: 'restaurant_cart', methods: ['POST'])]
     public function cartAction($id, Request $request,
         CartContextInterface $cartContext)
     {
@@ -625,14 +580,12 @@ class RestaurantController extends AbstractController
         return $this->jsonResponse($cart, $errors);
     }
 
-    /**
-     * @Route("/restaurant/{id}/cart/product/{code}", name="restaurant_add_product_to_cart", methods={"POST"})
-     */
+    #[Route(path: '/restaurant/{id}/cart/product/{code}', name: 'restaurant_add_product_to_cart', methods: ['POST'])]
     public function addProductToCartAction($id, $code, Request $request,
         CartContextInterface $cartContext,
         OptionsPayloadConverter $optionsPayloadConverter)
     {
-        $restaurant = $this->getDoctrine()
+        $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
         $product = $this->productRepository->findOneByCode($code);
@@ -688,13 +641,11 @@ class RestaurantController extends AbstractController
         return $this->jsonResponse($cart, $errors);
     }
 
-    /**
-     * @Route("/restaurant/{id}/cart/clear-time", name="restaurant_cart_clear_time", methods={"POST"})
-     */
+    #[Route(path: '/restaurant/{id}/cart/clear-time', name: 'restaurant_cart_clear_time', methods: ['POST'])]
     public function clearCartTimeAction($id, Request $request,
         CartContextInterface $cartContext)
     {
-        $restaurant = $this->getDoctrine()
+        $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
@@ -711,14 +662,12 @@ class RestaurantController extends AbstractController
         return $this->jsonResponse($cart, $errors);
     }
 
-    /**
-     * @Route("/restaurant/{id}/cart/items/{itemId}", name="restaurant_modify_cart_item_quantity", methods={"POST"})
-     */
+    #[Route(path: '/restaurant/{id}/cart/items/{itemId}', name: 'restaurant_modify_cart_item_quantity', methods: ['POST'])]
     public function updateCartItemQuantityAction($id, $itemId, Request $request,
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor)
     {
-        $restaurant = $this->getDoctrine()
+        $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
@@ -746,13 +695,11 @@ class RestaurantController extends AbstractController
         return $this->jsonResponse($cart, $errors);
     }
 
-    /**
-     * @Route("/restaurant/{id}/cart/{cartItemId}", methods={"DELETE"}, name="restaurant_remove_from_cart")
-     */
+    #[Route(path: '/restaurant/{id}/cart/{cartItemId}', methods: ['DELETE'], name: 'restaurant_remove_from_cart')]
     public function removeFromCartAction($id, $cartItemId, Request $request,
         CartContextInterface $cartContext)
     {
-        $restaurant = $this->getDoctrine()
+        $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
@@ -772,9 +719,7 @@ class RestaurantController extends AbstractController
     }
 
 
-    /**
-     * @Route("/restaurants/map", name="restaurants_map")
-     */
+    #[Route(path: '/restaurants/map', name: 'restaurants_map')]
     public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $projectCache)
     {
         $restaurants = $projectCache->get('homepage.map', function (ItemInterface $item) use ($slugify) {
@@ -804,9 +749,7 @@ class RestaurantController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/restaurants/suggest", name="restaurants_suggest")
-     */
+    #[Route(path: '/restaurants/suggest', name: 'restaurants_suggest')]
     public function suggestRestaurantAction(Request $request,
         EntityManagerInterface $manager,
         EmailManager $emailManager,
@@ -851,9 +794,7 @@ class RestaurantController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/restaurant/{id}/vote", name="restaurant_vote", methods={"POST"})
-     */
+    #[Route(path: '/restaurant/{id}/vote', name: 'restaurant_vote', methods: ['POST'])]
     public function voteAction($id, SettingsManager $settingsManager)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -875,9 +816,7 @@ class RestaurantController extends AbstractController
         return $this->redirectToRoute('restaurant', [ 'id' => $id ]);
     }
 
-    /**
-     * @Route("/stores", name="stores")
-     */
+    #[Route(path: '/stores', name: 'stores')]
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
         CacheInterface $projectCache,
@@ -890,9 +829,7 @@ class RestaurantController extends AbstractController
         return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
     }
 
-    /**
-     * @Route("/restaurants/tags/{tags}", name="restaurants_by_tags")
-     */
+    #[Route(path: '/restaurants/tags/{tags}', name: 'restaurants_by_tags')]
     public function listByTagsAction($tags)
     {
         return $this->redirectToRoute(

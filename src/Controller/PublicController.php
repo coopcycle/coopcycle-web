@@ -21,9 +21,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * @Route("/{_locale}/pub", requirements={ "_locale": "%locale_regex%" })
- */
+#[Route(path: '/{_locale}/pub', requirements: ['_locale' => '%locale_regex%'])]
 class PublicController extends AbstractController
 {
     public function __construct(
@@ -32,9 +30,7 @@ class PublicController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/o/{hashid}", name="public_order")
-     */
+    #[Route(path: '/o/{hashid}', name: 'public_order')]
     public function orderAction($hashid, Request $request,
         EntityManagerInterface $objectManager,
         StripeManager $stripeManager,
@@ -118,9 +114,7 @@ class PublicController extends AbstractController
         return $this->render('public/order.html.twig', $parameters);
     }
 
-    /**
-     * @Route("/d/{hashid}", name="public_delivery")
-     */
+    #[Route(path: '/d/{hashid}', name: 'public_delivery')]
     public function deliveryAction($hashid, Request $request,
         CentrifugoClient $centrifugoClient,
         Hashids $hashids8)
@@ -163,9 +157,7 @@ class PublicController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/ado/{hashid}", name="public_adhoc_order")
-     */
+    #[Route(path: '/ado/{hashid}', name: 'public_adhoc_order')]
     public function adhocOrderAction($hashid, Request $request,
         EntityManagerInterface $objectManager,
         OrderManager $orderManager,
@@ -193,9 +185,7 @@ class PublicController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/ado/{hashid}/p", name="public_adhoc_order_payment")
-     */
+    #[Route(path: '/ado/{hashid}/p', name: 'public_adhoc_order_payment')]
     public function adhocOrderPaymentAction($hashid, Request $request,
         EntityManagerInterface $objectManager,
         OrderManager $orderManager,

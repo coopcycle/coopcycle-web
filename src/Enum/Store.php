@@ -39,4 +39,5 @@ class Store extends Enum
     const TIRE_SHOP              = 'http://schema.org/TireShop';
     const TOY_STORE              = 'http://schema.org/ToyStore';
     const WHOLESALE_STORE        = 'http://schema.org/WholesaleStore';
+    const PHARMACY               = 'https://schema.org/Pharmacy';
 }

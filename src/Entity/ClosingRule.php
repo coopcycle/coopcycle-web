@@ -6,41 +6,22 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Restaurant\DeleteClosingRule;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(iri="https://schema.org/OpeningHoursSpecification",
- *   shortName="OpeningHoursSpecification",
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={"method"="GET"},
- *     "delete"={
- *       "method"="DELETE",
- *       "controller"=DeleteClosingRule::class,
- *       "security"="is_granted('delete', object)"
- *     },
- *   },
- * )
- */
+#[ApiResource(iri: 'https://schema.org/OpeningHoursSpecification', shortName: 'OpeningHoursSpecification', collectionOperations: [], itemOperations: ['get' => ['method' => 'GET'], 'delete' => ['method' => 'DELETE', 'controller' => DeleteClosingRule::class, 'security' => "is_granted('delete', object)"]])]
 class ClosingRule
 {
     /**
      * @var int
-     * @Groups({"restaurant", "planning"})
      */
+    #[Groups(['restaurant', 'planning'])]
     private $id;
 
-    /**
-     * @Groups({"restaurant", "planning"})
-     */
+    #[Groups(['restaurant', 'planning'])]
     private $startDate;
 
-    /**
-     * @Groups({"restaurant", "planning"})
-     */
+    #[Groups(['restaurant', 'planning'])]
     private $endDate;
 
-    /**
-     * @Groups({"planning"})
-     */
+    #[Groups(['planning'])]
     private $reason;
 
     /**

@@ -6,29 +6,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CollectionTrait
 {
-    /**
-     * @Groups({"task_collection", "task_collections", "task_list"})
-     */
+    #[Groups(['task_collection', 'task_collections', 'task_list'])]
     protected $distance;
 
-    /**
-     * @Groups({"task_collection", "task_collections", "task_list"})
-     */
+    #[Groups(['task_collection', 'task_collections', 'task_list'])]
     protected $duration;
 
-    /**
-     * @Groups({"task_collection", "task_collections", "task_list"})
-     */
+    #[Groups(['task_collection', 'task_collections', 'task_list'])]
     protected $polyline = '';
 
-    /**
-     * @Groups({"task_collection", "task_list"})
-     */
+    #[Groups(['task_collection', 'task_list'])]
     private $createdAt;
 
-    /**
-     * @Groups({"task_collection", "task_list"})
-     */
+    #[Groups(['task_collection', 'task_list'])]
     private $updatedAt;
 
     public function getDistance()

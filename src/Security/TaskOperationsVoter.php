@@ -43,7 +43,7 @@ class TaskOperationsVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         if ($token instanceof OAuth2Token) {
-            return $this->voteOnAttributeWithOAuth($attribute, $subject);
+            return $this->voteOnAttributeWithOAuth($subject);
         }
 
         if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
@@ -76,7 +76,7 @@ class TaskOperationsVoter extends Voter
         return false;
     }
 
-    private function voteOnAttributeWithOAuth($attribute, $subject)
+    private function voteOnAttributeWithOAuth($subject)
     {
         if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_TASKS')) {
             return false;

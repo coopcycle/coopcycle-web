@@ -11,17 +11,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait ShippingOptionsTrait
 {
-    /**
-     * @Assert\GreaterThan(1)
-     * @Assert\LessThanOrEqual(6)
-     */
+    #[Assert\GreaterThan(1)]
+    #[Assert\LessThanOrEqual(6)]
     protected $shippingOptionsDays = 2;
 
     /**
      * @var string
-     *
-     * @Assert\Type(type="string")
      */
+    #[Assert\Type(type: 'string')]
     protected $deliveryPerimeterExpression = 'distance < 3000';
 
     /**
@@ -32,9 +29,6 @@ trait ShippingOptionsTrait
         return $this->shippingOptionsDays;
     }
 
-    /**
-     * @param int $shippingOptionsDays
-     */
     public function setShippingOptionsDays(int $shippingOptionsDays)
     {
         $this->shippingOptionsDays = $shippingOptionsDays;
@@ -48,9 +42,6 @@ trait ShippingOptionsTrait
         return $this->deliveryPerimeterExpression;
     }
 
-    /**
-     * @param string $deliveryPerimeterExpression
-     */
     public function setDeliveryPerimeterExpression(string $deliveryPerimeterExpression)
     {
         $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;

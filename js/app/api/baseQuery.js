@@ -8,6 +8,7 @@ import { selectOrderAccessToken } from '../entities/guest/selectors'
 const guestCheckoutEndpoints = [
   'getOrderValidate',
   'getOrderTiming',
+  'getOrder',
   'updateOrder',
 ]
 

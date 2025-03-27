@@ -1,6 +1,5 @@
 import React from 'react'
 import { Provider } from 'react-redux'
-import { createStoreFromPreloadedState } from '../../order/redux/store'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import OrdersToInvoice from './components/OrdersToInvoice'
 import { TopNav } from '../../components/TopNav'
@@ -8,6 +7,7 @@ import { useTranslation } from 'react-i18next'
 import { antdLocale } from '../../i18n'
 import { ConfigProvider } from 'antd'
 import FeaturePreviewTag from '../../components/FeaturePreviewTag'
+import { createStoreFromPreloadedState } from './redux/store'
 
 const buildInitialState = () => {
   return {

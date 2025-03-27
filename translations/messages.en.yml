@@ -1021,6 +1021,7 @@ restricted_diets.LOW_LACTOSE_DIET: Low lactose
 restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
+restricted_diets.EGG_FREE_DIET: Egg free
 time_slot.human_readable: '%day% between %start% and %end%'
 time_range: between %start% and %end%
 time_range.same_day: '[Today] [%range%]'
@@ -1146,6 +1147,7 @@ store.SPORTING_GOODS_STORE: Sporting goods store
 store.TIRE_SHOP: Tire shop
 store.TOY_STORE: Toy store
 store.WHOLESALE_STORE: Wholesale store
+store.PHARMACY: Pharmacy
 form.local_business_type.food_establishment: Food establishment
 form.local_business_type.store: Store
 form.local_business_type.label: Type of business

@@ -1,0 +1,69 @@
+include:
+  - stores_excl_setup.yml
+
+AppBundle\Entity\User:
+  dispatcher_01:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'dispatcher'
+        - '12345678'
+        - 'dispatcher@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_DISPATCHER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+  courier_{1..50}:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - '<username()>'
+        - '12345678'
+        - '<email()>'
+        - true
+        - false
+    roles: [ 'ROLE_COURIER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\Entity\Delivery:
+  delivery_{1..250}:
+    __factory:
+      createWithAddress:
+        - "@warehouse"
+        - "@client_1"
+    __calls:
+      - setPickupRange:
+          - <identity(new \DateTime('today 18:00:00'))>
+          - <identity(new \DateTime('today 18:30:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 19:00:00'))>
+          - <identity(new \DateTime('today 19:30:00'))>
+    store: "@store_1"
+
+  delivery_{251..500}:
+    __factory:
+      createWithAddress:
+        - "@warehouse"
+        - "@client_1"
+    __calls:
+      - setPickupRange:
+          - <identity(new \DateTime('today 18:00:00'))>
+          - <identity(new \DateTime('today 18:30:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 19:00:00'))>
+          - <identity(new \DateTime('today 19:30:00'))>
+    store: '@store_*'
+
+AppBundle\Entity\Sylius\PricingRulesBasedPrice:
+  price_{1..500}:
+    __construct:
+      - <numberBetween(500, 20000)>
+
+AppBundle\Entity\Sylius\Order:
+  order_{1..500}:
+    __factory:
+      '@sylius.factory.order::createForDeliveryAndPrice':
+        - "@delivery_<current()>"
+        - "@price_<current()>"
+    __calls:
+      #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
+      - setNumber: [ "A<current()>" ]
+      - setState: [ 'new' ]

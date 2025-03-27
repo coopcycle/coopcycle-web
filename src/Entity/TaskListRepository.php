@@ -206,7 +206,7 @@ class TaskListRepository extends ServiceEntityRepository
                 $weight = $task->getWeight();
             }
 
-            $taskDto = new MyTaskDto(
+            return new MyTaskDto(
                 $task->getId(),
                 $task->getCreatedAt(),
                 $task->getUpdatedAt(),
@@ -240,8 +240,6 @@ class TaskListRepository extends ServiceEntityRepository
                     $this->getIsZeroWaste($orderId, $zeroWasteOrders)
                 )
             );
-
-            return $taskDto;
         }, $tasksQueryResult);
 
 
@@ -260,9 +258,7 @@ class TaskListRepository extends ServiceEntityRepository
                 $orderedTasks[] = $taskDtosById[$taskId];
             }
         }
-
-
-        $taskListDto = new MyTaskListDto(
+        return new MyTaskListDto(
             $taskList->getId(),
             $taskList->getCreatedAt(),
             $taskList->getUpdatedAt(),
@@ -273,7 +269,6 @@ class TaskListRepository extends ServiceEntityRepository
             $taskList->getDuration(),
             $taskList->getPolyline(),
         );
-        return $taskListDto;
     }
 
     /**
@@ -282,7 +277,7 @@ class TaskListRepository extends ServiceEntityRepository
      * The task has been done in the context of this TaskList.
      */
     public function findLastTaskListByTask(Task $task) {
-        $taskList = $this->entityManager->createQueryBuilder()
+        return $this->entityManager->createQueryBuilder()
             ->select('tl')
             ->from(TaskList::class, 'tl')
             ->leftJoin('tl.items', 'item')
@@ -295,8 +290,6 @@ class TaskListRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
-
-        return $taskList;
     }
 
     private function getPaymentMethod($paymentMethodsByOrderId, ?int $orderId): ?string

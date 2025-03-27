@@ -10,64 +10,24 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *     "create"={
- *       "method"="POST",
- *       "path"="/orders/adhoc",
- *       "controller"=AdhocOrderController::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')",
- *       "validation_groups"={"cart"},
- *       "normalization_context"={"groups"={"order"}}
- *     },
- *     "get"={
- *       "method"="GET",
- *       "path"="/orders/adhoc/search",
- *       "controller"=SearchAdhocOrdersController::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')",
- *       "normalization_context"={"groups"={"order"}}
- *     }
- *   },
- *   itemOperations={
- *     "get": {
- *       "method"="GET",
- *       "path"="/orders/adhoc/{id}"
- *     },
- *     "add_items"={
- *       "method"="PUT",
- *       "path"="/orders/adhoc/{id}",
- *       "controller"=UpdateAdhocOrderController::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')",
- *       "read"=false,
- *       "write"=false,
- *       "validation_groups"={"cart"},
- *       "normalization_context"={"groups"={"order"}}
- *     }
- *   }
- * )
- */
+#[ApiResource(collectionOperations: ['create' => ['method' => 'POST', 'path' => '/orders/adhoc', 'controller' => AdhocOrderController::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')", 'validation_groups' => ['cart'], 'normalization_context' => ['groups' => ['order']]], 'get' => ['method' => 'GET', 'path' => '/orders/adhoc/search', 'controller' => SearchAdhocOrdersController::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')", 'normalization_context' => ['groups' => ['order']]]], itemOperations: ['get' => ['method' => 'GET', 'path' => '/orders/adhoc/{id}'], 'add_items' => ['method' => 'PUT', 'path' => '/orders/adhoc/{id}', 'controller' => UpdateAdhocOrderController::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')", 'read' => false, 'write' => false, 'validation_groups' => ['cart'], 'normalization_context' => ['groups' => ['order']]]])]
 final class OrderAdhoc
 {
-    /**
-     * @ApiProperty(identifier=true)
-     */
+    #[ApiProperty(identifier: true)]
     public $id;
 
     /**
      * @var LocalBusiness
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     public $restaurant;
 
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank]
     public $customer;
 
     /**
      * @var array
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     public $items;
 }

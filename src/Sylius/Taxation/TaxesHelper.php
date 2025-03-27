@@ -30,9 +30,6 @@ class TaxesHelper
         $this->legacyTaxes = $legacyTaxes;
     }
 
-    /**
-     * @return array
-     */
     public function getTaxTotals(OrderInterface $order, bool $itemsOnly = false): array
     {
         $taxRateCodes = [];
@@ -164,7 +161,6 @@ class TaxesHelper
 
     /**
      * Given a base rate code, returns
-     * @return array
      */
     public function getAlternativeTaxRateCodes(string $baseRateCode): array
     {

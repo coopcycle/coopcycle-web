@@ -45,82 +45,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * @ApiResource(
- *   shortName="Restaurant",
- *   attributes={
- *     "denormalization_context"={"groups"={"order_create", "restaurant_update"}},
- *     "normalization_context"={"groups"={"restaurant", "address", "order"}}
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "pagination_enabled"=false,
- *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_list"}}
- *     },
- *     "me_restaurants"={
- *       "method"="GET",
- *       "path"="/me/restaurants",
- *       "controller"=MyRestaurants::class
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "normalization_context"={"groups"={"restaurant", "address", "order", "restaurant_potential_action"}},
- *       "security"="is_granted('view', object)"
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     },
- *     "restaurant_menu"={
- *       "method"="GET",
- *       "path"="/restaurants/{id}/menu",
- *       "controller"=Menu::class,
- *       "normalization_context"={"groups"={"restaurant_menu"}}
- *     },
- *     "restaurant_menus"={
- *       "method"="GET",
- *       "path"="/restaurants/{id}/menus",
- *       "controller"=Menus::class,
- *       "normalization_context"={"groups"={"restaurant_menus"}}
- *     },
- *     "put"={
- *       "method"="PUT",
- *       "input"=RestaurantInput::class,
- *       "denormalization_context"={"groups"={"restaurant_update"}},
- *       "security"="is_granted('edit', object)"
- *     },
- *     "close"={
- *       "method"="PUT",
- *       "path"="/restaurants/{id}/close",
- *       "controller"=CloseController::class,
- *       "security"="is_granted('edit', object)"
- *     },
- *     "restaurant_deliveries"={
- *       "method"="GET",
- *       "path"="/restaurants/{id}/deliveries/{date}",
- *       "controller"=RestaurantDeliveriesController::class,
- *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "normalization_context"={"groups"={"delivery", "address", "restaurant_delivery"}}
- *     },
- *     "restaurant_timing"={
- *       "method"="GET",
- *       "path"="/restaurants/{id}/timing",
- *       "controller"=Timing::class,
- *       "normalization_context"={"groups"={"restaurant_timing"}}
- *     },
- *     "restaurant_orders"={
- *       "method"="GET",
- *       "path"="/restaurants/{id}/orders",
- *       "controller"=Orders::class,
- *       "security"="is_granted('edit', object)"
- *     }
- *   }
- * )
  * @Vich\Uploadable
- * @AssertIsActivableRestaurant(groups="activable")
  */
+#[ApiResource(shortName: 'Restaurant', attributes: ['denormalization_context' => ['groups' => ['order_create', 'restaurant_update']], 'normalization_context' => ['groups' => ['restaurant', 'address', 'order']]], collectionOperations: ['get' => ['method' => 'GET', 'pagination_enabled' => false, 'normalization_context' => ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]], 'me_restaurants' => ['method' => 'GET', 'path' => '/me/restaurants', 'controller' => MyRestaurants::class]], itemOperations: ['get' => ['method' => 'GET', 'normalization_context' => ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']], 'security' => "is_granted('view', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'restaurant_menu' => ['method' => 'GET', 'path' => '/restaurants/{id}/menu', 'controller' => Menu::class, 'normalization_context' => ['groups' => ['restaurant_menu']]], 'restaurant_menus' => ['method' => 'GET', 'path' => '/restaurants/{id}/menus', 'controller' => Menus::class, 'normalization_context' => ['groups' => ['restaurant_menus']]], 'put' => ['method' => 'PUT', 'input' => RestaurantInput::class, 'denormalization_context' => ['groups' => ['restaurant_update']], 'security' => "is_granted('edit', object)"], 'close' => ['method' => 'PUT', 'path' => '/restaurants/{id}/close', 'controller' => CloseController::class, 'security' => "is_granted('edit', object)"], 'restaurant_deliveries' => ['method' => 'GET', 'path' => '/restaurants/{id}/deliveries/{date}', 'controller' => RestaurantDeliveriesController::class, 'access_control' => "is_granted('ROLE_ADMIN')", 'normalization_context' => ['groups' => ['delivery', 'address', 'restaurant_delivery']]], 'restaurant_timing' => ['method' => 'GET', 'path' => '/restaurants/{id}/timing', 'controller' => Timing::class, 'normalization_context' => ['groups' => ['restaurant_timing']]], 'restaurant_orders' => ['method' => 'GET', 'path' => '/restaurants/{id}/orders', 'controller' => Orders::class, 'security' => "is_granted('edit', object)"]])]
+#[AssertIsActivableRestaurant(groups: ['activable'])]
 class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,
     OpenCloseInterface,
@@ -144,8 +72,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     /**
      * @var int
-     * @Groups({"restaurant"})
      */
+    #[Groups(['restaurant'])]
     protected $id;
 
     protected $type = FoodEstablishment::RESTAURANT;
@@ -156,54 +84,49 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     /**
      * @var string The name of the item
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple", "order", "order_minimal"})
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'http://schema.org/name')]
+    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
     protected $name;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $description;
 
     /**
      * @var boolean Is the restaurant enabled?
      *
      * A disable restaurant is not shown to visitors, but remain accessible in preview to admins and owners.
-     *
-     * @Groups({"restaurant"})
      */
+    #[Groups(['restaurant'])]
     protected $enabled = false;
 
     protected $quotesAllowed = false;
 
     /**
      * @var bool
-     * @Groups({"restaurant"})
      */
+    #[Groups(['restaurant'])]
     protected $depositRefundEnabled = false;
 
     /**
      * @var bool
-     * @Groups({"restaurant"})
      */
+    #[Groups(['restaurant'])]
     protected $depositRefundOptin = true;
 
     /**
      * @var bool
-     * @Groups({"order"})
      */
+    #[Groups(['order'])]
     protected $loopeatEnabled = false;
 
     protected $pledge;
 
     /**
      * @var Address
-     *
-     * @Groups({"restaurant", "order", "restaurant_seo", "restaurant_simple", "order", "order_minimal"})
      */
+    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
     protected $address;
 
     /**
@@ -213,9 +136,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     /**
      * @var string The website of the restaurant.
-     *
-     * @ApiProperty(iri="https://schema.org/URL")
      */
+    #[ApiProperty(iri: 'https://schema.org/URL')]
     protected $website;
 
     protected $stripeAccounts;
@@ -224,16 +146,14 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $exclusive = false;
 
-    /**
-     * @Groups({"restaurant", "restaurant_update"})
-     */
+    #[Groups(['restaurant', 'restaurant_update'])]
     protected $state = self::STATE_NORMAL;
 
     /**
      * @var Contract|null
-     * @Groups({"order_create"})
-     * @Assert\Valid(groups={"Default", "activable"})
      */
+    #[Groups(['order_create'])]
+    #[Assert\Valid(groups: ['Default', 'activable'])]
     protected $contract;
 
     /**
@@ -258,29 +178,19 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $mercadopagoAccount;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $edenredMerchantId;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $edenredTRCardEnabled = false;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $edenredEnabled = false;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $edenredSyncSent = false;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $hub;
 
     protected $vytalEnabled = false;
@@ -302,9 +212,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected string $billingMethod = 'unit';
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected bool $autoAcceptOrdersEnabled = false;
 
     protected string $paymentGateway = 'stripe';
@@ -381,9 +289,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;
@@ -464,9 +369,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this->contract;
     }
 
-    /**
-     * @param Contract $contract
-     */
     public function setContract(Contract $contract)
     {
         $this->contract = $contract;
@@ -558,17 +460,11 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isExclusive(): bool
     {
         return $this->exclusive;
     }
 
-    /**
-     * @param bool $exclusive
-     */
     public function setExclusive(bool $exclusive)
     {
         $this->exclusive = $exclusive;
@@ -596,9 +492,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isDepositRefundOptin(): bool
     {
         if ($this->isLoopeatEnabled() || $this->isDabbaEnabled()) {
@@ -610,8 +503,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     }
 
     /**
-     * @param bool $depositRefundOptin
-     *
      * @return self
      */
     public function setDepositRefundOptin(bool $depositRefundOptin)
@@ -659,8 +550,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     }
 
     /**
-     * @param ReusablePackaging $reusablePackaging
-     *
      * @return self
      */
     public function addReusablePackaging(ReusablePackaging $reusablePackaging)
@@ -673,8 +562,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     }
 
     /**
-     * @param ReusablePackaging $reusablePackaging
-     *
      * @return bool
      */
     public function hasReusablePackaging(ReusablePackaging $reusablePackaging)
@@ -683,8 +570,6 @@ class LocalBusiness extends BaseLocalBusiness implements
     }
 
     /**
-     * @param string $name
-     *
      * @return bool
      */
     public function hasReusablePackagingWithName(string $name)
@@ -1010,10 +895,8 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
-    /**
-     * @SerializedName("facets")
-     * @Groups("restaurant_list")
-     */
+    #[SerializedName('facets')]
+    #[Groups('restaurant_list')]
     public function getFacets()
     {
         $facets = [
@@ -1118,46 +1001,28 @@ class LocalBusiness extends BaseLocalBusiness implements
         return self::getKeyForType($this->getType());
     }
 
-    /**
-     * @return int|null
-     */
     public function getRateLimitRangeDuration(): ?int
     {
         return $this->rateLimitRangeDuration;
     }
 
-    /**
-     * @param int|null $rateLimitRangeDuration
-     * @return LocalBusiness
-     */
     public function setRateLimitRangeDuration(?int $rateLimitRangeDuration): LocalBusiness
     {
         $this->rateLimitRangeDuration = $rateLimitRangeDuration;
         return $this;
     }
 
-    /**
-     * @return int|null
-     */
     public function getRateLimitAmount(): ?int
     {
         return $this->rateLimitAmount;
     }
 
-    /**
-     * @param int|null $rateLimitAmount
-     * @return LocalBusiness
-     */
     public function setRateLimitAmount(?int $rateLimitAmount): LocalBusiness
     {
         $this->rateLimitAmount = $rateLimitAmount;
         return $this;
     }
 
-    /**
-     * @param string $expression
-     * @return $this
-     */
     public function setOrdersRateLimiter(string $expression): LocalBusiness
     {
         [$amount, $timeWindow] = explode(':', $expression);
@@ -1173,9 +1038,6 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
-    /**
-     * @return string
-     */
     public function getOrdersRateLimiter(): string
     {
         return sprintf('%s:%s',

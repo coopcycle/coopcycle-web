@@ -32,8 +32,6 @@ class TaxesInitializer
         $expectedTaxCategories = $this->taxesProvider->getCategories();
 
         $allMigrations = [];
-
-        $flush = false;
         foreach ($expectedTaxCategories as $c) {
             $taxCategory = $this->taxCategoryRepository->findOneByCode($c->getCode());
             if (null === $taxCategory) {

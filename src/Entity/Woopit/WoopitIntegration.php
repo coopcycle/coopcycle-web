@@ -172,7 +172,6 @@ class WoopitIntegration
     /**
      * Sets store.
      *
-     * @param Store $store
      *
      * @return $this
      */
@@ -196,7 +195,6 @@ class WoopitIntegration
     /**
      * Sets zone.
      *
-     * @param Zone $zone
      *
      * @return $this
      */

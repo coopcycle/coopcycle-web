@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class ShippingTimeRange extends Constraint
 {
     const SHIPPED_AT_EXPIRED = 'Order::SHIPPED_AT_EXPIRED';

@@ -49,7 +49,5 @@ class DeliveryCancel
         }
 
         $this->entityManager->flush();
-
-        return;
     }
 }

@@ -10,13 +10,13 @@ final class AddressInput
 {
     /**
      * @var Store
-     * @Groups({"address_create"})
      */
+    #[Groups(['address_create'])]
     public $store;
 
     /**
      * @var Address
-     * @Groups({"address_create"})
      */
+    #[Groups(['address_create'])]
     public $address;
 }

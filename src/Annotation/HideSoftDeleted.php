@@ -2,12 +2,9 @@
 
 namespace AppBundle\Annotation;
 
-use Doctrine\Common\Annotations\Annotation;
+use Attribute;
 
-/**
- * @Annotation
- * @Target({"CLASS", "METHOD"})
- */
+#[Attribute(Attribute::TARGET_CLASS|Attribute::TARGET_METHOD)]
 final class HideSoftDeleted
 {
 }

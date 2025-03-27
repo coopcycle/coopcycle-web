@@ -9,14 +9,14 @@ class ArbitraryPrice implements PriceInterface
 {
     /**
      * @var int
-     * @Groups({"delivery_create"})
      */
+    #[Groups(['delivery_create'])]
     private $variantPrice;
 
     /**
      * @var ?string
-     * @Groups({"delivery_create"})
      */
+    #[Groups(['delivery_create'])]
     private $variantName;
 
     public function __construct(

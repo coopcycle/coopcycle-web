@@ -11,17 +11,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 final class ConfigurePaymentOutput
 {
     /**
-     * @ApiProperty
-     * @Groups({"order_configure_payment"})
      * @var Collection
      */
+    #[ApiProperty]
+    #[Groups(['order_configure_payment'])]
     public $payments;
 
     /**
-     * @ApiProperty
-     * @Groups({"order_configure_payment"})
      * @var string|null
      */
+    #[ApiProperty]
+    #[Groups(['order_configure_payment'])]
     public $redirectUrl;
 
     public function __construct(OrderInterface $order)

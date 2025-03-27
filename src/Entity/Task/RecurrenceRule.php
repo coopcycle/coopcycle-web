@@ -15,48 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   shortName="RecurrenceRule",
- *   normalizationContext={"groups"={"task_recurrence_rule"}},
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
- *     },
- *     "post"={
- *       "method"="POST",
- *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
- *     },
- *     "generate_orders"={
- *       "method"="POST",
- *       "path"="/recurrence_rules/generate_orders",
- *       "security"="is_granted('ROLE_DISPATCHER')",
- *       "controller"=GenerateOrders::class
- *     },
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
- *     },
- *     "put"={
- *       "method"="PUT",
- *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
- *     },
- *     "between"={
- *       "method"="POST",
- *       "path"="/recurrence_rules/{id}/between",
- *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')",
- *       "controller"=BetweenController::class
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
- *     }
- *   }
- * )
- */
+#[ApiResource(shortName: 'RecurrenceRule', normalizationContext: ['groups' => ['task_recurrence_rule']], collectionOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'generate_orders' => ['method' => 'POST', 'path' => '/recurrence_rules/generate_orders', 'security' => "is_granted('ROLE_DISPATCHER')", 'controller' => GenerateOrders::class]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'put' => ['method' => 'PUT', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'between' => ['method' => 'POST', 'path' => '/recurrence_rules/{id}/between', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')", 'controller' => BetweenController::class], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"]])]
 class RecurrenceRule
 {
     use SoftDeleteable;
@@ -70,38 +29,31 @@ class RecurrenceRule
 
     /**
      * @var string|null
-     * @Groups({"task_recurrence_rule"})
      */
+    #[Groups(['task_recurrence_rule'])]
     private $name;
 
     /**
      * @var Rule
-     * @Groups({"task_recurrence_rule"})
-     * @ApiProperty(
-     *     attributes={
-     *         "openapi_context"={
-     *             "type"="string",
-     *             "example"="FREQ=WEEKLY"
-     *         }
-     *     }
-     * )
      */
+    #[Groups(['task_recurrence_rule'])]
+    #[ApiProperty(attributes: ['openapi_context' => ['type' => 'string', 'example' => 'FREQ=WEEKLY']])]
     private $rule;
 
     /**
      * @var array
-     * @Groups({"task_recurrence_rule"})
-     * @AssertRecurrenceRuleTemplate
      */
+    #[Groups(['task_recurrence_rule'])]
+    #[AssertRecurrenceRuleTemplate]
     private $template = [];
 
     private ?array $arbitraryPriceTemplate = null;
 
     /**
      * @var Store
-     * @Assert\NotNull
-     * @Groups({"task_recurrence_rule"})
      */
+    #[Assert\NotNull]
+    #[Groups(['task_recurrence_rule'])]
     private $store;
 
     private bool $generateOrders = false;
@@ -143,8 +95,6 @@ class RecurrenceRule
     }
 
     /**
-     * @param Rule $rule
-     *
      * @return self
      */
     public function setRule(Rule $rule)
@@ -163,8 +113,6 @@ class RecurrenceRule
     }
 
     /**
-     * @param array $template
-     *
      * @return self
      */
     public function setTemplate(array $template)
@@ -174,17 +122,12 @@ class RecurrenceRule
         return $this;
     }
 
-    /**
-     * @return Store
-     */
     public function getStore(): Store
     {
         return $this->store;
     }
 
     /**
-     * @param Store $store
-     *
      * @return self
      */
     public function setStore(Store $store)
@@ -194,10 +137,8 @@ class RecurrenceRule
         return $this;
     }
 
-    /**
-     * @SerializedName("orgName")
-     * @Groups({"task_recurrence_rule"})
-     */
+    #[SerializedName('orgName')]
+    #[Groups(['task_recurrence_rule'])]
     public function getOrganizationName()
     {
         return $this->store->getOrganization()->getName();
@@ -213,10 +154,8 @@ class RecurrenceRule
         $this->arbitraryPriceTemplate = $arbitraryPriceTemplate;
     }
 
-    /**
-     * @SerializedName("isCancelled")
-     * @Groups({"task_recurrence_rule"})
-     */
+    #[SerializedName('isCancelled')]
+    #[Groups(['task_recurrence_rule'])]
     public function isCancelled(): bool
     {
         return $this->isDeleted();

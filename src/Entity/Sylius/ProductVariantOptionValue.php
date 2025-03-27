@@ -46,8 +46,6 @@ class ProductVariantOptionValue
     }
 
     /**
-     * @param ProductVariantInterface $variant
-     *
      * @return self
      */
     public function setVariant(ProductVariantInterface $variant)
@@ -66,8 +64,6 @@ class ProductVariantOptionValue
     }
 
     /**
-     * @param ProductOptionValueInterface $optionValue
-     *
      * @return self
      */
     public function setOptionValue(ProductOptionValueInterface $optionValue)
@@ -77,9 +73,6 @@ class ProductVariantOptionValue
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getQuantity(): int
     {
         return $this->quantity;

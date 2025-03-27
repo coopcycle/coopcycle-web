@@ -59,7 +59,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function assetBase64($obj, string $fieldName, string $filter): ?string
     {
-        $mapping = $this->propertyMappingFactory->fromField($obj, $fieldName);
+        $this->propertyMappingFactory->fromField($obj, $fieldName);
 
         $uri = $this->storage->resolveUri($obj, $fieldName);
 

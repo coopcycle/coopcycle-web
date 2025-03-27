@@ -152,8 +152,6 @@ class TaskSubscriber implements EventSubscriber
      * See https://github.com/coopcycle/coopcycle-web/issues/3306
      *
      * @param UnitOfWork $uow
-     * @param array $tasksToUpdate
-     * @param \SplObjectStorage $createdAddresses
      */
     private function handleAddressesChangesForTasks(/* UnitOfWork */ $uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
     {
@@ -195,9 +193,7 @@ class TaskSubscriber implements EventSubscriber
     }
 
     /**
-     * @param EntityManagerInterface $em
      * @param Task[] $tasksToUpdate
-     * @return void
      */
     private function handleStateChangesForTasks(EntitymanagerInterface $em, array $tasksToUpdate): void
     {

@@ -27,8 +27,6 @@ class CubeJsonQuery
     }
 
     /**
-     * @param string $name
-     *
      * @return self
      */
     public function setName(string $name)
@@ -38,17 +36,12 @@ class CubeJsonQuery
         return $this;
     }
 
-    /**
-     * @return array
-     */
     public function getQuery(): array
     {
         return $this->query;
     }
 
     /**
-     * @param array $query
-     *
      * @return self
      */
     public function setQuery(array $query)

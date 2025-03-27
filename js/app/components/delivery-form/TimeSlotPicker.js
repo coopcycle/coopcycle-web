@@ -17,7 +17,7 @@ export default ({ index, timeSlotLabels }) => {
 
   const { setFieldValue, values } = useFormikContext()
 
-  const [formattedTimeslots, setFormattedTimeslots] = useState(null)
+  const [formattedTimeslots, setFormattedTimeslots] = useState({})
   const [isLoadingChoices, setIsLoadingChoices] = useState(false)
 
   const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {

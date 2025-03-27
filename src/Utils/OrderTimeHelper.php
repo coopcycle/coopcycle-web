@@ -35,7 +35,7 @@ class OrderTimeHelper
     {
     }
 
-    private function filterChoices(OrderInterface $cart, array $choices, $fulfillmentMethod): array
+    private function filterChoices(OrderInterface $cart, array $choices): array
     {
         $choicesLogged = 0;
         $acceptedChoicesLogged = 0;
@@ -86,8 +86,6 @@ class OrderTimeHelper
      *    - ordering delay
      * 3. Sort availabilities
      * 4. Cache the result
-     *
-     * @return array
      */
     private function getAsapChoices(OrderInterface $cart, FulfillmentMethod $fulfillmentMethod): array
     {
@@ -119,7 +117,7 @@ class OrderTimeHelper
             );
 
             $choiceList = $choiceLoader->loadChoiceList();
-            $values = $this->filterChoices($cart, $choiceList->getChoices(), $fulfillmentMethod);
+            $values = $this->filterChoices($cart, $choiceList->getChoices());
 
             // FIXME Sort availabilities
 
@@ -223,7 +221,7 @@ class OrderTimeHelper
                 $range->getLower()->format(\DateTime::ATOM),
                 $range->getUpper()->format(\DateTime::ATOM),
             ] : null,
-            'today' => $range ? DateUtils::isToday($range) : false,
+            'today' => $range && DateUtils::isToday($range),
             'fast' => $fast,
             'diff' => sprintf('%d - %d', $lowerDiff, $upperDiff),
             'ranges' => array_map(function (TsRange $range) {
@@ -235,9 +233,6 @@ class OrderTimeHelper
         ];
     }
 
-    /**
-     * @return TsRange|null
-     */
     public function getShippingTimeRange(OrderInterface $cart): ?TsRange
     {
         $ranges = $this->getShippingTimeRanges($cart);

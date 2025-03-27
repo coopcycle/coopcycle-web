@@ -11,100 +11,46 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-/**
- * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"trailer"}},
- *     "denormalization_context"={"groups"={"trailer_create"}},
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER')",
- *      },
- *     "post"={
- *       "method"="POST",
- *       "access_control"="is_granted('ROLE_ADMIN')",
- *      },
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')",
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *     },
- *     "set_vehicles"={
- *       "method"="PUT",
- *       "security"="is_granted('ROLE_ADMIN')",
- *       "path"="/trailers/{id}/vehicles",
- *       "controller"=SetVehicles::class,
- *       "write"=false,
- *       "read"=false
- *     },
- *   },
- *   order={"name": "ASC"},
- * )
- */
+#[ApiResource(attributes: ['normalization_context' => ['groups' => ['trailer']], 'denormalization_context' => ['groups' => ['trailer_create']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'access_control' => "is_granted('ROLE_ADMIN')"]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('ROLE_ADMIN')"], 'set_vehicles' => ['method' => 'PUT', 'security' => "is_granted('ROLE_ADMIN')", 'path' => '/trailers/{id}/vehicles', 'controller' => SetVehicles::class, 'write' => false, 'read' => false]], order: ['name' => 'ASC'])]
 class Trailer
 {
     use Timestampable;
     use SoftDeleteable;
 
-    /**
-    * @Groups({"trailer"})
-    */
+    #[Groups(['trailer'])]
     protected $id;
 
-    /**
-    * @Groups({"trailer", "trailer_create"})
-    * @Assert\NotBlank
-    * @Assert\Type("string")
-    */
+    #[Groups(['trailer', 'trailer_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     protected $name;
 
-    /**
-    * @Groups({"trailer", "trailer_create"})
-    * @Assert\NotBlank
-    * @Assert\Type("integer")
-    */
+    #[Groups(['trailer', 'trailer_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     protected $maxVolumeUnits;
 
-    /**
-    * @Groups({"trailer", "trailer_create"})
-    * @Assert\NotBlank
-    * @Assert\Type("integer")
-    */
+    #[Groups(['trailer', 'trailer_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     protected $maxWeight;
 
     /**
-    * @Groups({"trailer", "trailer_create"})
-    * @Assert\NotBlank
-    * @Assert\CssColor
-    */
+     * @Assert\CssColor
+     */
+    #[Groups(['trailer', 'trailer_create'])]
+    #[Assert\NotBlank]
     protected $color;
 
-    /**
-    * @Groups({"trailer", "trailer_create"})
-    * @Assert\Type("boolean")
-    */
+    #[Groups(['trailer', 'trailer_create'])]
+    #[Assert\Type('boolean')]
     protected $isElectric;
 
-    /**
-    * @Groups({"trailer", "trailer_create"})
-    * @Assert\Type("integer")
-    */
+    #[Groups(['trailer', 'trailer_create'])]
+    #[Assert\Type('integer')]
     protected $electricRange;
 
-    /**
-    * @Groups({"trailer"})
-    */
+    #[Groups(['trailer'])]
     protected $compatibleVehicles;
 
     public function __construct() {
