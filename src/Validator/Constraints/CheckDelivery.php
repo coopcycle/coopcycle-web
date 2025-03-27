@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class CheckDelivery extends Constraint
 {
     public $notValidMessage = 'delivery.check.notValid';

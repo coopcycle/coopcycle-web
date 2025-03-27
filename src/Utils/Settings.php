@@ -87,9 +87,7 @@ class Settings
 
     public $company_gln;
 
-    /**
-     * @AssertGoogleApiKey()
-     */
+    #[AssertGoogleApiKey]
     public $google_api_key_custom;
 
     public $geocoding_provider;

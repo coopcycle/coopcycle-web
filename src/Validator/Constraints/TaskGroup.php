@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class TaskGroup extends Constraint
 {
     public $duplicateRef = 'task_group.ref.duplicate';

@@ -16,9 +16,8 @@ class FulfillmentMethod implements ToggleableInterface
 
     /**
      * @var array
-     *
-     * @AssertNotOverlappingOpeningHours
      */
+    #[AssertNotOverlappingOpeningHours]
     private $openingHours = [];
     private $openingHoursBehavior = 'asap';
 

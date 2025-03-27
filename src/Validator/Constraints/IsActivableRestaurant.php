@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class IsActivableRestaurant extends Constraint
 {
     public $enabledMessage = 'restaurant.notActivable';

@@ -59,9 +59,8 @@ class TimeSlot
 
     /**
      * @var array
-     *
-     * @AssertNotOverlappingOpeningHours(groups={"Default"})
      */
+    #[AssertNotOverlappingOpeningHours(groups: ['Default'])]
     private $openingHours = [];
 
     /**

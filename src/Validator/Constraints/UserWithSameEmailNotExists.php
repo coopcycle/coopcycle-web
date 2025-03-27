@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class UserWithSameEmailNotExists extends Constraint
 {
     const USER_WITH_SAME_EMAIL_EXISTS_ERROR = 'd775d559-0819-425a-8043-d5b5dadda6f4';

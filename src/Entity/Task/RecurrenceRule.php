@@ -42,9 +42,9 @@ class RecurrenceRule
 
     /**
      * @var array
-     * @AssertRecurrenceRuleTemplate
      */
     #[Groups(['task_recurrence_rule'])]
+    #[AssertRecurrenceRuleTemplate]
     private $template = [];
 
     private ?array $arbitraryPriceTemplate = null;
