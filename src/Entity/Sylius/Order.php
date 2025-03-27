@@ -141,9 +141,7 @@ class Order extends BaseOrder implements OrderInterface
      */
     protected $tipAmount;
 
-    /**
-     * @AssertShippingTimeRange(groups={"Default", "ShippingTime"})
-     */
+    #[AssertShippingTimeRange(groups: ['Default', 'ShippingTime'])]
     protected $shippingTimeRange;
 
 
