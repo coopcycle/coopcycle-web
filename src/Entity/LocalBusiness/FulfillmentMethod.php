@@ -26,8 +26,8 @@ class FulfillmentMethod implements ToggleableInterface
 
     /**
      * @var int
-     * @Assert\NotBlank
      */
+    #[Assert\NotBlank]
     private $minimumAmount = 0;
 
     /**
@@ -104,9 +104,7 @@ class FulfillmentMethod implements ToggleableInterface
     }
 
     /**
-     * @param string $name
      * @param mixed $value
-     *
      * @return self
      */
     public function setOption(string $name, $value)
@@ -160,25 +158,16 @@ class FulfillmentMethod implements ToggleableInterface
         return $this->orderingDelayMinutes;
     }
 
-    /**
-     * @param int $orderingDelayMinutes
-     */
     public function setOrderingDelayMinutes(int $orderingDelayMinutes)
     {
         $this->orderingDelayMinutes = $orderingDelayMinutes;
     }
 
-    /**
-     * @return boolean
-     */
     public function isPreOrderingAllowed(): bool
     {
         return $this->preOrderingAllowed;
     }
 
-    /**
-     * @param bool $preOrderingAllowed
-     */
     public function setPreOrderingAllowed(bool $preOrderingAllowed)
     {
         $this->preOrderingAllowed = $preOrderingAllowed;

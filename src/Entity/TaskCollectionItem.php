@@ -14,15 +14,11 @@ class TaskCollectionItem
 
     private $parent;
 
-    /**
-     * @Assert\Valid()
-     * @Groups({"task_collection"})
-     */
+    #[Assert\Valid]
+    #[Groups(['task_collection'])]
     private $task;
 
-    /**
-     * @Groups({"task_collection"})
-     */
+    #[Groups(['task_collection'])]
     private $position;
 
     public function getId()

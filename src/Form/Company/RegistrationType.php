@@ -42,7 +42,7 @@ class RegistrationType extends AbstractType implements DataMapperInterface
 
     public function mapDataToForms($viewData, $forms)
     {
-        $forms = iterator_to_array($forms);
+        iterator_to_array($forms);
 
 
 

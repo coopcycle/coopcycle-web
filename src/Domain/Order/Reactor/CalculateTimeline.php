@@ -40,7 +40,7 @@ class CalculateTimeline
             return;
         }
 
-        $timeline = $this->getTimeline($order);
+        $this->getTimeline($order);
 
         if ($event instanceof Event\OrderDelayed) {
             $this->calculator->delay($order, $event->getDelay());

@@ -28,8 +28,8 @@ abstract class LocalBusinessGroup implements OpenCloseInterface, ToggleableInter
 
      /**
      * @var Contract|null
-     * @Assert\Valid(groups={"Default", "activable"})
      */
+    #[Assert\Valid(groups: ['Default', 'activable'])]
     protected $contract;
 
     public function __construct()
@@ -90,23 +90,13 @@ abstract class LocalBusinessGroup implements OpenCloseInterface, ToggleableInter
         return $this;
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     * @return bool
-     */
     public function hasRestaurant(LocalBusiness $restaurant): bool
     {
         return $this->getRestaurants()->contains($restaurant);
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public abstract function addRestaurant(LocalBusiness $restaurant);
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public abstract function removeRestaurant(LocalBusiness $restaurant): void;
 
     /**
@@ -117,17 +107,11 @@ abstract class LocalBusinessGroup implements OpenCloseInterface, ToggleableInter
         return $this->contract;
     }
 
-    /**
-     * @param Contract $contract
-     */
     public function setContract(Contract $contract)
     {
         $this->contract = $contract;
     }
 
-    /**
-     * @return array
-     */
     public function getBusinessTypes(): array
     {
         $types = [];

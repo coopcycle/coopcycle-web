@@ -34,7 +34,6 @@ class OrderManager
     }
 
     /**
-     * @param OrderInterface $order
      * @param string|array|null $data
      */
     public function checkout(OrderInterface $order, $data = null)

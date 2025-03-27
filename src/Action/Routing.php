@@ -36,13 +36,7 @@ class Routing
         }, $coords);
     }
 
-    /**
-     * @Route(
-     *     path="/routing/route/{coordinates}",
-     *     name="routing_route",
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(path: '/routing/route/{coordinates}', name: 'routing_route', methods: ['GET'])]
     public function routeAction($coordinates): JsonResponse
     {
         $coords = $this->decodeCoordinates($coordinates);
@@ -51,13 +45,7 @@ class Routing
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route(
-     *     path="/routing/trip/{coordinates}",
-     *     name="routing_trip",
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(path: '/routing/trip/{coordinates}', name: 'routing_trip', methods: ['GET'])]
     public function tripAction($coordinates): JsonResponse
     {
         $data = $this->routing->getServiceResponse(

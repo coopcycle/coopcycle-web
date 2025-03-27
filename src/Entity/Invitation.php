@@ -102,9 +102,6 @@ class Invitation
         return $this->grants;
     }
 
-    /**
-     * @param string $role
-     */
     public function addRole(string $role)
     {
         $roles = $this->grants['roles'] ?? [];
@@ -116,9 +113,6 @@ class Invitation
         $this->grants['roles'] = $roles;
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public function addRestaurant(LocalBusiness $restaurant)
     {
         $restaurants = $this->grants['restaurants'] ?? [];
@@ -130,9 +124,6 @@ class Invitation
         $this->grants['restaurants'] = $restaurants;
     }
 
-    /**
-     * @param Store $store
-     */
     public function addStore(Store $store)
     {
         $stores = $this->grants['stores'] ?? [];

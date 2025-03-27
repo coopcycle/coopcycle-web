@@ -52,13 +52,7 @@ class Register
         $this->confirmationEnabled = $confirmationEnabled;
     }
 
-    /**
-     * @Route(
-     *     path="/register",
-     *     name="api_register",
-     *     methods={"POST"}
-     * )
-     */
+    #[Route(path: '/register', name: 'api_register', methods: ['POST'])]
     public function registerAction(Request $request)
     {
         $email = $request->request->get('_email');

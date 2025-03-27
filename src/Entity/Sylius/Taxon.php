@@ -10,21 +10,7 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
 use AppBundle\Action\Restaurant\ActivateMenu;
 
-/**
- * @ApiResource(iri="http://schema.org/Menu",
- *   shortName="Menu",
- *   attributes={
- *     "normalization_context"={"groups"={"restaurant"}}
- *   },
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "path"="/restaurants/menus/{id}",
- *     }
- *   }
- * )
- */
+#[ApiResource(iri: 'http://schema.org/Menu', shortName: 'Menu', attributes: ['normalization_context' => ['groups' => ['restaurant']]], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'path' => '/restaurants/menus/{id}']])]
 class Taxon extends BaseTaxon implements Comparable
 {
     private $taxonProducts;

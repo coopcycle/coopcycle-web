@@ -62,7 +62,7 @@ class RestaurantFilter
             return $hash[$a] < $hash[$b] ? -1 : 1;
         });
 
-        $event = $stopwatch->stop('RestaurantFilter::matchingLatLng');
+        $stopwatch->stop('RestaurantFilter::matchingLatLng');
 
         return $matches;
     }

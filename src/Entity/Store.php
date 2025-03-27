@@ -35,64 +35,9 @@ use AppBundle\Action\Store\Packages as Packages;
  *
  * @see http://schema.org/Store Documentation on Schema.org
  *
- * @ApiResource(iri="http://schema.org/Store",
- *   attributes={
- *     "normalization_context"={"groups"={"store", "address"}}
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER')"
- *     },
- *     "me_stores"={
- *       "method"="GET",
- *       "path"="/me/stores",
- *       "controller"=MyStores::class
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('edit', object)"
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     },
- *     "time_slots"={
- *       "method"="GET",
- *       "path"="/stores/{id}/time_slots",
- *       "controller"=TimeSlots::class,
- *       "normalization_context"={"groups"={"store_time_slots"}},
- *       "security"="is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
- *     },
- *     "packages"={
- *       "method"="GET",
- *       "path"="/stores/{id}/packages",
- *       "controller"=Packages::class,
- *       "normalization_context"={"groups"={"store_packages"}},
- *       "security"="is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
- *     },
- *     "add_address"={
- *       "method"="POST",
- *       "path"="/stores/{id}/addresses",
- *       "security"="is_granted('edit', object)",
- *       "input"=Address::class,
- *       "controller"=AddAddress::class
- *     },
- *   },
- *   subresourceOperations={
- *     "deliveries_get_subresource"={
- *       "security"="is_granted('edit', object)"
- *     }
- *   }
- * )
  * @Vich\Uploadable
  */
+#[ApiResource(iri: 'http://schema.org/Store', attributes: ['normalization_context' => ['groups' => ['store', 'address']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'me_stores' => ['method' => 'GET', 'path' => '/me/stores', 'controller' => MyStores::class]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('edit', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'security' => "is_granted('ROLE_ADMIN')"], 'time_slots' => ['method' => 'GET', 'path' => '/stores/{id}/time_slots', 'controller' => TimeSlots::class, 'normalization_context' => ['groups' => ['store_time_slots']], 'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"], 'packages' => ['method' => 'GET', 'path' => '/stores/{id}/packages', 'controller' => Packages::class, 'normalization_context' => ['groups' => ['store_packages']], 'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"], 'add_address' => ['method' => 'POST', 'path' => '/stores/{id}/addresses', 'security' => "is_granted('edit', object)", 'input' => Address::class, 'controller' => AddAddress::class]], subresourceOperations: ['deliveries_get_subresource' => ['security' => "is_granted('edit', object)"]])]
 class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
 {
     use SoftDeleteable;
@@ -102,34 +47,29 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     /**
      * @var int
-     * @Groups({"store"})
      */
+    #[Groups(['store'])]
     private $id;
 
     /**
      * @var string The name of the item
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"store"})
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'http://schema.org/name')]
+    #[Groups(['store'])]
     protected $name;
 
     /**
      * @var boolean
-     *
-     * @Groups({"store"})
      */
+    #[Groups(['store'])]
     protected $enabled = false;
 
     /**
      * @Vich\UploadableField(mapping="store_image", fileNameProperty="imageName")
-     * @Assert\File(
-     *   maxSize = "1024k",
-     *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
-     * )
      * @var File
      */
+    #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 
     /**
@@ -137,16 +77,13 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     private $imageName;
 
-    /**
-     * @Groups({"store"})
-     */
+    #[Groups(['store'])]
     private $address;
 
     /**
      * @var string The website.
-     *
-     * @ApiProperty(iri="https://schema.org/URL")
      */
+    #[ApiProperty(iri: 'https://schema.org/URL')]
     private $website;
 
     /**
@@ -160,53 +97,39 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $pricingRuleSet;
 
-    /**
-     * @ApiSubresource
-     */
+    #[ApiSubresource]
     private $deliveries;
 
     private $rrules;
 
     private $owners;
 
-    /**
-     * @Groups({"store"})
-     */
+    #[Groups(['store'])]
     private $prefillPickupAddress = false;
 
-    /**
-     * @ApiSubresource
-     */
+    #[ApiSubresource]
     private $addresses;
 
-    /**
-     * @Groups({"store"})
-     */
+    #[Groups(['store'])]
     private $timeSlot;
 
     private $packageSet;
 
     private $checkExpression;
 
-    /**
-     * @Groups({"store"})
-     */
+    #[Groups(['store'])]
     private $weightRequired = false;
 
-    /**
-     * @Groups({"store"})
-     */
+    #[Groups(['store'])]
     private $packagesRequired = false;
 
-    /**
-     * @Groups({"store"})
-     */
+    #[Groups(['store'])]
     private $multiDropEnabled = false;
 
     /**
      * @var Collection<int, StoreTimeSlot>
-     * @Groups({"store"})
      */
+    #[Groups(['store'])]
     private $timeSlots;
 
     private ?string $transporter = null;
@@ -221,7 +144,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     /**
      * The GLN of the store used for field M03004
-     * @var string|null
      */
     protected ?string $storeGLN = null;
 
@@ -276,9 +198,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this->enabled;
     }
 
-    /**
-     * @param bool $enabled
-     */
     public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;
@@ -593,7 +512,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
         foreach ($newTimeSlots as $position => $ts) {
 
-            foreach ($this->timeSlots as $i => $sts) {
+            foreach ($this->timeSlots as $sts) {
                 if ($sts->getTimeSlot() === $ts) {
                     $sts->setPosition($position);
                     continue 2;
@@ -610,11 +529,11 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     }
 
     /**
-     * @SerializedName("packages")
-     * @Groups({"store_with_packages"})
      *
      * @return Package[]
      */
+    #[SerializedName('packages')]
+    #[Groups(['store_with_packages'])]
     public function getPackages()
     {
         if (null !== $this->packageSet) {

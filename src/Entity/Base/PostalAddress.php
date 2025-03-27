@@ -17,74 +17,67 @@ abstract class PostalAddress
 {
     /**
      * @var string The country. For example, USA. You can also provide the two-letter [ISO 3166-1 alpha-2 country code](http://en.wikipedia.org/wiki/ISO_3166-1).
-     *
-     * @Groups({"address_create"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/addressCountry")
      */
+    #[Groups(['address_create'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/addressCountry')]
     protected $addressCountry;
 
     /**
      * @var string The locality. For example, Mountain View.
-     *
-     * @Groups({"address_create", "order_update"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/addressLocality")
      */
+    #[Groups(['address_create', 'order_update'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/addressLocality')]
     protected $addressLocality;
 
     /**
      * @var string The region. For example, CA.
-     *
-     * @Groups({"address_create"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/addressRegion")
      */
+    #[Groups(['address_create'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/addressRegion')]
     protected $addressRegion;
 
     /**
      * @var string The name of the item.
-     *
-     * @Groups({"address", "address_create", "task_create", "task_edit"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/name")
      */
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/name')]
     private $name;
 
     /**
      * @var string The postal code. For example, 94043.
-     *
-     * @Groups({"address_create", "order_update", "task_create", "address_gb"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/postalCode")
      */
+    #[Groups(['address_create', 'order_update', 'task_create', 'address_gb'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/postalCode')]
     protected $postalCode;
 
     /**
      * @var string The post office box number for PO box addresses.
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/postOfficeBoxNumber")
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/postOfficeBoxNumber')]
     protected $postOfficeBoxNumber;
 
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
-     *
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create", "pricing_deliveries"})
-     * @Assert\Type(type="string")
-     * @Assert\NotBlank()
-     * @ApiProperty(iri="https://schema.org/streetAddress")
      */
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create', 'pricing_deliveries'])]
+    #[Assert\Type(type: 'string')]
+    #[Assert\NotBlank]
+    #[ApiProperty(iri: 'https://schema.org/streetAddress')]
     protected $streetAddress;
 
     /**
      * @var PhoneNumber|null
      *
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create"})
-     * @ApiProperty(iri="https://schema.org/telephone")
      * @AssertPhoneNumber(groups={"Default", "cart"})
      */
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create'])]
+    #[ApiProperty(iri: 'https://schema.org/telephone')]
     protected $telephone;
 
     /**
@@ -260,9 +253,6 @@ abstract class PostalAddress
         return $this->telephone;
     }
 
-    /**
-     * @param PhoneNumber|null $telephone
-     */
     public function setTelephone(?PhoneNumber $telephone = null)
     {
         $this->telephone = $telephone;

@@ -528,9 +528,7 @@ trait RestaurantTrait
         ]);
     }
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
         TaxonRepository $taxonRepository,
         FactoryInterface $taxonFactory,
@@ -744,9 +742,7 @@ trait RestaurantTrait
         ]);
     }
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function restaurantProductsAction($id, Request $request, IriConverterInterface $iriConverter, PaginatorInterface $paginator)
     {
         $restaurant = $this->getDoctrine()
@@ -874,9 +870,7 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function restaurantProductOptionsAction($id, Request $request)
     {
         $restaurant = $this->getDoctrine()
@@ -1254,7 +1248,7 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
-        $routes = $request->attributes->get('routes');
+        $request->attributes->get('routes');
 
         [ $start, $end ] = $this->extractRange($request);
 

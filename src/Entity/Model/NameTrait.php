@@ -10,10 +10,9 @@ trait NameTrait
 {
     /**
      * @var string The name of the item
-     *
-     * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"order"})
      */
+    #[ApiProperty(iri: 'http://schema.org/name')]
+    #[Groups(['order'])]
     protected $name;
 
     /**

@@ -21,37 +21,33 @@ abstract class Person
 
     /**
      * @var \DateTime Date of birth.
-     *
-     * @Groups({"person"})
-     * @Assert\Date
-     * @ApiProperty(iri="https://schema.org/birthDate")
      */
+    #[Groups(['person'])]
+    #[Assert\Date]
+    #[ApiProperty(iri: 'https://schema.org/birthDate')]
     private $birthDate;
 
     /**
      * @var string Family name. In the U.S., the last name of an Person. This can be used along with givenName instead of the name property.
-     *
-     * @Groups({"person"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/familyName")
      */
+    #[Groups(['person'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/familyName')]
     private $familyName;
 
     /**
      * @var string Gender of the person.
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/gender")
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/gender')]
     private $gender;
 
     /**
      * @var string The name of the item.
-     *
-     * @Groups({"person"})
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/name")
      */
+    #[Groups(['person'])]
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/name')]
     private $name;
 
     /**
@@ -81,7 +77,6 @@ abstract class Person
     /**
      * Sets birthDate.
      *
-     * @param \DateTime $birthDate
      *
      * @return $this
      */

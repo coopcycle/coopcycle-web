@@ -38,7 +38,6 @@ class BarcodeUtils {
 
     /**
      * @return Barcode[]|Barcode|null
-     * @param object $entity
      */
     public static function getBarcodeFromEntity(object $entity): array|Barcode|null {
         switch (get_class($entity)) {
@@ -81,9 +80,8 @@ class BarcodeUtils {
 
 
     /**
-    * @param string|Barcode $barcode
-    * @return string
-    */
+     * @param string|Barcode $barcode
+     */
     public static function getToken($barcode): string
     {
         if ($barcode instanceof Barcode) {

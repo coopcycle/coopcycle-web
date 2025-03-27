@@ -275,9 +275,7 @@ class LocalBusinessRepository extends EntityRepository
             ->groupBy('c.id')
             ->orderBy('cnt', 'DESC');
 
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function findByCuisine($cuisine) {
@@ -301,9 +299,7 @@ class LocalBusinessRepository extends EntityRepository
 
         $qb->orderBy('c.name');
 
-        $result = $qb->getQuery()->getResult();
-
-        return $result;
+        return $qb->getQuery()->getResult();
     }
 
     public function findByFilters($filters)

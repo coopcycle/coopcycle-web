@@ -35,7 +35,7 @@ class Invoice
         }
 
         return match ($request->get('format')) {
-            'pdf' => new Response((string)$this->receiptsFilesystem->read($filename), 200, [
+            'pdf' => new Response($this->receiptsFilesystem->read($filename), 200, [
                 'Content-Disposition' => 'inline',
                 'Content-Type' => 'application/pdf',
             ]),

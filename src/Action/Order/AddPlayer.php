@@ -68,10 +68,6 @@ class AddPlayer
         ], 200);
     }
 
-    /**
-     * @param array $body
-     * @return CustomerInterface
-     */
     private function getCustomer(array $body): CustomerInterface
     {
         if (

@@ -31,13 +31,7 @@ class GoogleSignIn
         $this->appId = $appId;
     }
 
-    /**
-     * @Route(
-     *     path="/google_sign_in/login",
-     *     name="api_google_sign_in_login",
-     *     methods={"POST"}
-     * )
-     */
+    #[Route(path: '/google_sign_in/login', name: 'api_google_sign_in_login', methods: ['POST'])]
     public function googleSignInAction(Request $request)
     {
         $data = [];

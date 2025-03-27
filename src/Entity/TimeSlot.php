@@ -14,44 +14,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
 use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
-/**
- * @ApiResource(
- *   normalizationContext={"groups"={"time_slot"}},
- *   paginationClientEnabled=true,
- *   itemOperations={
- *     "get"={"method"="GET"},
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     },
- *     "choices"={
- *       "method"="GET",
- *       "path"="/time_slots/{id}/choices",
- *       "controller"=OpeningHours::class,
- *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
- *       "security"="is_granted('edit', object)"
- *     },
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *     },
- *     "choices"={
- *       "method"="GET",
- *       "path"="/time_slots/choices",
- *       "controller"=ChoicesController::class,
- *       "status"=200,
- *       "read"=false,
- *       "write"=false,
- *       "normalization_context"={"groups"={"time_slot_choices"}, "api_sub_level"=true},
- *       "security"="is_granted('ROLE_OAUTH2_DELIVERIES')",
- *       "openapi_context"={
- *         "summary"="Retrieves choices for time slot"
- *       }
- *     },
- *   })
- */
+#[ApiResource(normalizationContext: ['groups' => ['time_slot']], paginationClientEnabled: true, itemOperations: ['get' => ['method' => 'GET'], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'choices' => ['method' => 'GET', 'path' => '/time_slots/{id}/choices', 'controller' => OpeningHours::class, 'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true], 'security' => "is_granted('edit', object)"]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'choices' => ['method' => 'GET', 'path' => '/time_slots/choices', 'controller' => ChoicesController::class, 'status' => 200, 'read' => false, 'write' => false, 'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true], 'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')", 'openapi_context' => ['summary' => 'Retrieves choices for time slot']]])]
 class TimeSlot
 {
     use Timestampable;
@@ -60,39 +23,39 @@ class TimeSlot
 
     /**
      * @var string
-     * @Groups({"time_slot", "store_time_slots"})
      */
+    #[Groups(['time_slot', 'store_time_slots'])]
     private $name;
 
     /**
      * @var string
-     * @Groups({"time_slot"})
      */
+    #[Groups(['time_slot'])]
     private $interval = '2 days';
 
     /**
      * @var bool
-     * @Groups({"time_slot"})
      */
+    #[Groups(['time_slot'])]
     private $workingDaysOnly = true;
 
     /**
      * kept for backward compatibility, to be deleted when https://github.com/coopcycle/coopcycle-app/issues/1771 is solved
      * @deprecated
-     * @Groups({"time_slot"})
      */
+    #[Groups(['time_slot'])]
     public $choices = [];
 
     /**
      * @var string
-     * @Groups({"time_slot"})
      */
+    #[Groups(['time_slot'])]
     private $priorNotice;
 
     /**
      * @var string
      */
-    private $sameDayCutoff = null;
+    private $sameDayCutoff;
 
     /**
      * @var array
@@ -178,17 +141,12 @@ class TimeSlot
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isWorkingDaysOnly(): bool
     {
         return $this->workingDaysOnly;
     }
 
     /**
-     * @param bool $workingDaysOnly
-     *
      * @return self
      */
     public function setWorkingDaysOnly(bool $workingDaysOnly)
@@ -198,9 +156,7 @@ class TimeSlot
         return $this;
     }
 
-    /**
-     * @Groups({"time_slot"})
-     */
+    #[Groups(['time_slot'])]
     public function getOpeningHoursSpecification()
     {
         return array_map(function (OpeningHoursSpecification $spec) {

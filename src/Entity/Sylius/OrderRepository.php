@@ -286,8 +286,7 @@ class OrderRepository extends BaseOrderRepository
     public function fetchNextSeqId(){
         $dbConnection = $this->getEntityManager()->getConnection();
         $nextValQuery = $dbConnection->getDatabasePlatform()->getSequenceNextValSQL('sylius_order_id_seq');
-        $id = (int) $dbConnection->executeQuery($nextValQuery)->fetchOne();
-        return $id;
+        return (int) $dbConnection->executeQuery($nextValQuery)->fetchOne();
     }
 
     public function findBookmarked(Store $store, UserInterface $user): array

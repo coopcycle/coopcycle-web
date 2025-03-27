@@ -8,10 +8,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class PaymentMethodsOutput
 {
-    /**
-     * @ApiProperty
-     * @Groups({"order"})
-     */
+    #[ApiProperty]
+    #[Groups(['order'])]
     private $methods;
 
     public function __construct()

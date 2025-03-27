@@ -20,31 +20,15 @@ interface CustomerInterface extends BaseCustomerInterface, LoopeatCredentialsInt
      */
     public function getOrders(): Collection;
 
-    /**
-     * @return Address|null
-     */
     public function getDefaultAddress(): ?Address;
 
-    /**
-     * @param Address|null $defaultAddress
-     */
     public function setDefaultAddress(?Address $defaultAddress): void;
 
-    /**
-     * @param Address $address
-     */
     public function addAddress(Address $address): void;
 
-    /**
-     * @param Address $address
-     */
     public function removeAddress(Address $address): void;
 
-    /**
-     * @param Address $address
-     *
-     * @return bool
-     */
+    
     public function hasAddress(Address $address): bool;
 
     /**
@@ -52,19 +36,10 @@ interface CustomerInterface extends BaseCustomerInterface, LoopeatCredentialsInt
      */
     public function getAddresses(): Collection;
 
-    /**
-     * @return bool
-     */
     public function hasUser(): bool;
 
-    /**
-     * @return User|UserInterface|null
-     */
     public function getUser(): ?UserInterface;
 
-    /**
-     * @param User|UserInterface|null $user
-     */
     public function setUser(?UserInterface $user);
 
     /**
@@ -72,14 +47,8 @@ interface CustomerInterface extends BaseCustomerInterface, LoopeatCredentialsInt
      */
     public function setTelephone($telephone);
 
-    /**
-     * @return bool
-     */
     public function hasEdenredCredentials(): bool;
 
-    /**
-     * @return EdenredCustomerCredentials|null
-     */
     public function getEdenredCredentials(): ?EdenredCustomerCredentials;
 
     public function setEdenredAccessToken($accessToken);

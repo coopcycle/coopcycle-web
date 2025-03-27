@@ -8,20 +8,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class BusinessAccountRegistration
 {
-    /**
-	 * @Assert\Valid
-	 */
-	public $user;
+    #[Assert\Valid]
+ public $user;
 
-    /**
-	 * @Assert\Valid
-	 */
-	public $businessAccount;
+    #[Assert\Valid]
+ public $businessAccount;
 
-	/**
-	 * @Assert\Valid
-	 */
-	public $code;
+	#[Assert\Valid]
+ public $code;
 
     public function __construct(User $user, BusinessAccount $businessAccount, $code = null) {
 		$this->user = $user;

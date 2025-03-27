@@ -32,9 +32,6 @@ class Context
         return false;
     }
 
-    /**
-     * @return BusinessAccount|null
-     */
     public function getBusinessAccount(): ?BusinessAccount
     {
         $user = $this->security->getUser();

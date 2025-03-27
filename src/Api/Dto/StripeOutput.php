@@ -8,19 +8,19 @@ final class StripeOutput
 {
     /**
      * @var boolean
-     * @Groups({"order"})
      */
+    #[Groups(['order'])]
     public $requiresAction;
 
     /**
      * @var string
-     * @Groups({"order"})
      */
+    #[Groups(['order'])]
     public $paymentIntentClientSecret;
 
     /**
      * @var string
-     * @Groups({"order"})
      */
+    #[Groups(['order'])]
     public $paymentIntentId;
 }

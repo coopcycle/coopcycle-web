@@ -206,9 +206,6 @@ class OrderView
         return $total > 0 ? $total * -1 : $total;
     }
 
-    /**
-     * @return string|null
-     */
     public function getNonprofit(): ?string
     {
         return $this->nonprofitName;

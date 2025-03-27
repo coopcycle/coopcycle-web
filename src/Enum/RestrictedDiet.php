@@ -9,8 +9,8 @@ use MyCLabs\Enum\Enum;
  * A diet restricted to certain foods or preparations for cultural, religious, health or lifestyle reasons.
  *
  * @see http://schema.org/RestrictedDiet Documentation on Schema.org
- * @ApiResource(iri="http://schema.org/RestrictedDiet")
  */
+#[ApiResource(iri: 'http://schema.org/RestrictedDiet')]
 class RestrictedDiet extends Enum
 {
     /**

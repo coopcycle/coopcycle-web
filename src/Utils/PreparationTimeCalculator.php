@@ -23,9 +23,6 @@ class PreparationTimeCalculator
     private $language;
     private $cache = [];
 
-    /**
-     * @param array $config
-     */
     public function __construct(array $config)
     {
         $this->config = $config;
@@ -39,9 +36,6 @@ class PreparationTimeCalculator
 
     /**
      * Returns a time expression string, for ex. "15 minutes".
-     *
-     * @param OrderInterface $order
-     * @return string
      */
     public function calculate(OrderInterface $order): string
     {

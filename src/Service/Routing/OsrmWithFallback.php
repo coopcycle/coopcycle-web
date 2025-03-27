@@ -10,10 +10,6 @@ class OsrmWithFallback extends Base
     private $osrm;
     private $fallback;
 
-    /**
-     * @param Osrm $osrm
-     * @param Fallback $fallback
-     */
     public function __construct(Osrm $osrm, Fallback $fallback)
     {
         $this->osrm = $osrm;

@@ -92,7 +92,7 @@ class WoopitSubscriptionsCommand extends Command
                     $this->io->text('Subscriptions for Woopit processed successfully');
                     break;
                 case 400:
-                    $responseData = json_decode((string) $response->getContent(false), true);
+                    $responseData = json_decode($response->getContent(false), true);
                     $this->io->caution(
                         sprintf('Missing and/or incorrect items in the body. Reasons: %s', $responseData['message'])
                     );
