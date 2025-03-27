@@ -13,11 +13,12 @@ import {
 } from './pricing-rule-parser'
 import i18n from '../../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
-import PricingRuleSetActions from './components/PricingRuleSetActions'
+import AddRulePerDelivery from './components/AddRulePerDelivery'
 import RulePicker from './components/RulePicker'
 import PriceRangeEditor from './components/PriceRangeEditor'
 import PricePerPackageEditor from './components/PricePerPackageEditor'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
+import AddRulePerTask from './components/AddRulePerTask'
 
 const PriceChoice = ({ defaultValue, onChange }) => {
   const { t } = useTranslation()
@@ -218,7 +219,14 @@ function addPricingRule(ruleTarget) {
     expressionAST: undefined,
   })
 
-  newLi.appendTo(ruleSet)
+  if (ruleTarget === 'TASK') {
+    //add at the beginning of the list (because task based rules are evaluated first)
+    newLi.prependTo(ruleSet)
+  } else if (ruleTarget === 'DELIVERY') {
+    //add at the end of the list
+    newLi.appendTo(ruleSet)
+  }
+
   onListChange()
 }
 
@@ -289,23 +297,29 @@ function hasLegacyRules() {
 }
 
 $('#pricing-rule-set-header').each(function (index, item) {
-  if (!hasLegacyRules()) {
-    return
-  }
-
   const root = createRoot(item)
   root.render(
     <StrictMode>
-      <LegacyPricingRulesWarning
-        migrateToTarget={ruleTarget => {
-          root.unmount()
-          migrateToTarget(ruleTarget)
-        }}
-      />
+      {hasLegacyRules() && (
+        <LegacyPricingRulesWarning
+          migrateToTarget={ruleTarget => {
+            root.unmount()
+            migrateToTarget(ruleTarget)
+          }}
+        />
+      )}
+      <div className="d-flex justify-content-end">
+        <AddRulePerTask onAddRule={addPricingRule} />
+      </div>
     </StrictMode>,
   )
 })
 
 $('#pricing-rule-set-footer').each(function (index, item) {
-  render(<PricingRuleSetActions onAddRule={addPricingRule} />, item)
+  render(
+    <div className="mb-5 d-flex justify-content-end">
+      <AddRulePerDelivery onAddRule={addPricingRule} />
+    </div>,
+    item,
+  )
 })
