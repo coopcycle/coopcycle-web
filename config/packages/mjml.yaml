@@ -1,6 +1,4 @@
-# see https://github.com/notFloran/mjml-bundle#binary
 mjml:
-    renderer: 'binary'
+    renderer: 'service'
     options:
-        binary: '%kernel.project_dir%/node_modules/.bin/mjml'
-        minify: false
+        service_id: 'AppBundle\Mjml\MjmlServerRenderer'

@@ -148,11 +148,6 @@ event_bus:
     event_name_resolver_strategy: named_message
     logging: ~
 
-mjml:
-    renderer: 'service'
-    options:
-        service_id: 'AppBundle\Mjml\MjmlServerRenderer'
-
 kreait_firebase:
     projects:
         coopcycle:
