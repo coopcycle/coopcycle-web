@@ -12,7 +12,7 @@ export default function AddRulePerTask({ onAddRule }) {
         success
         icon="plus"
         onClick={() => onAddRule('TASK')}
-        testID="pricint_rule_set_add_rule_target_task">
+        testID="pricing_rule_set_add_rule_target_task">
         {t('PRICING_ADD_RULE_PER_TASK')}
       </Button>
       <HelpIcon

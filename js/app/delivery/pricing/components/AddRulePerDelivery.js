@@ -12,7 +12,7 @@ export default function AddRulePerDelivery({ onAddRule }) {
         success
         icon="plus"
         onClick={() => onAddRule('DELIVERY')}
-        testID="pricint_rule_set_add_rule_target_delivery">
+        testID="pricing_rule_set_add_rule_target_delivery">
         {t('PRICING_ADD_RULE')}
       </Button>
       <HelpIcon className="ml-1" tooltipText={t('PRICING_ADD_RULE_HELP')} />

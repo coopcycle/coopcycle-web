@@ -27,7 +27,7 @@ context('Setup simple matrix pricing (role: admin)', () => {
     cy.get('#pricing_rule_set_name').type('Matrix')
 
     // Rule: packages = SMALL; diff_hours(pickup) > 4; price = 7
-    cy.get('[data-testid="pricint_rule_set_add_rule_target_delivery"]').click();
+    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click();
     cy.get('[data-testid="rule-picker-add-condition"]').click();
     cy.get('tr > :nth-child(1) > .form-control').select('packages');
     cy.get('[width="25%"] > .form-control').select('SMALL');
@@ -38,7 +38,7 @@ context('Setup simple matrix pricing (role: admin)', () => {
     cy.get('#pricing_rule_set_rules_0_price').type('7');
 
     // Rule: packages = SMALL; diff_hours(pickup) < 4; price = 10
-    cy.get('[data-testid="pricint_rule_set_add_rule_target_delivery"]').click();
+    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click();
     cy.get(':nth-child(2) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .text-right > [data-testid="rule-picker-add-condition"]').click();
     cy.get(':nth-child(2) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > :nth-child(1) > .form-control').select('packages');
     cy.get(':nth-child(2) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > [width="25%"] > .form-control').select('SMALL');
@@ -51,7 +51,7 @@ context('Setup simple matrix pricing (role: admin)', () => {
     cy.get('#pricing_rule_set_rules_1_price').type('10');
 
     // Rule: packages = XL; diff_hours(pickup) > 4; price = 12
-    cy.get('[data-testid="pricint_rule_set_add_rule_target_delivery"]').click();
+    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click();
     cy.get(':nth-child(3) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .text-right > [data-testid="rule-picker-add-condition"]').click();
     cy.get(':nth-child(3) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > :nth-child(1) > .form-control').select('packages');
     cy.get(':nth-child(3) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > [width="25%"] > .form-control').select('XL');
@@ -64,7 +64,7 @@ context('Setup simple matrix pricing (role: admin)', () => {
     cy.get('#pricing_rule_set_rules_2_price').type('12');
 
     // Rule: packages = XL; diff_hours(pickup) < 4; price = 15
-    cy.get('[data-testid="pricint_rule_set_add_rule_target_delivery"]').click();
+    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click();
     cy.get(':nth-child(4) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .text-right > [data-testid="rule-picker-add-condition"]').click();
     cy.get(':nth-child(4) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > :nth-child(1) > .form-control').select('packages');
     cy.get(':nth-child(4) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > [width="25%"] > .form-control').select('XL');
