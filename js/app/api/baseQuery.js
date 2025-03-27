@@ -1,4 +1,4 @@
-import { fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
+import { fetchBaseQuery } from '@reduxjs/toolkit/query'
 import {
   selectAccessToken,
   setAccessToken,
