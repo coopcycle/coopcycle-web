@@ -206,9 +206,9 @@ class ProfileController extends AbstractController
             $exp = clone $order->getShippingTimeRange()->getUpper();
             $exp->modify('+3 hours');
 
-            return $this->render('profile/order.html.twig', [
+            return $this->render('profile/order.html.twig', $this->auth([
                 'order' => $order,
-                'events' => (new OrderEventCollection($order))->toArray(),
+                'orderAccessToken' => null, // not needed, as a guest user does not have access to this route
                 'order_normalized' => $normalizer->normalize($order, 'jsonld', [
                     'groups' => ['order'],
                     'is_web' => true
@@ -219,7 +219,7 @@ class ProfileController extends AbstractController
                     'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
                     'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
                 ]
-            ]);
+            ]));
         }
 
         $form = $this->createForm(OrderType::class, $order);
