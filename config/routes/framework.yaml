@@ -43,10 +43,6 @@ oauth2:
     type: php
     prefix: /oauth2
 
-foodtech_enabled_aware:
-    resource: .
-    type: foodtech_enabled_aware
-
 when@dev:
     _errors:
         resource: '@FrameworkBundle/Resources/config/routing/errors.xml'

@@ -1,5 +1,5 @@
-nucleos_user:
-    resource: "@NucleosUserBundle/Resources/config/routing/all.xml"
+# nucleos_user:
+#     resource: "@NucleosUserBundle/Resources/config/routing/all.xml"
 
 nucleos_user_security:
     resource: "@NucleosUserBundle/Resources/config/routing/security.php"

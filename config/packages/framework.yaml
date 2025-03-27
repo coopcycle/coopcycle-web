@@ -3,7 +3,7 @@ framework:
     #esi:             ~
     secret:          "%secret%"
     router:
-        resource: "%kernel.project_dir%/app/config/routing.yml"
+        # resource: "%kernel.project_dir%/app/config/routing.yml"
         strict_requirements: ~
         utf8: true
     form:            ~
