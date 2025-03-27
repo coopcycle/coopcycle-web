@@ -178,7 +178,7 @@
     "require-dev": {
         "symfony/debug-bundle": "*",
         "symfony/stopwatch": "^6.4",
-        "symfony/web-profiler-bundle": "^6.1",
+        "symfony/web-profiler-bundle": "~6.0.0",
         "symfony/phpunit-bridge": "^5.0",
         "phpunit/phpunit": "^9.0",
         "behat/behat": "^3.7",
