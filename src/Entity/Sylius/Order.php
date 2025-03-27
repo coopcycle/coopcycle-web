@@ -110,10 +110,8 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $customer;
 
-    /**
-     * @AssertShippingAddress
-     */
     #[Assert\Valid]
+    #[AssertShippingAddress]
     protected $shippingAddress;
 
     protected $billingAddress;
