@@ -73,4 +73,5 @@ return [
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
     SimpleBus\SymfonyBridge\SimpleBusCommandBusBundle::class => ['all' => true],
     SimpleBus\SymfonyBridge\SimpleBusEventBusBundle::class => ['all' => true],
+    Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle::class => ['all' => true],
 ];
