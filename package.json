@@ -152,7 +152,7 @@
     "react-markdown": "^8.0.3",
     "react-modal": "^3.16.1",
     "react-phone-number-input": "^3.2.12",
-    "react-redux": "^7.2.9",
+    "react-redux": "^8.1.0",
     "react-select": "^5.8.0",
     "react-split": "^2.0.14",
     "react-spreadsheet": "^0.9.2",
