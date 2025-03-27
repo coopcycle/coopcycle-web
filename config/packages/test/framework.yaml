@@ -1,5 +1,5 @@
 imports:
-    - { resource: ../dev/config.yml }
+    - { resource: ../dev/framework.yaml }
 
 parameters:
     tile38_fleet_key: '%database_name%_test:fleet'

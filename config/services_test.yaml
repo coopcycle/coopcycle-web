@@ -3,5 +3,9 @@ services:
         autowire: true
         autoconfigure: true
 
-    App\Tests\Behat\:
-        resource: '../tests/Behat/*'
+    # Tests\Behat\:
+    #     resource: '../tests/Behat/*'
+
+    # Tests\Behat\JsonContext:
+    #     arguments:
+    #         $httpCallResultPool: '@behatch.http_call.result_pool'

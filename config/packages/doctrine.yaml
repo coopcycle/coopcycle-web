@@ -43,9 +43,9 @@ doctrine:
         mappings:
             AppBundle:
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
+                dir: '%kernel.project_dir%/src/Resources/config/doctrine'
                 prefix: 'AppBundle\Entity'
-                alias: AppBundle
+                # alias: AppBundle
                 type: xml
         dql:
             string_functions:
