@@ -5,39 +5,22 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('view', object.getTask())",
- *     }
- *   }
- * )
- */
+#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('view', object.getTask())"]])]
 class TaskEvent
 {
     private $id;
 
     private $task;
 
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     private $name;
 
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     private array $data = [];
 
     private array $metadata = [];
 
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     private $createdAt;
 
     public function __construct(

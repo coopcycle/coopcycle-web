@@ -27,7 +27,6 @@ interface RoutingInterface
     public function getDuration(GeoCoordinates ...$coordinates);
 
     /**
-     * @param GeoCoordinates $source
      * @param GeoCoordinates[] ...$coordinates
      */
     public function getDistances(GeoCoordinates $source, GeoCoordinates ...$coordinates);

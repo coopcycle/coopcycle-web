@@ -98,7 +98,6 @@ class Client
     }
 
     /**
-     * @param PaymentInterface $payment
      * @return string The authorization ID
      */
     public function authorizeTransaction(PaymentInterface $payment): string
@@ -143,7 +142,6 @@ class Client
     }
 
     /**
-     * @param PaymentInterface $payment
      * @return string The capture ID
      */
     public function captureTransaction(PaymentInterface $payment): string

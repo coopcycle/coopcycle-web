@@ -47,7 +47,7 @@ class StandtrackIUBRangeSetupCommand extends Command
             ->prepare(
                 'CREATE SEQUENCE IF NOT EXISTS standtrack_iub_seq MINVALUE :from MAXVALUE :to;',
             );
-        $ctn = $stmt->executeQuery([':from' => (int)$from, ':to' => (int)$to])->fetchOne();
+        $stmt->executeQuery([':from' => (int)$from, ':to' => (int)$to])->fetchOne();
 
         return 0;
     }

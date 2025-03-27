@@ -67,17 +67,12 @@ class Refund
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getAmount(): int
     {
         return $this->amount;
     }
 
     /**
-     * @param int $amount
-     *
      * @return self
      */
     public function setAmount(int $amount)
@@ -96,8 +91,6 @@ class Refund
     }
 
     /**
-     * @param array $data
-     *
      * @return self
      */
     public function setData(array $data)

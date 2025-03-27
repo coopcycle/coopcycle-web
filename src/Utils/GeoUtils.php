@@ -50,12 +50,12 @@ class GeoUtils
 
     public static function getViewbox($lat, $lng, $distance = 50): array
     {
-        $geotools = new Geotools();
+        new Geotools();
 
         // We generate a bounding box around the center
         // the adresses will be generated inside this bounding box
         $northEast = new Coordinate(self::getBoundingBoxCoords($lat, $lng, 45,  $distance));
-        $southEast = new Coordinate(self::getBoundingBoxCoords($lat, $lng, 135, $distance));
+        new Coordinate(self::getBoundingBoxCoords($lat, $lng, 135, $distance));
         $southWest = new Coordinate(self::getBoundingBoxCoords($lat, $lng, 225, $distance));
         $northWest = new Coordinate(self::getBoundingBoxCoords($lat, $lng, 315, $distance));
 
@@ -81,7 +81,7 @@ class GeoUtils
      */
     public static function getLatLngBounds($lat, $lng, $distance = 50): string
     {
-        $geotools = new Geotools();
+        new Geotools();
 
         // We generate a bounding box around the center
         // the adresses will be generated inside this bounding box

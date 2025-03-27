@@ -43,9 +43,7 @@ final class WebAuthenticationListener implements EventSubscriberInterface
     public function onImplicitLogin(UserEvent $event)
     {
         $user = $event->getUser();
-        if ($user instanceof UserInterface) {
-            $this->blame($user);
-        }
+        $this->blame($user);
     }
 
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)

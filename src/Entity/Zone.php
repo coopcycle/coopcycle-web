@@ -13,9 +13,7 @@ class Zone
      */
     protected $id;
 
-    /**
-     * @Assert\Type(type="string")
-     */
+    #[Assert\Type(type: 'string')]
     protected $name;
 
     protected $polygon;

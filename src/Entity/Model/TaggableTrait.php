@@ -15,19 +15,15 @@ trait TaggableTrait
         return ClassUtils::getClass($this);
     }
 
-    /**
-     * @SerializedName("tags")
-     * @Groups({"task", "order", "order_minimal", "delivery"})
-     */
+    #[SerializedName('tags')]
+    #[Groups(['task', 'order', 'order_minimal', 'delivery'])]
     public function getTags(): array
     {
         return $this->tags;
     }
 
-    /**
-     * @SerializedName("tags")
-     * @Groups({"task_create", "task_edit"})
-     */
+    #[SerializedName('tags')]
+    #[Groups(['task_create', 'task_edit'])]
     public function setTags(array|string $tags): void
     {
         $this->tags = is_array($tags) ? $tags : explode(' ', $tags);

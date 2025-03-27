@@ -48,6 +48,9 @@ export const apiSlice = createApi({
     getOrderValidate: builder.query({
       query: nodeId => `${nodeId}/validate`,
     }),
+    getOrder: builder.query({
+      query: nodeId => nodeId,
+    }),
     updateOrder: builder.mutation({
       query: ({ nodeId, ...patch }) => ({
         url: nodeId,
@@ -64,5 +67,6 @@ export const {
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
   useGetOrderTimingQuery,
+  useGetOrderQuery,
   useUpdateOrderMutation,
 } = apiSlice

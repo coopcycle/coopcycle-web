@@ -8,7 +8,7 @@ final class OptimizationSuggestions
 {
     /**
      * @var OptimizationSuggestion[]
-     * @Groups({"optimization_suggestions"})
      */
+    #[Groups(['optimization_suggestions'])]
     public array $suggestions = [];
 }

@@ -14,14 +14,28 @@ services:
     #         # translatable sets locale such as default application locale before command execute
     #         - { name: kernel.event_listener, event: console.command, method: onConsoleCommand, priority: -10 }
 
+    # Attribute mapping driver for the Doctrine Extension listeners
+    gedmo.mapping.driver.attribute:
+        class: Gedmo\Mapping\Driver\AttributeReader
 
     # Doctrine Extension listeners to handle behaviors
     gedmo.listener.tree:
         class: Gedmo\Tree\TreeListener
         tags:
-            - { name: doctrine.event_subscriber, connection: default }
+            - { name: doctrine.event_listener, event: 'prePersist'}
+            - { name: doctrine.event_listener, event: 'preUpdate'}
+            - { name: doctrine.event_listener, event: 'preRemove'}
+            - { name: doctrine.event_listener, event: 'onFlush'}
+            - { name: doctrine.event_listener, event: 'loadClassMetadata'}
+            - { name: doctrine.event_listener, event: 'postPersist'}
+            - { name: doctrine.event_listener, event: 'postUpdate'}
+            - { name: doctrine.event_listener, event: 'postRemove'}
         calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+            # Uncomment the below call if using attributes, and comment the call for the annotation reader
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
 
     # gedmo.listener.translatable:
     #     class: Gedmo\Translatable\TranslatableListener
@@ -35,44 +49,59 @@ services:
     gedmo.listener.softdeleteable:
         class: Gedmo\SoftDeleteable\SoftDeleteableListener
         tags:
-            - { name: doctrine.event_subscriber, connection: default }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+            - { name: doctrine.event_listener, event: 'onFlush' }
         calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+            # Uncomment the below call if using attributes, and comment the call for the annotation reader
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+    gedmo.listener.timestampable:
+        class: Gedmo\Timestampable\TimestampableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'prePersist' }
+            - { name: doctrine.event_listener, event: 'onFlush' }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+        calls:
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'onFlush' }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+            - { name: doctrine.event_listener, event: 'prePersist' }
+        calls:
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+    gedmo.listener.sortable:
+        class: Gedmo\Sortable\SortableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'onFlush' }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+            - { name: doctrine.event_listener, event: 'prePersist' }
+            - { name: doctrine.event_listener, event: 'postPersist' }
+            - { name: doctrine.event_listener, event: 'preUpdate' }
+            - { name: doctrine.event_listener, event: 'postRemove' }
+            - { name: doctrine.event_listener, event: 'postFlush' }
+        calls:
+            # Uncomment the below call if using attributes, and comment the call for the annotation reader
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
 
     coopcycle.listener.post_soft_delete:
         class: AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber
         tags:
             - { name: doctrine.event_subscriber }
 
-    gedmo.listener.timestampable:
-        class: Gedmo\Timestampable\TimestampableListener
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }
-        calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
-
     postgis.event_subscriber:
         class: AppBundle\Doctrine\PostGIS\ORMSchemaEventSubscriber
         tags:
             - { name: doctrine.event_subscriber, connection: default }
-
-    gedmo.listener.sluggable:
-        class: Gedmo\Sluggable\SluggableListener
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }
-        calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
-
-    gedmo.listener.sortable:
-        class: Gedmo\Sortable\SortableListener
-        tags:
-            - { name: doctrine.event_subscriber, connection: default }
-        calls:
-            - [ setAnnotationReader, [ "@annotation_reader" ] ]
-
-    # gedmo.listener.loggable:
-    #     class: Gedmo\Loggable\LoggableListener
-    #     tags:
-    #         - { name: doctrine.event_subscriber, connection: default }
-    #     calls:
-    #         - [ setAnnotationReader, [ "@annotation_reader" ] ]

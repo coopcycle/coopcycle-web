@@ -8,23 +8,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Package
 {
 
-    /**
-     * @Groups({"package"})
-     */
+    #[Groups(['package'])]
     protected $id;
 
 
-    /**
-     * @Groups({"package"})
-     */
+    #[Groups(['package'])]
     protected $package;
 
     protected $task;
 
 
-    /**
-     * @Groups({"package"})
-     */
+    #[Groups(['package'])]
     protected $quantity = 0;
 
     public function __construct(Task $task = null)

@@ -34,9 +34,7 @@ class PatchAwareStoreNormalizer implements NormalizerInterface, DenormalizerInte
     {
         unset($context[AbstractNormalizer::OBJECT_TO_POPULATE]);
 
-        $object = $this->normalizer->denormalize($data, $class, $format, $context);
-
-        return $object;
+        return $this->normalizer->denormalize($data, $class, $format, $context);
     }
 
     public function supportsDenormalization($data, $type, $format = null, array $context = [])

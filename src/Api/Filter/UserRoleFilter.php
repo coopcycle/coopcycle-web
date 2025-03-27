@@ -18,7 +18,7 @@ final class UserRoleFilter extends AbstractContextAwareFilter
             return;
         }
 
-        $parameterName = $queryNameGenerator->generateParameterName($property);
+        $queryNameGenerator->generateParameterName($property);
 
         $roles = [];
         if (!is_array($value)) {

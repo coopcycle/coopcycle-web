@@ -12,32 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   shortName="DeliveryImportQueue",
- *   normalizationContext={"groups"={"delivery_import_queue"}},
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "normalizationContext"={"groups"={"delivery_import_queue"}},
- *       "security"="is_granted('view', object)"
- *     },
- *     "csv"={
- *       "method"="GET",
- *       "path"="/delivery_import_queues/{id}/csv",
- *       "controller"=CsvController::class,
- *       "security"="is_granted('view', object)"
- *     },
- *     "redownload"={
- *       "method"="GET",
- *       "path"="/delivery_import_queues/{id}/redownload",
- *       "controller"=RedownloadController::class,
- *       "security"="is_granted('view', object)"
- *     }
- *   }
- * )
- */
+#[ApiResource(shortName: 'DeliveryImportQueue', normalizationContext: ['groups' => ['delivery_import_queue']], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'normalizationContext' => ['groups' => ['delivery_import_queue']], 'security' => "is_granted('view', object)"], 'csv' => ['method' => 'GET', 'path' => '/delivery_import_queues/{id}/csv', 'controller' => CsvController::class, 'security' => "is_granted('view', object)"], 'redownload' => ['method' => 'GET', 'path' => '/delivery_import_queues/{id}/redownload', 'controller' => RedownloadController::class, 'security' => "is_granted('view', object)"]])]
 class ImportQueue
 {
     use Timestampable;
@@ -53,19 +28,15 @@ class ImportQueue
 
     protected Store $store;
 
-    /**
-     * @Assert\Type(type="string")
-     * @Groups({"delivery_import_queue"})
-     */
+    #[Assert\Type(type: 'string')]
+    #[Groups(['delivery_import_queue'])]
     protected $status = self::STATUS_PENDING;
 
     protected $startedAt;
 
     protected $finishedAt;
 
-    /**
-     * @Groups({"delivery_import_queue"})
-     */
+    #[Groups(['delivery_import_queue'])]
     protected array $errors = [];
 
     public function getId()

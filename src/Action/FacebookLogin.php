@@ -37,13 +37,7 @@ class FacebookLogin
         $this->logger = $logger;
     }
 
-    /**
-     * @Route(
-     *     path="/facebook/login",
-     *     name="api_facebook_login",
-     *     methods={"POST"}
-     * )
-     */
+    #[Route(path: '/facebook/login', name: 'api_facebook_login', methods: ['POST'])]
     public function facebookLoginAction(Request $request)
     {
         $data = [];

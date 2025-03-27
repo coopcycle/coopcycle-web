@@ -8,14 +8,14 @@ class TourInput extends ArrayOfTasksInput
 {
     /**
      * @var string
-     * @Groups({"tour"})
      */
+    #[Groups(['tour'])]
     public $name;
 
     /**
      * @var string
-     * @Groups({"tour"})
      */
+    #[Groups(['tour'])]
     public $date;
 }
 

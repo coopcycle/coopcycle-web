@@ -10,31 +10,8 @@ use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-/**
- *
- * @ApiResource(
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "controller"=NotFoundAction::class,
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')",
- *     },
- *     "applications"={
- *        "method"="GET",
- *        "path"="/package_sets/{id}/applications",
- *        "controller"=Applications::class,
- *        "security"="is_granted('ROLE_ADMIN')",
- *        "openapi_context"={
- *          "summary"="Get the objects to which this pricing rule set is applied"
- *        }
- *     },
- *   }
- * )
- */
+
+#[ApiResource(itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')", 'controller' => NotFoundAction::class], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'applications' => ['method' => 'GET', 'path' => '/package_sets/{id}/applications', 'controller' => Applications::class, 'security' => "is_granted('ROLE_ADMIN')", 'openapi_context' => ['summary' => 'Get the objects to which this pricing rule set is applied']]])]
 class PackageSet
 {
     use Timestampable;
@@ -42,12 +19,7 @@ class PackageSet
     protected $id;
     protected $name;
 
-    /**
-     * @Assert\Unique(
-     *  normalizer="AppBundle\Entity\Package::getPackageName",
-     *  message="form.package_set.duplicatePackageNames"
-     * )
-     */
+    #[Assert\Unique(normalizer: 'AppBundle\Entity\Package::getPackageName', message: 'form.package_set.duplicatePackageNames')]
     protected $packages;
 
     public function __construct()

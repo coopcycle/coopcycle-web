@@ -143,9 +143,7 @@ final class ColisActivDataExporter implements DataExporterInterface
 
         $csv->insertAll($data);
 
-        $content = $csv->getContent();
-
-        return $content;
+        return $csv->getContent();
     }
 
     public function getContentType(): string

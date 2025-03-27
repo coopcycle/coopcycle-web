@@ -8,8 +8,7 @@ final class TimeSlotChoices
 {
     /**
      * @var array
-     *
-     * @Groups({"time_slot_choices"})
      */
+    #[Groups(['time_slot_choices'])]
     public $choices = [];
 }

@@ -6,18 +6,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class CartItemInput
 {
-    /**
-     * @Groups({"cart"})
-     */
+    #[Groups(['cart'])]
     public $product;
 
-    /**
-     * @Groups({"cart"})
-     */
+    #[Groups(['cart'])]
     public $quantity = 1;
 
-    /**
-     * @Groups({"cart"})
-     */
+    #[Groups(['cart'])]
     public $options = [];
 }

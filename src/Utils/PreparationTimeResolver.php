@@ -17,12 +17,7 @@ class PreparationTimeResolver
         $this->pickupTimeResolver = $pickupTimeResolver;
     }
 
-    /**
-     * @param OrderInterface $order
-     * @param \DateTime $pickupOrDropoff
-     *
-     * @return \DateTime
-     */
+    
     public function resolve(OrderInterface $order, \DateTime $pickupOrDropoff): \DateTime
     {
         $preparationTime = $this->getPreparationTime($order);

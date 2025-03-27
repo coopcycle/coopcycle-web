@@ -26,7 +26,7 @@ class LoopeatFormats
     {
         $output = new LoopeatFormatsObject();
 
-        $restaurantContainers = $this->loopeatClient->getRestaurantContainers($data);
+        $this->loopeatClient->getRestaurantContainers($data);
 
         foreach ($data->getItems() as $item) {
 

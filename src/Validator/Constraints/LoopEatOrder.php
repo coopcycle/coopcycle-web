@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class LoopEatOrder extends Constraint
 {
     public $insufficientQuantity = 'loopeat.insufficient_quantity';

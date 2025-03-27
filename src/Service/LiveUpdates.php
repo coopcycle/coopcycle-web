@@ -86,7 +86,6 @@ class LiveUpdates
     /**
      * @param UserInterface[] $users
      * @param NamedMessage|string $message
-     * @param array $data
      */
     public function toUsers($users, $message, array $data = [])
     {
@@ -177,7 +176,6 @@ class LiveUpdates
 
     /**
      * @param UserInterface|string $user
-     * @param array $payload
      */
     public function publishEvent($user, array $payload)
     {

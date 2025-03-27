@@ -16,27 +16,7 @@ use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *   },
- *   itemOperations={
- *     "get"={"method"="GET"},
- *     "put"={
- *       "method"="PUT",
- *       "denormalization_context"={"groups"={"product_update"}},
- *       "access_control"="is_granted('edit', object)"
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "access_control"="is_granted('edit', object)"
- *     }
- *   },
- *   attributes={
- *     "normalization_context"={"groups"={"product"}}
- *   }
- * )
- */
+#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET'], 'put' => ['method' => 'PUT', 'denormalization_context' => ['groups' => ['product_update']], 'access_control' => "is_granted('edit', object)"], 'delete' => ['method' => 'DELETE', 'access_control' => "is_granted('edit', object)"]], attributes: ['normalization_context' => ['groups' => ['product']]])]
 class Product extends BaseProduct implements ProductInterface, Comparable
 {
     protected $deletedAt;
@@ -95,9 +75,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
         return $this->hasOption($optionValue->getOption());
     }
 
-    /**
-     * @return bool
-     */
     public function isReusablePackagingEnabled(): bool
     {
         return $this->reusablePackagingEnabled;
@@ -115,17 +92,12 @@ class Product extends BaseProduct implements ProductInterface, Comparable
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getReusablePackagings(): Collection
     {
         return $this->reusablePackagings;
     }
 
     /**
-     * @param ReusablePackagings $reusablePackagings
-     *
      * @return self
      */
     public function addReusablePackaging(ReusablePackagings $reusablePackagings)
@@ -270,17 +242,11 @@ class Product extends BaseProduct implements ProductInterface, Comparable
         return $this === $other;
     }
 
-    /**
-     * @return LocalBusiness|null
-     */
     public function getRestaurant(): ?LocalBusiness
     {
         return $this->restaurant;
     }
 
-    /**
-     * @param LocalBusiness|null $restaurant
-     */
     public function setRestaurant(?LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;

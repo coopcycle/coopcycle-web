@@ -18,9 +18,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class SearchController extends AbstractController
 {
-    /**
-     * @Route("/search/restaurants", name="search_restaurants")
-     */
+    #[Route(path: '/search/restaurants', name: 'search_restaurants')]
     public function restaurantsAction(Request $request,
         LocalBusinessRepository $repository,
         Client $client,
@@ -65,9 +63,7 @@ class SearchController extends AbstractController
         return new JsonResponse(['hits' => $hits]);
     }
 
-    /**
-     * @Route("/search/deliveries", name="search_deliveries")
-     */
+    #[Route(path: '/search/deliveries', name: 'search_deliveries')]
     public function deliveriesAction(Request $request,
         EntityManagerInterface $entityManager,
         Client $client,
@@ -126,9 +122,7 @@ class SearchController extends AbstractController
         return new JsonResponse(['hits' => $hits]);
     }
 
-    /**
-     * @Route("/search/geocode", name="search_geocode")
-     */
+    #[Route(path: '/search/geocode', name: 'search_geocode')]
     public function geocodeAction(Request $request, Geocoder $geocoder)
     {
         if ($address = $geocoder->geocode($request->query->get('address'))) {
@@ -142,9 +136,7 @@ class SearchController extends AbstractController
         return new JsonResponse([], 400);
     }
 
-    /**
-     * @Route("/search/pixabay", name="search_pixabay")
-     */
+    #[Route(path: '/search/pixabay', name: 'search_pixabay')]
     public function pixabayAction(Request $request, PixabayClient $pixabay)
     {
         $results = $pixabay->search($request->query->get('q'), $request->query->getInt('page', 1));

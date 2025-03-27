@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class Order extends Constraint
 {
     const SHIPPED_AT_NOT_EMPTY = 'Order::SHIPPED_AT_NOT_EMPTY';

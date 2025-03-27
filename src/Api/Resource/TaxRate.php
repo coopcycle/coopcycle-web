@@ -10,31 +10,13 @@ use AppBundle\Entity\Sylius\TaxRate as BaseTaxRate;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *     "tax_rates"={
- *       "method"="GET",
- *       "path"="/tax_rates"
- *     }
- *   },
- *   itemOperations={
- *     "get": {
- *       "method"="GET",
- *       "controller"=NotFoundAction::class,
- *       "read"=false,
- *       "output"=false
- *     },
- *   }
- * )
- */
+#[ApiResource(collectionOperations: ['tax_rates' => ['method' => 'GET', 'path' => '/tax_rates']], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false]])]
 final class TaxRate
 {
     /**
      * @var string
-     *
-     * @ApiProperty(identifier=true)
      */
+    #[ApiProperty(identifier: true)]
     public $id;
 
     public $code;

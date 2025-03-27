@@ -32,9 +32,7 @@ class DabbaController extends AbstractController
         $this->logger = $logger;
     }
 
-    /**
-     * @Route("/dabba/oauth/callback", name="dabba_oauth_callback")
-     */
+    #[Route(path: '/dabba/oauth/callback', name: 'dabba_oauth_callback')]
     public function callbackAction(
         Request $request,
         JWTEncoderInterface $jwtEncoder,

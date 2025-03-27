@@ -211,9 +211,7 @@ class AdminController extends AbstractController
         $this->typesenseShopsFinder = $typesenseShopsFinder;
     }
 
-    /**
-     * @Route("/admin", name="admin_index")
-     */
+    #[Route(path: '/admin', name: 'admin_index')]
     public function indexAction()
     {
         return $this->redirectToRoute('admin_dashboard');
@@ -251,9 +249,7 @@ class AdminController extends AbstractController
         );
     }
 
-    /**
-     * @Route("/admin/orders/search", name="admin_orders_search")
-     */
+    #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
     public function searchOrdersAction(
         Request $request,
         OrderRepository $orderRepository
@@ -288,9 +284,7 @@ class AdminController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/admin/orders/{id}", name="admin_order")
-     */
+    #[Route(path: '/admin/orders/{id}', name: 'admin_order')]
     public function orderAction(
         $id,
         Request $request,
@@ -455,9 +449,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/users", name="admin_users")
-     */
+    #[Route(path: '/admin/users', name: 'admin_users')]
     public function usersAction(Request $request, PaginatorInterface $paginator)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
@@ -557,9 +549,7 @@ class AdminController extends AbstractController
         return $this->render('admin/users.html.twig', $parameters);
     }
 
-    /**
-     * @Route("/admin/users/invite", name="admin_users_invite")
-     */
+    #[Route(path: '/admin/users/invite', name: 'admin_users_invite')]
     public function inviteUserAction(
         Request $request,
         EmailManager $emailManager,
@@ -635,9 +625,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/user/{username}", name="admin_user_details")
-     */
+    #[Route(path: '/admin/user/{username}', name: 'admin_user_details')]
     public function userAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
@@ -652,9 +640,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/user/{username}/edit", name="admin_user_edit")
-     */
+    #[Route(path: '/admin/user/{username}/edit', name: 'admin_user_edit')]
     public function userEditAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
@@ -712,9 +698,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/user/{username}/delete", name="admin_user_delete", methods={"POST"})
-     */
+    #[Route(path: '/admin/user/{username}/delete', name: 'admin_user_delete', methods: ['POST'])]
     public function userDeleteAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
@@ -734,9 +718,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_users');
     }
 
-    /**
-     * @Route("/admin/user/{username}/tracking", name="admin_user_tracking")
-     */
+    #[Route(path: '/admin/user/{username}/tracking', name: 'admin_user_tracking')]
     public function userTrackingAction($username, Request $request, UserManagerInterface $userManager)
     {
         $user = $userManager->findUserByUsername($username);
@@ -769,9 +751,7 @@ class AdminController extends AbstractController
         return [ $restaurants, $pages, $page ];
     }
 
-    /**
-     * @Route("/admin/deliveries", name="admin_deliveries")
-     */
+    #[Route(path: '/admin/deliveries', name: 'admin_deliveries')]
     public function deliveriesAction(Request $request,
         PaginatorInterface $paginator,
         DeliveryManager $deliveryManager,
@@ -928,9 +908,7 @@ class AdminController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/admin/tasks", name="admin_tasks")
-     */
+    #[Route(path: '/admin/tasks', name: 'admin_tasks')]
     public function tasksAction(Request $request, PaginatorInterface $paginator)
     {
         $form = $this->createForm(AttachToOrganizationType::class);
@@ -977,9 +955,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/settings/taxation", name="admin_taxation_settings")
-     */
+    #[Route(path: '/admin/settings/taxation', name: 'admin_taxation_settings')]
     public function taxationSettingsAction(
         Request $request,
         TaxRateResolverInterface $taxRateResolver,
@@ -1019,9 +995,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/tags", name="admin_tags")
-     */
+    #[Route(path: '/admin/tags', name: 'admin_tags')]
     public function tagsAction(Request $request, TagManager $tagManager)
     {
         if ($request->isMethod('POST') && $request->request->has('delete')) {
@@ -1049,9 +1023,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/deliveries/pricing", name="admin_deliveries_pricing")
-     */
+    #[Route(path: '/admin/deliveries/pricing', name: 'admin_deliveries_pricing')]
     public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, ApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1152,9 +1124,7 @@ class AdminController extends AbstractController
         ]));
     }
 
-    /**
-     * @Route("/admin/deliveries/pricing/new", name="admin_deliveries_pricing_ruleset_new")
-     */
+    #[Route(path: '/admin/deliveries/pricing/new', name: 'admin_deliveries_pricing_ruleset_new')]
     public function newPricingRuleSetAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1163,9 +1133,7 @@ class AdminController extends AbstractController
         return $this->renderPricingRuleSetForm($ruleSet, $request);
     }
 
-    /**
-     * @Route("/admin/deliveries/pricing/{id}", name="admin_deliveries_pricing_ruleset")
-     */
+    #[Route(path: '/admin/deliveries/pricing/{id}', name: 'admin_deliveries_pricing_ruleset')]
     public function pricingRuleSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1176,9 +1144,7 @@ class AdminController extends AbstractController
         return $this->renderPricingRuleSetForm($ruleSet, $request);
     }
 
-    /**
-     * @Route("/admin/deliveries/pricing/{id}/duplicate", name="admin_deliveries_pricing_ruleset_duplicate")
-     */
+    #[Route(path: '/admin/deliveries/pricing/{id}/duplicate', name: 'admin_deliveries_pricing_ruleset_duplicate')]
     public function duplicatePricingRuleSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1237,9 +1203,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/deliveries/failures", name="admin_failures_list")
-     */
+    #[Route(path: '/admin/deliveries/failures', name: 'admin_failures_list')]
     public function failuresAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1252,9 +1216,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/deliveries/failures/new", name="admin_deliveries_failures_failurereasonset_new")
-     */
+    #[Route(path: '/admin/deliveries/failures/new', name: 'admin_deliveries_failures_failurereasonset_new')]
     public function newFailureReasonSetAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1263,9 +1225,7 @@ class AdminController extends AbstractController
         return $this->renderFailureReasonSetForm($failureReasonSet, $request);
     }
 
-    /**
-     * @Route("/admin/deliveries/failures/{id}", name="admin_deliveries_failures_failurereasonset")
-     */
+    #[Route(path: '/admin/deliveries/failures/{id}', name: 'admin_deliveries_failures_failurereasonset')]
     public function failureReasonSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1276,9 +1236,7 @@ class AdminController extends AbstractController
         return $this->renderFailureReasonSetForm($failureReasonSet, $request);
     }
 
-    /**
-     * @Route("/admin/deliveries/failures/{id}/delete", methods={"POST"}, name="admin_failures_delete")
-     */
+    #[Route(path: '/admin/deliveries/failures/{id}/delete', methods: ['POST'], name: 'admin_failures_delete')]
     public function deleteFailureReasonSetAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1303,9 +1261,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_failures_list');
     }
 
-    /**
-     * @Route("/admin/zones/{id}/delete", methods={"POST"}, name="admin_zone_delete")
-     */
+    #[Route(path: '/admin/zones/{id}/delete', methods: ['POST'], name: 'admin_zone_delete')]
     public function deleteZoneAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1317,9 +1273,7 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_zones');
     }
 
-    /**
-     * @Route("/admin/zones", name="admin_zones")
-     */
+    #[Route(path: '/admin/zones', name: 'admin_zones')]
     public function zonesAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1371,9 +1325,7 @@ class AdminController extends AbstractController
         return $this->renderStoreForm($store, $request, $this->translator);
     }
 
-    /**
-     * @Route("/admin/restaurants/search", name="admin_restaurants_search")
-     */
+    #[Route(path: '/admin/restaurants/search', name: 'admin_restaurants_search')]
     public function searchRestaurantsAction(Request $request)
     {
         $query = new TypesenseQuery($request->query->get('q'), 'name');
@@ -1392,9 +1344,7 @@ class AdminController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/admin/restaurant/{restaurantId}/menus", name="admin_restaurant_menus")
-     */
+    #[Route(path: '/admin/restaurant/{restaurantId}/menus', name: 'admin_restaurant_menus')]
     public function searchRestaurantMenusAction($restaurantId)
     {
         $restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->find($restaurantId);
@@ -1410,9 +1360,7 @@ class AdminController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/admin/stores/search", name="admin_stores_search")
-     */
+    #[Route(path: '/admin/stores/search', name: 'admin_stores_search')]
     public function searchStoresAction(Request $request)
     {
         $repository = $this->getDoctrine()->getRepository(Store::class);
@@ -1445,9 +1393,7 @@ class AdminController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/admin/users/search", name="admin_users_search")
-     */
+    #[Route(path: '/admin/users/search', name: 'admin_users_search')]
     public function searchUsersAction(Request $request)
     {
         $repository = $this->getDoctrine()->getRepository(User::class);
@@ -1472,9 +1418,7 @@ class AdminController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/admin/settings", name="admin_settings")
-     */
+    #[Route(path: '/admin/settings', name: 'admin_settings')]
     public function settingsAction(Request $request, SettingsManager $settingsManager, Redis $redis, LoggerInterface $domainEventLogger)
     {
         /* Stripe live mode */
@@ -1621,17 +1565,13 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/embed", name="admin_embed")
-     */
+    #[Route(path: '/admin/embed', name: 'admin_embed')]
     public function embedAction()
     {
         return $this->redirectToRoute('admin_forms', [], 301);
     }
 
-    /**
-     * @Route("/admin/forms/new", name="admin_form_new")
-     */
+    #[Route(path: '/admin/forms/new', name: 'admin_form_new')]
     public function newFormAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1665,9 +1605,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/forms/{id}", name="admin_form")
-     */
+    #[Route(path: '/admin/forms/{id}', name: 'admin_form')]
     public function formAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1700,18 +1638,14 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/forms", name="admin_forms")
-     */
+    #[Route(path: '/admin/forms', name: 'admin_forms')]
     public function formsAction()
     {
         $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findBy(array(), array('id' => 'ASC'));
         return $this->render('admin/forms.html.twig', $this->auth(['forms' => $forms]));
     }
 
-    /**
-     * @Route("/admin/activity", name="admin_activity")
-     */
+    #[Route(path: '/admin/activity', name: 'admin_activity')]
     public function activityAction(Request $request, ActivityManager $activityManager)
     {
         $date = new \DateTime();
@@ -1727,9 +1661,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/api/apps", name="admin_api_apps")
-     */
+    #[Route(path: '/admin/api/apps', name: 'admin_api_apps')]
     public function apiAppsAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1760,9 +1692,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/api/apps/new", name="admin_new_api_app")
-     */
+    #[Route(path: '/admin/api/apps/new', name: 'admin_new_api_app')]
     public function newApiAppAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1795,9 +1725,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/api/apps/{id}", name="admin_api_app")
-     */
+    #[Route(path: '/admin/api/apps/{id}', name: 'admin_api_app')]
     public function apiAppAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1824,9 +1752,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/integrations", name="admin_integrations")
-     */
+    #[Route(path: '/admin/integrations', name: 'admin_integrations')]
     public function integrationsAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1834,9 +1760,7 @@ class AdminController extends AbstractController
         return $this->render('admin/integrations.html.twig');
     }
 
-    /**
-     * @Route("/admin/integrations/woopit", name="admin_integrations_woopit")
-     */
+    #[Route(path: '/admin/integrations/woopit', name: 'admin_integrations_woopit')]
     public function integrationWoopitAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1867,9 +1791,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/integrations/woopit/new", name="admin_new_integration_woopit")
-     */
+    #[Route(path: '/admin/integrations/woopit/new', name: 'admin_new_integration_woopit')]
     public function newIntegrationAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1903,9 +1825,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/integrtations/woopit/{id}", name="admin_integration_woopit")
-     */
+    #[Route(path: '/admin/integrtations/woopit/{id}', name: 'admin_integration_woopit')]
     public function integrationAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1932,9 +1852,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/promotions", name="admin_promotions")
-     */
+    #[Route(path: '/admin/promotions', name: 'admin_promotions')]
     public function promotionsAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -1947,9 +1865,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/promotions/{id}/coupons/new", name="admin_new_promotion_coupon")
-     */
+    #[Route(path: '/admin/promotions/{id}/coupons/new', name: 'admin_new_promotion_coupon')]
     public function newPromotionCouponAction(
         $id,
         Request $request,
@@ -1980,9 +1896,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/promotions/credit-notes/new", name="admin_new_credit_note")
-     */
+    #[Route(path: '/admin/promotions/credit-notes/new', name: 'admin_new_credit_note')]
     public function newCreditNoteAction(Request $request, PromotionCouponFactoryInterface $promotionCouponFactory)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2011,9 +1925,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/promotions/coupons/new", name="admin_new_promotion_coupon_from_template")
-     */
+    #[Route(path: '/admin/promotions/coupons/new', name: 'admin_new_promotion_coupon_from_template')]
     public function newPromotionCouponFromTemplateAction(
         Request $request,
         PromotionRepositoryInterface $promotionRepository,
@@ -2036,15 +1948,13 @@ class AdminController extends AbstractController
         return $this->createNotFoundException();
     }
 
-    /**
-     * @Route("/admin/promotions/{id}/coupons/{code}", name="admin_promotion_coupon")
-     */
+    #[Route(path: '/admin/promotions/{id}/coupons/{code}', name: 'admin_promotion_coupon')]
     public function promotionCouponAction($id, $code, Request $request, PromotionRepositoryInterface $promotionRepository)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $promotionCoupon = $this->promotionCouponRepository->findOneByCode($code);
-        $promotion = $promotionRepository->find($id);
+        $promotionRepository->find($id);
 
         $form = $this->createForm(PromotionCouponType::class, $promotionCoupon);
 
@@ -2060,9 +1970,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/orders/{id}/emails", name="admin_order_email_preview")
-     */
+    #[Route(path: '/admin/orders/{id}/emails', name: 'admin_order_email_preview')]
     public function orderEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
         $order = $this->orderRepository->find($id);
@@ -2087,9 +1995,7 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/admin/tasks/{id}/emails", name="admin_task_email_preview")
-     */
+    #[Route(path: '/admin/tasks/{id}/emails', name: 'admin_task_email_preview')]
     public function taskEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
         $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
@@ -2113,9 +2019,7 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/admin/emails", name="admin_email_preview")
-     */
+    #[Route(path: '/admin/emails', name: 'admin_email_preview')]
     public function emailsPreviewAction(Request $request, TwigEnvironment $twig)
     {
         $bodyRenderer = new BodyRenderer($twig);
@@ -2141,9 +2045,7 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/admin/emails/invitation", name="admin_email_invitation_preview")
-     */
+    #[Route(path: '/admin/emails/invitation', name: 'admin_email_invitation_preview')]
     public function invitationEmailPreviewAction(Request $request, EmailManager $emailManager)
     {
         $invitation = new Invitation();
@@ -2161,9 +2063,7 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/admin/restaurants/pledges", name="admin_restaurants_pledges")
-     */
+    #[Route(path: '/admin/restaurants/pledges', name: 'admin_restaurants_pledges')]
     public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2194,9 +2094,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/restaurants/pledges/{id}/emails", name="admin_pledge_email_preview")
-     */
+    #[Route(path: '/admin/restaurants/pledges/{id}/emails', name: 'admin_pledge_email_preview')]
     public function pledgeEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2219,9 +2117,7 @@ class AdminController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/admin/settings/time-slots", name="admin_time_slots")
-     */
+    #[Route(path: '/admin/settings/time-slots', name: 'admin_time_slots')]
     public function timeSlotsAction(Request $request, PaginatorInterface $paginator, ApplicationsNormalizer $normalizer, TimeSlotManager $timeSlotManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2279,9 +2175,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/settings/time-slots/new", name="admin_new_time_slot")
-     */
+    #[Route(path: '/admin/settings/time-slots/new', name: 'admin_new_time_slot')]
     public function newTimeSlotAction(Request $request, EntityManagerInterface $objectManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2291,9 +2185,7 @@ class AdminController extends AbstractController
         return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
     }
 
-    /**
-     * @Route("/admin/settings/time-slots/preview", name="admin_time_slot_preview")
-     */
+    #[Route(path: '/admin/settings/time-slots/preview', name: 'admin_time_slot_preview')]
     public function timeSlotPreviewAction(Request $request, EntityManagerInterface $objectManager)
     {
         $timeSlot = new TimeSlot();
@@ -2320,9 +2212,7 @@ class AdminController extends AbstractController
         return new Response('', 200);
     }
 
-    /**
-     * @Route("/admin/settings/time-slots/{id}", name="admin_time_slot")
-     */
+    #[Route(path: '/admin/settings/time-slots/{id}', name: 'admin_time_slot')]
     public function timeSlotAction($id, Request $request, EntityManagerInterface $objectManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2336,9 +2226,7 @@ class AdminController extends AbstractController
         return $this->renderTimeSlotForm($request, $timeSlot, $objectManager);
     }
 
-    /**
-     * @Route("/admin/settings/packages", name="admin_packages")
-     */
+    #[Route(path: '/admin/settings/packages', name: 'admin_packages')]
     public function packageSetsAction(Request $request, PaginatorInterface $paginator, PackageSetManager $packageSetManager, ApplicationsNormalizer $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2409,9 +2297,7 @@ class AdminController extends AbstractController
         return $this->render('admin/package_set.html.twig', $this->auth(['form' => $form->createView()]));
     }
 
-    /**
-     * @Route("/admin/settings/packages/new", name="admin_new_package")
-     */
+    #[Route(path: '/admin/settings/packages/new', name: 'admin_new_package')]
     public function newPackageSetAction(Request $request, EntityManagerInterface $objectManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2421,9 +2307,7 @@ class AdminController extends AbstractController
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
     }
 
-    /**
-     * @Route("/admin/settings/packages/{id}", name="admin_package")
-     */
+    #[Route(path: '/admin/settings/packages/{id}', name: 'admin_package')]
     public function packageSetAction($id, Request $request, EntityManagerInterface $objectManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2795,9 +2679,7 @@ class AdminController extends AbstractController
     }
 
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function restaurantListAction(Request $request, SettingsManager $settingsManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2865,8 +2747,6 @@ class AdminController extends AbstractController
 
 
     /**
-     * @param Nonprofit $nonprofit
-     * @param Request $request
      * @return RedirectResponse|Response
      */
     private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
@@ -2895,7 +2775,6 @@ class AdminController extends AbstractController
     /**
      * Handle POST request from nonprofit form
      *
-     * @param Request $request
      * @return RedirectResponse|Response
      */
     public function newNonprofitAction(Request $request)
@@ -2910,8 +2789,6 @@ class AdminController extends AbstractController
     /**
      * Build and return the form of a specific nonprofit
      *
-     * @param int $id
-     * @param Request $request
      * @return RedirectResponse|Response
      */
     public function nonprofitAction(int $id, Request $request)
@@ -2925,11 +2802,6 @@ class AdminController extends AbstractController
         return $this->handleNonprofitForm($nonprofit, $request);
     }
 
-    /**
-     * @param int $id
-     * @param Request $request
-     * @return RedirectResponse
-     */
     public function deleteNonprofitAction(int $id, Request $request): RedirectResponse
     {
         $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
@@ -2941,9 +2813,6 @@ class AdminController extends AbstractController
 
     /**
      * Build the nonprofit list page
-     *
-     * @param Request $request
-     * @return Response
      */
     public function nonProfitsActionListAction(
         Request $request
@@ -2972,9 +2841,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/vehicles", name="admin_vehicles")
-     */
+    #[Route(path: '/admin/vehicles', name: 'admin_vehicles')]
     public function vehiclesAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2982,9 +2849,7 @@ class AdminController extends AbstractController
         return $this->render('admin/vehicles.html.twig', $this->auth([]));
     }
 
-    /**
-     * @Route("/admin/warehouses", name="admin_warehouses")
-     */
+    #[Route(path: '/admin/warehouses', name: 'admin_warehouses')]
     public function warehousesAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -2992,9 +2857,7 @@ class AdminController extends AbstractController
         return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
-    /**
-     * @Route("/admin/cube", name="admin_cube")
-     */
+    #[Route(path: '/admin/cube', name: 'admin_cube')]
     public function cubeAction(CubeJsTokenFactory $tokenFactory)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -3004,9 +2867,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/invoicing", name="admin_invoicing")
-     */
+    #[Route(path: '/admin/invoicing', name: 'admin_invoicing')]
     public function invoicingAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');

@@ -182,6 +182,7 @@ framework:
             'AppBundle\Message\IndexDeliveries': async
             'AppBundle\Message\WoopitDocumentWebhook': async
             'AppBundle\Message\ImportDeliveries': async
+            'AppBundle\Message\CalculateTaskDistance': async
     workflows:
         enabled: true
     mailer:

@@ -9,7 +9,7 @@ class ArrayOfTasksInput
 {
     /**
      * @var Task[]
-     * @Groups({"tour"})
      */
+    #[Groups(['tour'])]
     public $tasks;
 }

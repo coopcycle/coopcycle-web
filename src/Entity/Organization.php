@@ -8,29 +8,14 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
-/**
- * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"org"}},
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_ADMIN')",
- *      },
- *   },
- *   order={"name": "ASC"},
- * )
- */
+#[ApiResource(attributes: ['normalization_context' => ['groups' => ['org']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_ADMIN')"]], order: ['name' => 'ASC'])]
 class Organization
 {
     use SoftDeleteable;
 
     private $id;
 
-    /**
-    * @Groups({"org"})
-    */
+    #[Groups(['org'])]
     private $name;
 
     /**

@@ -76,6 +76,8 @@ services:
   coopcycle.remote_push_notification_manager: '@AppBundle\Service\RemotePushNotificationManager'
   coopcycle.price_formatter: '@AppBundle\Utils\PriceFormatter'
 
+  Doctrine\ORM\Mapping\Driver\AttributeReader: ~
+
   Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
@@ -102,7 +104,6 @@ services:
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
 
   # Autowiring variables in controllers
-
   Doctrine\Persistence\ObjectRepository $productRepository: '@sylius.repository.product'
   AppBundle\Entity\Sylius\TaxonRepository $taxonRepository: '@sylius.repository.taxon'
   Sylius\Component\Product\Repository\ProductOptionRepositoryInterface $productOptionRepository: '@sylius.repository.product_option'
@@ -716,6 +717,8 @@ services:
 
   # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
+    arguments:
+      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 48 }
@@ -1122,6 +1125,8 @@ services:
       autoconfigure: false
 
   AppBundle\MessageHandler\ImportTasksHandler: ~
+
+  AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
     arguments:
@@ -1572,3 +1577,4 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
+  AppBundle\Utils\Defaults: ~

@@ -10,7 +10,7 @@ class DeauthenticatedListener
     public function __construct(private SessionStorage $storage)
     {}
 
-    public function logoutOnChange(DeauthenticatedEvent $event)
+    public function logoutOnChange(\Symfony\Component\Security\Http\Event\TokenDeauthenticatedEvent $event)
     {
         $this->storage->remove();
     }
