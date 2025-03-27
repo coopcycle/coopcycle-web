@@ -12,13 +12,13 @@ parameters:
   country_iso: "%env(COOPCYCLE_COUNTRY)%"
   region_iso: "%env(COOPCYCLE_REGION)%"
   coopcycle.locale: "%env(COOPCYCLE_LOCALE)%"
+  locale: "%coopcycle.locale%"
   database_driver:   pdo_pgsql
   database_host:     "%env(COOPCYCLE_DB_HOST)%"
   database_port:     "%env(COOPCYCLE_DB_PORT)%"
   database_name:     "%env(COOPCYCLE_DB_NAME)%"
   database_user:     "%env(COOPCYCLE_DB_USER)%"
   database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
-  locale: "%coopcycle.locale%"
   locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
   router.request_context.scheme: 'http'
   router.request_context.host: "%env(APP_HOST)%"
