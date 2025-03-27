@@ -20,24 +20,21 @@ abstract class Organization
 
     /**
      * @var string A short description of the item.
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/description")
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/description')]
     private $description;
     /**
      * @var string The name of the item.
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="https://schema.org/name")
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'https://schema.org/name')]
     private $name;
     /**
      * @var string URL of the item.
-     *
-     * @Assert\Url
-     * @ApiProperty(iri="https://schema.org/url")
      */
+    #[Assert\Url]
+    #[ApiProperty(iri: 'https://schema.org/url')]
     private $url;
 
     /**

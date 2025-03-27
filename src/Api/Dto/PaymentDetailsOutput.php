@@ -10,13 +10,13 @@ final class PaymentDetailsOutput
 {
     /**
      * @var string|null
-     * @Groups({"payment_details"})
      */
+    #[Groups(['payment_details'])]
     public $stripeAccount;
 
     /**
      * @var Collection
-     * @Groups({"payment_details"})
      */
+    #[Groups(['payment_details'])]
     public $payments;
 }

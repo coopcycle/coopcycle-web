@@ -6,13 +6,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 final class CreateRemotePushTokenRequest
 {
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank]
     public $platform;
 
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank]
     public $token;
 }

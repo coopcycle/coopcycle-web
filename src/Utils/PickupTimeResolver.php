@@ -13,12 +13,7 @@ class PickupTimeResolver
         $this->shippingTimeCalculator = $shippingTimeCalculator;
     }
 
-    /**
-     * @param OrderInterface $order
-     * @param \DateTime $pickupOrDropoff
-     *
-     * @return \DateTime
-     */
+    
     public function resolve(OrderInterface $order, \DateTime $pickupOrDropoff): \DateTime
     {
         if ($order->isTakeaway()) {

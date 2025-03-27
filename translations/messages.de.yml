@@ -542,6 +542,7 @@ form.product.confirm.help: "Du hast den Namen des Produkts geändert. Wenn sie e
   \ unterscheiden kannst und die Geschichte erhalten. "
 form.product.restricted_diets.help: Passt dieses Produkt für die folgenden Diäten?
 form.product.restricted_diets.label: Kalorienbeschränkte Diäten
+restricted_diets.EGG_FREE_DIET: Ohne Eier
 form.menu_editor.products.help: Um Produkte in die Liste rechts hinzufügen, füge sie
   zuerst in das  <a href="%products_url%">Katalog</a> first
 form.maintenance.disable.alert: Du bist in Begriff den Wartung-Modus zu deaktivieren

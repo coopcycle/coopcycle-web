@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class ShippingAddress extends Constraint
 {
     const ADDRESS_NOT_SET = 'Order::ADDRESS_NOT_SET';

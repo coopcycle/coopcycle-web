@@ -521,10 +521,9 @@ form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.rules.docs_path: /en/admin/pricing_rule/
 form.pricing_rule_set.strategy.label: Method of calculation
 form.pricing_rule_set.strategy.docs_path: /en/admin/pricing_method_of_calculation
-form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom. Depending
-  on the the method of calculation selected, either the first rule that matches will
-  decide the price, or the price will be calculated by adding up all the matching
-  rules.
+form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom, and 'Rules per point' are applied before 'Rules per order'.
+  Depending on the method of calculation selected, either the first rule that matches will decide the price,
+  or the price will be calculated by adding all the matching rules.
 form.pricing_rule_set.strategy.find.label: The first rule that matches
 form.pricing_rule_set.strategy.map.label: All the matching rules
 form.pricing_rule.price.label: Price
@@ -1022,6 +1021,7 @@ restricted_diets.LOW_LACTOSE_DIET: Low lactose
 restricted_diets.LOW_SALT_DIET: Low salt
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Vegetarian
+restricted_diets.EGG_FREE_DIET: Egg free
 time_slot.human_readable: '%day% between %start% and %end%'
 time_range: between %start% and %end%
 time_range.same_day: '[Today] [%range%]'
@@ -1147,6 +1147,7 @@ store.SPORTING_GOODS_STORE: Sporting goods store
 store.TIRE_SHOP: Tire shop
 store.TOY_STORE: Toy store
 store.WHOLESALE_STORE: Wholesale store
+store.PHARMACY: Pharmacy
 form.local_business_type.food_establishment: Food establishment
 form.local_business_type.store: Store
 form.local_business_type.label: Type of business
@@ -1561,8 +1562,8 @@ payment_method:
   swile: Swile
   restoflash: Restoflash
 registration.navigation.title: "Personal account creation"
-registration.info.title: "What is CoopCycle?"
-registration.info.text: "On CoopCycle, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
+registration.info.title: "What is %brandName%?"
+registration.info.text: "On %brandName%, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
 registration.info.business.account.attachment: "You will be attached to the business account %businessAccountName%, but you can also command under your name."
 registration.alert.text: "You have been invited to create an account on %brandName% by %invitedBy%."
 registration.alert.business.account.text: "Welcome in CoopCycle - %brandName% ! Please create your business account before making your first order."

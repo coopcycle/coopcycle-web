@@ -2,9 +2,12 @@
 
 namespace AppBundle\Entity;
 
+use Gedmo\Timestampable\Traits\Timestampable;
 
 class StripeAccount
 {
+    use Timestampable;
+
     /**
      * @var int
      */
@@ -21,10 +24,6 @@ class StripeAccount
     private $refreshToken;
 
     private $livemode;
-
-    private $createdAt;
-
-    private $updatedAt;
 
     public function getId()
     {

@@ -14,16 +14,10 @@ interface ProductInterface extends BaseProductInterface
 
     public function getPositionForOption(ProductOptionInterface $option): int;
 
-    /**
-     * @return LocalBusiness|null
-     */
     public function getRestaurant(): ?LocalBusiness;
 
     public function isAlcohol(): bool;
 
-    /**
-     * @return bool
-     */
     public function isReusablePackagingEnabled(): bool;
 
     public function hasReusablePackagings(): bool;

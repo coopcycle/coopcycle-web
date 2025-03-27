@@ -130,7 +130,7 @@ class InitDemoCommand extends Command
         if ($lock->acquire()) {
 
             $output->writeln('Verifying database config…');
-            $this->handleCraueConfig($input, $output);
+            $this->handleCraueConfig($input);
 
             $output->writeln('Purging database…');
             $this->ormPurger->purge();
@@ -223,7 +223,7 @@ class InitDemoCommand extends Command
         return $setting;
     }
 
-    private function handleCraueConfig(InputInterface $input, OutputInterface $output)
+    private function handleCraueConfig(InputInterface $input)
     {
         $className = $this->configEntityName;
         $em = $this->doctrine->getManagerForClass($className);
@@ -443,7 +443,7 @@ class InitDemoCommand extends Command
         foreach ($prices as $k => $price) {
             $pricingRule = new Entity\Delivery\PricingRule();
             $pricingRule->setPosition($k);
-            $pricingRule->setExpression('distance in '.(string)$distances[$k].'..'.(string)$distances[$k+1]);
+            $pricingRule->setExpression('distance in '.$distances[$k].'..'.$distances[$k+1]);
             $pricingRule->setPrice($price);
             $pricingRule->setRuleSet($pricingRuleSet);
             $pricingRuleSet->getRules()->add($pricingRule);

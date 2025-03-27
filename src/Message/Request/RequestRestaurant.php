@@ -8,9 +8,6 @@ use AppBundle\Entity\Address;
 class RequestRestaurant
 {
     private string $name;
-    /**
-     * @var Address
-     */
     private Address $address;
     private string $contact;
     private bool $b2b;
@@ -23,33 +20,21 @@ class RequestRestaurant
         $this->b2b = $b2b;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return Address
-     */
     public function getAddress(): Address
     {
         return $this->address;
     }
 
-    /**
-     * @return string
-     */
     public function getContact(): string
     {
         return $this->contact;
     }
 
-    /**
-     * @return bool
-     */
     public function isB2b(): bool
     {
         return $this->b2b;

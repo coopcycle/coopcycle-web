@@ -48,11 +48,7 @@ class CustomizeType extends AbstractType
         }
 
         if ($enabled) {
-            if ($this->assetsFilesystem->fileExists($filename)) {
-                $this->assetsFilesystem->write($filename, $content);
-            } else {
-                $this->assetsFilesystem->write($filename, $content);
-            }
+            $this->assetsFilesystem->write($filename, $content);
         } else {
             if ($this->assetsFilesystem->fileExists($filename)) {
                 $this->assetsFilesystem->delete($filename);

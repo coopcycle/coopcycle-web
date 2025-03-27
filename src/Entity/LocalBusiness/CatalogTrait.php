@@ -10,21 +10,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CatalogTrait
 {
-    /**
-     * @ApiSubresource
-     */
+    #[ApiSubresource]
     protected $products;
 
-    /**
-     * @ApiSubresource
-     */
+    #[ApiSubresource]
     protected $productOptions;
 
     protected $taxons;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $activeMenuTaxon;
 
     /* Products */

@@ -15,42 +15,8 @@ use AppBundle\Entity\TaskList\Item;
 use AppBundle\Vroom\Job as VroomJob;
 use AppBundle\Vroom\Shipment as VroomShipment;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER')",
- *       "pagination_enabled"=false
- *     },
- *     "post"={
- *       "method"="POST",
- *       "input"=TourInput::class,
- *       "security"="is_granted('ROLE_DISPATCHER')"
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('ROLE_DISPATCHER')"
- *     },
- *     "put"={
- *       "method"="PUT",
- *       "input"=TourInput::class,
- *       "security"="is_granted('ROLE_DISPATCHER')"
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_DISPATCHER')",
- *     }
- *   },
- *   attributes={
- *     "denormalization_context"={"groups"={"tour"}},
- *     "normalization_context"={"groups"={"task_collection", "tour"}}
- *   }
- * )
- * @ApiFilter(DateFilter::class, properties={"date"})
- */
+#[ApiResource(collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')", 'pagination_enabled' => false], 'post' => ['method' => 'POST', 'input' => TourInput::class, 'security' => "is_granted('ROLE_DISPATCHER')"]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_DISPATCHER')"], 'put' => ['method' => 'PUT', 'input' => TourInput::class, 'security' => "is_granted('ROLE_DISPATCHER')"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_DISPATCHER')"]], attributes: ['denormalization_context' => ['groups' => ['tour']], 'normalization_context' => ['groups' => ['task_collection', 'tour']]])]
+#[ApiFilter(DateFilter::class, properties: ['date'])]
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
     private $date;
@@ -64,8 +30,8 @@ class Tour extends TaskCollection implements TaskCollectionInterface
 
     /**
      * @var string
-     * @Groups({"tour", "task"})
      */
+    #[Groups(['tour', 'task'])]
     protected $name;
 
     /**
@@ -112,10 +78,8 @@ class Tour extends TaskCollection implements TaskCollectionInterface
         return $this->date;
     }
 
-    /**
-     * @SerializedName("date")
-     * @Groups({"task_collection", "task_collections"})
-     */
+    #[SerializedName('date')]
+    #[Groups(['task_collection', 'task_collections'])]
     public function getDateString()
     {
         return $this->date->format('Y-m-d');
@@ -132,8 +96,7 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     {
 
         $tasks = $tour->getTasks();
-        $job = Task::toVroomJob($tasks[0], $tourIri);
-        return $job;
+        return Task::toVroomJob($tasks[0], $tourIri);
 
     }
 
@@ -150,7 +113,6 @@ class Tour extends TaskCollection implements TaskCollectionInterface
     /**
      * Set the value of taskListItem
      *
-     * @param  Item  $taskListItem
      *
      * @return  self
      */

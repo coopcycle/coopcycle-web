@@ -26,10 +26,6 @@ async function _putTimeSlots(id, data) {
 async function _updateTimeSlots(id, timeSlots, setFetching) {
 
   let payload = { timeSlots }
-  // If all timeslots are removed, we also clear the default one
-  if (timeSlots.length === 0) {
-    payload = { ...payload, timeSlot: null }
-  }
 
   setFetching(true)
   const { error } = await _putTimeSlots(id, payload);
@@ -115,6 +111,29 @@ export default function ({ store }) {
     _fetch();
   }, []);
 
+  const saveDefaultTS = async defaultTSId => {
+    setDefaultTS(defaultTSId);
+    setFetching(true)
+    const { error } = await _putTimeSlots(id, {
+      timeSlot: defaultTSId,
+    });
+    setFetching(false)
+    if (error && error.response) {
+      notification.error({
+        message: error.response.data['hydra:title'],
+        description: error.response.data['hydra:description'],
+      });
+    }
+  }
+
+  // when there is no default timeslot selected force the first timeslot as default 
+  // if there is not timeslots selected force default timeslot to NULL
+  useEffect(() => {
+    if (Array.isArray(selectedTS) && !selectedTS.find(ts => ts.value === defaultTS)) {
+      saveDefaultTS(selectedTS.length > 0 ? selectedTS[0].value : null)
+    }
+  }, [selectedTS]);
+
   if (!choices && !selectedTS) {
     return (
       <div>
@@ -158,18 +177,7 @@ export default function ({ store }) {
         <Radio.Group
           style={{ width: "100%", fontSize: "inherit" }}
           onChange={async (e) => {
-            setDefaultTS(e.target.value);
-            setFetching(true)
-            const { error } = await _putTimeSlots(id, {
-              timeSlot: e.target.value,
-            });
-            setFetching(false)
-            if (error && error.response) {
-              notification.error({
-                message: error.response.data['hydra:title'],
-                description: error.response.data['hydra:description'],
-              });
-            }
+            saveDefaultTS(e.target.value)
           }}
           value={defaultTS}
         >
@@ -177,8 +185,15 @@ export default function ({ store }) {
             {({ droppableProps, innerRef, placeholder }) => (
               <div {...droppableProps} ref={innerRef}>
                 { selectedTS.map((row, index) =>
-                  <Row key={ index } row={ row } index={ index } id={ id }
-                    setSelectedTS={ setSelectedTS } selectedTS={ selectedTS } setFetching={ setFetching } />
+                  <Row 
+                    key={ index }
+                    row={ row }
+                    index={ index }
+                    id={ id }
+                    setSelectedTS={ setSelectedTS }
+                    selectedTS={ selectedTS }
+                    setFetching={ setFetching }
+                  />
                 )}
                 { placeholder }
               </div>

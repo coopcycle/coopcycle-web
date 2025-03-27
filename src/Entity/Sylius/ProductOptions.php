@@ -44,8 +44,6 @@ class ProductOptions
     }
 
     /**
-     * @param ProductInterface $product
-     *
      * @return self
      */
     public function setProduct(ProductInterface $product)
@@ -64,8 +62,6 @@ class ProductOptions
     }
 
     /**
-     * @param ProductOptionInterface $option
-     *
      * @return self
      */
     public function setOption(ProductOptionInterface $option)

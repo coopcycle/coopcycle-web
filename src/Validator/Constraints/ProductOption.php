@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class ProductOption extends Constraint
 {
     public $rangeNotAllowed = 'product_option.valuesRange.notAllowed';

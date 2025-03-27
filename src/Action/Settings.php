@@ -71,13 +71,7 @@ class Settings
         $this->edenredAuthorizationEndpoint = $edenredAuthorizationEndpoint;
     }
 
-    /**
-     * @Route(
-     *     path="/settings",
-     *     name="api_settings",
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(path: '/settings', name: 'api_settings', methods: ['GET'])]
     public function settingsAction(Request $request): JsonResponse
     {
         $data = [

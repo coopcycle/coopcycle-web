@@ -46,13 +46,7 @@ class ResettingReset
         $this->tokenTtl = $tokenTtl;
     }
 
-    /**
-     * @Route(
-     *     path="/resetting/reset/{token}",
-     *     name="api_resetting_reset",
-     *     methods={"POST"}
-     * )
-     */
+    #[Route(path: '/resetting/reset/{token}', name: 'api_resetting_reset', methods: ['POST'])]
     public function resetAction($token, Request $request)
     {
         $password = $request->request->get('password');

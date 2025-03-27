@@ -11,40 +11,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @see http://schema.org/Place Documentation on Schema.org
- *
- * @ApiResource(iri="http://schema.org/Place",
- *   attributes={
- *     "normalization_context"={"groups"={"address"}}
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *     },
- *     "create_address"={
- *       "method"="POST",
- *       "path"="/me/addresses",
- *       "controller"=CreateAddress::class
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *       "access_control"="is_granted('edit', object)"
- *     }
- *   },
- *   subresourceOperations={
- *     "api_stores_addresses_get_subresource"={
- *       "method"="GET",
- *       "normalization_context"={"groups"={"address", "delivery"}}
- *     }
- *   }
- * )
  */
+#[ApiResource(iri: 'http://schema.org/Place', attributes: ['normalization_context' => ['groups' => ['address']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'create_address' => ['method' => 'POST', 'path' => '/me/addresses', 'controller' => CreateAddress::class]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('edit', object)"]], subresourceOperations: ['api_stores_addresses_get_subresource' => ['method' => 'GET', 'normalization_context' => ['groups' => ['address', 'delivery']]]])]
 class Address extends BaseAddress
 {
     /**
@@ -54,9 +22,7 @@ class Address extends BaseAddress
 
     private $company;
 
-    /**
-     * @Groups({"task", "warehouse", "delivery", "delivery_create", "task_create", "task_edit"})
-     */
+    #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit'])]
     private $contactName;
 
 
@@ -104,10 +70,8 @@ class Address extends BaseAddress
         return $this;
     }
 
-    /**
-     * @SerializedName("firstName")
-     * @Groups({"task"})
-     */
+    #[SerializedName('firstName')]
+    #[Groups(['task'])]
     public function getFirstName()
     {
         if (!empty($this->contactName)) {
@@ -125,10 +89,8 @@ class Address extends BaseAddress
         return null;
     }
 
-    /**
-     * @SerializedName("lastName")
-     * @Groups({"task"})
-     */
+    #[SerializedName('lastName')]
+    #[Groups(['task'])]
     public function getLastName()
     {
         if (!empty($this->contactName)) {
@@ -146,11 +108,8 @@ class Address extends BaseAddress
         return null;
     }
 
-    /**
-     * @param array $latLng
-     * @SerializedName("latLng")
-     * @Groups({"delivery_create", "pricing_deliveries"})
-     */
+    #[SerializedName('latLng')]
+    #[Groups(['delivery_create', 'pricing_deliveries'])]
     public function setLatLng(array $latLng)
     {
         [ $lat, $lng ] = $latLng;

@@ -8,8 +8,8 @@ final class LoopeatReturns
 {
     /**
      * @var LoopeatReturn[]
-     * @Groups({"order", "update_loopeat_returns"})
      */
+    #[Groups(['order', 'update_loopeat_returns'])]
     public array $returns = [];
 }
 

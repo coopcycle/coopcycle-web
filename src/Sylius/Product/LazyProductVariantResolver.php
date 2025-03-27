@@ -82,7 +82,6 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
 
         // No variant found
         $variant = $this->variantFactory->createForProduct($product);
-        $values = [];
         foreach ($optionValues as $optionValue) {
 
             $quantity = null;

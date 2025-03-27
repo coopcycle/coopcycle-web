@@ -72,14 +72,12 @@ class CalculateRetailPrice implements TaxableInterface
         $taxRate   = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
-        $retailPrice = new RetailPrice(
+        return new RetailPrice(
             $order->getItems(),
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount,
             'included' === $request->query->get('tax', 'included')
         );
-
-        return $retailPrice;
     }
 }

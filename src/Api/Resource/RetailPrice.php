@@ -12,43 +12,13 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"pricing_deliveries"}}
- *   },
- *   collectionOperations={
- *     "calc_price"={
- *       "method"="POST",
- *       "path"="/retail_prices/calculate",
- *       "input"=DeliveryInput::class,
- *       "controller"=CalculateController::class,
- *       "status"=200,
- *       "write"=false,
- *       "denormalization_context"={"groups"={"pricing_deliveries"}},
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
- *       "openapi_context"={
- *         "summary"="Calculates price of a Delivery",
- *       }
- *     },
- *   },
- *   itemOperations={
- *     "get": {
- *       "method"="GET",
- *       "controller"=NotFoundAction::class,
- *       "read"=false,
- *       "output"=false
- *     }
- *   }
- * )
- */
+#[ApiResource(attributes: ['normalization_context' => ['groups' => ['pricing_deliveries']]], collectionOperations: ['calc_price' => ['method' => 'POST', 'path' => '/retail_prices/calculate', 'input' => DeliveryInput::class, 'controller' => CalculateController::class, 'status' => 200, 'write' => false, 'denormalization_context' => ['groups' => ['pricing_deliveries']], 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')", 'openapi_context' => ['summary' => 'Calculates price of a Delivery']]], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false]])]
 final class RetailPrice
 {
     /**
      * @var string
-     *
-     * @ApiProperty(identifier=true)
      */
+    #[ApiProperty(identifier: true)]
     public $id;
 
     /**
@@ -61,16 +31,14 @@ final class RetailPrice
 
     /**
      * @var int
-     *
-     * @Groups({"pricing_deliveries"})
      */
+    #[Groups(['pricing_deliveries'])]
     public $amount;
 
     /**
      * @var string
-     *
-     * @Groups({"pricing_deliveries"})
      */
+    #[Groups(['pricing_deliveries'])]
     public $currency;
 
     /**
@@ -99,10 +67,8 @@ final class RetailPrice
         $this->taxIncluded = $taxIncluded;
     }
 
-    /**
-     * @Groups({"pricing_deliveries"})
-     * @SerializedName("tax")
-     */
+    #[Groups(['pricing_deliveries'])]
+    #[SerializedName('tax')]
     public function getTax(): array
     {
         return [

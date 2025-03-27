@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class GoogleApiKey extends Constraint
 {
     public const INVALID_API_KEY_ERROR = '13dfb729-edf0-480a-a653-69c9cafccaef';

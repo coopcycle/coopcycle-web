@@ -101,9 +101,6 @@ final class OrderTaxesProcessor implements OrderProcessorInterface, TaxableInter
         return $taxAdjustment;
     }
 
-    /**
-     * @param BaseOrderInterface $order
-     */
     private function clearTaxes(BaseOrderInterface $order): void
     {
         $order->removeAdjustments(AdjustmentInterface::TAX_ADJUSTMENT);

@@ -10,8 +10,8 @@ use Doctrine\ORM\Query\SqlWalker;
 
 class Similarity extends FunctionNode
 {
-    private $lhs = null;
-    private $rhs = null;
+    private $lhs;
+    private $rhs;
 
     public function parse(Parser $parser)
     {

@@ -56,9 +56,7 @@ class StripeController extends AbstractController
         $this->logger = $logger;
     }
 
-    /**
-     * @Route("/stripe/connect/standard", name="stripe_connect_standard_account")
-     */
+    #[Route(path: '/stripe/connect/standard', name: 'stripe_connect_standard_account')]
     public function connectStandardAccountAction(
         Request $request,
         JWTEncoderInterface $jwtEncoder,
@@ -101,9 +99,6 @@ class StripeController extends AbstractController
         curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($req, CURLOPT_POST, true);
         curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($params));
-
-        // TODO: Additional error handling
-        $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $res = json_decode(curl_exec($req), true);
         curl_close($req);
 
@@ -163,9 +158,8 @@ class StripeController extends AbstractController
 
     /**
      * @see https://stripe.com/docs/connect/webhooks
-     *
-     * @Route("/stripe/webhook", name="stripe_webhook", methods={"POST"})
      */
+    #[Route(path: '/stripe/webhook', name: 'stripe_webhook', methods: ['POST'])]
     public function webhookAction(Request $request,
         StripeManager $stripeManager,
         SettingsManager $settingsManager,
@@ -230,13 +224,13 @@ class StripeController extends AbstractController
 
         switch ($event->type) {
             case Stripe\Event::PAYMENT_INTENT_SUCCEEDED:
-                return $this->handlePaymentIntentSucceeded($event, $orderManager);
+                return $this->handlePaymentIntentSucceeded($event);
             case Stripe\Event::PAYMENT_INTENT_PAYMENT_FAILED:
-                return $this->handlePaymentIntentPaymentFailed($event, $eventBus, $emailManager);
+                return $this->handlePaymentIntentPaymentFailed($event);
             case Stripe\Event::CHARGE_CAPTURED:
                 return $this->handleChargeCaptured($event, $stripeManager);
             case Stripe\Event::CHARGE_SUCCEEDED:
-                return $this->handleChargeSucceeded($event);
+                return $this->handleChargeSucceeded();
         }
 
         return new Response('', 200);
@@ -244,7 +238,6 @@ class StripeController extends AbstractController
 
     /**
      * @param Stripe\PaymentIntent|string $paymentIntent
-     * @return PaymentInterface|null
      */
     private function findOneByPaymentIntent($paymentIntent): ?PaymentInterface
     {
@@ -258,7 +251,7 @@ class StripeController extends AbstractController
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function handlePaymentIntentSucceeded(Stripe\Event $event, OrderManager $orderManager): Response
+    private function handlePaymentIntentSucceeded(Stripe\Event $event): Response
     {
         $paymentIntent = $event->data->object;
 
@@ -275,7 +268,7 @@ class StripeController extends AbstractController
         return new Response('', 200);
     }
 
-    private function handlePaymentIntentPaymentFailed(Stripe\Event $event, EventBus $eventBus, EmailManager $emailManager)
+    private function handlePaymentIntentPaymentFailed(Stripe\Event $event)
     {
         $paymentIntent = $event->data->object;
 
@@ -342,8 +335,6 @@ class StripeController extends AbstractController
 
         $balanceTransaction =
             Stripe\BalanceTransaction::retrieve($charge->balance_transaction, $stripeOptions);
-
-        $stripeFee = 0;
         foreach ($balanceTransaction->fee_details as $feeDetail) {
             if ('stripe_fee' === $feeDetail->type) {
 
@@ -369,16 +360,15 @@ class StripeController extends AbstractController
         $this->entityManager->flush();
     }
 
-    private function handleChargeSucceeded(Stripe\Event $event): Response
+    private function handleChargeSucceeded(): Response
     {
         return new Response('', 200);
     }
 
     /**
      * @see https://stripe.com/docs/payments/accept-a-payment-synchronously#web-create-payment-intent
-     *
-     * @Route("/stripe/payment/{hashId}/create-intent", name="stripe_create_payment_intent", methods={"POST"})
      */
+    #[Route(path: '/stripe/payment/{hashId}/create-intent', name: 'stripe_create_payment_intent', methods: ['POST'])]
     public function createPaymentIntentAction($hashId, Request $request,
         OrderNumberAssignerInterface $orderNumberAssigner,
         StripeManager $stripeManager)
@@ -496,9 +486,8 @@ class StripeController extends AbstractController
 
     /**
      * @see https://stripe.com/docs/connect/cloning-customers-across-accounts
-     *
-     * @Route("/stripe/payment/{hashId}/clone-payment-method", name="stripe_clone_payment_method", methods={"POST"})
      */
+    #[Route(path: '/stripe/payment/{hashId}/clone-payment-method', name: 'stripe_clone_payment_method', methods: ['POST'])]
     public function clonePaymentMethodToConnectedAccountAction($hashId, Request $request,
         StripeManager $stripeManager)
     {
@@ -560,9 +549,8 @@ class StripeController extends AbstractController
      *
      * To attach a new PaymentMethod to a customer for future payments, Stripe recommends to use a SetupIntent
      * But if SetupIntent requires an extra action we'll attach the payment method to the customer later
-     *
-     * @Route("/stripe/payment/{hashId}/create-setup-intent-or-attach-pm", name="stripe_create_setup_intent_or_attach_pm", methods={"POST"})
      */
+    #[Route(path: '/stripe/payment/{hashId}/create-setup-intent-or-attach-pm', name: 'stripe_create_setup_intent_or_attach_pm', methods: ['POST'])]
     public function createSetupIntentOrAttachPMAction($hashId, Request $request,
         StripeManager $stripeManager)
     {
@@ -624,9 +612,7 @@ class StripeController extends AbstractController
         return new JsonResponse();
     }
 
-    /**
-     * @Route("/stripe/customer/{hashId}/payment-methods", name="stripe_customer_payment_methods", methods={"GET"})
-     */
+    #[Route(path: '/stripe/customer/{hashId}/payment-methods', name: 'stripe_customer_payment_methods', methods: ['GET'])]
     public function customerPaymentMethodsActions($hashId, StripeManager $stripeManager)
     {
         $hashids = new Hashids($this->secret, 8);

@@ -22,9 +22,6 @@ class TaxRate extends BaseTaxRate
         return $this->country;
     }
 
-    /**
-     * @param string $country
-     */
     public function setCountry(string $country): void
     {
         $this->country = $country;

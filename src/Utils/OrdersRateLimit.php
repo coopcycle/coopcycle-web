@@ -21,8 +21,6 @@ class OrdersRateLimit
 
     /**
      * @param Order $order
-     * @param \DateTime $pickupTime
-     * @return bool
      * @throws \RedisException
      */
     public function isRangeFull(Order|OrderInterface $order, \DateTime $pickupTime): bool {
@@ -67,8 +65,6 @@ class OrdersRateLimit
     }
 
     /**
-     * @param Event $event
-     * @return void
      * @throws \RedisException
      * @throws \Exception
      */
@@ -88,15 +84,15 @@ class OrdersRateLimit
 
         switch (get_class($event)) {
             case Event\OrderCreated::class:
-                $this->handleOrderCreatedEvent($event, $params);
+                $this->handleOrderCreatedEvent($params);
                 break;
             case Event\OrderDelayed::class:
-                $this->handleOrderDelayedEvent($event, $params);
+                $this->handleOrderDelayedEvent($params);
                 break;
             case Event\OrderPicked::class:
             case Event\OrderRefused::class:
             case Event\OrderCancelled::class:
-                $this->handleOrderCancel($event, $params);
+                $this->handleOrderCancel($params);
                 break;
             default:
                 throw new \Exception(sprintf('%s event is not handled', get_class($event)));
@@ -106,12 +102,9 @@ class OrdersRateLimit
 
 
     /**
-     * @param OrderCreated $event
-     * @param array $params
-     * @return void
      * @throws \RedisException
      */
-    private function handleOrderCreatedEvent(Event\OrderCreated $event, array $params): void
+    private function handleOrderCreatedEvent(array $params): void
     {
 
         $this->logger->info(sprintf(
@@ -127,12 +120,9 @@ class OrdersRateLimit
     }
 
     /**
-     * @param OrderDelayed $event
-     * @param array $params
-     * @return void
      * @throws \RedisException
      */
-    private function handleOrderDelayedEvent(Event\OrderDelayed $event, array $params): void
+    private function handleOrderDelayedEvent(array $params): void
     {
 
         $previous = $this->redis->zScore($params['key'], $params['id']);
@@ -151,12 +141,9 @@ class OrdersRateLimit
     }
 
     /**
-     * @param Event $event
-     * @param array $params
-     * @return void
      * @throws \RedisException
      */
-    private function handleOrderCancel(Event $event, array $params): void
+    private function handleOrderCancel(array $params): void
     {
         $this->logger->info(sprintf(
             "%s: order canceled [Order: %u] [BusinessID: %u]",
@@ -172,7 +159,6 @@ class OrdersRateLimit
 
     /**
      * @param Order $order
-     * @return bool
      */
     private function featureEnabled(Order|OrderInterface $order): bool
     {
@@ -190,11 +176,6 @@ class OrdersRateLimit
             $localBusiness->getRateLimitRangeDuration();
     }
 
-    /**
-     * @param Order $order
-     * @param bool $timeline
-     * @return array
-     */
     private function getOrdersLimitParameters(Order $order, bool $timeline = false): array
     {
         $business = $order->getRestaurant();
@@ -214,8 +195,6 @@ class OrdersRateLimit
     }
 
     /**
-     * @param array $params
-     * @return void
      * @throws \RedisException
      */
     private function garbageCollect(array $params): void

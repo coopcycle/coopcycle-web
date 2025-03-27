@@ -8,46 +8,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   shortName="TaskImportQueue",
- *   normalizationContext={"groups"={"task_import_queue"}},
- *   collectionOperations={},
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "normalizationContext"={"groups"={"task_import_queue"}}
- *     }
- *   }
- * )
- */
+#[ApiResource(shortName: 'TaskImportQueue', normalizationContext: ['groups' => ['task_import_queue']], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'normalizationContext' => ['groups' => ['task_import_queue']]]])]
 class ImportQueue
 {
     use Timestampable;
 
-    /**
-     * @Groups({"task"})
-     */
+    #[Groups(['task'])]
     protected $id;
 
-    /**
-     * @Assert\Type(type="string")
-     * @Groups({"task_import_queue"})
-     */
+    #[Assert\Type(type: 'string')]
+    #[Groups(['task_import_queue'])]
     protected $status;
 
-    /**
-     * @Groups({"task_import_queue_completed"})
-     */
+    #[Groups(['task_import_queue_completed'])]
     protected $group;
 
     protected $startedAt;
 
     protected $finishedAt;
 
-    /**
-     * @Groups({"task_import_queue_failed"})
-     */
+    #[Groups(['task_import_queue_failed'])]
     protected $error;
 
     public function getId()
@@ -76,8 +56,6 @@ class ImportQueue
     }
 
     /**
-     * @param Group $group
-     *
      * @return self
      */
     public function setGroup(Group $group)
@@ -87,9 +65,6 @@ class ImportQueue
         return $this;
     }
 
-    /**
-     * @return Group
-     */
     public function getGroup(): Group
     {
         return $this->group;
@@ -110,10 +85,8 @@ class ImportQueue
         $this->error = $error;
     }
 
-    /**
-     * @Groups({"task_import_queue_completed"})
-     * @SerializedName("tasks")
-     */
+    #[Groups(['task_import_queue_completed'])]
+    #[SerializedName('tasks')]
     public function getTasks(): array
     {
         return $this->group->getTasks();

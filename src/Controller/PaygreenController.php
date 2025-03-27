@@ -29,9 +29,7 @@ class PaygreenController extends AbstractController
         private PaygreenManager $paygreenManager)
     {}
 
-    /**
-     * @Route("/paygreen/create-payment-order/{hashId}", name="paygreen_create_payment_order")
-     */
+    #[Route(path: '/paygreen/create-payment-order/{hashId}', name: 'paygreen_create_payment_order')]
     public function createPaymentOrderAction($hashId, Request $request)
     {
         try {
@@ -79,16 +77,14 @@ class PaygreenController extends AbstractController
         ];
     }
 
-    /**
-     * @Route("/paygreen/return", name="paygreen_return")
-     */
+    #[Route(path: '/paygreen/return', name: 'paygreen_return')]
     public function return(CartContextInterface $cartContext, OrderManager $orderManager, Request $request)
     {
         $order = $cartContext->getCart();
 
         $paymentOrderId = $request->query->get('po_id');
 
-        $paymentOrder = $this->paygreenManager->getPaymentOrder($paymentOrderId);
+        $this->paygreenManager->getPaymentOrder($paymentOrderId);
 
         // TODO Check if things are corresponding
 
@@ -109,9 +105,7 @@ class PaygreenController extends AbstractController
         return $this->redirectToOrderConfirm($order);
     }
 
-    /**
-     * @Route("/paygreen/cancel", name="paygreen_cancel")
-     */
+    #[Route(path: '/paygreen/cancel', name: 'paygreen_cancel')]
     public function cancel(CartContextInterface $cartContext, Request $request)
     {
         return $this->redirectToRoute('order_payment');

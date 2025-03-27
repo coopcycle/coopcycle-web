@@ -16,18 +16,16 @@ class GeoCoordinates
 {
     /**
      * @var float The latitude of a location. For example `37.42242`.
-     *
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create", "pricing_deliveries"})
-     * @Assert\Type(type="float")
      */
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create', 'pricing_deliveries'])]
+    #[Assert\Type(type: 'float')]
     private $latitude;
 
     /**
      * @var float The longitude of a location. For example `-122.08585`.
-     *
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create", "pricing_deliveries"})
-     * @Assert\Type(type="float")
      */
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create', 'pricing_deliveries'])]
+    #[Assert\Type(type: 'float')]
     private $longitude;
 
     public function __construct($latitude = null, $longitude = null)

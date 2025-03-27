@@ -10,7 +10,6 @@ class Checkout
     private $data;
 
     /**
-     * @param OrderInterface $order
      * @param string|array|null $data
      */
     public function __construct(OrderInterface $order, $data = null)

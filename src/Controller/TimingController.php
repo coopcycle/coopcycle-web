@@ -9,9 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TimingController extends AbstractController
 {
-    /**
-     * @Route("/restaurant/{id}/timing", name="restaurant_fulfillment_timing", methods={"GET"})
-     */
+    #[Route(path: '/restaurant/{id}/timing', name: 'restaurant_fulfillment_timing', methods: ['GET'])]
     public function fulfillmentTimingAction($id,
         TimingRegistry $timingRegistry)
     {

@@ -108,14 +108,14 @@ class DeliveryType extends AbstractType
                     'with_weight' => $options['with_weight'],
                     'with_weight_required' => null !== $store ? $store->isWeightRequired() : true,
                     'with_position' => true,
-                    'with_barcode' => null !== $store ? !empty($store->getStoreGLN()) : false, // or transporter enabled
+                    'with_barcode' => null !== $store && !empty($store->getStoreGLN()), // or transporter enabled
                 ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'prototype_data' => new Task(),
             ]);
 
-            $isMultiDropEnabled = null !== $store ? $store->isMultiDropEnabled() : false;
+            $isMultiDropEnabled = null !== $store && $store->isMultiDropEnabled();
             // customers/stores owners are not allowed to edit existing deliveries
             $isEditEnabled = ($isStoreDeliveryOrder && $this->authorizationChecker->isGranted('ROLE_DISPATCHER')) || $isNew;
 
@@ -234,9 +234,6 @@ class DeliveryType extends AbstractType
         });
     }
 
-    /**
-     * @return TimeSlot|null
-     */
     private function getTimeSlot(array $options, ?Store $store = null): ?TimeSlot
     {
         /*
@@ -292,9 +289,6 @@ class DeliveryType extends AbstractType
         return null;
     }
 
-    /**
-     * @return PackageSet|null
-     */
     private function getPackageSet(array $options, ?Store $store = null): ?PackageSet
     {
         if (null !== $options['with_package_set']) {
