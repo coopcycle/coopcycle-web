@@ -1,22 +1,49 @@
 framework:
     messenger:
-        # Uncomment this (and the failed transport below) to send failed messages to this transport for later handling.
-        # failure_transport: failed
-
+        buses:
+            messenger.bus.default:
+                # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
+                middleware:
+                    # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    - 'AppBundle\Messenger\RequestIdMiddleware'
+                    - 'AppBundle\Messenger\RouteMiddleware'
+                    # each time a message is handled, the Doctrine connection
+                    # is "pinged" and reconnected if it's closed. Useful
+                    # if your workers run for a long time and the database
+                    # connection is sometimes lost
+                    - doctrine_ping_connection
+                    # After handling, the Doctrine connection is closed,
+                    # which can free up database connections in a worker,
+                    # instead of keeping them open forever
+                    - doctrine_close_connection
         transports:
-            # https://symfony.com/doc/current/messenger.html#transport-configuration
-            # async: '%env(MESSENGER_TRANSPORT_DSN)%'
-            # failed: 'doctrine://default?queue_name=failed'
-            # sync: 'sync://'
-
+            # https://symfony.com/doc/current/messenger.html#redis-transport
+            #
+            # When running multiple multiple Redis consumers, you may have error:
+            # "Could not acknowledge redis message"
+            #
+            # This is because each Redis consumer must be unique.
+            # Make sure to pass a DSN with a unique consumer name for each process.
+            #
+            # redis://localhost:6379/<stream>/<group>/<name>
+            #
+            # https://github.com/symfony/symfony/issues/35358
+            # https://github.com/symfony/symfony-docs/pull/11869
+            # https://github.com/symfony/symfony-docs/pull/14888
+            #
+            async: "%env(MESSENGER_TRANSPORT_DSN)%"
         routing:
-            # Route your messages to the transports
-            # 'App\Message\YourMessage': async
-
-# when@test:
-#    framework:
-#        messenger:
-#            transports:
-#                # replace with your transport name here (e.g., my_transport: 'in-memory://')
-#                # For more Messenger testing tools, see https://github.com/zenstruck/messenger-test
-#                async: 'in-memory://'
+            'AppBundle\Message\CalculateRoute': async
+            'AppBundle\Message\DeliveryCreated': async
+            'AppBundle\Message\Email': async
+            'AppBundle\Message\PushNotification': async
+            'AppBundle\Message\ImportTasks': async
+            'AppBundle\Message\OrderReceiptEmail': async
+            'AppBundle\Message\Sms': async
+            'AppBundle\Message\UpdateLocation': async
+            'AppBundle\Message\TopBarNotification': async
+            'AppBundle\Message\Webhook': async
+            'AppBundle\Message\IndexDeliveries': async
+            'AppBundle\Message\WoopitDocumentWebhook': async
+            'AppBundle\Message\ImportDeliveries': async
+            'AppBundle\Message\CalculateTaskDistance': async
