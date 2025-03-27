@@ -14,3 +14,7 @@ framework:
                 adapters:
                   - cache.adapter.array
                   - cache.app
+            craue_config.cache:
+                adapters:
+                  - cache.adapter.array
+                  - cache.app
