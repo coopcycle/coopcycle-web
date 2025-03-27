@@ -60,9 +60,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @HideSoftDeleted
- */
+#[HideSoftDeleted]
 #[Route(path: '/{_locale}', requirements: ['_locale' => '%locale_regex%'])]
 class RestaurantController extends AbstractController
 {
