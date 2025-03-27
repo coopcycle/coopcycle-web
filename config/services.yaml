@@ -30,15 +30,10 @@ services:
 
   cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
 
-  craue_config_cache_provider: '@craue_config.cache'
-
-  # craue_config_cache_provider:
-  #   class: Symfony\Component\Cache\Adapter\ChainAdapter
-  #   public: false
-  #   arguments:
-  #     - [ '@cache.adapter.array', '@cache.app' ]
-  #   tags:
-  #     - { name: cache.pool, namespace: craue_config }
+  craue_config_cache_provider:
+    parent: 'craue_config.cache'
+    tags:
+      - { name: cache.pool, namespace: craue_config }
 
   AppBundle\Action\:
     resource: '../src/Action/*'
