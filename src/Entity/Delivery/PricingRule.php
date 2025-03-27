@@ -50,7 +50,7 @@ class PricingRule
     #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
     protected string $target = self::TARGET_DELIVERY;
 
-    #[Groups(['original_rules'])]
+    #[Groups(['original_rules', 'pricing_deliveries'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
     protected $expression;

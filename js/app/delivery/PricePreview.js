@@ -84,7 +84,10 @@ class PricePreview {
          const root = createRoot(item)
          root.render(
            <StrictMode>
-             <PriceCalculation orderItems={data.items} itemsTotal={data.amount} />
+             <PriceCalculation
+               calculation={data.calculation}
+               orderItems={data.items}
+               itemsTotal={data.amount} />
            </StrictMode>,
          )
        })
