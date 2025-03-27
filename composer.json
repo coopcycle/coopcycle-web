@@ -22,7 +22,7 @@
     "config": {
         "process-timeout":0,
         "allow-plugins": {
-            "drupal/core-vendor-hardening": true,
+            "drupal/core-vendor-hardening": false,
             "php-http/discovery": true,
             "symfony/flex": true,
             "symfony/runtime": true
@@ -33,7 +33,6 @@
     },
     "require": {
         "php": ">=8.2",
-
         "symfony/flex": "*",
         "symfony/asset": "*",
         "symfony/mailer": "*",
@@ -54,7 +53,6 @@
         "symfony/webpack-encore-bundle": "^1.6",
         "friendsofsymfony/rest-bundle": "^3.0",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
-
         "api-platform/core": "2.6.8",
         "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^2.4",
@@ -275,11 +273,6 @@
             "sylius/product-bundle": ["spec", "test"],
             "sylius/promotion-bundle": ["spec", "Tests", "test"],
             "sylius/resource-bundle": ["src/Bundle/spec", "src/Bundle/test", "src/Bundle/Tests"],
-            "symfony/symfony": [
-                "src/Symfony/Component/DependencyInjection/Tests",
-                "src/Symfony/Component/Form/Tests",
-                "src/Symfony/Component/Validator/Tests"
-            ],
             "symfony/webpack-encore-bundle": ["tests"],
             "willdurand/hateoas": ["tests"]
         }
