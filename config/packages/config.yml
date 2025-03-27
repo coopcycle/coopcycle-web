@@ -28,8 +28,6 @@ framework:
     assets: ~
     workflows:
         enabled: true
-    mailer:
-        dsn: '%env(COOPCYCLE_MAIL_URL)%'
     http_client:
         scoped_clients:
             urbantz.client:
