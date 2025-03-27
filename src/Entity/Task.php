@@ -62,7 +62,266 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use stdClass;
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['task', 'delivery', 'address']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')", 'pagination' => ['enabled_parameter_name' => 'pagination', 'items_per_page_parameter_name' => 'itemsPerPage'], 'pagination_enabled' => false, 'pagination_client_enabled' => true], 'post' => ['method' => 'POST', 'access_control' => "is_granted('ROLE_DISPATCHER')", 'denormalization_context' => ['groups' => ['task_create']], 'validation_groups' => ['Default']], 'tasks_assign' => ['method' => 'PUT', 'path' => '/tasks/assign', 'controller' => TaskBulkAssign::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')", 'openapi_context' => ['summary' => 'Assigns multiple Tasks at once to a messenger', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['username' => ['type' => 'string'], 'tasks' => ['type' => 'array']]], 'style' => 'form']]]], 'tasks_done' => ['method' => 'PUT', 'path' => '/tasks/done', 'controller' => TaskBulkMarkAsDone::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')", 'openapi_context' => ['summary' => 'Mark multiple Tasks as done at once', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['tasks' => ['type' => 'array']]], 'style' => 'form']]]], 'tasks_images' => ['method' => 'PUT', 'path' => '/tasks/images', 'denormalization_context' => ['groups' => ['tasks_images']], 'controller' => AddImagesToTasks::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')", 'openapi_context' => ['summary' => '', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['tasks' => ['type' => 'array'], 'images' => ['type' => 'array']]], 'style' => 'form']]]]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('view', object)"], 'put' => ['method' => 'PUT', 'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))", 'denormalization_context' => ['groups' => ['task_edit']]], 'task_start' => ['method' => 'PUT', 'path' => '/tasks/{id}/start', 'controller' => TaskStart::class, 'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))", 'openapi_context' => ['summary' => 'Marks a Task as started']], 'task_done' => ['method' => 'PUT', 'path' => '/tasks/{id}/done', 'controller' => TaskDone::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))", 'openapi_context' => ['summary' => 'Marks a Task as done', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['notes' => ['type' => 'string']]], 'style' => 'form']]]], 'task_failed' => ['method' => 'PUT', 'path' => '/tasks/{id}/failed', 'controller' => TaskFailed::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))", 'openapi_context' => ['summary' => 'Marks a Task as failed', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['notes' => ['type' => 'string']]], 'style' => 'form']]]], 'task_assign' => ['method' => 'PUT', 'path' => '/tasks/{id}/assign', 'controller' => TaskAssign::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')", 'openapi_context' => ['summary' => 'Assigns a Task to a messenger', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['username' => ['type' => 'string']]], 'style' => 'form']]]], 'task_remove_from_group' => ['method' => 'DELETE', 'path' => '/tasks/{id}/group', 'controller' => RemoveFromGroup::class, 'write' => false, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)", 'openapi_context' => ['summary' => 'Remove a task from the group to which it belongs']], 'task_unassign' => ['method' => 'PUT', 'path' => '/tasks/{id}/unassign', 'controller' => TaskUnassign::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))", 'openapi_context' => ['summary' => 'Unassigns a Task from a messenger']], 'task_cancel' => ['method' => 'PUT', 'path' => '/tasks/{id}/cancel', 'controller' => TaskCancel::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER')", 'openapi_context' => ['summary' => 'Cancels a Task']], 'task_duplicate' => ['method' => 'POST', 'path' => '/tasks/{id}/duplicate', 'controller' => TaskDuplicate::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER')", 'openapi_context' => ['summary' => 'Duplicates a Task']], 'task_reschedule' => ['method' => 'PUT', 'path' => '/tasks/{id}/reschedule', 'controller' => TaskReschedule::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER')", 'openapi_context' => ['summary' => 'Reschedules a Task', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['after' => ['type' => 'string', 'format' => 'date-time'], 'before' => ['type' => 'string', 'format' => 'date-time']]], 'style' => 'form']]]], 'task_failure_reasons' => ['method' => 'GET', 'path' => '/tasks/{id}/failure_reasons', 'controller' => TaskFailureReasons::class, 'security' => "is_granted('view', object)", 'openapi_context' => ['summary' => 'Retrieves possible failure reasons for a Task']], 'task_incident' => ['method' => 'PUT', 'path' => '/tasks/{id}/incidents', 'controller' => TaskIncident::class, 'security' => "is_granted('view', object)", 'openapi_context' => ['summary' => 'Creates an incident for a Task']], 'task_events' => ['method' => 'GET', 'path' => '/tasks/{id}/events', 'controller' => TaskEvents::class, 'security' => "is_granted('view', object)", 'openapi_context' => ['summary' => 'Retrieves events for a Task']], 'task_restore' => ['method' => 'PUT', 'path' => '/tasks/{id}/restore', 'controller' => TaskRestore::class, 'denormalization_context' => ['groups' => ['task_operation']], 'access_control' => "is_granted('ROLE_DISPATCHER')", 'openapi_context' => ['summary' => 'Restores a Task']], 'put_bio_deliver' => ['method' => 'PUT', 'path' => '/tasks/{id}/bio_deliver', 'security' => "is_granted('ROLE_OAUTH2_TASKS')", 'input' => BioDeliverInput::class, 'denormalization_context' => ['groups' => ['task_edit']]], 'get_task_context' => ['method' => 'GET', 'path' => '/tasks/{id}/context', 'controller' => TaskContext::class, 'security' => "is_granted('view', object)"], 'put_task_append_to_comment' => ['method' => 'PUT', 'path' => '/tasks/{id}/append_to_comment', 'controller' => TaskAppendToComment::class, 'security' => "is_granted('view', object)"]])]
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'method' => 'GET',
+            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
+            'pagination' => [
+                'enabled_parameter_name' => 'pagination',
+                'items_per_page_parameter_name' => 'itemsPerPage'
+            ],
+            'pagination_enabled' => false,
+            'pagination_client_enabled' => true
+        ],
+        'post' => [
+            'method' => 'POST',
+            'access_control' => "is_granted('ROLE_DISPATCHER')",
+            'denormalization_context' => ['groups' => ['task_create']],
+            'validation_groups' => ['Default']
+        ],
+        'tasks_assign' => [
+            'method' => 'PUT',
+            'path' => '/tasks/assign',
+            'controller' => TaskBulkAssign::class,
+            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+            'openapi_context' => [
+                'summary' => 'Assigns multiple Tasks at once to a messenger',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'username' => ['type' => 'string'],
+                            'tasks' => ['type' => 'array']
+                        ]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ],
+        'tasks_done' => [
+            'method' => 'PUT',
+            'path' => '/tasks/done',
+            'controller' => TaskBulkMarkAsDone::class,
+            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+            'openapi_context' => [
+                'summary' => 'Mark multiple Tasks as done at once',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['tasks' => ['type' => 'array']]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ],
+        'tasks_images' => [
+            'method' => 'PUT',
+            'path' => '/tasks/images',
+            'denormalization_context' => ['groups' => ['tasks_images']],
+            'controller' => AddImagesToTasks::class,
+            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
+            'openapi_context' => [
+                'summary' => '',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'tasks' => ['type' => 'array'],
+                            'images' => ['type' => 'array']
+                        ]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'access_control' => "is_granted('view', object)"
+        ],
+        'put' => [
+            'method' => 'PUT',
+            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+            'denormalization_context' => ['groups' => ['task_edit']]
+        ],
+        'task_start' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/start',
+            'controller' => TaskStart::class,
+            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+            'openapi_context' => ['summary' => 'Marks a Task as started']
+        ],
+        'task_done' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/done',
+            'controller' => TaskDone::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+            'openapi_context' => [
+                'summary' => 'Marks a Task as done',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['notes' => ['type' => 'string']]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ],
+        'task_failed' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/failed',
+            'controller' => TaskFailed::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+            'openapi_context' => [
+                'summary' => 'Marks a Task as failed',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['notes' => ['type' => 'string']]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ],
+        'task_assign' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/assign',
+            'controller' => TaskAssign::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
+            'openapi_context' => [
+                'summary' => 'Assigns a Task to a messenger',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['username' => ['type' => 'string']]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ],
+        'task_remove_from_group' => [
+            'method' => 'DELETE',
+            'path' => '/tasks/{id}/group',
+            'controller' => RemoveFromGroup::class,
+            'write' => false,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)",
+            'openapi_context' => ['summary' => 'Remove a task from the group to which it belongs']
+        ],
+        'task_unassign' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/unassign',
+            'controller' => TaskUnassign::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
+            'openapi_context' => ['summary' => 'Unassigns a Task from a messenger']
+        ],
+        'task_cancel' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/cancel',
+            'controller' => TaskCancel::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER')",
+            'openapi_context' => ['summary' => 'Cancels a Task']
+        ],
+        'task_duplicate' => [
+            'method' => 'POST',
+            'path' => '/tasks/{id}/duplicate',
+            'controller' => TaskDuplicate::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER')",
+            'openapi_context' => ['summary' => 'Duplicates a Task']
+        ],
+        'task_reschedule' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/reschedule',
+            'controller' => TaskReschedule::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER')",
+            'openapi_context' => [
+                'summary' => 'Reschedules a Task',
+                'parameters' => [[
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'after' => ['type' => 'string', 'format' => 'date-time'],
+                            'before' => ['type' => 'string', 'format' => 'date-time']
+                        ]
+                    ],
+                    'style' => 'form'
+                ]]
+            ]
+        ],
+        'task_failure_reasons' => [
+            'method' => 'GET',
+            'path' => '/tasks/{id}/failure_reasons',
+            'controller' => TaskFailureReasons::class,
+            'security' => "is_granted('view', object)",
+            'openapi_context' => ['summary' => 'Retrieves possible failure reasons for a Task']
+        ],
+        'task_incident' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/incidents',
+            'controller' => TaskIncident::class,
+            'security' => "is_granted('view', object)",
+            'openapi_context' => ['summary' => 'Creates an incident for a Task']
+        ],
+        'task_events' => [
+            'method' => 'GET',
+            'path' => '/tasks/{id}/events',
+            'controller' => TaskEvents::class,
+            'security' => "is_granted('view', object)",
+            'openapi_context' => ['summary' => 'Retrieves events for a Task']
+        ],
+        'task_restore' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/restore',
+            'controller' => TaskRestore::class,
+            'denormalization_context' => ['groups' => ['task_operation']],
+            'access_control' => "is_granted('ROLE_DISPATCHER')",
+            'openapi_context' => ['summary' => 'Restores a Task']
+        ],
+        'put_bio_deliver' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/bio_deliver',
+            'security' => "is_granted('ROLE_OAUTH2_TASKS')",
+            'input' => BioDeliverInput::class,
+            'denormalization_context' => ['groups' => ['task_edit']]
+        ],
+        'get_task_context' => [
+            'method' => 'GET',
+            'path' => '/tasks/{id}/context',
+            'controller' => TaskContext::class,
+            'security' => "is_granted('view', object)"
+        ],
+        'put_task_append_to_comment' => [
+            'method' => 'PUT',
+            'path' => '/tasks/{id}/append_to_comment',
+            'controller' => TaskAppendToComment::class,
+            'security' => "is_granted('view', object)"
+        ]
+    ],
+    attributes: ['normalization_context' => ['groups' => ['task', 'delivery', 'address']]]
+)]
 #[ApiFilter(TaskOrderFilter::class)]
 #[ApiFilter(TaskDateFilter::class, properties: ['date'])]
 #[ApiFilter(TaskFilter::class)]
