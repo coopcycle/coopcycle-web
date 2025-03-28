@@ -72,7 +72,6 @@ adminDashboard.pricing.noPricings: Nejsou zatím žádné ceny
 adminDashboard.pricing.createNew: Vytvořit nové ceny
 adminDashboard.pricing.noRuleFound: Nebylo nalezeno žádné cenové pravidlo. Pravidla
   tvorby cen definují způsob výpočtu nákladů na doručení.
-adminDashboard.pricing.addRule: Přidat pravidlo
 adminDashboard.tags.title: Značky
 adminDashboard.tags.createNew: Vytvořit novou značku
 adminDashboard.tags.name: Název
@@ -1422,7 +1421,6 @@ form.settings.notifications.title: Oznámení
 form.settings.notifications.order.created: Objednávka vytvořena
 form.settings.notifications.order.picked: Objednávka vyzvednuta
 form.pricing_rule_set.options.label: Možnosti
-form.pricing_rule_set.options.map_all_tasks.label: Použít na všechny úkoly
 tags.featured: Doporučené
 tags.exclusive: Exkluzivní
 tags.shops.new: Nové prodejny

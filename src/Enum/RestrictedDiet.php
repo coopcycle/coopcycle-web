@@ -69,6 +69,11 @@ class RestrictedDiet extends Enum
     const VEGETARIAN_DIET = 'http://schema.org/VegetarianDiet';
 
     /**
+     * @var string A diet without eggs - not a real schema.org entry, will return 404
+     */
+    const EGG_FREE_DIET = 'http://schema.org/EggFreeDiet';
+
+    /**
      * @var string The name of the item
      *
      * @Assert\Type(type="string")
