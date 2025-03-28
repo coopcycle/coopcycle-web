@@ -7,9 +7,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 trait ClosingRulesTrait
 {
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $closingRules;
 
     /**
@@ -20,17 +18,11 @@ trait ClosingRulesTrait
         return $this->closingRules;
     }
 
-    /**
-     * @param ClosingRule $closingRule
-     */
     public function addClosingRule(ClosingRule $closingRule)
     {
         $this->closingRules->add($closingRule);
     }
 
-    /**
-     * @param ClosingRule $closingRule
-     */
     public function removeClosingRule(ClosingRule $closingRule)
     {
         $this->closingRules->removeElement($closingRule);

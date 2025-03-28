@@ -12,17 +12,16 @@ class Cuisine
 {
     /**
      * @var int
-     * @Groups({"restaurant"})
      */
+    #[Groups(['restaurant'])]
     private $id;
 
     /**
      * @var string The name of the item
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant"})
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'http://schema.org/name')]
+    #[Groups(['restaurant'])]
     protected $name;
 
     protected $restaurants;

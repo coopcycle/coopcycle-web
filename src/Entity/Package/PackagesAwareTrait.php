@@ -8,9 +8,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 trait PackagesAwareTrait
 {
 
-    /**
-    * @Groups({"package"})
-    */
+    #[Groups(['package'])]
     protected $packages;
 
     public function hasPackages()

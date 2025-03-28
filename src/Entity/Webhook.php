@@ -10,32 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *     "post"={
- *       "method"="POST",
- *       "controller"=CreateController::class,
- *       "security_post_denormalize"="is_granted('create', object)",
- *       "denormalization_context"={"groups"={"webhook_create"}},
- *       "normalization_context"={"groups"={"webhook", "webhook_with_secret"}}
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "security"="is_granted('view', object)"
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('edit', object)"
- *     }
- *   },
- *   attributes={
- *     "normalization_context"={"groups"={"webhook"}}
- *   }
- * )
- */
+#[ApiResource(collectionOperations: ['post' => ['method' => 'POST', 'controller' => CreateController::class, 'security_post_denormalize' => "is_granted('create', object)", 'denormalization_context' => ['groups' => ['webhook_create']], 'normalization_context' => ['groups' => ['webhook', 'webhook_with_secret']]]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('view', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('edit', object)"]], attributes: ['normalization_context' => ['groups' => ['webhook']]])]
 class Webhook
 {
     use Timestampable;
@@ -54,23 +29,16 @@ class Webhook
 
     /**
      * @var string
-     * @Groups({"webhook", "webhook_create"})
      */
+    #[Groups(['webhook', 'webhook_create'])]
     private $url;
 
     /**
      * @var string
-     * @Assert\Choice(callback="getEvents")
-     * @Groups({"webhook", "webhook_create"})
-     * @ApiProperty(
-     *   attributes={
-     *     "openapi_context"={
-     *       "type"="string",
-     *       "enum"=Webhook::EVENTS
-     *     }
-     *   }
-     * )
      */
+    #[Assert\Choice(callback: 'getEvents')]
+    #[Groups(['webhook', 'webhook_create'])]
+    #[ApiProperty(attributes: ['openapi_context' => ['type' => 'string', 'enum' => Webhook::EVENTS]])]
     private $event;
 
     /**
@@ -80,8 +48,8 @@ class Webhook
 
     /**
      * @var string
-     * @Groups({"webhook_with_secret"})
      */
+    #[Groups(['webhook_with_secret'])]
     private $secret;
 
     /**
@@ -141,8 +109,6 @@ class Webhook
     }
 
     /**
-     * @param Client $oauth2Client
-     *
      * @return self
      */
     public function setOauth2Client(Client $oauth2Client)

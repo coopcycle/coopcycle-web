@@ -8,7 +8,7 @@ final class LoopeatFormats
 {
     /**
      * @var LoopeatFormat[]
-     * @Groups({"order", "update_loopeat_formats"})
      */
+    #[Groups(['order', 'update_loopeat_formats'])]
     public array $items = [];
 }

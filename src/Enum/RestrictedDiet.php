@@ -9,8 +9,8 @@ use MyCLabs\Enum\Enum;
  * A diet restricted to certain foods or preparations for cultural, religious, health or lifestyle reasons.
  *
  * @see http://schema.org/RestrictedDiet Documentation on Schema.org
- * @ApiResource(iri="http://schema.org/RestrictedDiet")
  */
+#[ApiResource(iri: 'http://schema.org/RestrictedDiet')]
 class RestrictedDiet extends Enum
 {
     /**
@@ -67,6 +67,11 @@ class RestrictedDiet extends Enum
      * @var string A diet exclusive of animal meat
      */
     const VEGETARIAN_DIET = 'http://schema.org/VegetarianDiet';
+
+    /**
+     * @var string A diet without eggs - not a real schema.org entry, will return 404
+     */
+    const EGG_FREE_DIET = 'http://schema.org/EggFreeDiet';
 
     /**
      * @var string The name of the item

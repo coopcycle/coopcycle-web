@@ -13,10 +13,6 @@ use Symfony\Component\Validator\Validation;
 
 class Tip
 {
-    /**
-     * @param OrderProcessorInterface $orderProcessor
-     * @param EntityManagerInterface $entityManager
-     */
     public function __construct(
         private OrderProcessorInterface $orderProcessor,
         private EntityManagerInterface $entityManager

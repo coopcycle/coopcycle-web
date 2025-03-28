@@ -12,7 +12,6 @@ class ValidationUtils
      * Transform a ConstraintViolationList to a JSON-serializable array.
      *
      * @deprecated
-     * @param ConstraintViolationListInterface $errors
      * @return array
      */
     public static function serializeValidationErrors(ConstraintViolationListInterface $errors)

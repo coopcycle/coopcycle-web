@@ -29,9 +29,7 @@ class EdenredController extends AbstractController
         $this->logger = $logger;
     }
 
-    /**
-     * @Route("/edenred/oauth/callback", name="edenred_oauth_callback")
-     */
+    #[Route(path: '/edenred/oauth/callback', name: 'edenred_oauth_callback')]
     public function oauthCallbackAction(Request $request,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
@@ -101,9 +99,8 @@ class EdenredController extends AbstractController
     /**
      * Proxies authorization_code requests to Edenred server, to avoid exposing the client secret.
      * This is used on the app.
-     *
-     * @Route("/edenred/connect/token", name="edenred_connect_token")
      */
+    #[Route(path: '/edenred/connect/token', name: 'edenred_connect_token')]
     public function connectTokenAction(Request $request)
     {
         $response = new JsonResponse();

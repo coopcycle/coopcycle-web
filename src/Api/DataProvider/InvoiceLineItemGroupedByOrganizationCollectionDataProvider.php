@@ -111,7 +111,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
 
         $activityByStore = [];
 
-        foreach ($ordersByStore as $storeId => $orders) {
+        foreach ($ordersByStore as $orders) {
             $store = $orders[0]->getDelivery()->getStore();
             $total = array_reduce($orders, function ($carry, $order) {
                 return $carry + $order->getTotal();

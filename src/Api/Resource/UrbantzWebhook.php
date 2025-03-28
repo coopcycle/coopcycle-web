@@ -10,32 +10,7 @@ use AppBundle\Api\Dto\UrbantzOrderInput;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-/**
- * @ApiResource(
- *   collectionOperations={},
- *   itemOperations={
- *     "get": {
- *       "method"="GET",
- *       "controller"=NotFoundAction::class,
- *       "read"=false,
- *       "output"=false
- *     },
- *     "receive_webhook"={
- *       "method"="POST",
- *       "path"="/urbantz/webhook/{id}",
- *       "input"=UrbantzOrderInput::class,
- *       "controller"=ReceiveWebhookController::class,
- *       "denormalization_context"={"groups"={"urbantz_input"}},
- *       "normalization_context"={"groups"={"urbantz_output"}},
- *       "security"="is_granted('ROLE_API_KEY')",
- *       "status"=200,
- *       "openapi_context"={
- *         "summary"="Receives a webhook from Urbantz.",
- *       }
- *     }
- *   }
- * )
- */
+#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false], 'receive_webhook' => ['method' => 'POST', 'path' => '/urbantz/webhook/{id}', 'input' => UrbantzOrderInput::class, 'controller' => ReceiveWebhookController::class, 'denormalization_context' => ['groups' => ['urbantz_input']], 'normalization_context' => ['groups' => ['urbantz_output']], 'security' => "is_granted('ROLE_API_KEY')", 'status' => 200, 'openapi_context' => ['summary' => 'Receives a webhook from Urbantz.']]])]
 final class UrbantzWebhook
 {
     const TASKS_ANNOUNCED = 'tasks_announced';
@@ -43,19 +18,14 @@ final class UrbantzWebhook
 
     /**
      * @var string
-     *
-     * @ApiProperty(identifier=true)
      */
+    #[ApiProperty(identifier: true)]
     public $id;
 
-    /**
-     * @Groups({"urbantz_input"})
-     */
+    #[Groups(['urbantz_input'])]
     public $tasks = [];
 
-    /**
-     * @Groups({"urbantz_output"})
-     */
+    #[Groups(['urbantz_output'])]
     public $deliveries = [];
 
     public $hub;

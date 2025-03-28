@@ -80,7 +80,7 @@ class Pay
         }
 
         if (isset($body['cashOnDelivery']) && true === $body['cashOnDelivery']) {
-            return $this->handleCashOnDelivery($data, $payment, $body);
+            return $this->handleCashOnDelivery($data, $payment);
         }
 
         // This is the 2nd step of a Stripe payment, to confirm the payment intent
@@ -180,7 +180,7 @@ class Pay
         return $data;
     }
 
-    private function handleCashOnDelivery(OrderInterface $data, PaymentInterface $payment, array $body): OrderInterface
+    private function handleCashOnDelivery(OrderInterface $data, PaymentInterface $payment): OrderInterface
     {
         if (!$this->cashEnabled && !$data->supportsCashOnDelivery()) {
             throw new BadRequestHttpException('Cash on delivery is not enabled');

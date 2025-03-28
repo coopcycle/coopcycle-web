@@ -128,9 +128,7 @@ class ProfileController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/profile/edit", name="profile_edit")
-     */
+    #[Route(path: '/profile/edit', name: 'profile_edit')]
     public function editProfileAction(Request $request, UserManagerInterface $userManager, TranslatorInterface $translator) {
 
         $user = $this->getUser();
@@ -206,9 +204,9 @@ class ProfileController extends AbstractController
             $exp = clone $order->getShippingTimeRange()->getUpper();
             $exp->modify('+3 hours');
 
-            return $this->render('profile/order.html.twig', [
+            return $this->render('profile/order.html.twig', $this->auth([
                 'order' => $order,
-                'events' => (new OrderEventCollection($order))->toArray(),
+                'orderAccessToken' => null, // not needed, as a guest user does not have access to this route
                 'order_normalized' => $normalizer->normalize($order, 'jsonld', [
                     'groups' => ['order'],
                     'is_web' => true
@@ -219,7 +217,7 @@ class ProfileController extends AbstractController
                     'token'   => $centrifugoClient->generateConnectionToken($order->getId(), $exp->getTimestamp()),
                     'channel' => sprintf('%s_order_events#%d', $this->getParameter('centrifugo_namespace'), $order->getId())
                 ]
-            ]);
+            ]));
         }
 
         $form = $this->createForm(OrderType::class, $order);
@@ -239,9 +237,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/addresses", name="profile_addresses")
-     */
+    #[Route(path: '/profile/addresses', name: 'profile_addresses')]
     public function addressesAction(Request $request)
     {
         return $this->render('profile/addresses.html.twig', array(
@@ -249,9 +245,7 @@ class ProfileController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/profile/addresses/new", name="profile_address_new")
-     */
+    #[Route(path: '/profile/addresses/new', name: 'profile_address_new')]
     public function newAddressAction(Request $request)
     {
         $address = new Address();
@@ -280,9 +274,7 @@ class ProfileController extends AbstractController
         ));
     }
 
-    /**
-     * @Route("/profile/tracking/{date}", name="profile_tracking")
-     */
+    #[Route(path: '/profile/tracking/{date}', name: 'profile_tracking')]
     public function trackingAction($date, Request $request)
     {
         $date = new \DateTime($date);
@@ -290,9 +282,7 @@ class ProfileController extends AbstractController
         return $this->userTracking($this->getUser(), $date);
     }
 
-    /**
-     * @Route("/profile/tasks", name="profile_tasks")
-     */
+    #[Route(path: '/profile/tasks', name: 'profile_tasks')]
     public function tasksAction(Request $request)
     {
         $date = new \DateTime();
@@ -318,9 +308,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/tasks/{id}/complete", name="profile_task_complete")
-     */
+    #[Route(path: '/profile/tasks/{id}/complete', name: 'profile_task_complete')]
     public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator)
     {
         $task = $this->getDoctrine()
@@ -366,9 +354,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/jwt", methods={"GET"}, name="profile_jwt")
-     */
+    #[Route(path: '/profile/jwt', methods: ['GET'], name: 'profile_jwt')]
     public function jwtAction(Request $request,
         JWTManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient)
@@ -400,9 +386,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/notifications", name="profile_notifications")
-     */
+    #[Route(path: '/profile/notifications', name: 'profile_notifications')]
     public function notificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
         $unread = (int) $topBarNotifications->countNotifications($this->getUser());
@@ -428,9 +412,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/notifications/remove", methods={"POST"}, name="profile_notifications_remove")
-     */
+    #[Route(path: '/profile/notifications/remove', methods: ['POST'], name: 'profile_notifications_remove')]
     public function removeNotificationsAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
         if ($request->query->has('all') && 'true' === $request->query->get('all')) {
@@ -447,9 +429,7 @@ class ProfileController extends AbstractController
         return $this->notificationsAction($request, $topBarNotifications, $normalizer);
     }
 
-    /**
-     * @Route("/profile/notification/{id}", methods={"DELETE"}, name="profile_notification_remove")
-     */
+    #[Route(path: '/profile/notification/{id}', methods: ['DELETE'], name: 'profile_notification_remove')]
     public function removeNotificationAction(Request $request, TopBarNotifications $topBarNotifications, NormalizerInterface $normalizer)
     {
         $topBarNotifications->markAsRead($this->getUser(), [$request->get('id')]);
@@ -485,9 +465,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/notifications/read", methods={"POST"}, name="profile_notifications_mark_as_read")
-     */
+    #[Route(path: '/profile/notifications/read', methods: ['POST'], name: 'profile_notifications_mark_as_read')]
     public function markNotificationsAsReadAction(Request $request, TopBarNotifications $topBarNotifications)
     {
         $ids = [];
@@ -518,9 +496,7 @@ class ProfileController extends AbstractController
         throw $this->createNotFoundException();
     }
 
-    /**
-     * @Route("/profile/business-account", name="profile_business_account")
-     */
+    #[Route(path: '/profile/business-account', name: 'profile_business_account')]
     public function businessAccountAction(
         Request $request,
         EntityManagerInterface $objectManager,
@@ -558,9 +534,7 @@ class ProfileController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/profile/business-account-orders", name="profile_business_account_orders")
-     */
+    #[Route(path: '/profile/business-account-orders', name: 'profile_business_account_orders')]
     public function businessAccountOrdersAction(
         Request $request,
         EntityManagerInterface $objectManager,

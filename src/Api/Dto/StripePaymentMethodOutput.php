@@ -12,9 +12,7 @@ final class StripePaymentMethodOutput
         $this->data = $data;
     }
 
-    /**
-     * @Groups({"order"})
-     */
+    #[Groups(['order'])]
     public function getId()
     {
         return $this->data->id;

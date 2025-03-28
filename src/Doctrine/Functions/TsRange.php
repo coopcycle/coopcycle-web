@@ -10,8 +10,8 @@ use Doctrine\ORM\Query\SqlWalker;
 
 class TsRange extends FunctionNode
 {
-    private $start = null;
-    private $end = null;
+    private $start;
+    private $end;
 
     public function parse(Parser $parser)
     {

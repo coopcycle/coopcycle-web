@@ -59,7 +59,7 @@ class GatewayResolver
 
     public function resolveForPayment(PaymentInterface $payment)
     {
-        $details = $payment->getDetails();
+        $payment->getDetails();
 
         if ($payment->hasPaygreenPaymentOrderId()) {
             return 'paygreen';

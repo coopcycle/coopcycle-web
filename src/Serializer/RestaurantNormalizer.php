@@ -133,7 +133,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
         // @see https://developers.google.com/search/docs/data-types/local-business#order-reservation-scenarios
 
-        $urlTemplate = $this->urlGenerator->generate('restaurant', [
+        $this->urlGenerator->generate('restaurant', [
             'id' => $object->getId(),
             'slug' => $this->slugify->slugify($object->getName()),
             'type' => $object->getContext() === Store::class ? 'store' : 'restaurant',

@@ -441,7 +441,7 @@ class Client
             }
         };
 
-        foreach ($order->getLoopeatDeliver() as $itemId => $formats) {
+        foreach ($order->getLoopeatDeliver() as $formats) {
 
             foreach ($formats as $format) {
 

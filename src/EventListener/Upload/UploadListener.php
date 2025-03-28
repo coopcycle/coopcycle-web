@@ -193,7 +193,7 @@ final class UploadListener
 
     private function onBannerUpload(PostPersistEvent $event)
     {
-        $file = $event->getFile();
+        $event->getFile();
 
         if ($this->isDemo) {
             throw new UploadException('Banner can\'t be changed in demo mode');

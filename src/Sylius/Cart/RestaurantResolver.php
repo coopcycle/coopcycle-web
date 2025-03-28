@@ -28,10 +28,6 @@ class RestaurantResolver
         'restaurant_cart',
     ];
 
-    /**
-     * @param RequestStack $requestStack
-     * @param LocalBusinessRepository $repository
-     */
     public function __construct(
         private RequestStack $requestStack,
         private LocalBusinessRepository $repository,
@@ -42,9 +38,6 @@ class RestaurantResolver
         $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();
     }
 
-    /**
-     * @return LocalBusiness|null
-     */
     public function resolve(): ?LocalBusiness
     {
         $request = $this->requestStack->getMainRequest();
@@ -64,9 +57,6 @@ class RestaurantResolver
         );
     }
 
-    /**
-     * @return bool
-     */
     public function accept(OrderInterface $cart): bool
     {
         $restaurant = $this->resolve();

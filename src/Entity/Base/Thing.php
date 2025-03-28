@@ -16,20 +16,18 @@ abstract class Thing
 {
     /**
      * @var string A description of the item
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="http://schema.org/description")
-     * @Groups({"restaurant"})
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'http://schema.org/description')]
+    #[Groups(['restaurant'])]
     protected $description;
 
     /**
      * @var string The name of the item
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="http://schema.org/name")
-     * @Groups({"restaurant"})
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iri: 'http://schema.org/name')]
+    #[Groups(['restaurant'])]
     protected $name;
 
     /**

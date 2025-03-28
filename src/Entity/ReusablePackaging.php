@@ -19,9 +19,7 @@ class ReusablePackaging implements StockableInterface
 
     protected $price = 0;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $name;
 
     protected $onHold = 0;
@@ -30,14 +28,10 @@ class ReusablePackaging implements StockableInterface
 
     protected $tracked = false;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected $type = self::TYPE_INTERNAL;
 
-    /**
-     * @Groups({"restaurant"})
-     */
+    #[Groups(['restaurant'])]
     protected array $data = [];
 
     public function getId()
@@ -145,17 +139,11 @@ class ReusablePackaging implements StockableInterface
         return $this->getRestaurant()->getName();
     }
 
-    /**
-     * @return array
-     */
     public function getData(): array
     {
         return $this->data;
     }
 
-    /**
-     * @param array $data
-     */
     public function setData(array $data = [])
     {
         $this->data = $data;

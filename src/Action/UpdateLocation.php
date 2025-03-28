@@ -42,9 +42,7 @@ class UpdateLocation
         $this->logger = $logger;
     }
 
-    /**
-     * @Route(path="/me/location", name="me_location", methods={"POST"})
-     */
+    #[Route(path: '/me/location', name: 'me_location', methods: ['POST'])]
     public function locationAction(Request $request)
     {
         $data = [];
@@ -98,21 +96,19 @@ class UpdateLocation
 
         // SET fleet truck1 POINT 3.5123 -12.2693
 
-        $response =
-            $this->tile38->rawCommand(
-                'SET',
-                $this->fleetKey,
-                $username,
-                'POINT',
-                $lastLocation['latitude'],
-                $lastLocation['longitude'],
-                $lastLocation['time']
-            );
+        $this->tile38->rawCommand(
+            'SET',
+            $this->fleetKey,
+            $username,
+            'POINT',
+            $lastLocation['latitude'],
+            $lastLocation['longitude'],
+            $lastLocation['time']
+        );
 
         // EXPIRE fleet truck 10
 
-        $response =
-            $this->tile38->rawCommand('EXPIRE', $this->fleetKey, $username, (60 * 30));
+        $this->tile38->rawCommand('EXPIRE', $this->fleetKey, $username, (60 * 30));
 
         // Even if the current position stored in Tile38 should be the source of thruth,
         // we send an update immediately using Centrifugo

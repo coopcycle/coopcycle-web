@@ -92,9 +92,7 @@ class LoopEatController extends AbstractController
         return $payload['iss'];
     }
 
-    /**
-     * @Route("/impec/oauth/callback", name="loopeat_oauth_callback")
-     */
+    #[Route(path: '/impec/oauth/callback', name: 'loopeat_oauth_callback')]
     public function connectStandardAccountAction(
         Request $request,
         JWTEncoderInterface $jwtEncoder,
@@ -174,9 +172,7 @@ class LoopEatController extends AbstractController
         return $this->redirect($this->getSuccessRedirect($payload));
     }
 
-    /**
-     * @Route("/loopeat/success", name="loopeat_success")
-     */
+    #[Route(path: '/loopeat/success', name: 'loopeat_success')]
     public function successAction(Request $request,
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor,
@@ -202,9 +198,7 @@ class LoopEatController extends AbstractController
         return $this->redirectToRoute('order');
     }
 
-    /**
-     * @Route("/loopeat/failure", name="loopeat_failure")
-     */
+    #[Route(path: '/loopeat/failure', name: 'loopeat_failure')]
     public function failureAction()
     {
         if ('iframe' === $this->loopeatOAuthFlow) {

@@ -10,28 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 
-/**
- * @ApiResource(
- *   itemOperations={
- *     "get"={
- *        "controller"=NotFoundAction::class,
- *     },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')",
- *     },
- *     "applications"={
- *        "method"="GET",
- *        "path"="/pricing_rule_sets/{id}/applications",
- *        "controller"=Applications::class,
- *        "security"="is_granted('ROLE_ADMIN')",
- *        "openapi_context"={
- *          "summary"="Get the objects to which this pricing rule set is applied"
- *        }
- *     },
- *   }
- * )
- */
+#[ApiResource(itemOperations: ['get' => ['controller' => NotFoundAction::class], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'applications' => ['method' => 'GET', 'path' => '/pricing_rule_sets/{id}/applications', 'controller' => Applications::class, 'security' => "is_granted('ROLE_ADMIN')", 'openapi_context' => ['summary' => 'Get the objects to which this pricing rule set is applied']]])]
 class PricingRuleSet
 {
     /**
@@ -39,9 +18,7 @@ class PricingRuleSet
      */
     protected $id;
 
-    /**
-     * @Assert\Valid()
-     */
+    #[Assert\Valid]
     protected $rules;
 
     protected $name;

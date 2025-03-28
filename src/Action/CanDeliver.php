@@ -27,13 +27,7 @@ class CanDeliver
         $this->expressionLanguage = $expressionLanguage;
     }
 
-    /**
-     * @Route(
-     *     name="restaurant_can_deliver",
-     *     path="/restaurants/{id}/can-deliver/{latitude},{longitude}",
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(name: 'restaurant_can_deliver', path: '/restaurants/{id}/can-deliver/{latitude},{longitude}', methods: ['GET'])]
     public function canDeliverAction($id, $latitude, $longitude, Request $request)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);

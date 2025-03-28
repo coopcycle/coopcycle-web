@@ -38,7 +38,7 @@
         "lexik/jwt-authentication-bundle": "^2.8",
         "jsor/doctrine-postgis": "^2.3.0",
         "league/geotools": "@stable",
-        "gedmo/doctrine-extensions": "^3.0.3",
+        "gedmo/doctrine-extensions": "^3.19",
         "snc/redis-bundle": "4.3.0",
         "knplabs/knp-time-bundle": "^2.0",
         "cocur/slugify": "^4.0",
@@ -153,6 +153,8 @@
         "picqer/php-barcode-generator": "^2.4",
         "shipmonk/doctrine-entity-preloader": "^1.0",
         "z4kn4fein/php-semver": "^3.0",
+        "invenso/rector": "^1.0",
+        "doctrine/annotations": "^1.13",
         "geocoder-php/geocode-earth-provider": "^1.4"
     },
     "require-dev": {
@@ -169,10 +171,10 @@
         "friends-of-behat/mink": "^1.8",
         "friends-of-behat/mink-extension": "^2.5",
         "friends-of-behat/mink-browserkit-driver": "^1.4",
-        "rector/rector": "^0.17",
         "phpstan/phpstan-doctrine": "^1.0",
         "aeon-php/calendar": "1.0.6",
-        "league/flysystem-memory": "^3.0"
+        "league/flysystem-memory": "^3.0",
+        "rector/rector": "^1.2"
     },
     "repositories": [
         {

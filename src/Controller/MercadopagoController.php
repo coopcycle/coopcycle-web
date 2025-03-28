@@ -21,9 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class MercadopagoController extends AbstractController
 {
-    /**
-     * @Route("/mercadopago/oauth/callback", name="mercadopago_oauth_callback")
-     */
+    #[Route(path: '/mercadopago/oauth/callback', name: 'mercadopago_oauth_callback')]
     public function oAuthCallbackAction(
         Request $request,
         JWTEncoderInterface $jwtEncoder,
@@ -86,9 +84,6 @@ class MercadopagoController extends AbstractController
         curl_setopt($req, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($req, CURLOPT_POST, true);
         curl_setopt($req, CURLOPT_POSTFIELDS, http_build_query($params));
-
-        // TODO: Additional error handling
-        $respCode = curl_getinfo($req, CURLINFO_HTTP_CODE);
         $res = json_decode(curl_exec($req), true);
         curl_close($req);
 

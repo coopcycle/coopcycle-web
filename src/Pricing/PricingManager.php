@@ -70,8 +70,6 @@ class PricingManager
                 $this->logger->warning('Price could not be calculated');
                 return null;
             }
-
-            $price = (int) $price;
             return new PricingRulesBasedPrice($price, $pricingRuleSet);
         } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
             return $pricingStrategy->getArbitraryPrice();
@@ -82,7 +80,6 @@ class PricingManager
     }
 
     /**
-     * @return OrderInterface|null
      * @throws NoRuleMatchedException
      */
     public function createOrder(Delivery $delivery, array $optionalArgs = []): ?OrderInterface
@@ -311,7 +308,7 @@ class PricingManager
 
     public function createOrderFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true, bool $throwException = false): ?OrderInterface
     {
-        $store = $recurrenceRule->getStore();
+        $recurrenceRule->getStore();
 
         $delivery = $this->deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, $persist);
 

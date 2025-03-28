@@ -61,9 +61,7 @@ trait StoreTrait
 {
     use InjectAuthTrait;
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
         $qb = $this->getDoctrine()
@@ -389,12 +387,7 @@ trait StoreTrait
             ->find($id);
 
         $this->accessControl($store, 'edit_delivery');
-
-        $delivery = null;
-
-        if (null === $delivery) {
-            $delivery = $store->createDelivery();
-        }
+        $delivery = $store->createDelivery();
 
         return $this->render(
             'store/deliveries/beta_new.html.twig',

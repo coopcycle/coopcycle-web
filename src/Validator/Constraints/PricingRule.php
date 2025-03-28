@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class PricingRule extends Constraint
 {
     public $expressionSyntaxErrorMessage = 'pricing_rule.expression.syntax_error';

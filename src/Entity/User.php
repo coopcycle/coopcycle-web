@@ -18,60 +18,52 @@ use Nucleos\UserBundle\Model\User as BaseUser;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
+use Serializable;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
-/**
- * @ApiResource(
- *   shortName="User",
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN') or user == object"
- *     },
- *     "put"={
- *       "method"="PUT",
- *       "access_control"="is_granted('ROLE_ADMIN') or user == object",
- *       "denormalization_context"={"groups"={"user_update"}},
- *     }
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')",
- *       "pagination_enabled"=false
- *     },
- *     "get_stripe_payment_methods"={
- *       "method"="GET",
- *       "path"="/me/stripe-payment-methods",
- *       "controller"=MyStripePaymentMethods::class,
- *       "output"=StripePaymentMethodsOutput::class,
- *       "normalization_context"={"api_sub_level"=true}
- *     }
- *   },
- *   attributes={
- *     "normalization_context"={ "groups"={"user", "order"} }
- *   }
- * )
- * @ApiFilter(UserRoleFilter::class, properties={"roles"})
- * @UniqueEntity("facebookId")
- */
-class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, \Serializable
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'method' => 'GET',
+            'access_control' => "is_granted('ROLE_DISPATCHER')",
+            'pagination_enabled' => false,
+            'pagination_client_enabled' => false,
+        ],
+        'get_stripe_payment_methods' => [
+            'method' => 'GET',
+            'path' => '/me/stripe-payment-methods',
+            'controller' => MyStripePaymentMethods::class,
+            'output' => StripePaymentMethodsOutput::class,
+            'normalization_context' => ['api_sub_level' => true]]
+    ],
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'access_control' => "is_granted('ROLE_ADMIN') or user == object"
+        ],
+        'put' => [
+            'method' => 'PUT',
+            'access_control' => "is_granted('ROLE_ADMIN') or user == object",
+            'denormalization_context' => ['groups' => ['user_update']]]
+    ],
+    shortName: 'User',
+    attributes: [
+        'normalization_context' => ['groups' => ['user', 'order']]
+    ]
+)]
+#[ApiFilter(UserRoleFilter::class, properties: ['roles'])]
+#[UniqueEntity('facebookId')]
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable
 {
     use Timestampable;
 
     protected $id;
 
-    /**
-     * @var string
-     */
     protected ?string $username;
 
-    /**
-     * @var string
-     */
     protected ?string $email;
 
     private $restaurants;

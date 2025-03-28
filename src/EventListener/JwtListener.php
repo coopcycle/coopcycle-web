@@ -7,9 +7,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class JwtListener
 {
-    /**
-     * @param AuthenticationSuccessEvent $event
-     */
     public function onAuthenticationSuccess(AuthenticationSuccessEvent $event)
     {
         $data = $event->getData();

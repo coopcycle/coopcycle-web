@@ -9,9 +9,8 @@ trait FoodEstablishmentTrait
 {
     /**
      * @var mixed The cuisine of the restaurant.
-     *
-     * @ApiProperty(iri="https://schema.org/servesCuisine")
      */
+    #[ApiProperty(iri: 'https://schema.org/servesCuisine')]
     protected $servesCuisine;
 
     public function setServesCuisine($servesCuisine)

@@ -56,7 +56,7 @@ class OAuthRuntime implements RuntimeExtensionInterface
 
         $params = array_merge($params, [
             'redirect_uri' => $this->proxyUri,
-            'state' => (string) $token,
+            'state' => $token,
         ]);
 
         return sprintf('%s://%s%s?%s',

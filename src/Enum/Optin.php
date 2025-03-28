@@ -44,7 +44,6 @@ class Optin extends Enum
                     '%brand_name%' => $settingsManager->get('brand_name')
                 ];
             case Optin::MARKETING:
-                return [];
             default:
                 return [];
         };

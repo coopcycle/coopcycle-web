@@ -31,13 +31,7 @@ class RegisterConfirm
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @Route(
-     *     path="/register/confirm/{token}",
-     *     name="api_register_confirm",
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(path: '/register/confirm/{token}', name: 'api_register_confirm', methods: ['GET'])]
     public function registerConfirmAction($token)
     {
         $user = $this->userManager->findUserByConfirmationToken($token);

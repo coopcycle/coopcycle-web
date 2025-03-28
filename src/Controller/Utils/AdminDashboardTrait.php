@@ -89,7 +89,7 @@ trait AdminDashboardTrait
         IriConverterInterface $iriConverter,
         TagManager $tagManager)
     {
-        $hashids = new Hashids($this->getParameter('secret'), 8);
+        new Hashids($this->getParameter('secret'), 8);
 
         $date = new \DateTime($date);
 
