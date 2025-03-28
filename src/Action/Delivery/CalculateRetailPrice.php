@@ -76,20 +76,20 @@ class CalculateRetailPrice implements TaxableInterface
             function ($item) {
                 $target = '';
 
-                if (isset($item['task'])) {
-                    $target = $item['task']->getType();
+                if (null !== $item->task) {
+                    $target = $item->task->getType();
                 }
 
-                if (isset($item['delivery'])) {
+                if (null !== $item->delivery) {
                     $target = 'ORDER';
                 }
 
                 return [
                     'target' => $target,
-                    'rules' => $item['rules'],
+                    'rules' => $item->ruleResults,
                 ];
             },
-            $priceCalculation->getMatcherOutput()
+            $priceCalculation->getResultsPerEntity()
         );
 
         return new RetailPrice(
