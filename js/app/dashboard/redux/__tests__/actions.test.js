@@ -1,4 +1,4 @@
-import thunk from 'redux-thunk'
+import { thunk } from 'redux-thunk'
 import moment from 'moment'
 import configureMockStore from 'redux-mock-store'
 
