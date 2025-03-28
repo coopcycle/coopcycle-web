@@ -1,0 +1,3 @@
+doctrine:
+  dbal:
+    profiling_collect_backtrace: true

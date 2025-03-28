@@ -17,91 +17,38 @@ framework:
             cubejs.client:
                 base_uri: "http://host.docker.internal:4000/cubejs-api/v1/"
 
-doctrine:
-    dbal:
-        dbname:   "%database_name%_test"
+# services:
 
-web_profiler:
-    toolbar: false
-    intercept_redirects: false
+#     _defaults:
+#         autowire: true
+#         autoconfigure: true
 
-snc_redis:
-    clients:
-        default:
-            type: phpredis
-            alias: default
-            dsn: "%env(COOPCYCLE_REDIS_DSN)%/1"
-            options:
-                prefix: "%database_name%_test:"
+#     Tests\Behat\FeatureContext: ~
 
-oneup_flysystem:
-    adapters:
-        assets:
-            local:
-                location: '/tmp'
-        product_images:
-            local:
-                location: '/tmp'
-        restaurant_images:
-            local:
-                location: '/tmp'
-        store_images:
-            local:
-                location: '/tmp'
-        task_images:
-            local:
-                location: '/tmp'
-        receipts:
-            local:
-                location: '/tmp'
-        task_imports:
-            local:
-                location: '/tmp'
-        product_imports:
-            local:
-                location: '/tmp'
-        delivery_imports:
-            local:
-                location: '/tmp'
+#     Fidry\AliceDataFixtures\LoaderInterface $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
 
-liip_imagine:
-    resolvers:
-        default:
-            web_path:
-                web_root: '/tmp'
+#     AppBundle\EventListener\CarbonListener:
+#         arguments:
+#             - '@snc_redis.default'
+#         tags:
+#             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
 
-services:
+#     AppBundle\Fixtures\AliceDataFixtures\SettingsProcessor:
+#         arguments:
+#           - '@coopcycle.settings_manager'
+#         tags:
+#             - { name: fidry_alice_data_fixtures.processor }
 
-    _defaults:
-        autowire: true
-        autoconfigure: true
+#     urbantz_client_mock:
+#         class: Symfony\Component\HttpClient\MockHttpClient
+#         arguments:
+#             $baseUri: 'https://api.urbantz.com/v2/'
 
-    Tests\Behat\FeatureContext: ~
+#     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
 
-    Fidry\AliceDataFixtures\LoaderInterface $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
-
-    AppBundle\EventListener\CarbonListener:
-        arguments:
-            - '@snc_redis.default'
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-
-    AppBundle\Fixtures\AliceDataFixtures\SettingsProcessor:
-        arguments:
-          - '@coopcycle.settings_manager'
-        tags:
-            - { name: fidry_alice_data_fixtures.processor }
-
-    urbantz_client_mock:
-        class: Symfony\Component\HttpClient\MockHttpClient
-        arguments:
-            $baseUri: 'https://api.urbantz.com/v2/'
-
-    Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
-
-    AppBundle\CubeJs\TokenFactory:
-        arguments:
-          $databaseName: '%database_name%_test'
-          $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
-          $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
-          $appName: '%env(COOPCYCLE_APP_NAME)%'
+#     AppBundle\CubeJs\TokenFactory:
+#         arguments:
+#           $databaseName: '%database_name%_test'
+#           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+#           $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
+#           $appName: '%env(COOPCYCLE_APP_NAME)%'
