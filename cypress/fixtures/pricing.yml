@@ -1,0 +1,10 @@
+include:
+  - admin_user.yml
+  - packages.yml
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    openingHours:
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'

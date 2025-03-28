@@ -1,5 +1,6 @@
 global.changesSaved: Your changes have been saved.
 docs.label: Docs
+visitDocumentation.label: Visit documentation
 navbar.login: Login
 navbar.myAccount: My Account
 base.footer.contactUs: Contact us
@@ -93,7 +94,6 @@ adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how
   the delivery cost is calculated.
-adminDashboard.pricing.addRule: Add rule
 adminDashboard.tags.title: Tags
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name
@@ -518,17 +518,16 @@ form.company.make_the_request.label: Send request
 pricing_rule_set.new: New pricing
 form.pricing_rule_set.name.label: Name
 form.pricing_rule_set.rules.label: Rules
+form.pricing_rule_set.rules.docs_path: /en/admin/pricing_rule/
 form.pricing_rule_set.strategy.label: Method of calculation
-form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom. Depending
-  on the the method of calculation selected, either the first rule that matches will
-  decide the price, or the price will be calculated by adding up all the matching
-  rules.
+form.pricing_rule_set.strategy.docs_path: /en/admin/pricing_method_of_calculation
+form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom, and 'Rules per point' are applied before 'Rules per order'.
+  Depending on the method of calculation selected, either the first rule that matches will decide the price,
+  or the price will be calculated by adding all the matching rules.
 form.pricing_rule_set.strategy.find.label: The first rule that matches
 form.pricing_rule_set.strategy.map.label: All the matching rules
 form.pricing_rule.price.label: Price
 form.pricing_rule_set.options.label: Options
-form.pricing_rule_set.options.map_all_tasks.label: Apply to all the tasks
-form.pricing_rule_set.options.map_all_tasks.help: Use with care! Applies only if the method of calculation is "All the matching rules". When this setting is active, each rule will be evaluated against each task, not on the whole delivery object. So for example "distance" rule has no effect here, because a task considered on its own has no distance set on it.
 form.preparation_time_rule.expression.label: Expression
 form.preparation_time_rule.time.label: Time
 form.preparation_time.defaults_warning: "This restaurant does not have any custom\

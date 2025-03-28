@@ -31,7 +31,6 @@ use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
-use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
@@ -45,8 +44,6 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\ExpressionLanguage\PackagesResolver;
-use AppBundle\Pricing\PriceCalculationVisitor;
-use AppBundle\Pricing\PricingRuleMatcherInterface;
 use AppBundle\Utils\Barcode\Barcode;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use AppBundle\Validator\Constraints\Task as AssertTask;
@@ -56,7 +53,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -329,7 +325,7 @@ use stdClass;
 #[ApiFilter(OrganizationFilter::class, properties: ['organization'])]
 #[UniqueEntity(fields: ['organization', 'ref'], errorPath: 'ref')]
 #[AssertTask]
-class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, PricingRuleMatcherInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -1164,6 +1160,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     public function toExpressionLanguageValues()
     {
+        //FIXME: to be removed?; for now it might still be needed to maintain backwards compatibility
+        // for move information see app/DoctrineMigrations/Version20250304220001.php
         $values = Delivery::toExpressionLanguageValues($this->getDelivery());
 
         $emptyObject = new \stdClass();
@@ -1186,33 +1184,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $values;
     }
 
-    public function matchesPricingRule(PricingRule $pricingRule, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $expression = $pricingRule->getExpression();
-
-        return $language->evaluate($expression, $this->toExpressionLanguageValues());
-    }
     /**
      * @return void
      */
     public function appendToComments($comments)
     {
         $this->comments = implode("\n\n", array_filter([trim($this->getComments()), $comments]));
-    }
-    /**
-     * @return mixed
-     */
-    public function evaluatePrice(PricingRule $pricingRule, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        return $language->evaluate($pricingRule->getPrice(), $this->toExpressionLanguageValues());
     }
 
     #[Groups(['task'])]
@@ -1251,15 +1228,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
 
         return $this;
-    }
-
-    /**
-     * @return void
-     */
-    public function acceptPriceCalculationVisitor(PriceCalculationVisitor $visitor)
-    {
-        $visitor->visitTask($this);
-
     }
 
     public static function fixTimeWindow(Task $task)

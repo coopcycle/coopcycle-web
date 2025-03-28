@@ -1,4 +1,4 @@
-import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange, PricePerPackage, RawPriceExpression } from '../pricing-rule-parser'
+import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange, PricePerPackage, RawPriceExpression } from '../pricing/pricing-rule-parser'
 import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'

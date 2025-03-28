@@ -56,7 +56,6 @@ adminDashboard.pricing.noPricings: Aún no hay tarifas
 adminDashboard.pricing.createNew: Crear nueva tarifa
 adminDashboard.pricing.noRuleFound: No se encuentra ninguna regla de tarificación.
   Éstas definen como se calcula el coste de la entrega.
-adminDashboard.pricing.addRule: Añadir regla
 adminDashboard.pricing.duplicate: Duplicar
 adminDashboard.pricing.copyOf: Copia de %rule_set_name%
 adminDashboard.tags.title: Etiquetas
@@ -1747,8 +1746,6 @@ stores.filters.input.placeholder: 'Buscar por dirección, nombre o #id'
 basics.filter: Filtro
 stores.search.results_for: Resultado de la búsqueda <mark>%query%</mark>
 form.pricing_rule_set.options.label: Elegir
-form.pricing_rule_set.options.map_all_tasks.label: Aplicar a todas las tareas
-form.pricing_rule_set.options.map_all_tasks.help: ¡Úselo con cuidado! Se aplica únicamente si el método de cálculo es "Todas las reglas coincidentes". Esto significa que cada regla se evaluará en relación con cada tarea, no con todo el objeto de entrega. Por ejemplo, la regla de "distancia" no tiene efecto aquí, porque una tarea considerada por sí sola no tiene una distancia definida.
 error.504: El servidor tardó demasiado tiempo en responder.
 error.return_to_homepage: Volver a la página de inicio
 adminDashboard.business_restaurant_groups.title: Agrupaciones de restaurantes
