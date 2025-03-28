@@ -7,6 +7,7 @@ use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
 use AppBundle\Api\Dto\DeliveryInput;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Entity\Delivery\OrderItem;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -19,6 +20,13 @@ final class RetailPrice
      */
     #[ApiProperty(identifier: true)]
     public $id;
+
+    /**
+     * @var int
+     *
+     */
+    #[Groups(['pricing_deliveries'])]
+    public $items;
 
     /**
      * @var int
@@ -37,9 +45,26 @@ final class RetailPrice
      */
     public $taxAmount;
 
-    public function __construct(int $taxIncludedAmount, string $currency, int $taxAmount, bool $taxIncluded = true)
+    private bool $taxIncluded;
+
+    #[Groups(['pricing_deliveries'])]
+    public $calculation;
+
+    /**
+     * @param OrderItem[] $items
+     */
+    public function __construct(
+        array $items,
+        array $calculation,
+        int $taxIncludedAmount,
+        string $currency,
+        int $taxAmount,
+        bool $taxIncluded = true
+    )
     {
         $this->id = Uuid::uuid4()->toString();
+        $this->items = $items;
+        $this->calculation = $calculation;
         $this->amount = $taxIncluded ? $taxIncludedAmount : ($taxIncludedAmount - $taxAmount);
         $this->currency = $currency;
         $this->taxAmount = $taxAmount;

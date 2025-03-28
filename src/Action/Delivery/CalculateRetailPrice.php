@@ -51,13 +51,16 @@ class CalculateRetailPrice implements TaxableInterface
             $store = $this->storeExtractor->extractStore();
         }
 
-        $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
+        $priceCalculation = $this->deliveryManager->getPriceCalculation($data, $store->getPricingRuleSet());
 
-        if (null === $amount) {
+        if (null === $priceCalculation) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
             throw new BadRequestHttpException($message);
         }
 
+        $order = $priceCalculation->getOrder();
+
+        $amount = $order->getItemsTotal();
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
 
         $this->setTaxCategory(
@@ -69,7 +72,32 @@ class CalculateRetailPrice implements TaxableInterface
         $taxRate   = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
+        $calculation = $priceCalculation->getCalculation();
+
+        $calculationOutput = array_map(
+            function ($item) use ($calculation) {
+                $target = '';
+
+                if (null !== $item->task) {
+                    $target = $item->task->getType();
+                }
+
+                if (null !== $item->delivery) {
+                    $target = 'ORDER';
+                }
+
+                return [
+                    'target' => $target,
+                    'strategy' => $calculation->ruleSet->getStrategy(),
+                    'rules' => $item->ruleResults,
+                ];
+            },
+            $calculation->resultsPerEntity
+        );
+
         return new RetailPrice(
+            $order->getItems(),
+            $calculationOutput,
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount,

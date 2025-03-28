@@ -50,7 +50,7 @@ class PricingRule
     #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
     protected string $target = self::TARGET_DELIVERY;
 
-    #[Groups(['original_rules'])]
+    #[Groups(['original_rules', 'pricing_deliveries'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
     protected $expression;
@@ -148,5 +148,30 @@ class PricingRule
         }
 
         return $language->evaluate($this->getExpression(), $values);
+    }
+
+    public function apply(array $values, ExpressionLanguage $language = null): ProductOption
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        $priceExpression = $this->getPrice();
+        $result = $language->evaluate($priceExpression, $values);
+
+        if (str_contains($priceExpression, 'price_percentage')) {
+            return new ProductOption(
+                $this->getExpression(),
+                $priceExpression,
+                0,
+                $result
+            );
+        } else {
+            return new ProductOption(
+                $this->getExpression(),
+                $priceExpression,
+                $result,
+            );
+        }
     }
 }
