@@ -163,7 +163,6 @@
     "redux-actions": "^2.6.5",
     "redux-async-queue": "^1.0.0",
     "redux-mock-store": "^1.5.4",
-    "redux-thunk": "^3.1.0",
     "reselect": "^4.1.7",
     "rrule": "^2.7.1",
     "sass": "^1.56.1",
