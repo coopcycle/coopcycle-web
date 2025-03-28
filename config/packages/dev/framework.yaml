@@ -1,0 +1,8 @@
+framework:
+    profiler: { only_exceptions: false }
+    session:
+        save_path:   "/tmp"
+
+# Uncomment to send emails in dev
+# parameters:
+#     nucleos_profile.registration.confirmation.enabled: true

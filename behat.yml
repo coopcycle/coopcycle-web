@@ -12,9 +12,11 @@ default:
   extensions:
     FriendsOfBehat\SymfonyExtension:
       kernel:
-        class: AppKernel
+        class: AppBundle\Kernel
         environment: test
         debug: true
+      # https://github.com/FriendsOfBehat/SymfonyExtension/issues/126
+      bootstrap: 'tests/bootstrap.php'
     Behat\MinkExtension:
       sessions:
         default:

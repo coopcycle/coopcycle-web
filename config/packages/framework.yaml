@@ -1,0 +1,79 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    #esi:             ~
+    secret:          "%secret%"
+    router:
+        # resource: "%kernel.project_dir%/app/config/routing.yml"
+        strict_requirements: ~
+        utf8: true
+    form:            ~
+    csrf_protection: ~
+    serializer:      { enable_annotations: true }
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    session:
+        # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
+        handler_id: Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler
+        cookie_lifetime: 604800 # 7 days
+        gc_maxlifetime: 604800 # 7 days
+        # Make sure to *NOT* define cookie_samesite, so that it can be changed at runtime
+        # https://github.com/coopcycle/coopcycle-web/issues/3084
+        # https://github.com/symfony/symfony/issues/45200
+        cookie_samesite: ~
+        cookie_secure: 'auto'
+    fragments:       ~
+    http_method_override: true
+    assets: ~
+    workflows:
+        enabled: true
+    http_client:
+        scoped_clients:
+            urbantz.client:
+                base_uri: 'https://api.urbantz.com/v2/'
+                headers:
+                    X-Api-Key: '%env(URBANTZ_API_KEY)%'
+            facebook.client:
+                base_uri: 'https://graph.facebook.com/'
+            browserless.client:
+                base_uri: "%env(COOPCYCLE_BROWSERLESS_HOST)%"
+            mjml.client:
+                base_uri: "%env(COOPCYCLE_MJML_HOST)%/"
+            vroom.client:
+                base_uri: "http://%env(VROOM_HOST)%/"
+            api.client:
+                base_uri: "%router.request_context.scheme%://%router.request_context.host%"
+            osrm.client:
+                base_uri: "http://%osrm_host%"
+                timeout: 5.0
+            cubejs.client:
+                base_uri: "%env(CUBEJS_API_URL)%/"
+            woopit.http_client:
+                base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
+                headers:
+                    X-Api-Version: '%env(WOOPIT_API_VERSION)%'
+            dabba.client:
+                base_uri: "%env(DABBA_BASE_URL)%/"
+            umap.client:
+                base_uri: "https://umap.openstreetmap.fr/"
+            unsplash.client:
+                base_uri: "https://api.unsplash.com/"
+                headers:
+                    Authorization: 'Client-ID %env(UNSPLASH_ACCESS_KEY)%'
+            pixabay.client:
+                base_uri: "https://pixabay.com/api/"
+                query:
+                    key: "%env(PIXABAY_API_KEY)%"
+            edenredsynchronizer.client:
+                base_uri: "%env(EDENRED_SYNCHRONIZER_BASE_URL)%"
+                query:
+                    api_key: "%env(EDENRED_SYNCHRONIZER_API_KEY)%"
+            insee.client:
+                base_uri: "https://api.insee.fr/api-sirene/3.11/"
+                headers:
+                    X-INSEE-Api-Key-Integration: '%env(INSEE_PORTAIL_API_KEY)%'
+
+# when@test:
+#     framework:
+#         test: true
+#         session:
+#             storage_factory_id: session.storage.factory.mock_file

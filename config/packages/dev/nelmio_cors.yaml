@@ -1,0 +1,3 @@
+nelmio_cors:
+    defaults:
+        allow_origin:   ["%cors_allow_origin%", "http://localhost:6006"]

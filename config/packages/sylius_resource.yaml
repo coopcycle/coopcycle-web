@@ -1,0 +1,88 @@
+# @see https://github.com/Sylius/SyliusResourceBundle/blob/master/docs/index.md
+sylius_resource:
+    # Override default settings
+    #settings:
+
+    # Configure the mapping for your resources
+    mapping:
+        paths:
+            - '%kernel.project_dir%/src/Entity'
+
+    # Configure your resources
+    resources:
+        #app.book:
+            #classes:
+                #model: App\Entity\Book
+
+sylius_taxation:
+    resources:
+        tax_category:
+            classes:
+                model: AppBundle\Entity\Sylius\TaxCategory
+        tax_rate:
+            classes:
+                model: AppBundle\Entity\Sylius\TaxRate
+
+sylius_order:
+    resources:
+        order:
+            classes:
+                model: AppBundle\Entity\Sylius\Order
+                repository: AppBundle\Entity\Sylius\OrderRepository
+        order_item:
+            classes:
+                model: AppBundle\Entity\Sylius\OrderItem
+                repository: AppBundle\Entity\Sylius\OrderItemRepository
+
+sylius_product:
+    resources:
+        product:
+            classes:
+                model: AppBundle\Entity\Sylius\Product
+                repository: AppBundle\Entity\Sylius\ProductRepository
+        product_variant:
+            classes:
+                model: AppBundle\Entity\Sylius\ProductVariant
+        product_option:
+            classes:
+                model: AppBundle\Entity\Sylius\ProductOption
+        product_option_value:
+            classes:
+                model: AppBundle\Entity\Sylius\ProductOptionValue
+
+sylius_taxonomy:
+    resources:
+        taxon:
+            classes:
+                model: AppBundle\Entity\Sylius\Taxon
+                repository: AppBundle\Entity\Sylius\TaxonRepository
+
+sylius_customer:
+    resources:
+        customer:
+            classes:
+                model: AppBundle\Entity\Sylius\Customer
+
+sylius_locale:
+    locale: "%locale%"
+
+sylius_currency:
+    driver: doctrine/orm
+
+sylius_promotion:
+    resources:
+        promotion_subject:
+            classes:
+                model: AppBundle\Entity\Sylius\Order
+        promotion_coupon:
+            classes:
+                model: AppBundle\Entity\Sylius\PromotionCoupon
+
+sylius_payment:
+    resources:
+        payment:
+            classes:
+                model: AppBundle\Entity\Sylius\Payment
+        payment_method:
+            classes:
+                repository: Sylius\Bundle\PaymentBundle\Doctrine\ORM\PaymentMethodRepository

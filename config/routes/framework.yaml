@@ -1,0 +1,49 @@
+api_login_check:
+    path: /api/login_check
+
+app:
+    resource: '@AppBundle/Action/'
+    type:     'annotation'
+    prefix:   '/api'
+
+web:
+    resource: '@AppBundle/Controller/'
+    type:     'annotation'
+
+nucleos_profile_profile:
+    resource: "@NucleosProfileBundle/Resources/config/routing/profile.php"
+    prefix: /profile
+
+nucleos_profile_change_registration:
+    resource: "@NucleosProfileBundle/Resources/config/routing/registration.php"
+    prefix: /register
+
+# Override NucleosProfileBundle route
+nucleos_profile_profile_show:
+    path:     /profile/
+    methods:  [ GET, POST ]
+    defaults:
+        _controller: AppBundle\Controller\ProfileController::indexAction
+        layout: 'profile.html.twig'
+
+facebook_login:
+    path: /login/check-facebook
+
+coopcycle_admin:
+    resource: '@AppBundle/Resources/config/routing/admin.yml'
+
+coopcycle_dashboard:
+    resource: '@AppBundle/Resources/config/routing/dashboard.yml'
+
+coopcycle_profile:
+    resource: '@AppBundle/Resources/config/routing/profile.yml'
+
+oauth2:
+    resource: '@LeagueOAuth2ServerBundle/Resources/config/routes.php'
+    type: php
+    prefix: /oauth2
+
+when@dev:
+    _errors:
+        resource: '@FrameworkBundle/Resources/config/routing/errors.xml'
+        prefix:   /_error

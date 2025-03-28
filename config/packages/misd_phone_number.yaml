@@ -1,0 +1,13 @@
+# To persist libphonenumber\PhoneNumber objects, add the Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType mapping to your application's config.
+# This requires: doctrine/doctrine-bundle
+#doctrine:
+#    dbal:
+#        types:
+#            phone_number: Misd\PhoneNumberBundle\Doctrine\DBAL\Types\PhoneNumberType
+
+#misd_phone_number:
+#    twig: false
+#    form: false
+#    serializer: false
+#    validator:
+#        default_region: GB

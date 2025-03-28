@@ -1,0 +1,15 @@
+services:
+    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
+        tags: [{ name: doctrine.event_subscriber, connection: default }]
+
+doctrine:
+    dbal:
+        mapping_types:
+            _text: string
+        types:
+            geometry: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
+    orm:
+        dql:
+            string_functions:
+                ST_AsGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_AsGeoJSON'
+                ST_GeomFromGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON'

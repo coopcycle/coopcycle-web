@@ -1,0 +1,29 @@
+oneup_flysystem:
+    adapters:
+        assets:
+            local:
+                location: '/tmp'
+        product_images:
+            local:
+                location: '/tmp'
+        restaurant_images:
+            local:
+                location: '/tmp'
+        store_images:
+            local:
+                location: '/tmp'
+        task_images:
+            local:
+                location: '/tmp'
+        receipts:
+            local:
+                location: '/tmp'
+        task_imports:
+            local:
+                location: '/tmp'
+        product_imports:
+            local:
+                location: '/tmp'
+        delivery_imports:
+            local:
+                location: '/tmp'

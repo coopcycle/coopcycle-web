@@ -1,0 +1,11 @@
+sonata_seo:
+    encoding: UTF-8
+    page:
+        title: CoopCycle
+        metas:
+            name:
+                robots: index, follow
+            http-equiv:
+                'Content-Type': text/html; charset=utf-8
+            charset:
+                UTF-8: ''

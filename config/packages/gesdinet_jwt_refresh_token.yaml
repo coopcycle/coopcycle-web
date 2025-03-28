@@ -1,0 +1,3 @@
+gesdinet_jwt_refresh_token:
+    ttl_update: true
+    refresh_token_class: AppBundle\Entity\RefreshToken

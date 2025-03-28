@@ -1,0 +1,5 @@
+liip_imagine:
+    resolvers:
+        default:
+            web_path:
+                web_root: '/tmp'
