@@ -864,7 +864,7 @@ restricted_diets.LOW_LACTOSE_DIET: Sans lactose
 restricted_diets.LOW_SALT_DIET: Sans sel
 restricted_diets.VEGAN_DIET: Vegan
 restricted_diets.VEGETARIAN_DIET: Végétarien
-restricted_diets.EGG_FREE_DIET: Sans oeuf
+restricted_diets.EGG_FREE_DIET: Sans œuf
 time_slot.human_readable: '%day% entre %start% et %end%'
 time_range: entre %start% et %end%
 time_range.same_day: "[Aujourd'hui] [%range%]"
