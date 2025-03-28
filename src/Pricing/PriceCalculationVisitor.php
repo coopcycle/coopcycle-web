@@ -13,6 +13,7 @@ use AppBundle\Entity\Task;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 // a simplified version of Sylius OrderProcessor structure
 // migrate to Sylius later on?
@@ -342,7 +343,10 @@ class Result
 
 class RuleResult
 {
+    #[Groups(['pricing_deliveries'])]
     public PricingRule $rule;
+
+    #[Groups(['pricing_deliveries'])]
     public bool $matched;
 
     public function __construct(
