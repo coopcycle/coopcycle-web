@@ -33,7 +33,7 @@
         "ADMIN_DASHBOARD_ADD": "Gehitu",
         "ADMIN_DASHBOARD_DURATION": "Iraupena",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Arrastatu banaketak hona",
-        "ADMIN_DASHBOARD_DISTANCE": "Distantzia",
+        "ADMIN_DASHBOARD_DISTANCE": "Distantzia: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Gehitu planifikaziora",
         "ADMIN_DASHBOARD_DISPLAY": "Erakutsi",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Egin klik eskaera batean xehetasunak erakusteko",
