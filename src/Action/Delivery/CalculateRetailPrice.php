@@ -72,8 +72,10 @@ class CalculateRetailPrice implements TaxableInterface
         $taxRate   = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
-        $calculation = array_map(
-            function ($item) {
+        $calculation = $priceCalculation->getCalculation();
+
+        $calculationOutput = array_map(
+            function ($item) use ($calculation) {
                 $target = '';
 
                 if (null !== $item->task) {
@@ -86,15 +88,16 @@ class CalculateRetailPrice implements TaxableInterface
 
                 return [
                     'target' => $target,
+                    'strategy' => $calculation->ruleSet->getStrategy(),
                     'rules' => $item->ruleResults,
                 ];
             },
-            $priceCalculation->getResultsPerEntity()
+            $calculation->resultsPerEntity
         );
 
         return new RetailPrice(
             $order->getItems(),
-            $calculation,
+            $calculationOutput,
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount,

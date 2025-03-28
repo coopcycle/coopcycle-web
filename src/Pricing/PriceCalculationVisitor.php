@@ -19,10 +19,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 // migrate to Sylius later on?
 class PriceCalculationVisitor
 {
-    /**
-     * @var Result[] $resultsPerEntity
-     */
-    private array $resultsPerEntity = [];
+
+    private ?Calculation $calculation = null;
     /**
      * @var PricingRule[] $matchedRules
      */
@@ -39,8 +37,13 @@ class PriceCalculationVisitor
 
     public function visit(Delivery $delivery): void
     {
-        $this->resultsPerEntity = [];
+        $this->calculation = null;
         $this->matchedRules = [];
+
+        /**
+         * @var Result[] $resultsPerEntity
+         */
+        $resultsPerEntity = [];
 
         /**
          * @var ProductVariant[] $taskProductVariants
@@ -59,7 +62,7 @@ class PriceCalculationVisitor
             $resultPerTask = $this->visitTask($this->ruleSet, $delivery, $task);
             $resultPerTask->setTask($task);
 
-            $this->resultsPerEntity[] = $resultPerTask;
+            $resultsPerEntity[] = $resultPerTask;
 
             $matchedRules = array_filter($resultPerTask->ruleResults, function ($item) {
                 return $item->matched === true;
@@ -73,7 +76,7 @@ class PriceCalculationVisitor
         $resultPerDelivery = $this->visitDelivery($this->ruleSet, $delivery);
         $resultPerDelivery->setDelivery($delivery);
 
-        $this->resultsPerEntity[] = $resultPerDelivery;
+        $resultsPerEntity[] = $resultPerDelivery;
 
         $matchedRulesPerDelivery = array_filter($resultPerDelivery->ruleResults, function ($item) {
             return $item->matched === true;
@@ -82,8 +85,9 @@ class PriceCalculationVisitor
             $deliveryProductVariant = $resultPerDelivery->productVariant;
         }
 
+        $this->calculation = new Calculation($this->ruleSet, $resultsPerEntity);
 
-        foreach ($this->resultsPerEntity as $key => $item) {
+        foreach ($resultsPerEntity as $key => $item) {
             foreach ($item->ruleResults as $position => $ruleResult) {
                 if ($ruleResult->matched === true) {
                     $this->matchedRules[] = $ruleResult->rule;
@@ -114,12 +118,9 @@ class PriceCalculationVisitor
         return $this->order;
     }
 
-    /**
-     * @return Result[]
-     */
-    public function getResultsPerEntity(): array
+    public function getCalculation(): ?Calculation
     {
-        return $this->resultsPerEntity;
+        return $this->calculation;
     }
 
     public function getMatchedRules(): array
@@ -154,8 +155,6 @@ class PriceCalculationVisitor
 
     private function visitTask(PricingRuleSet $ruleSet, Delivery $delivery, Task $task): Result
     {
-        $tasks = $delivery->getTasks();
-
         $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
 
         if ($ruleSet->getStrategy() === 'find') {
@@ -165,6 +164,8 @@ class PriceCalculationVisitor
         }
 
         if ($ruleSet->getStrategy() === 'map') {
+            $tasks = $delivery->getTasks();
+
             return $this->applyMapStrategy($ruleSet, $taskAsExpressionLanguageValues, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
@@ -307,13 +308,33 @@ class PriceCalculationVisitor
     }
 }
 
+class Calculation
+{
+    public readonly PricingRuleSet $ruleSet;
+
+    /**
+     * @var Result[] $resultsPerEntity
+     */
+    public readonly array $resultsPerEntity;
+
+    /**
+     * @param PricingRuleSet $ruleSet
+     * @param Result[] $resultsPerEntity
+     */
+    public function __construct(PricingRuleSet $ruleSet, array $resultsPerEntity)
+    {
+        $this->ruleSet = $ruleSet;
+        $this->resultsPerEntity = $resultsPerEntity;
+    }
+}
+
 class Result
 {
     /**
      * @var RuleResult[]
      */
-    public array $ruleResults;
-    public ?ProductVariant $productVariant;
+    public readonly array $ruleResults;
+    public readonly ?ProductVariant $productVariant;
 
     public ?Delivery $delivery = null;
     public ?Task $task = null;
@@ -344,10 +365,10 @@ class Result
 class RuleResult
 {
     #[Groups(['pricing_deliveries'])]
-    public PricingRule $rule;
+    public readonly PricingRule $rule;
 
     #[Groups(['pricing_deliveries'])]
-    public bool $matched;
+    public readonly bool $matched;
 
     public function __construct(
         PricingRule $rule,

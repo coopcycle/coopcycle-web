@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 function ProductOption({ productOption }) {
   return (
@@ -57,9 +58,44 @@ function Target({ target, rules }) {
   )
 }
 
+function MethodOfCalculation({ calculation }) {
+  const { t } = useTranslation()
+
+  const strategy = useMemo(() => {
+    if (calculation.length === 0) {
+      return null
+    }
+
+    const item = calculation[0]
+
+    switch (item.strategy) {
+      case 'find':
+        return t('PRICING_PRICING_RULE_SET_STRATEGY_FIND_LABEL')
+      case 'map':
+        return t('PRICING_PRICING_RULE_SET_STRATEGY_MAP_LABEL')
+      default:
+        return t('PRICING_PRICING_RULE_SET_STRATEGY_UNKNOWN_LABEL')
+    }
+  }, [calculation, t])
+
+  if (!strategy) {
+    return null
+  }
+
+  return (
+    <li className="list-group-item d-flex flex-column gap-2">
+      <div>
+        <span>{t('PRICING_PRICING_RULE_SET_STRATEGY_LABEL')}:</span>
+        <span className="ml-1 font-weight-semi-bold">{strategy}</span>
+      </div>
+    </li>
+  )
+}
+
 export function PriceCalculation({ calculation, orderItems, itemsTotal }) {
   return (
     <>
+      <MethodOfCalculation calculation={calculation} />
       {calculation.map((item, index) => (
         <Target
           key={index}
