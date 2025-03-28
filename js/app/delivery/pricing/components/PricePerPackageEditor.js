@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { getCurrencySymbol } from '../i18n'
+import { getCurrencySymbol } from '../../../i18n'
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'
 import _ from 'lodash'
@@ -13,7 +13,7 @@ import _ from 'lodash'
  * - remove vertical padding and hide the separator to better match the styling
  *     of other native <select> elements on the page
  */
-const reactSelectStyles = { 
+const reactSelectStyles = {
   container: provided => ({
       ...provided,
       display: 'inline-block',
@@ -26,12 +26,12 @@ const reactSelectStyles = {
   input: provided => ({ ...provided, color: undefined }),
   singleValue: provided => ({ ...provided, color: undefined }),
   indicatorSeparator: () => ({ display: 'none' }),
-  dropdownIndicator: provided => ({ 
-    ...provided, 
-    color: undefined, 
-    padding: 0, 
-    ':hover': { 
-      color: undefined 
+  dropdownIndicator: provided => ({
+    ...provided,
+    color: undefined,
+    padding: 0,
+    ':hover': {
+      color: undefined
     }
   }),
   option: provided => ({ ...provided, wordWrap: 'break-word' })
@@ -48,7 +48,7 @@ export default ({ packages, defaultValue, onChange }) => {
   const [ withDiscount, setWithDiscount ] = useState(defaultValue.offset > 0)
 
   return (
-    <div>
+    <div data-testid="price_rule_price_per_package_editor">
       <div>
         <label className="mr-2">
           <input

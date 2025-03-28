@@ -9,6 +9,10 @@
   {% endif %}
 {% endblock %}
 
+{% block docs %}
+  {% include '_partials/docs.html.twig' with { docsPath: 'adminDashboard.pricing.docs_path' } %}
+{% endblock %}
+
 {% form_theme form 'form/pricing_rule_set.html.twig' %}
 
 {% block breadcrumb %}
@@ -31,7 +35,7 @@
 
     {{ form_row(form.name) }}
     {{ form_row(form.strategy) }}
-    {{ form_row(form.options) }}
+{#    {{ form_row(form.options) }}#}
 
     <hr>
 
@@ -44,6 +48,10 @@
     {% endif %}
 
     {{ form_label(form.rules) }}
+
+    <div class="form-group" id="pricing-rule-set-header">
+      {# rendered by React #}
+    </div>
 
     <ul
         id="rule-set"
@@ -70,10 +78,8 @@
         {% endfor %}
     </ul>
 
-    <div class="form-group text-right">
-      <button type="button" id="add-pricing-rule" class="btn btn-success">
-        <i class="fa fa-plus"></i> {% trans %}adminDashboard.pricing.addRule{% endtrans %}
-      </button>
+    <div class="form-group" id="pricing-rule-set-footer">
+      {# rendered by React #}
     </div>
 
     <button type="submit" class="btn btn-block btn-lg btn-primary">

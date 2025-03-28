@@ -6,8 +6,6 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -38,6 +36,20 @@ class PricingRule
      */
     protected $id;
 
+    const TARGET_DELIVERY = 'DELIVERY';
+    const TARGET_TASK = 'TASK';
+    /**
+     * Backward compatibility with legacy logic
+     * if strategy is 'map' the rule is
+     * applied per delivery/order in standard (one pickup, one dropoff) deliveries
+     * applied per task/point in multi-point deliveries
+     * @deprecated
+     */
+    const LEGACY_TARGET_DYNAMIC = 'LEGACY_TARGET_DYNAMIC';
+
+    #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
+    protected string $target = self::TARGET_DELIVERY;
+
     #[Groups(['original_rules'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
@@ -60,6 +72,16 @@ class PricingRule
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getTarget(): string
+    {
+        return $this->target;
+    }
+
+    public function setTarget(string $target): void
+    {
+        $this->target = $target;
     }
 
     public function getExpression()
@@ -110,21 +132,21 @@ class PricingRule
         return $this;
     }
 
-    public function evaluatePrice(Delivery $delivery, ExpressionLanguage $language = null)
+    public function evaluatePrice(array $values, ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getPrice(), Delivery::toExpressionLanguageValues($delivery));
+        return $language->evaluate($this->getPrice(), $values);
     }
 
-    public function matches(Delivery $delivery, ExpressionLanguage $language = null)
+    public function matches(array $values, ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
-        return $language->evaluate($this->getExpression(), Delivery::toExpressionLanguageValues($delivery));
+        return $language->evaluate($this->getExpression(), $values);
     }
 }

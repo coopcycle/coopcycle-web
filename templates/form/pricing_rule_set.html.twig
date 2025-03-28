@@ -4,6 +4,13 @@
 
   {% set pricing_rule = form.vars.data %}
 
+  <div class="delivery-pricing-ruleset__rule__target">
+    <div class="delivery-pricing-ruleset__rule__target__container">
+      {# rendered by React #}
+    </div>
+    {# hidden form input field #}
+    {{ form_widget(form.target, { attr: { 'data-rule-target': '' } }) }}
+  </div>
   <div class="delivery-pricing-ruleset__rule__main">
     <div class="delivery-pricing-ruleset__rule__handle">
       <i class="fa fa-2x fa-arrows"></i>
@@ -30,9 +37,9 @@
       {% endif %}
       >
       <div class="d-flex align-items-center">
-        {{ form_label(form.price, null, { label_attr: { class: 'w-25' } }) }}
+        {{ form_label(form.price, null, { label_attr: { class: 'delivery-pricing-ruleset__rule__price__label w-25' } }) }}
         <div class="w-75">
-          {{ form_widget(form.price) }}
+          {{ form_widget(form.price, { attr: { class: 'delivery-pricing-ruleset__rule__price__input' } }) }}
         </div>
       </div>
     </div>
