@@ -16,39 +16,3 @@ framework:
         scoped_clients:
             cubejs.client:
                 base_uri: "http://host.docker.internal:4000/cubejs-api/v1/"
-
-# services:
-
-#     _defaults:
-#         autowire: true
-#         autoconfigure: true
-
-#     Tests\Behat\FeatureContext: ~
-
-#     Fidry\AliceDataFixtures\LoaderInterface $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
-
-#     AppBundle\EventListener\CarbonListener:
-#         arguments:
-#             - '@snc_redis.default'
-#         tags:
-#             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
-
-#     AppBundle\Fixtures\AliceDataFixtures\SettingsProcessor:
-#         arguments:
-#           - '@coopcycle.settings_manager'
-#         tags:
-#             - { name: fidry_alice_data_fixtures.processor }
-
-#     urbantz_client_mock:
-#         class: Symfony\Component\HttpClient\MockHttpClient
-#         arguments:
-#             $baseUri: 'https://api.urbantz.com/v2/'
-
-#     Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
-
-#     AppBundle\CubeJs\TokenFactory:
-#         arguments:
-#           $databaseName: '%database_name%_test'
-#           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
-#           $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
-#           $appName: '%env(COOPCYCLE_APP_NAME)%'
