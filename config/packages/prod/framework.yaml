@@ -1,0 +1,33 @@
+framework:
+    php_errors:
+        log: true
+        throw: false
+    assets:
+        json_manifest_path: "%kernel.project_dir%/web/build/manifest.json"
+    # https://symfony.com/doc/current/cache.html#configuring-cache-with-frameworkbundle
+    # https://github.com/symfony/demo/blob/master/config/packages/prod/doctrine.yaml
+    cache:
+        pools:
+            doctrine.result_cache_pool:
+                adapter: cache.app
+            doctrine.system_cache_pool:
+                adapter: cache.system
+#    validation:
+#        cache: validator.mapping.cache.doctrine.apc
+#    serializer:
+#        cache: serializer.mapping.cache.doctrine.apc
+    session:
+        cookie_secure: true
+
+parameters:
+    router.request_context.scheme: 'https'
+    nucleos_profile.registration.confirmation.enabled: true
+
+services:
+    Sentry\Integration\IgnoreErrorsIntegration:
+        arguments:
+            $options:
+                ignore_exceptions:
+                    - Symfony\Component\Security\Core\Exception\AccessDeniedException
+                    - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+                    - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException

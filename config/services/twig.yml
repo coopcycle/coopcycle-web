@@ -1,0 +1,57 @@
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  AppBundle\Twig\:
+    resource: '../../src/Twig/*'
+
+  Twig\Extra\Intl\IntlExtension: '@twig.extension.intl'
+
+  AppBundle\Twig\AppearanceRuntime:
+    arguments:
+      $logoFallback: '%kernel.project_dir%/web/img/logo.png'
+      $assetsFilesystem: '@assets_filesystem'
+
+  AppBundle\Twig\AssetsRuntime:
+    arguments:
+      $assetsFilesystem: '@assets_filesystem'
+
+  AppBundle\Twig\OrderRuntime:
+    arguments:
+      $redis: '@snc_redis.default'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Twig\CacheExtension\KeyGenerator: ~
+
+  Twig\Extra\Cache\CacheRuntime:
+    arguments:
+      $cache: '@twig.cache'
+    tags:
+      - { name: twig.runtime }
+
+  AppBundle\Twig\OAuthRuntime:
+    arguments:
+      $key: '%env(COOPCYCLE_OAUTH2_PROXY_JWT_KEY)%'
+      $proxyUri: '%env(COOPCYCLE_OAUTH2_PROXY_URI)%'
+      $enabled: '%env(bool:COOPCYCLE_OAUTH2_PROXY_ENABLED)%'
+
+  Twig\Extra\Markdown\MarkdownInterface: '@Twig\Extra\Markdown\DefaultMarkdown'
+
+  Twig\Extra\Markdown\DefaultMarkdown: ~
+
+  Twig\Extra\Markdown\MarkdownRuntime:
+    tags:
+      - { name: twig.runtime }
+
+  AppBundle\Twig\SettingResolver:
+    arguments:
+      # We cache the Google API key validation result,
+      # so we use this cache pool, so that it's cleared
+      # after settings are changed
+      $cache: '@craue_config_cache_provider'
+
+  AppBundle\Twig\SyliusVariantResolver:
+    arguments:
+      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'

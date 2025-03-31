@@ -1,0 +1,52 @@
+twig:
+    debug:            "%kernel.debug%"
+    strict_variables: "%kernel.debug%"
+    form_themes:
+        - 'form/address_book.html.twig'
+        - 'form/price_with_tax.html.twig'
+        - 'form/delivery_zone_picker.html.twig'
+        - 'form/delivery.html.twig'
+        - '@VichUploader/Form/fields.html.twig'
+    globals:
+        is_demo: "%is_demo%"
+        instance_name: "%env(COOPCYCLE_APP_NAME)%"
+        sentry_public_dsn: "%sentry_public_dsn%"
+        datadog_client_token: "%env(COOPCYCLE_DATADOG_CLIENT_TOKEN)%"
+        datadog_application_id: "%env(COOPCYCLE_DATADOG_APPLICATION_ID)%"
+        country_iso: "%country_iso%"
+        region_iso: "%region_iso%"
+        cart_provider: '@AppBundle\Service\CartProviderService'
+        settings_manager: "@coopcycle.settings_manager"
+        analytics_disabled: "%kernel.debug%"
+        matomo_hostname: "%env(COOPCYCLE_MATOMO_HOSTNAME)%"
+        matomo_site_id: "%env(COOPCYCLE_MATOMO_SITE_ID)%"
+        matomo_checkout_completed_goal_id: "%env(MATOMO_CHECKOUT_COMPLETED_GOAL_ID)%"
+        countly_script: "%env(COOPCYCLE_COUNTLY_SCRIPT)%"
+        countly_hostname: "%env(COOPCYCLE_COUNTLY_HOSTNAME)%"
+        countly_app_key: "%env(COOPCYCLE_COUNTLY_APP_KEY)%"
+        currency_context: "@sylius.context.currency"
+        tax_incl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+        loopeat_context: '@AppBundle\LoopEat\Context'
+        legacy_taxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+        payment_gateway_resolver: '@AppBundle\Payment\GatewayResolver'
+        business_context: '@AppBundle\Business\Context'
+        loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
+        embed_context: '@AppBundle\Embed\Context'
+        locationiq_access_token: '%env(LOCATIONIQ_ACCESS_TOKEN)%'
+        autocomplete_adapter: '%env(COOPCYCLE_AUTOCOMPLETE_ADAPTER)%'
+        geocode_earth_api_key: '%env(GEOCODE_EARTH_API_KEY)%'
+        restaurant_menu_cache_annotation: '%restaurant_menu_cache_annotation%'
+        restaurant_caption_cache_annotation: '%restaurant_caption_cache_annotation%'
+        edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
+        cubejs_api_url: '%env(CUBEJS_API_URL)%'
+        ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
+        dabba_context: '@AppBundle\Dabba\Context'
+        group_orders_enabled: '%group_orders_enabled%'
+        business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+        odoo_url: '%env(ODOO_URL)%'
+        invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
+        loopeat_processing_fee: '%env(int:LOOPEAT_PROCESSING_FEE)%'
+        loopeat_processing_fee_behavior: '%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%'
+        paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
+
+    exception_controller: null

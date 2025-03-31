@@ -102,7 +102,7 @@ class DeliverySpreadsheetParserTest extends TestCase
         $this->assertContains('my-other-task-tag', $delivery->getPickup()->getTags());
 
 
-        $this->assertEquals($delivery->getDropoff()->getAddress()->getStreetAddress(), 'street address');
+        $this->assertEquals('street address', $delivery->getDropoff()->getAddress()->getStreetAddress());
     }
 
     public function testWithAddressThatThrows()
@@ -113,7 +113,7 @@ class DeliverySpreadsheetParserTest extends TestCase
 
         $error = array_shift($data);
 
-        $this->assertEquals($error[0], 'dropoff.address: Impossible de géocoder l\'adresse THIS ADDRESS WILL THROW');
+        $this->assertEquals('dropoff.address: Impossible de géocoder l\'adresse THIS ADDRESS WILL THROW', $error[0]);
     }
 
     public function testWithAddressThatThrowsAndCreateDeliveryAnyway()
