@@ -364,18 +364,12 @@ class Result
 
 class RuleResult
 {
-    #[Groups(['pricing_deliveries'])]
-    public readonly PricingRule $rule;
-
-    #[Groups(['pricing_deliveries'])]
-    public readonly bool $matched;
-
     public function __construct(
-        PricingRule $rule,
-        bool $matched
+        #[Groups(['pricing_deliveries'])]
+        public readonly PricingRule $rule,
+        #[Groups(['pricing_deliveries'])]
+        public readonly bool $matched
     )
     {
-        $this->rule = $rule;
-        $this->matched = $matched;
     }
 }

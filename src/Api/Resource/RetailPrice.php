@@ -4,6 +4,7 @@ namespace AppBundle\Api\Resource;
 
 use ApiPlatform\Core\Action\NotFoundAction;
 use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
+use AppBundle\Action\Delivery\CalculationItem;
 use AppBundle\Api\Dto\DeliveryInput;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -23,51 +24,30 @@ final class RetailPrice
 
     /**
      * @var int
-     *
-     */
-    #[Groups(['pricing_deliveries'])]
-    public $items;
-
-    /**
-     * @var int
      */
     #[Groups(['pricing_deliveries'])]
     public $amount;
 
-    /**
-     * @var string
-     */
-    #[Groups(['pricing_deliveries'])]
-    public $currency;
-
-    /**
-     * @var int
-     */
-    public $taxAmount;
-
     private bool $taxIncluded;
-
-    #[Groups(['pricing_deliveries'])]
-    public $calculation;
 
     /**
      * @param OrderItem[] $items
+     * @param CalculationItem[] $calculation
      */
     public function __construct(
-        array $items,
-        array $calculation,
+        #[Groups(['pricing_deliveries'])]
+        public readonly array $items,
+        #[Groups(['pricing_deliveries'])]
+        public readonly array $calculation,
         int $taxIncludedAmount,
-        string $currency,
-        int $taxAmount,
+        #[Groups(['pricing_deliveries'])]
+        public readonly string $currency,
+        public readonly int $taxAmount,
         bool $taxIncluded = true
     )
     {
         $this->id = Uuid::uuid4()->toString();
-        $this->items = $items;
-        $this->calculation = $calculation;
         $this->amount = $taxIncluded ? $taxIncludedAmount : ($taxIncludedAmount - $taxAmount);
-        $this->currency = $currency;
-        $this->taxAmount = $taxAmount;
         $this->taxIncluded = $taxIncluded;
     }
 

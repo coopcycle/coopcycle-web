@@ -4,6 +4,7 @@ namespace AppBundle\Action\Delivery;
 
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
+use AppBundle\Pricing\RuleResult;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Security\TokenStoreExtractor;
@@ -15,6 +16,7 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class CalculateRetailPrice implements TaxableInterface
 {
@@ -83,11 +85,11 @@ class CalculateRetailPrice implements TaxableInterface
                     $target = 'ORDER';
                 }
 
-                return [
-                    'target' => $target,
-                    'strategy' => $calculation->ruleSet->getStrategy(),
-                    'rules' => $item->ruleResults,
-                ];
+                return new CalculationItem(
+                    $target,
+                    $calculation->ruleSet->getStrategy(),
+                    $item->ruleResults
+                );
             },
             $calculation->resultsPerEntity
         );
@@ -100,5 +102,21 @@ class CalculateRetailPrice implements TaxableInterface
             $taxAmount,
             'included' === $request->query->get('tax', 'included')
         );
+    }
+}
+
+class CalculationItem {
+    /**
+     * @param RuleResult[] $rules
+     */
+    public function __construct(
+        #[Groups(['pricing_deliveries'])]
+        public readonly string $target,
+        #[Groups(['pricing_deliveries'])]
+        public readonly string $strategy,
+        #[Groups(['pricing_deliveries'])]
+        public readonly array $rules,
+    )
+    {
     }
 }
