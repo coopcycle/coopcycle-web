@@ -132,15 +132,6 @@ class PricingRule
         return $this;
     }
 
-    public function evaluatePrice(array $values, ExpressionLanguage $language = null)
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        return $language->evaluate($this->getPrice(), $values);
-    }
-
     public function matches(array $values, ExpressionLanguage $language = null)
     {
         if (null === $language) {
