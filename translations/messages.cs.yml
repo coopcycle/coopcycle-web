@@ -448,8 +448,8 @@ form.settings.stripe_secret_key.help: "Vytvořte si účet Stripe a získejte <a
   https://stripe.com/docs/dashboard#api-keys\"> veřejný klíč </a>\n"
 form.settings.stripe_connect_client_id.label: identifikátor Stripe Connect
 form.settings.stripe_connect_client_id.help: "Identifikátor získáte na stránce <a\
-  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"> parametry\
-  \ </a>\n"
+  \ href=\"https://dashboard.stripe.com/settings/connect/onboarding-options/oauth\"\
+  > parametry </a>\n"
 form.settings.latlng.label: Zeměpisné souřadnice
 form.settings.latlng.help: "Určete výchozí zeměpisnou šířku a délku. Můžete ji získat\
   \ na <a href=\"https://www.latlong.net/\">latlong.net </a>\n"
@@ -1243,7 +1243,7 @@ restaurant.canOrderForOtherDay: Na tento den si však stále můžete objednat!
 restaurant.closedNowWarning: Tato restaurace je nyní zavřená.
 adminDashboard.tooltip.organizations: Řízení organizace
 subscriptions.title: Odběry
-subscription.generated_order: Tato objednávka byla vytvořena na základě odběru
+subscription.generated_order: Tato objednávka byla vytvořena podle pravidla opakování
 restaurant.form.allow_mercadopago_connect.label: Umožnit restauraci spravovat účet
   Mercadopago samostatně
 restaurant.form.auto_accept_orders_enabled.label: Automaticky přijímat objednávky
@@ -1267,9 +1267,9 @@ adminDashboard.organizations.title: Organizace
 adminDashboard.orders.noOrders: Momentálně žádné objednávky
 admin.deliveries.to_be_confirmed.alert: Máte dodávky, které je třeba potvrdit. Klikněte
   na ikonu "Doručení " v pravém sloupci.
-subscription.title: 'Odběr #%id%'
-subscription.view: Zobrazit odběr
-restaurant.form.auto_accept_orders_enabled.docs_path: /en/admin/restaurants/general-settings/#auto-accept-orders
+subscription.title: 'Pravidlo opakování #%id%'
+subscription.view: Zobrazit pravidlo opakování
+restaurant.form.auto_accept_orders_enabled.docs_path: /cs/food-tech/restaurace/obecna-nastaveni/#auto-prijeti-objednavek
 profile.businessAccount: Podnikatelský účet
 profile.orders: Objednávky
 profile.configuration: Konfigurace
@@ -1381,6 +1381,9 @@ payment_method:
   card: Kreditní karta
   edenred: Edenred
   edenred+card: Edenred
+  conecs: Conecs
+  swile: Swile
+  restoflash: Restoflash
 form.local_business.mercadopago.remove.connection: Odstranit spojení s Mercadopago
 form.task_export.dv4cul.label: Export ve formátu DV4CUL
 restaurant.form.dabba_enabled.label: Povolení systému vracení záloh Dabba
@@ -1390,7 +1393,7 @@ tasks.mark_as_done.has_previous: 'Úkol #%failed_task% nemohl být dokončen, pr
   má předchozí úkol #%previous_task%, který musí být dokončen jako první.'
 import.delivery.price.error.priceCalculation.row: Cenu dodávky se nepodařilo vypočítat
   pro řádek %row_number%
-registration.info.text: Na CoopCycle si můžete objednat jídlo z restaurací ve vašem
+registration.info.text: Na %brandName% si můžete objednat jídlo z restaurací ve vašem
   okolí, které vám doručí místní družstvo. Jsme hrdí na to, že jsme etickou alternativou
   k uberizaci naší společnosti!
 registration.step.invitation.copy.link: Zkopírujte níže uvedený odkaz a pošlete ho
@@ -1463,10 +1466,10 @@ form.settings.paygreen.title: Konfigurace Paygreen
 restaurant.businessAccount.notAvilable: "Tato restaurace není zahrnuta v restauracích\
   \ vaší firemní konfigurace. <br> Dostupné restaurace pro vaši společnost si můžete\
   \ prohlédnout <a href=\"%path%\">kliknutím sem</a>.\n"
-restaurant.form.deposit_refund_enabled.docs_path: /cs/admin/restaurace/obecna-nastaveni/#vraceni-vkladu
-restaurant.form.exclusive.docs_path: /cs/admin/restaurace/obecna-nastaveni/#exkluzivni
-restaurant.form.quotes_allowed.docs_path: /cs/admin/restaurace/obecne-nastaveni/#uvozovky-povoleno
-restaurant.form.featured.docs_path: /cs/admin/restaurace/obecna-nastaveni/#vlastni
+restaurant.form.deposit_refund_enabled.docs_path: /cs/food-tech/restaurace/obecna-nastaveni/#vraceni-vkladu
+restaurant.form.exclusive.docs_path: /cs/food-tech/restaurace/obecna-nastaveni/#exkluzivni
+restaurant.form.quotes_allowed.docs_path: /cs/food-tech/restaurace/obecna-nastaveni/#uvozovky-povoleno
+restaurant.form.featured.docs_path: /cs/food-tech/restaurace/obecna-nastaveni/#vlastni
 order.state.started: Připravuje se
 order.state.ready: Připraveno
 order.net_total_including_tax: Čistá částka (včetně daně)
@@ -1645,7 +1648,7 @@ form.settings.notifications.task.cancelled: Úkol zrušen
 form.settings.notifications.task.rescheduled: Úkol přeložen na jindy
 order.export.heading.payment_method: Způsob platby
 registration.navigation.title: Vytvoření osobního účtu
-registration.info.title: Co je CoopCycle?
+registration.info.title: Co je %brandName%?
 registration.info.business.account.attachment: Budete připojeni k obchodnímu účtu
   %businessAccountName%, ale můžete také zadávat příkazy pod svým jménem.
 registration.alert.text: K vytvoření účtu na %brandName% vás pozval %invitedBy%.
@@ -1673,7 +1676,7 @@ form.business_restaurant_group.restaurant: Restaurace
 form.business_restaurant_group.menu: Jídelní lístek
 form.product.business_restaurant_group.price_definition.placeholder: Vyberte jednu
   z nich
-restaurants.edenred.add_restaurants: Přidat restaurace
+restaurants.edenred.add_restaurants: Přidat Edenred restaurace
 restaurants.edenred.add_list_title: Seznam restaurací k odeslání do Edenred
 restaurants.edenred.added_restaurants: Přidané restaurace
 restaurants.edenred.added_list.name: Název
@@ -1715,3 +1718,61 @@ order.export.heading.applied_billing: Použité účtování
 deliveries.import_upload_error: Soubor se nepodařilo nahrát. Zkuste to prosím později.
 organizations.breadcrumb: Organizace
 organizations.new: Nová organizace
+order.export.heading.incidents: Incidenty
+adminDashboard.pricing.docs_path: /cs/web/admin/dodavky/ceny/
+form.settings.on_demand_delivery_product_name.label: Název produktu
+form.settings.on_demand_delivery_product_name.help: Název, který se objeví v přehledu
+  objednávek a na faktuře
+form.settings.accounting_account.help: Výchozí účetní kód pro evidenci objednávek
+  dodávek na vyžádání v účetním systému.
+form.store_type.pricing_rule_set.warning: Bez stanovení ceny nelze vypočítat a sledovat
+  cenu dodávky pro fakturaci. Rovněž nebude k dispozici příspěvek na základě výše
+  objednávky.
+form.delivery.price.missing: Pro více informací nás kontaktujte
+form.local_business.iso_code.fr.siret.help: Ověření DIČ najdete na <a href="https://ec.europa.eu/taxation_customs/vies/#/vat-validation"
+  target="_blank">Evropském systému VIES</a>
+form.delivery.price.missing.incident: 'Objednávka č. %number%: Cenu dodávky se nepodařilo
+  vypočítat. Zadejte ji prosím ručně a zkontrolujte cenu.'
+form.pricing_rule_set.options.map_all_tasks.help: Používejte opatrně! Platí pouze
+  v případě, že je metoda výpočtu "Všechna odpovídající pravidla". Pokud je toto nastavení
+  aktivní, bude každé pravidlo vyhodnoceno vůči každému úkolu, nikoli vůči celému
+  objektu dodávky. Takže například pravidlo "vzdálenost" zde nemá žádný vliv, protože
+  úloha posuzovaná samostatně nemá nastavenou žádnou vzdálenost.
+stores.recurrence_rules: Pravidla pro opakování
+stores.recurrence_rules.empty_message: Po vytvoření opakující se objednávky se zde
+  zobrazí pravidla opakování
+recurrence_rule.price.missing: Cenu dodávky nebylo možné vypočítat. Zkontrolujte prosím
+  ceny.
+recurrence_rule.legacy: K odstranění tohoto pravidla použijte ovládací panel odesílání
+basics.more: Více
+foodtech.dashboard.title: Řídící panel
+form.task_export.colisactiv_all.label: Export ve formátu ColivActiv včetně všech nedokončených
+  úkolů
+order.items_total_excluding_tax: Produkty celkem (bez DPH)
+order.adjustment_type.incident: Událost
+form.store_type.pricing_rule_set.warning.list: Cena není nakonfigurována
+pricing_rule_set.new: Nové ceny
+recurrence_rules.table.repeat: Opakování
+recurrence_rules.table.generate_orders: Vytváření úkolů/objednávek
+recurrence_rules.table.created_at: Pravidlo vytvořeno
+admin.settings.foodtech: Food Tech
+admin.settings.package_delivery: Doručování balíčků
+basics.editing: Úpravy
+adminDashboard.incidents.docs_path: /cs/admin/Incidenty/
+adminDashboard.invoicing.title: Fakturace [NÁHLED]
+adminDashboard.invoicing.docs_path: /cs/web/admin/dodavky/fakturace/
+adminDashboard.invoicing.help: Připravit faktury
+adminDashboard.invoicing.line_item.order_number: Objednávka č. %number%
+form.settings.accounting_account.label: Účetní kód
+deliveries.imports.see_errored_file: Detaily o chybách
+loopeat.incident.unexpected_returns: Neočekávaný počet vrácení bezodpadových obalů
+form.store.urbantz_hub_id: Urbantz Hub Id
+form.payment.edenred.refund_amount.help: Edenred nepodporuje částečné náhrady.
+restaurant.form.use_paygreen.label: Použijte Paygreen pro tento obchod
+restaurant.meal_vouchers_transactions.emitter: Vydavatel
+form.settings.version: verze
+store.form.storeGLN.label: Store GLN
+form.task.barcode.label: Čárový kód
+store.form.storeGLN.help: Číslo GLN naleznete na <a href="https://www.gs1.org/services/verified-by-gs1"
+  target="_blank">webu GS1</a>
+form.settings.company_gln.label: GLN společnosti
