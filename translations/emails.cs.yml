@@ -79,10 +79,11 @@ order.payment_failed.body: "Ahoj,\n<br>\nJe nám líto, při zpracování vaší
 order.payment_failed.subject: Při zpracování platby došlo k chybě
 order.receipt.body: "Ahoj,\n<br>\nV příloze naleznete potvrzení o vaší objednávce."
 order.receipt.subject: Potvrzení za vaši objednávku %order.number%
-order.loopeat.accepted: "<p>Vybrali jste si variantu bez odpadu, gratulujeme!</p>\n\
-  <p>Při příštím rozvozu jídla nezapomeňte kurýrovi vrátit krabičku (krabičky) na\
-  \ oběd a látkový sáček.</p>\n<p>Díky vám měníme svět, jedno jídlo za druhým.</p>\n\
-  <p>Šířte tuto myšlenku dál, každý čin se počítá!</p>\n<p>Užijte si své jídlo!</p>\n"
+order.loopeat.accepted: "<p>Gratulujeme vám k vaší objednávce s nulovým odpadem u\
+  \ našeho partnera \" %name% \".</p>\n<p>Své opakovaně použitelné krabičky můžete\
+  \ bezplatně vrátit v síti našich partnerů (seznam najdete na svém účtu \" %name%\
+  \ \") nebo požádat svého kurýra, aby to udělal za vás při další objednávce.</p>\n\
+  <p>Nezapomeňte vrátit plátěnou tašku!</p>\n"
 registration.company: Žádost o registraci firmy
 registration.restaurant: Žádost o přidání nové restaurace
 order.adhoc.body: "Dobrý den,\n<br>\nByla pro vás vytvořena nová objednávka.\n<br>\n\
@@ -104,3 +105,8 @@ task.dropoff.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#%id%</strong
   \ doručena na následující adresu:\n<br>\n%address%\n"
 task.dropoff.done.subject: 'Zásilka #%id% byla doručena'
 business_account.send_invitation.cta: Pokračujte v aktivaci
+order.loopeat.accepted.with_fee: "<p>Gratulujeme vám k vaší objednávce s nulovým odpadem\
+  \ u našeho partnera \" %name% \".</p>\n<p>Své opakovaně použitelné krabičky můžete\
+  \ bezplatně vrátit v síti našich partnerů (seznam na vašem účtu \" %name% \") nebo\
+  \ požádat svého kurýra, aby to udělal za vás při další objednávce (poplatek %amount%).</p>\n\
+  <p>Nezapomeňte vrátit totebag!</p>\n"
