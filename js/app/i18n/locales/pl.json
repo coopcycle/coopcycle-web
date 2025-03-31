@@ -154,7 +154,7 @@
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Kliknij na zamówienie i wyświetl szczegóły",
         "ADMIN_DASHBOARD_DISPLAY": "Wyświetl",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Dodaj do planowania",
-        "ADMIN_DASHBOARD_DISTANCE": "Dystans",
+        "ADMIN_DASHBOARD_DISTANCE": "Dystans: {{ distance }} kms",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Przeciągnij dostawy tutaj",
         "ADMIN_DASHBOARD_DURATION": "Czas trwania",
         "ADMIN_DASHBOARD_ADD": "Dodaj",
