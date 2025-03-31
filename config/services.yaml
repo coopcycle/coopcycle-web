@@ -916,18 +916,6 @@ services:
   AppBundle\Transporter\ImportFromPoint: ~
   AppBundle\Transporter\ReportFromCC: ~
 
-  AppBundle\Command\SyncTransportersCommand:
-    public: true
-    arguments:
-      $edifactFs: '@edi_messages_filesystem'
-      $appName: '%env(COOPCYCLE_APP_NAME)%'
-
-
-  AppBundle\Command\StandtrackIUBRangeSetupCommand:
-    public: true
-    arguments:
-      $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
-
   AppBundle\Action\Register:
     public: true
     arguments:
