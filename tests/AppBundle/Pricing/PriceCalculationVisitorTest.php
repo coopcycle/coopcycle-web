@@ -165,7 +165,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(699, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithMapStrategyAndDifferentTargets()
+    public function testMultiPointGetPriceWithMapStrategyAndDifferentTargets()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -212,7 +212,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithMapStrategyAndTaskTarget()
+    public function testMultiPointGetPriceWithMapStrategyAndTaskTarget()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -260,7 +260,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithMapStrategyAndDeliveryTarget()
+    public function testMultiPointGetPriceWithMapStrategyAndDeliveryTarget()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -308,7 +308,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(300, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithZones()
+    public function testMultiPointGetPriceWithZones()
     {
         $pickupAddress = new Address();
         $pickupAddress->setStreetAddress('Pickup 1');
@@ -402,7 +402,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithZones()
+    public function testLegacyMultiPointGetPriceWithZones()
     {
         $pickupAddress = new Address();
         $pickupAddress->setStreetAddress('Pickup 1');
@@ -496,7 +496,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithDiffHoursGreaterThan()
+    public function testMultiPointGetPriceWithDiffHoursGreaterThan()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('diff_hours(pickup, "> 3")');
@@ -542,7 +542,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(400, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithDiffHoursGreaterThan()
+    public function testLegacyMultiPointGetPriceWithDiffHoursGreaterThan()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('diff_hours(pickup, "> 3")');
@@ -588,7 +588,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(400, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithDiffHoursLessThan()
+    public function testMultiPointGetPriceWithDiffHoursLessThan()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -637,7 +637,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(100, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithDiffHoursLessThan()
+    public function testLegacyMultiPointGetPriceWithDiffHoursLessThan()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -760,7 +760,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(100, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithTaskTypeCondition()
+    public function testMultiPointGetPriceWithTaskTypeCondition()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
@@ -804,7 +804,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithTaskTypeCondition()
+    public function testLegacyMultiPointGetPriceWithTaskTypeCondition()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
@@ -1143,7 +1143,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(200, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithPricePerPackage()
+    public function testMultiPointGetPriceWithPricePerPackage()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
@@ -1192,7 +1192,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(400, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithPricePerPackage()
+    public function testLegacyMultiPointGetPriceWithPricePerPackage()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
