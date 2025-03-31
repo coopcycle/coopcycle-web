@@ -110,7 +110,7 @@ class PriceCalculationVisitor
 
     public function getPrice(): ?int
     {
-        return $this->order->getItemsTotal();
+        return $this->order?->getItemsTotal();
     }
 
     public function getOrder(): ?Order
