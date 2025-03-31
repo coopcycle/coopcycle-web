@@ -1,0 +1,9 @@
+nucleos_user:
+    db_driver: orm
+    firewall_name: web
+    user_class: AppBundle\Entity\User
+    service:
+        user_manager: coopcycle.user_manager
+    from_email: "%transactional_sender_name% <%transactional_address%>"
+    loggedin:
+        route: homepage

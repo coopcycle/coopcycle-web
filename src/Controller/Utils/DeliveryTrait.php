@@ -21,7 +21,7 @@ trait DeliveryTrait
      */
     abstract protected function getDeliveryRoutes();
 
-    public function deliveryActionBeta(
+    public function deliveryItemReactFormAction(
         $id,
         Request $request,
         EntityManagerInterface $entityManager,
@@ -44,6 +44,7 @@ trait DeliveryTrait
             'store_route' => $routes['store'],
             'back_route' => $routes['back'],
             'show_left_menu' => true,
+            'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
         ]));
     }
 

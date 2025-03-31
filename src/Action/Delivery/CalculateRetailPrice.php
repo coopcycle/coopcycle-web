@@ -29,10 +29,8 @@ class CalculateRetailPrice implements TaxableInterface
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
-        private readonly TranslatorInterface $translator,
-        private readonly string $state)
-    {
-    }
+        private readonly string $state
+    ) {}
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
     {
@@ -54,7 +52,7 @@ class CalculateRetailPrice implements TaxableInterface
         $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
 
         if (null === $amount) {
-            $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+            $message = 'delivery.price.error.priceCalculation';
             throw new BadRequestHttpException($message);
         }
 

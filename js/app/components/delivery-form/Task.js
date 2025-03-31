@@ -61,7 +61,7 @@ export default ({
 
   const format = 'LL'
 
-  const [showLess, setShowLess] = useState(false)
+  const [showLess, setShowLess] = useState(task.type === 'DROPOFF' && values.tasks.length > 2)
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
   useEffect(() => {
@@ -77,14 +77,6 @@ export default ({
     }
   }, [isTimeSlotSelect, storeDeliveryInfos])
 
-  useEffect(() => {
-    const shouldShowLess =
-      task.type === 'DROPOFF' &&
-      values.tasks.length > 2 &&
-      index !== values.tasks.length - 1
-    setShowLess(shouldShowLess)
-  }, [task.type, values.tasks.length, index])
-
   return (
     <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
       <div
@@ -93,17 +85,21 @@ export default ({
             ? 'task__header task__header--pickup'
             : 'task__header task__header--dropoff'
         }
-        onClick={() => setShowLess(!showLess)}>
+        onClick={() => setShowLess(!showLess)}
+      >
         {task.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
           <i className="fa fa-arrow-down"></i>
         )}
-        <h3 className="task__header__title mb-4">
-          {task.type === 'PICKUP'
-            ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
-            : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
-        </h3>
+        <h4 className="task__header__title ml-2 mb-4">
+          { task.address?.streetAddress ?
+              task.address.streetAddress :
+              task.type === 'PICKUP' ?
+                t('DELIVERY_FORM_PICKUP_INFORMATIONS') :
+                t('DELIVERY_FORM_DROPOFF_INFORMATIONS')
+          }
+        </h4>
 
         <button type="button" className="task__button">
           <i
@@ -114,6 +110,14 @@ export default ({
                 : t('DELIVERY_FORM_SHOW_LESS')
             }></i>
         </button>
+
+        { showRemoveButton && (
+          <i
+            className="fa fa-trash cursor-pointer"
+            onClick={() => onRemove(index)}
+            type="button"
+          />
+        )}
       </div>
 
       <div
@@ -129,7 +133,7 @@ export default ({
 
         {task.type === 'DROPOFF' ? (
           <div className="mt-4">
-            {packages ? (
+            {packages && packages.length ? (
               <Packages
                 storeId={storeId}
                 index={index}

@@ -1,0 +1,15 @@
+# https://github.com/doctrine/DoctrineBundle/releases/tag/2.0.1
+# https://symfony.com/blog/new-in-doctrinebundle-1-11-0
+# https://github.com/symfony/demo/blob/master/config/packages/prod/doctrine.yaml
+doctrine:
+    orm:
+        auto_generate_proxy_classes: false
+        metadata_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        query_cache_driver:
+            type: pool
+            pool: doctrine.system_cache_pool
+        result_cache_driver:
+            type: pool
+            pool: doctrine.result_cache_pool

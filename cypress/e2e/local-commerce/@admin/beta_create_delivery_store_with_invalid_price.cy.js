@@ -61,7 +61,7 @@ context('Delivery (role: admin)', () => {
   
       cy.get('.alert-danger', { timeout: 10000 }).should(
         'contain',
-        "Le prix de la course n'a pas pu être calculé.",
+        "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
       )
   
       cy.get('button[type="submit"]').click()

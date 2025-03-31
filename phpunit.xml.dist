@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- http://phpunit.de/manual/4.1/en/appendixes.configuration.html -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="app/autoload.php">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="false" colors="true" bootstrap="tests/bootstrap.php">
   <coverage>
     <include>
       <directory>src</directory>
@@ -14,7 +14,7 @@
   <php>
     <ini name="error_reporting" value="-1"/>
     <server name="APP_ENV" value="test" force="true"/>
-    <server name="KERNEL_CLASS" value="AppKernel"/>
+    <server name="KERNEL_CLASS" value="AppBundle\Kernel"/>
     <!-- https://symfony.com/blog/new-in-symfony-3-1-deprecation-helper-improvements -->
     <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
   </php>

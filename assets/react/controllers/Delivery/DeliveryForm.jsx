@@ -108,10 +108,7 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function({ storeId, deliveryId, order }) {
-
-  // This variable is used to test the store role and restrictions. We need to have it passed as prop to make it work.
-  const isDispatcher = true
+export default function({ storeId, deliveryId, order, isDispatcher }) {
 
   const httpClient = new window._auth.httpClient()
 
@@ -119,7 +116,7 @@ export default function({ storeId, deliveryId, order }) {
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
-  const [priceError, setPriceError] = useState({ isPriceError: false, priceErrorMessage: ' ' })
+  const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
   const [timeSlotLabels, setTimeSlotLabels] = useState([])
@@ -146,15 +143,24 @@ export default function({ storeId, deliveryId, order }) {
 
       const taskErrors = {}
 
-      /** As the new form is for now only use by admin, they're authorized to create without phone. To be add for store */
+      if (!isDispatcher) {
+        if (!values.tasks[i].address.formattedTelephone) {
+          taskErrors.address = taskErrors.address || {};
+          taskErrors.address.formattedTelephone = t("FORM_REQUIRED")
+        }
 
-      // if (!values.tasks[i].address.formattedTelephone) {
-      //   taskErrors.address = taskErrors.address || {};
-      //   taskErrors.address.formattedTelephone = t("DELIVERY_FORM_ERROR_TELEPHONE")
-      // }
+        if (!values.tasks[i].address.contactName) {
+          taskErrors.address = taskErrors.address || {};
+          taskErrors.address.contactName = t("FORM_REQUIRED")
+        }
+
+        if (!values.tasks[i].address.name) {
+          taskErrors.address = taskErrors.address || {};
+          taskErrors.address.name = t("FORM_REQUIRED")
+        }
+      }
 
       if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
-        taskErrors.address = taskErrors.address || {};
         taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
       }
 
@@ -175,77 +181,86 @@ export default function({ storeId, deliveryId, order }) {
   }
 
   useEffect(() => {
-    const deliveryURL = `${baseURL}/api/deliveries/${deliveryId}?groups=barcode,address,delivery`
-    const addressesURL = `${baseURL}/api/stores/${storeId}/addresses`
-    const storeURL = `${baseURL}/api/stores/${storeId}`
-    const packagesURL = `${baseURL}/api/stores/${storeId}/packages`
-    const tagsURL = `${baseURL}/api/tags`
-    const timeSlotLabelsUrl = `${baseURL}/api/stores/${storeId}/time_slots`
+    const fetchTags = () => new Promise(resolve => {
+      httpClient.get(`/api/tags`).then(result => {
+        setTags(result.response['hydra:member'])
+        resolve()
+      })      
+    })
+
+    const fetchAddresses = () => new Promise(resolve => {
+      httpClient.get(`/api/stores/${storeId}/addresses`).then(result => {
+        setAddresses(result.response['hydra:member'])
+        resolve()
+      })      
+    })
+
+    const fetchTimeSlots = () => new Promise(resolve => {
+      httpClient.get(`/api/stores/${storeId}/time_slots`).then(result => {
+        setTimeSlotLabels(result.response['hydra:member'])
+        resolve()
+      })      
+    })
+
+    const fetchPackages = () => new Promise(resolve => {
+      httpClient.get(`/api/stores/${storeId}/packages`).then(result => {
+        setStorePackages(result.response['hydra:member'])
+        resolve()
+      })
+    })
+
+    const fetchStoreDeliveryInfos = () => new Promise(resolve => {
+      httpClient.get(`/api/stores/${storeId}`).then(result => {
+        setStoreDeliveryInfos(result.response)
+
+        if (!deliveryId) {
+          setInitialValues({
+            tasks: [
+              {...pickupSchema, timeSlotUrl: result.response.timeSlot},
+              {...dropoffSchema, timeSlotUrl: result.response.timeSlot}
+            ],
+          })
+        }
+        resolve()
+      })
+    })
+
+    const fetchDeliveryInfos = () => new Promise(resolve => {
+      if (deliveryId) {
+        httpClient.get(`/api/deliveries/${deliveryId}?groups=barcode,address,delivery`).then(result => {
+          let response = result.response
+
+          //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
+          delete response.dropoff
+          delete response.pickup
+  
+          response.tasks.forEach(task => {
+            const formattedTelephone = getFormattedValue(task.address.telephone)
+            task.address.formattedTelephone = formattedTelephone
+            if (task.tags.length > 0) {
+              const tags = task.tags.map(tag => tag.name)
+              task.tags = tags
+            }
+          })
+          setInitialValues(response)
+          setTrackingLink(response.trackingUrl)
+          resolve()
+        })
+      }
+    })
+
+    const promises = [fetchAddresses(), fetchPackages(), fetchTimeSlots(), fetchStoreDeliveryInfos()]
+
+    if (isDispatcher) {
+      promises.push(fetchTags())
+    }
 
     if (deliveryId) {
-      Promise.all([
-        httpClient.get(deliveryURL),
-        httpClient.get(addressesURL),
-        httpClient.get(storeURL),
-        httpClient.get(packagesURL),
-        httpClient.get(tagsURL),
-        httpClient.get(timeSlotLabelsUrl)
-      ]).then(values => {
-        const [delivery, addresses, storeInfos, packages, tags, timeSlotLabels] = values
-
-        const storePackages = packages.response['hydra:member']
-
-        if (storePackages.length > 0) {
-          setStorePackages(storePackages)
-        }
-
-        //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
-        delete delivery.response.dropoff
-        delete delivery.response.pickup
-
-        delivery.response.tasks.forEach(task => {
-          const formattedTelephone = getFormattedValue(task.address.telephone)
-          task.address.formattedTelephone = formattedTelephone
-        })
-
-        setInitialValues(delivery.response)
-        setTrackingLink(delivery.response.trackingUrl)
-        setAddresses(addresses.response['hydra:member'])
-        setStoreDeliveryInfos(storeInfos.response)
-        setTags(tags.response['hydra:member'])
-        setTimeSlotLabels(timeSlotLabels.response['hydra:member'])
-        setIsLoading(false)
-      })
-    } else {
-      Promise.all([
-        httpClient.get(addressesURL),
-        httpClient.get(storeURL),
-        httpClient.get(packagesURL),
-        httpClient.get(tagsURL),
-        httpClient.get(timeSlotLabelsUrl)
-      ]).then(values => {
-        const [addresses, storeInfos, packages, tags, timeSlotLabels] = values
-
-        const storePackages = packages.response['hydra:member']
-        if (storePackages.length > 0) {
-          setStorePackages(storePackages)
-        }
-
-        setInitialValues({
-          tasks: [
-            {...pickupSchema, timeSlotUrl: storeInfos.response.timeSlot},
-            {...dropoffSchema, timeSlotUrl: storeInfos.response.timeSlot}
-          ],
-        })
-        setAddresses(addresses.response['hydra:member'])
-        setStoreDeliveryInfos(storeInfos.response)
-        setTags(tags.response['hydra:member'])
-        setTimeSlotLabels(timeSlotLabels.response['hydra:member'])
-        setIsLoading(false)
-      })
+      promises.push(fetchDeliveryInfos())
     }
-  }, [])
 
+    Promise.all(promises).then(() => setIsLoading(false))
+  }, [])
 
   const handleSubmit = useCallback(async (values) => {
     const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
@@ -263,7 +278,7 @@ export default function({ storeId, deliveryId, order }) {
     const createOrEditADelivery = async (deliveryId) => {
       const url = getUrl(deliveryId);
       const method = deliveryId ? 'put' : 'post';
-
+      deliveryId && !isDispatcher
       let data = {
         store: storeDeliveryInfos['@id'],
         tasks: values.tasks
@@ -308,10 +323,11 @@ export default function({ storeId, deliveryId, order }) {
       }
 
       // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
-      window.location = "/admin/deliveries";
+      window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
     }
   }, [storeDeliveryInfos])
 
+  const isStoreOwnerAndEdit = deliveryId && !isDispatcher
 
   const getPrice = _.debounce(
     (values) => {
@@ -337,13 +353,14 @@ export default function({ storeId, deliveryId, order }) {
         const { response, error } = await httpClient.post(url, infos)
 
         if (error) {
-          setPriceError({ isPriceError: true, priceErrorMessage: error.response.data['hydra:description'] })
+          setPriceErrorMessage(error.response.data['hydra:description'])
           setCalculatePrice(0)
         }
 
         if (response) {
           setCalculatePrice(response)
-          setPriceError({ isPriceError: false, priceErrorMessage: ' ' })
+          setPriceErrorMessage('')
+
         }
 
         setPriceLoading(false)
@@ -494,7 +511,7 @@ export default function({ storeId, deliveryId, order }) {
                               );
                             })}
 
-                          {storeDeliveryInfos.multiDropEnabled ? <div
+                          {storeDeliveryInfos.multiDropEnabled && !(isStoreOwnerAndEdit) ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
@@ -546,7 +563,7 @@ export default function({ storeId, deliveryId, order }) {
                         deliveryPrice={deliveryPrice}
                         calculatedPrice={calculatedPrice}
                         setCalculatePrice={setCalculatePrice}
-                        priceError={priceError}
+                        priceErrorMessage={priceErrorMessage}
                         setOverridePrice={setOverridePrice}
                         overridePrice={overridePrice}
                         priceLoading={priceLoading}
