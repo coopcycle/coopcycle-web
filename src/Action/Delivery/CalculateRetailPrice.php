@@ -15,7 +15,6 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalculateRetailPrice implements TaxableInterface
 {
@@ -29,10 +28,8 @@ class CalculateRetailPrice implements TaxableInterface
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
-        private readonly TranslatorInterface $translator,
-        private readonly string $state)
-    {
-    }
+        private readonly string $state
+    ) {}
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
     {
@@ -54,7 +51,7 @@ class CalculateRetailPrice implements TaxableInterface
         $priceCalculation = $this->deliveryManager->getPriceCalculation($data, $store->getPricingRuleSet());
 
         if (null === $priceCalculation) {
-            $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+            $message = 'delivery.price.error.priceCalculation';
             throw new BadRequestHttpException($message);
         }
 

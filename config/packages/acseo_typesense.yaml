@@ -1,0 +1,87 @@
+acseo_typesense:
+    typesense:
+        url: 'http://%env(TYPESENSE_HOST)%:%env(TYPESENSE_PORT)%'
+        key: '%env(TYPESENSE_API_KEY)%'
+        collection_prefix: '%database_name%_'
+    collections:
+        products:
+            entity: 'AppBundle\Entity\Sylius\Product'
+            collection_name: '%typesense_products_collection_name%'
+            fields:
+                id:
+                    name: id
+                    type: primary
+                sortable_id:
+                    entity_attribute: id
+                    name: sortable_id
+                    type: int32
+                name:
+                    name: name
+                    type: string
+                shop_id:
+                    name: shop_id
+                    type: int32
+                    entity_attribute: restaurant.id
+                    optional: true
+                shop_name:
+                    name: shop_name
+                    type: string
+                    entity_attribute: restaurant.name
+                    optional: true
+                shop_enabled:
+                    name: shop_enabled
+                    type: bool
+                    entity_attribute: restaurant.enabled
+                    optional: true
+                image_url:
+                    name: image_url
+                    type: string
+                    entity_attribute: 'AppBundle\Typesense\Converter\ProductConverter::getImageURL'
+                    optional: true
+            default_sorting_field: sortable_id
+            finders:
+                products_autocomplete:
+                    finder_parameters:
+                        query_by: title
+                        limit: 10
+                        prefix: true
+                        num_typos: 1
+                        drop_tokens_threshold: 1
+        shops:
+            entity: 'AppBundle\Entity\LocalBusiness'
+            collection_name: '%typesense_shops_collection_name%'
+            fields:
+                id:
+                    name: id
+                    type: primary
+                sortable_id:
+                    entity_attribute: id
+                    name: sortable_id
+                    type: int32
+                name:
+                    name: name
+                    type: string
+                type:
+                    name: type
+                    type: string
+                    facet: true
+                    entity_attribute: shopType
+                cuisine:
+                    name: cuisine
+                    type: string[]
+                    facet: true
+                    entity_attribute: shopCuisines
+                category:
+                    name: category
+                    type: string[]
+                    facet: true
+                    entity_attribute: shopCategories
+                enabled:
+                    name: enabled
+                    type: bool
+                image_url:
+                    name: image_url
+                    type: string
+                    entity_attribute: 'AppBundle\Typesense\Converter\ShopConverter::getImageURL'
+                    optional: true
+            default_sorting_field: sortable_id

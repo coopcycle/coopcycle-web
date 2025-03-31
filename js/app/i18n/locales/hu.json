@@ -27,7 +27,7 @@
         "ADMIN_DASHBOARD_ADD": "Hozzáad",
         "ADMIN_DASHBOARD_DURATION": "Időtartam",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Húzza ide a szállításokat",
-        "ADMIN_DASHBOARD_DISTANCE": "Távolság",
+        "ADMIN_DASHBOARD_DISTANCE": "Távolság: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Adj hozzá egy felhasználót a tervezéshez",
         "ADMIN_DASHBOARD_DISPLAY": "Megjelenítés",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Kattints a rendelésre a részletek megjelenítéséhez",

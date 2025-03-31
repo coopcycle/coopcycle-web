@@ -1,0 +1,112 @@
+oneup_flysystem:
+    adapters:
+        assets:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: assets
+        product_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: products
+        restaurant_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: restaurants
+        store_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: stores
+        task_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: tasks
+        receipts:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: receipts
+        task_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: task_imports
+        product_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: product_imports
+        delivery_imports:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: delivery_imports
+        nonprofits_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: nonprofits
+        edi_messages:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: edi_messages
+        incident_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: incidents
+
+    filesystems:
+        assets:
+            adapter: assets
+            alias: assets_filesystem
+            mount: assets
+        product_images:
+            adapter: product_images
+            alias: product_images_filesystem
+            mount: product_images
+        restaurant_images:
+            adapter: restaurant_images
+            alias: restaurant_images_filesystem
+            mount: restaurant_images
+        store_images:
+            adapter: store_images
+            alias: store_images_filesystem
+            mount: store_images
+        task_images:
+            adapter: task_images
+            alias: task_images_filesystem
+            mount: task_images
+        receipts:
+            adapter: receipts
+            alias: receipts_filesystem
+            mount: receipts
+        task_imports:
+            adapter: task_imports
+            alias: task_imports_filesystem
+            mount: task_imports
+        product_imports:
+            adapter: product_imports
+            alias: product_imports_filesystem
+            mount: product_imports
+        delivery_imports:
+            adapter: delivery_imports
+            alias: delivery_imports_filesystem
+            mount: delivery_imports
+        nonprofits_images:
+            adapter: nonprofits_images
+            alias: nonprofits_images_filesystem
+            mount: nonprofits_images
+        edi_messages:
+            adapter: edi_messages
+            alias: edi_messages_filesystem
+            mount: edi_messages
+        incident_images:
+            adapter: incident_images
+            alias: incident_images_filesystem
+            mount: incident_images

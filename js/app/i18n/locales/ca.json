@@ -31,7 +31,7 @@
         "ADMIN_DASHBOARD_ADD": "Afegir",
         "ADMIN_DASHBOARD_DURATION": "Durada",
         "ADMIN_DASHBOARD_DROP_DELIVERIES": "Arrossega aquí les entregues",
-        "ADMIN_DASHBOARD_DISTANCE": "Distància",
+        "ADMIN_DASHBOARD_DISTANCE": "Distància: {{ distance }} kms",
         "ADMIN_DASHBOARD_ADDUSER_TO_PLANNING": "Afegir a la planificació",
         "ADMIN_DASHBOARD_DISPLAY": "Mostrar",
         "ADMIN_DASHBOARD_CLICK_FOR_DETAILS": "Clica sobre una comanda perquè es mostrin els detalls",

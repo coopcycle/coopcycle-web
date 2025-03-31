@@ -3,6 +3,7 @@
 namespace AppBundle\Security;
 
 use AppBundle\Entity\Address;
+use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
@@ -41,7 +42,12 @@ class AddressVoter extends Voter
             return true;
         }
 
-        // TODO : handle give access to a store owner to edit their addresses
+        /** @var User */
+        $user = $token->getUser();
+
+        if ($this->authorizationChecker->isGranted('ROLE_STORE') && $user->ownsAddress($subject)) {
+            return true;
+        }
 
         return false;
     }

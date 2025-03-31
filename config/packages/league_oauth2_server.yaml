@@ -1,0 +1,23 @@
+league_oauth2_server:
+    authorization_server:
+        private_key: "%jwt_private_key_path%"
+        private_key_passphrase: "%env(COOPCYCLE_PRIVATE_KEY_PASSPHRASE)%"
+        encryption_key: "%env(COOPCYCLE_OAUTH_ENCRYPTION_KEY)%"
+        access_token_ttl: PT1H
+        refresh_token_ttl: P1M
+        enable_client_credentials_grant: true
+        enable_password_grant: false
+        enable_refresh_token_grant: false
+        enable_auth_code_grant: false
+    resource_server:
+        public_key: "%jwt_public_key_path%"
+    scopes:
+        available:
+            - tasks
+            - deliveries
+            - orders
+        default:
+            - deliveries
+    persistence:
+        doctrine:
+            entity_manager: default
