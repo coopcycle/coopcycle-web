@@ -10,6 +10,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
@@ -43,6 +44,9 @@ class PriceCalculationVisitorTest extends KernelTestCase
         );
         $this->expressionLanguage->registerProvider(
             new PriceRangeExpressionLanguageProvider()
+        );
+        $this->expressionLanguage->registerProvider(
+            new PricePercentageExpressionLanguageProvider()
         );
     }
 
@@ -165,7 +169,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(699, $visitor->getPrice());
     }
 
-    public function testMultiPointGetPriceWithMapStrategyAndDifferentTargets()
+    public function testMultiPointGetPriceWithMapStrategyAndMixedTargets()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -1339,5 +1343,199 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         $visitor->visit($delivery);
         $this->assertEquals(6000, $visitor->getPrice());
+    }
+
+    public function testGetPriceWithMapStrategyAndPricePercentageSurcharge()
+    {
+        // default: Target "DELIVERY"
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0'); // a hack to match any order/delivery
+        // base price: 5 EUR
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('diff_days(pickup, "< 3")');
+        // short notice: 15% surcharge
+        $rule2->setPrice('price_percentage(11500)');
+        $rule2->setPosition(1);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(575, $visitor->getPrice());
+    }
+
+    public function testGetPriceWithMapStrategyAndPricePercentageDiscount()
+    {
+        // default: Target "DELIVERY"
+
+        Carbon::setTestNow(Carbon::parse('2024-06-12 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0'); // a hack to match any order/delivery
+        // base price: 5 EUR
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('diff_days(pickup, "> 3")');
+        // advance notice: 15% discount
+        $rule2->setPrice('price_percentage(8500)');
+        $rule2->setPosition(1);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(425, $visitor->getPrice());
+    }
+
+    /**
+     * Tests that the price percentage is applied separately on each task
+     */
+    public function testGetPriceWithMapStrategyAndPricePercentageOnEachTask()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('task.type == "DROPOFF"'); // a hack to match any dropoff task
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setTarget(PricingRule::TARGET_TASK);
+        $rule2->setExpression('weight > 5000 and weight < 10000');
+        // weight > 5kg: 15% surcharge
+        $rule2->setPrice('price_percentage(11500)');
+        $rule2->setPosition(1);
+
+        $rule3 = new PricingRule();
+        $rule3->setTarget(PricingRule::TARGET_TASK);
+        $rule3->setExpression('weight > 10000');
+        // weight > 10kg: 50% surcharge
+        $rule3->setPrice('price_percentage(15000)');
+        $rule3->setPosition(2);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+            $rule3,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setWeight(6000);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setWeight(12500);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(1325, $visitor->getPrice());
+    }
+
+    /**
+     * Tests that the price percentage is applied on the entire order (sum of all tasks and all previous delivery-based rules)
+     */
+    public function testGetPriceWithMapStrategyAndPricePercentageOnEntireOrder()
+    {
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        // price per dropoff point
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('task.type == "DROPOFF"'); // a hack to match any dropoff task
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        // base price per order
+        $rule2 = new PricingRule();
+        $rule2->setExpression('distance > 0'); // a hack to match any order/delivery
+        // base price: 3 EUR
+        $rule2->setPrice('300');
+        $rule2->setPosition(1);
+
+        $rule3 = new PricingRule();
+        $rule3->setExpression('diff_days(pickup, "< 3")');
+        // short notice: 15% surcharge
+        $rule3->setPrice('price_percentage(11500)');
+        $rule3->setPosition(2);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+            $rule3,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(1495, $visitor->getPrice());
     }
 }
