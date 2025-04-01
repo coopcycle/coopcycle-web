@@ -5,7 +5,7 @@ base.footer.contactUs: Kontaktujte nás
 base.footer.help: Nápověda
 base.footer.legal: Zákonné oznámení
 base.footer.suggest: Navrhnout firmu
-adminDashboard.title: Dispatch
+adminDashboard.title: Odeslání
 adminDashboard.configuration: Konfigurace
 adminDashboard.tooltip.orders: Správa objednávek restaurací
 adminDashboard.tooltip.deliveries: Spravovat dodávky
@@ -1776,3 +1776,5 @@ form.task.barcode.label: Čárový kód
 store.form.storeGLN.help: Číslo GLN naleznete na <a href="https://www.gs1.org/services/verified-by-gs1"
   target="_blank">webu GS1</a>
 form.settings.company_gln.label: GLN společnosti
+order.export.heading.incident_adjustments: Úpravy incidentu
+deliveries.imports.see_file: Viz soubor
