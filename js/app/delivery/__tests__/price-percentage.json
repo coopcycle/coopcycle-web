@@ -1,0 +1,20 @@
+{
+  "nodes": {
+    "nodes": {
+      "arguments": {
+        "nodes": [
+          {
+            "nodes": [],
+            "attributes": {
+              "value": 8500
+            }
+          }
+        ],
+        "attributes": []
+      }
+    },
+    "attributes": {
+      "name": "price_percentage"
+    }
+  }
+}
