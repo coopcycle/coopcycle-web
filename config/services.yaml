@@ -211,6 +211,9 @@ services:
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
   Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
   Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
+  Sylius\Component\Resource\Factory\FactoryInterface $orderItemFactory: '@sylius.factory.order_item'
+  Sylius\Component\Resource\Repository\RepositoryInterface $customerRepository: '@sylius.repository.customer'
+  Sylius\Component\Resource\Factory\FactoryInterface $customerFactory: '@sylius.factory.customer'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
