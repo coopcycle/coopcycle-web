@@ -12,6 +12,11 @@ if (!is_file(dirname(__DIR__).'/vendor/autoload_runtime.php')) {
     throw new LogicException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
 }
 
+// https://symfony.com/doc/5.x/components/runtime.html#using-options
+$_SERVER['APP_RUNTIME_OPTIONS'] = [
+    'project_dir' => dirname($_SERVER['SCRIPT_FILENAME'], 2)
+];
+
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
 return function (array $context) {
