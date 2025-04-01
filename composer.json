@@ -196,8 +196,7 @@
         "phpstan/phpstan-doctrine": "^1.0",
         "aeon-php/calendar": "1.0.6",
         "league/flysystem-memory": "^3.0",
-        "rector/rector": "^1.2",
-        "doctrine/doctrine-fixtures-bundle": "*"
+        "rector/rector": "^1.2"
     },
     "repositories": [
         {
