@@ -5,21 +5,15 @@ namespace AppBundle\Action\Incident;
 use AppBundle\Action\Base;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class CreateComment extends Base
 {
-
-    private ObjectManager $entityManager;
-
-    public function __construct(ManagerRegistry $doctrine)
-    {
-        $this->entityManager = $doctrine->getManager();
-
-    }
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
 
     public function __invoke(Incident $data, UserInterface $user, Request $request): Incident
     {

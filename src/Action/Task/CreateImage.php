@@ -7,8 +7,7 @@ use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Form\TaskImageType;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -18,16 +17,12 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class CreateImage
 {
-
-    private ObjectManager $entityManager;
     public function __construct(
-        ManagerRegistry $doctrine,
+        private EntityManagerInterface $entityManager,
         protected FormFactoryInterface $formFactory,
         protected IriConverterInterface $iriConverter,
         protected ValidatorInterface $validator)
-    {
-        $this->entityManager = $doctrine->getManager();
-    }
+    {}
 
     public function __invoke(Request $request)
     {

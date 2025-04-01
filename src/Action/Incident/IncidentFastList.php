@@ -4,19 +4,13 @@ namespace AppBundle\Action\Incident;
 
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentRepository;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class IncidentFastList
 {
-
-    private ObjectManager $entityManager;
-
-    public function __construct(ManagerRegistry $doctrine)
-    {
-        $this->entityManager = $doctrine->getManager();
-    }
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
 
     public function __invoke($data, Request $request): array
     {
