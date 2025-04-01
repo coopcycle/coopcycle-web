@@ -19,7 +19,7 @@ class ProductOption
         private readonly string $matchedRule,
         private readonly string $priceRule,
         private readonly int $priceAdditive, // in cents
-        private readonly int $priceMultiplier = 10000 // 0.01% - 1; 100% - 10000
+        private readonly int $priceMultiplier = 10000 // 1 => 0.01%; 10000 => 100%
     )
     {
     }
