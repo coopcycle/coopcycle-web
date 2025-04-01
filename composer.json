@@ -245,6 +245,9 @@
             "allow-contrib": true,
             "require": "5.4.*"
         },
+        "runtime": {
+            "autoload_template": "src/Resources/autoload_runtime.template"
+        },
         "drupal-core-vendor-hardening": {
             "api-platform/core": ["features", "tests"],
             "aws/aws-sdk-php": [".changes"],
