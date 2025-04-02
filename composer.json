@@ -185,18 +185,18 @@
         "behat/behat": "^3.7",
         "behatch/contexts": "dev-php80 as 3.3.0",
         "coduo/php-matcher": "^6.0",
-        "phpstan/phpstan": "^1.0",
-        "phpstan/phpstan-symfony": "^1.0",
+        "phpstan/phpstan": "^2.0",
+        "phpstan/phpstan-symfony": "^2.0",
         "phpspec/prophecy-phpunit": "^2.0",
-        "phpstan/phpstan-webmozart-assert": "^1.0",
+        "phpstan/phpstan-webmozart-assert": "^2.0",
         "friends-of-behat/symfony-extension": "^2.0",
         "friends-of-behat/mink": "^1.8",
         "friends-of-behat/mink-extension": "^2.5",
         "friends-of-behat/mink-browserkit-driver": "^1.4",
-        "phpstan/phpstan-doctrine": "^1.0",
+        "phpstan/phpstan-doctrine": "^2.0",
         "aeon-php/calendar": "1.0.6",
         "league/flysystem-memory": "^3.0",
-        "rector/rector": "^1.2"
+        "rector/rector": "^2.0"
     },
     "repositories": [
         {
