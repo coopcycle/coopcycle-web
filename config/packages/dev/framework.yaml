@@ -1,5 +1,4 @@
 framework:
-    profiler: { only_exceptions: false }
     session:
         save_path:   "/tmp"
 
