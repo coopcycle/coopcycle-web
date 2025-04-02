@@ -41,7 +41,7 @@ class TimeSlotManager
     }
 
     /**
-     * @return DeliveryForm[]]
+     * @return DeliveryForm[]
      */
     public function getDeliveryForms(TimeSlot $timeSlot) {
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['timeSlot' => $timeSlot]);

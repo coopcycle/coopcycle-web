@@ -57,7 +57,7 @@ class PricingRuleSetManager
     }
 
     /**
-     * @return DeliveryForm[]]
+     * @return DeliveryForm[]
      */
     public function getDeliveryForms(PricingRuleSet $pricingRuleSet) {
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
