@@ -131,6 +131,7 @@ class RulePicker extends React.Component {
             <RulePickerLine
               key={ `${index}-${this.state.rev}` }
               index={ index }
+              testID={`condition-${index}`}
               ruleTarget={ this.props.ruleTarget }
               type={ line.left }
               operator={ line.operator }

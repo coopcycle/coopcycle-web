@@ -701,7 +701,7 @@ class RestaurantStats implements \Countable
             case 'incidents':
                 return implode('\n', $order->getIncidents());
             case 'billing_method':
-                return $order->billingMethod ?? 'unit';
+                return $order->billingMethod === 'percentage' ? 'percentage' : 'unit';
             case 'applied_billing':
                 return $order->hasVendor() ? Order::STORE_TYPE_FOODTECH : Order::STORE_TYPE_LASTMILE;
         }
