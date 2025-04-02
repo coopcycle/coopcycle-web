@@ -89,6 +89,7 @@ class CheckoutCustomerType extends AbstractType
                 $email = $form->get('email')->getData();
                 $emailCanonical = $this->canonicalizer->canonicalize($email);
 
+                /** @var \AppBundle\Sylius\Customer\CustomerInterface|null $customer */
                 $customer = $this->customerRepository
                     ->findOneBy([
                         'emailCanonical' => $emailCanonical,

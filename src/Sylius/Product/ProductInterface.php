@@ -23,4 +23,6 @@ interface ProductInterface extends BaseProductInterface
     public function hasReusablePackagings(): bool;
 
     public function getReusablePackagings(): Collection;
+
+    public function hasNonAdditionalOptions();
 }

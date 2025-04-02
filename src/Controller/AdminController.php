@@ -1878,6 +1878,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        /** @var \Sylius\Component\Promotion\Model\PromotionInterface $promotion */
         $promotion = $promotionRepository->find($id);
 
         $promotionCoupon = $promotionCouponFactory->createForPromotion($promotion);

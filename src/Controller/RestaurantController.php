@@ -588,7 +588,8 @@ class RestaurantController extends AbstractController
         $this->getDoctrine()
             ->getRepository(LocalBusiness::class)->find($id);
 
-        $product = $this->productRepository->findOneByCode($code);
+        /** @var \AppBundle\Sylius\Product\ProductInterface $product */
+        $product = $this->productRepository->findOneBy(['code' => $code ]);
 
         $cart = $cartContext->getCart();
 
