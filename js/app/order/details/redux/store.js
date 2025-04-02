@@ -7,6 +7,7 @@ import {
   setOrderEvents,
 } from '../../../entities/order/reduxSlice'
 import { apiSlice } from '../../../api/slice'
+import { setupListeners } from '@reduxjs/toolkit/query'
 
 const listenerMiddleware = createListenerMiddleware()
 listenerMiddleware.startListening({
@@ -25,7 +26,7 @@ listenerMiddleware.startListening({
 })
 
 export function createStoreFromPreloadedState(preloadedState) {
-  return configureStore({
+  const store = configureStore({
     reducer: {
       [accountSlice.name]: accountSlice.reducer,
       [guestSlice.name]: guestSlice.reducer,
@@ -38,4 +39,9 @@ export function createStoreFromPreloadedState(preloadedState) {
         .concat(apiSlice.middleware)
         .prepend(listenerMiddleware.middleware),
   })
+
+  // Enable refetchOnFocus and refetchOnReconnect behaviors
+  setupListeners(store.dispatch)
+
+  return store
 }

@@ -1,4 +1,4 @@
-import { fetchBaseQuery } from '@reduxjs/toolkit/dist/query/react'
+import { fetchBaseQuery } from '@reduxjs/toolkit/query'
 import {
   selectAccessToken,
   setAccessToken,
@@ -30,6 +30,10 @@ const baseQuery = fetchBaseQuery({
     return headers
   },
   jsonContentType: 'application/ld+json',
+  isJsonContentType: headers =>
+    ['application/json', 'application/ld+json'].includes(
+      headers.get('content-type')?.trim(),
+    ),
 })
 
 //based on https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#automatic-re-authorization-by-extending-fetchbasequery
