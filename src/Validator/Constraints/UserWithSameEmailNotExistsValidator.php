@@ -32,10 +32,6 @@ class UserWithSameEmailNotExistsValidator extends ConstraintValidator
             return;
         }
 
-        if (!is_string($value)) {
-            throw new \InvalidArgumentException('$value should be a string');
-        }
-
         $user = $this->userManager->findUserByEmail($value);
 
         if (null !== $user) {
