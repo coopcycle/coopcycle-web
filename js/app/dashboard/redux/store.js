@@ -1,5 +1,5 @@
 import {createStore, applyMiddleware, compose, combineReducers} from 'redux'
-import thunk from 'redux-thunk'
+import { thunk } from 'redux-thunk'
 import reduceReducers from 'reduce-reducers';
 import { socketIO, persistFilters, resetOptimizationResult } from './middlewares'
 import {

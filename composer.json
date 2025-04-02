@@ -173,7 +173,8 @@
         "doctrine/dbal": "^3",
         "twig/extra-bundle": "^2.12|^3.0",
         "symfony/workflow": "5.4.*",
-        "symfony/lock": "5.4.*"
+        "symfony/lock": "5.4.*",
+        "symfony/proxy-manager-bridge": "5.4.*"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
@@ -195,8 +196,7 @@
         "phpstan/phpstan-doctrine": "^1.0",
         "aeon-php/calendar": "1.0.6",
         "league/flysystem-memory": "^3.0",
-        "rector/rector": "^1.2",
-        "doctrine/doctrine-fixtures-bundle": "*"
+        "rector/rector": "^1.2"
     },
     "repositories": [
         {
@@ -224,8 +224,8 @@
     "prefer-stable": true,
     "scripts": {
         "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "cache:clear --no-warmup": "symfony-cmd",
+            "assets:install --symlink --relative %PUBLIC_DIR%": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"
@@ -238,7 +238,7 @@
         "symfony-app-dir": "app",
         "symfony-bin-dir": "bin",
         "symfony-var-dir": "var",
-        "symfony-web-dir": "web",
+        "public-dir": "web",
         "symfony-tests-dir": "tests",
         "symfony-assets-install": "relative",
         "symfony": {

@@ -162,6 +162,9 @@ services:
       - { name: 'console.command', command: 'coopcycle:stores:copy_addresses' }
 
   AppBundle\Command\SyncTransportersCommand:
+    arguments:
+      $edifactFs: '@edi_messages_filesystem'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:transporters:sync' }
 
@@ -180,3 +183,9 @@ services:
       $appName: '%env(COOPCYCLE_APP_NAME)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:export:orders' }
+
+  AppBundle\Command\StandtrackIUBRangeSetupCommand:
+    arguments:
+      $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:standtrack:iub_range_setup' }
