@@ -22,7 +22,6 @@ use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
-use Webmozart\Assert\Assert;
 
 /**
  * @see https://collectif-impec-api-preprod.herokuapp.com/api-docs/index.html
@@ -322,8 +321,6 @@ class Client
             $restaurant = $order->getRestaurant();
 
             $currentRestaurant = $this->currentRestaurant($restaurant);
-
-            Assert::isInstanceOf($order, OAuthCredentialsInterface::class);
 
             $response = $this->client->request('POST', sprintf('/api/v1/partners/restaurants/%s/orders', $currentRestaurant['id']), [
                 'headers' => [

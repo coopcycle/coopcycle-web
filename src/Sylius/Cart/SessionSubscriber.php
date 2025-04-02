@@ -10,7 +10,6 @@ use Sylius\Component\Order\Context\CartNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Webmozart\Assert\Assert;
 
 final class SessionSubscriber implements EventSubscriberInterface
 {
@@ -64,15 +63,13 @@ final class SessionSubscriber implements EventSubscriberInterface
 
         try {
 
+            /** @var OrderInterface $cart */
             $cart = $this->cartContext->getCart();
 
         } catch (CartNotFoundException $exception) {
             $this->logger->debug('SessionSubscriber | No cart found in context');
             return;
         }
-
-        /** @var OrderInterface $cart */
-        Assert::isInstanceOf($cart, OrderInterface::class);
 
         if (null === $cart->getId()) {
             $this->logger->debug(sprintf('SessionSubscriber | Order (cart) (created_at = %s) has not been persisted yet', $cart->getCreatedAt()->format(\DateTime::ATOM)));

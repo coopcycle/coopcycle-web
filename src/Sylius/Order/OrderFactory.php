@@ -15,7 +15,6 @@ use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
-use Webmozart\Assert\Assert;
 
 class OrderFactory implements FactoryInterface
 {
@@ -54,8 +53,6 @@ class OrderFactory implements FactoryInterface
 
     public function createForDeliveryAndPrice(Delivery $delivery, PriceInterface $price, ?CustomerInterface $customer = null, $attach = true): OrderInterface
     {
-        Assert::isInstanceOf($this->productVariantFactory, ProductVariantFactory::class);
-
         $order = $this->factory->createNew();
 
         if ($attach) {
