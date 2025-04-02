@@ -433,7 +433,7 @@ class RulePickerLine extends React.Component {
   render () {
 
     return (
-      <tr>
+      <tr data-testid={this.props.testID}>
         <td>
           <RulePickerTypeSelect ruleTarget={this.props.ruleTarget} type={this.state.type} onTypeSelect={this.onTypeSelect} />
         </td>
