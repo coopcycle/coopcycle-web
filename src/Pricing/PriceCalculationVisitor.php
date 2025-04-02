@@ -16,7 +16,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 // a simplified version of Sylius OrderProcessor structure
-// migrate to Sylius later on?
+// migrate to Sylius in https://github.com/coopcycle/coopcycle/issues/261
 class PriceCalculationVisitor
 {
 

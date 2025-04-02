@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * a simplified version of Sylius OrderItem/ProductVariant/ProductOptions structure
- * migrate to Sylius later on
+ * migrate to Sylius in https://github.com/coopcycle/coopcycle/issues/261
  */
 class ProductOption
 {
@@ -24,17 +24,13 @@ class ProductOption
     {
     }
 
-    /**
-     * @Groups({"pricing_deliveries"})
-     */
+    #[Groups(['pricing_deliveries'])]
     public function getMatchedRule(): string
     {
         return $this->matchedRule;
     }
 
-    /**
-     * @Groups({"pricing_deliveries"})
-     */
+    #[Groups(['pricing_deliveries'])]
     public function getPriceRule(): string
     {
         return $this->priceRule;
@@ -50,9 +46,7 @@ class ProductOption
         return $this->priceMultiplier;
     }
 
-    /**
-     * @Groups({"pricing_deliveries"})
-     */
+    #[Groups(['pricing_deliveries'])]
     public function getPrice(): ?int
     {
         return $this->price;

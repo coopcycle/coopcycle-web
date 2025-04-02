@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * a simplified version of Sylius OrderItem/ProductVariant/ProductOptions structure
- * migrate to Sylius later on
+ * migrate to Sylius in https://github.com/coopcycle/coopcycle/issues/261
  */
 class OrderItem
 {
@@ -22,17 +22,13 @@ class OrderItem
     {
     }
 
-    /**
-     * @Groups({"pricing_deliveries"})
-     */
+    #[Groups(['pricing_deliveries'])]
     public function getProductVariant(): ProductVariant
     {
         return $this->productVariant;
     }
 
-    /**
-     * @Groups({"pricing_deliveries"})
-     */
+    #[Groups(['pricing_deliveries'])]
     public function getTotal(): ?int
     {
         return $this->total;

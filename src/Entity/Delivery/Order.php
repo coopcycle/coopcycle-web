@@ -2,11 +2,9 @@
 
 namespace AppBundle\Entity\Delivery;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-
 /**
  * a simplified version of Sylius OrderItem/ProductVariant/ProductOptions structure
- * migrate to Sylius later on
+ * migrate to Sylius in https://github.com/coopcycle/coopcycle/issues/261
  */
 class Order
 {
