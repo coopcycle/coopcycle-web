@@ -1119,7 +1119,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getWeight()
     {
