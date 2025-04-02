@@ -8,6 +8,7 @@ use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Order\AdhocOrderType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use phpcent\Client as CentrifugoClient;
@@ -43,6 +44,7 @@ class PublicController extends AbstractController
         }
 
         $id = current($decoded);
+        /** @var OrderInterface|null $order */
         $order = $this->orderRepository->find($id);
 
         if (null === $order) {
