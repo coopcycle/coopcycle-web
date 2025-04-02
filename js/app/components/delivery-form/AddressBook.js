@@ -77,7 +77,6 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
   }
 
   useEffect(() => {
-    console.log('shallPrefillAddress', shallPrefillAddress)
     if (shallPrefillAddress) {
       handleAddressSelected(storeDeliveryInfos.address.streetAddress)
     }

@@ -62,13 +62,14 @@
     {% set tracking_link = null %}
   {% endif %}
 
-  <div {{ react_component('Delivery/DeliveryForm', { 
+  <div {{ react_component('Delivery/DeliveryForm', {
         isNew: is_new,
         storeId: store.id,
         deliveryId: delivery.id,
         order: order,
         trackingLink: tracking_link,
-        isDispatcher: isDispatcher
-      }) 
+        isDispatcher: isDispatcher,
+        isDebugPricing: debug_pricing
+      })
   }}></div>
 {% endblock %}

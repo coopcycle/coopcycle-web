@@ -20,6 +20,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 import _ from 'lodash'
+import { PriceCalculation } from '../../../../js/app/delivery/PriceCalculation'
 
 
 /** used in case of phone validation */
@@ -108,7 +109,7 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function({ storeId, deliveryId, order, isDispatcher }) {
+export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
 
   const httpClient = new window._auth.httpClient()
 
@@ -568,6 +569,12 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
                         overridePrice={overridePrice}
                         priceLoading={priceLoading}
                       />
+                      { isDispatcher && isDebugPricing && Boolean(calculatedPrice) && (
+                        <PriceCalculation
+                          calculation={calculatedPrice.calculation}
+                          orderItems={calculatedPrice.items}
+                          itemsTotal={calculatedPrice.amount} />
+                      )}
                     </div>
 
                     {!(deliveryId && !isDispatcher) ?
