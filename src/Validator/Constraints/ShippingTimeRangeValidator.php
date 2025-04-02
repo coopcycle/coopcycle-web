@@ -53,20 +53,18 @@ class ShippingTimeRangeValidator extends ConstraintValidator
             }
         } else {
 
-            if (null !== $value) {
-                if ($value->getLower() < $now) {
-                    $this->context
-                        ->buildViolation($constraint->shippedAtExpiredMessage)
-                        ->setCode(ShippingTimeRange::SHIPPED_AT_EXPIRED)
-                        ->addViolation();
+            if ($value->getLower() < $now) {
+                $this->context
+                    ->buildViolation($constraint->shippedAtExpiredMessage)
+                    ->setCode(ShippingTimeRange::SHIPPED_AT_EXPIRED)
+                    ->addViolation();
 
-                    return;
-                }
+                return;
             }
 
             $restaurant = $object->getRestaurant();
 
-            if (null !== $value && null !== $restaurant && $restaurant->getOpeningHoursBehavior() === 'asap') {
+            if (null !== $restaurant && $restaurant->getOpeningHoursBehavior() === 'asap') {
                 if (false === $this->shippingDateFilter->accept($object, $value, $now)) {
                     $this->context->buildViolation($constraint->shippedAtNotAvailableMessage)
                         ->setCode(ShippingTimeRange::SHIPPED_AT_NOT_AVAILABLE)
