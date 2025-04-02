@@ -208,8 +208,6 @@ class RouteOptimizer
             $routingProblem->addShipment($shipment);
         }
 
-        $routingProblem->getShipments();
-
         // FIXME
         // Would make more sense to start from the warehouse/hub once this concept is introduced
         // In any case, we are only interested in the ordering, not the duration
