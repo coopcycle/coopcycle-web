@@ -327,7 +327,7 @@ class SetupCommand extends Command
 
     private function createAllergensAttributes(OutputInterface $output)
     {
-        $attribute = $this->productAttributeRepository->findOneByCode('ALLERGENS');
+        $attribute = $this->productAttributeRepository->findOneBy(['code' => 'ALLERGENS']);
 
         if (null === $attribute) {
 
@@ -360,7 +360,7 @@ class SetupCommand extends Command
 
     private function createRestrictedDietsAttributes(OutputInterface $output)
     {
-        $attribute = $this->productAttributeRepository->findOneByCode('RESTRICTED_DIETS');
+        $attribute = $this->productAttributeRepository->findOneBy(['code' => 'RESTRICTED_DIETS']);
 
         if (null === $attribute) {
 
@@ -393,7 +393,7 @@ class SetupCommand extends Command
 
     private function createFreeDeliveryPromotion(OutputInterface $output)
     {
-        $promotion = $this->promotionRepository->findOneByCode('FREE_DELIVERY');
+        $promotion = $this->promotionRepository->findOneBy(['code' => 'FREE_DELIVERY']);
 
         if (null === $promotion) {
 
