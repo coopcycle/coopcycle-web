@@ -260,7 +260,7 @@ class SetupCommand extends Command
 
         foreach ($methods as $method) {
 
-            $paymentMethod = $paymentMethodRepository->findOneByCode($method['code']);
+            $paymentMethod = $paymentMethodRepository->findOneBy(['code' => $method['code']]);
 
             if (null === $paymentMethod) {
 
@@ -288,7 +288,7 @@ class SetupCommand extends Command
 
     private function createOnDemandDeliveryProduct(OutputInterface $output)
     {
-        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+        $product = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
         if (null === $product) {
 

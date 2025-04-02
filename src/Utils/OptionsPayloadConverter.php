@@ -16,10 +16,10 @@ class OptionsPayloadConverter
         foreach ($options as $option) {
             // Legacy
             if (is_string($option)) {
-                $optionValue = $this->productOptionValueRepository->findOneByCode($option);
+                $optionValue = $this->productOptionValueRepository->findOneBy(['code' => $option]);
                 $optionValues->attach($optionValue);
             } else {
-                $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
+                $optionValue = $this->productOptionValueRepository->findOneBy(['code' => $option['code']]);
                 if ($optionValue && $product->hasOptionValue($optionValue)) {
                     $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
                     $quantity = $this->getQuantity($optionValue, $quantity);
