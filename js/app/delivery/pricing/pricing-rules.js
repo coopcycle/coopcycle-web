@@ -54,6 +54,7 @@ const onListChange = () => {
 
   $('.delivery-pricing-ruleset > li').each((index, el) => {
     $(el).find('.delivery-pricing-ruleset__rule__position').val(index)
+    $(el).attr('data-testid', `pricing-rule-${index}`)
   })
 }
 
