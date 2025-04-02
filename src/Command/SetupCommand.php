@@ -168,7 +168,7 @@ class SetupCommand extends Command
 
     private function createSyliusLocale($code, OutputInterface $output)
     {
-        $locale = $this->localeRepository->findOneByCode($code);
+        $locale = $this->localeRepository->findOneBy(['code' => $code]);
 
         if (null !== $locale) {
             $output->writeln(sprintf('Sylius locale "%s" already exists', $code));
@@ -185,7 +185,7 @@ class SetupCommand extends Command
 
     private function createSyliusChannel($code, $name, OutputInterface $output)
     {
-        $channel = $this->channelRepository->findOneByCode($code);
+        $channel = $this->channelRepository->findOneBy(['code' => $code]);
 
         if (null !== $channel) {
             $output->writeln(sprintf('Sylius channel "%s" already exists', $code));
@@ -202,7 +202,7 @@ class SetupCommand extends Command
 
     private function createSyliusCurrency($code, OutputInterface $output)
     {
-        $currency = $this->currencyRepository->findOneByCode($code);
+        $currency = $this->currencyRepository->findOneBy(['code' => $code]);
 
         if (null !== $currency) {
             $output->writeln(sprintf('Sylius currency "%s" already exists', $code));

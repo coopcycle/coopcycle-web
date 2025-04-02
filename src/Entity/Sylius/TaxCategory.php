@@ -31,4 +31,18 @@ class TaxCategory extends BaseTaxCategory
             }
         });
     }
+
+    public function isLegacy(): bool
+    {
+        $rates = $this->getRates();
+        if (count($rates) === 1) {
+            if ($rate = $rates->first()) {
+                /** @var \AppBundle\Entity\Sylius\TaxRate|false $rate */
+                return null === $rate->getCountry();
+            }
+
+        }
+
+        return false;
+    }
 }

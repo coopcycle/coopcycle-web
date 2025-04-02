@@ -87,27 +87,30 @@ class PublicController extends AbstractController
                     )
                     ->first();
 
-                try {
+                if ($lastPayment) {
 
-                    if ($lastPayment->requiresUseStripeSDK()) {
-                        $stripeManager->confirmIntent($lastPayment);
+                    try {
+
+                        if ($lastPayment->requiresUseStripeSDK()) {
+                            $stripeManager->confirmIntent($lastPayment);
+                        }
+
+                        $stripeManager->capture($lastPayment);
+
+                        $lastPayment->setState(PaymentInterface::STATE_COMPLETED);
+
+                    } catch (Stripe\Exception\ApiErrorException $e) {
+
+                        $lastPayment->setLastError($e->getMessage());
+
+                    } finally {
+                        $objectManager->flush();
                     }
 
-                    $stripeManager->capture($lastPayment);
-
-                    $lastPayment->setState(PaymentInterface::STATE_COMPLETED);
-
-                } catch (Stripe\Exception\ApiErrorException $e) {
-
-                    $lastPayment->setLastError($e->getMessage());
-
-                } finally {
-                    $objectManager->flush();
+                    return $this->redirectToRoute('public_order', [
+                        'hashid' => $hashid
+                    ]);
                 }
-
-                return $this->redirectToRoute('public_order', [
-                    'hashid' => $hashid
-                ]);
             }
 
             $parameters['payment_form'] = $paymentForm->createView();

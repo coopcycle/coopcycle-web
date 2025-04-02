@@ -967,17 +967,14 @@ class AdminController extends AbstractController
 
         $taxCategories = $taxCategoryRepository->findBy([], ['name' => 'ASC']);
         foreach ($taxCategories as $c) {
-            /** @var \Sylius\Component\Taxation\Model\TaxCategoryInterface $c */
-            $isLegacy = count($c->getRates()) === 1 && null === $c->getRates()->first()->getCountry();
-            if (!$isLegacy) {
-                foreach ($c->getRates() as $r) {
-                    /** @var \AppBundle\Entity\Sylius\TaxRate $r */
-                    $countries[] = $r->getCountry();
-                }
+            /** @var \AppBundle\Entity\Sylius\TaxCategory $c */
+            if ($c->isLegacy()) {
+                continue;
             }
 
-            if ($isLegacy) {
-                continue;
+            foreach ($c->getRates() as $r) {
+                /** @var \AppBundle\Entity\Sylius\TaxRate $r */
+                $countries[] = $r->getCountry();
             }
 
             $rates = [];
