@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Exception\PaygreenException;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Utils\Defaults;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
@@ -28,6 +29,7 @@ class PaygreenManager
         private UrlGeneratorInterface $urlGenerator,
         private ChannelContextInterface $channelContext,
         private AdjustmentFactoryInterface $adjustmentFactory,
+        private Defaults $defaults,
         private string $country)
     {}
 
@@ -55,16 +57,30 @@ class PaygreenManager
             throw new PaygreenException('Could not capture payment');
         }
 
+        $payload = json_decode($response->getBody()->getContents(), true);
+        $po = $payload['data'];
+
         // We also store the transaction fee
 
         $order = $payment->getOrder();
 
         $order->removeAdjustments(AdjustmentInterface::STRIPE_FEE_ADJUSTMENT);
 
+        $paygreenFee = 0;
+        foreach ($po['transactions'] as $transaction) {
+            if ($transaction['status'] === 'transaction.captured') {
+                foreach ($transaction['operations'] as $operation) {
+                    if ($operation['status'] === 'operation.captured') {
+                        $paygreenFee += $operation['cost'] + $operation['fees'];
+                    }
+                }
+            }
+        }
+
         $feeAdjustment = $this->adjustmentFactory->createWithData(
             AdjustmentInterface::STRIPE_FEE_ADJUSTMENT,
             'Paygreen fee',
-            $po['paygreen_fees'],
+            $paygreenFee,
             $neutral = true
         );
         $order->addAdjustment($feeAdjustment);
@@ -76,7 +92,7 @@ class PaygreenManager
 
         $order = $payment->getOrder();
 
-        if (null === $order->getId() || null === $order->getShippingAddress()) {
+        if (null === $order->getId() || null === $order->getShippingAddress() || null === $order->getCustomer()) {
             return;
         }
 
@@ -105,6 +121,10 @@ class PaygreenManager
             $response = $this->paygreenClient->createBuyer($buyer);
             $data = json_decode($response->getBody()->getContents(), true);
 
+            if ($response->getStatusCode() !== 200) {
+                throw new PaygreenException($data['detail'] ?? $data['message']);
+            }
+
             $order->getCustomer()->setPaygreenBuyerId($data['data']['id']);
         }
 
@@ -122,8 +142,8 @@ class PaygreenManager
         $paymentOrder->setShippingAddress($address);
         $paymentOrder->setDescription(sprintf('Order %s', $order->getNumber()));
         $paymentOrder->setShopId($shopId);
-        $paymentOrder->setReturnUrl($this->getCallbackUrl($order, 'paygreen_return'));
-        $paymentOrder->setCancelUrl($this->getCallbackUrl($order, 'paygreen_cancel'));
+        $paymentOrder->setReturnUrl($this->getCallbackUrl('paygreen_return'));
+        $paymentOrder->setCancelUrl($this->getCallbackUrl('paygreen_cancel'));
         $paymentOrder->setEligibleAmounts($this->getEligibleAmounts($order));
 
         // We can set platforms fees *ONLY* when the order is paid 100% by credit card
@@ -222,9 +242,9 @@ class PaygreenManager
 
         $address = new PaygreenModel\Address();
         $address->setStreetLineOne($shippingAddress->getStreetAddress());
-        $address->setCity($shippingAddress->getAddressLocality());
+        $address->setCity($shippingAddress->getAddressLocality() ?? $this->defaults->getAddressLocality());
         $address->setCountryCode(strtoupper($this->country));
-        $address->setPostalCode($shippingAddress->getPostalCode());
+        $address->setPostalCode($shippingAddress->getPostalCode() ?? $this->defaults->getPostalCode());
 
         return $address;
     }
@@ -260,7 +280,7 @@ class PaygreenManager
         ];
     }
 
-    private function getCallbackUrl(OrderInterface $order, string $route): string
+    private function getCallbackUrl(string $route): string
     {
         $channel = $this->channelContext->getChannel();
 

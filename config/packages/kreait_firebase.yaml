@@ -1,0 +1,4 @@
+kreait_firebase:
+    projects:
+        coopcycle:
+            credentials: '%env(FIREBASE_CREDENTIALS)%'

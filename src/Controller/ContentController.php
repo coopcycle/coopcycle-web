@@ -11,28 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-/**
- * @Route("/{_locale}", requirements={ "_locale": "%locale_regex%" })
- */
+#[Route(path: '/{_locale}', requirements: ['_locale' => '%locale_regex%'])]
 class ContentController extends AbstractController
 {
-    /**
-     * @Route({
-     *   "an": "/sobre-nosotros",
-     *   "ca": "/sobre-nosaltres",
-     *   "da": "/om-os",
-     *   "de": "/uber-uns",
-     *   "en": "/about-us",
-     *   "es": "/sobre-nosotros",
-     *   "eu": "/guri-buruz",
-     *   "fr": "/a-propos",
-     *   "hu": "/rolunk",
-     *   "it": "/riguardo-a-noi",
-     *   "pl": "/o-nas",
-     *   "pt_BR": "/sobre-nos",
-     *   "pt_PT": "/sobre-nos"
-     * }, name="about_us")
-     */
+    #[Route(path: ['an' => '/sobre-nosotros', 'ca' => '/sobre-nosaltres', 'da' => '/om-os', 'de' => '/uber-uns', 'en' => '/about-us', 'es' => '/sobre-nosotros', 'eu' => '/guri-buruz', 'fr' => '/a-propos', 'hu' => '/rolunk', 'it' => '/riguardo-a-noi', 'pl' => '/o-nas', 'pt_BR' => '/sobre-nos', 'pt_PT' => '/sobre-nos'], name: 'about_us')]
     public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
         if (!$assetsFilesystem->fileExists('about_us.md')) {
@@ -65,9 +47,7 @@ class ContentController extends AbstractController
         return file_get_contents($files[$key]);
     }
 
-    /**
-     * @Route("/legal", name="legal")
-     */
+    #[Route(path: '/legal', name: 'legal')]
     public function legalAction(Request $request, Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->fileExists('custom_legal.md')) {
@@ -81,9 +61,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/terms", name="terms")
-     */
+    #[Route(path: '/terms', name: 'terms')]
     public function termsAction(Request $request, Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->fileExists('custom_terms.md')) {
@@ -97,9 +75,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/privacy", name="privacy")
-     */
+    #[Route(path: '/privacy', name: 'privacy')]
     public function privacyAction(Request $request, Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->fileExists('custom_privacy.md')) {
@@ -113,9 +89,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/privacy-mobile", name="privacy-mobile")
-     */
+    #[Route(path: '/privacy-mobile', name: 'privacy-mobile')]
     public function privacyMobileAction(Request $request, Filesystem $assetsFilesystem)
     {
 
@@ -126,9 +100,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/covid-19", name="covid_19")
-     */
+    #[Route(path: '/covid-19', name: 'covid_19')]
     public function covid19Action(TranslatorInterface $translator)
     {
         return $this->render('content/raw.html.twig', [
@@ -136,9 +108,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/terms-text", name="terms-text")
-     */
+    #[Route(path: '/terms-text', name: 'terms-text')]
     public function termsTextAction(Request $request, Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->fileExists('custom_terms.md')) {
@@ -152,9 +122,7 @@ class ContentController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/privacy-text", name="privacy-text")
-     */
+    #[Route(path: '/privacy-text', name: 'privacy-text')]
     public function privacyTextAction(Request $request, Filesystem $assetsFilesystem)
     {
         if ($assetsFilesystem->fileExists('custom_privacy.md')) {

@@ -1,0 +1,1652 @@
+imports:
+  - { resource: services/forms.yml }
+  - { resource: services/serializer.yml }
+  - { resource: services/twig.yml }
+  - { resource: services/validators.yml }
+  - { resource: services/commands.yml }
+  - { resource: services/doctrine_extensions.yml }
+  - { resource: services/message_bus/order.yml }
+  - { resource: services/message_bus/task.yml }
+
+# Learn more about services, parameters and containers at
+# http://symfony.com/doc/current/book/service_container.html
+parameters:
+  sylius_cart_restaurant_session_key_name: _coopcycle.sylius.cart.restaurant
+  apns_default_is_production_env: true
+  env(COOPCYCLE_PUBLIC_KEY_FILE): "%kernel.project_dir%/var/jwt/public.pem"
+  env(COOPCYCLE_PRIVATE_KEY_FILE): "%kernel.project_dir%/var/jwt/private.pem"
+  env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
+  env(APP_LOG_DIR): "%kernel.logs_dir%"
+  env(APP_VERSION): dev-master
+  secret: "%env(APP_SECRET)%"
+  country_iso: "%env(COOPCYCLE_COUNTRY)%"
+  region_iso: "%env(COOPCYCLE_REGION)%"
+  coopcycle.locale: "%env(COOPCYCLE_LOCALE)%"
+  locale: "%coopcycle.locale%"
+  database_driver:   pdo_pgsql
+  database_host:     "%env(COOPCYCLE_DB_HOST)%"
+  database_port:     "%env(COOPCYCLE_DB_PORT)%"
+  database_name:     "%env(COOPCYCLE_DB_NAME)%"
+  database_user:     "%env(COOPCYCLE_DB_USER)%"
+  database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
+  locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
+  router.request_context.scheme: 'http'
+  router.request_context.host: "%env(APP_HOST)%"
+  loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
+  loopeat_base_url: '%env(LOOPEAT_BASE_URL)%'
+  loopeat_client_id: '%env(LOOPEAT_CLIENT_ID)%'
+  loopeat_client_secret: '%env(LOOPEAT_CLIENT_SECRET)%'
+  tile38_fleet_key: '%database_name%:fleet'
+  tile38_doorstep_chan_namespace: '%database_name%'
+  centrifugo_namespace: '%database_name%'
+  cors_allow_origin: http://localhost
+  jwt_public_key_path: "%env(COOPCYCLE_PUBLIC_KEY_FILE)%"
+  jwt_private_key_path: "%env(COOPCYCLE_PRIVATE_KEY_FILE)%"
+  transactional_address: "%env(COOPCYCLE_MAIL_SENDER_ADDRESS)%"
+  transactional_sender_name: "%env(COOPCYCLE_MAIL_SENDER_NAME)%"
+  osrm_host: "%env(COOPCYCLE_OSRM_HOST)%"
+  is_demo: "%env(bool:COOPCYCLE_DEMO)%"
+  sentry_public_dsn: "%env(COOPCYCLE_SENTRY_DSN)%"
+  foodtech_enabled: "%env(bool:COOPCYCLE_FOODTECH_ENABLED)%"
+  b2b_enabled: '%env(bool:COOPCYCLE_B2B_ENABLED)%'
+  sonic_namespace: '%database_name%'
+  sonic_secret_password: '%env(SONIC_SECRET_PASSWORD)%'
+  restaurant_menu_cache_annotation: 'restaurant_menu_v0.5'
+  restaurant_caption_cache_annotation: 'restaurant_caption_v0.1'
+  avatar_dir: '%env(APP_PUBLIC_DIR)%/images/avatars/'
+  centrifugo_tracking_channel: '$%centrifugo_namespace%_tracking'
+  edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
+  nucleos_profile.registration.confirmation.enabled: false
+  craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
+  vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
+  en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
+  nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
+  dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
+  dabba_enabled: '%env(bool:DABBA_ENABLED)%'
+  dabba_base_url: '%env(DABBA_BASE_URL)%'
+  dabba_client_id: '%env(DABBA_CLIENT_ID)%'
+  dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
+  typesense_shops_collection_name: "shops"
+  typesense_products_collection_name: "products"
+  colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
+  group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
+  business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
+  transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+  billing_enabled: '%env(bool:BILLING_ENABLED)%'
+
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+    bind:
+      $locale: "%env(COOPCYCLE_LOCALE)%"
+
+  # For some cache pools, want *STABLE* cache keys between deploys.
+  # To achieve this, we *EXPLICITLY* set a namespace,
+  # so that Symfony doesn't use "framework.cache.prefix_seed",
+  # which changes between different versions of the kernel.
+  #
+  # https://symfony.com/doc/current/cache.html#creating-custom-namespaced-pools
+  restart_workers_signal.cache:
+      parent: cache.adapter.redis
+      tags:
+          - { name: cache.pool, provider: snc_redis.default, namespace: messenger }
+
+  cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
+
+  craue_config_cache_provider:
+    parent: 'craue_config.cache'
+    tags:
+      - { name: cache.pool, namespace: craue_config }
+
+  AppBundle\Action\:
+    resource: '../src/Action/*'
+    tags: ['controller.service_arguments']
+
+  AppBundle\EventSubscriber\:
+    resource: '../src/EventSubscriber/*'
+
+  AppBundle\Service\:
+    resource: '../src/Service/*'
+
+  AppBundle\Message\:
+    resource: '../src/Message/*'
+
+  AppBundle\MessageHandler\:
+    resource: '../src/MessageHandler/*'
+
+  AppBundle\Controller\:
+    resource: '../src/Controller'
+    tags: ['controller.service_arguments']
+
+  AppBundle\Api\DataTransformer\:
+    resource: '../src/Api/DataTransformer/*'
+
+  AppBundle\Api\Filter\:
+    resource: '../src/Api/Filter/*'
+    tags: ['api_platform.filter']
+
+  coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
+
+  coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
+  coopcycle.shipping_time_calculator: '@AppBundle\Utils\ShippingTimeCalculator'
+  coopcycle.shipping_date_filter:
+    alias: AppBundle\Utils\ShippingDateFilter
+    public: true
+  coopcycle.order_timeline_calculator:
+    alias: AppBundle\Utils\OrderTimelineCalculator
+    public: true
+  coopcycle.utils.order_text_encoder: '@AppBundle\Utils\OrderTextEncoder'
+  coopcycle.order_number_assigner: '@AppBundle\Sylius\Order\OrderNumberAssigner'
+  coopcycle.utils.restaurant_filter: '@AppBundle\Utils\RestaurantFilter'
+  coopcycle.expression_language:
+    alias: AppBundle\ExpressionLanguage\ExpressionLanguage
+    public: true
+  coopcycle.tag_manager: '@AppBundle\Service\TagManager'
+  coopcycle.geocoder: '@AppBundle\Service\Geocoder'
+  coopcycle.task_manager: '@AppBundle\Service\TaskManager'
+  coopcycle.order_manager: '@AppBundle\Service\OrderManager'
+  coopcycle.delivery.manager: '@AppBundle\Service\DeliveryManager'
+  coopcycle.stripe_manager: '@AppBundle\Service\StripeManager'
+  coopcycle.settings_manager:
+    alias: AppBundle\Service\SettingsManager
+    public: true
+  coopcycle.email_manager: '@AppBundle\Service\EmailManager'
+  coopcycle.remote_push_notification_manager: '@AppBundle\Service\RemotePushNotificationManager'
+  coopcycle.price_formatter: '@AppBundle\Utils\PriceFormatter'
+
+  Doctrine\ORM\Mapping\Driver\AttributeReader: ~
+
+  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
+  Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
+  Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
+  Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
+  Sylius\Component\Channel\Context\ChannelContextInterface: '@sylius.context.channel.composite'
+  Redis:
+    alias: 'snc_redis.default'
+    public: true
+  Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface: '@sylius.templating.helper.currency'
+  Nucleos\UserBundle\Util\UserManipulator:
+    alias: 'nucleos_user.util.user_manipulator'
+    public: true
+  Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface: '@lexik_jwt_authentication.jwt_manager'
+  Liip\ImagineBundle\Service\FilterService: '@liip_imagine.service.filter'
+  League\Flysystem\MountManager: '@oneup_flysystem.mount_manager'
+  AppBundle\Service\RoutingInterface: '@routing_service'
+
+  League\Flysystem\Filesystem $taskImportsFilesystem: '@task_imports_filesystem'
+  League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
+  League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
+  League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
+  Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
+
+  Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
+
+  # Autowiring variables in controllers
+  Doctrine\Persistence\ObjectRepository $productRepository: '@sylius.repository.product'
+  AppBundle\Entity\Sylius\TaxonRepository $taxonRepository: '@sylius.repository.taxon'
+  Sylius\Component\Product\Repository\ProductOptionRepositoryInterface $productOptionRepository: '@sylius.repository.product_option'
+  Sylius\Component\Resource\Factory\FactoryInterface $taxonFactory: '@sylius.factory.taxon'
+  Sylius\Component\Resource\Factory\FactoryInterface $productFactory: '@sylius.factory.product'
+  Sylius\Component\Resource\Factory\FactoryInterface $productOptionFactory: '@sylius.factory.product_option'
+  League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
+  Redis $tile38: '@snc_redis.tile38'
+  Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
+  League\Flysystem\Filesystem $taskImagesFilesystem: '@task_images_filesystem'
+  Nucleos\ProfileBundle\Mailer\RegistrationMailer: '@nucleos_profile.mailer.simple'
+  Lcobucci\JWT\Configuration $cubeJsJwtConfiguration: '@cubejs.jwt.config'
+  Hashids\Hashids $hashids8: '@hashids.8'
+  Hashids\Hashids $hashids12: '@hashids.12'
+  Hashids\Hashids $hashids16: '@hashids.16'
+  BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
+  ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
+  ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
+  ACSEO\TypesenseBundle\Manager\DocumentManager: '@typesense.document_manager'
+  ACSEO\TypesenseBundle\Client\CollectionClient: '@typesense.collection_client'
+  ACSEO\TypesenseBundle\Client\TypesenseClient: '@typesense.client'
+  Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface: '@league.oauth2_server.factory.psr_http'
+  League\Flysystem\Filesystem $restaurantImagesFilesystem: '@restaurant_images_filesystem'
+  League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
+  Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
+  Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
+
+  AppBundle\Routing\FoodtechEnabledAwareLoader:
+    arguments:
+      $isFoodtechEnabled: '%foodtech_enabled%'
+    tags: [routing.loader]
+
+  AppBundle\Controller\OrderController:
+    arguments:
+      $objectManager: '@sylius.manager.order'
+      $orderFactory: '@sylius.factory.order'
+      $environment: '%kernel.environment%'
+
+  AppBundle\LoopEat\Client:
+    arguments:
+      $config: { base_uri: "%loopeat_base_url%" }
+    calls:
+      - method: setLoopEatClientId
+        arguments:
+            - '%loopeat_client_id%'
+      - method: setLoopEatClientSecret
+        arguments:
+            - '%loopeat_client_secret%'
+    tags:
+      - { name: monolog.logger, channel: loopeat }
+
+  AppBundle\LoopEat\Context: ~
+
+  AppBundle\LoopEat\ContextInitializer:
+    arguments:
+      $processingFee: "%env(int:LOOPEAT_PROCESSING_FEE)%"
+      $processingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
+    tags:
+      - { name: monolog.logger, channel: loopeat }
+
+  AppBundle\Controller\RestaurantController:
+    arguments:
+      $orderManager: '@sylius.manager.order'
+      $validator: '@validator'
+      $productRepository: '@sylius.repository.product'
+      $orderItemRepository: '@sylius.repository.order_item'
+      $orderItemFactory: '@sylius.factory.order_item'
+      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'
+      $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
+      $orderModifier: '@sylius.order_modifier'
+      $serializer: '@serializer'
+      $environment: '%kernel.environment%'
+
+  AppBundle\Controller\LoopEatController:
+    arguments:
+      $loopeatBaseUrl: '%loopeat_base_url%'
+      $loopeatClientId: '%loopeat_client_id%'
+      $loopeatClientSecret: '%loopeat_client_secret%'
+      $loopeatOAuthFlow: '%env(LOOPEAT_OAUTH_FLOW)%'
+    tags:
+      - { name: monolog.logger, channel: loopeat }
+
+  AppBundle\Controller\StripeController:
+    arguments:
+      $secret: '%secret%'
+      $debug: '%kernel.debug%'
+      $adjustmentFactory: '@sylius.factory.adjustment'
+    tags:
+      - { name: monolog.logger, channel: stripe }
+
+  AppBundle\Controller\EdenredController:
+    tags:
+      - { name: monolog.logger, channel: edenred }
+
+  AppBundle\Controller\EmbedController:
+    arguments:
+      $customerRepository: '@sylius.repository.customer'
+      $customerFactory: '@sylius.factory.customer'
+
+  AppBundle\Controller\AdminController:
+    arguments:
+      $promotionRuleFactory: '@sylius.factory.promotion_rule'
+      $promotionFactory: '@sylius.factory.promotion'
+      $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
+      $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
+      $edifactFilesystem: '@edi_messages_filesystem'
+
+  AppBundle\Controller\AssetsController:
+    arguments:
+      $taskImagesFilesystem: '@task_images_filesystem'
+      $incidentImagesFilesystem: '@incident_images_filesystem'
+
+  AppBundle\Controller\DashboardController:
+    arguments:
+      $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
+
+  AppBundle\EventListener\LocaleListener:
+    arguments: ['%env(COOPCYCLE_LOCALE)%']
+    tags:
+      - { name: kernel.event_subscriber }
+
+  AppBundle\EventListener\SeoListener:
+    arguments:
+      $seoPage: '@sonata.seo.page.default'
+    tags:
+      - { name: kernel.event_listener, event: kernel.request }
+
+  coopcycle.user_provider:
+    class: AppBundle\Security\NucleosUserBundleUserProvider
+    arguments: ['@nucleos_user.user_manager', { facebook: facebookId }]
+
+  AppBundle\EventListener\MaintenanceListener:
+    arguments:
+      $redis: '@snc_redis.default'
+      $templating: '@twig'
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  AppBundle\EventListener\DeauthenticatedListener:
+    tags:
+      - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\DeauthenticatedEvent, method: logoutOnChange }
+
+  sylius.context.locale.request_based:
+    class: Sylius\Bundle\LocaleBundle\Context\RequestBasedLocaleContext
+    arguments: ['@request_stack', '@sylius.locale_provider']
+    tags:
+      - { name: sylius.context.locale, priority: 128 }
+
+  sylius.context.locale.immutable:
+    class: Sylius\Component\Locale\Context\ImmutableLocaleContext
+    arguments: ['%sylius_locale.locale%']
+    tags:
+      - { name: sylius.context.locale, priority: 64 }
+
+  sylius.context.currency.settings_aware:
+    class: AppBundle\Sylius\Currency\SettingsAwareCurrencyContext
+    arguments: ['@coopcycle.settings_manager']
+    tags:
+      - { name: sylius.context.currency }
+
+  sylius.tax_rate_resolver:
+    class: AppBundle\Sylius\Taxation\Resolver\TaxRateResolver
+    arguments:
+      $region: '%region_iso%'
+
+  AppBundle\Sylius\Taxation\Resolver\TaxRateResolverInterface: '@sylius.tax_rate_resolver'
+
+  # IMPORTANT
+  # OrderOptionsProcessor MUST be invoked BEFORE OrderFeeProcessor
+  # Otherwise, fee calculation may be wrong
+  # We don't tag those services directly, but we use OrderOptionsFeeProcessor
+  # We also need to disable auto configuration for these services
+  # Otherwise, they will be still added automatically by Sylius; https://github.com/Sylius/Sylius/issues/12389
+
+  sylius.order_processing.order_options_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderOptionsProcessor
+    autoconfigure: false # see comment above
+    arguments:
+      $adjustmentFactory: "@sylius.factory.adjustment"
+
+  sylius.order_processing.order_fee_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderFeeProcessor
+    autoconfigure: false # see comment above
+    arguments:
+      $adjustmentFactory: "@sylius.factory.adjustment"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
+  sylius.order_processing.order_vendor_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderVendorProcessor
+    autoconfigure: false # see comment above
+    tags:
+      - { name: monolog.logger, channel: coopcycle.order_processing }
+
+  # For now, disable auto configuration for all services tagged with sylius.order_processor
+  # Otherwise they will be added (and executed) twice:
+  # Once, due to the OrderProcessorInterface https://github.com/Sylius/Sylius/issues/12389
+  # And once, due to the tag sylius.order_processor
+  # The recommended approach is to use attributes instead of tags: https://docs.sylius.com/en/latest/components_and_bundles/bundles/SyliusOrderBundle/processors.html
+
+  # should be executed before any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogStartProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    tags:
+      - { name: sylius.order_processor, priority: 1000 }
+
+  AppBundle\Sylius\OrderProcessing\OrderDisabledProductProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    tags:
+      - { name: sylius.order_processor, priority: 96 }
+
+  sylius.order_processing.order_promotion_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderPromotionProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    arguments:
+      - "@sylius.promotion_processor"
+    tags:
+      - { name: sylius.order_processor, priority: 64 }
+
+  # IMPORTANT
+  # OrderDepositRefundProcessor must be executed *BEFORE* OrderFeeProcessor
+  # because we need to increase the platform fee for LoopEat
+
+  AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    arguments:
+      $adjustmentFactory: "@sylius.factory.adjustment"
+      $loopeatProcessingFee: "%env(LOOPEAT_PROCESSING_FEE)%"
+      $loopeatProcessingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
+    tags:
+      - { name: sylius.order_processor, priority: 52 }
+
+  sylius.order_processing.order_options_fee_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderOptionsFeeProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    arguments:
+      - "@sylius.order_processing.order_options_processor"
+      - "@sylius.order_processing.order_fee_processor"
+      - "@sylius.order_processing.order_vendor_processor"
+    tags:
+      - { name: sylius.order_processor, priority: 48 }
+
+  sylius.order_processing.order_taxes_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    arguments:
+      $state: "%region_iso%"
+    tags:
+      - { name: sylius.order_processor, priority: 32 }
+
+  sylius.order_processing.order_payment_processor:
+    class: AppBundle\Sylius\OrderProcessing\OrderPaymentProcessor
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    tags:
+      - { name: sylius.order_processor, priority: 16 }
+
+  # should be executed after any other processor
+  AppBundle\Sylius\OrderProcessing\OrderLogFinishProcessor:
+    autoconfigure: false # autoconfigure here duplicates the function of tags, see the comment above
+    tags:
+      - { name: sylius.order_processor, priority: -100 }
+
+  sylius.promotion_action.delivery_percentage:
+    class: AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - name: sylius.promotion_action
+        type: delivery_percentage_discount
+        label: 'Delivery percentage discount'
+        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
+
+  sylius.promotion_action.fixed_discount:
+    class: AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - name: sylius.promotion_action
+        type: order_fixed_discount
+        label: 'Fixed discount'
+        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\FixedDiscountConfigurationType
+
+  sylius.promotion_action.percentage_discount:
+    class: AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand
+    arguments:
+      - "@sylius.factory.adjustment"
+    tags:
+      - name: sylius.promotion_action
+        type: order_percentage_discount
+        label: 'Percentage discount'
+        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
+
+  sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
+    class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionCouponPerCustomerUsageLimitEligibilityChecker
+    arguments:
+      - "@sylius.repository.order"
+    tags:
+      - { name: sylius.promotion_coupon_eligibility_checker }
+
+  AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker:
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_customer
+        label: 'Is customer'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsCustomerConfigurationType
+
+  AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker:
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_restaurant
+        label: 'Is restaurant'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsRestaurantConfigurationType
+
+  AppBundle\Sylius\Promotion\Checker\Rule\IsItemsTotalAboveRuleChecker:
+    tags:
+      - name: sylius.promotion_rule_checker
+        type: is_items_total_above
+        label: 'Is items total above'
+        form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
+
+  coopcycle.sylius.factory.product_variant:
+    class: AppBundle\Sylius\Product\ProductVariantFactory
+    decorates: sylius.factory.product_variant
+    arguments:
+      - "@coopcycle.sylius.factory.product_variant.inner"
+      - "@sylius.repository.product"
+      - "@sylius.repository.tax_category"
+      - "@coopcycle.settings_manager"
+      - "@translator"
+    public: false
+
+  AppBundle\Sylius\Order\OrderFactory:
+    decorates: sylius.factory.order
+    arguments:
+      $factory: '@AppBundle\Sylius\Order\OrderFactory.inner'
+      $channelContext: "@sylius.context.channel"
+      $orderItemFactory: "@sylius.factory.order_item"
+      $productVariantFactory: "@sylius.factory.product_variant"
+      $orderItemQuantityModifier: "@sylius.order_item_quantity_modifier"
+      $orderModifier: "@sylius.order_modifier"
+    public: false
+
+  coopcycle.sylius.product_variant_resolver.lazy:
+    class: AppBundle\Sylius\Product\LazyProductVariantResolver
+    arguments:
+      - "@sylius.product_variant_resolver.default"
+      - "@sylius.factory.product_variant"
+    public: true
+
+  AppBundle\Sylius\Cart\RestaurantResolver:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.order_processing }
+
+  AppBundle\Sylius\Cart\SessionStorage:
+    arguments:
+      $sessionKeyName: "%sylius_cart_restaurant_session_key_name%"
+
+  AppBundle\Sylius\Cart\RestaurantCartContext:
+    arguments:
+      $orderFactory: "@sylius.factory.order"
+    tags:
+      - { name: sylius.context.cart, priority: 32 }
+
+  coopcycle.repository.zone:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Zone
+
+  coopcycle.expression_language.zone.provider:
+    public: false
+    class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
+    arguments: [ '@coopcycle.repository.zone' ]
+
+  AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider: ~
+
+  AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider: ~
+
+  AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider: ~
+
+  AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider: ~
+
+  AppBundle\ExpressionLanguage\ExpressionLanguage:
+    arguments:
+      $cache: null
+      $providers:
+        - '@coopcycle.expression_language.zone.provider'
+        - '@AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider'
+        - '@AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider'
+        - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
+        - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
+
+  AppBundle\EventListener\RegistrationListener:
+    tags:
+      - { name: kernel.event_subscriber }
+
+  AppBundle\EventListener\WebAuthenticationListener:
+    arguments: ['@sylius.manager.order', '@sylius.context.cart']
+    tags:
+      - { name: kernel.event_subscriber }
+
+  AppBundle\EventListener\SyliusIdGeneratorSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+
+  AppBundle\EventListener\LogoutSubscriber: ~
+
+  AppBundle\EventListener\TaggableSubscriber:
+    arguments: [ '@coopcycle.tag_manager' ]
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+      - { name: monolog.logger, channel: coopcycle.tagging }
+
+  AppBundle\Service\DeliveryManager:
+    arguments:
+      $expressionLanguage: "@coopcycle.expression_language"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
+  AppBundle\Utils\PreparationTimeCalculator:
+    arguments:
+      - {
+          'restaurant.state == "rush" and order.itemsTotal < 2000':        '20 minutes',
+          'restaurant.state == "rush" and order.itemsTotal in 2000..5000': '30 minutes',
+          'restaurant.state == "rush" and order.itemsTotal > 5000':        '45 minutes',
+          'order.itemsTotal < 2000':                                       '10 minutes',
+          'order.itemsTotal in 2000..5000':                                '15 minutes',
+          'order.itemsTotal > 5000':                                       '30 minutes'
+        }
+
+  AppBundle\Utils\ShippingTimeCalculator:
+    arguments:
+      - '@routing_service'
+
+  AppBundle\Utils\PickupTimeResolver: ~
+
+  AppBundle\Utils\PreparationTimeResolver: ~
+
+  AppBundle\Utils\ShippingDateFilter:
+    arguments:
+      $redis: "@snc_redis.default"
+    tags:
+      - { name: monolog.logger, channel: timing }
+
+  AppBundle\Utils\OrderTimelineCalculator: ~
+
+  AppBundle\Utils\OrderTimeHelper:
+    arguments:
+      $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: timing }
+
+  AppBundle\Entity\Listener\:
+    resource: '../src/Entity/Listener/*'
+
+  AppBundle\Entity\Listener\TaskListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\Entity\Listener\AddressListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\Entity\Listener\DeliveryListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\Entity\Listener\OrderInvitationListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\LoopEat\TaskListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\Integration\Standtrack\StandtrackTaskListener:
+    tags:
+      - { name: doctrine.orm.entity_listener }
+
+  AppBundle\EventListener\Edifact\TaskChangedNotifier:
+    tags:
+      -
+        name: 'doctrine.orm.entity_listener'
+        event: 'postUpdate'
+        entity: AppBundle\Entity\Task
+
+  AppBundle\EventListener\JwtListener:
+    tags:
+      - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccess }
+
+  coopcycle.repository.task:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Task
+
+  AppBundle\Entity\LocalBusinessRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\LocalBusiness
+    calls:
+      - method: setRestaurantFilter
+        arguments:
+            - '@coopcycle.utils.restaurant_filter'
+      - method: setBusinessContext
+        arguments:
+            - '@AppBundle\Business\Context'
+
+  AppBundle\Entity\HubRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Hub
+
+  AppBundle\Entity\DeliveryRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Delivery
+    calls:
+      - method: setSecret
+        arguments:
+            - '%secret%'
+      - method: setSonicClient
+        arguments:
+            - '@Psonic\Client'
+      - method: setSonicSecretPassword
+        arguments:
+            - '%sonic_secret_password%'
+      - method: setSonicNamespace
+        arguments:
+            - '%sonic_namespace%'
+
+  AppBundle\Entity\Sylius\OrderRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Sylius\Order
+    calls: [[setDeliveryRepository, ['@AppBundle\Entity\DeliveryRepository']]]
+
+  sylius.repository.order:
+    alias: AppBundle\Entity\Sylius\OrderRepository
+
+  AppBundle\Entity\TaskListRepository: ~
+
+  AppBundle\Entity\TourRepository: ~
+
+  AppBundle\Entity\Task\RecurrenceRuleRepository: ~
+
+  AppBundle\Service\Routing\Osrm: ~
+
+  routing_service:
+    public: true
+    class: AppBundle\Service\Routing\OsrmWithFallback
+
+  AppBundle\Api\Filter\DeliveryOrderFilter:
+    autowire: false
+    autoconfigure: false
+    public: true
+    parent: ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter
+    arguments:
+      $properties: []
+
+  coopcycle.web_success_handler:
+    class: AppBundle\EventListener\AuthenticationWebSuccessHandler
+    arguments: ['@security.http_utils', '@router']
+
+  AppBundle\Security\UserManager:
+    arguments:
+      $decorated: '@nucleos_user.user_manager.default'
+      $objectManager: '@nucleos_user.object_manager'
+
+  coopcycle.user_manager:
+    alias: AppBundle\Security\UserManager
+
+  AppBundle\Service\SettingsManager:
+    arguments:
+      $craueConfig: "@craue_config"
+      $craueCache: "@craue_config_cache_adapter"
+      $configEntityName: "%craue_config.entity_name%"
+      $country: "%country_iso%"
+      $foodtechEnabled: "%foodtech_enabled%"
+      $b2bEnabled: "%b2b_enabled%"
+      $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $projectDir: "%kernel.project_dir%"
+
+  AppBundle\Service\EmailManager:
+    arguments:
+      $transactionalAddress: "%transactional_address%"
+
+  AppBundle\Service\RemotePushNotificationManager: ~
+
+  AppBundle\Geocoder\RateLimiterStore:
+    arguments:
+      $redis: '@snc_redis.shared'
+      $service: opencage
+
+  geocode_earth.rate_limiter_store:
+    class: AppBundle\Geocoder\RateLimiterStore
+    autowire: false
+    arguments:
+      $redis: '@snc_redis.shared'
+      $service: geocode_earth
+
+  App\Service\GeocodeEarthRateLimiter: '@geocode_earth.rate_limiter_store'
+
+  AppBundle\Service\Geocoder:
+    arguments:
+      $openCageApiKey: "%env(OPENCAGE_API_KEY)%"
+      $geocodeEarthApiKey: '%env(GEOCODE_EARTH_API_KEY)%'
+      $country: "%country_iso%"
+      $locale: "%env(COOPCYCLE_LOCALE)%"
+      $rateLimitPerSecond: 15
+      $autoconfigure: "%env(bool:COOPCYCLE_GEOCODER_AUTOCONF_ENABLED)%"
+      $geocodeEarthRateLimiterStore : "@geocode_earth.rate_limiter_store"
+
+  # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
+  AppBundle\Doctrine\EventSubscriber\TourSubscriber:
+    arguments:
+      $eventBus: '@event_bus'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 48 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
+    arguments:
+      $eventBus: '@event_bus'
+      $eventStore: '@coopcycle.domain.event_store'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 32 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
+
+  AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
+    arguments:
+      $eventBus: '@event_bus'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
+
+  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  AppBundle\Doctrine\EventSubscriber\OrderSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
+    tags:
+      - { name: monolog.logger, channel: coopcycle.search }
+      - { name: doctrine.event_subscriber }
+
+  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  # needs to be run last to take into account all changes
+  AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber, priority: -100 }
+
+  AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
+    arguments:
+        $denyAccessListener: '@api_platform.security.listener.request.deny_access'
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\DeliverySubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\TaskImportQueueSubscriber:
+    arguments:
+        $secret: '%secret%'
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
+    arguments:
+        - '@doctrine'
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\MaintenanceSubscriber:
+    arguments:
+        - '@snc_redis.default'
+        - '@translator'
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\WarehouseDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\ProductOptionSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
+    tags: [ 'kernel.event_subscriber' ]
+
+  AppBundle\Api\EventSubscriber\UrbantzSubscriber:
+    arguments:
+      $secret: '%secret%'
+    tags:
+      - { name: kernel.event_subscriber }
+      - { name: monolog.logger, channel: urbantz }
+
+  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
+    tags:
+      - { name: doctrine.event_subscriber }
+
+  AppBundle\Action\Settings:
+    public: true
+    arguments:
+      $assetsFilesystem: '@assets_filesystem'
+      $phoneNumberNormalizer: '@misd_phone_number.serializer.normalizer'
+      $country: '%country_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+      $splitTermsAndConditionsAndPrivacyPolicy: '%env(SPLIT_TERMS_AND_CONDITIONS_AND_PRIVACY_POLICY)%'
+      $edenredClientId: '%env(EDENRED_AUTHENTICATION_CLIENT_ID)%'
+      $edenredAuthorizationEndpoint: '%env(EDENRED_AUTHENTICATION_BASE_URL)%'
+
+  AppBundle\Transporter\ImportFromPoint: ~
+  AppBundle\Transporter\ReportFromCC: ~
+
+  AppBundle\Action\Register:
+    public: true
+    arguments:
+      $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
+      $mailer: '@nucleos_profile.mailer'
+
+  AppBundle\Action\ResettingSendEmail:
+    public: true
+    arguments:
+      $retryTtl: '%nucleos_user.resetting.retry_ttl%'
+
+  AppBundle\Action\ResettingReset:
+    public: true
+    arguments:
+      $tokenTtl: '%nucleos_user.resetting.token_ttl%'
+
+  AppBundle\Action\UpdateLocation:
+    public: true
+    arguments:
+      $tile38: '@snc_redis.tile38'
+      $fleetKey: '%tile38_fleet_key%'
+      $trackingChannel: '%centrifugo_tracking_channel%'
+      $centrifugoNamespace: '%centrifugo_namespace%'
+
+  AppBundle\Action\Order\Pay:
+    public: true
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+    tags:
+      - { name: monolog.logger, channel: stripe }
+
+  AppBundle\Action\Delivery\CalculateRetailPrice:
+    public: true
+    arguments:
+      $state: "%region_iso%"
+
+  AppBundle\Action\CentrifugoToken:
+    public: true
+    arguments:
+      $centrifugoNamespace: "%centrifugo_namespace%"
+
+  AppBundle\Action\Order\PaymentMethods:
+    public: true
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+      $edenredEnabled: '%env(bool:EDENRED_ENABLED)%'
+
+  AppBundle\Action\Order\Centrifugo:
+    public: true
+    arguments:
+      $centrifugoNamespace: '%centrifugo_namespace%'
+
+  AppBundle\Action\Urbantz\ReceiveWebhook:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: urbantz }
+
+  AppBundle\Action\GoogleSignIn:
+    public: true
+    arguments:
+      $appId: "%env(GOOGLE_SIGN_IN_CLIENT_ID)%"
+
+  AppBundle\Action\TimeSlot\Choices:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Action\TimeSlot\StoreOpeningHours:
+    public: true
+    arguments:
+      $country: "%country_iso%"
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Incident\LoopeatFailureReasonsResolver: ~
+
+  AppBundle\Action\Task\FailureReasons:
+    public: true
+    arguments:
+      $failureReasonsResolvers:
+        - '@AppBundle\Incident\LoopeatFailureReasonsResolver'
+
+  AppBundle\EventListener\RestaurantFilterConfigurator:
+    tags:
+      - { name: kernel.event_listener, event: kernel.request, priority: 5 }
+
+  AppBundle\Api\DataProvider\RestaurantCollectionDataProvider:
+    parent: 'api_platform.doctrine.orm.collection_data_provider'
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+    calls:
+      - setRestaurantFilter: ['@coopcycle.utils.restaurant_filter']
+      - setTimingRegistry: ['@AppBundle\Service\TimingRegistry']
+    autoconfigure: false
+    autowire: false
+    public: false
+
+  AppBundle\Api\DataProvider\TaskListCollectionDataProvider:
+    parent: 'api_platform.doctrine.orm.collection_data_provider'
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+    calls:
+      - setTokenExtractor: ['@AppBundle\Security\TokenStoreExtractor']
+    autoconfigure: false
+    autowire: false
+    public: false
+
+  AppBundle\Api\DataProvider\TaskCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
+    tags:
+      - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
+
+  AppBundle\Api\DataProvider\StoreAddressesSubresourceDataProvider:
+    arguments:
+      $requestStack: '@request_stack'
+      $doctrine: '@doctrine'
+    tags:
+      - { name: 'api_platform.subresource_data_provider', priority: 2 }
+    autoconfigure: false
+
+  AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
+
+  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
+    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
+    autoconfigure: false
+
+  AppBundle\Api\DataProvider\InvoiceLineItemGroupedByOrganizationCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Api\DataProvider\InvoiceLineItemCollectionDataProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    tags:
+      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Utils\RestaurantFilter:
+    arguments:
+      - '@routing_service'
+      - '@coopcycle.expression_language'
+
+  AppBundle\Sylius\Order\OrderNumberAssigner:
+    decorates: 'sylius.order_number_assigner'
+
+  AppBundle\Utils\OrderTextEncoder:
+    arguments:
+      - '@twig'
+
+  AppBundle\Utils\PriceFormatter:
+    arguments:
+      - '@sylius.context.currency'
+
+  AppBundle\Sylius\Channel\ChannelResolver:
+    tags:
+      - { name: 'sylius.context.channel.request_based.resolver' }
+
+  AppBundle\Sylius\Channel\DefaultChannelContext:
+    arguments:
+      - '@sylius.repository.channel'
+    tags:
+      - { name: 'sylius.context.channel', priority: -64 }
+
+  AppBundle\EventListener\BusinessListener:
+    tags:
+      - { name: kernel.event_listener, event: kernel.response }
+
+  AppBundle\Business\Context: ~
+
+  AppBundle\EventSubscriber\ApiLogSubscriber:
+    tags:
+      - { name: monolog.logger, channel: api }
+
+  AppBundle\EventSubscriber\ClearTwigCacheSubscriber:
+    arguments:
+      $annotation: '%restaurant_menu_cache_annotation%'
+
+  AppBundle\EventListener\Upload\UploadListener:
+    arguments:
+      $mappingFactory: '@vich_uploader.property_mapping_factory'
+      $uploadHandler: '@vich_uploader.upload_handler'
+      $secret: '%secret%'
+      $isDemo: '%is_demo%'
+    tags:
+      - { name: kernel.event_listener, event: oneup_uploader.post_persist, method: onUpload }
+
+  AppBundle\Security\ApiKeyManager: ~
+
+  AppBundle\Security\OrderAccessTokenManager: ~
+
+  AppBundle\Mjml\MjmlServerRenderer: ~
+
+  AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
+    arguments:
+      $orderItemFactory: "@sylius.factory.order_item"
+      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
+
+  AppBundle\Api\DataTransformer\CartSessionInputDataTransformer:
+    arguments:
+      $orderFactory: "@sylius.factory.order"
+
+  AppBundle\Twig\CoopCycleExtension:
+    arguments:
+      $secret: '%secret%'
+
+  AppBundle\Security\TokenStoreExtractor: ~
+
+  AppBundle\Utils\LogoNamer:
+    public: true
+
+  AppBundle\Utils\BannerNamer:
+    public: true
+
+  # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
+  # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
+  s3_client:
+    class: Aws\S3\S3Client
+    arguments:
+        - endpoint: '%env(S3_ENDPOINT)%'
+          version: latest
+          region: '%env(S3_REGION)%'
+          credentials:
+            key: '%env(S3_CREDENTIALS_KEY)%'
+            secret: '%env(S3_CREDENTIALS_SECRET)%'
+          use_path_style_endpoint: true
+
+  AppBundle\Service\StripeManager:
+    tags:
+      - { name: monolog.logger, channel: stripe }
+
+  AppBundle\Service\MercadopagoManager: ~
+
+  AppBundle\Sylius\Order\ReceiptGenerator:
+    arguments:
+      $filesystem: '@receipts_filesystem'
+      $taxRateRepository: '@sylius.repository.tax_rate'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Service\TagManager:
+    arguments:
+      $cache: '@tag_manager.cache'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.tagging }
+
+  AppBundle\Log\:
+    resource: '../src/Log/*'
+
+  Symfony\Bridge\Monolog\Processor\RouteProcessor:
+    tags:
+      - { name: monolog.processor }
+
+  AppBundle\Log\ApiRequestResponseProcessor:
+    tags:
+      - { name: monolog.processor, channel: api }
+
+  Symfony\Bridge\Monolog\Processor\TokenProcessor:
+    tags:
+      - { name: monolog.processor, channel: api }
+
+  AppBundle\Messenger\:
+    resource: '../src/Messenger/*'
+
+  AppBundle\MessageHandler\EmailHandler: ~
+
+  AppBundle\Api\Swagger\SwaggerDecorator:
+      decorates: 'api_platform.openapi.factory'
+      arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
+      autoconfigure: false
+
+  AppBundle\MessageHandler\ImportTasksHandler: ~
+
+  AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
+
+  AppBundle\MessageHandler\CalculateRouteHandler:
+    arguments:
+      $eventBus: '@simple_bus.event_bus'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.logistics }
+
+  AppBundle\MessageHandler\TopBarNotificationHandler: ~
+
+  AppBundle\MessageHandler\DeliveryCreatedHandler:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\MessageHandler\IndexDeliveriesHandler:
+    arguments:
+      $ingestClient: '@sonic.ingest.client'
+      $controlClient: '@sonic.control.client'
+      $sonicSecretPassword: '%env(SONIC_SECRET_PASSWORD)%'
+      $namespace: '%sonic_namespace%'
+    tags:
+      - { name: monolog.logger, channel: coopcycle.search }
+
+  AppBundle\MessageHandler\CreateWebhookEndpointHandler:
+    arguments:
+      $entityName: "%craue_config.entity_name%"
+
+  AppBundle\Service\MaintenanceManager: ~
+
+  AppBundle\Service\SmsManager: ~
+
+  AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider: ~
+  AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor: ~
+
+  AppBundle\Service\CartProviderService:
+    arguments:
+      $country: "%country_iso%"
+
+  AppBundle\Service\InvitationLinkProviderService: ~
+
+  AppBundle\Domain\Order\Workflow\Guard:
+    public: true
+
+  AppBundle\Taxonomy\CuisineProvider: ~
+
+  Pushok\AuthProviderInterface: '@Pushok\AuthProvider\Token'
+
+  Pushok\AuthProvider\Token:
+    factory: ['Pushok\AuthProvider\Token', 'create']
+    arguments:
+      $options:
+        key_id: "%env(APNS_KEY_ID)%"
+        team_id: "%env(APNS_TEAM_ID)%"
+        app_bundle_id: "%env(APNS_APP_BUNDLE_ID)%"
+        private_key_path: "%env(APNS_PRIVATE_KEY_FILE)%"
+        private_key_secret: "%env(APNS_CERTIFICATE_PASS_PHRASE)%"
+
+  Pushok\Client:
+    arguments:
+      $isProductionEnv: "%env(default:apns_default_is_production_env:bool:APNS_IS_PRODUCTION_ENV)%"
+
+  AppBundle\Sylius\Taxation\TaxesProvider:
+    arguments:
+      $taxCategoryFactory: '@sylius.factory.tax_category'
+      $taxRateFactory: '@sylius.factory.tax_rate'
+
+  AppBundle\EventListener\AjaxSessionCloseListener:
+    tags:
+      - { name: "kernel.event_listener", event: "kernel.request", priority: -255 }
+
+  AppBundle\Payment\GatewayResolver:
+    arguments:
+      $country: '%country_iso%'
+      $mercadopagoCountries:
+        - ar
+        - br
+        - cr
+        - mx
+        - cl
+        - co
+      $forceStripe: "%env(bool:FORCE_STRIPE)%"
+      $paygreenEnabled: "%env(bool:PAYGREEN_ENABLED)%"
+
+  AppBundle\Payment\Gateway\Stripe: ~
+  AppBundle\Payment\Gateway\Edenred: ~
+  AppBundle\Payment\Gateway\MercadoPago: ~
+  AppBundle\Payment\Gateway\Paygreen: ~
+
+  AppBundle\Payment\Gateway:
+    arguments:
+      $gateways:
+        stripe: '@AppBundle\Payment\Gateway\Stripe'
+        edenred: '@AppBundle\Payment\Gateway\Edenred'
+        mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
+        paygreen: '@AppBundle\Payment\Gateway\Paygreen'
+
+  AppBundle\Security\BusinessVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\EventSubscriber\RegistrationInitializeListener:
+    arguments:
+      $orderRepository: '@sylius.repository.order'
+      $customerRepository: '@sylius.repository.customer'
+      $secret: '%secret%'
+
+  AppBundle\Embed\Context: ~
+
+  AppBundle\Security\DeleteClosingRuleVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\OrderActionsVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\LocalBusinessVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DashboardViewVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\ProductVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DeliveriesVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\StoreVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\AddressVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\UserVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\TaskGroupVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\WebhookVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\ProductOptionValueVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DeliveryQuoteVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\DeliveryImportQueueVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\TimeSlotVoter:
+    tags: [ 'security.voter' ]
+
+  # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
+  # The built-in RequestAttributeValueResolver, which fetches attributes from the Request, has a priority of 100.
+  # If your resolver also fetches Request attributes, set a priority of 100 or more.
+  # Otherwise, set a priority lower than 100 to make sure the argument resolver is not triggered when the Request attribute is present.
+  AppBundle\Controller\ArgumentResolver\AddressValueResolver:
+    tags:
+      - { name: controller.argument_value_resolver, priority: 50 }
+
+  AppBundle\Security\TaskOperationsVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Sylius\Cart\SessionSubscriber:
+    arguments:
+      $enabled: "%foodtech_enabled%"
+    tags:
+      - { name: kernel.event_subscriber }
+
+  AppBundle\Utils\OptionsPayloadConverter:
+    arguments:
+      $productOptionValueRepository: '@sylius.repository.product_option_value'
+
+  Psonic\Client:
+    arguments:
+      - '%env(SONIC_HOST)%'
+      - '%env(SONIC_PORT)%'
+      - 30
+
+  sonic.ingest.client:
+    class: Psonic\Client
+    arguments:
+      - '%env(SONIC_HOST)%'
+      - '%env(SONIC_PORT)%'
+      - 30
+
+  sonic.control.client:
+    class: Psonic\Client
+    arguments:
+      - '%env(SONIC_HOST)%'
+      - '%env(SONIC_PORT)%'
+      - 30
+
+  AppBundle\Service\RouteOptimizer: ~
+
+  phpcent\Client:
+    arguments:
+      - '%env(CENTRIFUGO_API_URL)%'
+      - '%env(CENTRIFUGO_API_KEY)%'
+      - '%env(CENTRIFUGO_TOKEN_HMAC_SECRET_KEY)%'
+
+  AppBundle\Service\LiveUpdates:
+    arguments:
+      $namespace: '%centrifugo_namespace%'
+
+  AppBundle\Spreadsheet\DeliveryDataExporter: ~
+  AppBundle\Spreadsheet\DV4CULDataExporter: ~
+
+  colisactiv:
+    class: AppBundle\Spreadsheet\ColisActivDataExporter
+    arguments:
+      $includeAllTasks: false
+
+  colisactiv_all:
+    class: AppBundle\Spreadsheet\ColisActivDataExporter
+    arguments:
+      $includeAllTasks: true
+
+  AppBundle\Edenred\Authentication:
+    arguments:
+      $config: { base_uri: "%env(EDENRED_AUTHENTICATION_BASE_URL)%" }
+      $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
+      $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
+    tags:
+      - { name: monolog.logger, channel: edenred }
+
+  AppBundle\Edenred\RefreshTokenHandler:
+    arguments:
+      $baseUrl: "%env(EDENRED_AUTHENTICATION_BASE_URL)%"
+      $clientId: "%env(EDENRED_AUTHENTICATION_CLIENT_ID)%"
+      $clientSecret: "%env(EDENRED_AUTHENTICATION_CLIENT_SECRET)%"
+    tags:
+      - { name: monolog.logger, channel: edenred }
+
+  AppBundle\Edenred\Client:
+    arguments:
+      $config: { base_uri: "%env(EDENRED_PAYMENT_BASE_URL)%" }
+      $paymentClientId: '%env(EDENRED_PAYMENT_CLIENT_ID)%'
+      $paymentClientSecret: '%env(EDENRED_PAYMENT_CLIENT_SECRET)%'
+    tags:
+      - { name: monolog.logger, channel: edenred }
+
+  AppBundle\Service\Geofencing:
+    arguments:
+      $tile38: '@snc_redis.tile38'
+      $doorstepChanNamespace: '%tile38_doorstep_chan_namespace%'
+      $fleetKey: '%tile38_fleet_key%'
+
+  AppBundle\Sylius\Taxation\TaxesHelper:
+    arguments:
+      $country: '%region_iso%'
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+      $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
+
+  AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
+
+  AppBundle\Security\BearerTokenAuthenticator:
+    abstract: true
+
+  # https://symfony.com/doc/5.4/session/database.html#store-sessions-in-a-key-value-database-redis
+  Symfony\Component\HttpFoundation\Session\Storage\Handler\RedisSessionHandler:
+    arguments:
+      - '@snc_redis.session'
+      - { 'prefix': '%database_name%:session:' }
+
+  AppBundle\Routing\EmbedAwareRouter:
+    decorates: router
+    arguments: ['@.inner']
+
+  # https://cube.dev/docs/security
+
+  cubejs.jwt.key:
+    class: Lcobucci\JWT\Signer\Key
+    factory: ['Lcobucci\JWT\Signer\Key\InMemory', 'plainText']
+    arguments: ['%env(CUBEJS_API_SECRET)%']
+
+  cubejs.jwt.signer:
+    class: Lcobucci\JWT\Signer\Hmac\Sha256
+
+  cubejs.jwt.config:
+    class: Lcobucci\JWT\Configuration
+    factory: ['Lcobucci\JWT\Configuration', 'forSymmetricSigner']
+    arguments: ['@cubejs.jwt.signer', '@cubejs.jwt.key']
+
+  AppBundle\CubeJs\TokenFactory:
+    arguments:
+      $databaseName: '%database_name%'
+      $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+      $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+
+  AppBundle\Translation\DatePeriodFormatter:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'
+
+  hashids.8:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 8]
+
+  AppBundle\Service\PriceHelper:
+    arguments:
+      $state: "%region_iso%"
+
+  hashids.12:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 12]
+
+  hashids.16:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 16]
+
+  woopit.grant_type:
+    class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
+    arguments: [
+      '@woopit.http_client',
+      '%env(WOOPIT_AUTHENTICATION_API_URL)%',
+      '%env(WOOPIT_CLIENT_ID)%',
+      '%env(WOOPIT_CLIENT_SECRET)%'
+    ]
+
+  woopit.oauth_http_client:
+      class: BenjaminFavre\OAuthHttpClient\OAuthHttpClient
+      arguments: [
+        '@woopit.http_client',
+        '@woopit.grant_type'
+      ]
+
+  AppBundle\Dabba\Client:
+    arguments:
+      $baseUrl: "%dabba_base_url%"
+      $clientId: "%dabba_client_id%"
+      $clientSecret: "%dabba_client_secret%"
+
+  AppBundle\Dabba\Context:
+    tags:
+      - { name: monolog.logger, channel: dabba }
+
+  AppBundle\Typesense\Converter\:
+    resource: '../src/Typesense/Converter/*'
+    public: true
+
+  AppBundle\Utils\OrdersRateLimit: ~
+
+  AppBundle\Sylius\Order\OrderInvitationContext: ~
+
+  coopcycle.sylius.order_modifier:
+    class: AppBundle\Sylius\Order\OrderModifier
+    decorates: sylius.order_modifier
+
+  coopcycle.sylius.order_item_quantity_modifier:
+    class: AppBundle\Sylius\Order\OrderItemQuantityModifier
+    decorates: sylius.order_item_quantity_modifier
+
+  AppBundle\CubeJs\HttpClient:
+    decorates: cubejs.client
+
+  AppBundle\Service\Tile38Helper:
+    arguments:
+      $fleetKey: '%tile38_fleet_key%'
+
+  AppBundle\Pricing\PricingManager: ~
+
+  AppBundle\Form\BusinessAccountRegistrationFlow:
+    autoconfigure: true
+
+  proj4php\Proj4php:
+    calls:
+      - method: addDef
+        arguments:
+          - 'EPSG:25830'
+          - '+proj=utm +zone=30 +ellps=GRS80 +units=m +no_defs'
+
+  AppBundle\Geography\CityZoneImporter\Umap: ~
+  AppBundle\Geography\CityZoneImporter\EsriJson: ~
+  AppBundle\Geography\CityZoneImporter\GeoJson: ~
+  AppBundle\Geography\CityZoneImporter\Json: ~
+
+  AppBundle\Geography\CityZoneImporter:
+    arguments:
+      $importers:
+        umap: '@AppBundle\Geography\CityZoneImporter\Umap'
+        esrijson: '@AppBundle\Geography\CityZoneImporter\EsriJson'
+        geojson: '@AppBundle\Geography\CityZoneImporter\GeoJson'
+        json: '@AppBundle\Geography\CityZoneImporter\Json'
+
+  AppBundle\Unsplash\Client: ~
+  AppBundle\Pixabay\Client:
+    arguments:
+      $lang: "%env(COOPCYCLE_LOCALE)%"
+
+  AppBundle\Assets\PlaceholderImageResolver:
+    arguments:
+      $pixabayApiKey: '%env(PIXABAY_API_KEY)%'
+
+  AppBundle\Utils\RestaurantDecorator: ~
+
+  AppBundle\Fulfillment\FulfillmentMethodResolver: ~
+
+  AppBundle\Controller\StorybookController:
+    arguments:
+      $translator: '@translator'
+
+  AppBundle\Edenred\SynchronizerClient:
+    arguments: [
+      '@edenredsynchronizer.client',
+    ]
+
+  paygreen.http_client:
+    class: Symfony\Component\HttpClient\Psr18Client
+
+  AppBundle\Paygreen\EnvironmentFactory:
+    arguments:
+      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+
+  Paygreen\Sdk\Payment\V3\Environment:
+    factory: '@AppBundle\Paygreen\EnvironmentFactory'
+    lazy: true
+
+  Paygreen\Sdk\Payment\V3\Client:
+    arguments:
+      - '@paygreen.http_client'
+      - '@Paygreen\Sdk\Payment\V3\Environment'
+
+  AppBundle\Sylius\Payment\Context: ~
+
+  AppBundle\Entity\Delivery\FailureReasonRegistry: ~
+
+  Picqer\Barcode\BarcodeGeneratorSVG: ~
+
+  AppBundle\Utils\Barcode\BarcodeUtils: ~
+
+  AppBundle\EventSubscriber\BarcodeUtilsSubscriber:
+    arguments:
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+      $salt: '%env(APP_SECRET)%'
+    tags:
+      - { name: kernel.event_subscriber }
+
+  AppBundle\Service\PaygreenManager:
+    arguments:
+      $country: '%country_iso%'
+
+  AppBundle\Serializer\CustomSerializationContextBuiler:
+    decorates: api_platform.serializer.context_builder
+    arguments:
+      $decorated: '@AppBundle\Serializer\CustomSerializationContextBuiler.inner'
+
+  AppBundle\Integration\Standtrack\StandtrackClient:
+    arguments:
+      $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
+
+  AppBundle\Utils\Defaults: ~

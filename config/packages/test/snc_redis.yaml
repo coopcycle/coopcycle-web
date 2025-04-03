@@ -1,0 +1,8 @@
+snc_redis:
+    clients:
+        default:
+            type: phpredis
+            alias: default
+            dsn: "%env(COOPCYCLE_REDIS_DSN)%/1"
+            options:
+                prefix: "%database_name%_test:"

@@ -76,7 +76,7 @@ final class SubresourceDenyAccessListener implements EventSubscriberInterface
             $subresourceContext = $request->attributes->get('_api_subresource_context');
 
             $parent = null;
-            foreach ($subresourceContext['identifiers'] as $key => [$resourceClass, $id]) {
+            foreach ($subresourceContext['identifiers'] as [$resourceClass, $id]) {
                 if (null !== $parent = $this->itemDataProvider->getItem($resourceClass, $request->attributes->get($id), 'get')) {
                     break;
                 }

@@ -15,16 +15,14 @@ abstract class Place extends PostalAddress
 {
     /**
      * @var GeoCoordinates The geo coordinates of the place.
-     *
-     * @Assert\NotNull()
-     * @Groups({"address", "address_create", "task_create", "task_edit", "order_update", "cart", "delivery_create", "pricing_deliveries"})
      */
+    #[Assert\NotNull]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create', 'pricing_deliveries'])]
     protected $geo;
 
     /**
      * Sets geo.
      *
-     * @param GeoCoordinates $coords
      *
      * @return $this
      */

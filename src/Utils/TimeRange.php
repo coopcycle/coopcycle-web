@@ -7,14 +7,7 @@ use AppBundle\Exception\TimeRange\NoWeekdayException;
 
 class TimeRange
 {
-    private $weekdays = [];
-    private $timeRanges = [];
-    private $is247 = false;
-
     private static $objectCache = [];
-
-    private $checkWeekdayCache = [];
-    private $checkTimeCache = [];
 
     const TIME_RANGE_247 = 'Mo-Su 00:00-23:59';
 
@@ -37,7 +30,6 @@ class TimeRange
         }
 
         if (self::TIME_RANGE_247 === $range) {
-            $this->is247 = true;
             return;
         }
 
@@ -78,9 +70,6 @@ class TimeRange
         if (empty($weekdays)) {
             throw new NoWeekdayException();
         }
-
-        $this->timeRanges = $hours;
-        $this->weekdays = $weekdays;
     }
 
     public static function create(string $range)

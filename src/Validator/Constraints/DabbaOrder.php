@@ -4,9 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class DabbaOrder extends Constraint
 {
     public $insufficientQuantity = 'dabba.insufficient_quantity';

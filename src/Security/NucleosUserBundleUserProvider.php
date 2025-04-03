@@ -147,9 +147,6 @@ class NucleosUserBundleUserProvider implements UserProviderInterface, AccountCon
 
     /**
      * Disconnects a user.
-     *
-     * @param UserInterface         $user
-     * @param UserResponseInterface $response
      */
     public function disconnect(UserInterface $user, UserResponseInterface $response)
     {
@@ -170,7 +167,7 @@ class NucleosUserBundleUserProvider implements UserProviderInterface, AccountCon
         }
 
         $userId = $this->accessor->getValue($user, $identifier);
-        $username = $user->getUsername();
+        $user->getUsername();
 
         if (null === $user = $this->userManager->findUserBy([$identifier => $userId])) {
             $exception = new UserNotFoundException(sprintf('User with ID "%d" could not be reloaded.', $userId));
@@ -195,10 +192,8 @@ class NucleosUserBundleUserProvider implements UserProviderInterface, AccountCon
     /**
      * Gets the property for the response.
      *
-     * @param UserResponseInterface $response
      *
      * @return string
-     *
      * @throws \RuntimeException
      */
     protected function getProperty(UserResponseInterface $response)

@@ -59,7 +59,7 @@ class SuggestOptimizations
 
         $steps = $route['steps'];
 
-        $start = array_shift($steps);
+        array_shift($steps);
 
         $reordered = [];
         $optimizedOrder = [];

@@ -12,6 +12,7 @@ use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
+use Sylius\Component\Resource\Model\TimestampableTrait;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -22,18 +23,17 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class ProductImage
 {
+    use TimestampableTrait;
+
     private $id;
 
     private $product;
 
     /**
      * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName")
-     * @Assert\File(
-     *   maxSize = "1024k",
-     *   mimeTypes = {"image/jpg", "image/jpeg", "image/png"}
-     * )
      * @var File
      */
+    #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 
     /**
@@ -45,8 +45,6 @@ class ProductImage
      * @var string
      */
     private $ratio = '1:1';
-
-    private $updatedAt;
 
     public function setImageName($imageName)
     {
@@ -72,12 +70,6 @@ class ProductImage
     public function setImageFile(File $image = null)
     {
         $this->imageFile = $image;
-
-        if ($image) {
-            // It is required that at least one field changes if you are using doctrine
-            // otherwise the event listeners won't be called and the file is lost
-            $this->updatedAt = new \DateTimeImmutable();
-        }
 
         return $this;
     }

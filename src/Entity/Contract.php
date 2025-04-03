@@ -20,9 +20,9 @@ class Contract
     /**
      * @var int
      * The amount (in cents) charged by the platform.
-     * @Assert\NotBlank
-     * @Assert\Type("integer")
      */
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     private $flatDeliveryPrice = 0;
 
     /**
@@ -34,31 +34,23 @@ class Contract
     /**
      * @var PricingRuleSet|null
      * The pricing rule to calculate the amount charged by the platform.
-     * @Assert\Expression(
-     *   "this.getVariableDeliveryPrice() != null or !this.isVariableDeliveryPriceEnabled()",
-     *   message="restaurant.contract.variableDeliveryPrice.pickOne",
-     *   groups={"Default", "activable"}
-     * )
      */
+    #[Assert\Expression('this.getVariableDeliveryPrice() != null or !this.isVariableDeliveryPriceEnabled()', message: 'restaurant.contract.variableDeliveryPrice.pickOne', groups: ['Default', 'activable'])]
     private $variableDeliveryPrice;
 
     /**
      * @var int
      * The amount (in cents) paid by the customer.
-     * @Assert\NotBlank
-     * @Assert\Type("integer")
      */
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     private $customerAmount = 0;
 
     /**
      * @var PricingRuleSet|null
      * The pricing rule to calculate the amount paid by the customer.
-     * @Assert\Expression(
-     *   "this.getVariableCustomerAmount() != null or !this.isVariableCustomerAmountEnabled()",
-     *   message="restaurant.contract.variableCustomerAmount.pickOne",
-     *   groups={"Default", "activable"}
-     * )
      */
+    #[Assert\Expression('this.getVariableCustomerAmount() != null or !this.isVariableCustomerAmountEnabled()', message: 'restaurant.contract.variableCustomerAmount.pickOne', groups: ['Default', 'activable'])]
     private $variableCustomerAmount;
 
     /**
@@ -69,23 +61,23 @@ class Contract
 
     /**
      * @var float
-     * @Assert\NotBlank
-     * @Assert\Type("float")
      */
+    #[Assert\NotBlank]
+    #[Assert\Type('float')]
     private $feeRate = 0.00;
 
     /**
      * @var bool
      * Restaurant pays Stripe fee?
-     * @Assert\Type("bool")
      */
+    #[Assert\Type('bool')]
     private $restaurantPaysStripeFee = true;
 
     /**
      * @var float
-     * @Assert\NotBlank
-     * @Assert\Type("float")
      */
+    #[Assert\NotBlank]
+    #[Assert\Type('float')]
     private $takeAwayFeeRate = 0.00;
 
     public function __construct()
@@ -129,25 +121,16 @@ class Contract
         return $this->flatDeliveryPrice;
     }
 
-    /**
-     * @param int $flatDeliveryPrice
-     */
     public function setFlatDeliveryPrice(int $flatDeliveryPrice)
     {
         $this->flatDeliveryPrice = $flatDeliveryPrice;
     }
 
-    /**
-     * @return bool
-     */
     public function isVariableDeliveryPriceEnabled(): bool
     {
         return $this->variableDeliveryPriceEnabled;
     }
 
-    /**
-     * @param bool $variableDeliveryPriceEnabled
-     */
     public function setVariableDeliveryPriceEnabled(bool $variableDeliveryPriceEnabled): void
     {
         $this->variableDeliveryPriceEnabled = $variableDeliveryPriceEnabled;
@@ -161,9 +144,6 @@ class Contract
         return $this->variableDeliveryPrice;
     }
 
-    /**
-     * @param PricingRuleSet|null $variableDeliveryPrice
-     */
     public function setVariableDeliveryPrice(?PricingRuleSet $variableDeliveryPrice)
     {
         $this->variableDeliveryPrice = $variableDeliveryPrice;
@@ -178,7 +158,6 @@ class Contract
     }
 
     /**
-     * @param float $feeRate
      * @return Contract
      */
     public function setFeeRate(float $feeRate)
@@ -200,17 +179,11 @@ class Contract
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isRestaurantPaysStripeFee(): bool
     {
         return $this->restaurantPaysStripeFee;
     }
 
-    /**
-     * @param bool $restaurantPaysStripeFee
-     */
     public function setRestaurantPaysStripeFee(bool $restaurantPaysStripeFee): void
     {
         $this->restaurantPaysStripeFee = $restaurantPaysStripeFee;
@@ -265,7 +238,6 @@ class Contract
     }
 
     /**
-     * @param float $takeAwayFeeRate
      * @return Contract
      */
     public function setTakeAwayFeeRate(float $takeAwayFeeRate)

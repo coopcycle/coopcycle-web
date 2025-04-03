@@ -28,14 +28,14 @@ context('Setup simple km-based pricing (role: admin)', () => {
     cy.get('#pricing_rule_set_strategy_1').check()
 
     // Rule: distance > 0; price = 5
-    cy.get('[data-testid="pricint_rule_set_add_rule_target_delivery"]').click()
+    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click()
     cy.get('[data-testid="rule-picker-add-condition"]').click()
     cy.get('tr > :nth-child(1) > .form-control').select('distance')
     cy.get('[width="20%"] > .form-control').select('>')
     cy.get('#pricing_rule_set_rules_0_price').type('5')
 
     // Rule: distance > 3; price = 3 per 2km above 1km
-    cy.get('[data-testid="pricint_rule_set_add_rule_target_delivery"]').click()
+    cy.get('[data-testid="pricing_rule_set_add_rule_target_delivery"]').click()
     cy.get(':nth-child(2) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .text-right > [data-testid="rule-picker-add-condition"]',).click()
     cy.get(':nth-child(2) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > :nth-child(1) > .form-control',).select('distance')
     cy.get(':nth-child(2) > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > tr > [width="20%"] > .form-control',).select('>')

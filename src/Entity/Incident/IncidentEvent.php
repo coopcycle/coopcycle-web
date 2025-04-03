@@ -7,40 +7,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class IncidentEvent
 {
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $id;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $type;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $message;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected ?array $metadata;
 
     protected $incident;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $createdBy;
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $createdAt;
 
     const TYPE_COMMENT = "commented";

@@ -41,8 +41,6 @@ class WebhookExecution
     }
 
     /**
-     * @param Webhook $webhook
-     *
      * @return self
      */
     public function setWebhook(Webhook $webhook)

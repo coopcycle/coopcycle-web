@@ -1,0 +1,4 @@
+mjml:
+    renderer: 'service'
+    options:
+        service_id: 'AppBundle\Mjml\MjmlServerRenderer'

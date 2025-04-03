@@ -12,9 +12,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class SpreadsheetController extends AbstractController
 {
-    /**
-     * @Route("/spreadsheets/examples/coopcycle-products-example.csv", name="spreadsheet_example_products")
-     */
+    #[Route(path: '/spreadsheets/examples/coopcycle-products-example.csv', name: 'spreadsheet_example_products')]
     public function productsExampleCsvAction(ProductSpreadsheetParser $parser)
     {
         $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');
@@ -29,9 +27,7 @@ class SpreadsheetController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/spreadsheets/examples/coopcycle-tasks-example.csv", name="spreadsheet_example_tasks")
-     */
+    #[Route(path: '/spreadsheets/examples/coopcycle-tasks-example.csv', name: 'spreadsheet_example_tasks')]
     public function tasksExampleCsvAction(TaskSpreadsheetParser $parser)
     {
         $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');
@@ -46,9 +42,7 @@ class SpreadsheetController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/spreadsheets/examples/coopcycle-deliveries-example.csv", name="spreadsheet_example_deliveries")
-     */
+    #[Route(path: '/spreadsheets/examples/coopcycle-deliveries-example.csv', name: 'spreadsheet_example_deliveries')]
     public function deliveriesExampleCsvAction(DeliverySpreadsheetParser $parser)
     {
         $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');

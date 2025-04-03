@@ -22,95 +22,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * A TaskList represents the daily planning for a courier.
  * It is a concrete implementation of a TaskCollection.
- *
- * @ApiResource(
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')",
- *       "openapi_context"={
- *         "summary"="Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses."
- *       },
- *       "normalization_context"={"groups"={"task_list", "task_collection", "task", "delivery", "address"}}
- *     },
- *     "post"={
- *       "method"="POST",
- *       "controller"=CreateTaskListController::class,
- *       "access_control"="is_granted('ROLE_DISPATCHER')"
- *     },
- *     "v2"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')",
- *       "path"="/task_lists/v2",
- *       "openapi_context"={
- *         "summary"="Retrieves TaskLists as lists of tours and tasks."
- *       }
- *    }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER')"
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *       "access_control"="is_granted('ROLE_DISPATCHER')",
- *      },
- *     "set_items"={
- *       "method"="PUT",
- *       "access_control"="is_granted('ROLE_DISPATCHER')",
- *       "path"="/task_lists/set_items/{date}/{username}",
- *       "controller"=SetTaskListItemsController::class,
- *       "read"=false,
- *       "write"=false
- *      },
- *     "my_tasks"={
- *       "method"="GET",
- *       "path"="/me/tasks/{date}",
- *       "controller"=MyTasksController::class,
- *       "output"=MyTaskListDto::class,
- *       "access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
- *       "read"=false,
- *       "write"=false,
- *       "normalization_context"={"groups"={"task_list", "task", "delivery", "address"}},
- *       "openapi_context"={
- *         "summary"="Retrieves the collection of Task resources assigned to the authenticated token.",
- *         "parameters"={{
- *           "in"="path",
- *           "name"="date",
- *           "required"=true,
- *           "type"="string",
- *           "format"="date"
- *         }}
- *       }
- *     },
- *     "optimize"={
- *        "method"="GET",
- *        "path"="/task_lists/{id}/optimize",
- *        "controller"=OptimizeController::class,
- *        "access_control"="is_granted('ROLE_ADMIN')",
- *        "serialize"=false
- *     }
- *   },
- *   attributes={
- *     "normalization_context"={"groups"={"task_list"}}
- *   }
- * )
- * @ApiFilter(DateFilter::class, properties={"date"})
  */
+#[ApiResource(collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')", 'openapi_context' => ['summary' => "Legacy endpoint, please use '/api/task_lists/v2' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses."], 'normalization_context' => ['groups' => ['task_list', 'task_collection', 'task', 'delivery', 'address']]], 'post' => ['method' => 'POST', 'controller' => CreateTaskListController::class, 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'v2' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_OAUTH2_TASKS')", 'path' => '/task_lists/v2', 'openapi_context' => ['summary' => 'Retrieves TaskLists as lists of tours and tasks.']]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'set_items' => ['method' => 'PUT', 'access_control' => "is_granted('ROLE_DISPATCHER')", 'path' => '/task_lists/set_items/{date}/{username}', 'controller' => SetTaskListItemsController::class, 'read' => false, 'write' => false], 'my_tasks' => ['method' => 'GET', 'path' => '/me/tasks/{date}', 'controller' => MyTasksController::class, 'output' => MyTaskListDto::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')", 'read' => false, 'write' => false, 'normalization_context' => ['groups' => ['task_list', 'task', 'delivery', 'address']], 'openapi_context' => ['summary' => 'Retrieves the collection of Task resources assigned to the authenticated token.', 'parameters' => [['in' => 'path', 'name' => 'date', 'required' => true, 'type' => 'string', 'format' => 'date']]]], 'optimize' => ['method' => 'GET', 'path' => '/task_lists/{id}/optimize', 'controller' => OptimizeController::class, 'access_control' => "is_granted('ROLE_ADMIN')", 'serialize' => false]], attributes: ['normalization_context' => ['groups' => ['task_list']]])]
+#[ApiFilter(DateFilter::class, properties: ['date'])]
 class TaskList implements TaskCollectionInterface
 {
     use TaskCollectionTrait;
 
-    /**
-     * @Groups({"task_list"})
-     */
+    #[Groups(['task_list'])]
     private $id;
 
-    /**
-     * @Assert\Valid()
-     * @Groups({"task_list"})
-     */
+    #[Assert\Valid]
+    #[Groups(['task_list'])]
     protected $items;
 
     /**
@@ -118,7 +41,7 @@ class TaskList implements TaskCollectionInterface
      * Can be get and set, but not persisted to the database
      * @deprecated
      */
-    protected $tempLegacyTaskStorage = null;
+    protected $tempLegacyTaskStorage;
 
     private $date;
 
@@ -126,14 +49,14 @@ class TaskList implements TaskCollectionInterface
 
     /**
      * @var Vehicle
-     * @Groups({"task_list"})
-    */
+     */
+    #[Groups(['task_list'])]
     private $vehicle;
 
     /**
      * @var Trailer
-     * @Groups({"task_list"})
-    */
+     */
+    #[Groups(['task_list'])]
     private $trailer;
 
     public function __construct()
@@ -151,10 +74,8 @@ class TaskList implements TaskCollectionInterface
         return $this->date;
     }
 
-    /**
-     * @SerializedName("date")
-     * @Groups({"task_list"})
-     */
+    #[SerializedName('date')]
+    #[Groups(['task_list'])]
     public function getDateString()
     {
         return $this->date->format('Y-m-d');
@@ -224,10 +145,8 @@ class TaskList implements TaskCollectionInterface
         }
     }
 
-    /**
-     * @SerializedName("username")
-     * @Groups({"task_list"})
-     */
+    #[SerializedName('username')]
+    #[Groups(['task_list'])]
     public function getUsername()
     {
         return $this->getCourier()->getUsername();

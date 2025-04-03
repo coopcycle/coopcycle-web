@@ -1,0 +1,41 @@
+parameters:
+    tile38_fleet_key: '%database_name%_test:fleet'
+    tile38_doorstep_chan_namespace: '%database_name%_test'
+    typesense_shops_collection_name: "shops_test"
+    typesense_products_collection_name: "products_test"
+
+services:
+
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Tests\Behat\FeatureContext: ~
+
+    Fidry\AliceDataFixtures\LoaderInterface $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
+
+    AppBundle\EventListener\CarbonListener:
+        arguments:
+            - '@snc_redis.default'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    AppBundle\Fixtures\AliceDataFixtures\SettingsProcessor:
+        arguments:
+          - '@coopcycle.settings_manager'
+        tags:
+            - { name: fidry_alice_data_fixtures.processor }
+
+    urbantz_client_mock:
+        class: Symfony\Component\HttpClient\MockHttpClient
+        arguments:
+            $baseUri: 'https://api.urbantz.com/v2/'
+
+    Symfony\Contracts\HttpClient\HttpClientInterface $urbantzClient: '@urbantz_client_mock'
+
+    AppBundle\CubeJs\TokenFactory:
+        arguments:
+          $databaseName: '%database_name%_test'
+          $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
+          $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
+          $appName: '%env(COOPCYCLE_APP_NAME)%'

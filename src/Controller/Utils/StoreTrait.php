@@ -61,9 +61,7 @@ trait StoreTrait
 {
     use InjectAuthTrait;
 
-    /**
-     * @HideSoftDeleted
-     */
+    #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
         $qb = $this->getDoctrine()
@@ -280,7 +278,9 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryAction($id, Request $request,
+    public function newStoreDeliveryAction(
+        $id,
+        Request $request,
         PricingManager $pricingManager,
         OrderManager $orderManager,
         EntityManagerInterface $entityManager,
@@ -375,7 +375,8 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryReactFormAction($id,
+    public function newStoreDeliveryReactFormAction(
+        $id,
         Request $request,
         EntityManagerInterface $entityManager
     ) {
@@ -386,12 +387,7 @@ trait StoreTrait
             ->find($id);
 
         $this->accessControl($store, 'edit_delivery');
-
-        $delivery = null;
-
-        if (null === $delivery) {
-            $delivery = $store->createDelivery();
-        }
+        $delivery = $store->createDelivery();
 
         return $this->render(
             'store/deliveries/beta_new.html.twig',
@@ -404,6 +400,8 @@ trait StoreTrait
                 'store_route' => $routes['store'],
                 'back_route' => $routes['back'],
                 'show_left_menu' => true,
+                'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
+                'debug_pricing' => $request->query->getBoolean('debug', false),
         ]));
     }
 

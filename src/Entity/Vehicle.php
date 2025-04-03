@@ -9,105 +9,55 @@ use Gedmo\Timestampable\Traits\Timestampable;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-/**
- * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"vehicle", "warehouse"}},
- *     "denormalization_context"={"groups"={"vehicle_create"}},
- *   },
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_DISPATCHER')",
- *      },
- *     "post"={
- *       "method"="POST",
- *       "access_control"="is_granted('ROLE_ADMIN')",
- *      }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *       "access_control"="is_granted('ROLE_ADMIN')"
- *      },
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')",
- *     },
- *   },
- *   order={"name": "ASC"},
- * )
- */
+#[ApiResource(attributes: ['normalization_context' => ['groups' => ['vehicle', 'warehouse']], 'denormalization_context' => ['groups' => ['vehicle_create']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'access_control' => "is_granted('ROLE_ADMIN')"]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('ROLE_ADMIN')"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"]], order: ['name' => 'ASC'])]
 class Vehicle
 {
     use Timestampable;
     use SoftDeleteable;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
     protected $id;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\NotBlank
-    * @Assert\Type("string")
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('string')]
     protected $name;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\NotBlank
-    * @Assert\Type("integer")
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     protected $maxVolumeUnits;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\NotBlank
-    * @Assert\Type("integer")
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type('integer')]
     protected $maxWeight;
 
     /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\NotBlank
-    * @Assert\CssColor
-    */
+     * @Assert\CssColor
+     */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\NotBlank]
     protected $color;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\Type("boolean")
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\Type('boolean')]
     protected $isElectric;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\Type("integer")
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\Type('integer')]
     protected $electricRange;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\Type("integer")
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\Type('integer')]
     protected $co2emissions;
 
-    /**
-    * @Groups({"vehicle", "vehicle_create"})
-    * @Assert\NotBlank
-    * @Assert\Type(Warehouse::class)]
-    */
+    #[Groups(['vehicle', 'vehicle_create'])]
+    #[Assert\NotBlank]
+    #[Assert\Type(Warehouse::class)] // ]
     protected $warehouse;
 
-    /**
-    * @Groups({"vehicle"})
-    */
+    #[Groups(['vehicle'])]
     protected $compatibleTrailers;
 
     public function __construct() {

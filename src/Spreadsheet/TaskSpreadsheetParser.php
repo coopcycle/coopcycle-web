@@ -184,7 +184,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
             }
 
             if (isset($record['weight']) && !empty($record['weight']) && $task->isDropoff()) {
-                $this->applyWeight($task, $record['weight']);
+                $this->applyWeight($record['weight']);
             }
 
             if (isset($record['group']) && !empty(trim($record['group']))) {
@@ -298,7 +298,7 @@ class TaskSpreadsheetParser extends AbstractSpreadsheetParser
         return $taskGroup;
     }
 
-    private function applyWeight(Task $task, $weight)
+    private function applyWeight($weight)
     {
         $mass = new Mass($weight, 'kg');
 

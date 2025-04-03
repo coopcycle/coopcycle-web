@@ -16,21 +16,15 @@ class Item
 
     private $parent;
 
-    /**
-     * @Assert\Valid()
-     * @Groups({"task_list"})
-     */
+    #[Assert\Valid]
+    #[Groups(['task_list'])]
     private $task;
 
-    /**
-     * @Assert\Valid()
-     * @Groups({"task_list"})
-     */
+    #[Assert\Valid]
+    #[Groups(['task_list'])]
     private $tour;
 
-    /**
-     * @Groups({"task_list"})
-     */
+    #[Groups(['task_list'])]
     private $position;
 
     public function getId()

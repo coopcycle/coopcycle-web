@@ -8,16 +8,8 @@ use Gedmo\Timestampable\Traits\Timestampable;
 
 /**
  * A form to order deliveries, to be embedded anywhere.
- *
- * @ApiResource(
- *   itemOperations={
- *     "delete"={
- *       "method"="DELETE",
- *       "security"="is_granted('ROLE_ADMIN')"
- *     }
- *   }
- * )
  */
+#[ApiResource(itemOperations: ['delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"]])]
 class DeliveryForm
 {
     use Timestampable;

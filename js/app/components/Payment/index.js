@@ -312,7 +312,9 @@ export default function(formSelector, options) {
         // This will be used later in handlePayment function
         payments = response.data.payments
 
-        cc.mount(document.getElementById('card-element'), null, response.data, options).then(() => enableBtn(submitButton))
+        cc.mount(document.getElementById('card-element'), 'card', response.data, options).then((shouldEnableBtn = true) => {
+          shouldEnableBtn && enableBtn(submitButton)
+        })
 
       })
   } else {

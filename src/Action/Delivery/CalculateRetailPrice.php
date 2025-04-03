@@ -4,6 +4,7 @@ namespace AppBundle\Action\Delivery;
 
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
+use AppBundle\Pricing\RuleResult;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Security\TokenStoreExtractor;
@@ -15,7 +16,7 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class CalculateRetailPrice implements TaxableInterface
 {
@@ -29,10 +30,8 @@ class CalculateRetailPrice implements TaxableInterface
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
-        private readonly TranslatorInterface $translator,
-        private readonly string $state)
-    {
-    }
+        private readonly string $state
+    ) {}
 
     private function setTaxCategory(?TaxCategoryInterface $taxCategory): void
     {
@@ -51,13 +50,16 @@ class CalculateRetailPrice implements TaxableInterface
             $store = $this->storeExtractor->extractStore();
         }
 
-        $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
+        $priceCalculation = $this->deliveryManager->getPriceCalculation($data, $store->getPricingRuleSet());
 
-        if (null === $amount) {
-            $message = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
+        if (null === $priceCalculation) {
+            $message = 'delivery.price.error.priceCalculation';
             throw new BadRequestHttpException($message);
         }
 
+        $order = $priceCalculation->getOrder();
+
+        $amount = $order->getItemsTotal();
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
 
         $this->setTaxCategory(
@@ -69,13 +71,52 @@ class CalculateRetailPrice implements TaxableInterface
         $taxRate   = $this->taxRateResolver->resolve($this, ['country' => strtolower($this->state)]);
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
-        $retailPrice = new RetailPrice(
+        $calculation = $priceCalculation->getCalculation();
+
+        $calculationOutput = array_map(
+            function ($item) use ($calculation) {
+                $target = '';
+
+                if (null !== $item->task) {
+                    $target = $item->task->getType();
+                }
+
+                if (null !== $item->delivery) {
+                    $target = 'ORDER';
+                }
+
+                return new CalculationItem(
+                    $target,
+                    $calculation->ruleSet->getStrategy(),
+                    $item->ruleResults
+                );
+            },
+            $calculation->resultsPerEntity
+        );
+
+        return new RetailPrice(
+            $order->getItems(),
+            $calculationOutput,
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount,
             'included' === $request->query->get('tax', 'included')
         );
+    }
+}
 
-        return $retailPrice;
+class CalculationItem {
+    /**
+     * @param RuleResult[] $rules
+     */
+    public function __construct(
+        #[Groups(['pricing_deliveries'])]
+        public readonly string $target,
+        #[Groups(['pricing_deliveries'])]
+        public readonly string $strategy,
+        #[Groups(['pricing_deliveries'])]
+        public readonly array $rules,
+    )
+    {
     }
 }

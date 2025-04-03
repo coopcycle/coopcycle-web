@@ -8,9 +8,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class ClosingRules extends Constraint
 {
     public $message = 'closing_rules.message';

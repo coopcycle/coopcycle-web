@@ -1,0 +1,3 @@
+monolog:
+  # channels to use with autowire; https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+  channels: [ 'domain_event', 'checkout', 'database', 'push_notification', 'real_time_message', 'transporter' ]

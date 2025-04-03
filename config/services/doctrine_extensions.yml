@@ -1,0 +1,107 @@
+# services to handle doctrine extensions
+# import it in config.yml
+services:
+    # KernelRequest listener
+    # extension.listener:
+    #     class: Acme\DemoBundle\Listener\DoctrineExtensionListener
+    #     calls:
+    #         - [ setContainer, [ "@service_container" ] ]
+    #     tags:
+    #         # translatable sets locale after router processing
+    #         - { name: kernel.event_listener, event: kernel.request, method: onLateKernelRequest, priority: -10 }
+    #         # loggable hooks user username if one is in security context
+    #         - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+    #         # translatable sets locale such as default application locale before command execute
+    #         - { name: kernel.event_listener, event: console.command, method: onConsoleCommand, priority: -10 }
+
+    # Attribute mapping driver for the Doctrine Extension listeners
+    gedmo.mapping.driver.attribute:
+        class: Gedmo\Mapping\Driver\AttributeReader
+
+    # Doctrine Extension listeners to handle behaviors
+    gedmo.listener.tree:
+        class: Gedmo\Tree\TreeListener
+        tags:
+            - { name: doctrine.event_listener, event: 'prePersist'}
+            - { name: doctrine.event_listener, event: 'preUpdate'}
+            - { name: doctrine.event_listener, event: 'preRemove'}
+            - { name: doctrine.event_listener, event: 'onFlush'}
+            - { name: doctrine.event_listener, event: 'loadClassMetadata'}
+            - { name: doctrine.event_listener, event: 'postPersist'}
+            - { name: doctrine.event_listener, event: 'postUpdate'}
+            - { name: doctrine.event_listener, event: 'postRemove'}
+        calls:
+            # Uncomment the below call if using attributes, and comment the call for the annotation reader
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+
+    # gedmo.listener.translatable:
+    #     class: Gedmo\Translatable\TranslatableListener
+    #     tags:
+    #         - { name: doctrine.event_subscriber, connection: default }
+    #     calls:
+    #         - [ setAnnotationReader, [ "@annotation_reader" ] ]
+    #         - [ setDefaultLocale, [ %locale% ] ]
+    #         - [ setTranslationFallback, [ false ] ]
+
+    gedmo.listener.softdeleteable:
+        class: Gedmo\SoftDeleteable\SoftDeleteableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+            - { name: doctrine.event_listener, event: 'onFlush' }
+        calls:
+            # Uncomment the below call if using attributes, and comment the call for the annotation reader
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+    gedmo.listener.timestampable:
+        class: Gedmo\Timestampable\TimestampableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'prePersist' }
+            - { name: doctrine.event_listener, event: 'onFlush' }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+        calls:
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+    gedmo.listener.sluggable:
+        class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'onFlush' }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+            - { name: doctrine.event_listener, event: 'prePersist' }
+        calls:
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+    gedmo.listener.sortable:
+        class: Gedmo\Sortable\SortableListener
+        tags:
+            - { name: doctrine.event_listener, event: 'onFlush' }
+            - { name: doctrine.event_listener, event: 'loadClassMetadata' }
+            - { name: doctrine.event_listener, event: 'prePersist' }
+            - { name: doctrine.event_listener, event: 'postPersist' }
+            - { name: doctrine.event_listener, event: 'preUpdate' }
+            - { name: doctrine.event_listener, event: 'postRemove' }
+            - { name: doctrine.event_listener, event: 'postFlush' }
+        calls:
+            # Uncomment the below call if using attributes, and comment the call for the annotation reader
+            - [ setAnnotationReader, [ '@gedmo.mapping.driver.attribute' ] ]
+            # The `clock` service was introduced in Symfony 6.2; if using an older Symfony version, you can either comment this call or provide your own PSR-20 Clock implementation
+            # - [ setClock, [ '@clock' ] ]
+
+
+    coopcycle.listener.post_soft_delete:
+        class: AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber
+        tags:
+            - { name: doctrine.event_subscriber }
+
+    postgis.event_subscriber:
+        class: AppBundle\Doctrine\PostGIS\ORMSchemaEventSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }

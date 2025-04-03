@@ -9,10 +9,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 trait FulfillmentMethodsTrait
 {
-    /**
-     * @Groups({"restaurant"})
-     * @Assert\Valid()
-     */
+    #[Groups(['restaurant'])]
+    #[Assert\Valid]
     protected $fulfillmentMethods;
 
     public function getFulfillmentMethods()
@@ -99,10 +97,8 @@ trait FulfillmentMethodsTrait
         return $this;
     }
 
-    /**
-     * @SerializedName("openingHoursSpecification")
-     * @Groups({"restaurant", "restaurant_seo"})
-     */
+    #[SerializedName('openingHoursSpecification')]
+    #[Groups(['restaurant', 'restaurant_seo'])]
     public function getOpeningHoursSpecification()
     {
         return array_map(function (OpeningHoursSpecification $openingHoursSpecification) {

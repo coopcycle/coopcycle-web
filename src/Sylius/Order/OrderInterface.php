@@ -61,76 +61,33 @@ interface OrderInterface extends
      */
     public const CANCEL_REASON_NO_SHOW = 'NO_SHOW';
 
-    /**
-     * @return int
-     */
     public function getTaxTotal(): int;
 
-    /**
-     * @return int
-     */
     public function getItemsTaxTotal(): int;
 
-    /**
-     * @return int
-     */
     public function getTaxTotalByRate($taxRate): int;
 
-    /**
-     * @return int
-     */
     public function getItemsTaxTotalByRate($taxRate): int;
 
-    /**
-     * @return int
-     */
     public function getFeeTotal(): int;
 
-    /**
-     * @return int
-     */
     public function getRevenue(): int;
 
-    /**
-     * @return LocalBusiness|null
-     */
     public function getRestaurant(): ?LocalBusiness;
 
-    /**
-     * @return Address|null
-     */
     public function getShippingAddress(): ?Address;
 
-    /**
-     * @return Address|null
-     */
     public function getBillingAddress(): ?Address;
 
-    /**
-     * @return \DateTime|null
-     */
     public function getShippedAt(): ?\DateTime;
 
-    /**
-     * @return TsRange|null
-     */
     public function getShippingTimeRange(): ?TsRange;
 
-    /**
-     * @param string|null $state
-     *
-     * @return PaymentInterface|null
-     */
+    
     public function getLastPayment(?string $state = null): ?PaymentInterface;
 
-    /**
-     * @return Delivery|null
-     */
     public function getDelivery(): ?Delivery;
 
-    /**
-     * @param Delivery $delivery
-     */
     public function setDelivery(Delivery $delivery): void;
 
     /**
@@ -138,24 +95,12 @@ interface OrderInterface extends
      */
     public function getEvents(): Collection;
 
-    /**
-     * @return boolean
-     */
     public function containsDisabledProduct(): bool;
 
-    /**
-     * @return boolean
-     */
     public function isTakeaway(): bool;
 
-    /**
-     * @return string
-     */
     public function getFulfillmentMethod(): string;
 
-    /**
-     * @return int
-     */
     public function getItemsTotalExcludingTax(): int;
 
     /*
@@ -168,7 +113,6 @@ interface OrderInterface extends
      * all the vendor information should be consumed from the Restaurant entity.
      *
      * Use this method to get vendor data like ID, name, address, etc.
-     * @return Vendor|null
      */
     public function getVendor(): ?Vendor;
 
@@ -180,28 +124,15 @@ interface OrderInterface extends
      *
      * Use this method to get vendor setup like contract, fulfillmentMethods, closingRules,
      * shippingOptionsDays, openingHours.
-     * @return Vendor|null
      */
     public function getVendorConditions(): ?Vendor;
 
-    /**
-     * @return boolean
-     */
     public function hasVendor(): bool;
 
-    /**
-     * @return Collection
-     */
     public function getVendors(): Collection;
 
-    /**
-     * @return int
-     */
     public function getTransferAmount(LocalBusiness $subVendor): int;
 
-    /**
-     * @return \SplObjectStorage
-     */
     public function getItemsGroupedByVendor(): \SplObjectStorage;
 
     /**
@@ -209,10 +140,6 @@ interface OrderInterface extends
      */
     public function getReusablePackagingPledgeReturn();
 
-    /**
-     * @param LocalBusiness $restaurant
-     * @return float
-     */
     public function getPercentageForRestaurant(LocalBusiness $restaurant): float;
 
     public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount);
@@ -221,9 +148,6 @@ interface OrderInterface extends
 
     public function isMultiVendor(): bool;
 
-    /**
-     * @return Address|null
-     */
     public function getPickupAddress(): ?Address;
 
     public function getAlcoholicItemsTotal(): int;
@@ -242,16 +166,10 @@ interface OrderInterface extends
 
     public function getBusinessAccount(): ?BusinessAccount;
 
-    /**
-     * @param BusinessAccount $businessAccount
-     */
     public function setBusinessAccount(BusinessAccount $businessAccount): void;
 
     public function isBusiness(): bool;
 
-    /**
-     * @return Collection
-     */
     public function getPickupAddresses(): Collection;
 
     /**
@@ -260,11 +178,7 @@ interface OrderInterface extends
      */
     public function getBookmarks(): Collection;
 
-    /**
-     * @param string|null $state
-     *
-     * @return PaymentInterface|null
-     */
+    
     public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
 
     public function isFoodtech(): bool;

@@ -1,26 +1,3 @@
-admin_delivery:
-  path: /admin/deliveries/{id}
-  defaults:
-      _controller: AppBundle\Controller\AdminController::deliveryAction
-      layout: 'admin.html.twig'
-      routes:
-          success: admin_deliveries
-          back: admin_deliveries
-  methods:  [ GET, POST ]
-
-
-admin_delivery_beta:
-  path: /admin/deliveries/{id}/beta
-  defaults:
-      _controller: AppBundle\Controller\AdminController::deliveryActionBeta
-      layout: 'admin.html.twig'
-      routes:
-        stores: admin_stores
-        store: admin_store
-        success: admin_store_deliveries
-        back: admin_deliveries
-  methods:  [ GET ]
-
 admin_order_receipt:
     path:     /admin/orders/{orderNumber}/receipt.pdf
     defaults: { _controller: AppBundle\Controller\AdminController::orderReceiptAction }
@@ -639,6 +616,29 @@ admin_store_delivery_new_beta:
             success: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET ]
+
+admin_delivery:
+  path: /admin/deliveries/{id}
+  defaults:
+      _controller: AppBundle\Controller\AdminController::deliveryAction
+      layout: 'admin.html.twig'
+      routes:
+          success: admin_deliveries
+          back: admin_deliveries
+  methods:  [ GET, POST ]
+
+
+admin_delivery_beta:
+  path: /admin/deliveries/{id}/beta
+  defaults:
+      _controller: AppBundle\Controller\AdminController::deliveryItemReactFormAction
+      layout: 'admin.html.twig'
+      routes:
+        stores: admin_stores
+        store: admin_store
+        success: admin_store_deliveries
+        back: admin_deliveries
+  methods:  [ GET ]
 
 admin_store_delivery_download_images:
     path: /admin/stores/{storeId}/deliveries/{deliveryId}/images/download

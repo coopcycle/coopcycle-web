@@ -39,13 +39,7 @@ class SignInWithApple
         $this->dispatcher = $dispatcher;
     }
 
-    /**
-     * @Route(
-     *     path="/sign_in_with_apple/login",
-     *     name="api_sign_in_with_apple_login",
-     *     methods={"POST"}
-     * )
-     */
+    #[Route(path: '/sign_in_with_apple/login', name: 'api_sign_in_with_apple_login', methods: ['POST'])]
     public function signInWithAppleLoginAction(Request $request)
     {
         $data = [];

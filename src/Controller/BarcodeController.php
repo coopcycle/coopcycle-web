@@ -35,9 +35,7 @@ class BarcodeController extends AbstractController
 
 
 
-    /**
-     * @Route("/api/barcode", name="barcode_api")
-     */
+    #[Route(path: '/api/barcode', name: 'barcode_api')]
     public function barcodeAction(
         IriConverterInterface $iriConverter,
         NormalizerInterface $normalizer,
@@ -102,7 +100,6 @@ class BarcodeController extends AbstractController
      * ask_to_complete: Will redirect the user to the complete page
      * ask_to_start_pickup: Will prompt the user to start the pickup
      * ask_to_complete_pickup: Will prompt the user to complete the pickup
-     * @return array|null
      */
     private function determineClientAction(Task $task): ?array
     {
@@ -168,9 +165,7 @@ class BarcodeController extends AbstractController
     }
 
 
-    /**
-     * @Route("/tasks/label", name="task_label_pdf")
-     */
+    #[Route(path: '/tasks/label', name: 'task_label_pdf')]
     public function viewLabelAction(
         PhoneNumberUtil $phoneUtil,
         BarcodeGeneratorSVG $generator,
@@ -261,7 +256,7 @@ class BarcodeController extends AbstractController
             ]
         ]);
 
-        $pdf = (string) $response->getContent();
+        $pdf = $response->getContent();
         return new Response($pdf, 200, [
             'Cache-Control' => 'private',
             'Content-Type' => 'application/pdf',

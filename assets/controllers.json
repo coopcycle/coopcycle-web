@@ -1,5 +1,11 @@
 {
     "controllers": {
+        "@symfony/ux-react": {
+            "react": {
+                "enabled": true,
+                "fetch": "lazy"
+            }
+        },
         "@symfony/ux-turbo": {
             "turbo-core": {
                 "enabled": true,
@@ -9,12 +15,6 @@
                 "enabled": false,
                 "fetch": "eager"
             }
-        },
-        "@symfony/ux-react": {
-          "react": {
-            "enabled": true,
-            "fetch": "lazy"
-          }
         }
     },
     "entrypoints": []

@@ -299,6 +299,7 @@ restricted_diets.HALAL_DIET: Carne halal
 restricted_diets.HINDU_DIET: Indù
 restricted_diets.KOSHER_DIET: Kosher
 restricted_diets.LOW_CALORIE_DIET: Ipocalorico
+restricted_diets.EGG_FREE_DIET: Senza uova
 form.banner.enable.alert: Stai per abilitare il banner
 form.banner.disable.alert: Stai per disabilitare il banner
 form.banner.message.label: Messaggio da mostrare nel banner
@@ -388,6 +389,7 @@ form.local_business.stripe_account.need_stripe_account: "Non hai ancora creato u
 store.TIRE_SHOP: Gommista
 store.TOY_STORE: Negozio di giocattoli
 store.WHOLESALE_STORE: Negozio all'ingrosso
+store.PHARMACY: Farmacia
 form.local_business_type.food_establishment: Stabilimento alimentare
 form.local_business_type.store: Negozio
 form.local_business_type.label: Tipo di azienda

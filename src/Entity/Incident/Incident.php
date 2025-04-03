@@ -15,118 +15,59 @@ use AppBundle\Action\Incident\CreateIncident;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-/**
- * @ApiResource(
- *   collectionOperations={
- *     "get"={
- *       "method"="GET",
- *       "controller"=IncidentFastList::class,
- *     },
- *     "post"={
- *       "method"="POST",
- *       "controller"=CreateIncident::class,
- *     }
- *   },
- *   itemOperations={
- *     "get"={
- *       "method"="GET",
- *     },
- *     "patch"={
- *       "method"="PATCH",
- *     },
- *     "put"={
- *       "method"="PUT",
- *     },
- *     "add_comment"={
- *       "method"="POST",
- *       "path"="/incidents/{id}/comments",
- *       "controller"=CreateComment::class,
- *     },
- *     "action"={
- *       "method"="PUT",
- *       "path"="/incidents/{id}/action",
- *       "controller"=IncidentAction::class,
- *     }
- *   },
- *   normalizationContext={"groups"={"incident"}}
- * )
- */
+#[ApiResource(collectionOperations: ['get' => ['method' => 'GET', 'controller' => IncidentFastList::class], 'post' => ['method' => 'POST', 'controller' => CreateIncident::class]], itemOperations: ['get' => ['method' => 'GET'], 'patch' => ['method' => 'PATCH'], 'put' => ['method' => 'PUT'], 'add_comment' => ['method' => 'POST', 'path' => '/incidents/{id}/comments', 'controller' => CreateComment::class], 'action' => ['method' => 'PUT', 'path' => '/incidents/{id}/action', 'controller' => IncidentAction::class]], normalizationContext: ['groups' => ['incident']])]
 class Incident implements TaggableInterface {
     use TaggableTrait;
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $id;
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected ?string $title = null;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected string $status = Incident::STATUS_OPEN;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected int $priority = Incident::PRIORITY_MEDIUM;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected Task $task;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected ?string $failureReasonCode = null;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected ?string $description = null;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected Collection $images;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected Collection $events;
 
 
     /**
      * FIXME: allow to set $createdBy API clients (ApiApp) and integrations
-     * @Groups({"incident"})
      */
+    #[Groups(['incident'])]
     protected ?UserInterface $createdBy = null;
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected array $metadata = [];
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $createdAt;
 
 
-    /**
-     * @Groups({"incident"})
-     */
+    #[Groups(['incident'])]
     protected $updatedAt;
 
     const STATUS_OPEN = 'OPEN';
@@ -251,8 +192,8 @@ class Incident implements TaggableInterface {
 
     /**
      * Redefined to make it serializable.
-     * @Groups({"incident"})
      */
+    #[Groups(['incident'])]
     public function getTags(): array
     {
         return $this->tags;

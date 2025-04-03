@@ -12,13 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
-/**
- * @ApiResource(
- *   attributes={
- *     "normalization_context"={"groups"={"package"}}
- *   },
- * )
- */
+#[ApiResource(attributes: ['normalization_context' => ['groups' => ['package']]])]
 class Package implements TaggableInterface
 {
     use Timestampable;
@@ -27,47 +21,35 @@ class Package implements TaggableInterface
 
     protected $id;
 
-    /**
-     * @Groups({"store_with_packages", "package", "store_packages"})
-     */
+    #[Groups(['store_with_packages', 'package', 'store_packages'])]
     protected $name;
 
 
-    /**
-     * @Groups({"package"})
-     */
+    #[Groups(['package'])]
     protected $volumeUnits;
 
 
-    /**
-     * @Groups({"package"})
-     */
+    #[Groups(['package'])]
     protected $packageSet;
     protected $slug;
 
     protected $description;
 
     /**
-    * @Assert\NotBlank
-    * @Assert\CssColor
-    */
+     * @Assert\CssColor
+     */
+    #[Assert\NotBlank]
     protected $color;
 
-    /**
-     * @Assert\NotBlank
-     */
+    #[Assert\NotBlank]
     protected $maxVolumeUnits;
     protected $averageVolumeUnits;
 
-    /**
-     * @Assert\NotBlank
-    */
+    #[Assert\NotBlank]
     protected $maxWeight;
     protected $averageWeight;
 
-    /**
-     * @Assert\Length({"min"=2, "max"=2})
-     */
+    #[Assert\Length(['min' => 2, 'max' => 2])]
     protected $shortCode;
 
     /**
@@ -111,8 +93,6 @@ class Package implements TaggableInterface
     }
 
     /**
-     * @param PackageSet $packageSet
-     *
      * @return self
      */
     public function setPackageSet(PackageSet $packageSet)

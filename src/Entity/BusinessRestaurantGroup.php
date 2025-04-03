@@ -44,9 +44,6 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
         return $this;
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public function addRestaurant(LocalBusiness $restaurant)
     {
         if (!$this->restaurants->contains($restaurant)) {
@@ -54,9 +51,6 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
         }
     }
 
-    /**
-     * @param LocalBusiness $restaurant
-     */
     public function removeRestaurant(LocalBusiness $restaurant): void
     {
         $this->restaurants->removeElement($restaurant);
@@ -95,17 +89,11 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
         return $this;
     }
 
-    /**
-     * @param BusinessRestaurantGroupRestaurantMenu $restaurantMenu
-     */
     public function addRestaurantWithMenu(BusinessRestaurantGroupRestaurantMenu $restaurantMenu)
     {
         $this->restaurantsWithMenu->add($restaurantMenu);
     }
 
-    /**
-     * @param BusinessRestaurantGroupRestaurantMenu $restaurantMenu
-     */
     public function removeRestaurantWithMenu(BusinessRestaurantGroupRestaurantMenu $restaurantMenu): void
     {
         $this->restaurantsWithMenu->removeElement($restaurantMenu);

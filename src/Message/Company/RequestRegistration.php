@@ -27,9 +27,6 @@ class RequestRegistration
         $this->businessReferent = $businessReferent;
     }
 
-    /**
-     * @return string
-     */
     public function getCompanyName(): string
     {
         return $this->companyName;
@@ -40,25 +37,16 @@ class RequestRegistration
         return $this->address;
     }
 
-    /**
-     * @return int
-     */
     public function getCollaboratorNumber(): int
     {
         return $this->collaboratorNumber;
     }
 
-    /**
-     * @return int
-     */
     public function getMealEstimate(): int
     {
         return $this->mealEstimate;
     }
 
-    /**
-     * @return array
-     */
     public function getBusinessReferent(): array
     {
         return $this->businessReferent;

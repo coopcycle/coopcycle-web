@@ -19,22 +19,13 @@ use Twig\Environment;
 
 /**
  * Class CompanyController
- * @Route("/company")
  */
+#[Route(path: '/company')]
 class CompanyController
 {
     private MessageBusInterface $bus;
-    /**
-     * @var FormFactoryInterface
-     */
     private FormFactoryInterface $formFactory;
-    /**
-     * @var Environment
-     */
     private Environment $twig;
-    /**
-     * @var RouterInterface
-     */
     private RouterInterface $router;
 
     public function __construct(
@@ -55,9 +46,7 @@ class CompanyController
         $this->router = $router;
     }
 
-    /**
-     * @Route("/register" , name="company_registration")
-     */
+    #[Route(path: '/register', name: 'company_registration')]
     public function registerAction(Request $request)
     {
 

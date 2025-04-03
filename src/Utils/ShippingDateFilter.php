@@ -28,10 +28,7 @@ class ShippingDateFilter
     }
 
     /**
-     * @param OrderInterface $order
-     * @param TsRange $range
      *
-     * @return bool
      * @throws \RedisException
      */
     public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null): bool

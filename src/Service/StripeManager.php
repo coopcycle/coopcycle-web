@@ -22,8 +22,6 @@ class StripeManager
      * Please call this method before using the Stripe lib
      *
      * FIXME: legacy approach: https://github.com/stripe/stripe-php/wiki/Migration-to-StripeClient-and-services-in-7.33.0#legacy-approach
-     * 
-     * @return void
      */
     public function setupStripeApi(): void
     {
@@ -142,9 +140,6 @@ class StripeManager
         return $payload;
     }
 
-    /**
-     * @return Stripe\PaymentIntent
-     */
     public function createIntent(PaymentInterface $payment, $savePaymentMethod = false): Stripe\PaymentIntent
     {
         $this->setupStripeApi();
@@ -193,9 +188,6 @@ class StripeManager
 
     }
 
-    /**
-     * @return Stripe\PaymentIntent
-     */
     public function confirmIntent(PaymentInterface $payment): Stripe\PaymentIntent
     {
         $this->setupStripeApi();

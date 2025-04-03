@@ -30,9 +30,7 @@ class AssetsController extends AbstractController
     ) { }
 
 
-    /**
-     * @Route("/assets/banner.svg", name="assets_banner_svg")
-     */
+    #[Route(path: '/assets/banner.svg', name: 'assets_banner_svg')]
     public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
     {
         try {
@@ -60,14 +58,8 @@ class AssetsController extends AbstractController
     /**
      * @see https://github.com/liip/LiipImagineBundle/issues/971
      * @see https://github.com/liip/LiipImagineBundle/issues/1032
-     *
-     * @Route("/media/cache/{filter}/{path}", name="liip_imagine_cache",
-     *   requirements={
-     *     "filter"="^(?!resolve)[A-z0-9_-]*",
-     *     "path"=".+"
-     *   }
-     * )
      */
+    #[Route(path: '/media/cache/{filter}/{path}', name: 'liip_imagine_cache', requirements: ['filter' => '^(?!resolve)[A-z0-9_-]*', 'path' => '.+'])]
     public function liipImagineCacheAction($filter, $path, Request $request,
         CacheManager $cacheManager,
         DataManager $dataManager,
@@ -87,9 +79,7 @@ class AssetsController extends AbstractController
         }
     }
 
-    /**
-     * @Route("/placeholder/{filter}/placeholders/{hashid}.jpg", name="placeholder_image")
-     */
+    #[Route(path: '/placeholder/{filter}/placeholders/{hashid}.jpg', name: 'placeholder_image')]
     public function placeholderImageAction($filter, $hashid, Request $request,
         PixabayClient $pixabay,
         Filesystem $restaurantImagesFilesystem)
@@ -113,9 +103,7 @@ class AssetsController extends AbstractController
     }
 
 
-    /**
-    * @Route("/media/tasks/images/{path}", name="task_image_public", methods={"GET"})
-    */
+    #[Route(path: '/media/tasks/images/{path}', name: 'task_image_public', methods: ['GET'])]
     public function taskImagePublicAction($path, Request $request): Response
     {
         $object = $this->getDoctrine()->getRepository(TaskImage::class)->findOneBy([
@@ -137,9 +125,7 @@ class AssetsController extends AbstractController
         ]);
     }
 
-    /**
-    * @Route("/media/incidents/images/{path}", name="incident_image_public", methods={"GET"})
-    */
+    #[Route(path: '/media/incidents/images/{path}', name: 'incident_image_public', methods: ['GET'])]
     public function incidentImagePublicAction($path, Request $request): Response
     {
         $object = $this->getDoctrine()->getRepository(IncidentImage::class)->findOneBy([

@@ -17,16 +17,11 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-/**
- * @Route("/{_locale}/request")
- */
+#[Route(path: '/{_locale}/request')]
 class RequestController
 {
     private Environment $twig;
     private FormFactoryInterface $formFactory;
-    /**
-     * @var MessageBusInterface
-     */
     private MessageBusInterface $bus;
 
     public function __construct(
@@ -47,9 +42,7 @@ class RequestController
         $this->bus = $bus;
     }
 
-    /**
-     * @Route("/restaurant", name="request_restaurant")
-     */
+    #[Route(path: '/restaurant', name: 'request_restaurant')]
     public function restaurantAction(Request $request)
     {
         $form = $this->formFactory->create(RequestForAddType::class);
