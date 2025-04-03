@@ -564,6 +564,8 @@ services:
 
   AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider: ~
 
+  AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider: ~
+
   AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider: ~
 
   AppBundle\ExpressionLanguage\ExpressionLanguage:
@@ -573,6 +575,7 @@ services:
         - '@coopcycle.expression_language.zone.provider'
         - '@AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider'
+        - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
   AppBundle\EventListener\RegistrationListener:

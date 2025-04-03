@@ -40,7 +40,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -84,7 +90,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -128,7 +140,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": false
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -175,7 +193,13 @@ Feature: Retail prices
         "tax":{
           "amount":217,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -222,7 +246,13 @@ Feature: Retail prices
         "tax":{
           "amount":217,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -267,7 +297,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -321,7 +357,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -375,7 +417,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -415,7 +463,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -458,7 +512,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -509,7 +569,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -545,7 +611,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -611,7 +683,13 @@ Feature: Retail prices
         "tax":{
           "amount":83,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
 
@@ -657,6 +735,12 @@ Feature: Retail prices
         "tax":{
           "amount":@integer@,
           "included": true
-        }
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
       }
       """
