@@ -328,7 +328,7 @@ use stdClass;
 #[ApiFilter(OrganizationFilter::class, properties: ['organization'])]
 #[UniqueEntity(fields: ['organization', 'ref'], errorPath: 'ref')]
 #[AssertTask]
-class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, TimeSlotAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -459,9 +459,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     #[Groups(['task'])]
     private $traveledDistanceMeter = 0;
 
-    /**
-     * @Groups({"delivery_create"})
-     */
+    #[Groups(['delivery_create'])]
     private ?string $timeSlotUrl = null;
 
     public function __construct()
