@@ -35,7 +35,6 @@ use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Package\PackagesAwareInterface;
-use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Entity\Task\Package as TaskPackage;
 use AppBundle\Entity\Task\RecurrenceRule;
