@@ -59,12 +59,12 @@ export default (props) => {
   const { tags, defaultValue, ...rest } = props
 
   let defaultValueAsTags = []
+
   if (defaultValue && Array.isArray(defaultValue)) {
     defaultValueAsTags = _.map(defaultValue, tag => {
       if (_.isString(tag)) {
         return _.find(tags, t => t.slug === tag)
       }
-
       return _.find(tags, t => t.slug === tag.slug)
     })
   }

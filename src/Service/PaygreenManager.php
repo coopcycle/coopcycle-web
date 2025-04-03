@@ -57,6 +57,9 @@ class PaygreenManager
             throw new PaygreenException('Could not capture payment');
         }
 
+        $payload = json_decode($response->getBody()->getContents(), true);
+        $po = $payload['data'];
+
         // We also store the transaction fee
 
         $order = $payment->getOrder();
