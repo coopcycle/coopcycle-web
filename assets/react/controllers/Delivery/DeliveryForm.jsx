@@ -238,10 +238,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
           response.tasks.forEach(task => {
             const formattedTelephone = getFormattedValue(task.address.telephone)
             task.address.formattedTelephone = formattedTelephone
-            if (task.tags.length > 0) {
-              const tags = task.tags.map(tag => tag.name)
-              task.tags = tags
-            }
           })
           setInitialValues(response)
           setTrackingLink(response.trackingUrl)
