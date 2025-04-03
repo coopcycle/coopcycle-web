@@ -4,11 +4,6 @@ services:
     autowire: true
     autoconfigure: true
 
-  AppBundle\Validator\Constraints\CartValidator:
-    arguments: [ '@routing_service' ]
-    tags:
-      - { name: validator.constraint_validator }
-
   AppBundle\Validator\Constraints\DeliveryValidator:
     arguments: [ '@routing_service' ]
     tags:
@@ -56,10 +51,6 @@ services:
       - { name: validator.constraint_validator }
 
   AppBundle\Form\Checkout\Action\Validator\AddProductToCartValidator:
-    tags:
-      - { name: validator.constraint_validator }
-
-  AppBundle\Validator\Constraints\ShippingTimeRangeJumpValidator:
     tags:
       - { name: validator.constraint_validator }
 
