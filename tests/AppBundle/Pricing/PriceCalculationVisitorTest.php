@@ -32,7 +32,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
     private $priceCalculationVisitor;
 
-    private function createWithExpressionLanguage($expressionLanguage)
+    private function createWithExpressionLanguage($expressionLanguage): PriceCalculationVisitor
     {
         return new PriceCalculationVisitor(
             $expressionLanguage,
