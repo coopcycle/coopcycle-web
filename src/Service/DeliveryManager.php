@@ -8,6 +8,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
+use AppBundle\Pricing\Output;
 use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -15,22 +16,18 @@ use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DeliveryManager
 {
     public function __construct(
         private readonly DenormalizerInterface $denormalizer,
-        private readonly ExpressionLanguage $expressionLanguage,
         private readonly RoutingInterface $routing,
         private readonly OrderTimeHelper $orderTimeHelper,
         private readonly OrderTimelineCalculator $orderTimelineCalculator,
         private readonly TokenStoreExtractor $storeExtractor,
         private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger = new NullLogger()
+        private readonly PriceCalculationVisitor $priceCalculationVisitor,
     )
     {}
 
@@ -41,21 +38,19 @@ class DeliveryManager
             return 0;
         }
 
-        $visitor = $this->getPriceCalculation($delivery, $ruleSet);
+        $output = $this->getPriceCalculation($delivery, $ruleSet);
         // if the Pricing Rules are configured but none of them matched, the price is null
-        return $visitor->getPrice();
+        return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, ?PricingRuleSet $ruleSet): ?PriceCalculationVisitor
+    public function getPriceCalculation(Delivery $delivery, ?PricingRuleSet $ruleSet): ?Output
     {
         // if no Pricing Rules are defined, the default rule is to set the price to 0
         if (null === $ruleSet) {
             return null;
         }
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
-        $visitor->visit($delivery);
-        return $visitor;
+        return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
     }
 
     public function createFromOrder(OrderInterface $order)

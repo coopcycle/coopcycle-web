@@ -10,7 +10,8 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Delivery\ProductOption;
 use AppBundle\Entity\Delivery\ProductVariant;
 use AppBundle\Entity\Task;
-use AppBundle\ExpressionLanguage\TimeSlotResolver;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
+use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -21,26 +22,21 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class PriceCalculationVisitor
 {
 
-    private ?Calculation $calculation = null;
-    /**
-     * @var PricingRule[] $matchedRules
-     */
-    private array $matchedRules = [];
-    private ?Order $order = null;
-
     public function __construct(
-        private PricingRuleSet $ruleSet,
-        private ExpressionLanguage $expressionLanguage,
+        private readonly ExpressionLanguage $expressionLanguage,
+        private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
+        private readonly TaskExpressionLanguageVisitor $taskExpressionLanguageVisitor,
         private LoggerInterface $logger = new NullLogger()
     )
     {
-        TimeSlotResolver::setLogger($logger);
     }
 
-    public function visit(Delivery $delivery): void
+    public function visit(Delivery $delivery, PricingRuleSet $ruleSet): Output
     {
-        $this->calculation = null;
-        $this->matchedRules = [];
+        /**
+         * @var PricingRule[] $matchedRules
+         */
+        $matchedRules = [];
 
         /**
          * @var Result[] $resultsPerEntity
@@ -55,13 +51,12 @@ class PriceCalculationVisitor
          * @var ProductVariant|null $deliveryProductVariant
          */
         $deliveryProductVariant = null;
-        $this->order = null;
 
         $tasks = $delivery->getTasks();
 
         // Apply the rules to each task/point
         foreach ($tasks as $task) {
-            $resultPerTask = $this->visitTask($this->ruleSet, $delivery, $task);
+            $resultPerTask = $this->visitTask($ruleSet, $delivery, $task);
             $resultPerTask->setTask($task);
 
             $resultsPerEntity[] = $resultPerTask;
@@ -75,7 +70,7 @@ class PriceCalculationVisitor
         }
 
         // Apply the rules to the whole delivery/order
-        $resultPerDelivery = $this->visitDelivery($this->ruleSet, $delivery);
+        $resultPerDelivery = $this->visitDelivery($ruleSet, $delivery);
         $resultPerDelivery->setDelivery($delivery);
 
         $resultsPerEntity[] = $resultPerDelivery;
@@ -87,27 +82,34 @@ class PriceCalculationVisitor
             $deliveryProductVariant = $resultPerDelivery->productVariant;
         }
 
-        $this->calculation = new Calculation($this->ruleSet, $resultsPerEntity);
+        $calculation = new Calculation($ruleSet, $resultsPerEntity);
 
         foreach ($resultsPerEntity as $key => $item) {
             foreach ($item->ruleResults as $position => $ruleResult) {
                 if ($ruleResult->matched === true) {
-                    $this->matchedRules[] = $ruleResult->rule;
+                    $matchedRules[] = $ruleResult->rule;
                 }
             }
         }
 
-        if (count($this->matchedRules) === 0) {
+        /**
+         * @var Order|null $order
+         */
+        $order = null;
+
+        if (count($matchedRules) === 0) {
             $this->logger->info(sprintf('No rule matched'), [
-                'strategy' => $this->ruleSet->getStrategy(),
+                'strategy' => $ruleSet->getStrategy(),
             ]);
         } else {
-            $this->order = $this->process($taskProductVariants, $deliveryProductVariant);
+            $order = $this->process($taskProductVariants, $deliveryProductVariant);
 
-            $this->logger->info(sprintf('Calculated price: %d', $this->getPrice()), [
-                'strategy' => $this->ruleSet->getStrategy(),
+            $this->logger->info(sprintf('Calculated price: %d', $order->getItemsTotal()), [
+                'strategy' => $ruleSet->getStrategy(),
             ]);
         }
+
+        return new Output($calculation, $matchedRules, $order);
     }
 
     public function getPrice(): ?int
@@ -132,7 +134,7 @@ class PriceCalculationVisitor
 
     private function visitDelivery(PricingRuleSet $ruleSet, Delivery $delivery): Result
     {
-        $deliveryAsExpressionLanguageValues = Delivery::toExpressionLanguageValues($delivery);
+        $deliveryAsExpressionLanguageValues = $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
 
         if ($ruleSet->getStrategy() === 'find') {
             return $this->applyFindStrategy($ruleSet, $deliveryAsExpressionLanguageValues, function (PricingRule $rule) {
@@ -157,7 +159,7 @@ class PriceCalculationVisitor
 
     private function visitTask(PricingRuleSet $ruleSet, Delivery $delivery, Task $task): Result
     {
-        $taskAsExpressionLanguageValues = $task->toExpressionLanguageValues();
+        $taskAsExpressionLanguageValues = $this->taskExpressionLanguageVisitor->toExpressionLanguageValues($task);
 
         if ($ruleSet->getStrategy() === 'find') {
             return $this->applyFindStrategy($ruleSet, $taskAsExpressionLanguageValues, function (PricingRule $rule) {
@@ -310,34 +312,41 @@ class PriceCalculationVisitor
     }
 }
 
+class Output
+{
+    /**
+     * @param Calculation|null $calculation
+     * @param PricingRule[] $matchedRules
+     * @param Order|null $order
+     */
+    public function __construct(
+        public readonly ?Calculation $calculation,
+        public readonly array $matchedRules,
+        public readonly ?Order $order)
+    {
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->order?->getItemsTotal();
+    }
+}
+
 class Calculation
 {
-    public readonly PricingRuleSet $ruleSet;
-
-    /**
-     * @var Result[] $resultsPerEntity
-     */
-    public readonly array $resultsPerEntity;
-
     /**
      * @param PricingRuleSet $ruleSet
      * @param Result[] $resultsPerEntity
      */
-    public function __construct(PricingRuleSet $ruleSet, array $resultsPerEntity)
+    public function __construct(
+        public readonly PricingRuleSet $ruleSet,
+        public readonly array $resultsPerEntity)
     {
-        $this->ruleSet = $ruleSet;
-        $this->resultsPerEntity = $resultsPerEntity;
     }
 }
 
 class Result
 {
-    /**
-     * @var RuleResult[]
-     */
-    public readonly array $ruleResults;
-    public readonly ?ProductVariant $productVariant;
-
     public ?Delivery $delivery = null;
     public ?Task $task = null;
 
@@ -346,11 +355,9 @@ class Result
      * @param ProductVariant|null $productVariant
      */
     public function __construct(
-        array $ruleResults,
-        ?ProductVariant $productVariant = null)
+        public readonly array $ruleResults,
+        public readonly ?ProductVariant $productVariant = null)
     {
-        $this->ruleResults = $ruleResults;
-        $this->productVariant = $productVariant;
     }
 
     public function setDelivery(Delivery $delivery): void

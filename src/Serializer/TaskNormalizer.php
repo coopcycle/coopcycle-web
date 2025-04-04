@@ -7,12 +7,14 @@ use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -26,7 +28,8 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         private UserManagerInterface $userManager,
         private Geocoder $geocoder,
         private EntityManagerInterface $entityManager,
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private LoggerInterface $logger
     )
     {}
 
@@ -227,6 +230,23 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $user = $this->userManager->findUserByUsername($data['assignedTo']);
             if ($user && $user->hasRole('ROLE_COURIER')) {
                 $task->assignTo($user);
+            }
+        }
+
+        /**
+         * @var TimeSlot $timeSlot
+         */
+        $timeSlot = null;
+
+        if (isset($data['timeSlotUrl'])) {
+            try {
+                $timeSlot = $this->iriConverter->getItemFromIri($data['timeSlotUrl']);
+            } catch (InvalidArgumentException $e) {
+                $this->logger->warning('Invalid time slot URL: ' . $data['timeSlotUrl']);
+            }
+
+            if (null !== $timeSlot) {
+                $task->setTimeSlot($timeSlot);
             }
         }
 

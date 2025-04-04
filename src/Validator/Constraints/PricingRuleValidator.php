@@ -4,6 +4,7 @@ namespace AppBundle\Validator\Constraints;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Symfony\Component\Validator\Constraint;
@@ -11,11 +12,11 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class PricingRuleValidator extends ConstraintValidator
 {
-    private $expressionLanguage;
-
-    public function __construct(ExpressionLanguage $expressionLanguage)
+    public function __construct(
+        private ExpressionLanguage $expressionLanguage,
+        private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
+    )
     {
-        $this->expressionLanguage = $expressionLanguage;
     }
 
     public function validate($object, Constraint $constraint)
@@ -37,7 +38,7 @@ class PricingRuleValidator extends ConstraintValidator
 
         try {
 
-            $this->expressionLanguage->evaluate($object->getExpression(), Delivery::toExpressionLanguageValues($delivery));
+            $this->expressionLanguage->evaluate($object->getExpression(), $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery));
 
         } catch (SyntaxError $e) {
             $this->context
@@ -49,7 +50,7 @@ class PricingRuleValidator extends ConstraintValidator
 
         try {
 
-            $this->expressionLanguage->evaluate($object->getPrice(), Delivery::toExpressionLanguageValues($delivery));
+            $this->expressionLanguage->evaluate($object->getPrice(), $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery));
 
         } catch (SyntaxError $e) {
 

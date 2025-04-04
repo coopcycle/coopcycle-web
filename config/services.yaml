@@ -128,6 +128,12 @@ services:
     resource: '../src/Api/Filter/*'
     tags: ['api_platform.filter']
 
+  AppBundle\ExpressionLanguage\:
+    resource: '../src/ExpressionLanguage/*'
+
+  AppBundle\Pricing\:
+    resource: '../src/Pricing/*'
+
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
   coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
@@ -578,6 +584,10 @@ services:
         - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
+  AppBundle\Pricing\PriceCalculationVisitor:
+    arguments:
+      $expressionLanguage: "@coopcycle.expression_language"
+
   AppBundle\EventListener\RegistrationListener:
     tags:
       - { name: kernel.event_subscriber }
@@ -600,8 +610,6 @@ services:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
     tags:
       - { name: monolog.logger, channel: fee_calculation }
 
@@ -1557,8 +1565,6 @@ services:
   AppBundle\Service\Tile38Helper:
     arguments:
       $fleetKey: '%tile38_fleet_key%'
-
-  AppBundle\Pricing\PricingManager: ~
 
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
