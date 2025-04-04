@@ -23,8 +23,6 @@ use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\ExpressionLanguage\PackagesResolver;
-use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -407,50 +405,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
                 break;
             }
         }
-    }
-
-    private static function createTaskObject(?Task $task)
-    {
-        $taskObject = new \stdClass();
-        if ($task) {
-
-            return $task->toExpressionLanguageObject();
-        }
-
-        return $taskObject;
-    }
-
-    private static function createOrderObject(?Order $order)
-    {
-        $object = new \stdClass();
-        if ($order) {
-            $object->itemsTotal = $order->getItemsTotal();
-        } else {
-            $object->itemsTotal = 0;
-        }
-
-        return $object;
-    }
-
-    public static function toExpressionLanguageValues(Delivery $delivery)
-    {
-        $pickup = self::createTaskObject($delivery->getPickup());
-        $dropoff = self::createTaskObject($delivery->getDropoff());
-        $order = self::createOrderObject($delivery->getOrder());
-
-        $emptyTaskObject = new \stdClass();
-        $emptyTaskObject->type = '';
-
-        return [
-            'distance' => $delivery->getDistance(),
-            'weight' => $delivery->getWeight(),
-            'vehicle' => $delivery->getVehicle(),
-            'pickup' => $pickup,
-            'dropoff' => $dropoff,
-            'packages' => new PackagesResolver($delivery),
-            'order' => $order,
-            'task' => $emptyTaskObject,
-        ];
     }
 
     public function setPickupRange(\DateTime $after, \DateTime $before)

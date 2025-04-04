@@ -9,6 +9,7 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Exception\ShippingAddressMissingException;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
@@ -24,15 +25,11 @@ class DeliveryManagerTest extends KernelTestCase
 {
     use ProphecyTrait;
 
-    private $expressionLanguage;
-
     protected function setUp(): void
     {
         parent::setUp();
 
         self::bootKernel();
-
-        $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
 
         $this->denormalizer = $this->prophesize(DenormalizerInterface::class);
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
@@ -40,6 +37,7 @@ class DeliveryManagerTest extends KernelTestCase
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
         $this->storeExtractor = $this->prophesize(TokenStoreExtractor::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->priceCalculationVisitor = $this->prophesize(PriceCalculationVisitor::class);
     }
 
     public function tearDown(): void
@@ -93,12 +91,12 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
             $this->storeExtractor->reveal(),
-            $this->entityManager->reveal()
+            $this->entityManager->reveal(),
+            $this->priceCalculationVisitor->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -135,12 +133,12 @@ class DeliveryManagerTest extends KernelTestCase
 
         $deliveryManager = new DeliveryManager(
             $this->denormalizer->reveal(),
-            $this->expressionLanguage,
             $this->routing->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->orderTimelineCalculator->reveal(),
             $this->storeExtractor->reveal(),
-            $this->entityManager->reveal()
+            $this->entityManager->reveal(),
+            $this->priceCalculationVisitor->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
