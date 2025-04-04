@@ -11,7 +11,32 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['pricing_deliveries']]], collectionOperations: ['calc_price' => ['method' => 'POST', 'path' => '/retail_prices/calculate', 'input' => DeliveryInput::class, 'controller' => CalculateController::class, 'status' => 200, 'write' => false, 'denormalization_context' => ['groups' => ['pricing_deliveries']], 'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')", 'openapi_context' => ['summary' => 'Calculates price of a Delivery']]], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false]])]
+#[ApiResource(
+    collectionOperations: [
+        'calc_price' => [
+            'method' => 'POST',
+            'path' => '/retail_prices/calculate',
+            'input' => DeliveryInput::class,
+            'controller' => CalculateController::class,
+            'status' => 200,
+            'write' => false,
+            'denormalization_context' => ['groups' => ['pricing_deliveries']],
+            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
+            'openapi_context' => ['summary' => 'Calculates price of a Delivery']
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'controller' => NotFoundAction::class,
+            'read' => false,
+            'output' => false
+        ]
+    ],
+    attributes: [
+        'normalization_context' => ['groups' => ['pricing_deliveries']]
+    ]
+)]
 final class RetailPrice
 {
     /**
