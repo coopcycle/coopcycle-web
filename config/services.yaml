@@ -1356,7 +1356,7 @@ services:
   # Otherwise, set a priority lower than 100 to make sure the argument resolver is not triggered when the Request attribute is present.
   AppBundle\Controller\ArgumentResolver\AddressValueResolver:
     tags:
-      - { name: controller.argument_value_resolver, priority: 50 }
+      - { name: controller.argument_value_resolver, priority: 125 }
 
   AppBundle\Security\TaskOperationsVoter:
     tags: [ 'security.voter' ]
