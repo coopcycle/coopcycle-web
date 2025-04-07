@@ -587,6 +587,8 @@ services:
   AppBundle\Pricing\PriceCalculationVisitor:
     arguments:
       $expressionLanguage: "@coopcycle.expression_language"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\EventListener\RegistrationListener:
     tags:
@@ -610,8 +612,6 @@ services:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
-    tags:
-      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
