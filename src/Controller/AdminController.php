@@ -181,35 +181,23 @@ class AdminController extends AbstractController
     }
 
     public function __construct(
-        OrderRepositoryInterface $orderRepository,
-        TranslatorInterface $translator,
+        protected OrderRepositoryInterface $orderRepository,
+        protected TranslatorInterface $translator,
         protected EntityManagerInterface $entityManager,
-        PromotionCouponRepositoryInterface $promotionCouponRepository,
-        FactoryInterface $promotionRuleFactory,
-        FactoryInterface $promotionFactory,
-        HttpClientInterface $browserlessClient,
-        UploaderHelper $uploaderHelper,
-        bool $optinExportUsersEnabled,
-        CollectionFinderInterface $typesenseShopsFinder,
-        bool $adhocOrderEnabled,
+        protected PromotionCouponRepositoryInterface $promotionCouponRepository,
+        protected FactoryInterface $promotionRuleFactory,
+        protected FactoryInterface $promotionFactory,
+        protected HttpClientInterface $browserlessClient,
+        protected UploaderHelper $uploaderHelper,
+        protected bool $optinExportUsersEnabled,
+        protected CollectionFinderInterface $typesenseShopsFinder,
+        protected bool $adhocOrderEnabled,
         protected Filesystem $incidentImagesFilesystem,
         protected Filesystem $edifactFilesystem,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        protected TimeSlotManager $timeSlotManager
-    )
-    {
-        $this->orderRepository = $orderRepository;
-        $this->translator = $translator;
-        $this->promotionCouponRepository = $promotionCouponRepository;
-        $this->promotionRuleFactory = $promotionRuleFactory;
-        $this->promotionFactory = $promotionFactory;
-        $this->browserlessClient = $browserlessClient;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->optinExportUsersEnabled = $optinExportUsersEnabled;
-        $this->adhocOrderEnabled = $adhocOrderEnabled;
-        $this->typesenseShopsFinder = $typesenseShopsFinder;
-    }
+        protected TimeSlotManager $timeSlotManager)
+    {}
 
     #[Route(path: '/admin', name: 'admin_index')]
     public function indexAction()
