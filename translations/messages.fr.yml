@@ -982,6 +982,7 @@ order.export.heading.refund_total: Remboursements
 order.export.heading.nonprofit: Association
 order.export.heading.incident_adjustments: Ajustements des incidents
 order.export.heading.incidents: Incidents
+order.export.heading.payment_gateway: Plateforme de paiement
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher
