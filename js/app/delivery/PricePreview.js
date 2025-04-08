@@ -31,7 +31,7 @@ function createPricingPromise(delivery, token, $container) {
           }
         }
 
-        resolve({ success: false, message })
+        resolve({ success: false, data: e.response.data, message })
       })
   })
 }
@@ -67,10 +67,10 @@ class PricePreview {
       return createPricingPromise(delivery, token, $container)
     })
    .then(priceResult => {
+     const { data } = priceResult
 
      if (priceResult.success) {
 
-       const { data } = priceResult
        const taxExcluded = data.amount - data.tax.amount
 
        $('#delivery_price')
@@ -80,21 +80,21 @@ class PricePreview {
          .find('[data-tax="excluded"]')
          .text((taxExcluded / 100).formatMoney())
 
-       $('#pricing-rules-debug').each(function (index, item) {
-         const root = createRoot(item)
-         root.render(
-           <StrictMode>
-             <PriceCalculation
-               calculation={data.calculation}
-               orderItems={data.items}
-               itemsTotal={data.amount} />
-           </StrictMode>,
-         )
-       })
-
      } else {
        $('#delivery_price_error').text(priceResult.message)
      }
+
+     $('#pricing-rules-debug').each(function (index, item) {
+       const root = createRoot(item)
+       root.render(
+         <StrictMode>
+           <PriceCalculation
+             calculation={data.calculation}
+             orderItems={data.items}
+             itemsTotal={data.amount} />
+         </StrictMode>,
+       )
+     })
 
      $container.removeClass('delivery-price--loading')
    })

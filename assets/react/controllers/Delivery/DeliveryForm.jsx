@@ -115,6 +115,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+  const [calculateResponseData, setCalculateResponseData] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
@@ -350,11 +351,13 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
         const { response, error } = await httpClient.post(url, infos)
 
         if (error) {
+          setCalculateResponseData(error.response.data)
           setPriceErrorMessage(error.response.data['hydra:description'])
           setCalculatePrice(0)
         }
 
         if (response) {
+          setCalculateResponseData(response)
           setCalculatePrice(response)
           setPriceErrorMessage('')
 
@@ -565,11 +568,11 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                         overridePrice={overridePrice}
                         priceLoading={priceLoading}
                       />
-                      { isDispatcher && isDebugPricing && Boolean(calculatedPrice) && (
+                      { isDispatcher && isDebugPricing && Boolean(calculateResponseData) && (
                         <PriceCalculation
-                          calculation={calculatedPrice.calculation}
-                          orderItems={calculatedPrice.items}
-                          itemsTotal={calculatedPrice.amount} />
+                          calculation={calculateResponseData.calculation}
+                          orderItems={calculateResponseData.items}
+                          itemsTotal={calculateResponseData.amount} />
                       )}
                     </div>
 
