@@ -6,6 +6,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 require_once dirname(__DIR__) . '/vendor/autoload_runtime.php';
 
+// https://symfony.com/doc/5.x/components/runtime.html#using-options
+$_SERVER['APP_RUNTIME_OPTIONS'] = [
+    'project_dir' => dirname($_SERVER['SCRIPT_FILENAME'], 2)
+];
+
 return function (array $context) {
     if ($_SERVER['APP_DEBUG']) {
         umask(0000);
