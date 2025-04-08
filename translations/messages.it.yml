@@ -728,7 +728,6 @@ basics.created_at: Creato il %date%
 basics.updated_at: Aggiornato il %date%
 basics.date_range: Da %start% a %end%
 basics.total_including_tax: Totale incluso tasse
-basics.stripe_fees: Commissioni Stripe
 basics.net_income: Reddito netto
 basics.send_invitation: Manda un invito
 basics.send_invitation.confirm: Il tuo invito è stato mandato! Puoi cambiare adesso

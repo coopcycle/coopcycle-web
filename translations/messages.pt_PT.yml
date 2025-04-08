@@ -349,7 +349,6 @@ basics.send_invitation.confirm: Seu convite foi enviado! agora pode editar os aj
   do novo usuário.
 basics.send_invitation: Enviar um convite
 basics.platform_fees: Tarifas da plataforma
-basics.stripe_fees: Tarifas de Stripe
 basics.total_including_tax: Total incluíndo impostos
 basics.no_entries: Nenhum elemento ainda
 basics.are_you_sure: Tem certeza?

@@ -784,7 +784,6 @@ form.package.shortCode.label: Código de 2 letras
 form.package.volume_units.label: Unidades de volumen
 basics.date_range: Desde %start% hasta %end%
 basics.total_including_tax: Total incluyendo todos los impuestos
-basics.stripe_fees: Tarifas de Stripe
 basics.platform_fees: Tarifas de plataforma
 basics.net_income: Ingresos netos
 time_slot.human_readable: '%day% entre %start% y %end%'

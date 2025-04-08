@@ -956,7 +956,6 @@ basics.created_at: Created at %date%
 basics.updated_at: Updated at %date%
 basics.date_range: From %start% to %end%
 basics.total_including_tax: Total including all taxes
-basics.stripe_fees: Stripe fees
 basics.platform_fees: Platform fees
 basics.net_income: Net income
 basics.send_invitation: Send an invitation
