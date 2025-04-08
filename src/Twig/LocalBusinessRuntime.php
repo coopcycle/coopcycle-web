@@ -28,26 +28,16 @@ use libphonenumber\PhoneNumber;
 class LocalBusinessRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        TranslatorInterface $translator,
-        SerializerInterface $serializer,
-        LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
-        EntityManagerInterface $entityManager,
-        TimingRegistry $timingRegistry,
-        RestaurantDecorator $restaurantDecorator,
-        BusinessContext $businessContext,
-        SettingsManager $settingsManager)
-    {
-        $this->translator = $translator;
-        $this->serializer = $serializer;
-        $this->repository = $repository;
-        $this->projectCache = $projectCache;
-        $this->entityManager = $entityManager;
-        $this->timingRegistry = $timingRegistry;
-        $this->restaurantDecorator = $restaurantDecorator;
-        $this->businessContext = $businessContext;
-        $this->settingsManager = $settingsManager;
-    }
+        private TranslatorInterface $translator,
+        private SerializerInterface $serializer,
+        private LocalBusinessRepository $repository,
+        private CacheInterface $projectCache,
+        private EntityManagerInterface $entityManager,
+        private TimingRegistry $timingRegistry,
+        private RestaurantDecorator $restaurantDecorator,
+        private BusinessContext $businessContext,
+        private SettingsManager $settingsManager)
+    {}
 
     /**
      * @param string|LocalBusiness $entityOrText

@@ -7,6 +7,8 @@ use AppBundle\Service\TimingRegistry;
 
 class SortableRestaurantIterator extends \ArrayIterator
 {
+    private $timingRegistry;
+
     public function __construct($array, TimingRegistry $timingRegistry)
     {
         $this->timingRegistry = $timingRegistry;
