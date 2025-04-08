@@ -10,17 +10,15 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 
 class TaxesInitializer
 {
+    private $logger;
+
     public function __construct(
-        Connection $conn,
-        TaxesProvider $taxesProvider,
-        TaxCategoryRepositoryInterface $taxCategoryRepository,
-        ObjectManager $em,
+        private Connection $conn,
+        private TaxesProvider $taxesProvider,
+        private TaxCategoryRepositoryInterface $taxCategoryRepository,
+        private ObjectManager $em,
         ?LoggerInterface $logger = null)
     {
-        $this->conn = $conn;
-        $this->taxesProvider = $taxesProvider;
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->em = $em;
         $this->logger = $logger ?? new NullLogger();
     }
 

@@ -18,7 +18,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -29,7 +29,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private TranslatorInterface $translator,
-        private SerializerInterface $serializer,
+        private NormalizerInterface $serializer,
         private LocalBusinessRepository $repository,
         private CacheInterface $projectCache,
         private EntityManagerInterface $entityManager,
