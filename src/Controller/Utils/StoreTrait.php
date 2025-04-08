@@ -490,6 +490,7 @@ trait StoreTrait
             'recurrenceRule' => $recurrenceRule,
             'delivery' => $tempDelivery,
             'form' => $form->createView(),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
         ]);
     }
 
