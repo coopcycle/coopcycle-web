@@ -781,6 +781,8 @@ Feature: Retail prices
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
         "hydra:description":"delivery.price.error.priceCalculation",
-        "trace":@array@
+        "calculation": [
+          @...@
+        ]
       }
       """
