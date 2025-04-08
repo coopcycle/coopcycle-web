@@ -92,17 +92,10 @@ function MethodOfCalculation({ calculation }) {
   )
 }
 
-export function PriceCalculation({ calculation, orderItems, itemsTotal }) {
+function Cart({ orderItems, itemsTotal }) {
   return (
     <>
-      <MethodOfCalculation calculation={calculation} />
-      {calculation.map((item, index) => (
-        <Target
-          key={index}
-          target={item.target}
-          rules={Object.values(item.rules)}
-        />
-      ))}
+
       {orderItems.map((orderItem, index) => (
         <OrderItem key={index} orderItem={orderItem} index={index} />
       ))}
@@ -110,6 +103,31 @@ export function PriceCalculation({ calculation, orderItems, itemsTotal }) {
         <span>Order Total</span>
         <span className="pull-right">{(itemsTotal / 100).formatMoney()}</span>
       </li>
+    </>
+  )
+}
+
+export function PriceCalculation({ calculation, orderItems, itemsTotal }) {
+  return (
+    <>
+      {Boolean(calculation) && (
+        <>
+          <MethodOfCalculation calculation={calculation} />
+          {calculation.map((item, index) => (
+            <Target
+              key={index}
+              target={item.target}
+              rules={Object.values(item.rules)}
+            />
+          ))}
+        </>
+      )}
+
+      {Boolean(orderItems && itemsTotal) && (
+        <Cart
+          orderItems={orderItems}
+          itemsTotal={itemsTotal} />
+      )}
     </>
   )
 }
