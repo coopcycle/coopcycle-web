@@ -52,6 +52,8 @@ class TaskExpressionLanguageVisitor
 
         if (null !== $task->getTimeSlot()) {
             $values['time_slot'] = $this->iriConverter->getIriFromItem($task->getTimeSlot());
+        } else {
+            $values['time_slot'] = null;
         }
 
         $values['task'] = $thisObj;
