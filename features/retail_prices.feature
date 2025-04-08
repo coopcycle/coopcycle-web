@@ -693,7 +693,7 @@ Feature: Retail prices
       }
       """
 
-    Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
+  Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
@@ -742,5 +742,45 @@ Feature: Retail prices
         "calculation": [
           @...@
         ]
+      }
+      """
+
+  Scenario: Can't calculate a price
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/9",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":"delivery.price.error.priceCalculation",
+        "trace":@array@
       }
       """
