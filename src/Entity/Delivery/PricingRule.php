@@ -47,6 +47,7 @@ class PricingRule
      */
     const LEGACY_TARGET_DYNAMIC = 'LEGACY_TARGET_DYNAMIC';
 
+    #[Groups(['pricing_deliveries'])]
     #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
     protected string $target = self::TARGET_DELIVERY;
 
@@ -55,7 +56,7 @@ class PricingRule
     #[Assert\NotBlank]
     protected $expression;
 
-    #[Groups(['original_rules'])]
+    #[Groups(['original_rules', 'pricing_deliveries'])]
     #[Assert\Type(type: 'string')]
     protected $price;
 
@@ -152,15 +153,13 @@ class PricingRule
 
         if (str_contains($priceExpression, 'price_percentage')) {
             return new ProductOption(
-                $this->getExpression(),
-                $priceExpression,
+                $this,
                 0,
                 $result
             );
         } else {
             return new ProductOption(
-                $this->getExpression(),
-                $priceExpression,
+                $this,
                 $result,
             );
         }

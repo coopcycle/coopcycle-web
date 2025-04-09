@@ -16,8 +16,7 @@ class ProductOption
     private ?int $price = null;
 
     public function __construct(
-        private readonly string $matchedRule,
-        private readonly string $priceRule,
+        private readonly PricingRule $matchedRule,
         private readonly int $priceAdditive, // in cents
         private readonly int $priceMultiplier = 10000 // 1 => 0.01%; 10000 => 100%
     )
@@ -25,15 +24,9 @@ class ProductOption
     }
 
     #[Groups(['pricing_deliveries'])]
-    public function getMatchedRule(): string
+    public function getMatchedRule(): PricingRule
     {
         return $this->matchedRule;
-    }
-
-    #[Groups(['pricing_deliveries'])]
-    public function getPriceRule(): string
-    {
-        return $this->priceRule;
     }
 
     public function getPriceAdditive(): int
