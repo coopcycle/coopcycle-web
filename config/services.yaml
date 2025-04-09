@@ -1000,6 +1000,11 @@ services:
       $failureReasonsResolvers:
         - '@AppBundle\Incident\LoopeatFailureReasonsResolver'
 
+  AppBundle\Action\Order\AddPlayer:
+    public: true
+    arguments:
+      $centrifugoNamespace: '%centrifugo_namespace%'
+
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
@@ -1221,6 +1226,11 @@ services:
   AppBundle\MessageHandler\CreateWebhookEndpointHandler:
     arguments:
       $entityName: "%craue_config.entity_name%"
+
+  AppBundle\MessageHandler\ExportOrdersHandler:
+    arguments:
+      $defaultLocale: "%kernel.default_locale%"
+      $nonProfitsEnabled: "%nonprofits_enabled%"
 
   AppBundle\Service\MaintenanceManager: ~
 
