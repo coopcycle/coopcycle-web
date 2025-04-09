@@ -2,14 +2,11 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
-use AppBundle\Service\Geocoder;
-use AppBundle\Service\TagManager;
 use AppBundle\Service\Tile38Helper;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
 use Doctrine\Persistence\ManagerRegistry;
@@ -24,13 +21,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function __construct(
         private readonly ItemNormalizer $normalizer,
-        private readonly Geocoder $geocoder,
-        private readonly IriConverterInterface $iriConverter,
         private readonly ManagerRegistry $doctrine,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
         private readonly Tile38Helper $tile38Helper,
-        private readonly TagManager $tagManager,
         private readonly TaskNormalizer $taskNormalizer,
     )
     {
