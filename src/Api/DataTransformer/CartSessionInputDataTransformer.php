@@ -4,17 +4,16 @@ namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use AppBundle\Api\Resource\CartSession;
+use AppBundle\Sylius\Order\OrderFactory;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Psr\Log\LoggerInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
-use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CartSessionInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        private readonly FactoryInterface $orderFactory,
+        private readonly OrderFactory $orderFactory,
         private readonly TokenStorageInterface $tokenStorage,
         private readonly LoggerInterface $checkoutLogger
     )
