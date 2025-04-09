@@ -112,6 +112,7 @@ use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -180,6 +181,9 @@ class AdminController extends AbstractController
         ];
     }
 
+    /**
+     * @param \AppBundle\Entity\Sylius\OrderRepository $orderRepository
+     */
     public function __construct(
         protected OrderRepositoryInterface $orderRepository,
         protected TranslatorInterface $translator,
@@ -1841,13 +1845,16 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction()
+    public function promotionsAction(EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $qb = $this->promotionCouponRepository->createQueryBuilder('c');
+
+        $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
+
         $promotionCoupons = $qb->getQuery()->getResult();
+
         return $this->render('admin/promotions.html.twig', [
             'promotion_coupons' => $promotionCoupons,
         ]);
