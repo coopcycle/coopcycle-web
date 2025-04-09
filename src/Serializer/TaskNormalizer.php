@@ -357,7 +357,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
             foreach ($data['packages'] as $p) {
-                //FIXME: does this actually work? $task->getStore() is probably null at this point
+                //FIXME: does this actually work for tasks inside a Delivery? $task->getStore() is probably null at this point
                 $package = $packageRepository->findOneByNameAndStore($p['type'], $task->getStore());
                 if ($package) {
                     $task->setQuantityForPackage($package, $p['quantity']);
