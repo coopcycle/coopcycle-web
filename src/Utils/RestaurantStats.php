@@ -79,6 +79,7 @@ class RestaurantStats implements \Countable
         $this->addRefunds();
         $this->addStores();
         $this->addPaymentMethods();
+        $this->addPaymentGateways();
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -349,6 +350,68 @@ class RestaurantStats implements \Countable
         }, $this->result);
     }
 
+    private function addPaymentGateways()
+    {
+        if (count($this->ids) === 0) {
+            return;
+        }
+
+        $qb = $this->entityManager->getRepository(Order::class)
+            ->createQueryBuilder('o');
+        $qb
+            ->select([
+                'o.id AS order_id',
+                'pm.code',
+                'p.details'
+            ])
+            ->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id')
+            ->join(PaymentMethodInterface::class, 'pm', Expr\Join::WITH, 'p.method = pm.id')
+            ->andWhere(
+                $qb->expr()->in('o.id', ':ids')
+            )
+            ->andWhere(
+                $qb->expr()->in('p.state', ':payment_states')
+            )
+            ->setParameter('ids', $this->ids)
+            ->setParameter('payment_states', [ PaymentInterface::STATE_COMPLETED, PaymentInterface::STATE_REFUNDED])
+            ;
+
+        $paymentsByOrder = $qb->getQuery()->getArrayResult();
+        $paymentsByOrder = array_reduce($paymentsByOrder, function ($carry, $item) {
+            if (!isset($carry[$item['order_id']])) {
+                $carry[$item['order_id']] = [];
+            }
+            $carry[$item['order_id']][] = [
+                'method' => $item['code'],
+                'details' => $item['details'],
+            ];
+
+            return $carry;
+        }, []);
+
+        $this->result = array_map(function ($order) use ($paymentsByOrder) {
+
+            $payments = $paymentsByOrder[$order->id] ?? [];
+
+            $cardPayments = array_filter($payments, function ($payment) {
+                return $payment['method'] === 'CARD';
+            });
+
+            if (count($cardPayments) === 1) {
+                $cardPayment = current($cardPayments);
+                $details = $cardPayment['details'];
+                if (array_key_exists('paygreen_payment_order_id', $details)) {
+                    $order->paymentGateway = 'paygreen';
+                } else {
+                    $order->paymentGateway = 'stripe';
+                }
+            }
+
+            return $order;
+
+        }, $this->result);
+    }
+
     //DEADCODE: NON_PROFIT
     private function addNonprofits()
     {
@@ -603,6 +666,7 @@ class RestaurantStats implements \Countable
         $headings[] = 'promotions';
         $headings[] = 'total_incl_tax';
         $headings[] = 'payment_method';
+        $headings[] = 'payment_gateway';
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
@@ -704,6 +768,8 @@ class RestaurantStats implements \Countable
                 return $order->billingMethod === 'percentage' ? 'percentage' : 'unit';
             case 'applied_billing':
                 return $order->hasVendor() ? Order::STORE_TYPE_FOODTECH : Order::STORE_TYPE_LASTMILE;
+            case 'payment_gateway':
+                return $order->paymentGateway;
         }
 
         return '';

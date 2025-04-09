@@ -7,11 +7,12 @@ use AppBundle\Sylius\Taxation\TaxesHelper;
 use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExportOrdersHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class ExportOrdersHandler
 {
 
     public function __construct(
@@ -19,13 +20,14 @@ class ExportOrdersHandler implements MessageHandlerInterface
         private EntityManagerInterface $entityManager,
         private PaginatorInterface $paginator,
         private TaxesHelper $taxesHelper,
-        private ContainerInterface $container
+        private string $defaultLocale,
+        private bool $nonProfitsEnabled
     )
     { }
 
     public function __invoke(ExportOrders $message): ?string
     {
-        $locale = $message->getLocale() ?? $this->container->getParameter('kernel.default_locale');
+        $locale = $message->getLocale() ?? $this->defaultLocale;
         $stats = new RestaurantStats(
             $this->entityManager,
             $message->getFrom()->setTime(0, 0, 0),
@@ -37,7 +39,7 @@ class ExportOrdersHandler implements MessageHandlerInterface
             $this->taxesHelper,
             true,
             $message->isWithMessenger(),
-            $this->container->getParameter('nonprofits_enabled'),
+            $this->nonProfitsEnabled,
             $message->isWithBillingMethod(),
             $message->isIncludeTaxes()
         );

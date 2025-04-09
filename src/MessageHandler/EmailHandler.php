@@ -4,9 +4,10 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\Email;
 use AppBundle\Service\EmailManager;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class EmailHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class EmailHandler
 {
     private EmailManager $emailManager;
 

@@ -18,7 +18,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -28,26 +28,16 @@ use libphonenumber\PhoneNumber;
 class LocalBusinessRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        TranslatorInterface $translator,
-        SerializerInterface $serializer,
-        LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
-        EntityManagerInterface $entityManager,
-        TimingRegistry $timingRegistry,
-        RestaurantDecorator $restaurantDecorator,
-        BusinessContext $businessContext,
-        SettingsManager $settingsManager)
-    {
-        $this->translator = $translator;
-        $this->serializer = $serializer;
-        $this->repository = $repository;
-        $this->projectCache = $projectCache;
-        $this->entityManager = $entityManager;
-        $this->timingRegistry = $timingRegistry;
-        $this->restaurantDecorator = $restaurantDecorator;
-        $this->businessContext = $businessContext;
-        $this->settingsManager = $settingsManager;
-    }
+        private TranslatorInterface $translator,
+        private NormalizerInterface $serializer,
+        private LocalBusinessRepository $repository,
+        private CacheInterface $projectCache,
+        private EntityManagerInterface $entityManager,
+        private TimingRegistry $timingRegistry,
+        private RestaurantDecorator $restaurantDecorator,
+        private BusinessContext $businessContext,
+        private SettingsManager $settingsManager)
+    {}
 
     /**
      * @param string|LocalBusiness $entityOrText

@@ -15,21 +15,13 @@ use z4kn4fein\SemVer\Version;
 
 class SettingResolver implements RuntimeExtensionInterface
 {
-    private $settingsManager;
-
     public function __construct(
-        SettingsManager $settingsManager,
-        ValidatorInterface $validator,
-        TranslatorInterface $translator,
-        UrlGeneratorInterface $urlGenerator,
-        CacheInterface $cache)
-    {
-        $this->settingsManager = $settingsManager;
-        $this->validator = $validator;
-        $this->translator = $translator;
-        $this->urlGenerator = $urlGenerator;
-        $this->cache = $cache;
-    }
+        private SettingsManager $settingsManager,
+        private ValidatorInterface $validator,
+        private TranslatorInterface $translator,
+        private UrlGeneratorInterface $urlGenerator,
+        private CacheInterface $cache)
+    {}
 
     public function resolveSetting($name)
     {

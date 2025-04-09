@@ -4,9 +4,10 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\Sms;
 use AppBundle\Service\SmsManager;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class SmsHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class SmsHandler
 {
     public function __construct(SmsManager $smsManager)
     {

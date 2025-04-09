@@ -8,9 +8,10 @@ use AppBundle\Service\EmailManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class OrderReceiptEmailHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class OrderReceiptEmailHandler
 {
     private EmailManager $emailManager;
     private EntityManagerInterface $entityManager;

@@ -12,9 +12,10 @@ use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Bus\MessageBus;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class CalculateRouteHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class CalculateRouteHandler
 {
     private $objectManager;
     private $routing;

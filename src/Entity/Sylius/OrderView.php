@@ -36,6 +36,7 @@ class OrderView
     public $storeName;
     public $paymentMethod;
     public $billingMethod = 'unit';
+    public $paymentGateway;
 
     public function __construct(?LocalBusiness $restaurant = null)
     {
@@ -146,6 +147,12 @@ class OrderView
             }
         }
 
+        // When using Paygreen, the banking fees are *ALWAYS* paid by the platform
+        if ($this->paymentGateway === 'paygreen') {
+            return $this->getTotal() - $this->getFeeTotal() + $this->getRefundTotal();
+        }
+
+        // FIXME Actually take into account the contract.restaurant_pays_stripe_fee setting
         return $this->getTotal() - $this->getFeeTotal() - $this->getStripeFeeTotal()
             + $this->getRefundTotal();
     }

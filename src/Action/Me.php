@@ -17,12 +17,10 @@ class Me
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        AccessTokenManagerInterface $accessTokenManager,
-        ManagerRegistry $doctrine)
+        private AccessTokenManagerInterface $accessTokenManager,
+        private ManagerRegistry $doctrine)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->doctrine = $doctrine;
-        $this->accessTokenManager = $accessTokenManager;
     }
 
     /**
@@ -46,7 +44,7 @@ class Me
             $client = $accessToken->getClient();
 
             return $this->doctrine->getRepository(ApiApp::class)
-                ->findOneByOauth2Client($client);
+                ->findOneBy(['oauth2Client' => $client]);
         }
 
         return $this->getUser();

@@ -13,10 +13,11 @@ use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ImportTasksHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class ImportTasksHandler
 {
     private $objectManager;
     private $taskImportsFilesystem;

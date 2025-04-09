@@ -23,10 +23,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
  */
 class NucleosUserBundleUserProvider implements UserProviderInterface, AccountConnectorInterface, OAuthAwareUserProviderInterface
 {
-    private $slugify;
-    private $canonicalizer;
-    private $customerRepository;
-
     /**
      * @var array
      */
@@ -34,20 +30,17 @@ class NucleosUserBundleUserProvider implements UserProviderInterface, AccountCon
         'identifier' => 'id',
     ];
 
+    protected $accessor;
+
     public function __construct(
-        UserManagerInterface $userManager,
+        private UserManagerInterface $userManager,
         array $properties,
-        SlugifyInterface $slugify,
-        CanonicalizerInterface $canonicalizer,
-        RepositoryInterface $customerRepository)
+        private SlugifyInterface $slugify,
+        private CanonicalizerInterface $canonicalizer,
+        private RepositoryInterface $customerRepository)
     {
-        $this->userManager = $userManager;
         $this->properties = array_merge($this->properties, $properties);
         $this->accessor = PropertyAccess::createPropertyAccessor();
-
-        $this->slugify = $slugify;
-        $this->canonicalizer = $canonicalizer;
-        $this->customerRepository = $customerRepository;
     }
 
     /**

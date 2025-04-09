@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next'
 function ProductOption({ productOption }) {
   return (
     <div>
-      <div>Condition: {productOption.matchedRule}</div>
+      <div>Target: {productOption.matchedRule.target}</div>
+      <div>Condition: {productOption.matchedRule.expression}</div>
       <div>
-        <span>Price: {productOption.priceRule}</span>
+        <span>Price expression: {productOption.matchedRule.price}</span>
         <span className="pull-right">
           {(productOption.price / 100).formatMoney()}
         </span>
@@ -19,7 +20,7 @@ function OrderItem({ orderItem, index }) {
   return (
     <li className="list-group-item d-flex flex-column gap-2">
       <div>
-        <span className="font-weight-semi-bold">Order Item {index + 1}</span>
+        <span className="font-weight-semi-bold">Item {index + 1}</span>
       </div>
       {orderItem.productVariant.productOptions.map((productOption, index) => (
         <ProductOption key={index} productOption={productOption} />

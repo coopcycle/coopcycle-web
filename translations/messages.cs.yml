@@ -672,7 +672,6 @@ basics.send_invitation.confirm: Vaše pozvánka byla odeslána! Nyní můžete u
 basics.send_invitation: Poslat pozvánku
 basics.net_income: Čistý příjem
 basics.platform_fees: Poplatky platformy
-basics.stripe_fees: Poplatky Stripe
 basics.total_including_tax: Celkem včetně všech daní
 basics.date_range: Od %start% do %end%
 basics.updated_at: Aktualizováno %date%

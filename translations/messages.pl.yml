@@ -569,7 +569,6 @@ basics.are_you_sure: Jesteś pewien/pewna?
 basics.created_at: Utworzony dnia %date%
 basics.date_range: Od %start% do %end%
 basics.total_including_tax: Łącznie wliczając podatki
-basics.stripe_fees: Opłaty Stripe
 basics.platform_fees: Opłaty platformy
 basics.send_invitation: Wyślij zaproszenie
 profile.password.change: Zmień swoje hasło

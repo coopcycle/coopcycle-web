@@ -8,9 +8,10 @@ use AppBundle\Message\CalculateTaskDistance;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class CalculateTaskDistanceHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class CalculateTaskDistanceHandler
 {
 
     public function __construct(

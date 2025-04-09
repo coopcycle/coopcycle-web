@@ -11,11 +11,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
-class WoopitWebhookHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class WoopitWebhookHandler
 {
     public function __construct(
         OAuthHttpClient $woopitClient,
