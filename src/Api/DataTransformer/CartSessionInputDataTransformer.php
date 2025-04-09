@@ -14,13 +14,11 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 class CartSessionInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        FactoryInterface $orderFactory,
-        TokenStorageInterface $tokenStorage,
-        private LoggerInterface $checkoutLogger
+        private readonly FactoryInterface $orderFactory,
+        private readonly TokenStorageInterface $tokenStorage,
+        private readonly LoggerInterface $checkoutLogger
     )
     {
-        $this->orderFactory = $orderFactory;
-        $this->tokenStorage = $tokenStorage;
     }
 
     private function getCartFromSession()
