@@ -82,6 +82,7 @@ services:
     public: false
     bind:
       $locale: "%env(COOPCYCLE_LOCALE)%"
+      $country: "%country_iso%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,

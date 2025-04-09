@@ -982,6 +982,203 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with timeSlot and range in ISO 8601 as an admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Delivery",
+          "@id":"@string@.startsWith('/api/deliveries')",
+          "@type":"http://schema.org/ParcelDelivery",
+          "id":@integer@,
+          "tasks":@array@,
+          "pickup":{
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "status":"TODO",
+            "type":"PICKUP",
+            "address":{
+              "@id":"@string@.startsWith('/api/addresses')",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":@double@,
+                "longitude":@double@
+              },
+              "streetAddress":@string@,
+              "telephone":null,
+              "name":null,
+              "contactName": null,
+              "description": null
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "after":"@string@.isDateTime()",
+            "before":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "comments": "",
+            "weight": null,
+            "packages": [],
+            "barcode": {"@*@":"@*@"},
+            "createdAt":"@string@.isDateTime()",
+            "tags": [],
+            "metadata": {"@*@": "@*@"}
+          },
+          "dropoff":{
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "status":"TODO",
+            "type":"DROPOFF",
+            "address":{
+              "@id":"@string@.startsWith('/api/addresses')",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":@double@,
+                "longitude":@double@
+              },
+              "streetAddress":@string@,
+              "telephone":null,
+              "name":null,
+              "contactName": null,
+              "description": null
+            },
+            "doneAfter":"2020-04-02T12:00:00+02:00",
+            "after":"2020-04-02T12:00:00+02:00",
+            "before":"2020-04-02T14:00:00+02:00",
+            "doneBefore":"2020-04-02T14:00:00+02:00",
+            "comments": "",
+            "weight":null,
+            "packages": [],
+            "barcode": {"@*@":"@*@"},
+            "createdAt":"@string@.isDateTime()",
+            "tags": [],
+            "metadata": {"@*@": "@*@"}
+          },
+          "trackingUrl": @string@
+        }
+      """
+
+  Scenario: Can't create a delivery with invalid timeSlotUrl as an admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/123456",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/123456",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Error",
+          "@type":"hydra:Error",
+          "hydra:title":"An error occurred",
+          "hydra:description":"task.timeSlotUrl.invalid",
+          "trace":@array@
+        }
+      """
+    
+  Scenario: Can't create a delivery with invalid timeSlot range as an admin
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:05:00Z/2020-04-02T12:05:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:05:00Z/2020-04-02T12:05:00Z"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Error",
+          "@type":"hydra:Error",
+          "hydra:title":"An error occurred",
+          "hydra:description":"task.timeSlot.invalid",
+          "trace":@array@
+        }
+      """
+
   Scenario: Create delivery with pickup & dropoff as a store owner
     Given the fixtures files are loaded:
       | sylius_channels.yml |

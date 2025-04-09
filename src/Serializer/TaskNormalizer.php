@@ -5,12 +5,18 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\DataType\TsRange;
+use AppBundle\Entity\Address;
+use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use AppBundle\Spreadsheet\ParseMetadataTrait;
 use AppBundle\Utils\Barcode\BarcodeUtils;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -21,6 +27,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
+    use ParseMetadataTrait;
+
     public function __construct(
         private readonly ItemNormalizer $normalizer,
         private readonly IriConverterInterface $iriConverter,
@@ -29,6 +37,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly string $country,
         private readonly LoggerInterface $logger
     )
     {}
@@ -192,13 +201,19 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         }
 
         $address = null;
-        if (isset($data['address']) && is_string($data['address'])) {
-            try {
-                $this->iriConverter->getItemFromIri($data['address']);
-            } catch (InvalidArgumentException $e) {
-                $addressAsString = $data['address'];
-                unset($data['address']);
-                $address = $this->geocoder->geocode($addressAsString);
+        if (isset($data['address'])) {
+
+            $address = null;
+            if (is_string($data['address'])) {
+                $addressIRI = $this->iriConverter->getIriFromResourceClass(Address::class);
+                if (0 === strpos($data['address'], $addressIRI)) {
+                    $address = $this->iriConverter->getItemFromIri($data['address']);
+                } else {
+                    $address = $this->geocoder->geocode($data['address']);
+                    unset($data['address']);
+                }
+            } elseif (is_array($data['address'])) {
+                $address = $this->denormalizeAddress($data['address'], $format);
             }
         }
 
@@ -212,6 +227,9 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
+        /**
+         * @var Task $task
+         */
         $task = $this->normalizer->denormalize($data, $class, $format, $context);
 
         if (null === $task->getId() && null !== $task->getAddress()) {
@@ -243,17 +261,20 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 $timeSlot = $this->iriConverter->getItemFromIri($data['timeSlotUrl']);
             } catch (InvalidArgumentException $e) {
                 $this->logger->warning('Invalid time slot URL: ' . $data['timeSlotUrl']);
+                throw new InvalidArgumentException('task.timeSlotUrl.invalid');
             }
 
-            if (null !== $timeSlot) {
-                $task->setTimeSlot($timeSlot);
-            }
+            $task->setTimeSlot($timeSlot);
         }
 
         if (isset($data['timeSlot'])) {
 
-            // TODO Validate time slot
+            /**
+             * @var TsRange $range
+             */
+            $range = null;
 
+            //example: 2024-01-01 14:30-18:45
             if (1 === preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data['timeSlot'], $matches)) {
 
                 $date = $matches[1];
@@ -270,20 +291,65 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
                 $before = new \DateTime($date);
                 $before->setTime($endHour, $endMinute);
 
-                $task->setAfter($after);
-                $task->setBefore($before);
-
+                $range = TsRange::create($after, $before);
             } else {
+
+                //example: 2022-08-12T10:00:00Z/2022-08-12T12:00:00Z
 
                 $tz = date_default_timezone_get();
 
                 // FIXME Catch Exception
                 $period = CarbonPeriod::createFromIso($data['timeSlot']);
 
-                $task->setAfter($period->getStartDate()->tz($tz)->toDateTime());
-                $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());
+                $after = $period->getStartDate()->tz($tz)->toDateTime();
+                $before = $period->getEndDate()->tz($tz)->toDateTime();
 
+                $range = TsRange::create($after, $before);
             }
+
+            // Validate that the input time slot was selected from the given list of time slot choices (timeSlotUrl)
+            if (null !== $timeSlot) {
+                $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
+                $choiceList = $choiceLoader->loadChoiceList();
+
+                $choices = array_filter(
+                    $choiceList->getChoices(),
+                    function ($choice) use ($range) {
+                        return $choice->contains($range);
+                    }
+                );
+
+                if (0 === count($choices)) {
+                    $this->logger->warning('Invalid time slot range: ' . $data['timeSlot']);
+                    throw new InvalidArgumentException('task.timeSlot.invalid');
+                }
+            }
+
+            $task->setAfter($range->getLower());
+            $task->setBefore($range->getUpper());
+        } elseif (isset($data['before']) || isset($data['after'])) {
+
+            $tz = date_default_timezone_get();
+
+            if (isset($data['after'])) {
+                $task->setAfter(
+                    Carbon::parse($data['after'])->tz($tz)->toDateTime()
+                );
+            }
+            if (isset($data['before'])) {
+                $task->setBefore(
+                    Carbon::parse($data['before'])->tz($tz)->toDateTime()
+                );
+            }
+        }
+
+        if (isset($data['comments'])) {
+            $task->setComments($data['comments']);
+        }
+
+        if (isset($data['tags'])) {
+            $task->setTags($data['tags']);
+            $this->tagManager->update($task);
         }
 
         if (isset($data['packages'])) {
@@ -291,6 +357,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
             foreach ($data['packages'] as $p) {
+                //FIXME: does this actually work? $task->getStore() is probably null at this point
                 $package = $packageRepository->findOneByNameAndStore($p['type'], $task->getStore());
                 if ($package) {
                     $task->setQuantityForPackage($package, $p['quantity']);
@@ -298,7 +365,32 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
+        if (isset($data['weight'])) {
+            $task->setWeight($data['weight']);
+        }
+
+        if (isset($data['metadata']) && is_string($data['metadata'])) { // we support here metadata send as a string from a CSV file
+            $this->parseAndApplyMetadata($task, $data['metadata']);
+        }
+
         return $task;
+    }
+
+    private function denormalizeAddress($data, $format = null)
+    {
+        $address = $this->normalizer->denormalize($data, Address::class, $format);
+
+        if (null === $address->getGeo()) {
+            if (isset($data['latLng'])) {
+                [ $latitude, $longitude ] = $data['latLng'];
+                $address->setGeo(new GeoCoordinates($latitude, $longitude));
+            } else {
+                $geocoded = $this->geocoder->geocode($address->getStreetAddress());
+                $address->setGeo($geocoded->getGeo());
+            }
+        }
+
+        return $address;
     }
 
     public function supportsDenormalization($data, $type, $format = null)
