@@ -20,13 +20,13 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     public function __construct(
-        private ItemNormalizer $normalizer,
-        private IriConverterInterface $iriConverter,
-        private TagManager $tagManager,
-        private UserManagerInterface $userManager,
-        private Geocoder $geocoder,
-        private EntityManagerInterface $entityManager,
-        private UrlGeneratorInterface $urlGenerator
+        private readonly ItemNormalizer $normalizer,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly TagManager $tagManager,
+        private readonly UserManagerInterface $userManager,
+        private readonly Geocoder $geocoder,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly UrlGeneratorInterface $urlGenerator
     )
     {}
 

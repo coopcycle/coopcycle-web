@@ -15,18 +15,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
 #[ApiResource(
-    normalizationContext: ['groups' => ['time_slot']],
-    paginationClientEnabled: true,
-    itemOperations: [
-        'get' => ['method' => 'GET'],
-        'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"],
-        'choices' => [
-            'method' => 'GET',
-            'path' => '/time_slots/{id}/choices',
-            'controller' => OpeningHours::class,
-            'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
-            'security' => "is_granted('edit', object)"
-        ]],
     collectionOperations: [
         'get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"],
         'choices' => [
@@ -40,7 +28,19 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
             'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')",
             'openapi_context' => ['summary' => 'Retrieves choices for time slot']
         ]
-    ]
+    ],
+    itemOperations: [
+        'get' => ['method' => 'GET'],
+        'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"],
+        'choices' => [
+            'method' => 'GET',
+            'path' => '/time_slots/{id}/choices',
+            'controller' => OpeningHours::class,
+            'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
+            'security' => "is_granted('edit', object)"
+        ]],
+    normalizationContext: ['groups' => ['time_slot']],
+    paginationClientEnabled: true
 )]
 class TimeSlot
 {

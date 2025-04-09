@@ -17,19 +17,13 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 class CartItemInputDataTransformer implements DataTransformerInterface
 {
     public function __construct(
-        ProductRepositoryInterface $productRepository,
-        OptionsPayloadConverter $optionsPayloadConverter,
-        LazyProductVariantResolverInterface $variantResolver,
-        FactoryInterface $orderItemFactory,
-        OrderItemQuantityModifierInterface $orderItemQuantityModifier,
-        OrderModifierInterface $orderModifier)
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly OptionsPayloadConverter $optionsPayloadConverter,
+        private readonly LazyProductVariantResolverInterface $variantResolver,
+        private readonly FactoryInterface $orderItemFactory,
+        private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        private readonly OrderModifierInterface $orderModifier)
     {
-        $this->productRepository = $productRepository;
-        $this->optionsPayloadConverter = $optionsPayloadConverter;
-        $this->variantResolver = $variantResolver;
-        $this->orderItemFactory = $orderItemFactory;
-        $this->orderItemQuantityModifier = $orderItemQuantityModifier;
-        $this->orderModifier = $orderModifier;
     }
 
     /**

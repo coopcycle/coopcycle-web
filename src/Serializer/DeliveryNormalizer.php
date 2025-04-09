@@ -18,7 +18,6 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -27,20 +26,17 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     use ParseMetadataTrait;
 
-    private Hashids $hashids;
-
     public function __construct(
-        private ItemNormalizer $normalizer,
-        private Geocoder $geocoder,
-        private IriConverterInterface $iriConverter,
-        private ManagerRegistry $doctrine,
-        private UrlGeneratorInterface $urlGenerator,
-        Hashids $hashids8,
-        private Tile38Helper $tile38Helper,
-        private TagManager $tagManager
+        private readonly ItemNormalizer $normalizer,
+        private readonly Geocoder $geocoder,
+        private readonly IriConverterInterface $iriConverter,
+        private readonly ManagerRegistry $doctrine,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Hashids $hashids8,
+        private readonly Tile38Helper $tile38Helper,
+        private readonly TagManager $tagManager
     )
     {
-        $this->hashids = $hashids8;
     }
 
     public function normalize($object, $format = null, array $context = array())
@@ -48,7 +44,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         $data = $this->normalizer->normalize($object, $format, $context);
 
         $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
-            'hashid' => $this->hashids->encode($object->getId())
+            'hashid' => $this->hashids8->encode($object->getId())
         ], UrlGeneratorInterface::ABSOLUTE_URL);
 
         if (!$object->isCompleted()) {

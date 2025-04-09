@@ -37,7 +37,69 @@ use AppBundle\Action\Store\Packages as Packages;
  *
  * @Vich\Uploadable
  */
-#[ApiResource(iri: 'http://schema.org/Store', attributes: ['normalization_context' => ['groups' => ['store', 'address']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'me_stores' => ['method' => 'GET', 'path' => '/me/stores', 'controller' => MyStores::class]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('edit', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'security' => "is_granted('ROLE_ADMIN')"], 'time_slots' => ['method' => 'GET', 'path' => '/stores/{id}/time_slots', 'controller' => TimeSlots::class, 'normalization_context' => ['groups' => ['store_time_slots']], 'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"], 'packages' => ['method' => 'GET', 'path' => '/stores/{id}/packages', 'controller' => Packages::class, 'normalization_context' => ['groups' => ['store_packages']], 'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"], 'add_address' => ['method' => 'POST', 'path' => '/stores/{id}/addresses', 'security' => "is_granted('edit', object)", 'input' => Address::class, 'controller' => AddAddress::class]], subresourceOperations: ['deliveries_get_subresource' => ['security' => "is_granted('edit', object)"]])]
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'method' => 'GET',
+            'access_control' => "is_granted('ROLE_DISPATCHER')"
+        ],
+        'me_stores' => [
+            'method' => 'GET',
+            'path' => '/me/stores',
+            'controller' => MyStores::class
+        ]
+    ],
+    iri: 'http://schema.org/Store',
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'security' => "is_granted('edit', object)"
+        ],
+        'delete' => [
+            'method' => 'DELETE',
+            'security' => "is_granted('ROLE_ADMIN')"
+        ],
+        'patch' => [
+            'method' => 'PATCH',
+            'security' => "is_granted('ROLE_ADMIN')"
+        ],
+        'time_slots' => [
+            'method' => 'GET',
+            'path' => '/stores/{id}/time_slots',
+            'controller' => TimeSlots::class,
+            'normalization_context' => [
+                'groups' => ['store_time_slots']
+            ],
+            'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
+        ],
+        'packages' => [
+            'method' => 'GET',
+            'path' => '/stores/{id}/packages',
+            'controller' => Packages::class,
+            'normalization_context' => [
+                'groups' => ['store_packages']
+            ],
+            'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
+        ],
+        'add_address' => [
+            'method' => 'POST',
+            'path' => '/stores/{id}/addresses',
+            'security' => "is_granted('edit', object)",
+            'input' => Address::class,
+            'controller' => AddAddress::class
+        ]
+    ],
+    subresourceOperations: [
+        'deliveries_get_subresource' => [
+            'security' => "is_granted('edit', object)"
+        ]
+    ],
+    attributes: [
+        'normalization_context' => [
+            'groups' => ['store', 'address']
+        ]
+    ]
+)]
 class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
 {
     use SoftDeleteable;
