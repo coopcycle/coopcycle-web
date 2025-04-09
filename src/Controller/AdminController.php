@@ -112,6 +112,7 @@ use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -180,36 +181,27 @@ class AdminController extends AbstractController
         ];
     }
 
+    /**
+     * @param \AppBundle\Entity\Sylius\OrderRepository $orderRepository
+     */
     public function __construct(
-        OrderRepositoryInterface $orderRepository,
-        TranslatorInterface $translator,
+        protected OrderRepositoryInterface $orderRepository,
+        protected TranslatorInterface $translator,
         protected EntityManagerInterface $entityManager,
-        PromotionCouponRepositoryInterface $promotionCouponRepository,
-        FactoryInterface $promotionRuleFactory,
-        FactoryInterface $promotionFactory,
-        HttpClientInterface $browserlessClient,
-        UploaderHelper $uploaderHelper,
-        bool $optinExportUsersEnabled,
-        CollectionFinderInterface $typesenseShopsFinder,
-        bool $adhocOrderEnabled,
+        protected PromotionCouponRepositoryInterface $promotionCouponRepository,
+        protected FactoryInterface $promotionRuleFactory,
+        protected FactoryInterface $promotionFactory,
+        protected HttpClientInterface $browserlessClient,
+        protected UploaderHelper $uploaderHelper,
+        protected bool $optinExportUsersEnabled,
+        protected CollectionFinderInterface $typesenseShopsFinder,
+        protected bool $adhocOrderEnabled,
         protected Filesystem $incidentImagesFilesystem,
         protected Filesystem $edifactFilesystem,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        protected TimeSlotManager $timeSlotManager
-    )
-    {
-        $this->orderRepository = $orderRepository;
-        $this->translator = $translator;
-        $this->promotionCouponRepository = $promotionCouponRepository;
-        $this->promotionRuleFactory = $promotionRuleFactory;
-        $this->promotionFactory = $promotionFactory;
-        $this->browserlessClient = $browserlessClient;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->optinExportUsersEnabled = $optinExportUsersEnabled;
-        $this->adhocOrderEnabled = $adhocOrderEnabled;
-        $this->typesenseShopsFinder = $typesenseShopsFinder;
-    }
+        protected TimeSlotManager $timeSlotManager)
+    {}
 
     #[Route(path: '/admin', name: 'admin_index')]
     public function indexAction()
@@ -1853,13 +1845,16 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction()
+    public function promotionsAction(EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $qb = $this->promotionCouponRepository->createQueryBuilder('c');
+
+        $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
         $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
         $qb->setParameter('date', new \DateTime());
+
         $promotionCoupons = $qb->getQuery()->getResult();
+
         return $this->render('admin/promotions.html.twig', [
             'promotion_coupons' => $promotionCoupons,
         ]);

@@ -19,11 +19,12 @@ use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ImportDeliveriesHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class ImportDeliveriesHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,

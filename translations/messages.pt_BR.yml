@@ -732,7 +732,6 @@ basics.created_at: Criado em %date%
 basics.updated_at: Atualizado em %date%
 basics.date_range: De %start% a %end%
 basics.total_including_tax: Total incl. impostos
-basics.stripe_fees: Taxas da Stripe
 basics.platform_fees: Taxas da Plataforma
 basics.net_income: Rendimento líquida
 basics.send_invitation: Enviar um convite

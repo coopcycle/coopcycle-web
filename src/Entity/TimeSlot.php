@@ -14,7 +14,34 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
 use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
-#[ApiResource(normalizationContext: ['groups' => ['time_slot']], paginationClientEnabled: true, itemOperations: ['get' => ['method' => 'GET'], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'choices' => ['method' => 'GET', 'path' => '/time_slots/{id}/choices', 'controller' => OpeningHours::class, 'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true], 'security' => "is_granted('edit', object)"]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'choices' => ['method' => 'GET', 'path' => '/time_slots/choices', 'controller' => ChoicesController::class, 'status' => 200, 'read' => false, 'write' => false, 'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true], 'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')", 'openapi_context' => ['summary' => 'Retrieves choices for time slot']]])]
+#[ApiResource(
+    normalizationContext: ['groups' => ['time_slot']],
+    paginationClientEnabled: true,
+    itemOperations: [
+        'get' => ['method' => 'GET'],
+        'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"],
+        'choices' => [
+            'method' => 'GET',
+            'path' => '/time_slots/{id}/choices',
+            'controller' => OpeningHours::class,
+            'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
+            'security' => "is_granted('edit', object)"
+        ]],
+    collectionOperations: [
+        'get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"],
+        'choices' => [
+            'method' => 'GET',
+            'path' => '/time_slots/choices',
+            'controller' => ChoicesController::class,
+            'status' => 200,
+            'read' => false,
+            'write' => false,
+            'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
+            'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')",
+            'openapi_context' => ['summary' => 'Retrieves choices for time slot']
+        ]
+    ]
+)]
 class TimeSlot
 {
     use Timestampable;

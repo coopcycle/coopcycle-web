@@ -6,10 +6,11 @@ use AppBundle\Message\ExportTasks;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\PriceFormatter;
 use League\Csv\Writer;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Doctrine\ORM\EntityManagerInterface;
 
-class ExportTasksHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class ExportTasksHandler
 {
 
     private static $columns = [

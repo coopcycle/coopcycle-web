@@ -917,7 +917,6 @@ allergens.CELERY: Apioa
 promotions.heading.credit_note: Kreditu-notak
 promotions.breadcrumb.new_credit_note: Kreditu-nota berria
 promotions.breadcrumb: Promozioak
-basics.stripe_fees: Stripe komisioak
 basics.platform_fees: Plataformaren komisioak
 roles.ROLE_COURIER.help: "Mezularia: ikusi zain dauden zereginak, aldatu esleitutako\
   \ zereginak...\n"

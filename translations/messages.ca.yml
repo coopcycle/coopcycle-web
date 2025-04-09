@@ -650,7 +650,6 @@ form.package.name.label: Nom
 form.package.volume_units.label: Unitats de volum
 basics.date_range: Des de %start% fins a %end%
 basics.total_including_tax: Total, inclosos tots els impostos
-basics.stripe_fees: Comissions de Stripe
 basics.platform_fees: Comissions de la plataforma
 basics.net_income: Ingressos nets
 localBusiness.form.openingHoursBehavior.asap: Tan aviat com sigui possible

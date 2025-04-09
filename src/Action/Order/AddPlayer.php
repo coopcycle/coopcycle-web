@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Nucleos\UserBundle\Util\CanonicalFieldsUpdater;
 use phpcent\Client;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -25,7 +24,7 @@ class AddPlayer
         private CanonicalFieldsUpdater $canonicalFieldsUpdater,
         private JWSProviderInterface $JWSProvider,
         private IriConverterInterface $iriConverter,
-        private ContainerInterface $container,
+        private string $centrifugoNamespace,
         private Client $centrifugoClient,
     )
     { }
@@ -63,7 +62,7 @@ class AddPlayer
             'player' => $player,
             'centrifugo' => [
                 'token' => $this->centrifugoClient->generateConnectionToken($data->getId(), time() + 6 * 3600),
-                'channel' => sprintf('%s_order_events#%d', $this->container->getParameter('centrifugo_namespace'), $data->getId())
+                'channel' => sprintf('%s_order_events#%d', $this->centrifugoNamespace, $data->getId())
             ]
         ], 200);
     }

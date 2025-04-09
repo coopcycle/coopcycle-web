@@ -8,10 +8,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Psonic\Client;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Twig\Environment as TwigEnvironment;
 
-class IndexDeliveriesHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class IndexDeliveriesHandler
 {
     public function __construct(
         EntityManagerInterface $entityManager,

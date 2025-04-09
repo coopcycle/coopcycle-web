@@ -7,9 +7,10 @@ use AppBundle\Entity\TrackingPosition;
 use AppBundle\Message\UpdateLocation;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-class UpdateLocationHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class UpdateLocationHandler
 {
     private $entityManager;
     private $userManager;

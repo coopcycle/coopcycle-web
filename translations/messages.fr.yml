@@ -746,7 +746,6 @@ basics.no_entries: Aucun élément pour l'instant
 basics.created_at: Créé le %date%
 basics.date_range: Du %start% au %end%
 basics.total_including_tax: Total TTC
-basics.stripe_fees: Frais Stripe
 basics.platform_fees: Frais de plateforme
 basics.net_income: Revenu net
 basics.send_invitation: Envoyer une invitation
@@ -983,6 +982,7 @@ order.export.heading.refund_total: Remboursements
 order.export.heading.nonprofit: Association
 order.export.heading.incident_adjustments: Ajustements des incidents
 order.export.heading.incidents: Incidents
+order.export.heading.payment_gateway: Plateforme de paiement
 form.order_export.messenger.label: Inclure une colonne avec le coursier ayant livré
   la commande
 basics.show: Afficher

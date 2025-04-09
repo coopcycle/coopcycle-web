@@ -13,14 +13,15 @@ use Hashids\Hashids;
 use Liip\ImagineBundle\Service\FilterService;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
-class WoopitDocumentHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class WoopitDocumentHandler
 {
 
     public function __construct(

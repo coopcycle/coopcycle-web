@@ -17,22 +17,14 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 class AssetsRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
-        StorageInterface $storage,
-        PropertyMappingFactory $propertyMappingFactory,
-        CacheManager $cacheManager,
-        Filesystem $assetsFilesystem,
-        UrlGeneratorInterface $urlGenerator,
-        CacheInterface $projectCache,
-        PlaceholderImageResolver $placeholderImageResolver)
-    {
-        $this->storage = $storage;
-        $this->propertyMappingFactory = $propertyMappingFactory;
-        $this->cacheManager = $cacheManager;
-        $this->assetsFilesystem = $assetsFilesystem;
-        $this->urlGenerator = $urlGenerator;
-        $this->projectCache = $projectCache;
-        $this->placeholderImageResolver = $placeholderImageResolver;
-    }
+        private StorageInterface $storage,
+        private PropertyMappingFactory $propertyMappingFactory,
+        private CacheManager $cacheManager,
+        private Filesystem $assetsFilesystem,
+        private UrlGeneratorInterface $urlGenerator,
+        private CacheInterface $projectCache,
+        private PlaceholderImageResolver $placeholderImageResolver)
+    {}
 
     public function asset($obj, string $fieldName, string $filter, bool $generateUrl = false, bool $cacheUrl = false): ?string
     {

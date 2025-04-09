@@ -5,10 +5,11 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Message\TopBarNotification;
 use AppBundle\Service\LiveUpdates;
 use Redis;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Ramsey\Uuid\Uuid;
 
-class TopBarNotificationHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class TopBarNotificationHandler
 {
     private $redis;
     private $liveUpdates;
