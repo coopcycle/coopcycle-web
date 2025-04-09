@@ -10,7 +10,20 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[ApiResource(attributes: ['jsonld_context' => []], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false]])]
+#[ApiResource(
+    collectionOperations: [],
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'controller' => NotFoundAction::class,
+            'read' => false,
+            'output' => false
+        ]
+    ],
+    attributes: [
+        'jsonld_context' => []
+    ]
+)]
 final class TimeSlotChoice
 {
     /**
