@@ -8,9 +8,11 @@ use AppBundle\Utils\RestaurantStats;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class ExportOrdersHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class ExportOrdersHandler
 {
 
     public function __construct(

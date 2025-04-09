@@ -3,10 +3,11 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\UpdateNotificationsCount;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use AppBundle\Service\LiveUpdates;
 
-class UpdateNotificationsCountHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class UpdateNotificationsCountHandler
 {
     private $liveUpdates;
 

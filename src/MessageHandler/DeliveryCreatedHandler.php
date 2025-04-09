@@ -12,13 +12,14 @@ use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
-class DeliveryCreatedHandler implements MessageHandlerInterface
+#[AsMessageHandler]
+class DeliveryCreatedHandler
 {
     private $entityManager;
     private $userManager;
