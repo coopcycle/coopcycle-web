@@ -154,6 +154,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     /**
      * @var ?ArbitraryPrice
      */
+    #[Groups(['delivery_create'])]
     private $arbitraryPrice;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[
