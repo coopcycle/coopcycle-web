@@ -82,6 +82,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         return $task;
     }
 
+    //FIXME: figure out if this is still used anywhere or if it can be fully replaced by DeliveryInputDataTransformer
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         /**
@@ -93,7 +94,6 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         if ($inputClass === DeliveryInput::class) {
             return $delivery;
         }
-
 
         if (isset($data['tasks']) && is_array($data['tasks'])) {
             $tasks = array_map(function ($item) use ($delivery, $format, $context) {
