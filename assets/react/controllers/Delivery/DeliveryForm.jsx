@@ -20,6 +20,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 import _ from 'lodash'
+import { PriceCalculation } from '../../../../js/app/delivery/PriceCalculation'
 
 
 /** used in case of phone validation */
@@ -108,12 +109,13 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function({ storeId, deliveryId, order, isDispatcher }) {
+export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
 
   const httpClient = new window._auth.httpClient()
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+  const [calculateResponseData, setCalculateResponseData] = useState({})
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
@@ -359,11 +361,13 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
         const { response, error } = await httpClient.post(url, infos)
 
         if (error) {
+          setCalculateResponseData(error.response.data)
           setPriceErrorMessage(error.response.data['hydra:description'])
           setCalculatePrice(0)
         }
 
         if (response) {
+          setCalculateResponseData(response)
           setCalculatePrice(response)
           setPriceErrorMessage('')
 
@@ -574,6 +578,12 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
                         overridePrice={overridePrice}
                         priceLoading={priceLoading}
                       />
+                      { isDispatcher && isDebugPricing && Boolean(calculateResponseData) && (
+                        <PriceCalculation
+                          calculation={calculateResponseData.calculation}
+                          orderItems={calculateResponseData.items}
+                          itemsTotal={calculateResponseData.amount} />
+                      )}
                     </div>
 
                     {!(deliveryId && !isDispatcher) ?
