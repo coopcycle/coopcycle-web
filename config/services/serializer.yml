@@ -4,7 +4,6 @@ services:
     autowire: true
     autoconfigure: true
     bind:
-      $country: "%country_iso%"
 
   misd_phone_number.serializer.normalizer:
     class: AppBundle\Serializer\PhoneNumberNormalizer
