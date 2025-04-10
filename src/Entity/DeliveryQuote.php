@@ -11,7 +11,36 @@ use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(collectionOperations: ['create_quote' => ['method' => 'POST', 'path' => '/deliveries/quotes', 'input' => DeliveryInput::class, 'controller' => DeliveryQuoteController::class, 'normalization_context' => ['groups' => ['delivery_quote']], 'denormalization_context' => ['groups' => ['delivery_create', 'pricing_deliveries']], 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')", 'openapi_context' => ['summary' => 'Creates a delivery quote']]], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false], 'confirm_quote' => ['method' => 'PUT', 'path' => '/deliveries/quotes/{id}/confirm', 'controller' => ConfirmDeliveryQuoteController::class, 'normalization_context' => ['groups' => ['delivery_quote_confirm']], 'access_control' => "is_granted('confirm', object)", 'openapi_context' => ['summary' => 'Confirms a delivery quote']]])]
+#[ApiResource(
+    collectionOperations: [
+        'create_quote' => [
+            'method' => 'POST',
+            'path' => '/deliveries/quotes',
+            'input' => DeliveryInput::class,
+            'controller' => DeliveryQuoteController::class,
+            'normalization_context' => ['groups' => ['delivery_quote']],
+            'denormalization_context' => ['groups' => ['delivery_create', 'pricing_deliveries']],
+            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
+            'openapi_context' => ['summary' => 'Creates a delivery quote']
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'controller' => NotFoundAction::class,
+            'read' => false,
+            'output' => false
+        ],
+        'confirm_quote' => [
+            'method' => 'PUT',
+            'path' => '/deliveries/quotes/{id}/confirm',
+            'controller' => ConfirmDeliveryQuoteController::class,
+            'normalization_context' => ['groups' => ['delivery_quote_confirm']],
+            'access_control' => "is_granted('confirm', object)",
+            'openapi_context' => ['summary' => 'Confirms a delivery quote']
+        ]
+    ]
+)]
 class DeliveryQuote
 {
     use Timestampable;
