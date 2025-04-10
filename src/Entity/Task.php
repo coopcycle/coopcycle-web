@@ -356,7 +356,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $id;
 
     #[Assert\Choice(['PICKUP', 'DROPOFF'])]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'delivery'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery_create', 'delivery'])]
     private $type = self::TYPE_DROPOFF;
 
     #[Groups(['task', 'delivery'])]
@@ -366,7 +366,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     #[Assert\NotNull]
     #[Assert\Valid]
-    #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create'])]
     private $address;
 
     private $doneAfter;
@@ -437,7 +437,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * - PICKUP : sum of weight of all the dropoffs
      * @var int
      */
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     private $weight;
 
     #[Groups(['task'])]
@@ -579,7 +579,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @return Task
      */
     #[SerializedName('after')]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     public function setAfter(?\DateTime $doneAfter)
     {
         $this->doneAfter = $doneAfter;
@@ -588,7 +588,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
     #[SerializedName('before')]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     public function getBefore()
     {
         return $this->doneBefore;
