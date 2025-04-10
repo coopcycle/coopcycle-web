@@ -39,6 +39,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'method' => 'POST',
             'denormalization_context' => ['groups' => ['delivery_create']],
             'controller' => CreateDelivery::class,
+            'input' => DeliveryInput::class,
             'openapi_context' => ['parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS],
             'input_formats' => ['jsonld' => ['application/ld+json']],
             'security_post_denormalize' => "is_granted('create', object)"
@@ -170,16 +171,20 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         "style" => "form"
     ]];
 
-    public function __construct()
+    public function __construct(Task $pickup = null, Task $dropoff = null)
     {
         parent::__construct();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        if (null === $pickup) {
+            $pickup = new Task();
+            $pickup->setType(Task::TYPE_PICKUP);
+        }
         $pickup->setDelivery($this);
 
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
+        if (null === $dropoff) {
+            $dropoff = new Task();
+            $dropoff->setType(Task::TYPE_DROPOFF);
+        }
         $dropoff->setDelivery($this);
 
         $pickup->setNext($dropoff);

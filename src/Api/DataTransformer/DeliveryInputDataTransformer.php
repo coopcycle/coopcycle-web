@@ -35,20 +35,7 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
         if (is_array($data->tasks) && count($data->tasks) > 0) {
             $delivery = Delivery::createWithTasks(...$data->tasks);
         } else {
-            if ($data->pickup && $data->dropoff) {
-                $delivery = Delivery::createWithTasks($data->pickup, $data->dropoff);
-            } else {
-                $delivery = Delivery::create();
-                $delivery->removeTask($delivery->getDropoff());
-
-                $pickup = $delivery->getPickup();
-                $dropoff = $data->dropoff;
-
-                $pickup->setNext($dropoff);
-                $dropoff->setPrevious($pickup);
-
-                $delivery->addTask($dropoff);
-            }
+            $delivery = new Delivery($data->pickup, $data->dropoff);
         }
 
         if ($data->store && $data->store instanceof Store) {
