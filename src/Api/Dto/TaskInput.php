@@ -2,6 +2,7 @@
 
 namespace AppBundle\Api\Dto;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\TaskImage;
@@ -49,7 +50,7 @@ final class TaskInput
     public TimeSlot|null $timeSlotUrl = null;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]
-    public string|null $timeSlot = null;
+    public TsRange|null $timeSlot = null;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public string|null $comments = null;

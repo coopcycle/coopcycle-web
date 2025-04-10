@@ -166,40 +166,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             /**
              * @var TsRange $range
              */
-            $range = null;
-
-            //example: 2024-01-01 14:30-18:45
-            if (1 === preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data->timeSlot, $matches)) {
-
-                $date = $matches[1];
-                $timeRange = $matches[2];
-
-                [ $start, $end ] = explode('-', $timeRange);
-
-                [ $startHour, $startMinute ] = explode(':', $start);
-                [ $endHour, $endMinute ] = explode(':', $end);
-
-                $after = new \DateTime($date);
-                $after->setTime($startHour, $startMinute);
-
-                $before = new \DateTime($date);
-                $before->setTime($endHour, $endMinute);
-
-                $range = TsRange::create($after, $before);
-            } else {
-
-                //example: 2022-08-12T10:00:00Z/2022-08-12T12:00:00Z
-
-                $tz = date_default_timezone_get();
-
-                // FIXME Catch Exception
-                $period = CarbonPeriod::createFromIso($data->timeSlot);
-
-                $after = $period->getStartDate()->tz($tz)->toDateTime();
-                $before = $period->getEndDate()->tz($tz)->toDateTime();
-
-                $range = TsRange::create($after, $before);
-            }
+            $range = $data->timeSlot;
 
             // Validate that the input time slot was selected from the given list of time slot choices (timeSlotUrl)
             if (null !== $timeSlot) {
@@ -214,7 +181,10 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
                 );
 
                 if (0 === count($choices)) {
-                    $this->logger->warning('Invalid time slot range: ' . $data->timeSlot);
+                    $this->logger->warning('Invalid time slot range: ', [
+                        'timeSlot' => $timeSlot->getId(),
+                        'range' => $range,
+                    ]);
                     throw new InvalidArgumentException('task.timeSlot.invalid');
                 }
             }
