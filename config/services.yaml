@@ -125,6 +125,10 @@ services:
   AppBundle\Api\DataTransformer\:
     resource: '../src/Api/DataTransformer/*'
 
+  AppBundle\Api\DataTransformer\DeliveryInputDataTransformer:
+    arguments:
+      $normalizer: '@api_platform.jsonld.normalizer.item'
+
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
     tags: ['api_platform.filter']
