@@ -7,28 +7,21 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\EntityRepository;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaxesHelper
 {
-    private $translator;
 
     public function __construct(
-        RepositoryInterface $taxRateRepository,
-        TranslatorInterface $translator,
-        SettingsManager $settingsManager,
-        string $country,
-        string $locale,
-        bool $legacyTaxes)
-    {
-        $this->taxRateRepository = $taxRateRepository;
-        $this->translator = $translator;
-        $this->settingsManager = $settingsManager;
-        $this->country = $country;
-        $this->locale = $locale;
-        $this->legacyTaxes = $legacyTaxes;
-    }
+        private RepositoryInterface|EntityRepository $taxRateRepository,
+        private TranslatorInterface $translator,
+        private SettingsManager $settingsManager,
+        private string $country,
+        private string $locale,
+        private bool $legacyTaxes)
+    {}
 
     public function getTaxTotals(OrderInterface $order, bool $itemsOnly = false): array
     {
@@ -47,7 +40,7 @@ class TaxesHelper
 
         $taxRateCodes = array_unique($taxRateCodes);
         $taxRates = array_map(
-            fn(string $code) => $this->taxRateRepository->findOneByCode($code),
+            fn(string $code) => $this->taxRateRepository->findOneBy(['code' => $code]),
             $taxRateCodes
         );
 
@@ -76,7 +69,7 @@ class TaxesHelper
 
     public function translate($code): string
     {
-        $taxRate = $this->taxRateRepository->findOneByCode($code);
+        $taxRate = $this->taxRateRepository->findOneBy(['code' => $code]);
 
         $formatter = new \NumberFormatter($this->locale, \NumberFormatter::PERCENT);
         $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 2);
@@ -116,7 +109,7 @@ class TaxesHelper
     {
         if (!isset(self::$baseRateCodeCache[$code])) {
 
-            $rate = $this->taxRateRepository->findOneByCode($code);
+            $rate = $this->taxRateRepository->findOneBy(['code' => $code]);
             $baseRates = $this->getBaseRates();
 
             foreach ($baseRates as $baseRate) {

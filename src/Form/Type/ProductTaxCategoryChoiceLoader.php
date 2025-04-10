@@ -15,10 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
 {
-    private $taxCategoryRepository;
-    private $country;
-    private $legacyTaxes = true;
-
     private static $serviceTaxCategories = [
         'SERVICE',
         'SERVICE_TAX_EXEMPT',
@@ -37,18 +33,12 @@ class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
     ];
 
     public function __construct(
-        EntityRepository $taxCategoryRepository,
-        TaxRateResolverInterface $taxRateResolver,
-        ProductVariantFactoryInterface $productVariantFactory,
-        string $country,
-        bool $legacyTaxes)
-    {
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->productVariantFactory = $productVariantFactory;
-        $this->country = $country;
-        $this->legacyTaxes = $legacyTaxes;
-    }
+        private EntityRepository $taxCategoryRepository,
+        private TaxRateResolverInterface $taxRateResolver,
+        private ProductVariantFactoryInterface $productVariantFactory,
+        private string $country,
+        private bool $legacyTaxes = true)
+    {}
 
     /**
      * {@inheritdoc}

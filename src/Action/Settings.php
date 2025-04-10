@@ -19,14 +19,8 @@ use Hashids\Hashids;
 
 class Settings
 {
-    private $settingsManager;
-    private $assetsFilesystem;
-    private $country;
-    private $locale;
     private $splitTermsAndConditionsAndPrivacyPolicy;
-    private $timeRegistry;
-    private $entityManager;
-    private $router;
+
     private $keys = [
         'brand_name',
         'stripe_publishable_key',
@@ -38,37 +32,23 @@ class Settings
         'guest_checkout_enabled',
         'motto',
     ];
-    private $edenredClientId;
-    private $edenredAuthorizationEndpoint;
 
     public function __construct(
-        SettingsManager $settingsManager,
-        Filesystem $assetsFilesystem,
-        FilterService $imagineFilter,
-        PhoneNumberNormalizer $phoneNumberNormalizer,
-        TimeRegistry $timeRegistry,
-        $country,
-        $locale,
+        private SettingsManager $settingsManager,
+        private Filesystem $assetsFilesystem,
+        private FilterService $imagineFilter,
+        private PhoneNumberNormalizer $phoneNumberNormalizer,
+        private TimeRegistry $timeRegistry,
+        private string $country,
+        private string $locale,
         $splitTermsAndConditionsAndPrivacyPolicy,
-        EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $router,
-        Hashids $hashids12,
-        $edenredClientId,
-        $edenredAuthorizationEndpoint)
+        private EntityManagerInterface $entityManager,
+        private UrlGeneratorInterface $router,
+        private Hashids $hashids12,
+        private string $edenredClientId,
+        private string $edenredAuthorizationEndpoint)
     {
-        $this->settingsManager = $settingsManager;
-        $this->assetsFilesystem = $assetsFilesystem;
-        $this->imagineFilter = $imagineFilter;
-        $this->phoneNumberNormalizer = $phoneNumberNormalizer;
-        $this->timeRegistry = $timeRegistry;
-        $this->country = $country;
-        $this->locale = $locale;
         $this->splitTermsAndConditionsAndPrivacyPolicy = (bool) $splitTermsAndConditionsAndPrivacyPolicy;
-        $this->entityManager = $entityManager;
-        $this->router = $router;
-        $this->hashids12 = $hashids12;
-        $this->edenredClientId = $edenredClientId;
-        $this->edenredAuthorizationEndpoint = $edenredAuthorizationEndpoint;
     }
 
     #[Route(path: '/settings', name: 'api_settings', methods: ['GET'])]
