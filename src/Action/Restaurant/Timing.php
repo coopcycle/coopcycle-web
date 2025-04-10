@@ -13,14 +13,10 @@ use Symfony\Contracts\Cache\ItemInterface;
 class Timing
 {
     public function __construct(
-        OrderFactory $orderFactory,
-        OrderTimeHelper $orderTimeHelper,
-        CacheInterface $projectCache)
-    {
-        $this->orderFactory = $orderFactory;
-        $this->orderTimeHelper = $orderTimeHelper;
-        $this->projectCache = $projectCache;
-    }
+        private OrderFactory $orderFactory,
+        private OrderTimeHelper $orderTimeHelper,
+        private CacheInterface $projectCache)
+    {}
 
     private function toTimeInfo($data): TimeInfo
     {
