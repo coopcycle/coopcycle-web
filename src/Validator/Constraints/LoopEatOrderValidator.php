@@ -17,20 +17,12 @@ use Symfony\Component\Validator\Validation;
 
 class LoopEatOrderValidator extends ConstraintValidator
 {
-    private $client;
-    private $logger;
-
     public function __construct(
-        LoopeatClient $client,
-        LoopeatContext $loopeatContext,
-        PriceFormatter $priceFormatter,
-        LoggerInterface $logger)
-    {
-        $this->client = $client;
-        $this->loopeatContext = $loopeatContext;
-        $this->priceFormatter = $priceFormatter;
-        $this->logger = $logger;
-    }
+        private LoopeatClient $client,
+        private LoopeatContext $loopeatContext,
+        private PriceFormatter $priceFormatter,
+        private LoggerInterface $logger)
+    {}
 
     public function validate($object, Constraint $constraint)
     {

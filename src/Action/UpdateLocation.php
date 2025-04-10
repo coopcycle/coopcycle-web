@@ -17,29 +17,17 @@ class UpdateLocation
 {
     use TokenStorageTrait;
 
-    protected $messageBus;
-    protected $tile38;
-    protected $fleetKey;
-    protected $logger;
-
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        MessageBusInterface $messageBus,
-        Redis $tile38,
-        string $fleetKey,
-        CentrifugoClient $centrifugo,
-        string $trackingChannel,
-        string $centrifugoNamespace,
-        LoggerInterface $logger)
+        private MessageBusInterface $messageBus,
+        private Redis $tile38,
+        private string $fleetKey,
+        private CentrifugoClient $centrifugo,
+        private string $trackingChannel,
+        private string $centrifugoNamespace,
+        private LoggerInterface $logger)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->messageBus = $messageBus;
-        $this->tile38 = $tile38;
-        $this->fleetKey = $fleetKey;
-        $this->centrifugo = $centrifugo;
-        $this->trackingChannel = $trackingChannel;
-        $this->centrifugoNamespace = $centrifugoNamespace;
-        $this->logger = $logger;
     }
 
     #[Route(path: '/me/location', name: 'me_location', methods: ['POST'])]

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button } from 'antd'
+import { Button, Notification } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import { antdLocale } from '../../../../js/app/i18n'
 import { ConfigProvider } from 'antd'
@@ -123,7 +123,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const [tags, setTags] = useState([])
   const [timeSlotLabels, setTimeSlotLabels] = useState([])
   const [trackingLink, setTrackingLink] = useState('#')
-  const [initialValues, setInitialValues] = useState({tasks: []})
+  const [initialValues, setInitialValues] = useState({ tasks: [] })
   const [isLoading, setIsLoading] = useState(true)
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
@@ -187,21 +187,21 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       httpClient.get(`/api/tags`).then(result => {
         setTags(result.response['hydra:member'])
         resolve()
-      })      
+      })
     })
 
     const fetchAddresses = () => new Promise(resolve => {
       httpClient.get(`/api/stores/${storeId}/addresses`).then(result => {
         setAddresses(result.response['hydra:member'])
         resolve()
-      })      
+      })
     })
 
     const fetchTimeSlots = () => new Promise(resolve => {
       httpClient.get(`/api/stores/${storeId}/time_slots`).then(result => {
         setTimeSlotLabels(result.response['hydra:member'])
         resolve()
-      })      
+      })
     })
 
     const fetchPackages = () => new Promise(resolve => {
@@ -215,11 +215,21 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       httpClient.get(`/api/stores/${storeId}`).then(result => {
         setStoreDeliveryInfos(result.response)
 
+        let timeSlotUrl;
+        if (result.response.timeSlot) {
+          timeSlotUrl = result.response.timeSlot
+        } else if (result.response.timeSlots.length > 0) {
+          timeSlotUrl = result.response.timeSlots[0]
+        } else {
+          Notification.error("No time slot found")
+          console.error("No time slot found")
+        }
+
         if (!deliveryId) {
           setInitialValues({
             tasks: [
-              {...pickupSchema, timeSlotUrl: result.response.timeSlot},
-              {...dropoffSchema, timeSlotUrl: result.response.timeSlot}
+              { ...pickupSchema, timeSlotUrl },
+              { ...dropoffSchema, timeSlotUrl }
             ],
           })
         }
@@ -235,7 +245,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
           //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
           delete response.dropoff
           delete response.pickup
-  
+
           response.tasks.forEach(task => {
             const formattedTelephone = getFormattedValue(task.address.telephone)
             task.address.formattedTelephone = formattedTelephone
@@ -374,7 +384,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
     },
     800
   )
-  
+
   return (
     isLoading ?
       <div className="delivery-spinner">
@@ -435,7 +445,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
               }
 
               //Case 3: Time slot value changed
-              if (prevFirstTask.timeSlot &&firstTask.timeSlot && prevFirstTask.timeSlot !== firstTask.timeSlot) {
+              if (prevFirstTask.timeSlot && firstTask.timeSlot && prevFirstTask.timeSlot !== firstTask.timeSlot) {
                 values.tasks.slice(1).forEach((task, idx) => {
                   const taskIndex = idx + 1;
                   if (task.timeSlot) {

@@ -3,7 +3,6 @@
 namespace AppBundle\Action\Search;
 
 use ACSEO\TypesenseBundle\Client\CollectionClient;
-use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ACSEO\TypesenseBundle\Manager\CollectionManager;
 use AppBundle\Entity\LocalBusiness;
@@ -12,12 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ShopsProducts
 {
-    public function __construct(CollectionFinderInterface $typesenseShopsFinder, CollectionClient $collectionClient, CollectionManager $collectionManager)
-    {
-        $this->typesenseShopsFinder = $typesenseShopsFinder;
-        $this->collectionClient = $collectionClient;
-        $this->collectionManager = $collectionManager;
-    }
+    public function __construct(
+        private CollectionClient $collectionClient,
+        private CollectionManager $collectionManager)
+    {}
 
     public function __invoke(Request $request)
     {
