@@ -39,7 +39,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'method' => 'POST',
             'denormalization_context' => ['groups' => ['delivery_create']],
             'controller' => CreateDelivery::class,
-            'input' => DeliveryInput::class,
             'openapi_context' => ['parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS],
             'input_formats' => ['jsonld' => ['application/ld+json']],
             'security_post_denormalize' => "is_granted('create', object)"
@@ -49,7 +48,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'path' => '/deliveries/assert',
             'write' => false,
             'status' => 200,
-            'input' => DeliveryInput::class,
             'validation_groups' => ['Default', 'delivery_check'],
             'denormalization_context' => ['groups' => ['delivery_create']],
             'security_post_denormalize' => "is_granted('create', object)",
@@ -71,7 +69,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'write' => false,
             'status' => 200,
             'controller' => SuggestOptimizationsController::class,
-            'input' => DeliveryInput::class,
             'output' => OptimizationSuggestions::class,
             'denormalization_context' => ['groups' => ['delivery_create']],
             'normalization_context' => ['groups' => ['optimization_suggestions'], 'api_sub_level' => true],
