@@ -50,7 +50,7 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
 
         $this->deliveryManager->setDefaults($delivery);
 
-        if ($data->packages && is_array($data->packages)) {
+        if ($data->packages) {
             $packageRepository = $this->doctrine->getRepository(Package::class);
 
             foreach ($data->packages as $p) {
