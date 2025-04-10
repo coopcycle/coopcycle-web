@@ -72,7 +72,23 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             $tasks = array_map(fn(TaskInput $taskInput) => $this->transformTask($taskInput), $data->tasks);
             $delivery = Delivery::createWithTasks(...$tasks);
         } else {
-            $delivery = new Delivery($this->transformTask($data->pickup, Task::TYPE_PICKUP), $this->transformTask($data->dropoff, Task::TYPE_DROPOFF));
+            $pickup = $this->transformTask($data->pickup, Task::TYPE_PICKUP);
+            $dropoff = $this->transformTask($data->dropoff, Task::TYPE_DROPOFF);
+
+            if ($pickup && $dropoff) {
+                $delivery = Delivery::createWithTasks($pickup, $dropoff);
+            } else {
+                $delivery = Delivery::create();
+                $delivery->removeTask($delivery->getDropoff());
+
+                $pickup = $delivery->getPickup();
+                $dropoff = $data->dropoff;
+
+                $pickup->setNext($dropoff);
+                $dropoff->setPrevious($pickup);
+
+                $delivery->addTask($dropoff);
+            }
         }
 
         if ($store) {

@@ -171,20 +171,16 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         "style" => "form"
     ]];
 
-    public function __construct(Task $pickup = null, Task $dropoff = null)
+    public function __construct()
     {
         parent::__construct();
 
-        if (null === $pickup) {
-            $pickup = new Task();
-            $pickup->setType(Task::TYPE_PICKUP);
-        }
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
         $pickup->setDelivery($this);
 
-        if (null === $dropoff) {
-            $dropoff = new Task();
-            $dropoff->setType(Task::TYPE_DROPOFF);
-        }
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
         $dropoff->setDelivery($this);
 
         $pickup->setNext($dropoff);
