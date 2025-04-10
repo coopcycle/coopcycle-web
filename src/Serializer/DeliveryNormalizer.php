@@ -82,7 +82,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         return $task;
     }
 
-        public function denormalize($data, $class, $format = null, array $context = array())
+    public function denormalize($data, $class, $format = null, array $context = array())
     {
         /**
          * @var Delivery $delivery
