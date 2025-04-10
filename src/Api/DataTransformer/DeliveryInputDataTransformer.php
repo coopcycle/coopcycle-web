@@ -3,6 +3,7 @@
 namespace AppBundle\Api\DataTransformer;
 
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
+use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Package;
@@ -26,6 +27,7 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
     }
 
     /**
+     * @param DeliveryInput $data
      * {@inheritdoc}
      */
     public function transform($data, string $to, array $context = [])
