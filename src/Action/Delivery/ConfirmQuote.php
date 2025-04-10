@@ -12,20 +12,14 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class ConfirmQuote
 {
-    private $serializer;
-    private $orderFactory;
-    private $entityManager;
 
     public function __construct(
-        SerializerInterface $serializer,
-        OrderFactory $orderFactory,
-        EntityManagerInterface $entityManager,
-        DeliveryManager $deliveryManager)
+        private readonly SerializerInterface $serializer,
+        private readonly OrderFactory $orderFactory,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly DeliveryManager $deliveryManager
+    )
     {
-        $this->serializer = $serializer;
-        $this->orderFactory = $orderFactory;
-        $this->entityManager = $entityManager;
-        $this->deliveryManager = $deliveryManager;
     }
 
     public function __invoke(DeliveryQuote $data)
