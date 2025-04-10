@@ -15,6 +15,7 @@ final class DeliveryInput
     public $store;
 
     /**
+     * @deprecated Set weight via Task::setWeight()
      * @var int|null
      */
     #[Groups(['delivery_create', 'pricing_deliveries'])]
@@ -33,6 +34,7 @@ final class DeliveryInput
     public $dropoff;
 
     /**
+     * @deprecated set packages via Task::setQuantityForPackage()
      * @var array|null
      */
     #[Groups(['pricing_deliveries'])]
