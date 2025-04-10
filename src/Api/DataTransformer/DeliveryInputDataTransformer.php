@@ -270,7 +270,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             }
         }
 
-        if (isset($data->metadata) && is_string($data->metadata)) { // we support here metadata send as a string from a CSV file
+        if (isset($data->metadata)) { // we support here metadata send as a string from a CSV file
             $this->parseAndApplyMetadata($task, $data->metadata);
         }
 
