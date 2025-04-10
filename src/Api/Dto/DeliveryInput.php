@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 final class DeliveryInput
@@ -36,4 +37,6 @@ final class DeliveryInput
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $packages = null;
 
+    #[Groups(['delivery_create'])]
+    public ArbitraryPrice|null $arbitraryPrice = null;
 }

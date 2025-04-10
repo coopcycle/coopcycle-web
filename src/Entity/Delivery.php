@@ -39,6 +39,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             'method' => 'POST',
             'denormalization_context' => ['groups' => ['delivery_create']],
             'controller' => CreateDelivery::class,
+            'input' => DeliveryInput::class,
             'openapi_context' => ['parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS],
             'input_formats' => ['jsonld' => ['application/ld+json']],
             'security_post_denormalize' => "is_granted('create', object)"
@@ -153,7 +154,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     /**
      * @var ?ArbitraryPrice
      */
-    #[Groups(['delivery_create'])]
     private $arbitraryPrice;
 
     const OPENAPI_CONTEXT_POST_PARAMETERS = [[

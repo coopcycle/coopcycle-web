@@ -1130,7 +1130,7 @@ Feature: Deliveries
           "@context":"/api/contexts/Error",
           "@type":"hydra:Error",
           "hydra:title":"An error occurred",
-          "hydra:description":"task.timeSlotUrl.invalid",
+          "hydra:description":"Item not found for \"/api/time_slots/123456\".",
           "trace":@array@
         }
       """

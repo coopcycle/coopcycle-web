@@ -26,7 +26,6 @@ use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\TagManager;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -99,6 +98,10 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         $distance = $this->routing->getDistance(...$coords);
 
         $delivery->setDistance(ceil($distance));
+
+        if ($data->arbitraryPrice) {
+            $delivery->setArbitraryPrice($data->arbitraryPrice);
+        }
 
         return $delivery;
     }
