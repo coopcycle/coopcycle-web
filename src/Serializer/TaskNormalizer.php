@@ -178,6 +178,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
+        /**
+         * FIXME: Avoid using this method in the new code
+         * It exists only to support legacy use cases
+         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
+         */
+
         // Legacy props
         if (isset($data['doneAfter']) && !isset($data['after'])) {
             $data['after'] = $data['doneAfter'];

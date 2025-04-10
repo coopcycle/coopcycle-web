@@ -204,6 +204,12 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
+        /**
+         * FIXME: Avoid using this method in the new code
+         * It exists only to support legacy use cases
+         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
+         */
+
         $delivery = $this->normalizer->denormalize($data, $class, $format, $context);
 
         $inputClass = ($context['input']['class'] ?? null);
