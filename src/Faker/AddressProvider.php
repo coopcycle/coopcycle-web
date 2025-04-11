@@ -12,6 +12,7 @@ class AddressProvider extends BaseProvider
 {
     protected $geocoder;
     protected $center;
+    protected $distance;
 
     public function __construct(Generator $generator, Geocoder $geocoder, Coordinate $center, int $distance = 6)
     {

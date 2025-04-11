@@ -18,9 +18,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class InviteUserType extends AbstractType
 {
-    public function __construct(AuthorizationCheckerInterface $authorizationChecker) {
-        $this->asAdmin = $authorizationChecker->isGranted('ROLE_ADMIN');
-    }
+    public function __construct(private AuthorizationCheckerInterface $authorizationChecker)
+    {}
+
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('email', EmailType::class, [
@@ -35,7 +35,7 @@ class InviteUserType extends AbstractType
 
         $choices = ['roles.ROLE_COURIER.help' => 'ROLE_COURIER', 'roles.ROLE_DISPATCHER.help' => 'ROLE_DISPATCHER'];
 
-        if ($this->asAdmin) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $choices = array_merge(['roles.ROLE_ADMIN.help' => 'ROLE_ADMIN'], $choices);
         }
 
@@ -46,7 +46,7 @@ class InviteUserType extends AbstractType
             'multiple' => true,
         ]);
 
-        if ($this->asAdmin) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             $builder->add('restaurants', CollectionType::class, array(
                 'mapped' => false,
                 'entry_type' => EntityType::class,

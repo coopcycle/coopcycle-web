@@ -7,10 +7,8 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 final class LoopeatInsufficientStockException extends \Exception
 {
-    public function __construct(ConstraintViolationList $violations)
+    public function __construct(private ConstraintViolationList $violations)
     {
-        $this->violations = $violations;
-
         $message = '';
         foreach ($violations as $violation) {
             $message .= $violation->getMessage() . "\n";

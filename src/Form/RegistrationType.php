@@ -22,6 +22,8 @@ use AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType;
 
 class RegistrationType extends AbstractTypeExtension
 {
+    private $country;
+
     public function __construct(
         private SettingsManager $settingsManager,
         string $country,
