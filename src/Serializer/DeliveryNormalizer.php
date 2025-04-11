@@ -18,6 +18,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -34,7 +35,8 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
         private readonly Tile38Helper $tile38Helper,
-        private readonly TagManager $tagManager
+        private readonly TagManager $tagManager,
+        private readonly LoggerInterface $logger,
     )
     {
     }
@@ -204,18 +206,24 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        /**
-         * FIXME: Avoid using this method in the new code
-         * It exists only to support legacy use cases
-         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
-         */
-
         $delivery = $this->normalizer->denormalize($data, $class, $format, $context);
 
         $inputClass = ($context['input']['class'] ?? null);
         if ($inputClass === DeliveryInput::class) {
             return $delivery;
         }
+
+        /**
+         * FIXME: Avoid using this method in the new code
+         * It exists only to support legacy use cases
+         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
+         */
+
+        $this->logger->info('Deprecated: DeliveryNormalizer::denormalize', [
+            'class' => $class,
+            'data' => $data,
+            'context' => $context,
+        ]);
 
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
