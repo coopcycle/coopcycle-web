@@ -42,7 +42,7 @@ class OrderReceiptEmailHandler
 
         $email = $this->emailManager->createOrderReceiptMessage($order);
         $email->attach(
-            (string) $this->receiptsFilesystem->read($filename),
+            $this->receiptsFilesystem->read($filename),
             $filename,
             'application/pdf'
         );

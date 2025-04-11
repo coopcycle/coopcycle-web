@@ -14,7 +14,6 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 class CancelOrderHandler
 {
     public function __construct(
-        private StripeManager $stripeManager,
         private RecordsMessages $eventRecorder,
         private StateMachineFactoryInterface $stateMachineFactory)
     {}

@@ -20,6 +20,20 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Adhoc
 {
+    public $orderFactory;
+    public $orderModifier;
+    public $orderItemFactory;
+    public $orderItemQuantityModifier;
+    public $productFactory;
+    public $productRepository;
+    public $variantFactory;
+    public $taxCategoryRepository;
+    public $customerRepository;
+    public $canonicalizer;
+    public $customerFactory;
+    public $orderNumberAssigner;
+    public $objectManager;
+    public $emailManager;
     public function __construct(
         OrderFactory $orderFactory,
         OrderModifierInterface $orderModifier,

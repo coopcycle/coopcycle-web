@@ -17,6 +17,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class CalculateRouteHandler
 {
+    public $logger;
     private $objectManager;
     private $routing;
     private $eventBus;

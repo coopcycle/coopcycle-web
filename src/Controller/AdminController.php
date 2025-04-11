@@ -2365,7 +2365,7 @@ class AdminController extends AbstractController
             'json' => ['html' => $html]
         ]);
 
-        $response = new Response((string) $pdf->getContent());
+        $response = new Response($pdf->getContent());
 
         $response->headers->add(['Content-Type' => 'application/pdf']);
         $response->headers->add([

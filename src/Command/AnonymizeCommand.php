@@ -15,6 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class AnonymizeCommand extends Command
 {
+    public $io;
     private $entityManager;
     private $userManager;
 

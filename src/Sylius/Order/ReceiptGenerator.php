@@ -107,7 +107,7 @@ class ReceiptGenerator
             'json' => ['html' => $html]
         ]);
 
-        return (string) $response->getContent();
+        return $response->getContent();
     }
 
     private function addAdjustmentFooterItem(OrderReceipt $receipt, Adjustment $adjustment)

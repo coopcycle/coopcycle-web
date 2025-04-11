@@ -120,8 +120,6 @@ abstract class PostalAddress
 
     /**
      * Gets addressLocality.
-     *
-     * @return string|null
      */
     public function getAddressLocality(): ?string
     {
@@ -192,8 +190,6 @@ abstract class PostalAddress
 
     /**
      * Gets postalCode.
-     *
-     * @return string|null
      */
     public function getPostalCode(): ?string
     {

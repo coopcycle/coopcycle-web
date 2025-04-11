@@ -22,8 +22,7 @@ use Webmozart\Assert\Assert;
 class EdenredController extends AbstractController
 {
     public function __construct(
-        private Authentication $authentication,
-        private LoggerInterface $logger)
+        private Authentication $authentication)
     {}
 
     #[Route(path: '/edenred/oauth/callback', name: 'edenred_oauth_callback')]

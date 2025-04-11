@@ -21,6 +21,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class GeofencingCommand extends Command
 {
+    public $doorstepChanNamespace;
     private $doctrine;
     private $geofencing;
     private $tile38;

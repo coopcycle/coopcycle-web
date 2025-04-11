@@ -16,6 +16,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RemotePushNotificationsCommand extends Command
 {
+    public $remotePushNotificationManager;
+    public $userManager;
+    public $io;
     public function __construct(
         RemotePushNotificationManager $remotePushNotificationManager,
         UserManagerInterface $userManager)

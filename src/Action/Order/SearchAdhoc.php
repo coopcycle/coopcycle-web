@@ -19,6 +19,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class SearchAdhoc
 {
 
+    /**
+     * @var \Doctrine\Persistence\ManagerRegistry
+     */
+    public $doctrine;
+    public $orderRepository;
+    public $localBusinessRepository;
+    public $iriConverter;
     public function __construct(
         ManagerRegistry $doctrine,
         OrderRepositoryInterface $orderRepository,
