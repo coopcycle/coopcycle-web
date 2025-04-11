@@ -69,25 +69,14 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         if (is_array($data->tasks) && count($data->tasks) > 0) {
-            $tasks = array_map(fn(Task|TaskInput $taskInput) => $this->transformTask($taskInput), $data->tasks);
+            $tasks = array_map(fn(Task|TaskInput $taskInput) => $this->transformIntoTask($taskInput, $store), $data->tasks);
             $delivery = Delivery::createWithTasks(...$tasks);
+
         } else {
-            $pickup = $this->transformTask($data->pickup, Task::TYPE_PICKUP);
-            $dropoff = $this->transformTask($data->dropoff, Task::TYPE_DROPOFF);
+            $delivery = Delivery::create();
 
-            if ($pickup && $dropoff) {
-                $delivery = Delivery::createWithTasks($pickup, $dropoff);
-            } else {
-                $delivery = Delivery::create();
-                $delivery->removeTask($delivery->getDropoff());
-
-                $pickup = $delivery->getPickup();
-
-                $pickup->setNext($dropoff);
-                $dropoff->setPrevious($pickup);
-
-                $delivery->addTask($dropoff);
-            }
+            $this->transformIntoTaskInDelivery($data->pickup, Task::TYPE_PICKUP, $delivery->getPickup(), $store);
+            $this->transformIntoTaskInDelivery($data->dropoff, Task::TYPE_DROPOFF, $delivery->getDropoff(), $store);
         }
 
         if ($store) {
@@ -141,7 +130,28 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         return in_array($to, [ RetailPrice::class, DeliveryQuote::class, Delivery::class ]) && null !== ($context['input']['class'] ?? null);
     }
 
-    public function transformTask(Task|TaskInput|null $data, $taskType = null, Store|null $store = null): Task|null {
+    private function transformIntoTask(
+        Task|TaskInput|null $data,
+        Store|null $store = null
+    ): Task|null {
+        return $this->transformIntoTaskImpl($data, $store);
+    }
+
+    private function transformIntoTaskInDelivery(
+        Task|TaskInput|null $data,
+        string $taskType,
+        Task $task,
+        Store|null $store = null,
+    ): Task|null {
+        return $this->transformIntoTaskImpl($data, $store, $taskType, $task);
+    }
+
+    private function transformIntoTaskImpl(
+        Task|TaskInput|null $data,
+        Store|null $store = null,
+        string|null $taskType = null,
+        Task|null $task = null,
+    ): Task|null {
         if (null === $data) {
             return null;
         }
@@ -150,7 +160,9 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             return $data;
         }
 
-        $task = new Task();
+        if (null === $task) {
+            $task = new Task();
+        }
 
         $type = null;
         if (isset($data->type)) {
