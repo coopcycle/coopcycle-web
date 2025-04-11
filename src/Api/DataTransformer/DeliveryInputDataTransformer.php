@@ -6,6 +6,7 @@ use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\TaskInput;
 use AppBundle\DataType\TsRange;
@@ -54,7 +55,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param DeliveryInput $data
+     * @param DeliveryInput|DeliveryFromTasksInput $data
      * {@inheritdoc}
      */
     public function transform($data, string $to, array $context = [])
@@ -68,15 +69,21 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             }
         }
 
-        if (is_array($data->tasks) && count($data->tasks) > 0) {
-            $tasks = array_map(fn(Task|TaskInput $taskInput) => $this->transformIntoTask($taskInput, $store), $data->tasks);
-            $delivery = Delivery::createWithTasks(...$tasks);
+        if ($data instanceof DeliveryInput) {
+            if (is_array($data->tasks) && count($data->tasks) > 0) {
+                $tasks = array_map(fn(Task|TaskInput $taskInput) => $this->transformIntoTask($taskInput, $store), $data->tasks);
+                $delivery = Delivery::createWithTasks(...$tasks);
 
-        } else {
-            $delivery = Delivery::create();
+            } else {
+                $delivery = Delivery::create();
 
-            $this->transformIntoTaskInDelivery($data->pickup, Task::TYPE_PICKUP, $delivery->getPickup(), $store);
-            $this->transformIntoTaskInDelivery($data->dropoff, Task::TYPE_DROPOFF, $delivery->getDropoff(), $store);
+                $this->transformIntoTaskInDelivery($data->pickup, Task::TYPE_PICKUP, $delivery->getPickup(), $store);
+                $this->transformIntoTaskInDelivery($data->dropoff, Task::TYPE_DROPOFF, $delivery->getDropoff(), $store);
+            }
+        }
+
+        if ($data instanceof DeliveryFromTasksInput) {
+            $delivery = Delivery::createWithTasks(...$data->tasks);
         }
 
         if ($store) {
@@ -131,35 +138,31 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
     }
 
     private function transformIntoTask(
-        Task|TaskInput|null $data,
+        TaskInput $data,
         Store|null $store = null
-    ): Task|null {
+    ): Task {
         return $this->transformIntoTaskImpl($data, $store);
     }
 
     private function transformIntoTaskInDelivery(
-        Task|TaskInput|null $data,
+        TaskInput|null $data,
         string $taskType,
         Task $task,
         Store|null $store = null,
-    ): Task|null {
-        return $this->transformIntoTaskImpl($data, $store, $taskType, $task);
-    }
-
-    private function transformIntoTaskImpl(
-        Task|TaskInput|null $data,
-        Store|null $store = null,
-        string|null $taskType = null,
-        Task|null $task = null,
     ): Task|null {
         if (null === $data) {
             return null;
         }
 
-        if ($data instanceof Task) {
-            return $data;
-        }
+        return $this->transformIntoTaskImpl($data, $store, $taskType, $task);
+    }
 
+    private function transformIntoTaskImpl(
+        TaskInput $data,
+        Store|null $store = null,
+        string|null $taskType = null,
+        Task|null $task = null,
+    ): Task {
         if (null === $task) {
             $task = new Task();
         }

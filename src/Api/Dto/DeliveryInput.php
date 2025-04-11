@@ -4,13 +4,12 @@ namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Task;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 final class DeliveryInput
 {
 
-    #[Groups(['pricing_deliveries', 'delivery_create', 'delivery_create_from_tasks'])]
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
     public Store|null $store = null;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]
@@ -20,9 +19,9 @@ final class DeliveryInput
     public TaskInput|null $dropoff = null;
 
     /**
-     * @var Task[]|TaskInput[]|null
+     * @var TaskInput[]|null
      */
-    #[Groups(['pricing_deliveries', 'delivery_create', 'delivery_create_from_tasks'])]
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $tasks = null;
 
     /**

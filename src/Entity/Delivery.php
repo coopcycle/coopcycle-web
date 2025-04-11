@@ -12,6 +12,7 @@ use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
@@ -60,7 +61,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'from_tasks' => [
             'method' => 'POST',
             'path' => '/deliveries/from_tasks',
-            'input' => DeliveryInput::class,
+            'input' => DeliveryFromTasksInput::class,
             'denormalization_context' => ['groups' => ['delivery_create_from_tasks']],
             'security' => "is_granted('ROLE_ADMIN')"
         ],
