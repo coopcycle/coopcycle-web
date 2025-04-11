@@ -82,7 +82,6 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
                 $delivery->removeTask($delivery->getDropoff());
 
                 $pickup = $delivery->getPickup();
-                $dropoff = $data->dropoff;
 
                 $pickup->setNext($dropoff);
                 $dropoff->setPrevious($pickup);
