@@ -48,6 +48,7 @@ parameters:
         - '#Cannot use array destructuring on array<int, mixed>\|Doctrine\\ORM\\PersistentCollection#'
         - '#Call to an undefined method Symfony\\Component\\Security\\Http\\Authenticator\\Passport\\PassportInterface::getAttribute\(\).#'
         - '#Call to an undefined method DateTimeInterface::modify\(\)#'
+        - '#Call to an undefined method Sylius\\Component\\Customer\\Model\\CustomerInterface::(get|has|set)(Dabba|Loopeat|LoopEat)(AccessToken|Credentials|RefreshToken)\(\)#'
     universalObjectCratesClasses:
         - MercadoPago\Item
         - MercadoPago\Preference
