@@ -22,16 +22,11 @@ use AppBundle\Form\Type\TermsAndConditionsAndPrivacyPolicyType;
 
 class RegistrationType extends AbstractTypeExtension
 {
-    private $settingsManager;
-    private $splitTermsAndConditionsAndPrivacyPolicy;
-
     public function __construct(
-        SettingsManager $settingsManager,
+        private SettingsManager $settingsManager,
         string $country,
-        bool $splitTermsAndConditionsAndPrivacyPolicy = false)
+        private bool $splitTermsAndConditionsAndPrivacyPolicy = false)
     {
-        $this->settingsManager = $settingsManager;
-        $this->splitTermsAndConditionsAndPrivacyPolicy = $splitTermsAndConditionsAndPrivacyPolicy;
         $this->country = strtoupper($country);
     }
 

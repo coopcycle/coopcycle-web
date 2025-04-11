@@ -7,10 +7,8 @@ use Sylius\Component\Order\Modifier\OrderModifierInterface;
 
 class DeleteItem
 {
-    public function __construct(OrderModifierInterface $orderModifier)
-    {
-        $this->orderModifier = $orderModifier;
-    }
+    public function __construct(private OrderModifierInterface $orderModifier)
+    {}
 
     public function __invoke($data, $id, $itemId, Request $request)
     {

@@ -25,15 +25,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UpdateProfileType extends AbstractType
 {
-    private $tokenStorage;
-    private $translator;
     private $countryIso;
 
-    public function __construct(TokenStorageInterface $tokenStorage, TranslatorInterface $translator, LoopeatClient $loopeatClient, $countryIso)
+    public function __construct(
+        private TokenStorageInterface $tokenStorage,
+        private TranslatorInterface $translator,
+        private LoopeatClient $loopeatClient,
+        string $countryIso)
     {
-        $this->tokenStorage = $tokenStorage;
-        $this->translator = $translator;
-        $this->loopeatClient = $loopeatClient;
         $this->countryIso = strtoupper($countryIso);
     }
 

@@ -13,10 +13,9 @@ class MyStripePaymentMethods
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        StripeManager $stripeManager)
+        private StripeManager $stripeManager)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->stripeManager = $stripeManager;
     }
 
     public function __invoke()

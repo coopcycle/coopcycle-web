@@ -16,12 +16,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DataExportType extends AbstractType
 {
-    public function __construct(bool $dv4culEnabled, bool $colisactivEnabled, array $exporters)
-    {
-        $this->dv4culEnabled = $dv4culEnabled;
-        $this->colisactivEnabled = $colisactivEnabled;
-        $this->exporters = $exporters;
-    }
+    public function __construct(
+        private bool $dv4culEnabled,
+        private bool $colisactivEnabled,
+        private array $exporters)
+    {}
 
     private function getExporter(array $data)
     {

@@ -22,10 +22,8 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 
 final class DV4CULDataExporter implements DataExporterInterface
 {
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
+    public function __construct(private EntityManagerInterface $entityManager)
+    {}
 
     public function export(\DateTime $start, \DateTime $end): string
     {

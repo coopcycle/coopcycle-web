@@ -62,6 +62,8 @@ final class RetailPrice
      */
     public $taxAmount;
 
+    private bool $taxIncluded;
+
     public function __construct(int $taxIncludedAmount, string $currency, int $taxAmount, bool $taxIncluded = true)
     {
         $this->id = Uuid::uuid4()->toString();

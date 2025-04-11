@@ -17,10 +17,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductOptionWithPositionType extends AbstractType
 {
-    public function __construct(ManagerRegistry $doctrine)
-    {
-        $this->doctrine = $doctrine;
-    }
+    public function __construct(private ManagerRegistry $doctrine)
+    {}
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

@@ -19,12 +19,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class StoreAddressesSubresourceDataProvider implements SubresourceDataProviderInterface, RestrictedDataProviderInterface
 {
     public function __construct(
-        RequestStack $requestStack,
-        ManagerRegistry $doctrine)
-    {
-        $this->requestStack = $requestStack;
-        $this->doctrine = $doctrine;
-    }
+        private RequestStack $requestStack,
+        private ManagerRegistry $doctrine)
+    {}
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
