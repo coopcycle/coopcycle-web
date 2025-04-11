@@ -24,7 +24,7 @@ class Pay
     private $logger;
 
     public function __construct(
-        private OrderManager $dataManager,
+        private OrderManager $orderManager,
         private EntityManagerInterface $entityManager,
         private StripeManager $stripeManager,
         private OrderNumberAssignerInterface $orderNumberAssigner,

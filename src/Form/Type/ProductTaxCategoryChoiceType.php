@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
+use AppBundle\Sylius\Taxation\Resolver\TaxRateResolver;
 use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType as BaseTaxCategoryChoiceType;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -16,6 +17,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductTaxCategoryChoiceType extends AbstractType
 {
+    /**
+     * @param TaxRateResolver $taxRateResolver
+     */
     public function __construct(
         private EntityRepository $taxCategoryRepository,
         private TranslatorInterface $translator,
