@@ -69,7 +69,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         if (is_array($data->tasks) && count($data->tasks) > 0) {
-            $tasks = array_map(fn(TaskInput $taskInput) => $this->transformTask($taskInput), $data->tasks);
+            $tasks = array_map(fn(Task|TaskInput $taskInput) => $this->transformTask($taskInput), $data->tasks);
             $delivery = Delivery::createWithTasks(...$tasks);
         } else {
             $pickup = $this->transformTask($data->pickup, Task::TYPE_PICKUP);
@@ -142,9 +142,13 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         return in_array($to, [ RetailPrice::class, DeliveryQuote::class, Delivery::class ]) && null !== ($context['input']['class'] ?? null);
     }
 
-    public function transformTask(TaskInput|null $data, $taskType = null, Store|null $store = null): Task|null {
+    public function transformTask(Task|TaskInput|null $data, $taskType = null, Store|null $store = null): Task|null {
         if (null === $data) {
             return null;
+        }
+
+        if ($data instanceof Task) {
+            return $data;
         }
 
         $task = new Task();
