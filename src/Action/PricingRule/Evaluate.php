@@ -5,16 +5,12 @@ namespace AppBundle\Action\PricingRule;
 use AppBundle\Api\Dto\PricingRuleEvaluate;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Delivery\PricingRule;
-use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use AppBundle\Pricing\PriceCalculationVisitor;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class Evaluate
 {
     public function __construct(
-        private ExpressionLanguage $expressionLanguage,
-        private readonly LoggerInterface $logger = new NullLogger()
+        private readonly PriceCalculationVisitor $priceCalculationVisitor,
     )
     {
     }
@@ -31,11 +27,10 @@ class Evaluate
         $ruleSet = clone $pricingRuleSet;
         $ruleSet->setRules([$pricingRule]);
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
-        $visitor->visit($delivery);
+        $result = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
 
     	$output = new YesNoOutput();
-    	$output->result = count($visitor->getMatchedRules()) > 0;
+    	$output->result = count($result->matchedRules) > 0;
 
         return $output;
     }

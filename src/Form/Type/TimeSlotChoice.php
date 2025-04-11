@@ -128,6 +128,13 @@ class TimeSlotChoice
         return $range;
     }
 
+    public function contains(TsRange $range): bool
+    {
+        $thisRange = $this->toTsRange();
+
+        return $thisRange->lower <= $range->lower && $thisRange->upper >= $range->upper;
+    }
+
     public function __toString()
     {
         return sprintf('%s %s', $this->date->format('Y-m-d'), implode('-', $this->timeRange));

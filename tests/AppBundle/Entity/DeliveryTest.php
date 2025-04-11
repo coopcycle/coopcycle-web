@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\PackagesResolver;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -16,6 +17,12 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class DeliveryTest extends TestCase
 {
     use ProphecyTrait;
+
+    private function toExpressionLanguageValues(Delivery $delivery): array
+    {
+        $deliveryExpressionLanguageVisitor = new DeliveryExpressionLanguageVisitor();
+        return $deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
+    }
 
     public function testNewDeliveryHasTwoTasks()
     {
@@ -48,7 +55,7 @@ class DeliveryTest extends TestCase
         $delivery->addPackageWithQuantity($mediumPackage, 2);
         $delivery->getDropoff()->setDoorstep(true);
 
-        $values = Delivery::toExpressionLanguageValues($delivery);
+        $values = $this->toExpressionLanguageValues($delivery);
 
         $this->assertArrayHasKey('distance', $values);
         $this->assertArrayHasKey('weight', $values);
@@ -164,7 +171,7 @@ class DeliveryTest extends TestCase
 
         $language = new ExpressionLanguage();
 
-        $values = Delivery::toExpressionLanguageValues($delivery);
+        $values = $this->toExpressionLanguageValues($delivery);
 
         $this->assertArrayHasKey('order', $values);
         $this->assertNotNull($values['order']);
@@ -176,7 +183,7 @@ class DeliveryTest extends TestCase
 
         $delivery->setOrder($order->reveal());
 
-        $values = Delivery::toExpressionLanguageValues($delivery);
+        $values = $this->toExpressionLanguageValues($delivery);
 
         $this->assertNotNull($values['order']);
 
@@ -279,7 +286,7 @@ class DeliveryTest extends TestCase
 
         $delivery->addTask($otherDrop);
 
-        $values = Delivery::toExpressionLanguageValues($delivery);
+        $values = $this->toExpressionLanguageValues($delivery);
 
         $this->assertArrayHasKey('distance', $values);
         $this->assertArrayHasKey('weight', $values);

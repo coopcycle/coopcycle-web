@@ -4,6 +4,7 @@ namespace AppBundle\Functional;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -70,10 +71,11 @@ class CoursiersBordelaisTest extends TestCase
     {
         $expressionLanguage = new ExpressionLanguage();
         $expressionLanguage->addFunction(ExpressionFunction::fromPhp('ceil'));
+        $deliveryExpressionLanguageVisitor = new DeliveryExpressionLanguageVisitor();
 
         foreach ($this->pricingRules as $pricingRule) {
-            if ($pricingRule->matches(Delivery::toExpressionLanguageValues($delivery), $expressionLanguage)) {
-                $productOption = $pricingRule->apply(Delivery::toExpressionLanguageValues($delivery), $expressionLanguage);
+            if ($pricingRule->matches($deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage)) {
+                $productOption = $pricingRule->apply($deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage);
                 $this->assertEquals($expectedPrice, $productOption->getPriceAdditive());
             }
         }
