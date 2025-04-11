@@ -11,11 +11,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RestaurantMercadopagoController extends AbstractController
 {
-
-    public function __construct(SettingsManager $settingsManager)
-    {
-        $this->settingsManager = $settingsManager;
-    }
+    public function __construct(private SettingsManager $settingsManager)
+    {}
 
     #[Route(path: '/restaurant/{id}/mercadopago-account', name: 'restaurant-mercadopago-account', methods: ['GET'])]
     public function getMercadopagoAccount($id)

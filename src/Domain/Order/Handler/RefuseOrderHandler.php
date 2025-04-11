@@ -9,13 +9,8 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 
 class RefuseOrderHandler
 {
-    private $eventRecorder;
-
-    public function __construct(StripeManager $stripeManager, RecordsMessages $eventRecorder)
-    {
-        $this->stripeManager = $stripeManager;
-        $this->eventRecorder = $eventRecorder;
-    }
+    public function __construct(private StripeManager $stripeManager, private RecordsMessages $eventRecorder)
+    {}
 
     public function __invoke(RefuseOrder $command)
     {

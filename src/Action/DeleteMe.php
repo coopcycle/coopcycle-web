@@ -13,10 +13,9 @@ class DeleteMe
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        UserManagerInterface $userManager)
+        private UserManagerInterface $userManager)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->userManager = $userManager;
     }
 
     public function __invoke()

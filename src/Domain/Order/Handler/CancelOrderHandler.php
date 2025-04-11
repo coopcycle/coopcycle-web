@@ -13,18 +13,11 @@ use SimpleBus\Message\Recorder\RecordsMessages;
 
 class CancelOrderHandler
 {
-    private $eventRecorder;
-    private $stateMachineFactory;
-
     public function __construct(
-        StripeManager $stripeManager,
-        RecordsMessages $eventRecorder,
-        StateMachineFactoryInterface $stateMachineFactory)
-    {
-        $this->stripeManager = $stripeManager;
-        $this->eventRecorder = $eventRecorder;
-        $this->stateMachineFactory = $stateMachineFactory;
-    }
+        private StripeManager $stripeManager,
+        private RecordsMessages $eventRecorder,
+        private StateMachineFactoryInterface $stateMachineFactory)
+    {}
 
     public function __invoke(CancelOrder $command)
     {

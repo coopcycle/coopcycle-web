@@ -23,22 +23,17 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 #[AsMessageHandler]
 class WoopitDocumentHandler
 {
+    private $logger;
 
     public function __construct(
-        OAuthHttpClient $woopitClient,
-        IriConverterInterface $iriConverter,
-        EntityManagerInterface $entityManager,
-        Hashids $hashids12,
-        UploaderHelper $uploaderHelper,
-        FilterService $imagineFilter,
+        private OAuthHttpClient $woopitClient,
+        private IriConverterInterface $iriConverter,
+        private EntityManagerInterface $entityManager,
+        private Hashids $hashids12,
+        private UploaderHelper $uploaderHelper,
+        private FilterService $imagineFilter,
         LoggerInterface $logger = null)
     {
-        $this->woopitClient = $woopitClient;
-        $this->iriConverter = $iriConverter;
-        $this->entityManager = $entityManager;
-        $this->hashids12 = $hashids12;
-        $this->uploaderHelper = $uploaderHelper;
-        $this->imagineFilter = $imagineFilter;
         $this->logger = $logger ?? new NullLogger();
     }
 

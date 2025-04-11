@@ -4,11 +4,8 @@ namespace AppBundle\Message;
 
 class WoopitWebhook
 {
-    public function __construct(string $object, string $event)
-    {
-        $this->object = $object;
-        $this->event = $event;
-    }
+    public function __construct(private string $object, private string $event)
+    {}
 
     public function getObject(): string
     {

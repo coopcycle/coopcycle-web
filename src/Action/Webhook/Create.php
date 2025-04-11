@@ -9,12 +9,9 @@ use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 class Create
 {
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        AccessTokenManagerInterface $accessTokenManager)
-    {
-        $this->tokenStorage = $tokenStorage;
-        $this->accessTokenManager = $accessTokenManager;
-    }
+        private TokenStorageInterface $tokenStorage,
+        private AccessTokenManagerInterface $accessTokenManager)
+    {}
 
     public function __invoke($data)
     {
