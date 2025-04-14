@@ -7,7 +7,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Message\WoopitDocumentWebhook;
 use BenjaminFavre\OAuthHttpClient\OAuthHttpClient;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Hashids\Hashids;
 use Liip\ImagineBundle\Service\FilterService;
@@ -28,7 +27,6 @@ class WoopitDocumentHandler
     public function __construct(
         private OAuthHttpClient $woopitClient,
         private IriConverterInterface $iriConverter,
-        private EntityManagerInterface $entityManager,
         private Hashids $hashids12,
         private UploaderHelper $uploaderHelper,
         private FilterService $imagineFilter,
