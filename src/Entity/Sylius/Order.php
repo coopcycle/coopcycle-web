@@ -125,14 +125,22 @@ use Webmozart\Assert\Assert as WMAssert;
             'path' => '/invoice_line_items/grouped_by_organization',
             'security' => "is_granted('ROLE_ADMIN')",
             'output' => InvoiceLineItemGroupedByOrganization::class,
-            'normalization_context' => ['groups' => ['default_invoice_line_item']]
+            'normalization_context' => ['groups' => ['default_invoice_line_item']],
+            'openapi_context' => [
+                'summary' => 'Invoicing: Get the number of orders and sum total grouped by organization',
+                'description' => 'Retrieves the collection of organizations with the number of orders and sum total for the specified filter, for example: ?state[]=new&state[]=accepted&state[]=fulfilled&date[after]=2025-02-01&date[before]=2025-02-28',
+            ]
         ],
         'invoice_line_items' => [
             'method' => 'GET',
             'path' => '/invoice_line_items',
             'security' => "is_granted('ROLE_ADMIN')",
             'output' => InvoiceLineItem::class,
-            'normalization_context' => ['groups' => ['default_invoice_line_item']]
+            'normalization_context' => ['groups' => ['default_invoice_line_item']],
+            'openapi_context' => [
+                'summary' => 'Invoicing: Get the collection of orders',
+                'description' => 'Retrieves the collection of Order resources for the given organizations and the specified filter',
+            ]
         ],
         'invoice_line_items_export' => [
             'method' => 'GET',
@@ -141,7 +149,10 @@ use Webmozart\Assert\Assert as WMAssert;
             'pagination_enabled' => false,
             'security' => "is_granted('ROLE_ADMIN')",
             'output' => InvoiceLineItem::class,
-            'normalization_context' => ['groups' => ['export_invoice_line_item']]
+            'normalization_context' => ['groups' => ['export_invoice_line_item']],
+            'openapi_context' => [
+                'summary' => 'Invoicing: Get the collection of orders for export in the default format',
+            ]
         ],
         'invoice_line_items_odoo_export' => [
             'method' => 'GET',
@@ -150,7 +161,10 @@ use Webmozart\Assert\Assert as WMAssert;
             'pagination_enabled' => false,
             'security' => "is_granted('ROLE_ADMIN')",
             'output' => InvoiceLineItem::class,
-            'normalization_context' => ['groups' => ['odoo_export_invoice_line_item']]
+            'normalization_context' => ['groups' => ['odoo_export_invoice_line_item']],
+            'openapi_context' => [
+                'summary' => 'Invoicing: Get the collection of orders for export in the Odoo format',
+            ]
         ]
     ],
     iri: 'http://schema.org/Order',
