@@ -61,7 +61,6 @@ services:
   coopcycle.domain.order.handler.cancel_order:
     class: AppBundle\Domain\Order\Handler\CancelOrderHandler
     arguments:
-      - '@coopcycle.stripe_manager'
       - '@event_recorder'
       - '@sm.factory'
     tags:
