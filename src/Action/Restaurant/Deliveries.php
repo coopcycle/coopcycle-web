@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Deliveries
 {
+    public $objectManager;
     public function __construct(EntityManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;

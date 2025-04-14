@@ -11,7 +11,6 @@ use AppBundle\Dabba\GuestCheckoutAwareAdapter as DabbaAdapter;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
-use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,13 +23,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DabbaController extends AbstractController
 {
-    public function __construct(
-        DabbaClient $dabbaClient,
-        LoggerInterface $logger)
-    {
-        $this->dabbaClient = $dabbaClient;
-        $this->logger = $logger;
-    }
+    public function __construct(private DabbaClient $dabbaClient)
+    {}
 
     #[Route(path: '/dabba/oauth/callback', name: 'dabba_oauth_callback')]
     public function callbackAction(

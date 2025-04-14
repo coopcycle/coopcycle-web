@@ -17,6 +17,8 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class WoopitSubscriptionsCommand extends Command
 {
+    private $io;
+
     public function __construct(
         private OAuthHttpClient $woopitClient,
         private EntityManagerInterface $entityManager,

@@ -73,5 +73,5 @@ covid_19.body: |
   <p>Wenn Sie Ihre Bestellung ausgepackt und die Verpackung entsorgt haben, <strong>waschen Sie Ihre Hände!</strong></p>
   <p>Sie können Trinkgeld vor der Tür platzieren oder online Trinkgeld geben. Das Onlinetrinkgeld wir nach Steuerabzug zwischen Plattform und allen Fahrer*innen aufgeteilt.</p>
 order.payment.subject: Bezahlung der Bestellung %order.number%
-order.payment.body: "Hallo\nDie von Ihnen bei uns abgegeben Bestellung wurde fertiggestellt.\n\
+order.payment.body: "Hallo\nSie haben bei uns einen Lieferservice bestellt.\n\
   Unten finden Sie einen Link zur Kartenzahlung\n"

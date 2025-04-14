@@ -17,6 +17,17 @@ use Vich\UploaderBundle\Storage\StorageInterface;
 
 Class ResolveImagineCacheCommand extends Command
 {
+    public $storage;
+    /**
+     * @var \League\Flysystem\MountManager
+     */
+    public $mountManager;
+    public $propertyMappingFactory;
+    public $entityManager;
+    /**
+     * @var \Symfony\Component\Console\Style\SymfonyStyle
+     */
+    public $io;
     public function __construct(
         StorageInterface $storage,
         MountManager $mountManager,

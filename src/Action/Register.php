@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class Register
 {
+    public $validator;
     private $userManager;
     private $jwtManager;
     private $dispatcher;

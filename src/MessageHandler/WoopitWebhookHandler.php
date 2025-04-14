@@ -18,6 +18,14 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 #[AsMessageHandler]
 class WoopitWebhookHandler
 {
+    public $woopitClient;
+    public $iriConverter;
+    /**
+     * @var \Doctrine\ORM\EntityManagerInterface
+     */
+    public $entityManager;
+    public $hashids12;
+    public $logger;
     public function __construct(
         OAuthHttpClient $woopitClient,
         IriConverterInterface $iriConverter,

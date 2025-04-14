@@ -240,7 +240,7 @@ class OrderRepository extends BaseOrderRepository
 
     public function search($q): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('o');
+        $qb = $this->createOpmizedQueryBuilder('o');
 
         $qb
             ->leftJoin(Customer::class, 'c', Join::WITH, 'o.customer = c.id')

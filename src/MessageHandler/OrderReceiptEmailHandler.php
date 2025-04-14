@@ -13,21 +13,12 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class OrderReceiptEmailHandler
 {
-    private EmailManager $emailManager;
-    private EntityManagerInterface $entityManager;
-    private ReceiptGenerator $generator;
-
     public function __construct(
-        EmailManager $emailManager,
-        EntityManagerInterface $entityManager,
-        ReceiptGenerator $generator,
-        Filesystem $receiptsFilesystem)
-    {
-        $this->emailManager = $emailManager;
-        $this->entityManager = $entityManager;
-        $this->generator = $generator;
-        $this->receiptsFilesystem = $receiptsFilesystem;
-    }
+        private EmailManager $emailManager,
+        private EntityManagerInterface $entityManager,
+        private ReceiptGenerator $generator,
+        private Filesystem $receiptsFilesystem)
+    {}
 
     public function __invoke(OrderReceiptEmail $message)
     {
@@ -51,7 +42,7 @@ class OrderReceiptEmailHandler
 
         $email = $this->emailManager->createOrderReceiptMessage($order);
         $email->attach(
-            (string) $this->receiptsFilesystem->read($filename),
+            $this->receiptsFilesystem->read($filename),
             $filename,
             'application/pdf'
         );

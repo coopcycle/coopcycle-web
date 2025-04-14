@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class UpdateOptinConsent
 {
+    public $userManager;
     use TokenStorageTrait;
 
     public function __construct(TokenStorageInterface $tokenStorage, UserManagerInterface $userManager)

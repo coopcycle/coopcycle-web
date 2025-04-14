@@ -22,6 +22,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ImportTasksCommand extends Command
 {
+    public $io;
     private $objectManager;
     private $taskImportsFilesystem;
     private $spreadsheetParser;

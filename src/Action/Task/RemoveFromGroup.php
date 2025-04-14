@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class RemoveFromGroup extends Base
 {
+    public $entityManager;
     public function __construct(
         TaskManager $taskManager,
         EntityManagerInterface $entityManager

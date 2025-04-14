@@ -14,18 +14,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CanDeliver
 {
-    private $doctrine;
-    private $routing;
-
     public function __construct(
-        ManagerRegistry $doctrine,
-        RoutingInterface $routing,
-        ExpressionLanguage $expressionLanguage)
-    {
-        $this->doctrine = $doctrine;
-        $this->routing = $routing;
-        $this->expressionLanguage = $expressionLanguage;
-    }
+        private ManagerRegistry $doctrine,
+        private RoutingInterface $routing,
+        private ExpressionLanguage $expressionLanguage)
+    {}
 
     #[Route(name: 'restaurant_can_deliver', path: '/restaurants/{id}/can-deliver/{latitude},{longitude}', methods: ['GET'])]
     public function canDeliverAction($id, $latitude, $longitude, Request $request)

@@ -17,6 +17,13 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 Class EdenredCommand extends Command
 {
+    public $entityManager;
+    /**
+     * @var \AppBundle\Service\SettingsManager
+     */
+    public $settingsManager;
+    public $edenred;
+    public $io;
     const PAYMENT_METHOD = 'EDENRED';
 
     public function __construct(

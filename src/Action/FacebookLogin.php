@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class FacebookLogin
 {
+    public $logger;
     private $userManager;
     private $jwtManager;
     private $dispatcher;

@@ -17,23 +17,14 @@ use Twig\Environment as TwigEnvironment;
 
 class ReceiptGenerator
 {
-    private Filesystem $filesystem;
-
     public function __construct(
-        TwigEnvironment $twig,
-        HttpClientInterface $browserlessClient,
-        Filesystem $filesystem,
-        TranslatorInterface $translator,
-        RepositoryInterface $taxRateRepository,
-        string $locale)
-    {
-        $this->twig = $twig;
-        $this->browserlessClient = $browserlessClient;
-        $this->filesystem = $filesystem;
-        $this->translator = $translator;
-        $this->taxRateRepository = $taxRateRepository;
-        $this->locale = $locale;
-    }
+        private TwigEnvironment $twig,
+        private HttpClientInterface $browserlessClient,
+        private Filesystem $filesystem,
+        private TranslatorInterface $translator,
+        private RepositoryInterface $taxRateRepository,
+        private string $locale)
+    {}
 
     public function create(OrderInterface $order): OrderReceipt
     {
@@ -116,7 +107,7 @@ class ReceiptGenerator
             'json' => ['html' => $html]
         ]);
 
-        return (string) $response->getContent();
+        return $response->getContent();
     }
 
     private function addAdjustmentFooterItem(OrderReceipt $receipt, Adjustment $adjustment)

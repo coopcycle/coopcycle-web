@@ -126,7 +126,7 @@ class MercadopagoManager
         return $client->capture($payment->getMercadopagoPaymentId(), ($payment->getAmount() / 100), $requestOptions);
     }
 
-    public function getPayment(PaymentInterface $payment): Payment
+    public function getPayment(PaymentInterface $payment): ?Payment
     {
         $order = $payment->getOrder();
 

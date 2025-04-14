@@ -16,6 +16,9 @@ use Yasumi\Yasumi;
 
 class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 {
+    public $closingRules;
+    public $maxDate;
+    public $workingDaysOnly;
     private $timeSlot;
     private $OHSToCarbon;
     private $openingHoursSpecifications = [];

@@ -45,6 +45,7 @@ use Transporter\TransporterSyncOptions;
 
 class SyncTransportersCommand extends Command {
 
+    public $logger;
     use LockableTrait;
 
     private string $transporter;

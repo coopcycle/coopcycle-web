@@ -6,6 +6,7 @@ use AppBundle\Service\TaskManager;
 
 class DeleteGroup
 {
+    public $taskManager;
     public function __construct(TaskManager $taskManager)
     {
         $this->taskManager = $taskManager;

@@ -305,7 +305,8 @@
           "LowLactoseDiet": "A basso contenuto di lattosio",
           "LowSaltDiet": "A basso contenuto di sale",
           "VeganDiet": "Vegano",
-          "VegetarianDiet": "Vegetariano"
+          "VegetarianDiet": "Vegetariano",
+          "EggFreeDiet": "Senza uova"
         },
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Per favore scegli fino a {{count}} valore(i)",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Per favore scegli almeno {{count}} valore(i)",

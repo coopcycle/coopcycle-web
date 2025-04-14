@@ -17,6 +17,8 @@ use Twig\Environment as TwigEnvironment;
 
 Class BuildIndexCommand extends Command
 {
+    public $twig;
+    public $io;
     private $entityManager;
     private $ingestClient;
     private $controlClient;

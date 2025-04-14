@@ -22,6 +22,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LoopEatController extends AbstractController
 {
+    public $loopeatBaseUrl;
+    public $loopeatClientId;
+    public $loopeatClientSecret;
+    public $loopeatOAuthFlow;
+    public $loopeatClient;
+    public $logger;
     public function __construct(
         string $loopeatBaseUrl,
         string $loopeatClientId,

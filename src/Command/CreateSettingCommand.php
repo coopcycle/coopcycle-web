@@ -12,6 +12,10 @@ use Symfony\Component\Console\Question\Question;
 
 Class CreateSettingCommand extends Command
 {
+    /**
+     * @var \Doctrine\Persistence\ManagerRegistry
+     */
+    public $doctrine;
     private $entityName;
     private $entityManager;
     private $craueConfig;

@@ -19,6 +19,17 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class OrderNotificationCommand extends Command
 {
+    public $orderRepository;
+    /**
+     * @var \AppBundle\Service\RemotePushNotificationManager
+     */
+    public $remotePushNotificationManager;
+    public $websocket;
+    public $push;
+    /**
+     * @var \Symfony\Component\Console\Style\SymfonyStyle
+     */
+    public $io;
     public function __construct(
         RepositoryInterface $orderRepository,
         RemotePushNotificationManager $remotePushNotificationManager,

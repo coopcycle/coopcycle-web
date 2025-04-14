@@ -103,7 +103,7 @@ order.payment.subject: Paiement de votre commande %order.number%
 order.payment.body: |
   Bonjour,
   <br>
-  Nous avons réalisé une livraison que vous avez commandée auprès de nos services.
+  Vous nous avez commandé une prestation de livraison.
   <br>
   Vous trouverez ci-dessous un lien vous permettant de payer par carte bleue.
 covid_19.subject: COVID-19 | Instructions importantes pour votre commande
