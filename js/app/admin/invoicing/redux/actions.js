@@ -26,6 +26,9 @@ function downloadFile({ requestUrl, filename }) {
     const result = await baseQueryWithReauth(
       {
         url: requestUrl,
+        headers: {
+          'Accept': 'text/csv',
+        },
         responseHandler: 'text',
       },
       {
