@@ -1111,8 +1111,6 @@ notifications.tap_to_open: Klepnutím otevřete
 notifications.tasks_changed_today: Vaše dnešní úkoly byly aktualizovány
 notifications.delivery_created: Byla vytvořena dodávka k vyzvednutí %date%
 ordering_delay.admin_reminder: Nastavili jste globální zpoždění vyzvednutí Foodtech
-ordering_delay.disclaimer: V současné době dostáváme spoustu objednávek, dodací lhůty
-  se prodlužují!
 form.fulfillment_method.options.range_duration.label: Rozsah dosahu
 form.fulfillment_method.pre_ordering_allowed.help: Pokud zrušíte zaškrtnutí tohoto
   políčka, zákazníci budou moci zadávat objednávky pouze ve stejný den.

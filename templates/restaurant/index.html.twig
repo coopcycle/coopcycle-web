@@ -16,7 +16,6 @@
 
   {% set disabled_warning = ( not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) ) %}
   {% set preorder_warning = ( restaurant.isFulfillmentMethodEnabled('delivery') and restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes > 0 ) %}
-  {% set ordering_delay_warning = coopcycle_has_ordering_delay() %}
 
   {% if disabled_warning or preorder_warning or ordering_delay_warning %}
   <nav class="restaurant-banner {% if embed_context.enabled %}mt-0{% endif %}">
@@ -28,9 +27,6 @@
       <p class="mb-0">{{ 'restaurant.closedWarningWithDelay'|trans({
         '%delay%': restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes|delay_for_humans(app.request.locale)
       }) }}</p>
-      {% endif %}
-      {% if ordering_delay_warning %}
-      <p class="mb-0">🔥 {{ 'ordering_delay.disclaimer'|trans }}</p>
       {% endif %}
     </div>
   </nav>

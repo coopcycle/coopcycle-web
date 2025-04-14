@@ -1068,8 +1068,6 @@ restaurant.embed.disclaimer: Eskaera zure webgunean erantsi dezakezu zuzenean. J
   azpiko argibideak hasteko.
 form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu, bezeroak
   egun bereko eskaerak soilik egin ahalko dituzte.
-ordering_delay.disclaimer: Eskaera asko jasotzen ari gara, banaketa-denborak luzetzen
-  ari dira!
 ordering_delay.admin_reminder: Foodtech picku^ bilketa-atzerapen globala konfiguratu duzu
 notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
 store.PAWN_SHOP: Bahitetxea
