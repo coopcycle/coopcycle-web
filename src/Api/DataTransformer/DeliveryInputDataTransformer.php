@@ -92,26 +92,28 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
 
         $this->deliveryManager->setDefaults($delivery);
 
-        if ($data->packages) {
-            $packageRepository = $this->entityManager->getRepository(Package::class);
-
-            foreach ($data->packages as $p) {
-                $package = $packageRepository->findOneByNameAndStore($p->type, $store);
-                if ($package) {
-                    $delivery->addPackageWithQuantity($package, $p->quantity);
-                }
-            }
-        }
-
-        $delivery->setWeight($data->weight ?? null);
-
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
+        $coords = array_map(fn($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
         $distance = $this->routing->getDistance(...$coords);
 
         $delivery->setDistance(ceil($distance));
 
-        if ($data->arbitraryPrice) {
-            $delivery->setArbitraryPrice($data->arbitraryPrice);
+        if ($data instanceof DeliveryInput) {
+            if ($data->packages) {
+                $packageRepository = $this->entityManager->getRepository(Package::class);
+
+                foreach ($data->packages as $p) {
+                    $package = $packageRepository->findOneByNameAndStore($p->type, $store);
+                    if ($package) {
+                        $delivery->addPackageWithQuantity($package, $p->quantity);
+                    }
+                }
+            }
+
+            $delivery->setWeight($data->weight ?? null);
+
+            if ($data->arbitraryPrice) {
+                $delivery->setArbitraryPrice($data->arbitraryPrice);
+            }
         }
 
         return $delivery;
@@ -123,24 +125,25 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
     public function supportsTransformation($data, string $to, array $context = []): bool
     {
         if ($data instanceof RetailPrice) {
-          return false;
+            return false;
         }
 
         if ($data instanceof DeliveryQuote) {
-          return false;
+            return false;
         }
 
         if ($data instanceof Delivery) {
-          return false;
+            return false;
         }
 
-        return in_array($to, [ RetailPrice::class, DeliveryQuote::class, Delivery::class ]) && null !== ($context['input']['class'] ?? null);
+        return in_array($to, [RetailPrice::class, DeliveryQuote::class, Delivery::class]) && null !== ($context['input']['class'] ?? null);
     }
 
     private function transformIntoTask(
         TaskInput $data,
         Store|null $store = null
-    ): Task {
+    ): Task
+    {
         return $this->transformIntoTaskImpl($data, $store);
     }
 
@@ -149,7 +152,8 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         string $taskType,
         Task $task,
         Store|null $store = null,
-    ): Task|null {
+    ): Task|null
+    {
         if (null === $data) {
             return null;
         }
@@ -162,7 +166,8 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         Store|null $store = null,
         string|null $taskType = null,
         Task|null $task = null,
-    ): Task {
+    ): Task
+    {
         if (null === $task) {
             $task = new Task();
         }
@@ -262,7 +267,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
 
             if (null === $address->getGeo()) {
                 if (isset($data->latLng)) {
-                    [ $latitude, $longitude ] = $data->latLng;
+                    [$latitude, $longitude] = $data->latLng;
                     $address->setGeo(new GeoCoordinates($latitude, $longitude));
                 } else {
                     $geocoded = $this->geocoder->geocode($address->getStreetAddress());

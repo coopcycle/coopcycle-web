@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -20,10 +21,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
+class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     use ParseMetadataTrait;
 
@@ -208,15 +209,10 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $delivery = $this->normalizer->denormalize($data, $class, $format, $context);
 
-        $inputClass = ($context['input']['class'] ?? null);
-        if ($inputClass === DeliveryInput::class) {
-            return $delivery;
-        }
-
         /**
          * FIXME: Avoid using this method in the new code
          * It exists only to support legacy use cases
-         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
+         * Prefer using the DeliveryInputDataTransformer instead
          */
 
         $this->logger->info('Deprecated: DeliveryNormalizer::denormalize', [
@@ -266,8 +262,14 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         return $delivery;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = [])
     {
+        $inputClass = ($context['input']['class'] ?? null);
+        if ($inputClass === DeliveryInput::class ||
+            $inputClass === DeliveryFromTasksInput::class) {
+            return false;
+        }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Delivery::class;
     }
 }
