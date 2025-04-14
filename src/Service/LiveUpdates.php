@@ -46,6 +46,13 @@ class LiveUpdates
         $this->toUsers($admins, $message, $data);
     }
 
+    public function toDispatchers($message, array $data = [])
+    {
+        $admins = $this->userManager->findUsersByRole('ROLE_DISPATCHER');
+
+        $this->toUsers($admins, $message, $data);
+    }
+
     public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
     {
         $users = $this->userManager->findUsersByRole('ROLE_ADMIN');

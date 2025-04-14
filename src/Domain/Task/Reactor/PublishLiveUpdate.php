@@ -3,8 +3,18 @@
 namespace AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Event;
+use AppBundle\Domain\Task\Event\TaskAssigned;
+use AppBundle\Domain\Task\Event\TaskCancelled;
+use AppBundle\Domain\Task\Event\TaskCreated;
+use AppBundle\Domain\Task\Event\TaskDone;
+use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
+use AppBundle\Domain\Task\Event\TaskStarted;
+use AppBundle\Domain\Task\Event\TaskUnassigned;
+use AppBundle\Domain\Task\Event\TaskUpdated;
+use AppBundle\Domain\Tour\Event\TourCreated;
+use AppBundle\Domain\Tour\Event\TourUpdated;
 use AppBundle\Service\LiveUpdates;
 
 class PublishLiveUpdate
@@ -26,11 +36,27 @@ class PublishLiveUpdate
         // see https://github.com/coopcycle/coopcycle-app/issues/1803
         if ($event instanceof TaskListUpdated) {
             $user = $event->getCourier();
-            $this->liveUpdates->toUsers([ $user ], $event);
-        } else if ($event instanceof TaskListUpdatedv2) { // can be safely broadcasted both to riders and admins
+            $this->liveUpdates->toUsers([$user], $event);
+        } else if ($event instanceof TaskAssigned
+            || $event instanceof TaskCancelled
+            || $event instanceof TaskCreated
+            || $event instanceof TaskDone
+            || $event instanceof TaskFailed
+            || $event instanceof TaskStarted
+            || $event instanceof TaskUnassigned
+            || $event instanceof TaskUpdated
+        ) {
             $this->liveUpdates->toAdmins($event);
+            $this->liveUpdates->toDispatchers($event);
+        } else if ($event instanceof TaskListUpdatedv2) { // can be safely broadcasted to riders, dispatchers and admins
             $user = $event->getTaskList()->getCourier(); // not used in the rider part of the app yet
-            $this->liveUpdates->toUsers([ $user ], $event); // not used in the rider part of the app yet
+            $this->liveUpdates->toUserAndAdmins($user, $event); // not used in the rider part of the app yet
+            $this->liveUpdates->toDispatchers($event);
+        } else if ($event instanceof TourCreated
+            || $event instanceof TourUpdated
+        ) {
+            $this->liveUpdates->toAdmins($event);
+            $this->liveUpdates->toDispatchers($event);
         } else {
             $this->liveUpdates->toAdmins($event);
         }
