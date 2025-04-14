@@ -17,7 +17,7 @@
   {% set disabled_warning = ( not restaurant.enabled and (is_granted('ROLE_ADMIN') or is_granted('ROLE_RESTAURANT')) ) %}
   {% set preorder_warning = ( restaurant.isFulfillmentMethodEnabled('delivery') and restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes > 0 ) %}
 
-  {% if disabled_warning or preorder_warning or ordering_delay_warning %}
+  {% if disabled_warning or preorder_warning %}
   <nav class="restaurant-banner {% if embed_context.enabled %}mt-0{% endif %}">
     <div class="alert alert-warning text-center">
       {% if disabled_warning %}
