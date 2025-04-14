@@ -215,7 +215,7 @@ class AdminController extends AbstractController
             $qb = $this->orderRepository->search($request->query->get('q'));
         } else {
             $qb = $this->orderRepository
-                ->createQueryBuilder('o');
+                ->createOpmizedQueryBuilder('o');
             $qb
                 ->andWhere('o.state != :state')
                 ->setParameter('state', OrderInterface::STATE_CART)
