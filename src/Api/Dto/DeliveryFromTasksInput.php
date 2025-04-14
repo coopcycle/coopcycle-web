@@ -13,6 +13,8 @@ final class DeliveryFromTasksInput
     public Store|null $store = null;
 
     /**
+     * An array of the existing Task entities
+     *
      * @var Task[]|null
      */
     #[Groups(['delivery_create_from_tasks'])]

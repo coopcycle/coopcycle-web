@@ -71,14 +71,14 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
 
         if ($data instanceof DeliveryInput) {
             if (is_array($data->tasks) && count($data->tasks) > 0) {
-                $tasks = array_map(fn(Task|TaskInput $taskInput) => $this->transformIntoTask($taskInput, $store), $data->tasks);
+                $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
                 $delivery = Delivery::createWithTasks(...$tasks);
 
             } else {
                 $delivery = Delivery::create();
 
-                $this->transformIntoTaskInDelivery($data->pickup, Task::TYPE_PICKUP, $delivery->getPickup(), $store);
-                $this->transformIntoTaskInDelivery($data->dropoff, Task::TYPE_DROPOFF, $delivery->getDropoff(), $store);
+                $this->transformIntoDeliveryTask($data->pickup, $delivery->getPickup(), Task::TYPE_PICKUP, $store);
+                $this->transformIntoDeliveryTask($data->dropoff, $delivery->getDropoff(), Task::TYPE_DROPOFF, $store);
             }
         }
 
@@ -139,18 +139,18 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         return in_array($to, [RetailPrice::class, DeliveryQuote::class, Delivery::class]) && null !== ($context['input']['class'] ?? null);
     }
 
-    private function transformIntoTask(
+    private function transformIntoNewTask(
         TaskInput $data,
         Store|null $store = null
     ): Task
     {
-        return $this->transformIntoTaskImpl($data, $store);
+        return $this->transformIntoTaskImpl($data, new Task(), $store);
     }
 
-    private function transformIntoTaskInDelivery(
+    private function transformIntoDeliveryTask(
         TaskInput|null $data,
+        Task $outputTask,
         string $taskType,
-        Task $task,
         Store|null $store = null,
     ): Task|null
     {
@@ -158,20 +158,16 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             return null;
         }
 
-        return $this->transformIntoTaskImpl($data, $store, $taskType, $task);
+        return $this->transformIntoTaskImpl($data, $outputTask, $store, $taskType);
     }
 
     private function transformIntoTaskImpl(
         TaskInput $data,
+        Task $outputTask,
         Store|null $store = null,
         string|null $taskType = null,
-        Task|null $task = null,
     ): Task
     {
-        if (null === $task) {
-            $task = new Task();
-        }
-
         $type = null;
         if (isset($data->type)) {
             $type = strtoupper($data->type);
@@ -182,7 +178,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         if ($type) {
-            $task->setType($type);
+            $outputTask->setType($type);
         }
 
         // Legacy props
@@ -200,7 +196,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
 
         if ($data->timeSlotUrl) {
             $timeSlot = $data->timeSlotUrl;
-            $task->setTimeSlot($timeSlot);
+            $outputTask->setTimeSlot($timeSlot);
         }
 
         if (isset($data->timeSlot)) {
@@ -231,19 +227,19 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
                 }
             }
 
-            $task->setAfter($range->getLower());
-            $task->setBefore($range->getUpper());
+            $outputTask->setAfter($range->getLower());
+            $outputTask->setBefore($range->getUpper());
         } elseif (isset($data->before) || isset($data->after)) {
 
             $tz = date_default_timezone_get();
 
             if (isset($data->after)) {
-                $task->setAfter(
+                $outputTask->setAfter(
                     Carbon::parse($data->after)->tz($tz)->toDateTime()
                 );
             }
             if (isset($data->before)) {
-                $task->setBefore(
+                $outputTask->setBefore(
                     Carbon::parse($data->before)->tz($tz)->toDateTime()
                 );
             }
@@ -277,27 +273,27 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         if ($address) {
-            $task->setAddress($address);
+            $outputTask->setAddress($address);
         }
 
         if (isset($data->comments)) {
-            $task->setComments($data->comments);
+            $outputTask->setComments($data->comments);
         }
 
         if (isset($data->tags)) {
-            $task->setTags($data->tags);
-            $this->tagManager->update($task);
+            $outputTask->setTags($data->tags);
+            $this->tagManager->update($outputTask);
         }
 
         // Ignore weight & packages for pickup tasks
         // @see https://github.com/coopcycle/coopcycle-web/issues/3461
-        if ($task->isPickup()) {
+        if ($outputTask->isPickup()) {
             unset($data->weight);
             unset($data->packages);
         }
 
         if (isset($data->weight)) {
-            $task->setWeight($data->weight);
+            $outputTask->setWeight($data->weight);
         }
 
         if (isset($data->packages)) {
@@ -307,22 +303,22 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             foreach ($data->packages as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p->type, $store);
                 if ($package) {
-                    $task->setQuantityForPackage($package, $p->quantity);
+                    $outputTask->setQuantityForPackage($package, $p->quantity);
                 }
             }
         }
 
         if (isset($data->metadata)) { // we support here metadata send as a string from a CSV file
-            $this->parseAndApplyMetadata($task, $data->metadata);
+            $this->parseAndApplyMetadata($outputTask, $data->metadata);
         }
 
         if (isset($data->assignedTo)) {
             $user = $this->userManager->findUserByUsername($data->assignedTo);
             if ($user && $user->hasRole('ROLE_COURIER')) {
-                $task->assignTo($user);
+                $outputTask->assignTo($user);
             }
         }
 
-        return $task;
+        return $outputTask;
     }
 }
