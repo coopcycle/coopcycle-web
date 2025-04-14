@@ -69,7 +69,7 @@ covid_19.body: "<h1>instrucciones a seguir para su entrega</h1>\n<p>Debido a la 
   \ a una basura cerrada</strong> Para evitar tocarla inadvertidamente más tarde.</p>\n\
   <h2>4. Límpiese las manos!</h2>\n<p>Una vez que haya desempacado su pedido y desechado\
   \ el embalaje,<strong>límpiese las manos!</strong></p>\n"
-order.payment.body: "Hola,\n<br>\nHemos completado una entrega que nos ha pedido.\n\
+order.payment.body: "Hola,\n<br>\nUsted ha solicitado un servicio de entrega con nosotros.\n\
   <br>\nA continuación encontrará un enlace que le permite pagar con tarjeta de crédito.\n"
 order.payment.subject: Pago de tu pedido %order.number%
 order.expiring_authorization.text: El autorización de pago para el pedido <strong>%order.number%</strong>
