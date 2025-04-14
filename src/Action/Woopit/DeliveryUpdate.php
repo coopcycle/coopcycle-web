@@ -10,6 +10,19 @@ use libphonenumber\PhoneNumberUtil;
 
 class DeliveryUpdate
 {
+    /**
+     * @var \AppBundle\Service\Geocoder
+     */
+    public $geocoder;
+    /**
+     * @var \Hashids\Hashids
+     */
+    public $hashids12;
+    public $entityManager;
+    /**
+     * @var \libphonenumber\PhoneNumberUtil
+     */
+    public $phoneNumberUtil;
     use UpdateDeliveryTrait;
 
     public function __construct(

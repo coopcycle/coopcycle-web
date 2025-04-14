@@ -15,18 +15,12 @@ use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 class Assign
 {
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        RepositoryInterface $customerRepository,
-        CanonicalizerInterface $canonicalizer,
-        FactoryInterface $customerFactory,
-        SettingsManager $settingsManager)
-    {
-        $this->tokenStorage = $tokenStorage;
-        $this->customerRepository = $customerRepository;
-        $this->canonicalizer = $canonicalizer;
-        $this->customerFactory = $customerFactory;
-        $this->settingsManager = $settingsManager;
-    }
+        private TokenStorageInterface $tokenStorage,
+        private RepositoryInterface $customerRepository,
+        private CanonicalizerInterface $canonicalizer,
+        private FactoryInterface $customerFactory,
+        private SettingsManager $settingsManager)
+    {}
 
     public function __invoke($data, Request $request)
     {

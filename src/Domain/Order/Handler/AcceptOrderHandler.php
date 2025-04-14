@@ -12,13 +12,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class AcceptOrderHandler
 {
-    private $eventRecorder;
-
-    public function __construct(RecordsMessages $eventRecorder, ValidatorInterface $validator)
-    {
-        $this->eventRecorder = $eventRecorder;
-        $this->validator = $validator;
-    }
+    public function __construct(private RecordsMessages $eventRecorder, private ValidatorInterface $validator)
+    {}
 
     public function __invoke(AcceptOrder $command)
     {

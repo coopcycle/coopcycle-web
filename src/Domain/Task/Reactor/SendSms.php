@@ -16,26 +16,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SendSms
 {
-    private $settingsManager;
-    private $messageBus;
-
     public function __construct(
-        SettingsManager $settingsManager,
-        OrderRepository $orderRepository,
-        MessageBusInterface $messageBus,
-        PhoneNumberUtil $phoneNumberUtil,
-        UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator,
-        string $secret)
-    {
-        $this->settingsManager = $settingsManager;
-        $this->orderRepository = $orderRepository;
-        $this->messageBus = $messageBus;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->urlGenerator = $urlGenerator;
-        $this->translator = $translator;
-        $this->secret = $secret;
-    }
+        private SettingsManager $settingsManager,
+        private OrderRepository $orderRepository,
+        private MessageBusInterface $messageBus,
+        private PhoneNumberUtil $phoneNumberUtil,
+        private UrlGeneratorInterface $urlGenerator,
+        private TranslatorInterface $translator,
+        private string $secret)
+    {}
 
     public function __invoke(TaskStarted $event)
     {

@@ -309,7 +309,8 @@
           "LowLactoseDiet": "Sans lactose",
           "LowSaltDiet": "Sans sel",
           "VeganDiet": "Vegan",
-          "VegetarianDiet": "Végétarien"
+          "VegetarianDiet": "Végétarien",
+          "EggFreeDiet": "Sans œufs"
         },
         "CART_PRODUCT_OPTIONS_MANDATORY": "Vous devez sélectionner au moins {{count}} option(s)",
         "CART_PRODUCT_OPTIONS_INVALID": "Certaines options ne sont pas disponibles",

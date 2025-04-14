@@ -11,16 +11,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class DeliveryCancel
 {
-
     public function __construct(
-        Hashids $hashids12,
-        TaskManager $taskManager,
-        EntityManagerInterface $entityManager)
-    {
-        $this->hashids12 = $hashids12;
-        $this->entityManager = $entityManager;
-        $this->taskManager = $taskManager;
-    }
+        private Hashids $hashids12,
+        private TaskManager $taskManager,
+        private EntityManagerInterface $entityManager)
+    {}
 
     public function __invoke($deliveryId)
     {

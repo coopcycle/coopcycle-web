@@ -11,18 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AutocompleteAdapterType extends AbstractType
 {
-    private $autocompleteAdapter;
-    private $locationIqAccessToken;
-
     public function __construct(
-        string $autocompleteAdapter,
-        string $locationIqAccessToken,
-        string $geocodeEarthApiKey)
-    {
-        $this->autocompleteAdapter = $autocompleteAdapter;
-        $this->locationIqAccessToken = $locationIqAccessToken;
-        $this->geocodeEarthApiKey = $geocodeEarthApiKey;
-    }
+        private string $autocompleteAdapter,
+        private string $locationIqAccessToken,
+        private string $geocodeEarthApiKey)
+    {}
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

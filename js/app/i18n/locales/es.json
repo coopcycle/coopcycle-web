@@ -302,7 +302,8 @@
             "LowLactoseDiet": "Baja en lactosa",
             "LowSaltDiet": "Baja en sal",
             "VeganDiet": "Vegano",
-            "VegetarianDiet": "Vegetariano"
+            "VegetarianDiet": "Vegetariano",
+            "EggFreeDiet": "Sin huevo"
         },
         "CART_PRODUCT_OPTIONS_MANDATORY": "{{count}} de las opciones son obligatorios para continuar",
         "CART_PRODUCT_OPTIONS_INVALID": "Alguna de tus elecciones no es válida",

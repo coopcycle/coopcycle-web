@@ -6,10 +6,8 @@ use AppBundle\Sylius\Order\OrderInterface;
 
 class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
 {
-    public function __construct(OrderInterface $order)
-    {
-        $this->order = $order;
-    }
+    public function __construct(private OrderInterface $order)
+    {}
 
     public function getLoopeatAccessToken()
     {

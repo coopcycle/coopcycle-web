@@ -25,6 +25,12 @@ use Symfony\Component\Console\Question\Question;
 
 Class CreateTasksCommand extends Command
 {
+    public $entityManager;
+    public $faker;
+    public $geocoder;
+    public $settingsManager;
+    public $country;
+    public $defaultLocale;
     private $batchSize = 10;
 
     public function __construct(

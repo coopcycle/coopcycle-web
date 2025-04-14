@@ -215,7 +215,7 @@ class AdminController extends AbstractController
             $qb = $this->orderRepository->search($request->query->get('q'));
         } else {
             $qb = $this->orderRepository
-                ->createQueryBuilder('o');
+                ->createOpmizedQueryBuilder('o');
             $qb
                 ->andWhere('o.state != :state')
                 ->setParameter('state', OrderInterface::STATE_CART)
@@ -2365,7 +2365,7 @@ class AdminController extends AbstractController
             'json' => ['html' => $html]
         ]);
 
-        $response = new Response((string) $pdf->getContent());
+        $response = new Response($pdf->getContent());
 
         $response->headers->add(['Content-Type' => 'application/pdf']);
         $response->headers->add([

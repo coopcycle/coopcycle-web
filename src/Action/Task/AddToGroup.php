@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class AddToGroup extends Base
 {
+    public $objectManager;
+    public $serializer;
     public function __construct(
         TaskManager $taskManager,
         EntityManagerInterface $objectManager,

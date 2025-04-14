@@ -12,6 +12,7 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 
 final class PriceHelper implements TaxableInterface
 {
+    public $taxCategory;
     public function __construct(
         private CurrencyContextInterface $currencyContext,
         private SettingsManager $settingsManager,

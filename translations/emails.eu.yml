@@ -85,7 +85,7 @@ task.failed.body: |
   <br>
   Ezin izan da #%task.id% zeregina burutu.
 order.payment.subject: 'Zure %order.number% eskaeraren ordainketa'
-order.payment.body: "Kaixo,\n<br>\nEgin duzun eskaera baten entrega burutu dugu.\n\
+order.payment.body: "Kaixo,\n<br>\nUsted ha solicitado un servicio de entrega con nosotros.\n\
   <br>\nAzpian kreditu-txartelarekin ordaintzeko esteka bat aurkituko duzu.\n"
 covid_19.subject: 'COVID-19 | Zure eskaerarentzako argibide garrantzitsuak'
 covid_19.body: "<h1>Zure banaketa jarraitzeko instrukzioak</h1>\n<p>Uneko COVID-19\

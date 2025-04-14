@@ -10,16 +10,11 @@ use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 class InvitationManager
 {
     public function __construct(
-        TokenGeneratorInterface $tokenGenerator,
-        CanonicalizerInterface $canonicalizer,
-        EmailManager $emailManager,
-        EntityManagerInterface $objectManager)
-    {
-        $this->tokenGenerator = $tokenGenerator;
-        $this->canonicalizer = $canonicalizer;
-        $this->emailManager = $emailManager;
-        $this->objectManager = $objectManager;
-    }
+        private TokenGeneratorInterface $tokenGenerator,
+        private CanonicalizerInterface $canonicalizer,
+        private EmailManager $emailManager,
+        private EntityManagerInterface $objectManager)
+    {}
 
     public function send(Invitation $invitation): void
     {

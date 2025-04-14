@@ -23,28 +23,15 @@ use Twig\Environment;
 #[Route(path: '/company')]
 class CompanyController
 {
-    private MessageBusInterface $bus;
-    private FormFactoryInterface $formFactory;
-    private Environment $twig;
-    private RouterInterface $router;
-
     public function __construct(
-        MessageBusInterface $bus,
-        FormFactoryInterface $formFactory,
-        Environment $twig,
-        TranslatorInterface $translator,
-        SettingsManager $settingsManager,
-        EmailManager $emailManager,
-        RouterInterface $router
-    ) {
-        $this->bus = $bus;
-        $this->formFactory = $formFactory;
-        $this->twig = $twig;
-        $this->translator = $translator;
-        $this->settingsManager = $settingsManager;
-        $this->emailManager = $emailManager;
-        $this->router = $router;
-    }
+        private MessageBusInterface $bus,
+        private FormFactoryInterface $formFactory,
+        private Environment $twig,
+        private TranslatorInterface $translator,
+        private SettingsManager $settingsManager,
+        private EmailManager $emailManager,
+        private RouterInterface $router)
+    {}
 
     #[Route(path: '/register', name: 'company_registration')]
     public function registerAction(Request $request)

@@ -8,6 +8,10 @@ use Doctrine\Common\Collections\Collection;
 
 class MenuEditor
 {
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    public $products;
     private $restaurant;
     private $menu;
 

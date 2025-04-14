@@ -4,6 +4,7 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxRate;
+use AppBundle\Sylius\Taxation\Resolver\TaxRateResolver;
 use Doctrine\ORM\EntityRepository;
 use Sylius\Bundle\TaxationBundle\Form\Type\TaxCategoryChoiceType as BaseTaxCategoryChoiceType;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -16,29 +17,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductTaxCategoryChoiceType extends AbstractType
 {
-    private $taxCategoryRepository;
-    private $translator;
-    private $country;
-    private $legacyTaxes = true;
-    private $locale;
-
+    /**
+     * @param TaxRateResolver $taxRateResolver
+     */
     public function __construct(
-        EntityRepository $taxCategoryRepository,
-        TranslatorInterface $translator,
-        TaxRateResolverInterface $taxRateResolver,
-        ProductVariantFactoryInterface $productVariantFactory,
-        string $country,
-        bool $legacyTaxes,
-        string $locale)
-    {
-        $this->taxCategoryRepository = $taxCategoryRepository;
-        $this->translator = $translator;
-        $this->taxRateResolver = $taxRateResolver;
-        $this->productVariantFactory = $productVariantFactory;
-        $this->country = $country;
-        $this->legacyTaxes = $legacyTaxes;
-        $this->locale = $locale;
-    }
+        private EntityRepository $taxCategoryRepository,
+        private TranslatorInterface $translator,
+        private TaxRateResolverInterface $taxRateResolver,
+        private ProductVariantFactoryInterface $productVariantFactory,
+        private string $country,
+        private string $locale,
+        private bool $legacyTaxes = true)
+    {}
 
     public function configureOptions(OptionsResolver $resolver)
     {

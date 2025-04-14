@@ -13,6 +13,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class RegenerateAvatarsCommand extends Command
 {
+    public $io;
     private $avatarDir;
 
     public function __construct(string $avatarDir)

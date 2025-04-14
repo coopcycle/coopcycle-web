@@ -28,48 +28,27 @@ use AppBundle\Security\UserManager;
 
 abstract class LocalBusinessType extends AbstractType
 {
-    protected $authorizationChecker;
-    protected $tokenStorage;
-    protected $entityManager;
-    protected $serializer;
-    protected $urlGenerator;
-    protected $country;
-    protected $debug;
-    protected $cashOnDeliveryOptinEnabled;
     protected bool $transportersEnabled;
-    protected array $transportersConfig;
-    protected bool $billingEnabled;
     protected bool $standtrackEnabled;
 
     public function __construct(
-        AuthorizationCheckerInterface $authorizationChecker,
-        TokenStorageInterface $tokenStorage,
-        EntityManagerInterface $entityManager,
-        SerializerInterface $serializer,
-        GatewayResolver $gatewayResolver,
-        UrlGeneratorInterface $urlGenerator,
+        protected AuthorizationCheckerInterface $authorizationChecker,
+        protected TokenStorageInterface $tokenStorage,
+        protected EntityManagerInterface $entityManager,
+        protected SerializerInterface $serializer,
+        protected GatewayResolver $gatewayResolver,
+        protected UrlGeneratorInterface $urlGenerator,
         protected UserManager $userManager,
         protected FormFieldUtils $formFieldUtils,
-        string $country,
-        bool $debug = false,
-        bool $cashOnDeliveryOptinEnabled = false,
-        array $transportersConfig = [],
-        bool $billingEnabled = false,
+        protected string $country,
+        protected bool $debug = false,
+        protected bool $cashOnDeliveryOptinEnabled = false,
+        protected array $transportersConfig = [],
+        protected bool $billingEnabled = false,
         ?string $standtrackEnabled = null
     )
     {
-        $this->authorizationChecker = $authorizationChecker;
-        $this->tokenStorage = $tokenStorage;
-        $this->entityManager = $entityManager;
-        $this->serializer = $serializer;
-        $this->urlGenerator = $urlGenerator;
-        $this->country = $country;
-        $this->debug = $debug;
-        $this->cashOnDeliveryOptinEnabled = $cashOnDeliveryOptinEnabled;
-        $this->gatewayResolver = $gatewayResolver;
         $this->transportersEnabled = !empty($transportersConfig);
-        $this->transportersConfig = $transportersConfig;
-        $this->billingEnabled = $billingEnabled;
         $this->standtrackEnabled = !empty($standtrackEnabled);
     }
 

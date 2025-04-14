@@ -14,6 +14,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 Class DeduplicateCustomerAddressesCommand extends Command
 {
+    public $io;
     private $connection;
 
     public function __construct(Connection $connection)

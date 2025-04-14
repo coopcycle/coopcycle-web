@@ -19,6 +19,10 @@ use Twig\Environment as TwigEnvironment;
 
 Class EmailCubeQueryResultCommand extends Command
 {
+    /**
+     * @var \Symfony\Component\Console\Style\SymfonyStyle
+     */
+    public $io;
     public function __construct(
         private CubeJsTokenFactory $tokenFactory,
         private HttpClientInterface $cubejsClient,

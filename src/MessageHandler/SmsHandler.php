@@ -9,6 +9,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 class SmsHandler
 {
+    public $smsManager;
     public function __construct(SmsManager $smsManager)
     {
         $this->smsManager = $smsManager;

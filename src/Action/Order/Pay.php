@@ -21,30 +21,19 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Pay
 {
-    private $entityManager;
-    private $stripeManager;
-    private $orderNumberAssigner;
-    private $cashEnabled;
+    private $logger;
 
     public function __construct(
-        OrderManager $dataManager,
-        EntityManagerInterface $entityManager,
-        StripeManager $stripeManager,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        PaymentMethodRepositoryInterface $paymentMethodRepository,
-        GatewayResolver $gatewayResolver,
-        MercadopagoManager $mercadopagoManager,
-        bool $cashEnabled = false,
+        private OrderManager $orderManager,
+        private EntityManagerInterface $entityManager,
+        private StripeManager $stripeManager,
+        private OrderNumberAssignerInterface $orderNumberAssigner,
+        private PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private GatewayResolver $gatewayResolver,
+        private MercadopagoManager $mercadopagoManager,
+        private bool $cashEnabled = false,
         LoggerInterface $logger = null)
     {
-        $this->orderManager = $dataManager;
-        $this->entityManager = $entityManager;
-        $this->stripeManager = $stripeManager;
-        $this->orderNumberAssigner = $orderNumberAssigner;
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->gatewayResolver = $gatewayResolver;
-        $this->mercadopagoManager = $mercadopagoManager;
-        $this->cashEnabled = $cashEnabled;
         $this->logger = $logger ?? new NullLogger();
     }
 

@@ -16,14 +16,10 @@ use Symfony\Contracts\Cache\CacheInterface;
 class CustomizeType extends AbstractType
 {
     public function __construct(
-        SettingsManager $settingsManager,
-        Filesystem $assetsFilesystem,
-        CacheInterface $projectCache)
-    {
-        $this->settingsManager = $settingsManager;
-        $this->assetsFilesystem = $assetsFilesystem;
-        $this->projectCache = $projectCache;
-    }
+        private SettingsManager $settingsManager,
+        private Filesystem $assetsFilesystem,
+        private CacheInterface $projectCache)
+    {}
 
     private function getContentData($filename)
     {

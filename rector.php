@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Invenso\Rector\Set\ApiPlatformSetList;
+use Rector\CodeQuality\Rector\Class_\CompleteDynamicPropertiesRector;
 use Rector\Config\RectorConfig;
 use Rector\Symfony\Set\SymfonySetList;
 use Rector\Symfony\CodeQuality\Rector\ClassMethod\ActionSuffixRemoverRector;
@@ -36,6 +37,9 @@ return RectorConfig::configure()
     ->withSets([
         ApiPlatformSetList::ANNOTATIONS_TO_ATTRIBUTES,
         SymfonySetList::ANNOTATIONS_TO_ATTRIBUTES
+    ])
+    ->withRules([
+        CompleteDynamicPropertiesRector::class,
     ])
 ;
 

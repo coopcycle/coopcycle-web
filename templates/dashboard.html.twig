@@ -8,22 +8,20 @@
 {% endblock %}
 
 {% block body %}
-<section class="dashboard-subnav py-5">
-  <div class="container container--full-height">
+<section class="dashboard-subnav px-4 py-3">
   {% block subnav %}{% endblock %}
   {% block dashboard_subnav %}{% endblock %}
-  </div>
 </section>
-  {% if block('dashboard_actions') %}
-<section class="dashboard-actions py-5">
-    <div class="container container--full-height">
-      {% block dashboard_actions %}{% endblock %}
-    </div>
-</section>
-  {% endif %}
-<div class="container container--full-height mt-5">
+{% if block('dashboard_actions') %}
+  <section class="dashboard-actions py-3">
+      <div class="container container--full-height">
+        {% block dashboard_actions %}{% endblock %}
+      </div>
+  </section>
+{% endif %}
+<div class="container-fluid container--full-height m-4">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-md-12">
       {% block content %}{% endblock %}
     </div>
   </div>

@@ -7,11 +7,8 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
 {
-    public function __construct(OrderInterface $order, SessionInterface $session)
-    {
-        $this->order = $order;
-        $this->session = $session;
-    }
+    public function __construct(private OrderInterface $order, private SessionInterface $session)
+    {}
 
     public function getDabbaAccessToken()
     {

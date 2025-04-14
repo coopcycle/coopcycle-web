@@ -21,6 +21,9 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class BotCommand extends DaemonCommand
 {
+    public $apiClient;
+    public $geotools;
+    public $io;
     private $doctrine;
     private $tokenManager;
     private $routing;

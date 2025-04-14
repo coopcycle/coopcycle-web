@@ -20,6 +20,10 @@ use Twig\Environment;
 #[Route(path: '/{_locale}/request')]
 class RequestController
 {
+    public $translator;
+    public $router;
+    public $settingsManager;
+    public $emailManager;
     private Environment $twig;
     private FormFactoryInterface $formFactory;
     private MessageBusInterface $bus;

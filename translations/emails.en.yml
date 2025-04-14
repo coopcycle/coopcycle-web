@@ -87,8 +87,7 @@ task.failed.body: |
   <br>
   Task #%task.id% could not be completed.
 order.payment.subject: Payment of your order %order.number%
-order.payment.body: "Hello,\n<br>\nWe have completed a delivery that you have ordered\
-  \ from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
+order.payment.body: "Hello,\n<br>\nYou have ordered a delivery service from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
 covid_19.subject: COVID-19 | Important instructions for your order
 covid_19.body: "<h1>Instructions to follow for your delivery</h1>\n<p>Given the current\
   \ COVID-19 (Coronavirus) pandemic, you <strong>must strictly</strong> adhere to\

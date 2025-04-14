@@ -15,22 +15,14 @@ use Twig\Environment as TwigEnvironment;
 class IndexDeliveriesHandler
 {
     public function __construct(
-        EntityManagerInterface $entityManager,
-        Client $ingestClient,
-        Client $controlClient,
-        TwigEnvironment $twig,
-        string $sonicSecretPassword,
-        string $namespace,
-        LoggerInterface $logger)
-    {
-        $this->entityManager = $entityManager;
-        $this->ingestClient = $ingestClient;
-        $this->controlClient = $controlClient;
-        $this->twig = $twig;
-        $this->sonicSecretPassword = $sonicSecretPassword;
-        $this->namespace = $namespace;
-        $this->logger = $logger;
-    }
+        private EntityManagerInterface $entityManager,
+        private Client $ingestClient,
+        private Client $controlClient,
+        private TwigEnvironment $twig,
+        private string $sonicSecretPassword,
+        private string $namespace,
+        private LoggerInterface $logger)
+    {}
 
     public function __invoke(IndexDeliveries $message)
     {

@@ -13,6 +13,10 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 Class CopyStoreAddressesCommand extends Command
 {
+    /**
+     * @var \Symfony\Component\Console\Style\SymfonyStyle
+     */
+    public $io;
     private $entityManager;
 
     public function __construct(

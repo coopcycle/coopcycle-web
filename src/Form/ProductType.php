@@ -45,36 +45,19 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductType extends AbstractType
 {
-    private $variantFactory;
-    private $productAttributeRepository;
-    private $productAttributeValueFactory;
-    private $localeProvider;
-    private $translator;
-    private $entityManager;
-    private $variantResolver;
     private $hasChangedName = false;
 
     public function __construct(
-        ProductVariantFactoryInterface $variantFactory,
-        RepositoryInterface $productAttributeRepository,
-        FactoryInterface $productAttributeValueFactory,
-        LocaleProviderInterface $localeProvider,
-        TranslatorInterface $translator,
-        EntityManagerInterface $entityManager,
-        LazyProductVariantResolverInterface $variantResolver,
-        bool $taxIncl = true,
-        bool $businessAccountEnabled = false)
-    {
-        $this->variantFactory = $variantFactory;
-        $this->productAttributeRepository = $productAttributeRepository;
-        $this->productAttributeValueFactory = $productAttributeValueFactory;
-        $this->localeProvider = $localeProvider;
-        $this->translator = $translator;
-        $this->entityManager = $entityManager;
-        $this->variantResolver = $variantResolver;
-        $this->taxIncl = $taxIncl;
-        $this->businessAccountEnabled = $businessAccountEnabled;
-    }
+        private ProductVariantFactoryInterface $variantFactory,
+        private RepositoryInterface $productAttributeRepository,
+        private FactoryInterface $productAttributeValueFactory,
+        private LocaleProviderInterface $localeProvider,
+        private TranslatorInterface $translator,
+        private EntityManagerInterface $entityManager,
+        private LazyProductVariantResolverInterface $variantResolver,
+        private bool $taxIncl = true,
+        private bool $businessAccountEnabled = false)
+    {}
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

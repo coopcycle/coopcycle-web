@@ -15,6 +15,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class ApplyTaxesCommand extends Command
 {
+    public $io;
     private $orderTaxesProcessor;
     private $orderRepository;
     private $orderManager;

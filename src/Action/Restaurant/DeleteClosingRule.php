@@ -9,10 +9,8 @@ use Doctrine\ORM\Query\Expr;
 
 class DeleteClosingRule
 {
-    public function __construct(EntityManagerInterface $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
+    public function __construct(private EntityManagerInterface $objectManager)
+    {}
 
     public function __invoke($data)
     {

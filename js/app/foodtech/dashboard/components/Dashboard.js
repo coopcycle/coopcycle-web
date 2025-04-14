@@ -51,8 +51,11 @@ export default function Dashboard({ onDateChange }) {
 
   const sliderMarks = {
     0: t('RESTAURANT_DASHBOARD_DELAY_MARK_NONE'),
-    10: '10min',
+    5: '5min',
+    10: '10',
+    15: '15',
     20: '20',
+    25: '25',
     30: '30',
     40: '40',
     50: '50',
@@ -100,30 +103,6 @@ export default function Dashboard({ onDateChange }) {
   return (
     <div className="FoodtechDashboard">
       <div className="FoodtechDashboard__Navbar">
-        { showSettings && (
-          <div className="FoodtechDashboard__Navbar__Slider">
-            <Row type="flex" align="middle">
-              <Col span={ 4 }>
-                  <span>
-                    <i className="fa fa-clock-o mr-1"></i>
-                    { t('RESTAURANT_DASHBOARD_DELAY_SETTING') }
-                    <Tooltip title={ t('RESTAURANT_DASHBOARD_DELAY_SETTING_HELP')}>
-                      <i className='ml-1 fa fa-question-circle'></i>
-                    </Tooltip>
-                  </span>
-              </Col>
-              <Col span={ 20 }>
-                <Slider
-                  max={ 180 }
-                  defaultValue={ preparationDelay }
-                  marks={ sliderMarks }
-                  step={ null }
-                  tipFormatter={ _tipFormatter }
-                  onChange={ delay => dispatch(setPreparationDelay(delay)) } />
-              </Col>
-            </Row>
-          </div>
-        ) }
         { showSearch && (
           <div className="FoodtechDashboard__Navbar__Search">
             <Search />
@@ -170,6 +149,32 @@ export default function Dashboard({ onDateChange }) {
               } } />
           </ConfigProvider>
         </div>
+      </div>
+      <div>
+        { showSettings && (
+            <div className="FoodtechDashboard__Navbar__Slider">
+              <Row type="flex" align="middle">
+                <Col span={ 4 }>
+                    <span>
+                      <i className="fa fa-clock-o mr-1"></i>
+                      { t('RESTAURANT_DASHBOARD_DELAY_SETTING') }
+                      <Tooltip title={ t('RESTAURANT_DASHBOARD_DELAY_SETTING_HELP')}>
+                        <i className='ml-1 fa fa-question-circle'></i>
+                      </Tooltip>
+                    </span>
+                </Col>
+                <Col span={ 20 }>
+                  <Slider
+                    max={ 180 }
+                    defaultValue={ preparationDelay }
+                    marks={ sliderMarks }
+                    step={ null }
+                    tipFormatter={ _tipFormatter }
+                    onChange={ delay => dispatch(setPreparationDelay(delay)) } />
+                </Col>
+              </Row>
+            </div>
+          ) }
       </div>
       <div className="FoodtechDashboard__SlotViz">
         <SlotViz />
