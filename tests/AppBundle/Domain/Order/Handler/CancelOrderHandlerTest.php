@@ -7,7 +7,6 @@ use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Handler\CancelOrderHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Service\StripeManager;
 use AppBundle\Exception\OrderNotCancellableException;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
@@ -40,13 +39,11 @@ class CancelOrderHandlerTest extends KernelTestCase
         $this->setUpStripe();
 
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
-        $this->stripeManager = $this->prophesize(StripeManager::class);
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
         $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
 
         $this->handler = new CancelOrderHandler(
-            $this->stripeManager->reveal(),
             $this->eventRecorder->reveal(),
             $this->stateMachineFactory
         );

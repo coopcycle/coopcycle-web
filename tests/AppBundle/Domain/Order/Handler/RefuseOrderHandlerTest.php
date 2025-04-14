@@ -7,7 +7,6 @@ use AppBundle\Domain\Order\Event\OrderRefused;
 use AppBundle\Domain\Order\Handler\RefuseOrderHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -36,10 +35,8 @@ class RefuseOrderHandlerTest extends TestCase
 
         $this->eventRecorder = $this->prophesize(RecordsMessages::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
-        $this->stripeManager = $this->prophesize(StripeManager::class);
 
         $this->handler = new RefuseOrderHandler(
-            $this->stripeManager->reveal(),
             $this->eventRecorder->reveal()
         );
     }
@@ -58,10 +55,6 @@ class RefuseOrderHandlerTest extends TestCase
 
         $order = new Order();
         $order->addPayment($payment);
-
-        $this->stripeManager
-            ->refund($payment, null, true)
-            ->shouldNotBeCalled();
 
         $this->eventRecorder
             ->record(Argument::type(OrderRefused::class))
