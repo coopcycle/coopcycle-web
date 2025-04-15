@@ -57,14 +57,15 @@ export default function Dashboard({ onDateChange }) {
     20: '20',
     25: '25',
     30: '30',
+    35: '35',
     40: '40',
+    45: '45',
     50: '50',
+    55: '55',
     60: '1h',
     70: '1h10',
     90: '1h30',
-    120: '2h',
-    150: '2h30',
-    180: '3h',
+    120: '2h'
   }
 
   const sections = [
@@ -153,7 +154,7 @@ export default function Dashboard({ onDateChange }) {
       <div>
         { showSettings && (
             <div className="FoodtechDashboard__Navbar__Slider">
-              <Row type="flex" align="middle">
+              <Row type="flex" align="middle" className='px-2'>
                 <Col span={ 4 }>
                     <span>
                       <i className="fa fa-clock-o mr-1"></i>
@@ -165,7 +166,7 @@ export default function Dashboard({ onDateChange }) {
                 </Col>
                 <Col span={ 20 }>
                   <Slider
-                    max={ 180 }
+                    max={ 120 }
                     defaultValue={ preparationDelay }
                     marks={ sliderMarks }
                     step={ null }
