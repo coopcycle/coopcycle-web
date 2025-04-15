@@ -3,13 +3,7 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Task\RecurrenceRule;
-use AppBundle\Entity\TaskImage;
 use AppBundle\Entity\TimeSlot;
-use DateTime;
-use Doctrine\Common\Collections\Collection;
-use Nucleos\UserBundle\Model\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 final class TaskInput

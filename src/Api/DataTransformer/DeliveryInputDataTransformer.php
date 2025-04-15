@@ -19,6 +19,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\TimeSlotChoice;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
@@ -169,7 +170,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
     ): Task
     {
         $type = null;
-        if (isset($data->type)) {
+        if ($data->type) {
             $type = strtoupper($data->type);
         }
         // Task type derived from a property name has higher priority than the one from the task object
@@ -190,58 +191,84 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         /**
-         * @var TimeSlot $timeSlot
+         * @var TsRange $range
          */
-        $timeSlot = null;
+        $range = null;
 
-        if ($data->timeSlotUrl) {
-            $timeSlot = $data->timeSlotUrl;
-            $outputTask->setTimeSlot($timeSlot);
-        }
+        if ($data->timeSlot) {
 
-        if (isset($data->timeSlot)) {
-
-            /**
-             * @var TsRange $range
-             */
             $range = $data->timeSlot;
 
-            // Validate that the input time slot was selected from the given list of time slot choices (timeSlotUrl)
-            if (null !== $timeSlot) {
-                $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
-                $choiceList = $choiceLoader->loadChoiceList();
+            $outputTask->setAfter($range->getLower());
+            $outputTask->setBefore($range->getUpper());
 
-                $choices = array_filter(
-                    $choiceList->getChoices(),
-                    function ($choice) use ($range) {
-                        return $choice->contains($range);
-                    }
-                );
+        } elseif ($data->before || $data->after) {
 
-                if (0 === count($choices)) {
+            $tz = date_default_timezone_get();
+
+            $after = null;
+            if ($data->after) {
+                $after = Carbon::parse($data->after)->tz($tz)->toDateTime();
+            }
+
+            $before = null;
+            if ($data->before) {
+                $before = Carbon::parse($data->before)->tz($tz)->toDateTime();
+            }
+
+            if ($after && $before) {
+                $range = TsRange::create($after, $before);
+            }
+
+            if ($after) {
+                $outputTask->setAfter($after);
+            }
+            if ($before) {
+                $outputTask->setBefore($before);
+            }
+        }
+
+        if ($range) {
+            /**
+             * @var TimeSlot $timeSlot
+             */
+            $timeSlot = null;
+
+            if ($data->timeSlotUrl) {
+                $timeSlot = $data->timeSlotUrl;
+
+                if ($this->isChoice($timeSlot, $range)) {
+                    $outputTask->setTimeSlot($timeSlot);
+                } else {
                     $this->logger->warning('Invalid time slot range: ', [
                         'timeSlot' => $timeSlot->getId(),
                         'range' => $range,
                     ]);
                     throw new InvalidArgumentException('task.timeSlot.invalid');
                 }
-            }
 
-            $outputTask->setAfter($range->getLower());
-            $outputTask->setBefore($range->getUpper());
-        } elseif (isset($data->before) || isset($data->after)) {
+                $outputTask->setTimeSlot($timeSlot);
+            } else if ($store) {
+                // Try to find a time slot choice by range
 
-            $tz = date_default_timezone_get();
+                $storeTimeSlots = $store->getTimeSlots();
 
-            if (isset($data->after)) {
-                $outputTask->setAfter(
-                    Carbon::parse($data->after)->tz($tz)->toDateTime()
-                );
-            }
-            if (isset($data->before)) {
-                $outputTask->setBefore(
-                    Carbon::parse($data->before)->tz($tz)->toDateTime()
-                );
+                foreach ($storeTimeSlots as $storeTimeSlot) {
+                    if ($this->isChoice($storeTimeSlot, $range)) {
+                        $timeSlot = $storeTimeSlot;
+                        $outputTask->setTimeSlot($timeSlot);
+                        break;
+                    }
+                }
+
+                if (null === $timeSlot) {
+                    $this->logger->warning('No time slot choice found: ', [
+                        'store' => $store->getId(),
+                        'range' => $range,
+                    ]);
+                    //FIXME: decide if we want to fail the request
+//                    throw new InvalidArgumentException('task.timeSlot.notFound');
+                }
             }
         }
 
@@ -249,7 +276,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
          * @var Address $address
          */
         $address = null;
-        if (isset($data->address)) {
+        if ($data->address) {
             if (is_string($data->address)) {
                 $addressIRI = $this->iriConverter->getIriFromResourceClass(Address::class);
                 if (0 === strpos($data->address, $addressIRI)) {
@@ -262,7 +289,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             }
 
             if (null === $address->getGeo()) {
-                if (isset($data->latLng)) {
+                if ($data->latLng) {
                     [$latitude, $longitude] = $data->latLng;
                     $address->setGeo(new GeoCoordinates($latitude, $longitude));
                 } else {
@@ -276,11 +303,11 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             $outputTask->setAddress($address);
         }
 
-        if (isset($data->comments)) {
+        if ($data->comments) {
             $outputTask->setComments($data->comments);
         }
 
-        if (isset($data->tags)) {
+        if ($data->tags) {
             $outputTask->setTags($data->tags);
             $this->tagManager->update($outputTask);
         }
@@ -288,15 +315,15 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         // Ignore weight & packages for pickup tasks
         // @see https://github.com/coopcycle/coopcycle-web/issues/3461
         if ($outputTask->isPickup()) {
-            unset($data->weight);
-            unset($data->packages);
+            $data->weight = null;
+            $data->packages = null;
         }
 
-        if (isset($data->weight)) {
+        if ($data->weight) {
             $outputTask->setWeight($data->weight);
         }
 
-        if (isset($data->packages)) {
+        if ($data->packages) {
 
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
@@ -308,11 +335,11 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             }
         }
 
-        if (isset($data->metadata)) { // we support here metadata send as a string from a CSV file
+        if ($data->metadata) { // we support here metadata send as a string from a CSV file
             $this->parseAndApplyMetadata($outputTask, $data->metadata);
         }
 
-        if (isset($data->assignedTo)) {
+        if ($data->assignedTo) {
             $user = $this->userManager->findUserByUsername($data->assignedTo);
             if ($user && $user->hasRole('ROLE_COURIER')) {
                 $outputTask->assignTo($user);
@@ -320,5 +347,20 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         return $outputTask;
+    }
+
+    private function isChoice(TimeSlot $timeSlot, TsRange $range): bool
+    {
+        $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
+        $choiceList = $choiceLoader->loadChoiceList();
+
+        $choices = array_filter(
+            $choiceList->getChoices(),
+            function (TimeSlotChoice $choice) use ($range) {
+                return $choice->equals($range);
+            }
+        );
+
+        return 0 !== count($choices);
     }
 }

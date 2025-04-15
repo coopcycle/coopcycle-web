@@ -128,11 +128,11 @@ class TimeSlotChoice
         return $range;
     }
 
-    public function contains(TsRange $range): bool
+    public function equals(TsRange $range): bool
     {
         $thisRange = $this->toTsRange();
 
-        return $thisRange->lower <= $range->lower && $thisRange->upper >= $range->upper;
+        return $thisRange->lower == $range->lower && $thisRange->upper == $range->upper;
     }
 
     public function __toString()
