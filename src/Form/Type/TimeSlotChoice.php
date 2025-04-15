@@ -130,9 +130,13 @@ class TimeSlotChoice
 
     public function equals(TsRange $range): bool
     {
+        $rangeToString = function (TsRange $r) {
+            return sprintf('%s - %s', $r->lower->format('Y-m-d H:i'), $r->upper->format('Y-m-d H:i'));
+        };
+
         $thisRange = $this->toTsRange();
 
-        return $thisRange->lower == $range->lower && $thisRange->upper == $range->upper;
+        return $rangeToString($thisRange) === $rangeToString($range);
     }
 
     public function __toString()

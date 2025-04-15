@@ -354,13 +354,12 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
         $choiceList = $choiceLoader->loadChoiceList();
 
-        $choices = array_filter(
-            $choiceList->getChoices(),
-            function (TimeSlotChoice $choice) use ($range) {
-                return $choice->equals($range);
+        foreach ($choiceList->getChoices() as $choice) {
+            if ($choice->equals($range)) {
+                return true;
             }
-        );
+        }
 
-        return 0 !== count($choices);
+        return false;
     }
 }
