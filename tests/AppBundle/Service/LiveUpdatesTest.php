@@ -130,7 +130,7 @@ class LiveUpdatesTest extends TestCase
         ];
         $allUsers = array_merge([$user], $adminUsers);
 
-        $this->userManagerMock->findUsersByRole('ROLE_ADMIN')
+        $this->userManagerMock->findUsersByRoles(['ROLE_ADMIN'])
             ->willReturn($adminUsers)
             ->shouldBeCalledOnce();
 
@@ -164,7 +164,7 @@ class LiveUpdatesTest extends TestCase
         ];
         $allUsers = $adminUsers;
 
-        $this->userManagerMock->findUsersByRole('ROLE_ADMIN')
+        $this->userManagerMock->findUsersByRoles(['ROLE_ADMIN'])
             ->willReturn($adminUsers)
             ->shouldBeCalledOnce();
 
