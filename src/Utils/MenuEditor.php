@@ -19,6 +19,7 @@ class MenuEditor
     {
         $this->restaurant = $restaurant;
         $this->menu = $menu;
+        $this->products = $this->getProducts();
     }
 
     public function getName()
