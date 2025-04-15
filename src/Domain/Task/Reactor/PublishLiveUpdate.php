@@ -49,8 +49,7 @@ class PublishLiveUpdate
             $this->liveUpdates->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
         } else if ($event instanceof TaskListUpdatedv2) { // can be safely broadcasted to riders, dispatchers and admins
             $user = $event->getTaskList()->getCourier(); // not used in the rider part of the app yet
-            $this->liveUpdates->toUsers([$user], $event); // not used in the rider part of the app yet
-            $this->liveUpdates->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
+            $this->liveUpdates->toUserAndRoles($user, ['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
         } else if ($event instanceof TourCreated
             || $event instanceof TourUpdated
         ) {

@@ -187,4 +187,75 @@ class LiveUpdatesTest extends TestCase
 
         $this->liveUpdates->toUserAndAdmins($allUsers[0], $message);
     }
+
+    public function testToUserAndRoles_userDontHaveRole(): void
+    {
+        $message = 'Test message';
+        $user = $this->prophesize(UserInterface::class)->reveal();
+        $usersWithRoles = [
+            $this->prophesize(UserInterface::class)->reveal(),
+            $this->prophesize(UserInterface::class)->reveal(),
+            $this->prophesize(UserInterface::class)->reveal()
+        ];
+        $allUsers = array_merge([$user], $usersWithRoles);
+        $roles = ['ROLE_1', 'ROLE_2'];
+
+        $this->userManagerMock->findUsersByRoles($roles)
+            ->willReturn($usersWithRoles)
+            ->shouldBeCalledOnce();
+
+        $channels = array_map(function (UserInterface $user) {
+            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+        }, $allUsers);
+
+        $event = [
+            "event" => [
+                "name" => "Test message",
+                "data" => []
+            ]
+        ];
+
+        $this->centrifugoClientMock->broadcast($channels, $event)->shouldBeCalledOnce();
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())
+            ->willReturn(false) // just test message is send via Centrifugo
+            ->shouldBeCalled();
+
+        $this->liveUpdates->toUserAndRoles($user, $roles, $message);
+    }
+
+    public function testToUserAndRoles_userHaveRole(): void
+    {
+        $message = 'Test message';
+        $usersWithRoles = [
+            $this->prophesize(UserInterface::class)->reveal(),
+            $this->prophesize(UserInterface::class)->reveal(),
+            $this->prophesize(UserInterface::class)->reveal()
+        ];
+        $allUsers = $usersWithRoles;
+        $roles = ['ROLE_1', 'ROLE_2'];
+
+        $this->userManagerMock->findUsersByRoles($roles)
+            ->willReturn($usersWithRoles)
+            ->shouldBeCalledOnce();
+
+        $channels = array_map(function (UserInterface $user) {
+            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+        }, $allUsers);
+
+        $event = [
+            "event" => [
+                "name" => "Test message",
+                "data" => []
+            ]
+        ];
+
+        $this->centrifugoClientMock->broadcast($channels, $event)->shouldBeCalledOnce();
+
+        $this->notificationPreferencesMock->isEventEnabled(Argument::any())
+            ->willReturn(false) // just test message is send via Centrifugo
+            ->shouldBeCalled();
+
+        $this->liveUpdates->toUserAndRoles($allUsers[0], $roles, $message);
+    }
 }
