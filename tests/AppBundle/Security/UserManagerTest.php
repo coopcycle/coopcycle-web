@@ -36,12 +36,12 @@ class UserManagerTest extends KernelTestCase
         parent::tearDown();
     }
 
-    public function testFindUsersByRolesEmptyRoles(): void
+    public function testFindUsersByRoles_emptyRoles(): void
     {
         $this->assertEmpty($this->userManager->findUsersByRoles([]));
     }
 
-    public function testFindUsersByRolesNoUserWithRole(): void
+    public function testFindUsersByRoles_noUserWithRole(): void
     {
         $this->createUser(['ROLE_1'], 1);
         $this->createUser(['ROLE_2'], 2);
@@ -49,7 +49,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertEmpty($this->userManager->findUsersByRoles(['ROLE_3']));
     }
 
-    public function testFindUsersByRolesSomeUsersHaveSomeRoles(): void
+    public function testFindUsersByRoles_someUsersHaveSomeRoles(): void
     {
         $user_2 = $this->createUser(['ROLE_2'], 2);
         $user_3 = $this->createUser(['ROLE_3'], 3);
@@ -60,7 +60,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertSame($user_2, $result[0]);
     }
 
-    public function testFindUsersByRolesOneUsersHaveARoles(): void
+    public function testFindUsersByRoles_oneUsersHaveARoles(): void
     {
         $user_1 = $this->createUser(['ROLE_1'], 1);
         $user_2 = $this->createUser(['ROLE_2'], 2);
@@ -73,7 +73,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertSame($user_3, $result[0]);
     }
 
-    public function testFindUsersByRolesSomeUsersHaveAllRoles(): void
+    public function testFindUsersByRoles_someUsersHaveAllRoles(): void
     {
         $user_1 = $this->createUser(['ROLE_1'], 1);
         $user_2 = $this->createUser(['ROLE_2'], 2);
@@ -85,7 +85,7 @@ class UserManagerTest extends KernelTestCase
         $this->assertCount(3, $result);
     }
 
-    public function testFindUsersByRolesAllUsersHaveAllRoles(): void
+    public function testFindUsersByRoles_allUsersHaveAllRoles(): void
     {
         $user_1 = $this->createUser(['ROLE_1'], 1);
         $user_2 = $this->createUser(['ROLE_2'], 2);
