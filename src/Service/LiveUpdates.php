@@ -41,16 +41,7 @@ class LiveUpdates
 
     public function toAdmins($message, array $data = [])
     {
-        $admins = $this->userManager->findUsersByRole('ROLE_ADMIN');
-
-        $this->toUsers($admins, $message, $data);
-    }
-
-    public function toDispatchers($message, array $data = [])
-    {
-        $admins = $this->userManager->findUsersByRole('ROLE_DISPATCHER');
-
-        $this->toUsers($admins, $message, $data);
+        $this->toRoles(['ROLE_ADMIN'], $message, $data);
     }
 
     public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
@@ -88,6 +79,17 @@ class LiveUpdates
             $channel,
             ['event' => $payload]
         );
+    }
+
+    /**
+     * @param string[] $users
+     * @param NamedMessage|string $message
+     */
+    public function toRoles($roles, $message, array $data = [])
+    {
+        $users = $this->userManager->findUsersByRoles($roles);
+
+        $this->toUsers($users, $message, $data);
     }
 
     /**
