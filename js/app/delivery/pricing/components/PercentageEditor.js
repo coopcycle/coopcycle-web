@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 
 const convertToUi = value => {
   return value / 100 - 100
@@ -11,8 +10,6 @@ const convertFromUi = value => {
 
 export default ({ defaultValue, onChange }) => {
   const [percentage, setPercentage] = useState(defaultValue.percentage || 10000) // 10000 = 100.00%
-
-  const { t } = useTranslation()
 
   const initialLoad = useRef(true)
 
