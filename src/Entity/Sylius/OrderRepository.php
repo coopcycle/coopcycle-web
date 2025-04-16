@@ -55,6 +55,17 @@ class OrderRepository extends BaseOrderRepository
         return $qb;
     }
 
+    public function findCartById($id) : ?Order {
+        $qb = $this->createOpmizedQueryBuilder('o');
+        
+        return $qb->where('o.id = :id')
+            ->andWhere('o.state = :state')
+            ->setParameter('id', $id)
+            ->setParameter('state', OrderInterface::STATE_CART)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
     // This method is called by Dependency Injection
     public function setDeliveryRepository(?DeliveryRepository $deliveryRepository): void
     {
