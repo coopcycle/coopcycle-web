@@ -191,7 +191,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         /**
-         * @var TsRange $range
+         * @var TsRange|null $range
          */
         $range = null;
 
@@ -230,7 +230,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
 
         if ($range) {
             /**
-             * @var TimeSlot $timeSlot
+             * @var TimeSlot|null $timeSlot
              */
             $timeSlot = null;
 
@@ -273,7 +273,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         /**
-         * @var Address $address
+         * @var Address|null $address
          */
         $address = null;
         if ($data->address) {
