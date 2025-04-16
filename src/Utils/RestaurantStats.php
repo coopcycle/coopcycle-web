@@ -50,6 +50,13 @@ class RestaurantStats implements \Countable
 
     private $messengers;
 
+    private $mealVoucherCodes = [
+        'EDENRED',
+        'SWILE',
+        'CONECS',
+        'RESTOFLASH',
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         \DateTime $start,
@@ -333,17 +340,19 @@ class RestaurantStats implements \Countable
 
             $codes = $paymentMethods[$order->id] ?? [];
 
-            // Even if the order was partially paid with Edenred,
+            // Even if the order was partially paid with meal vouchers,
             // we only show one payment method.
-            $code = array_reduce($codes, function ($carry, $item) {
-                if ('EDENRED' === $carry || 'EDENRED' === $item) {
-                    return 'EDENRED';
+
+            if (count($codes) === 1) {
+                $order->paymentMethod = current($codes);
+            } else {
+                $matches = array_intersect($this->mealVoucherCodes, $codes);
+                if (count($matches) > 0) {
+                    $order->paymentMethod = current($matches);
+                } else {
+                    $order->paymentMethod = current($codes);
                 }
-
-                return $item;
-            }, null);
-
-            $order->paymentMethod = $code;
+            }
 
             return $order;
 
