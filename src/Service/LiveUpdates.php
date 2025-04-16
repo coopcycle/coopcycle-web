@@ -75,7 +75,7 @@ class LiveUpdates
     }
 
     /**
-     * @param string[] $users
+     * @param string[] $roles
      * @param NamedMessage|string $message
      */
     public function toRoles($roles, $message, array $data = [])
@@ -87,7 +87,7 @@ class LiveUpdates
 
     /**
      * @param UserInterface $user
-     * @param string[] $users
+     * @param string[] $roles
      * @param NamedMessage|string $message
      */
     public function toUserAndRoles($user, $roles, $message, array $data = [])
