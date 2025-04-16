@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Notification } from 'antd'
+import { Button, notification, ConfigProvider } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
-import { antdLocale } from '../../../../js/app/i18n'
-import { ConfigProvider } from 'antd'
 import moment from 'moment'
 
+import { antdLocale } from '../../../../js/app/i18n'
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
 import BarcodesModal from '../BarcodesModal.jsx'
@@ -20,8 +19,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 import _ from 'lodash'
-import { PriceCalculation } from '../../../../js/app/delivery/PriceCalculation'
-
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -115,7 +112,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
-  const [calculateResponseData, setCalculateResponseData] = useState({})
+  const [calculateResponseData, setCalculateResponseData] = useState(null)
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
@@ -221,7 +218,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
         } else if (result.response.timeSlots.length > 0) {
           timeSlotUrl = result.response.timeSlots[0]
         } else {
-          Notification.error("No time slot found")
+          notification.error("No time slot found")
           console.error("No time slot found")
         }
 
@@ -571,19 +568,15 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                         isDispatcher={isDispatcher}
                         deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
+                        isDebugPricing={isDebugPricing}
                         calculatedPrice={calculatedPrice}
+                        calculateResponseData={calculateResponseData}
                         setCalculatePrice={setCalculatePrice}
                         priceErrorMessage={priceErrorMessage}
                         setOverridePrice={setOverridePrice}
                         overridePrice={overridePrice}
                         priceLoading={priceLoading}
                       />
-                      { isDispatcher && isDebugPricing && Boolean(calculateResponseData) && (
-                        <PriceCalculation
-                          calculation={calculateResponseData.calculation}
-                          orderItems={calculateResponseData.items}
-                          itemsTotal={calculateResponseData.amount} />
-                      )}
                     </div>
 
                     {!(deliveryId && !isDispatcher) ?

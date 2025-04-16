@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { money } from '../../../../assets/react/controllers/Incident/utils'
 import { Checkbox, Input } from 'antd'
 import { useFormikContext, Field } from 'formik'
 import { useTranslation } from 'react-i18next'
+
+import { money } from '../../../../assets/react/controllers/Incident/utils'
 import PriceVATConverter from './PriceVATConverter'
 import Spinner from '../core/Spinner'
+import { PriceCalculation } from '../../delivery/PriceCalculation'
+
 import './ShowPrice.scss'
 
 const baseURL = location.protocol + '//' + location.host
@@ -55,6 +58,8 @@ export default ({
   deliveryId,
   deliveryPrice,
   calculatedPrice,
+  calculateResponseData,
+  isDebugPricing,
   priceErrorMessage,
   setOverridePrice,
   overridePrice,
@@ -168,6 +173,15 @@ export default ({
             }
           </>
         }
+
+        {(isDispatcher || isDebugPricing) && Boolean(calculateResponseData) && (
+          <PriceCalculation
+            isDebugPricing={isDebugPricing}
+            calculation={calculateResponseData.calculation}
+            orderItems={calculateResponseData.items}
+            itemsTotal={calculateResponseData.amount}
+          />
+        )}
 
         {isDispatcher && (
           <div className="mt-2">

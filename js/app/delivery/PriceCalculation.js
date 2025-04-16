@@ -1,5 +1,8 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Collapse } from 'antd'
+
+const { Panel } = Collapse
 
 function ProductOption({ productOption }) {
   return (
@@ -17,6 +20,8 @@ function ProductOption({ productOption }) {
 }
 
 function OrderItem({ orderItem, index }) {
+  const { t } = useTranslation()
+
   return (
     <li className="list-group-item d-flex flex-column gap-2">
       <div>
@@ -26,7 +31,7 @@ function OrderItem({ orderItem, index }) {
         <ProductOption key={index} productOption={productOption} />
       ))}
       <div className="font-weight-semi-bold">
-        <span>Item Total</span>
+        <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_ITEM_TOTAL')}</span>
         <span className="pull-right">
           {(orderItem.total / 100).formatMoney()}
         </span>
@@ -94,41 +99,55 @@ function MethodOfCalculation({ calculation }) {
 }
 
 function Cart({ orderItems, itemsTotal }) {
+  const { t } = useTranslation()
+
   return (
     <>
-
       {orderItems.map((orderItem, index) => (
         <OrderItem key={index} orderItem={orderItem} index={index} />
       ))}
       <li className="list-group-item">
-        <span>Order Total</span>
+        <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_TOTAL')}</span>
         <span className="pull-right">{(itemsTotal / 100).formatMoney()}</span>
       </li>
     </>
   )
 }
 
-export function PriceCalculation({ calculation, orderItems, itemsTotal }) {
-  return (
-    <>
-      {Boolean(calculation) && (
-        <>
-          <MethodOfCalculation calculation={calculation} />
-          {calculation.map((item, index) => (
-            <Target
-              key={index}
-              target={item.target}
-              rules={Object.values(item.rules)}
-            />
-          ))}
-        </>
-      )}
+export function PriceCalculation({
+  isDebugPricing,
+  calculation,
+  orderItems,
+  itemsTotal,
+}) {
+  const { t } = useTranslation()
 
-      {Boolean(orderItems && itemsTotal) && (
-        <Cart
-          orderItems={orderItems}
-          itemsTotal={itemsTotal} />
-      )}
-    </>
+  return (
+    <Collapse defaultActiveKey={isDebugPricing ? ['1'] : []}>
+      <Panel header={t('DELIVERY_FORM_HOW_IS_PRICE_CALCULATED')} key="1">
+        <>
+          {Boolean(calculation) && (
+            <>
+              <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_RULES')}</h4>
+              <MethodOfCalculation calculation={calculation} />
+              {calculation.map((item, index) => (
+                <Target
+                  key={index}
+                  target={item.target}
+                  rules={Object.values(item.rules)}
+                />
+              ))}
+            </>
+          )}
+
+          {Boolean(orderItems && itemsTotal) && (
+            <div className="mt-4">
+              <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_CART')}</h4>
+              <Cart orderItems={orderItems} itemsTotal={itemsTotal} />
+            </div>
+          )}
+        </>
+      </Panel>
+    </Collapse>
   )
 }

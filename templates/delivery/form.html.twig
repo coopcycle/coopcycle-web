@@ -89,7 +89,7 @@
             <small id="delivery_price_error" class="delivery-price-error"></small>
           </div>
 
-          {% if debug_pricing is defined and debug_pricing %}
+          {% if is_granted('ROLE_DISPATCHER') or (debug_pricing is defined and debug_pricing) %}
             <ul class="list-group" id="pricing-rules-debug">
               {# rendered by React #}
             </ul>
