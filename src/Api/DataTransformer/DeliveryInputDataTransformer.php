@@ -18,14 +18,12 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Api\Resource\RetailPrice;
-use AppBundle\Entity\TimeSlot;
-use AppBundle\Form\Type\TimeSlotChoice;
-use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TimeSlotManager;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +47,7 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         private readonly RoutingInterface $routing,
         private readonly EntityManagerInterface $entityManager,
         private readonly DeliveryManager $deliveryManager,
-        private readonly string $country,
+        private readonly TimeSlotManager $timeSlotManager,
         private readonly LoggerInterface $logger
     )
     {
@@ -228,47 +226,17 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
             }
         }
 
-        if ($range) {
-            /**
-             * @var TimeSlot|null $timeSlot
-             */
-            $timeSlot = null;
+        if ($range && $data->timeSlotUrl) {
+            $timeSlot = $data->timeSlotUrl;
 
-            if ($data->timeSlotUrl) {
-                $timeSlot = $data->timeSlotUrl;
-
-                if ($this->isChoice($timeSlot, $range)) {
-                    $outputTask->setTimeSlot($timeSlot);
-                } else {
-                    $this->logger->warning('Invalid time slot range: ', [
-                        'timeSlot' => $timeSlot->getId(),
-                        'range' => $range,
-                    ]);
-                    throw new InvalidArgumentException('task.timeSlot.invalid');
-                }
-
+            if ($this->timeSlotManager->isChoice($timeSlot, $range)) {
                 $outputTask->setTimeSlot($timeSlot);
-            } else if ($store) {
-                // Try to find a time slot choice by range
-
-                $storeTimeSlots = $store->getTimeSlots();
-
-                foreach ($storeTimeSlots as $storeTimeSlot) {
-                    if ($this->isChoice($storeTimeSlot, $range)) {
-                        $timeSlot = $storeTimeSlot;
-                        $outputTask->setTimeSlot($timeSlot);
-                        break;
-                    }
-                }
-
-                if (null === $timeSlot) {
-                    $this->logger->warning('No time slot choice found: ', [
-                        'store' => $store->getId(),
-                        'range' => $range,
-                    ]);
-                    //FIXME: decide if we want to fail the request
-//                    throw new InvalidArgumentException('task.timeSlot.notFound');
-                }
+            } else {
+                $this->logger->warning('Invalid time slot range: ', [
+                    'timeSlot' => $timeSlot->getId(),
+                    'range' => $range,
+                ]);
+                throw new InvalidArgumentException('task.timeSlot.invalid');
             }
         }
 
@@ -347,19 +315,5 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         }
 
         return $outputTask;
-    }
-
-    private function isChoice(TimeSlot $timeSlot, TsRange $range): bool
-    {
-        $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
-        $choiceList = $choiceLoader->loadChoiceList();
-
-        foreach ($choiceList->getChoices() as $choice) {
-            if ($choice->equals($range)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
