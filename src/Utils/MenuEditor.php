@@ -4,14 +4,9 @@ namespace AppBundle\Utils;
 
 use AppBundle\Entity\LocalBusiness;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 class MenuEditor
 {
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     */
-    public $products;
     private $restaurant;
     private $menu;
 
@@ -49,10 +44,5 @@ class MenuEditor
         }
 
         return $products;
-    }
-
-    public function setProducts(Collection $products)
-    {
-        $this->products = $products;
     }
 }

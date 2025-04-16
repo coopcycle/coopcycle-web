@@ -1,6 +1,9 @@
 /* eslint-disable */
 
 import axios from 'axios'
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { useTranslation } from 'react-i18next'
 
 const style = {
   input: {
@@ -47,6 +50,21 @@ const style = {
   },
 };
 
+const ErrorBox = () => {
+
+  const { t } = useTranslation()
+
+  return (
+    <div className="alert alert-warning d-flex flex-column align-items-center">
+      <p className="mb-2">{ t('PAYMENT_FORM_ERROR') }</p>
+      <button type="button" className="btn btn-default" onClick={ () => window.location.reload() }>
+        <i className="fa fa-refresh mr-1"></i>
+        <span>{ t('TRY_AGAIN') }</span>
+      </button>
+    </div>
+  )
+}
+
 export default {
   async init() {
     this.listeners = []
@@ -75,10 +93,16 @@ export default {
           resolve(paymentOrder.id)
           break;
         case window.paygreenjs.Events.PAYMENT_FAIL:
-          reject(event.detail?.error || new Error('An error occurred'));
-          break;
         case window.paygreenjs.Events.ERROR:
-          reject(event.detail);
+
+          // We just render an error box,
+          // as mounting PaygreenJS again would require creating a new PaymentOrder
+          // It is implemented the same way on Paygreen hosted page
+          createRoot(this.el).render(<ErrorBox />)
+
+          // We do *NOT* reject the promise,
+          // as this would render another error message
+
           break;
       }
     }
@@ -86,11 +110,13 @@ export default {
   },
   async mount(el, method, options, formOptions) {
 
+    // In case of payment error, will be used to render an error box
+    this.el = el
+
     this.config.gatewayConfig = {
       ...this.config.gatewayConfig,
       ...options.paygreen
     }
-
 
     return new Promise((resolve, reject) => {
 
@@ -136,7 +162,6 @@ export default {
         objectSecret: this.config.gatewayConfig.paygreen_object_secret,
         publicKey: this.config.gatewayConfig.publicKey,
         mode: 'payment',
-        displayAuthentication: 'modal',
         style,
         paymentMethod: method === 'card' ? 'bank_card' : method,
       }

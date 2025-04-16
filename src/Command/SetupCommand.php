@@ -256,6 +256,16 @@ class SetupCommand extends Command
                 'name' => 'Swile',
                 'countries' => ['fr'],
             ],
+            [
+                'code' => 'APPLE_PAY',
+                'name' => 'Apple Pay',
+                'countries' => ['fr'],
+            ],
+            [
+                'code' => 'GOOGLE_PAY',
+                'name' => 'Google Pay',
+                'countries' => ['fr'],
+            ],
         ];
 
         foreach ($methods as $method) {
