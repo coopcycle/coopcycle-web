@@ -53,7 +53,7 @@
         "symfony/webpack-encore-bundle": "^1.6",
         "friendsofsymfony/rest-bundle": "^3.0",
         "friendsofsymfony/jsrouting-bundle": "^2.2",
-        "api-platform/core": "2.6.8",
+        "api-platform/core": "^2.7",
         "doctrine/orm": "^2.7",
         "doctrine/doctrine-bundle": "^2.4",
         "nelmio/cors-bundle": "~2.0",
