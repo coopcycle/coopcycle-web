@@ -9,6 +9,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryFormSubmission;
+use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\Checkout\CheckoutPayment;
@@ -23,7 +24,6 @@ use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumber;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
-use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -193,7 +193,7 @@ class EmbedController extends AbstractController
 
     #[Route(path: '/forms/{hashid}/summary', name: 'embed_delivery_summary')]
     public function deliverySummaryAction($hashid, Request $request,
-        OrderRepositoryInterface $orderRepository,
+        OrderRepository $orderRepository,
         OrderManager $orderManager,
         OrderFactory $orderFactory,
         EntityManagerInterface $objectManager,
