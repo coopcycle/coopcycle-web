@@ -115,6 +115,7 @@ function Cart({ orderItems, itemsTotal }) {
 }
 
 export function PriceCalculation({
+  className,
   isDebugPricing,
   calculation,
   orderItems,
@@ -123,7 +124,9 @@ export function PriceCalculation({
   const { t } = useTranslation()
 
   return (
-    <Collapse defaultActiveKey={isDebugPricing ? ['1'] : []}>
+    <Collapse
+      className={className}
+      defaultActiveKey={isDebugPricing ? ['1'] : []}>
       <Panel header={t('DELIVERY_FORM_HOW_IS_PRICE_CALCULATED')} key="1">
         <>
           {Boolean(calculation) && (
