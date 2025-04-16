@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * FIXME: Should we merge this class into the OrderManager class?
+ * Operations related to Package Delivery/'LastMile' activity/orders
  */
 class PricingManager
 {

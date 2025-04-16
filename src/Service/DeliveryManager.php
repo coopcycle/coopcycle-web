@@ -18,6 +18,10 @@ use AppBundle\Utils\OrderTimelineCalculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
+/**
+ * Operations on the Delivery entity for both FoodTech and Package Delivery/'LastMile' activities
+ * (don't confuse with a (Package Delivery/'LastMile') orders)
+ */
 class DeliveryManager
 {
     public function __construct(
