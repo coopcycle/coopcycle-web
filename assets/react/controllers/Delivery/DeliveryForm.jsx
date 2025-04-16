@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, notification, ConfigProvider } from 'antd'
+import { Button, ConfigProvider } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
 
@@ -218,7 +218,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
         } else if (result.response.timeSlots.length > 0) {
           timeSlotUrl = result.response.timeSlots[0]
         } else {
-          notification.error("No time slot found")
           console.error("No time slot found")
         }
 
