@@ -393,19 +393,13 @@ class RestaurantStats implements \Countable
 
             $payments = $paymentsByOrder[$order->id] ?? [];
 
-            $cardPayments = array_filter($payments, function ($payment) {
-                return $payment['method'] === 'CARD';
-            });
-
-            if (count($cardPayments) === 1) {
-                $cardPayment = current($cardPayments);
-                $details = $cardPayment['details'];
-                if (array_key_exists('paygreen_payment_order_id', $details)) {
-                    $order->paymentGateway = 'paygreen';
+            $order->paymentGateway = array_reduce($payments, function ($carry, $item) {
+                if (array_key_exists('paygreen_payment_order_id', $item['details'])) {
+                    return 'paygreen';
                 } else {
-                    $order->paymentGateway = 'stripe';
+                    return 'stripe';
                 }
-            }
+            }, null);
 
             return $order;
 
