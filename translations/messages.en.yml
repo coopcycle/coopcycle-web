@@ -1560,6 +1560,8 @@ payment_method:
   conecs: Conecs
   swile: Swile
   restoflash: Restoflash
+  apple_pay: Apple Pay
+  google_pay: Google Pay
 registration.navigation.title: "Personal account creation"
 registration.info.title: "What is %brandName%?"
 registration.info.text: "On %brandName%, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
