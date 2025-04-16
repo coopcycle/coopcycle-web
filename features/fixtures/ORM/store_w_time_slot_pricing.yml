@@ -1,0 +1,46 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_2:
+    __construct: [ "48.846656", "2.369052" ]
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'time_slot == "/api/time_slots/1" and task.type == "PICKUP"'
+    price: 499
+    target: 'TASK'
+    position: 0
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  address_2:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '18, avenue Ledru-Rollin 75012 Paris 12ème'
+    geo: "@geo_1"
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    openingHours:
+      - 'Mo-Su 12:00-14:00'
+      - 'Mo-Su 14:00-17:00'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'

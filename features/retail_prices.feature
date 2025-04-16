@@ -480,6 +480,106 @@ Feature: Retail prices
       }
       """
 
+  Scenario: Get delivery price with implicit timeSlot for admin user
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | store_w_time_slot_pricing.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "after": "2020-04-02 12:00",
+          "before": "2020-04-02 14:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "after": "2020-04-02 12:00",
+          "before": "2020-04-02 14:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        },
+        "items": [
+          @...@
+        ],
+        "calculation": [
+          @...@
+        ]
+      }
+      """
+
+# The price can be calculated in this case
+# the response is 400 only because there is no other pricing rules provided
+  Scenario: Get delivery price with a range not from a timeSlot for admin user
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | sylius_taxation.yml |
+      | store_w_time_slot_pricing.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "after": "2020-04-02 12:10",
+          "before": "2020-04-02 14:10"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "after": "2020-04-02 12:10",
+          "before": "2020-04-02 14:10"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description": "delivery.price.error.priceCalculation",
+        "calculation": [
+          @...@
+        ]
+      }
+      """
+
   Scenario: Can't get delivery price with invalid timeSlotUrl for admin user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
