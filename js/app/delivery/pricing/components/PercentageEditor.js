@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import HelpIcon from '../../../components/HelpIcon'
 
 const convertToUi = value => {
   return value / 100 - 100
@@ -42,10 +41,6 @@ export default ({ defaultValue, onChange }) => {
           }}
         />
         <span className="ml-2">%</span>
-        <HelpIcon
-          className="ml-2"
-          tooltipText={t('PRICE_RANGE_EDITOR.TYPE_PERCENTAGE_HELP')}
-        />
       </label>
     </div>
   )
