@@ -46,6 +46,8 @@ function init(id, options = {}) {
 
   map = L.map(id, { scrollWheelZoom: false, zoomControl })
 
+  L.control.scale({position:'bottomright', metric: true, imperial: false}).addTo(map);
+
   if (options.polygonManagement) {
     map.pm.addControls({
       position: 'topleft',
