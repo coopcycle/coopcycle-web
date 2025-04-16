@@ -11,7 +11,7 @@ class MenuEditor
     /**
      * @var \Doctrine\Common\Collections\Collection
      */
-    public $products;
+    private $products;
     private $restaurant;
     private $menu;
 
@@ -19,7 +19,6 @@ class MenuEditor
     {
         $this->restaurant = $restaurant;
         $this->menu = $menu;
-        $this->products = $this->getProducts();
     }
 
     public function getName()
