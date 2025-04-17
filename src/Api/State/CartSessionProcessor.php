@@ -1,21 +1,32 @@
 <?php
 
-namespace AppBundle\Api\DataTransformer;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Api\Dto\CartSessionInput;
 use AppBundle\Api\Resource\CartSession;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Security\OrderAccessTokenManager;
+use AppBundle\Service\LoggingUtils;
+use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class CartSessionInputDataTransformer implements DataTransformerInterface
+class CartSessionProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly OrderFactory $orderFactory,
         private readonly TokenStorageInterface $tokenStorage,
-        private readonly LoggerInterface $checkoutLogger
+        private readonly NormalizerInterface $itemNormalizer,
+        private readonly OrderAccessTokenManager $orderAccessTokenManager,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $checkoutLogger,
+        private readonly LoggingUtils $loggingUtils
     )
     {
     }
@@ -38,10 +49,7 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($data, string $to, array $context = [])
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         $session = new CartSession();
 
@@ -75,20 +83,28 @@ class CartSessionInputDataTransformer implements DataTransformerInterface
             }
         }
 
-        $session->cart = $cart;
+        $this->entityManager->persist($cart);
+        $this->entityManager->flush();
 
-        return $session;
-    }
+        $isExisting = $cart->getId() === null;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsTransformation($data, string $to, array $context = []): bool
-    {
-        if ($data instanceof CartSession) {
-          return false;
+        if ($isExisting) {
+            $this->checkoutLogger->info('Order updated in the database', ['file' => 'CreateSession', 'order' => $this->loggingUtils->getOrderId($cart)]);
+        } else {
+            $this->checkoutLogger->info(sprintf('Order #%d (created_at = %s) created in the database',
+                $cart->getId(), $cart->getCreatedAt()->format(\DateTime::ATOM)), ['file' => 'CreateSession', 'order' => $this->loggingUtils->getOrderId($cart)]);
         }
 
-        return CartSession::class === $to && null !== ($context['input']['class'] ?? null);
+        $session->token = $this->orderAccessTokenManager->create($cart);
+        $session->cart = $cart;
+
+        // return new JsonResponse([
+        //     'token' => $this->orderAccessTokenManager->create($cart),
+        //     'cart' => $this->itemNormalizer->normalize($data->cart, 'jsonld', [
+        //         'groups' => ['cart']
+        //     ]),
+        // ]);
+
+        return $session;
     }
 }

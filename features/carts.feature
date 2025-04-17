@@ -587,7 +587,6 @@ Feature: Carts
       }
       """
 
-  @debug
   Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1259,6 +1258,7 @@ Feature: Carts
       }
       """
 
+  @debug
   Scenario: Start cart session
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1273,11 +1273,15 @@ Feature: Carts
         "restaurant": "/api/restaurants/1"
       }
       """
+    Then print last JSON response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
           "@context":"/api/contexts/Order",
@@ -1317,6 +1321,9 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
           "@context":"/api/contexts/Order",
