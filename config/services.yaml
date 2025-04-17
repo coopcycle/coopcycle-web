@@ -1121,10 +1121,10 @@ services:
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
     tags: [ 'api_platform.state_processor' ]
 
-  # AppBundle\Api\State\CartSessionProcessor:
-  #   arguments:
-  #     $orderFactory: "@sylius.factory.order"
-  #   tags: [ 'api_platform.state_processor' ]
+  AppBundle\Api\State\CartSessionProcessor:
+    arguments:
+      $orderFactory: "@sylius.factory.order"
+    tags: [ 'api_platform.state_processor' ]
 
   # AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer:
   #   tags: [ 'api_platform.data_transformer' ]
