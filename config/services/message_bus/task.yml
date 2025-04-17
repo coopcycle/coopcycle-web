@@ -115,54 +115,6 @@ services:
   # Reactors
   #
 
-  coopcycle.domain.task.reactor.publish_live_update:
-    class: AppBundle\Domain\Task\Reactor\PublishLiveUpdate
-    arguments:
-      - '@AppBundle\Service\LiveUpdates'
-    tags:
-      - name: event_subscriber
-        subscribes_to: task:created
-      - name: event_subscriber
-        subscribes_to: task:assigned
-      - name: event_subscriber
-        subscribes_to: task:unassigned
-      - name: event_subscriber
-        subscribes_to: task:started
-
-      - name: messenger.message_handler
-        subscribes_to: AppBundle\Domain\Task\Event
-
-      - name: event_subscriber
-        subscribes_to: task:failed
-      - name: event_subscriber
-        subscribes_to: task:cancelled
-      - name: event_subscriber
-        subscribes_to: task_collections:updated
-      - name: event_subscriber
-        subscribes_to: task_list:updated
-      - name: event_subscriber
-        subscribes_to: v2:task_list:updated
-      - name: event_subscriber
-        subscribes_to: task:rescheduled
-      - name: event_subscriber
-        subscribes_to: task:incident-reported
-      - name: event_subscriber
-        subscribes_to: task:updated
-      - name: event_subscriber
-        subscribes_to: tour:created
-      - name: event_subscriber
-        subscribes_to: tour:updated
-
-  coopcycle.domain.task.reactor.send_email:
-    class: AppBundle\Domain\Task\Reactor\SendEmail
-    arguments:
-      - '@coopcycle.email_manager'
-    tags:
-      - name: event_subscriber
-        subscribes_to: task:done
-      - name: event_subscriber
-        subscribes_to: task:failed
-
   coopcycle.domain.task.reactor.send_sms:
     class: AppBundle\Domain\Task\Reactor\SendSms
     arguments:
@@ -188,8 +140,8 @@ services:
         subscribes_to: task:assigned
       - name: event_subscriber
         subscribes_to: task:started
-      - name: event_subscriber
-        subscribes_to: task:done
+      - name: messenger.message_handler
+        handles: AppBundle\Domain\Task\Event\TaskDone
       - name: event_subscriber
         subscribes_to: task:failed
       - name: event_subscriber
@@ -207,8 +159,8 @@ services:
         subscribes_to: task:assigned
       - name: event_subscriber
         subscribes_to: task:started
-      - name: event_subscriber
-        subscribes_to: task:done
+      - name: messenger.message_handler
+        handles: AppBundle\Domain\Task\Event\TaskDone
       - name: event_subscriber
         subscribes_to: task:failed
 

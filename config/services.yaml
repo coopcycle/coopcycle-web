@@ -5,6 +5,7 @@ imports:
   - { resource: services/validators.yml }
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
+  - { resource: services/messenger.yaml }
   - { resource: services/message_bus/order.yml }
   - { resource: services/message_bus/task.yml }
 

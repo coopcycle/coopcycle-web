@@ -1,10 +1,14 @@
 <?php
 
-namespace AppBundle\Domain\Task\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
 use AppBundle\Domain\Task\Event;
+use AppBundle\Domain\Task\Event\TaskDone;
+use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Service\EmailManager;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 class SendEmail
 {
     private $emailManager;
@@ -14,8 +18,7 @@ class SendEmail
     {
         $this->emailManager = $emailManager;
     }
-
-    public function __invoke(Event $event)
+    public function __invoke(TaskDone|TaskFailed $event)
     {
         $task = $event->getTask();
 
