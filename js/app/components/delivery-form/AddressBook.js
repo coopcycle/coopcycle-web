@@ -59,9 +59,10 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
 
   /** This one is used by the select. Only if the user picked a remembered address. */
 
-  const handleAddressSelected = value => {
+  const handleAddressSelected = selectedId => {
+
     const selectedAddress = addresses.find(
-      address => address.streetAddress === value,
+      address => address['@id'] === selectedId,
     )
     const formattedTelephone = getFormattedValue(selectedAddress.telephone)
 
@@ -73,12 +74,12 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
       formattedTelephone,
       contactName: selectedAddress.contactName || '',
     })
-    setSelectValue(value)
+    setSelectValue(selectedId)
   }
 
   useEffect(() => {
     if (shallPrefillAddress) {
-      handleAddressSelected(storeDeliveryInfos.address.streetAddress)
+      handleAddressSelected(storeDeliveryInfos.address['@id'])
     }
   }, [shallPrefillAddress])
 
@@ -128,7 +129,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
               option.label.toLowerCase().includes(input.toLowerCase())
             }
             options={addresses.map(address => ({
-              value: address.streetAddress,
+              value: address['@id'],
               label: address.name ? `${address.name} - ${address.streetAddress}` : `${address.streetAddress}`,
               key: address['@id'],
               id: address['@id'],

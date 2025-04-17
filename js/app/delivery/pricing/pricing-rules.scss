@@ -17,15 +17,17 @@
 
     &__main {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
       border-bottom: 1px solid darken($bgcolor, 25%);
     }
 
     &__handle {
       text-align: center;
       cursor: grab;
-      padding: 20px;
+      padding: 0 20px;
+    }
+    &__body {
+      flex: 1;
+      padding: 0 10px;
     }
     &__remove {
       text-align: right;

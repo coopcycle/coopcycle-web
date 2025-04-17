@@ -22,6 +22,7 @@ import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import AddRulePerTask from './components/AddRulePerTask'
 import { PriceChoice } from './components/PriceChoice'
 import PercentageEditor from './components/PercentageEditor'
+import Position from './components/Position'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -40,6 +41,10 @@ const onListChange = () => {
 
   $('.delivery-pricing-ruleset > li').each((index, el) => {
     $(el).find('.delivery-pricing-ruleset__rule__position').val(index)
+
+    const rulePositionContainer = $(el).find('.delivery-pricing-ruleset__rule__position__container')
+    render(<Position position={index} />, rulePositionContainer[0])
+
     $(el).attr('data-testid', `pricing-rule-${index}`)
   })
 }
@@ -196,13 +201,8 @@ function addPricingRule(ruleTarget) {
     expressionAST: undefined,
   })
 
-  if (ruleTarget === 'TASK') {
-    //add at the beginning of the list (because task based rules are evaluated first)
-    newLi.prependTo(ruleSet)
-  } else if (ruleTarget === 'DELIVERY') {
-    //add at the end of the list
-    newLi.appendTo(ruleSet)
-  }
+  //add at the end of the list
+  newLi.appendTo(ruleSet)
 
   onListChange()
 }
@@ -285,18 +285,19 @@ $('#pricing-rule-set-header').each(function (index, item) {
           }}
         />
       )}
-      <div className="d-flex justify-content-end">
-        <AddRulePerTask onAddRule={addPricingRule} />
-      </div>
     </StrictMode>,
   )
 })
 
 $('#pricing-rule-set-footer').each(function (index, item) {
   render(
-    <div className="mb-5 d-flex justify-content-end">
+    <div className="mb-5 d-flex justify-content-end gap-4">
       <AddRulePerDelivery onAddRule={addPricingRule} />
+      <AddRulePerTask onAddRule={addPricingRule} />
     </div>,
     item,
   )
 })
+
+// Execute the function to set the initial state
+onListChange()

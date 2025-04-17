@@ -4,7 +4,7 @@ namespace AppBundle\Api\Resource;
 
 use ApiPlatform\Core\Action\NotFoundAction;
 use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
-use AppBundle\Action\Delivery\CalculationItem;
+use AppBundle\Api\Dto\CalculationOutput;
 use AppBundle\Api\Dto\DeliveryInput;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -57,13 +57,12 @@ final class RetailPrice
 
     /**
      * @param OrderItem[] $items
-     * @param CalculationItem[] $calculation
      */
     public function __construct(
         #[Groups(['pricing_deliveries'])]
         public readonly array $items,
         #[Groups(['pricing_deliveries'])]
-        public readonly array $calculation,
+        public readonly CalculationOutput $calculation,
         int $taxIncludedAmount,
         #[Groups(['pricing_deliveries'])]
         public readonly string $currency,

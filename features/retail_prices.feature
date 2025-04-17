@@ -44,9 +44,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -94,9 +92,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -144,9 +140,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -197,9 +191,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -250,9 +242,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -301,9 +291,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -361,9 +349,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -421,9 +407,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -706,9 +690,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -755,9 +737,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -812,9 +792,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -854,9 +832,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -926,9 +902,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -978,9 +952,7 @@ Feature: Retail prices
         "items": [
           @...@
         ],
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
 
@@ -1020,8 +992,6 @@ Feature: Retail prices
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
         "hydra:description":"delivery.price.error.priceCalculation",
-        "calculation": [
-          @...@
-        ]
+        "calculation": {"@*@":"@*@"}
       }
       """
