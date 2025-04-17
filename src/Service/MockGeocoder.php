@@ -20,7 +20,11 @@ class MockGeocoder implements GeocoderInterface
     public function geocode(string $value): Collection
     {
 
-        if ($value === '24 rue de rivoli paris') {
+        // remove all non-alphanumeric characters
+        $value = preg_replace('/[^a-zA-Z0-9\s]/', '', $value);
+        $value = strtolower($value);
+
+        if (str_contains($value, '24 rue de la paix paris')) {
             $address = new Address(
                 $this->getName(),
                 new AdminLevelCollection([
@@ -29,6 +33,24 @@ class MockGeocoder implements GeocoderInterface
                 new Coordinates(48.8566, 2.3522),
                 new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
                 '24',
+                'Rue de la Paix',
+                '75001',
+                'Paris',
+                null,
+                new Country('France', 'FR'),
+                null // Timezone, if applicable
+            );
+
+            return new AddressCollection([$address]);
+        } else if (str_contains($value, '44 rue de rivoli paris')) {
+            $address = new Address(
+                $this->getName(),
+                new AdminLevelCollection([
+                    new AdminLevel(1, 'Île-de-France', 'IDF')
+                ]),
+                new Coordinates(48.8566, 2.3522),
+                new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
+                '44',
                 'Rue de Rivoli',
                 '75001',
                 'Paris',
@@ -38,7 +60,43 @@ class MockGeocoder implements GeocoderInterface
             );
 
             return new AddressCollection([$address]);
-        } else {
+        } else if (str_contains($value, '48 rue de rivoli paris')) {
+            $address = new Address(
+                $this->getName(),
+                new AdminLevelCollection([
+                    new AdminLevel(1, 'Île-de-France', 'IDF')
+                ]),
+                new Coordinates(48.8566, 2.3522),
+                new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
+                '48',
+                'Rue de Rivoli',
+                '75001',
+                'Paris',
+                null,
+                new Country('France', 'FR'),
+                null // Timezone, if applicable
+            );
+
+            return new AddressCollection([$address]);
+        } else if (str_contains($value, '64 rue alexandre dumas')) {
+            $address = new Address(
+                $this->getName(),
+                new AdminLevelCollection([
+                    new AdminLevel(1, 'Île-de-France', 'IDF')
+                ]),
+                new Coordinates(48.8566, 2.3522),
+                new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
+                '64',
+                'Rue Alexandre Dumas',
+                '75001',
+                'Paris',
+                null,
+                new Country('France', 'FR'),
+                null // Timezone, if applicable
+            );
+
+            return new AddressCollection([$address]);
+        }  {
             return new AddressCollection([]);
         }
     }
