@@ -12,6 +12,7 @@ use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
 use AppBundle\Api\Dto\CalculationOutput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Delivery\OrderItem;
+use AppBundle\Api\State\CalculateRetailPriceProcessor;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -22,9 +23,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         new Post(
             uriTemplate: '/retail_prices/calculate',
             input: DeliveryInput::class,
-            controller: CalculateRetailPrice::class,
+            processor: CalculateRetailPriceProcessor::class,
             status: 200,
-            write: false,
             denormalizationContext: ['groups' => ['pricing_deliveries']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
             openapiContext: ['summary' => 'Calculates price of a Delivery']

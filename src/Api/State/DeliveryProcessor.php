@@ -1,8 +1,9 @@
 <?php
 
-namespace AppBundle\Api\DataTransformer;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Package;
@@ -15,7 +16,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class DeliveryInputDataTransformer implements DataTransformerInterface
+class DeliveryProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly RoutingInterface $routing,
@@ -25,10 +26,7 @@ class DeliveryInputDataTransformer implements DataTransformerInterface
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($data, string $to, array $context = [])
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         if (is_array($data->tasks) && count($data->tasks) > 0) {
             $delivery = Delivery::createWithTasks(...$data->tasks);

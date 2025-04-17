@@ -941,11 +941,6 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
-  AppBundle\Action\Delivery\CalculateRetailPrice:
-    public: true
-    arguments:
-      $state: "%region_iso%"
-
   AppBundle\Action\CentrifugoToken:
     public: true
     arguments:
@@ -1124,6 +1119,12 @@ services:
   AppBundle\Api\State\CartSessionProcessor:
     arguments:
       $orderFactory: "@sylius.factory.order"
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\CalculateRetailPriceProcessor:
+    decorates: AppBundle\Api\State\DeliveryProcessor
+    arguments:
+      $state: "%region_iso%"
     tags: [ 'api_platform.state_processor' ]
 
   # AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer:

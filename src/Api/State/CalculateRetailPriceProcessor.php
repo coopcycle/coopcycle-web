@@ -1,9 +1,11 @@
 <?php
 
-namespace AppBundle\Action\Delivery;
+namespace AppBundle\Api\State;
 
 use AppBundle\Api\Dto\CalculationItem;
 use AppBundle\Api\Dto\CalculationOutput;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
 use AppBundle\Security\TokenStoreExtractor;
@@ -17,14 +19,16 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class CalculateRetailPrice implements TaxableInterface
+class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterface
 {
     private ?TaxCategoryInterface $taxCategory = null;
 
 	public function __construct(
+        private readonly DeliveryProcessor $decorated,
         private readonly DeliveryManager $deliveryManager,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly SettingsManager $settingsManager,
@@ -33,6 +37,7 @@ class CalculateRetailPrice implements TaxableInterface
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
         private readonly NormalizerInterface $normalizer,
+        private readonly RequestStack $requestStack,
         private readonly string $state
     ) {}
 
@@ -46,8 +51,10 @@ class CalculateRetailPrice implements TaxableInterface
         return $this->taxCategory;
     }
 
-    public function __invoke(Delivery $data, Request $request)
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        $data = $this->decorated->process($data, $operation, $uriVariables, $context);
+
         $store = $data->getStore();
         if (null === $store) {
             $store = $this->storeExtractor->extractStore();
@@ -123,7 +130,7 @@ class CalculateRetailPrice implements TaxableInterface
             $amount,
             $this->currencyContext->getCurrencyCode(),
             $taxAmount,
-            'included' === $request->query->get('tax', 'included')
+            'included' === $this->requestStack->getCurrentRequest()->query->get('tax', 'included')
         );
     }
 }
