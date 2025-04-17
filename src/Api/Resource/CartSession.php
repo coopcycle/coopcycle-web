@@ -16,12 +16,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/carts/session',
             input: CartSessionInput::class,
             processor: CartSessionProcessor::class,
-            status: 200
+            status: 200,
+            normalizationContext: ['groups' => ['cart']]
         )
     ]
 )]
 final class CartSession
 {
+    #[Groups(['cart'])]
     public $token;
 
     #[Groups(['cart'])]

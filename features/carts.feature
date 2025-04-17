@@ -1258,7 +1258,6 @@ Feature: Carts
       }
       """
 
-  @debug
   Scenario: Start cart session
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1273,7 +1272,6 @@ Feature: Carts
         "restaurant": "/api/restaurants/1"
       }
       """
-    Then print last JSON response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -1284,7 +1282,6 @@ Feature: Carts
         "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1326,7 +1323,6 @@ Feature: Carts
         "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
