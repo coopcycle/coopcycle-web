@@ -8,7 +8,7 @@ use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use ApiPlatform\Core\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
+use ApiPlatform\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
 use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
