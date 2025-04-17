@@ -15,6 +15,12 @@ AppBundle\Entity\Delivery\PricingRule:
     target: 'TASK'
     position: 0
     ruleSet: '@pricing_rule_set_1'
+  pricing_rule_2:
+    expression: 'task.type == "DROPOFF"'
+    price: 200
+    target: 'TASK'
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
 
 AppBundle\Entity\Address:
   address_1:
