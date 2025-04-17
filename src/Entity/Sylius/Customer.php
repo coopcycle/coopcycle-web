@@ -2,7 +2,11 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Dabba\CustomerCredentials as DabbaCustomerCredentials;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
@@ -23,7 +27,7 @@ use Webmozart\Assert\Assert;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 
-#[ApiResource(shortName: 'Customer', normalizationContext: ['groups' => ['customer']], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN') or user.getCustomer() == object"], 'put' => ['method' => 'PUT', 'access_control' => "is_granted('ROLE_ADMIN') or user.getCustomer() == object", 'denormalization_context' => ['groups' => ['customer_update']]]], collectionOperations: [])]
+#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'), new Put(security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object', denormalizationContext: ['groups' => ['customer_update']])], shortName: 'Customer', normalizationContext: ['groups' => ['customer']])]
 class Customer extends BaseCustomer implements TaggableInterface, CustomerInterface
 {
     use TaggableTrait;

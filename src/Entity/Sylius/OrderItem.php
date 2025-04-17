@@ -2,8 +2,12 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -13,7 +17,39 @@ use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItem as BaseOrderItem;
 use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['order']], 'composite_identifier' => false], itemOperations: ['get' => ['method' => 'GET', 'path' => '/orders/{order}/items/{id}']], collectionOperations: [])]
+use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\State\CartItemProcessor;
+
+#[ApiResource(
+    uriTemplate: '/orders/{order}/items/{id}',
+    uriVariables: [
+        'order' => new Link(fromClass: Order::class),
+        'id' => new Link(fromClass: self::class),
+    ],
+    operations: [
+        new Get()
+    ],
+    normalizationContext: ['groups' => ['order']],
+)]
+// https://github.com/api-platform/api-platform/issues/571#issuecomment-1473665701
+#[ApiResource(
+    uriTemplate: '/orders/{id}/items',
+    uriVariables: [
+        'id' => new Link(fromClass: Order::class, fromProperty: 'items')
+    ],
+    operations: [
+        new Post(
+            read: false,
+            input: CartItemInput::class,
+            processor: CartItemProcessor::class,
+            validationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            normalizationContext: ['groups' => ['cart']],
+            // security: 'is_granted(\'edit\', object)',
+            openapiContext: ['summary' => 'Adds items to a Order resource.']
+        )
+    ]
+)]
 class OrderItem extends BaseOrderItem implements OrderItemInterface
 {
     /**

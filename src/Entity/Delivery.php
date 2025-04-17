@@ -2,9 +2,16 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
@@ -34,105 +41,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
  */
-#[ApiResource(
-    collectionOperations: [
-        'post' => [
-            'method' => 'POST',
-            'denormalization_context' => ['groups' => ['delivery_create']],
-            'controller' => CreateDelivery::class,
-            'openapi_context' => ['parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS],
-            'input_formats' => ['jsonld' => ['application/ld+json']],
-            'security_post_denormalize' => "is_granted('create', object)"
-        ],
-        'check' => [
-            'method' => 'POST',
-            'path' => '/deliveries/assert',
-            'write' => false,
-            'status' => 200,
-            'validation_groups' => ['Default', 'delivery_check'],
-            'denormalization_context' => ['groups' => ['delivery_create']],
-            'security_post_denormalize' => "is_granted('create', object)",
-            'openapi_context' => [
-                'summary' => 'Asserts a Delivery is feasible',
-                'parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
-            ]
-        ],
-        'from_tasks' => [
-            'method' => 'POST',
-            'path' => '/deliveries/from_tasks',
-            'input' => DeliveryInput::class,
-            'denormalization_context' => ['groups' => ['delivery_create_from_tasks']],
-            'security' => "is_granted('ROLE_ADMIN')"
-        ],
-        'suggest_optimizations' => [
-            'method' => 'POST',
-            'path' => '/deliveries/suggest_optimizations',
-            'write' => false,
-            'status' => 200,
-            'controller' => SuggestOptimizationsController::class,
-            'output' => OptimizationSuggestions::class,
-            'denormalization_context' => ['groups' => ['delivery_create']],
-            'normalization_context' => ['groups' => ['optimization_suggestions'], 'api_sub_level' => true],
-            'security_post_denormalize' => "is_granted('create', object)",
-            'openapi_context' => [
-                'summary' => 'Suggests optimizations for a delivery',
-                'parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
-            ]
-        ],
-        'deliveries_import_async' => [
-            'method' => 'POST',
-            'path' => '/deliveries/import_async',
-            'deserialize' => false,
-            'input_formats' => ['csv' => ['text/csv']],
-            'controller' => BulkAsyncDelivery::class,
-            'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')"
-        ]
-    ],
-    iri: 'http://schema.org/ParcelDelivery',
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('view', object)"
-        ],
-        'put' => [
-            'method' => 'PUT',
-            'controller' => EditDelivery::class,
-            'security' => "is_granted('edit', object)",
-            'denormalization_context' => ['groups' => ['delivery_create']]
-        ],
-        'pick' => [
-            'method' => 'PUT',
-            'path' => '/deliveries/{id}/pick',
-            'controller' => PickDelivery::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Marks a Delivery as picked']
-        ],
-        'drop' => [
-            'method' => 'PUT',
-            'path' => '/deliveries/{id}/drop',
-            'controller' => DropDelivery::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Marks a Delivery as dropped']
-        ],
-        'cancel' => [
-            'method' => 'DELETE',
-            'controller' => CancelDelivery::class,
-            'write' => false,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Cancels a Delivery']
-        ]
-    ],
-    attributes: [
-        'order' => ['createdAt' => 'DESC'],
-        'denormalization_context' => ['groups' => ['order_create']],
-        'normalization_context' => ['groups' => ['delivery', 'address']],
-        'pagination_items_per_page' => 15
-    ]
-)]
-#[ApiFilter(OrderFilter::class, properties: ['createdAt'])]
-#[ApiFilter(DeliveryOrderFilter::class, properties: ['dropoff.before'])]
+#[ApiResource(operations: [new Get(security: 'is_granted(\'view\', object)'), new Put(controller: Edit::class, security: 'is_granted(\'edit\', object)', denormalizationContext: ['groups' => ['delivery_create']]), new Put(uriTemplate: '/deliveries/{id}/pick', controller: Pick::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Marks a Delivery as picked']), new Put(uriTemplate: '/deliveries/{id}/drop', controller: Drop::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Marks a Delivery as dropped']), new Delete(controller: Cancel::class, write: false, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Cancels a Delivery'], name: 'cancel'), new Post(denormalizationContext: ['groups' => ['delivery_create']], controller: Create::class, openapiContext: ['parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]], inputFormats: ['jsonld' => ['application/ld+json']], securityPostDenormalize: 'is_granted(\'create\', object)'), new Post(uriTemplate: '/deliveries/assert', write: false, status: 200, validationContext: ['groups' => ['Default', 'delivery_check']], denormalizationContext: ['groups' => ['delivery_create']], securityPostDenormalize: 'is_granted(\'create\', object)', openapiContext: ['summary' => 'Asserts a Delivery is feasible', 'parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]]), new Post(uriTemplate: '/deliveries/from_tasks', input: DeliveryInput::class, denormalizationContext: ['groups' => ['delivery_create_from_tasks']], security: 'is_granted(\'ROLE_ADMIN\')'), new Post(uriTemplate: '/deliveries/suggest_optimizations', write: false, status: 200, controller: SuggestOptimizations::class, output: OptimizationSuggestions::class, denormalizationContext: ['groups' => ['delivery_create']], normalizationContext: ['groups' => ['optimization_suggestions'], 'api_sub_level' => true], securityPostDenormalize: 'is_granted(\'create\', object)', openapiContext: ['summary' => 'Suggests optimizations for a delivery', 'parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]]), new Post(uriTemplate: '/deliveries/import_async', deserialize: false, inputFormats: ['csv' => ['text/csv']], controller: BulkAsync::class, security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')')], types: ['http://schema.org/ParcelDelivery'], order: ['createdAt' => 'DESC'], denormalizationContext: ['groups' => ['order_create']], normalizationContext: ['groups' => ['delivery', 'address']], paginationItemsPerPage: 15)]
 #[AssertDelivery]
 #[AssertCheckDelivery(groups: ['delivery_check'])]
+#[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
+#[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
+#[ApiResource(uriTemplate: '/stores/{id}/deliveries.{_format}', uriVariables: ['id' => new Link(fromClass: \AppBundle\Entity\Store::class, identifiers: ['id'])], status: 200, types: ['http://schema.org/ParcelDelivery'], filters: ['annotated_app_bundle_entity_delivery_api_platform_core_bridge_doctrine_orm_filter_order_filter', 'annotated_app_bundle_entity_delivery_app_bundle_api_filter_delivery_order_filter'], normalizationContext: ['groups' => ['delivery', 'address']], operations: [new GetCollection()])]
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
     use PackagesAwareTrait;

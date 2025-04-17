@@ -2,8 +2,15 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * Nonprofit organisation
  */
-#[ApiResource(iri: 'http://schema.org/NGO', shortName: 'Nonprofit')]
+#[ApiResource(shortName: 'Nonprofit', types: ['http://schema.org/NGO'])]
 class Nonprofit
 {
 
@@ -30,8 +37,8 @@ class Nonprofit
 
     protected bool $enabled;
 
+    #[ApiProperty(iris: ['https://schema.org/URL'])]
     #[Assert\Url]
-    #[ApiProperty(iri: 'https://schema.org/URL')]
     protected ?string $url;
 
     protected ?string $logoName;

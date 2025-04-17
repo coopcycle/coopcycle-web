@@ -2,7 +2,14 @@
 
 namespace AppBundle\Entity\Incident;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
@@ -15,7 +22,7 @@ use AppBundle\Action\Incident\CreateIncident;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(collectionOperations: ['get' => ['method' => 'GET', 'controller' => IncidentFastList::class], 'post' => ['method' => 'POST', 'controller' => CreateIncident::class]], itemOperations: ['get' => ['method' => 'GET'], 'patch' => ['method' => 'PATCH'], 'put' => ['method' => 'PUT'], 'add_comment' => ['method' => 'POST', 'path' => '/incidents/{id}/comments', 'controller' => CreateComment::class], 'action' => ['method' => 'PUT', 'path' => '/incidents/{id}/action', 'controller' => IncidentAction::class]], normalizationContext: ['groups' => ['incident']])]
+#[ApiResource(operations: [new Get(), new Patch(), new Put(), new Post(uriTemplate: '/incidents/{id}/comments', controller: CreateComment::class), new Put(uriTemplate: '/incidents/{id}/action', controller: IncidentAction::class), new GetCollection(controller: IncidentFastList::class), new Post(controller: CreateIncident::class)], normalizationContext: ['groups' => ['incident']])]
 class Incident implements TaggableInterface {
     use TaggableTrait;
 

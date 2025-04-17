@@ -2,8 +2,13 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\MyRestaurants;
 use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
@@ -47,7 +52,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @Vich\Uploadable
  */
-#[ApiResource(shortName: 'Restaurant', attributes: ['denormalization_context' => ['groups' => ['order_create', 'restaurant_update']], 'normalization_context' => ['groups' => ['restaurant', 'address', 'order']]], collectionOperations: ['get' => ['method' => 'GET', 'pagination_enabled' => false, 'normalization_context' => ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]], 'me_restaurants' => ['method' => 'GET', 'path' => '/me/restaurants', 'controller' => MyRestaurants::class]], itemOperations: ['get' => ['method' => 'GET', 'normalization_context' => ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']], 'security' => "is_granted('view', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'restaurant_menu' => ['method' => 'GET', 'path' => '/restaurants/{id}/menu', 'controller' => Menu::class, 'normalization_context' => ['groups' => ['restaurant_menu']]], 'restaurant_menus' => ['method' => 'GET', 'path' => '/restaurants/{id}/menus', 'controller' => Menus::class, 'normalization_context' => ['groups' => ['restaurant_menus']]], 'put' => ['method' => 'PUT', 'input' => RestaurantInput::class, 'denormalization_context' => ['groups' => ['restaurant_update']], 'security' => "is_granted('edit', object)"], 'close' => ['method' => 'PUT', 'path' => '/restaurants/{id}/close', 'controller' => CloseController::class, 'security' => "is_granted('edit', object)"], 'restaurant_deliveries' => ['method' => 'GET', 'path' => '/restaurants/{id}/deliveries/{date}', 'controller' => RestaurantDeliveriesController::class, 'access_control' => "is_granted('ROLE_ADMIN')", 'normalization_context' => ['groups' => ['delivery', 'address', 'restaurant_delivery']]], 'restaurant_timing' => ['method' => 'GET', 'path' => '/restaurants/{id}/timing', 'controller' => Timing::class, 'normalization_context' => ['groups' => ['restaurant_timing']]], 'restaurant_orders' => ['method' => 'GET', 'path' => '/restaurants/{id}/orders', 'controller' => Orders::class, 'security' => "is_granted('edit', object)"]])]
+#[ApiResource(operations: [new Get(normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']], security: 'is_granted(\'view\', object)'), new Delete(security: 'is_granted(\'ROLE_ADMIN\')'), new Get(uriTemplate: '/restaurants/{id}/menu', controller: Menu::class, normalizationContext: ['groups' => ['restaurant_menu']]), new Get(uriTemplate: '/restaurants/{id}/menus', controller: Menus::class, normalizationContext: ['groups' => ['restaurant_menus']]), new Put(input: RestaurantInput::class, denormalizationContext: ['groups' => ['restaurant_update']], security: 'is_granted(\'edit\', object)'), new Put(uriTemplate: '/restaurants/{id}/close', controller: Close::class, security: 'is_granted(\'edit\', object)'), new Get(uriTemplate: '/restaurants/{id}/deliveries/{date}', controller: Deliveries::class, security: 'is_granted(\'ROLE_ADMIN\')', normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]), new Get(uriTemplate: '/restaurants/{id}/timing', controller: Timing::class, normalizationContext: ['groups' => ['restaurant_timing']]), new Get(uriTemplate: '/restaurants/{id}/orders', controller: Orders::class, security: 'is_granted(\'edit\', object)'), new GetCollection(paginationEnabled: false, normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]), new GetCollection(uriTemplate: '/me/restaurants', controller: MyRestaurants::class)], shortName: 'Restaurant', denormalizationContext: ['groups' => ['order_create', 'restaurant_update']], normalizationContext: ['groups' => ['restaurant', 'address', 'order']])]
 #[AssertIsActivableRestaurant(groups: ['activable'])]
 class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,
@@ -85,8 +90,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var string The name of the item
      */
+    #[ApiProperty(iris: ['http://schema.org/name'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'http://schema.org/name')]
     #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
     protected $name;
 
@@ -137,7 +142,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var string The website of the restaurant.
      */
-    #[ApiProperty(iri: 'https://schema.org/URL')]
+    #[ApiProperty(iris: ['https://schema.org/URL'])]
     protected $website;
 
     protected $stripeAccounts;

@@ -2,7 +2,11 @@
 
 namespace AppBundle\Entity\Delivery;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
@@ -11,23 +15,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    collectionOperations: [],
-    itemOperations: [
-        'get' => ['method' => 'GET'],
-        'evaluate' => [
-            'method' => 'POST',
-            'status' => 200,
-            'path' => '/pricing_rules/{id}/evaluate',
-            'controller' => EvaluateController::class,
-            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')",
-            'input' => DeliveryInput::class,
-            'output' => YesNoOutput::class,
-            'denormalization_context' => ['groups' => ['delivery_create', 'pricing_deliveries']],
-            'write' => false,
-            'openapi_context' => ['summary' => 'Evaluates a PricingRule']]
-    ]
-)]
+#[ApiResource(operations: [new Get(), new Post(status: 200, uriTemplate: '/pricing_rules/{id}/evaluate', controller: Evaluate::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')', input: DeliveryInput::class, output: YesNoOutput::class, denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']], write: false, openapiContext: ['summary' => 'Evaluates a PricingRule'])])]
 #[AssertPricingRule]
 class PricingRule
 {
