@@ -1,12 +1,14 @@
 <?php
 
-namespace AppBundle\Domain\Task\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
-use AppBundle\Domain\Event;
+use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
 use AppBundle\Service\LiveUpdates;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler]
 class PublishLiveUpdate
 {
     private $liveUpdates;
@@ -15,7 +17,7 @@ class PublishLiveUpdate
     {
         $this->liveUpdates = $liveUpdates;
     }
-
+    
     public function __invoke(Event $event)
     {
         // this event is used to update the rider TaskList in the app
