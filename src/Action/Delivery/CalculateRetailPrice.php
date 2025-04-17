@@ -2,9 +2,10 @@
 
 namespace AppBundle\Action\Delivery;
 
+use AppBundle\Api\Dto\CalculationItem;
+use AppBundle\Api\Dto\CalculationOutput;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
-use AppBundle\Pricing\RuleResult;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
@@ -17,7 +18,6 @@ use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class CalculateRetailPrice implements TaxableInterface
@@ -62,25 +62,27 @@ class CalculateRetailPrice implements TaxableInterface
 
         $calculation = $priceCalculation->getCalculation();
 
-        $calculationOutput = array_map(
-            function ($item) use ($calculation) {
-                $target = '';
+        $calculationItems = [];
+        foreach ($calculation->resultsPerEntity as $item) {
+            $target = '';
 
-                if (null !== $item->task) {
-                    $target = $item->task->getType();
-                }
+            if (null !== $item->task) {
+                $target = $item->task->getType();
+            }
 
-                if (null !== $item->delivery) {
-                    $target = 'ORDER';
-                }
+            if (null !== $item->delivery) {
+                $target = 'ORDER';
+            }
 
-                return new CalculationItem(
-                    $target,
-                    $calculation->ruleSet->getStrategy(),
-                    $item->ruleResults
-                );
-            },
-            $calculation->resultsPerEntity
+            $calculationItems[] = new CalculationItem(
+                $target,
+                $item->ruleResults
+            );
+        }
+        $calculationOutput = new CalculationOutput(
+            $calculation->ruleSet,
+            $calculation->ruleSet->getStrategy(),
+            $calculationItems
         );
 
         $order = $priceCalculation->getOrder();
@@ -123,21 +125,5 @@ class CalculateRetailPrice implements TaxableInterface
             $taxAmount,
             'included' === $request->query->get('tax', 'included')
         );
-    }
-}
-
-class CalculationItem {
-    /**
-     * @param RuleResult[] $rules
-     */
-    public function __construct(
-        #[Groups(['pricing_deliveries'])]
-        public readonly string $target,
-        #[Groups(['pricing_deliveries'])]
-        public readonly string $strategy,
-        #[Groups(['pricing_deliveries'])]
-        public readonly array $rules,
-    )
-    {
     }
 }

@@ -73,13 +73,7 @@ function MethodOfCalculation({ calculation }) {
   const { t } = useTranslation()
 
   const strategy = useMemo(() => {
-    if (calculation.length === 0) {
-      return null
-    }
-
-    const item = calculation[0]
-
-    switch (item.strategy) {
+    switch (calculation.strategy) {
       case 'find':
         return t('PRICING_PRICING_RULE_SET_STRATEGY_FIND_LABEL')
       case 'map':
@@ -119,6 +113,39 @@ function Cart({ orderItems, itemsTotal }) {
   )
 }
 
+/**
+ * nodeId is in the form of "/api/pricing_rule_sets/1"
+ * @param nodeId
+ */
+function getPriceRuleSetId(nodeId) {
+  const parts = nodeId.split('/')
+  return parts[parts.length - 1]
+}
+
+function PriceRuleSet({ calculation }) {
+  const { t } = useTranslation()
+  const url = window.Routing.generate('admin_deliveries_pricing_ruleset', {
+    id: getPriceRuleSetId(calculation.ruleSet),
+  })
+
+  return (
+    <div>
+      <MethodOfCalculation calculation={calculation} />
+      {calculation.items.map((item, index) => (
+        <Target
+          key={index}
+          target={item.target}
+          rules={Object.values(item.rules)}
+        />
+      ))}
+      <a href={url} target="_blank" rel="noopener noreferrer">
+        {t('DELIVERY_FORM_PRICE_CALCULATION_VIEW_PRICING_RULE_SET')}{' '}
+        <i className="fa fa-external-link"></i>
+      </a>
+    </div>
+  )
+}
+
 export function PriceCalculation({
   className,
   isDebugPricing,
@@ -137,14 +164,7 @@ export function PriceCalculation({
           {Boolean(calculation) && (
             <>
               <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_RULES')}</h4>
-              <MethodOfCalculation calculation={calculation} />
-              {calculation.map((item, index) => (
-                <Target
-                  key={index}
-                  target={item.target}
-                  rules={Object.values(item.rules)}
-                />
-              ))}
+              <PriceRuleSet calculation={calculation} />
             </>
           )}
 
