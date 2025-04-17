@@ -30,4 +30,4 @@ api_platform:
         json: ['application/json']
     swagger:
         versions: [3, 2]
-    metadata_backward_compatibility_layer: true
+    metadata_backward_compatibility_layer: false
