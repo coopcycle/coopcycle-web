@@ -1,8 +1,10 @@
+
 framework:
     messenger:
         default_bus: event.bus
         buses:
             commandnew.bus:
+                default_middleware: true
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
@@ -24,6 +26,7 @@ framework:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
                     - 'AppBundle\Messenger\RequestIdMiddleware'
                     - 'AppBundle\Messenger\RouteMiddleware'
+                    - 'AppBundle\Messenger\EventStoreMiddleware'
                     # each time a message is handled, the Doctrine connection
                     # is "pinged" and reconnected if it's closed. Useful
                     # if your workers run for a long time and the database

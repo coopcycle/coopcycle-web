@@ -1665,3 +1665,13 @@ services:
   AppBundle\MessageHandler\Task\PickOrDrop:
     arguments:
       $eventBus: '@simple_bus.event_bus'
+
+  coopcycle.domain.event_store:
+    class: AppBundle\Domain\EventStore
+    arguments:
+      - '@security.token_storage'
+      - '@request_stack'
+
+  AppBundle\Messenger\EventStoreMiddleware:
+    arguments:
+      - '@coopcycle.domain.event_store'
