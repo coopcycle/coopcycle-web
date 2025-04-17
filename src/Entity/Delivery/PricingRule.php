@@ -60,7 +60,7 @@ class PricingRule
     #[Assert\Type(type: 'string')]
     protected $price;
 
-    #[Groups(['original_rules'])]
+    #[Groups(['original_rules', 'pricing_deliveries'])]
     protected $position;
 
     protected $ruleSet;

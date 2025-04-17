@@ -5,12 +5,15 @@ import { Collapse } from 'antd'
 const { Panel } = Collapse
 
 function ProductOption({ productOption }) {
+  const rule = productOption.matchedRule
+
   return (
     <div>
-      <div>Target: {productOption.matchedRule.target}</div>
-      <div>Condition: {productOption.matchedRule.expression}</div>
+      <div>Rule #{rule.position + 1}</div>
+      <div>Target: {rule.target}</div>
+      <div>Condition: {rule.expression}</div>
       <div>
-        <span>Price expression: {productOption.matchedRule.price}</span>
+        <span>Price expression: {rule.price}</span>
         <span className="pull-right">
           {(productOption.price / 100).formatMoney()}
         </span>
@@ -46,7 +49,9 @@ function Rule({ rule, matched }) {
       className={
         matched ? 'list-group-item-success' : 'list-group-item-danger'
       }>
-      <div>{rule.expression}</div>
+      <div>
+        Rule #{rule.position + 1}: {rule.expression}
+      </div>
     </div>
   )
 }
