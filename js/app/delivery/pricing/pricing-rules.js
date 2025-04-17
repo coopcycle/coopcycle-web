@@ -196,13 +196,8 @@ function addPricingRule(ruleTarget) {
     expressionAST: undefined,
   })
 
-  if (ruleTarget === 'TASK') {
-    //add at the beginning of the list (because task based rules are evaluated first)
-    newLi.prependTo(ruleSet)
-  } else if (ruleTarget === 'DELIVERY') {
-    //add at the end of the list
-    newLi.appendTo(ruleSet)
-  }
+  //add at the end of the list
+  newLi.appendTo(ruleSet)
 
   onListChange()
 }
@@ -285,17 +280,15 @@ $('#pricing-rule-set-header').each(function (index, item) {
           }}
         />
       )}
-      <div className="d-flex justify-content-end">
-        <AddRulePerTask onAddRule={addPricingRule} />
-      </div>
     </StrictMode>,
   )
 })
 
 $('#pricing-rule-set-footer').each(function (index, item) {
   render(
-    <div className="mb-5 d-flex justify-content-end">
+    <div className="mb-5 d-flex justify-content-end gap-4">
       <AddRulePerDelivery onAddRule={addPricingRule} />
+      <AddRulePerTask onAddRule={addPricingRule} />
     </div>,
     item,
   )
