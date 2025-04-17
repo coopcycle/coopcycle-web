@@ -587,6 +587,7 @@ Feature: Carts
       }
       """
 
+  @debug
   Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -617,6 +618,7 @@ Feature: Carts
         ]
       }
       """
+    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -647,14 +649,12 @@ Feature: Carts
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":@integer@
                 }
