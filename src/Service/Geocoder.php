@@ -45,6 +45,7 @@ class Geocoder
         private readonly int $rateLimitPerSecond,
         private readonly RateLimiterStore $geocodeEarthRateLimiterStore,
         private readonly bool $autoconfigure = true,
+        private readonly string $environment,
         private readonly LoggerInterface $logger = new NullLogger()
     )
     {
@@ -52,6 +53,10 @@ class Geocoder
 
     private function getGeocoder()
     {
+        if ($this->environment === 'test') {
+            return new MockGeocoder();
+        }
+
         if (null === $this->geocoder) {
             $providers = [];
 
