@@ -20,17 +20,17 @@ services:
       - name: command_handler
         handles: AppBundle\Domain\Task\Command\Start
 
-  coopcycle.domain.task.handler.mark_as_done:
-    class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
-    arguments:
-      - '@event_recorder'
-      - '@translator'
-      - '@logger'
-      - '@AppBundle\Integration\Standtrack\StandtrackClient'
-      - '@messenger.default_bus'
-    tags:
-      - name: command_handler
-        handles: AppBundle\Domain\Task\Command\MarkAsDone
+  # coopcycle.domain.task.handler.mark_as_done:
+  #   class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
+  #   arguments:
+  #     - '@event_recorder'
+  #     - '@translator'
+  #     - '@logger'
+  #     - '@AppBundle\Integration\Standtrack\StandtrackClient'
+  #     - '@messenger.default_bus'
+  #   tags:
+  #     - name: command_handler
+  #       handles: AppBundle\Domain\Task\Command\MarkAsDone
 
   coopcycle.domain.task.handler.mark_as_failed:
     class: AppBundle\Domain\Task\Handler\MarkAsFailedHandler

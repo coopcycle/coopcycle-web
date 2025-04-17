@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Task\Command;
+namespace AppBundle\Message\Task\Command;
 
 use AppBundle\Entity\Task;
 
@@ -32,4 +32,3 @@ class MarkAsDone
         return $this->contactName;
     }
 }
-
