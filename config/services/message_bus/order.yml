@@ -5,20 +5,13 @@ services:
     autoconfigure: false
     public: true
 
-  coopcycle.domain.event_store:
-    public: false
-    class: AppBundle\Domain\EventStore
-    arguments:
-      - '@security.token_storage'
-      - '@request_stack'
-
-  coopcycle.domain.middleware.event_store:
-    public: false
-    class: AppBundle\Domain\Middleware\EventStoreMiddleware
-    arguments:
-      - '@coopcycle.domain.event_store'
-    tags:
-      - { name: event_bus_middleware, priority: -255 }
+  # coopcycle.domain.middleware.event_store:
+  #   public: false
+  #   class: AppBundle\Domain\Middleware\EventStoreMiddleware
+  #   arguments:
+  #     - '@coopcycle.domain.event_store'
+  #   tags:
+  #     - { name: event_bus_middleware, priority: -255 }
 
   #
   # Command Handlers
