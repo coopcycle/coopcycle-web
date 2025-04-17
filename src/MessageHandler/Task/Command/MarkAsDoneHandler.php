@@ -11,9 +11,10 @@ use AppBundle\Integration\Standtrack\StandtrackClient;
 use AppBundle\Message\CalculateTaskDistance;
 use AppBundle\Message\Task\Command\MarkAsDone;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
@@ -21,11 +22,10 @@ class MarkAsDoneHandler
 {
 
     public function __construct(
-        private RecordsMessages $eventRecorder,
         private TranslatorInterface $translator,
         private LoggerInterface $logger,
         private StandtrackClient $standtrackClient,
-        private MessageBusInterface $messageBus
+        private MessageBusInterface $eventBus
     )
     {}
 
@@ -53,7 +53,10 @@ class MarkAsDoneHandler
             );
         }
 
-        $this->eventRecorder->record(new Event\TaskDone($task, $command->getNotes()));
+        $event = new Event\TaskDone($task, $command->getNotes());
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
 
         //TODO: Make this async
         if (!empty($task->getIUB())) {
@@ -71,6 +74,6 @@ class MarkAsDoneHandler
             $task->getAddress()->setContactName($contactName);
         }
         
-        $this->messageBus->dispatch(new CalculateTaskDistance($task->getId()));
+        $this->eventBus->dispatch(new CalculateTaskDistance($task->getId()));
     }
 }

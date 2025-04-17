@@ -128,8 +128,10 @@ services:
         subscribes_to: task:unassigned
       - name: event_subscriber
         subscribes_to: task:started
-      - name: event_subscriber
-        subscribes_to: task:done
+
+      - name: messenger.message_handler
+        subscribes_to: AppBundle\Domain\Task\Event
+
       - name: event_subscriber
         subscribes_to: task:failed
       - name: event_subscriber

@@ -18,6 +18,7 @@ framework:
                     # instead of keeping them open forever
                     - doctrine_close_connection
             event.bus:
+                default_middleware: true
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
