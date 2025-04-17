@@ -1295,8 +1295,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@": "@*@"},
+          "fulfillmentMethod":"delivery",
+          "hasEdenredCredentials":@boolean@,
+          "invitation": null,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1331,8 +1334,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@": "@*@"},
+          "fulfillmentMethod":"delivery",
+          "hasEdenredCredentials":@boolean@,
+          "invitation": null,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1378,8 +1384,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@": "@*@"},
+          "fulfillmentMethod":"delivery",
+          "hasEdenredCredentials":@boolean@,
+          "invitation": null,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1414,8 +1423,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod": "delivery"
+          "adjustments":{"@*@": "@*@"},
+          "fulfillmentMethod": "delivery",
+          "hasEdenredCredentials":@boolean@,
+          "invitation": null,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1456,8 +1468,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"collection"
+          "adjustments":{"@*@": "@*@"},
+          "fulfillmentMethod":"collection",
+          "hasEdenredCredentials":@boolean@,
+          "invitation": null,
+          "paymentGateway":@string@
         }
       }
       """
