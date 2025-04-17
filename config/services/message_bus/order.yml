@@ -5,17 +5,6 @@ services:
     autoconfigure: false
     public: true
 
-  # coopcycle.domain.middleware.event_store:
-  #   public: false
-  #   class: AppBundle\Domain\Middleware\EventStoreMiddleware
-  #   arguments:
-  #     - '@coopcycle.domain.event_store'
-  #   tags:
-  #     - { name: event_bus_middleware, priority: -255 }
-
-  #
-  # Command Handlers
-  #
 
   coopcycle.domain.order.handler.checkout:
     class: AppBundle\Domain\Order\Handler\CheckoutHandler

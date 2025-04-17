@@ -5,66 +5,6 @@ services:
     autoconfigure: false
     public: true
 
-  #
-  # Command Handlers
-  #
-
-  coopcycle.domain.task.handler.start:
-    class: AppBundle\Domain\Task\Handler\StartHandler
-    arguments:
-      $eventRecorder: '@event_recorder'
-      $taskStateMachine: '@state_machine.task'
-      $logger: '@logger'
-      $standtrackClient: '@AppBundle\Integration\Standtrack\StandtrackClient'
-    tags:
-      - name: command_handler
-        handles: AppBundle\Domain\Task\Command\Start
-
-  # coopcycle.domain.task.handler.mark_as_done:
-  #   class: AppBundle\Domain\Task\Handler\MarkAsDoneHandler
-  #   arguments:
-  #     - '@event_recorder'
-  #     - '@translator'
-  #     - '@logger'
-  #     - '@AppBundle\Integration\Standtrack\StandtrackClient'
-  #     - '@messenger.default_bus'
-  #   tags:
-  #     - name: command_handler
-  #       handles: AppBundle\Domain\Task\Command\MarkAsDone
-
-  coopcycle.domain.task.handler.mark_as_failed:
-    class: AppBundle\Domain\Task\Handler\MarkAsFailedHandler
-    arguments:
-      - '@event_recorder'
-    tags:
-      - name: command_handler
-        handles: AppBundle\Domain\Task\Command\MarkAsFailed
-
-  coopcycle.domain.task.handler.cancel:
-    class: AppBundle\Domain\Task\Handler\CancelHandler
-    arguments:
-      - '@event_recorder'
-    tags:
-      - name: command_handler
-        handles: AppBundle\Domain\Task\Command\Cancel
-
-  coopcycle.domain.task.handler.update:
-    class: AppBundle\Domain\Task\Handler\UpdateHandler
-    arguments:
-      - '@event_recorder'
-    tags:
-      - name: command_handler
-        handles: AppBundle\Domain\Task\Command\Update
-
-  coopcycle.domain.task.handler.delete_group:
-    class: AppBundle\Domain\Task\Handler\DeleteGroupHandler
-    arguments:
-      - '@doctrine'
-      - '@event_recorder'
-    tags:
-      - name: command_handler
-        handles: AppBundle\Domain\Task\Command\DeleteGroup
-
   coopcycle.domain.task.handler.add_to_group:
     class: AppBundle\Domain\Task\Handler\AddToGroupHandler
     tags:
@@ -161,7 +101,7 @@ services:
         subscribes_to: task:started
       - name: messenger.message_handler
         handles: AppBundle\Domain\Task\Event\TaskDone
-      - name: event_subscriber
+      - name: event_suUpdatebscriber
         subscribes_to: task:failed
 
   coopcycle.domain.task.reactor.notify_loopeat:

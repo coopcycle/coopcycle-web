@@ -1,23 +1,21 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\DeleteGroup;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Message\Task\Command\DeleteGroup;
+use Doctrine\Persistence\ManagerRegistry;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class DeleteGroupHandler
 {
-    private $doctrine;
-    private $eventRecorder;
 
-    public function __construct($doctrine, RecordsMessages $eventRecorder)
-    {
-        $this->doctrine = $doctrine;
-        $this->eventRecorder = $eventRecorder;
-    }
+    public function __construct(private ManagerRegistry $doctrine, private  RecordsMessages $eventRecorder)
+    {}
 
     public function __invoke(DeleteGroup $command)
     {
