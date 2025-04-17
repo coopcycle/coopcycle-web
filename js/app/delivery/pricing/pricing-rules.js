@@ -22,6 +22,7 @@ import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import AddRulePerTask from './components/AddRulePerTask'
 import { PriceChoice } from './components/PriceChoice'
 import PercentageEditor from './components/PercentageEditor'
+import Position from './components/Position'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -40,6 +41,10 @@ const onListChange = () => {
 
   $('.delivery-pricing-ruleset > li').each((index, el) => {
     $(el).find('.delivery-pricing-ruleset__rule__position').val(index)
+
+    const rulePositionContainer = $(el).find('.delivery-pricing-ruleset__rule__position__container')
+    render(<Position position={index} />, rulePositionContainer[0])
+
     $(el).attr('data-testid', `pricing-rule-${index}`)
   })
 }
@@ -293,3 +298,6 @@ $('#pricing-rule-set-footer').each(function (index, item) {
     item,
   )
 })
+
+// Execute the function to set the initial state
+onListChange()
