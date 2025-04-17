@@ -2,8 +2,15 @@
 
 namespace AppBundle\Entity\Woopit;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Woopit\QuoteRequest as QuoteRequestController;
 use AppBundle\Action\Woopit\DeliveryRequest as DeliveryRequestController;
 use AppBundle\Action\Woopit\DeliveryCancel as DeliveryCancelController;
@@ -12,7 +19,7 @@ use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(formats: ['json'], collectionOperations: ['post' => ['method' => 'POST', 'path' => '/woopit/quotes', 'controller' => QuoteRequestController::class, 'security' => "is_granted('ROLE_API_KEY')", 'status' => 201, 'denormalization_context' => ['groups' => ['woopit_quote_input']], 'normalization_context' => ['groups' => ['woopit_quote_output']], 'openapi_context' => ['summary' => 'Receives requests for quotes.']], 'post_deliveries' => ['method' => 'POST', 'path' => '/woopit/deliveries', 'controller' => DeliveryRequestController::class, 'security' => "is_granted('ROLE_API_KEY')", 'status' => 201, 'write' => false, 'denormalization_context' => ['groups' => ['woopit_delivery_input']], 'normalization_context' => ['groups' => ['woopit_delivery_output']], 'openapi_context' => ['summary' => 'Receives requests for deliveries.']], 'get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'path' => '/woopit/quotes', 'read' => false, 'output' => false]], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false], 'delete_deliveries' => ['method' => 'DELETE', 'path' => '/woopit/deliveries/{deliveryId}', 'controller' => DeliveryCancelController::class, 'security' => "is_granted('ROLE_API_KEY')", 'read' => false, 'write' => false, 'openapi_context' => ['summary' => 'Cancel a delivery.']], 'patch_deliveries' => ['method' => 'PATCH', 'path' => '/woopit/deliveries/{deliveryId}', 'controller' => DeliveryUpdateController::class, 'security' => "is_granted('ROLE_API_KEY')", 'status' => 204, 'read' => false, 'write' => false, 'denormalization_context' => ['groups' => ['woopit_delivery_input']], 'normalization_context' => ['groups' => ['woopit_delivery_output']], 'openapi_context' => ['summary' => 'Receives requests to update a delivery.']]])]
+#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new Delete(uriTemplate: '/woopit/deliveries/{deliveryId}', controller: DeliveryCancel::class, security: 'is_granted(\'ROLE_API_KEY\')', read: false, write: false, openapiContext: ['summary' => 'Cancel a delivery.']), new Patch(uriTemplate: '/woopit/deliveries/{deliveryId}', controller: DeliveryUpdate::class, security: 'is_granted(\'ROLE_API_KEY\')', status: 204, read: false, write: false, denormalizationContext: ['groups' => ['woopit_delivery_input']], normalizationContext: ['groups' => ['woopit_delivery_output']], openapiContext: ['summary' => 'Receives requests to update a delivery.']), new Post(uriTemplate: '/woopit/quotes', controller: QuoteRequest::class, security: 'is_granted(\'ROLE_API_KEY\')', status: 201, denormalizationContext: ['groups' => ['woopit_quote_input']], normalizationContext: ['groups' => ['woopit_quote_output']], openapiContext: ['summary' => 'Receives requests for quotes.']), new Post(uriTemplate: '/woopit/deliveries', controller: DeliveryRequest::class, security: 'is_granted(\'ROLE_API_KEY\')', status: 201, write: false, denormalizationContext: ['groups' => ['woopit_delivery_input']], normalizationContext: ['groups' => ['woopit_delivery_output']], openapiContext: ['summary' => 'Receives requests for deliveries.']), new GetCollection(controller: NotFoundAction::class, uriTemplate: '/woopit/quotes', read: false, output: false)], formats: ['json'])]
 class QuoteRequest
 {
     use Timestampable;

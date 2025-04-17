@@ -2,12 +2,15 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Me as MeController;
 use AppBundle\Action\MyStripePaymentMethods;
 use AppBundle\Api\Dto\StripePaymentMethodsOutput;
@@ -24,38 +27,9 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
-#[ApiResource(
-    collectionOperations: [
-        'get' => [
-            'method' => 'GET',
-            'access_control' => "is_granted('ROLE_DISPATCHER')",
-            'pagination_enabled' => false,
-            'pagination_client_enabled' => false,
-        ],
-        'get_stripe_payment_methods' => [
-            'method' => 'GET',
-            'path' => '/me/stripe-payment-methods',
-            'controller' => MyStripePaymentMethods::class,
-            'output' => StripePaymentMethodsOutput::class,
-            'normalization_context' => ['api_sub_level' => true]]
-    ],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'access_control' => "is_granted('ROLE_ADMIN') or user == object"
-        ],
-        'put' => [
-            'method' => 'PUT',
-            'access_control' => "is_granted('ROLE_ADMIN') or user == object",
-            'denormalization_context' => ['groups' => ['user_update']]]
-    ],
-    shortName: 'User',
-    attributes: [
-        'normalization_context' => ['groups' => ['user', 'order']]
-    ]
-)]
-#[ApiFilter(UserRoleFilter::class, properties: ['roles'])]
+#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\') or user == object'), new Put(security: 'is_granted(\'ROLE_ADMIN\') or user == object', denormalizationContext: ['groups' => ['user_update']]), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false, paginationClientEnabled: false), new GetCollection(uriTemplate: '/me/stripe-payment-methods', controller: MyStripePaymentMethods::class, output: StripePaymentMethodsOutput::class, normalizationContext: ['api_sub_level' => true])], shortName: 'User', normalizationContext: ['groups' => ['user', 'order']])]
 #[UniqueEntity('facebookId')]
+#[ApiFilter(filterClass: UserRoleFilter::class, properties: ['roles'])]
 class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable
 {
     use Timestampable;

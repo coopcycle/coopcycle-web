@@ -2,12 +2,18 @@
 
 namespace AppBundle\Entity\Task;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
 use AppBundle\Action\Task\GenerateOrders;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Recurr\Rule;
@@ -15,46 +21,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(
-    collectionOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
-        ],
-        'post' => [
-            'method' => 'POST',
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
-        ],
-        'generate_orders' => [
-            'method' => 'POST',
-            'path' => '/recurrence_rules/generate_orders',
-            'security' => "is_granted('ROLE_DISPATCHER')",
-            'controller' => GenerateOrders::class
-        ]
-    ],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
-        ],
-        'put' => [
-            'method' => 'PUT',
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
-        ],
-        'between' => [
-            'method' => 'POST',
-            'path' => '/recurrence_rules/{id}/between',
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')",
-            'controller' => BetweenController::class
-        ],
-        'delete' => [
-            'method' => 'DELETE',
-            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
-        ]
-    ],
-    shortName: 'RecurrenceRule',
-    normalizationContext: ['groups' => ['task_recurrence_rule']]
-)]
+#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new Put(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new Post(uriTemplate: '/recurrence_rules/{id}/between', security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')', controller: RecurrenceRuleBetween::class), new Delete(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new GetCollection(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new Post(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new Post(uriTemplate: '/recurrence_rules/generate_orders', security: 'is_granted(\'ROLE_DISPATCHER\')', controller: GenerateOrders::class)], shortName: 'RecurrenceRule', normalizationContext: ['groups' => ['task_recurrence_rule']])]
 class RecurrenceRule
 {
     use SoftDeleteable;
@@ -75,8 +42,8 @@ class RecurrenceRule
     /**
      * @var Rule
      */
+    #[ApiProperty(openapiContext: ['type' => 'string', 'example' => 'FREQ=WEEKLY'])]
     #[Groups(['task_recurrence_rule'])]
-    #[ApiProperty(attributes: ['openapi_context' => ['type' => 'string', 'example' => 'FREQ=WEEKLY']])]
     private $rule;
 
     /**

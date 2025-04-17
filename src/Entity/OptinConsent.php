@@ -2,14 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\MyOptinConsents;
 use AppBundle\Action\UpdateOptinConsent;
-use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @see https://law.stackexchange.com/questions/29190/gdpr-where-to-store-users-consent
  */
-#[ApiResource(collectionOperations: ['me_optin_consents' => ['method' => 'GET', 'path' => '/me/optin-consents', 'controller' => MyOptinConsents::class], 'update_optin_consents' => ['method' => 'PUT', 'path' => '/me/optin-consents', 'controller' => UpdateOptinConsent::class]])]
+#[ApiResource(operations: [new Get(), new Put(), new Patch(), new Delete(), new GetCollection(uriTemplate: '/me/optin-consents', controller: MyOptinConsents::class), new Put(uriTemplate: '/me/optin-consents', controller: UpdateOptinConsent::class)])]
 class OptinConsent
 {
     private $id;

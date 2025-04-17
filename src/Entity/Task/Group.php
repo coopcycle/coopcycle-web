@@ -2,7 +2,13 @@
 
 namespace AppBundle\Entity\Task;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\AddToGroup as AddTasksToGroup;
 use AppBundle\Action\Task\Bulk as TaskBulk;
 use AppBundle\Action\Task\BulkAsync as TaskBulkAsync;
@@ -17,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(shortName: 'TaskGroup', normalizationContext: ['groups' => ['task_group']], collectionOperations: ['tasks_import' => ['method' => 'POST', 'path' => '/tasks/import', 'input_formats' => ['csv' => ['text/csv']], 'denormalization_context' => ['groups' => ['task', 'task_create']], 'controller' => TaskBulk::class, 'security' => "is_granted('ROLE_OAUTH2_TASKS') or is_granted('ROLE_ADMIN')"], 'tasks_import_async' => ['method' => 'POST', 'path' => '/tasks/import_async', 'input_formats' => ['csv' => ['text/csv']], 'deserialize' => false, 'controller' => TaskBulkAsync::class, 'security' => "is_granted('ROLE_OAUTH2_TASKS') or is_granted('ROLE_ADMIN')"], 'post' => ['method' => 'POST', 'security_post_denormalize' => "is_granted('create', object)"]], itemOperations: ['get' => ['method' => 'GET', 'normalizationContext' => ['groups' => ['task_group']], 'security' => "is_granted('view', object)"], 'put' => ['method' => 'PUT', 'denormalization_context' => ['groups' => ['task_group']], 'security' => "is_granted('edit', object)"], 'delete' => ['method' => 'DELETE', 'controller' => DeleteGroupController::class, 'security' => "is_granted('edit', object)"], 'add_tasks' => ['method' => 'POST', 'path' => '/task_groups/{id}/tasks', 'controller' => AddTasksToGroup::class, 'deserialize' => false, 'write' => false, 'security' => "is_granted('edit', object)"]])]
+#[ApiResource(operations: [new Get(normalizationContext: ['groups' => ['task_group']], security: 'is_granted(\'view\', object)'), new Put(denormalizationContext: ['groups' => ['task_group']], security: 'is_granted(\'edit\', object)'), new Delete(controller: DeleteGroup::class, security: 'is_granted(\'edit\', object)'), new Post(uriTemplate: '/task_groups/{id}/tasks', controller: AddToGroup::class, deserialize: false, write: false, security: 'is_granted(\'edit\', object)'), new Post(uriTemplate: '/tasks/import', inputFormats: ['csv' => ['text/csv']], denormalizationContext: ['groups' => ['task', 'task_create']], controller: Bulk::class, security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'), new Post(uriTemplate: '/tasks/import_async', inputFormats: ['csv' => ['text/csv']], deserialize: false, controller: BulkAsync::class, security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'), new Post(securityPostDenormalize: 'is_granted(\'create\', object)')], shortName: 'TaskGroup', normalizationContext: ['groups' => ['task_group']])]
 #[AssertTaskGroup]
 class Group implements TaggableInterface
 {

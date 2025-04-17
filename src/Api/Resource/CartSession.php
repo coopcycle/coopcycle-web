@@ -2,11 +2,14 @@
 
 namespace AppBundle\Api\Resource;
 
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Cart\CreateSession as CartSessionController;
 use AppBundle\Api\Dto\CartSessionInput;
-use ApiPlatform\Core\Annotation\ApiResource;
 
-#[ApiResource(collectionOperations: ['create_session' => ['method' => 'POST', 'path' => '/carts/session', 'controller' => CartSessionController::class, 'write' => false, 'input' => CartSessionInput::class]], itemOperations: [])]
+#[ApiResource(operations: [new Post(uriTemplate: '/carts/session', controller: CreateSession::class, write: false, input: CartSessionInput::class)])]
 final class CartSession
 {
     public $token;

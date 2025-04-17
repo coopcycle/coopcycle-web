@@ -2,11 +2,16 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
-use AppBundle\Action\Cart\AddItem as AddCartItem;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
 use AppBundle\Action\MyOrders;
@@ -47,6 +52,7 @@ use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Api\Filter\OrderStoreFilter;
+use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -89,376 +95,100 @@ use Webmozart\Assert\Assert as WMAssert;
  * @see http://schema.org/Order Documentation on Schema.org
  */
 #[ApiResource(
-    collectionOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('ROLE_ADMIN')"
-        ],
-        'post' => [
-            'method' => 'POST',
-            'denormalization_context' => ['groups' => ['order_create', 'address_create']]
-        ],
-        'timing' => [
-            'method' => 'POST',
-            'path' => '/orders/timing',
-            'write' => false,
-            'status' => 200,
-            'denormalization_context' => ['groups' => ['order_create', 'address_create']],
-            'normalization_context' => ['groups' => ['cart_timing']],
-            'openapi_context' => [
-                'summary' => 'Retrieves timing information about a Order resource.',
-                'responses' => [
-                    '200' => [
-                        'description' => 'Order timing information',
-                        'content' => ['application/json' => ['schema' => Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA]]
-                    ]
-                ]
-            ]
-        ],
-        'my_orders' => [
-            'method' => 'GET',
-            'path' => '/me/orders',
-            'controller' => MyOrders::class
-        ],
-        'invoice_line_items_grouped_by_organization' => [
-            'method' => 'GET',
-            'path' => '/invoice_line_items/grouped_by_organization',
-            'security' => "is_granted('ROLE_ADMIN')",
-            'output' => InvoiceLineItemGroupedByOrganization::class,
-            'normalization_context' => ['groups' => ['default_invoice_line_item']],
-            'openapi_context' => [
-                'summary' => 'Invoicing: Get the number of orders and sum total grouped by organization',
-                'description' => 'Retrieves the collection of organizations with the number of orders and sum total for the specified filter, for example: ?state[]=new&state[]=accepted&state[]=fulfilled&date[after]=2025-02-01&date[before]=2025-02-28',
-            ]
-        ],
-        'invoice_line_items' => [
-            'method' => 'GET',
-            'path' => '/invoice_line_items',
-            'security' => "is_granted('ROLE_ADMIN')",
-            'output' => InvoiceLineItem::class,
-            'normalization_context' => ['groups' => ['default_invoice_line_item']],
-            'openapi_context' => [
-                'summary' => 'Invoicing: Get the collection of orders',
-                'description' => 'Retrieves the collection of Order resources for the given organizations and the specified filter',
-            ]
-        ],
-        'invoice_line_items_export' => [
-            'method' => 'GET',
-            'path' => '/invoice_line_items/export',
-            // disable pagination for CSV export
-            'pagination_enabled' => false,
-            'security' => "is_granted('ROLE_ADMIN')",
-            'output' => InvoiceLineItem::class,
-            'normalization_context' => ['groups' => ['export_invoice_line_item']],
-            'openapi_context' => [
-                'summary' => 'Invoicing: Get the collection of orders for export in the default format',
-            ]
-        ],
-        'invoice_line_items_odoo_export' => [
-            'method' => 'GET',
-            'path' => '/invoice_line_items/export/odoo',
-            // disable pagination for CSV export
-            'pagination_enabled' => false,
-            'security' => "is_granted('ROLE_ADMIN')",
-            'output' => InvoiceLineItem::class,
-            'normalization_context' => ['groups' => ['odoo_export_invoice_line_item']],
-            'openapi_context' => [
-                'summary' => 'Invoicing: Get the collection of orders for export in the Odoo format',
-            ]
-        ]
-    ],
-    iri: 'http://schema.org/Order',
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('view', object)"
-        ],
-        'payment_details' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/payment',
-            'controller' => PaymentDetailsController::class,
-            'normalization_context' => ['api_sub_level' => true, 'groups' => ['payment_details']],
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Get payment details for a Order resource.']
-        ],
-        'payment_methods' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/payment_methods',
-            'controller' => PaymentMethodsController::class,
-            'output' => PaymentMethodsOutput::class,
-            'normalization_context' => ['api_sub_level' => true],
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Get available payment methods for a Order resource.']
-        ],
-        'pay' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/pay',
-            'controller' => OrderPay::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Pays a Order resource.']
-        ],
-        'accept' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/accept',
-            'controller' => OrderAccept::class,
-            'security' => "is_granted('accept', object)",
-            'deserialize' => false,
-            'openapi_context' => ['summary' => 'Accepts a Order resource.']
-        ],
-        'refuse' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/refuse',
-            'controller' => OrderRefuse::class,
-            'security' => "is_granted('refuse', object)",
-            'openapi_context' => ['summary' => 'Refuses a Order resource.']
-        ],
-        'delay' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/delay',
-            'controller' => OrderDelay::class,
-            'security' => "is_granted('delay', object)",
-            'openapi_context' => ['summary' => 'Delays a Order resource.']
-        ],
-        'fulfill' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/fulfill',
-            'controller' => OrderFulfill::class,
-            'security' => "is_granted('fulfill', object)",
-            'openapi_context' => ['summary' => 'Fulfills a Order resource.']
-        ],
-        'cancel' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/cancel',
-            'controller' => OrderCancel::class,
-            'security' => "is_granted('cancel', object)",
-            'openapi_context' => ['summary' => 'Cancels a Order resource.']
-        ],
-        'start_preparing' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/start_preparing',
-            'controller' => OrderStartPreparing::class,
-            'security' => "is_granted('start_preparing', object)",
-            'openapi_context' => ['summary' => 'Starts preparing an Order resource.']
-        ],
-        'finish_preparing' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/finish_preparing',
-            'controller' => OrderFinishPreparing::class,
-            'security' => "is_granted('finish_preparing', object)",
-            'openapi_context' => ['summary' => 'Finishes preparing an Order resource.']
-        ],
-        'restore' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/restore',
-            'controller' => OrderRestore::class,
-            'security' => "is_granted('restore', object)",
-            'openapi_context' => ['summary' => 'Restores a cancelled Order resource.']
-        ],
-        'assign' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/assign',
-            'controller' => OrderAssign::class,
-            'validation_groups' => ['cart'],
-            'normalization_context' => ['groups' => ['cart']],
-            'openapi_context' => ['summary' => 'Assigns a Order resource to a User.']
-        ],
-        'tip' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/tip',
-            'controller' => OrderTip::class,
-            'validation_groups' => ['cart'],
-            'security' => "is_granted('edit', object)",
-            'normalization_context' => ['groups' => ['cart']],
-            'openapi_context' => ['summary' => 'Updates tip amount of an Order resource.']
-        ],
-        'get_cart_timing' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/timing',
-            'security' => "is_granted('view', object)",
-            'openapi_context' => [
-                'summary' => 'Retrieves timing information about a Order resource.',
-                'responses' => [
-                    '200' => [
-                        'description' => 'Order timing information',
-                        'content' => ['application/json' => ['schema' => Order::SWAGGER_CONTEXT_TIMING_RESPONSE_SCHEMA]]
-                    ]
-                ]
-            ]
-        ],
-        'validate' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/validate',
-            'normalization_context' => ['groups' => ['cart']],
-            'security' => "is_granted('edit', object)"
-        ],
-        'put_cart' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}',
-            'validation_groups' => ['cart'],
-            'normalization_context' => ['groups' => ['cart']],
-            'denormalization_context' => ['groups' => ['order_update']],
-            'security' => "is_granted('edit', object)"
-        ],
-        'post_cart_items' => [
-            'method' => 'POST',
-            'path' => '/orders/{id}/items',
-            'input' => CartItemInput::class,
-            'controller' => AddCartItem::class,
-            'validation_groups' => ['cart'],
-            'denormalization_context' => ['groups' => ['cart']],
-            'normalization_context' => ['groups' => ['cart']],
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Adds items to a Order resource.']
-        ],
-        'put_item' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/items/{itemId}',
-            'controller' => UpdateCartItem::class,
-            'validation_groups' => ['cart'],
-            'denormalization_context' => ['groups' => ['cart']],
-            'normalization_context' => ['groups' => ['cart']],
-            'security' => "is_granted('edit', object)"
-        ],
-        'delete_item' => [
-            'method' => 'DELETE',
-            'path' => '/orders/{id}/items/{itemId}',
-            'controller' => DeleteCartItem::class,
-            'validation_groups' => ['cart'],
-            'normalization_context' => ['groups' => ['cart']],
-            'validate' => false,
-            'write' => false,
-            'status' => 200,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Deletes items from a Order resource.']
-        ],
-        'centrifugo' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/centrifugo',
-            'controller' => CentrifugoController::class,
-            'normalization_context' => ['groups' => ['centrifugo', 'centrifugo_for_order']],
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Get Centrifugo connection details for a Order resource.']
-        ],
-        'mercadopago_preference' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/mercadopago-preference',
-            'controller' => MercadopagoPreference::class,
-            'output' => MercadopagoPreferenceResponse::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Creates a MercadoPago preference and returns its ID.']
-        ],
-        'invoice' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/invoice',
-            'controller' => InvoiceController::class,
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Get Invoice for a Order resource.']
-        ],
-        'generate_invoice' => [
-            'method' => 'POST',
-            'path' => '/orders/{id}/invoice',
-            'normalization_context' => ['groups' => ['order']],
-            'controller' => GenerateInvoiceController::class,
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Generate Invoice for a Order resource.']
-        ],
-        'stripe_clone_payment_method' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/stripe/clone-payment-method/{paymentMethodId}',
-            'controller' => CloneStripePayment::class,
-            'output' => StripePaymentMethodOutput::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => '']
-        ],
-        'stripe_create_setup_intent_or_attach_pm' => [
-            'method' => 'POST',
-            'path' => '/orders/{id}/stripe/create-setup-intent-or-attach-pm',
-            'controller' => CreateSetupIntentOrAttachPM::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => '']
-        ],
-        'create_invitation' => [
-            'method' => 'POST',
-            'path' => '/orders/{id}/create_invitation',
-            'status' => 200,
-            'security' => "is_granted('edit', object)",
-            'normalization_context' => ['groups' => ['cart']],
-            'controller' => CreateInvitationController::class,
-            'validate' => false,
-            'openapi_context' => ['summary' => 'Generates an invitation link for an order']
-        ],
-        'add_player' => [
-            'method' => 'POST',
-            'path' => '/orders/{id}/players',
-            'controller' => AddPlayer::class
-        ],
-        'loopeat_formats' => [
-            'method' => 'GET',
-            'path' => '/orders/{id}/loopeat_formats',
-            'controller' => LoopeatFormatsController::class,
-            'output' => LoopeatFormatsOutput::class,
-            'normalization_context' => ['api_sub_level' => true],
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Get Loopeat formats for an order']
-        ],
-        'update_loopeat_formats' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/loopeat_formats',
-            'controller' => UpdateLoopeatFormatsController::class,
-            'security' => "is_granted('view', object)",
-            'input' => LoopeatFormatsOutput::class,
-            'validate' => false,
-            'normalization_context' => ['groups' => ['cart', 'order']],
-            'denormalization_context' => ['groups' => ['update_loopeat_formats']],
-            'openapi_context' => ['summary' => 'Update Loopeat formats for an order']
-        ],
-        'update_loopeat_returns' => [
-            'method' => 'POST',
-            'path' => '/orders/{id}/loopeat_returns',
-            'controller' => UpdateLoopeatReturnsController::class,
-            'security' => "is_granted('edit', object)",
-            'input' => LoopeatReturns::class,
-            'validate' => false,
-            'normalization_context' => ['groups' => ['cart']],
-            'denormalization_context' => ['groups' => ['update_loopeat_returns']],
-            'openapi_context' => ['summary' => 'Update Loopeat returns for an order']
-        ],
-        'update_edenred_credentials' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/edenred_credentials',
-            'security' => "is_granted('edit', object)",
-            'input' => EdenredCredentialsInput::class,
-            'validate' => false,
-            'normalization_context' => ['groups' => ['cart']],
-            'denormalization_context' => ['groups' => ['update_edenred_credentials']],
-            'openapi_context' => ['summary' => 'Update Edenred credentials for an order']
-        ],
-        'configure_payment' => [
-            'method' => 'PUT',
-            'path' => '/orders/{id}/payment',
-            'security' => "is_granted('edit', object)",
-            'input' => ConfigurePaymentInput::class,
-            'controller' => ConfigurePaymentController::class,
-            'output' => ConfigurePaymentOutput::class,
-            'validate' => false,
-            'denormalization_context' => ['groups' => ['order_configure_payment']],
-            'normalization_context' => ['api_sub_level' => true, 'groups' => ['order_configure_payment']],
-            'openapi_context' => ['summary' => 'Configure payment for a Order resource.']
-        ]
-    ],
-    attributes: [
-        'denormalization_context' => ['groups' => ['order_create']],
-        'normalization_context' => ['groups' => ['order', 'address']]
-    ]
-)]
-#[ApiFilter(OrderDateFilter::class, properties: ['date' => 'exact'])]
-#[ApiFilter(SearchFilter::class, properties: ['state' => 'exact'])]
-#[ApiFilter(ExistsFilter::class, properties: ['exports'])]
-#[ApiFilter(OrderStoreFilter::class)]
+    operations: [
+        new Get(security: 'is_granted(\'view\', object)'),
+        new Get(
+            uriTemplate: '/orders/{id}/payment',
+            controller: PaymentDetails::class,
+            normalizationContext: ['api_sub_level' => true, 'groups' => ['payment_details']],
+            security: 'is_granted(\'edit\', object)',
+            openapiContext: ['summary' => 'Get payment details for a Order resource.']
+        ),
+        new Get(
+            uriTemplate: '/orders/{id}/payment_methods',
+            controller: PaymentMethods::class,
+            output: PaymentMethodsOutput::class,
+            normalizationContext: ['api_sub_level' => true],
+            security: 'is_granted(\'edit\', object)',
+            openapiContext: ['summary' => 'Get available payment methods for a Order resource.']
+        ),
+        new Put(uriTemplate: '/orders/{id}/pay', controller: Pay::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Pays a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/accept', controller: Accept::class, security: 'is_granted(\'accept\', object)', deserialize: false, openapiContext: ['summary' => 'Accepts a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/refuse', controller: Refuse::class, security: 'is_granted(\'refuse\', object)', openapiContext: ['summary' => 'Refuses a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/delay', controller: Delay::class, security: 'is_granted(\'delay\', object)', openapiContext: ['summary' => 'Delays a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/fulfill', controller: Fulfill::class, security: 'is_granted(\'fulfill\', object)', openapiContext: ['summary' => 'Fulfills a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/cancel', controller: Cancel::class, security: 'is_granted(\'cancel\', object)', openapiContext: ['summary' => 'Cancels a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/start_preparing', controller: StartPreparing::class, security: 'is_granted(\'start_preparing\', object)', openapiContext: ['summary' => 'Starts preparing an Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/finish_preparing', controller: FinishPreparing::class, security: 'is_granted(\'finish_preparing\', object)', openapiContext: ['summary' => 'Finishes preparing an Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/restore', controller: Restore::class, security: 'is_granted(\'restore\', object)', openapiContext: ['summary' => 'Restores a cancelled Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/assign', controller: Assign::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Assigns a Order resource to a User.']),
+        new Put(uriTemplate: '/orders/{id}/tip', controller: Tip::class, validationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Updates tip amount of an Order resource.']),
+        new Get(
+            uriTemplate: '/orders/{id}/timing',
+            security: 'is_granted(\'view\', object)',
+            openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]
+        ),
+        new Get(uriTemplate: '/orders/{id}/validate', normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
+        new Put(uriTemplate: '/orders/{id}', validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['order_update']], security: 'is_granted(\'edit\', object)'),
+        // new Post(
+        //     uriTemplate: '/orders/{id}/items',
+        //     input: CartItemInput::class,
+        //     processor: CartItemProcessor::class,
+        //     // deserialize: false,
+        //     validationContext: ['groups' => ['cart']],
+        //     denormalizationContext: ['groups' => ['cart']],
+        //     normalizationContext: ['groups' => ['cart']],
+        //     security: 'is_granted(\'edit\', object)',
+        //     openapiContext: ['summary' => 'Adds items to a Order resource.']
+        // ),
+        new Put(uriTemplate: '/orders/{id}/items/{itemId}', controller: UpdateItem::class, validationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
+        new Delete(uriTemplate: '/orders/{id}/items/{itemId}', controller: DeleteItem::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], validate: false, write: false, status: 200, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Deletes items from a Order resource.']),
+        new Get(uriTemplate: '/orders/{id}/centrifugo', controller: Centrifugo::class, normalizationContext: ['groups' => ['centrifugo', 'centrifugo_for_order']], security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Centrifugo connection details for a Order resource.']),
+        new Get(uriTemplate: '/orders/{id}/mercadopago-preference', controller: MercadopagoPreference::class, output: MercadopagoPreferenceResponse::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Creates a MercadoPago preference and returns its ID.']),
+        new Get(uriTemplate: '/orders/{id}/invoice', controller: Invoice::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Invoice for a Order resource.']),
+        new Post(uriTemplate: '/orders/{id}/invoice', normalizationContext: ['groups' => ['order']], controller: GenerateInvoice::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Generate Invoice for a Order resource.']),
+        new Get(uriTemplate: '/orders/{id}/stripe/clone-payment-method/{paymentMethodId}', controller: CloneStripePayment::class, output: StripePaymentMethodOutput::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => '']),
+        new Post(uriTemplate: '/orders/{id}/stripe/create-setup-intent-or-attach-pm', controller: CreateSetupIntentOrAttachPM::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => '']),
+        new Post(uriTemplate: '/orders/{id}/create_invitation', status: 200, security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], controller: CreateInvitation::class, validate: false, openapiContext: ['summary' => 'Generates an invitation link for an order']),
+        new Post(uriTemplate: '/orders/{id}/players', controller: AddPlayer::class),
+        new Get(
+            uriTemplate: '/orders/{id}/loopeat_formats',
+            controller: LoopeatFormatsController::class,
+            output: LoopeatFormatsOutput::class,
+            normalizationContext: ['api_sub_level' => true],
+            security: 'is_granted(\'view\', object)',
+            openapiContext: ['summary' => 'Get Loopeat formats for an order']
+        ),
+        new Put(
+            uriTemplate: '/orders/{id}/loopeat_formats',
+            controller: UpdateLoopeatFormatsController::class,
+            security: 'is_granted(\'view\', object)',
+            input: LoopeatFormatsOutput::class,
+            validate: false,
+            normalizationContext: ['groups' => ['cart', 'order']],
+            denormalizationContext: ['groups' => ['update_loopeat_formats']],
+            openapiContext: ['summary' => 'Update Loopeat formats for an order']
+        ),
+        new Post(uriTemplate: '/orders/{id}/loopeat_returns', controller: UpdateLoopeatReturns::class, security: 'is_granted(\'edit\', object)', input: LoopeatReturns::class, validate: false, normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['update_loopeat_returns']], openapiContext: ['summary' => 'Update Loopeat returns for an order']),
+        new Put(uriTemplate: '/orders/{id}/edenred_credentials', security: 'is_granted(\'edit\', object)', input: EdenredCredentialsInput::class, validate: false, normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['update_edenred_credentials']], openapiContext: ['summary' => 'Update Edenred credentials for an order']),
+        new Put(uriTemplate: '/orders/{id}/payment', security: 'is_granted(\'edit\', object)', input: ConfigurePaymentInput::class, controller: ConfigurePayment::class, output: ConfigurePaymentOutput::class, validate: false, denormalizationContext: ['groups' => ['order_configure_payment']], normalizationContext: ['api_sub_level' => true, 'groups' => ['order_configure_payment']], openapiContext: ['summary' => 'Configure payment for a Order resource.']),
+        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Post(denormalizationContext: ['groups' => ['order_create', 'address_create']]),
+        new Post(uriTemplate: '/orders/timing', write: false, status: 200, denormalizationContext: ['groups' => ['order_create', 'address_create']], normalizationContext: ['groups' => ['cart_timing']], openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]),
+        new GetCollection(uriTemplate: '/me/orders', controller: MyOrders::class),
+        new GetCollection(uriTemplate: '/invoice_line_items/grouped_by_organization', security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItemGroupedByOrganization::class, normalizationContext: ['groups' => ['default_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the number of orders and sum total grouped by organization', 'description' => 'Retrieves the collection of organizations with the number of orders and sum total for the specified filter, for example: ?state[]=new&state[]=accepted&state[]=fulfilled&date[after]=2025-02-01&date[before]=2025-02-28']),
+        new GetCollection(uriTemplate: '/invoice_line_items', security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['default_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders', 'description' => 'Retrieves the collection of Order resources for the given organizations and the specified filter']),
+        new GetCollection(uriTemplate: '/invoice_line_items/export', paginationEnabled: false, security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['export_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the default format']),
+        new GetCollection(uriTemplate: '/invoice_line_items/export/odoo', paginationEnabled: false, security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['odoo_export_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the Odoo format'])], types: ['http://schema.org/Order'], denormalizationContext: ['groups' => ['order_create']], normalizationContext: ['groups' => ['order', 'address']])
+]
 #[AssertOrder(groups: ['Default'])]
 #[AssertOrderIsModifiable(groups: ['cart'])]
 #[AssertLoopEatOrder(groups: ['loopeat'])]
 #[AssertDabbaOrder(groups: ['dabba'])]
+#[ApiFilter(filterClass: OrderDateFilter::class, properties: ['date' => 'exact'])]
+#[ApiFilter(filterClass: SearchFilter::class, properties: ['state' => 'exact'])]
+#[ApiFilter(filterClass: ExistsFilter::class, properties: ['exports'])]
+#[ApiFilter(filterClass: OrderStoreFilter::class)]
 class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;

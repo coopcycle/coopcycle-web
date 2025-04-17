@@ -2,15 +2,18 @@
 
 namespace AppBundle\Api\Resource;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 // use AppBundle\Action\TaxRate as TaxRateController;
 use AppBundle\Entity\Sylius\TaxRate as BaseTaxRate;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(collectionOperations: ['tax_rates' => ['method' => 'GET', 'path' => '/tax_rates']], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false]])]
+#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new GetCollection(uriTemplate: '/tax_rates')])]
 final class TaxRate
 {
     /**
