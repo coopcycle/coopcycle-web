@@ -1,8 +1,7 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
@@ -10,11 +9,14 @@ use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use AppBundle\Integration\Standtrack\StandtrackClient;
 use AppBundle\Message\CalculateTaskDistance;
+use AppBundle\Message\Task\Command\MarkAsDone;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class MarkAsDoneHandler
 {
 

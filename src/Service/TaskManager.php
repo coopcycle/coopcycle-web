@@ -7,7 +7,6 @@ use AppBundle\Domain\Task\Command\Cancel;
 use AppBundle\Domain\Task\Command\Update;
 use AppBundle\Domain\Task\Command\DeleteGroup;
 use AppBundle\Domain\Task\Command\Incident as IncidentCommand;
-use AppBundle\Domain\Task\Command\MarkAsDone;
 use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Command\RemoveFromGroup;
 use AppBundle\Domain\Task\Command\Reschedule;
@@ -17,16 +16,21 @@ use AppBundle\Domain\Task\Command\Start;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
+use AppBundle\Message\Task\Command\MarkAsDone;
 use SimpleBus\SymfonyBridge\Bus\CommandBus;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class TaskManager
 {
-    private $commandBus;
 
-    public function __construct(CommandBus $commandBus)
+    public function __construct(
+        private CommandBus $commandBus,
+        private MessageBusInterface $commandnewBus
+    ) {}
+
+    public function markAsDone(Task $task, $notes = null, $contactName = null)
     {
-        $this->commandBus = $commandBus;
+        $this->commandnewBus->dispatch(new MarkAsDone($task, $notes, $contactName));
     }
 
     public function cancel(Task $task)
@@ -47,11 +51,6 @@ class TaskManager
     public function removeFromGroup(Task $task)
     {
         $this->commandBus->handle(new RemoveFromGroup($task));
-    }
-
-    public function markAsDone(Task $task, $notes = null, $contactName = null)
-    {
-        $this->commandBus->handle(new MarkAsDone($task, $notes, $contactName));
     }
 
     public function markAsFailed(Task $task, $notes = null, $contactName = null, $reason = null)
