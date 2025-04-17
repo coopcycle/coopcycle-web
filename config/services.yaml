@@ -1660,3 +1660,8 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  # TODO : delete this once migration is done
+  AppBundle\MessageHandler\Task\PickOrDrop:
+    arguments:
+      $eventBus: '@simple_bus.event_bus'

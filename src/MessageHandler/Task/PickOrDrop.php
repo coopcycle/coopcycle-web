@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Order\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
 use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Domain\Order\Event\OrderDropped;
@@ -8,11 +8,13 @@ use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Task\Event\TaskDone;
 use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Re-triggers an event in the order domain.
  */
-class PickOrDrop
+#[AsMessageHandler(handles: TaskDone::class)]
+ class PickOrDrop
 {
     private $eventBus;
 

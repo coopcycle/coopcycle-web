@@ -206,13 +206,13 @@ services:
         - name: event_subscriber
           subscribes_to: order:checkout_succeeded
 
-  coopcycle.domain.order.reactor.pick_or_drop:
-    class: AppBundle\Domain\Order\Reactor\PickOrDrop
-    arguments:
-      - '@event_bus'
-    tags:
-        - name: event_subscriber
-          subscribes_to: task:done
+  # coopcycle.domain.order.reactor.pick_or_drop:
+  #   class: AppBundle\Domain\Order\Reactor\PickOrDrop
+  #   arguments:
+  #     - '@event_bus'
+  #   tags:
+  #       - name: event_subscriber
+  #         subscribes_to: task:done
 
   coopcycle.domain.order.reactor.capture_payment:
     class: AppBundle\Domain\Order\Reactor\CapturePayment
