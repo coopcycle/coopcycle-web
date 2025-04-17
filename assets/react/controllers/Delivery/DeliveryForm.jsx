@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Button, Notification } from 'antd'
+import { Button, ConfigProvider } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
-import { antdLocale } from '../../../../js/app/i18n'
-import { ConfigProvider } from 'antd'
 import moment from 'moment'
 
+import { antdLocale } from '../../../../js/app/i18n'
 import Map from '../../../../js/app/components/delivery-form/Map.js'
 import Spinner from '../../../../js/app/components/core/Spinner.js'
 import BarcodesModal from '../BarcodesModal.jsx'
@@ -20,7 +19,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 import _ from 'lodash'
-
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -108,12 +106,13 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function({ storeId, deliveryId, order, isDispatcher }) {
+export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
 
   const httpClient = new window._auth.httpClient()
 
   const [addresses, setAddresses] = useState([])
   const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
+  const [calculateResponseData, setCalculateResponseData] = useState(null)
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
@@ -219,7 +218,6 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
         } else if (result.response.timeSlots.length > 0) {
           timeSlotUrl = result.response.timeSlots[0]
         } else {
-          Notification.error("No time slot found")
           console.error("No time slot found")
         }
 
@@ -359,11 +357,13 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
         const { response, error } = await httpClient.post(url, infos)
 
         if (error) {
+          setCalculateResponseData(error.response.data)
           setPriceErrorMessage(error.response.data['hydra:description'])
           setCalculatePrice(0)
         }
 
         if (response) {
+          setCalculateResponseData(response)
           setCalculatePrice(response)
           setPriceErrorMessage('')
 
@@ -567,7 +567,9 @@ export default function({ storeId, deliveryId, order, isDispatcher }) {
                         isDispatcher={isDispatcher}
                         deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
+                        isDebugPricing={isDebugPricing}
                         calculatedPrice={calculatedPrice}
+                        calculateResponseData={calculateResponseData}
                         setCalculatePrice={setCalculatePrice}
                         priceErrorMessage={priceErrorMessage}
                         setOverridePrice={setOverridePrice}

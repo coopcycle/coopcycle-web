@@ -89,17 +89,9 @@
             <small id="delivery_price_error" class="delivery-price-error"></small>
           </div>
 
-          {% if debug_pricing is defined and debug_pricing %}
-            {% set pricingRuleSet = delivery.store.pricingRuleSet %}
-            <ul class="list-group" id="pricing-rules-debug" data-strategy="{{ pricingRuleSet.strategy }}">
-              {% for pricing_rule in pricingRuleSet.rules %}
-                <li class="list-group-item" data-pricing-rule="/api/pricing_rules/{{ pricing_rule.id }}">
-                  <span>{{ pricing_rule.expression }}</span>
-                  <span class="pull-right">
-                <i class="fa fa-spinner fa-spin hidden"></i>
-              </span>
-                </li>
-              {% endfor %}
+          {% if is_granted('ROLE_DISPATCHER') or (debug_pricing is defined and debug_pricing) %}
+            <ul class="list-group" id="pricing-rules-debug">
+              {# rendered by React #}
             </ul>
           {% endif %}
 

@@ -29,20 +29,26 @@ context('Setup simple multi-point pricing (role: admin)', () => {
 
     // Rule; 7.20 for each dropoff
     cy.get('[data-testid="pricing_rule_set_add_rule_target_task"]').click();
-    cy.get('[data-testid="rule-picker-add-condition"]').click();
-    cy.get('[data-testid="condition-0"] > :nth-child(1) > .form-control').select('task.type');
-    cy.get('[width="25%"] > .form-control').select('DROPOFF');
-    cy.get('#pricing_rule_set_rules_0_price').type('7.20');
+    cy.get('[data-testid="pricing-rule-0"]')
+      .within(()=> {
+        cy.get('[data-testid="rule-picker-add-condition"]').click();
+        cy.get('[data-testid="condition-0"] > :nth-child(1) > .form-control').select('task.type');
+        cy.get('[width="25%"] > .form-control').select('DROPOFF');
+        cy.get('#pricing_rule_set_rules_0_price').type('7.20');
+      })
 
     // Rule: 1.50 for each dropoff with a package of type XL
     cy.get('[data-testid="pricing_rule_set_add_rule_target_task"]').click();
-    cy.get('[data-testid="pricing-rule-0"] > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .text-right > [data-testid="rule-picker-add-condition"]').click();
-    cy.get('[data-testid="pricing-rule-0"] > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > [data-testid="condition-0"] > :nth-child(1) > .form-control').select('task.type');
-    cy.get('[data-testid="pricing-rule-0"] > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > .table > tbody > [data-testid="condition-0"] > [width="25%"] > .form-control').select('DROPOFF');
-    cy.get('[data-testid="pricing-rule-0"] > .delivery-pricing-ruleset__rule__main > .w-75 > .delivery-pricing-ruleset__rule__expression > .rule-expression-container > .rule-picker > div.text-right > [data-testid="rule-picker-add-condition"]').click();
-    cy.get('[data-testid="condition-1"] > :nth-child(1) > .form-control').select('packages');
-    cy.get('[data-testid="condition-1"] > [width="25%"] > .form-control').select('XL');
-    cy.get('#pricing_rule_set_rules_1_price').type('1.50');
+    cy.get('[data-testid="pricing-rule-1"]')
+      .within(()=> {
+        cy.get('.rule-picker  > .text-right > [data-testid="rule-picker-add-condition"]').click();
+        cy.get('.rule-picker  > .table > tbody > [data-testid="condition-0"] > :nth-child(1) > .form-control').select('task.type');
+        cy.get('.rule-picker  > .table > tbody > [data-testid="condition-0"] > [width="25%"] > .form-control').select('DROPOFF');
+        cy.get('.rule-picker  > div.text-right > [data-testid="rule-picker-add-condition"]').click();
+        cy.get('[data-testid="condition-1"] > :nth-child(1) > .form-control').select('packages');
+        cy.get('[data-testid="condition-1"] > [width="25%"] > .form-control').select('XL');
+        cy.get('#pricing_rule_set_rules_1_price').type('1.50');
+      })
 
     // Save button
     cy.get('.btn-block').click()

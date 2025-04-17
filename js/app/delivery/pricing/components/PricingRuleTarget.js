@@ -12,7 +12,7 @@ export default function PricingRuleTarget({ target }) {
   }
 
   return (
-    <div className="mx-4 my-2">
+    <div className="px-2">
       {labels[target] ?? '?'}{' '}
       {target === 'LEGACY_TARGET_DYNAMIC' && (
         <DeprecatedTag tooltipText={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')} />
