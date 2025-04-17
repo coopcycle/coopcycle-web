@@ -130,17 +130,6 @@ use Webmozart\Assert\Assert as WMAssert;
         ),
         new Get(uriTemplate: '/orders/{id}/validate', normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
         new Put(uriTemplate: '/orders/{id}', validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['order_update']], security: 'is_granted(\'edit\', object)'),
-        // new Post(
-        //     uriTemplate: '/orders/{id}/items',
-        //     input: CartItemInput::class,
-        //     processor: CartItemProcessor::class,
-        //     // deserialize: false,
-        //     validationContext: ['groups' => ['cart']],
-        //     denormalizationContext: ['groups' => ['cart']],
-        //     normalizationContext: ['groups' => ['cart']],
-        //     security: 'is_granted(\'edit\', object)',
-        //     openapiContext: ['summary' => 'Adds items to a Order resource.']
-        // ),
         new Put(uriTemplate: '/orders/{id}/items/{itemId}', controller: UpdateItem::class, validationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
         new Delete(uriTemplate: '/orders/{id}/items/{itemId}', controller: DeleteItem::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], validate: false, write: false, status: 200, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Deletes items from a Order resource.']),
         new Get(uriTemplate: '/orders/{id}/centrifugo', controller: Centrifugo::class, normalizationContext: ['groups' => ['centrifugo', 'centrifugo_for_order']], security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Centrifugo connection details for a Order resource.']),

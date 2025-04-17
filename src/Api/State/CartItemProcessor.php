@@ -33,10 +33,6 @@ class CartItemProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        // $cart = $context['previous_data'];
-
-        var_dump($this->entityManager->contains($data));
-
         $cart = $this->entityManager->getRepository(Order::class)->find($uriVariables['id']);
 
         $product = $this->productRepository->findOneByCode($data->product);
@@ -60,7 +56,6 @@ class CartItemProcessor implements ProcessorInterface
 
         $this->orderModifier->addToOrder($cart, $orderItem);
 
-        // $this->entityManager->persist($cart);
         $this->entityManager->flush();
 
         return $cart;
