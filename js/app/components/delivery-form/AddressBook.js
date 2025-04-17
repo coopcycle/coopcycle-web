@@ -60,8 +60,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
   /** This one is used by the select. Only if the user picked a remembered address. */
 
   const handleAddressSelected = selectedId => {
-    console.log(selectedId)
-    console.log(addresses)
+
     const selectedAddress = addresses.find(
       address => address['@id'] === selectedId,
     )
@@ -81,7 +80,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
   useEffect(() => {
     console.log('shallPrefillAddress', shallPrefillAddress)
     if (shallPrefillAddress) {
-      handleAddressSelected(storeDeliveryInfos.address.streetAddress)
+      handleAddressSelected(storeDeliveryInfos.address['@id'])
     }
   }, [shallPrefillAddress])
 
