@@ -83,6 +83,7 @@ services:
     bind:
       $locale: "%env(COOPCYCLE_LOCALE)%"
       $country: "%country_iso%"
+      $environment: "%kernel.environment%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -1631,7 +1632,7 @@ services:
 
   AppBundle\Paygreen\EnvironmentFactory:
     arguments:
-      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+      $paygreenEnvironment: '%env(PAYGREEN_ENVIRONMENT)%'
 
   Paygreen\Sdk\Payment\V3\Environment:
     factory: '@AppBundle\Paygreen\EnvironmentFactory'
