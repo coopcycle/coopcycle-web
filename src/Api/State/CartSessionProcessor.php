@@ -14,7 +14,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserTo
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CartSessionProcessor implements ProcessorInterface
@@ -22,7 +21,6 @@ class CartSessionProcessor implements ProcessorInterface
     public function __construct(
         private readonly OrderFactory $orderFactory,
         private readonly TokenStorageInterface $tokenStorage,
-        private readonly NormalizerInterface $itemNormalizer,
         private readonly OrderAccessTokenManager $orderAccessTokenManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $checkoutLogger,
@@ -97,13 +95,6 @@ class CartSessionProcessor implements ProcessorInterface
 
         $session->token = $this->orderAccessTokenManager->create($cart);
         $session->cart = $cart;
-
-        // return new JsonResponse([
-        //     'token' => $this->orderAccessTokenManager->create($cart),
-        //     'cart' => $this->itemNormalizer->normalize($data->cart, 'jsonld', [
-        //         'groups' => ['cart']
-        //     ]),
-        // ]);
 
         return $session;
     }
