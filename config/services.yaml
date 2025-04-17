@@ -121,8 +121,11 @@ services:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
 
-  AppBundle\Api\DataTransformer\:
-    resource: '../src/Api/DataTransformer/*'
+  # AppBundle\Api\DataTransformer\:
+  #   resource: '../src/Api/DataTransformer/*'
+
+  AppBundle\Api\State\:
+    resource: '../src/Api/State/*'
 
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
@@ -742,7 +745,7 @@ services:
     autowire: false
     autoconfigure: false
     public: true
-    parent: ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter
+    parent: 'api_platform.doctrine.orm.date_filter'
     arguments:
       $properties: []
 
@@ -1112,14 +1115,25 @@ services:
 
   AppBundle\Mjml\MjmlServerRenderer: ~
 
-  AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
+  AppBundle\Api\State\CartItemProcessor:
     arguments:
       $orderItemFactory: "@sylius.factory.order_item"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
+    tags: [ 'api_platform.state_processor' ]
 
-  AppBundle\Api\DataTransformer\CartSessionInputDataTransformer:
-    arguments:
-      $orderFactory: "@sylius.factory.order"
+  # AppBundle\Api\DataTransformer\CartSessionInputDataTransformer:
+  #   arguments:
+  #     $orderFactory: "@sylius.factory.order"
+  #   tags: [ 'api_platform.data_transformer' ]
+
+  # AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer:
+  #   tags: [ 'api_platform.data_transformer' ]
+
+  # AppBundle\Api\DataTransformer\ConfigurePaymentInputDataTransformer:
+  #   tags: [ 'api_platform.data_transformer' ]
+
+  # AppBundle\Api\DataTransformer\DeliveryInputDataTransformer:
+  #   tags: [ 'api_platform.data_transformer' ]
 
   AppBundle\Twig\CoopCycleExtension:
     arguments:
