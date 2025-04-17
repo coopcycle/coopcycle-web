@@ -1,19 +1,20 @@
 <?php
 
-namespace AppBundle\Domain\Task\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
 use AppBundle\Domain\Task\Event\TaskStarted;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Message\Sms;
 use AppBundle\Service\SettingsManager;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumberFormat;
 use libphonenumber\PhoneNumberUtil;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+#[AsMessageHandler()]
 class SendSms
 {
     public function __construct(

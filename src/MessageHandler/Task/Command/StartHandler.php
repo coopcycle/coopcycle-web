@@ -1,15 +1,17 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\Start;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Integration\Standtrack\StandtrackClient;
+use AppBundle\Message\Task\Command\Start;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Workflow\WorkflowInterface;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class StartHandler
 {
     public function __construct(

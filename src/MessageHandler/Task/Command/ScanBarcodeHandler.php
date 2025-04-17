@@ -1,13 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\ScanBarcode;
 use AppBundle\Domain\Task\Event;
-use Doctrine\ORM\EntityManager;
-use Psr\Log\LoggerInterface;
+use AppBundle\Message\Task\Command\ScanBarcode;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class ScanBarcodeHandler
 {
     public function __construct(

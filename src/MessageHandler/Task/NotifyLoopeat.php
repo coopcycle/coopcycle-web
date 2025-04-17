@@ -1,11 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Task\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
 use AppBundle\Domain\Task\Event\TaskIncidentReported;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler()]
 class NotifyLoopeat
 {
     public function __construct(

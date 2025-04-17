@@ -1,10 +1,11 @@
 <?php
 
-namespace AppBundle\Domain\Task\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
-use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskDone;
+use AppBundle\Domain\Task\Event\TaskFailed;
+use AppBundle\Domain\Task\Event\TaskStarted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use Carbon\Carbon;
@@ -12,10 +13,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
+#[AsMessageHandler()]
 class NotifyUrbantz
 {
     private $urbantzClient;
@@ -34,7 +37,7 @@ class NotifyUrbantz
         $this->secret = $secret;
     }
 
-    public function __invoke(Event $event)
+    public function __invoke(TaskAssigned|TaskStarted|TaskDone|TaskFailed $event)
     {
         $task = $event->getTask();
 

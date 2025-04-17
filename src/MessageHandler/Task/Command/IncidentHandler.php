@@ -1,13 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\Incident;
-use AppBundle\Domain\Task\Command\Reschedule;
 use AppBundle\Domain\Task\Event;
-use AppBundle\Entity\Task;
+use AppBundle\Message\Task\Command\Incident;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class IncidentHandler
 {
 

@@ -1,12 +1,14 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\Restore;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
+use AppBundle\Message\Task\Command\Restore;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class RestoreHandler
 {
     private $eventRecorder;

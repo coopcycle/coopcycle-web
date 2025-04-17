@@ -1,15 +1,22 @@
 <?php
 
-namespace AppBundle\Domain\Task\Reactor;
+namespace AppBundle\MessageHandler\Task;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Task\Event;
+use AppBundle\Domain\Task\Event\TaskAssigned;
+use AppBundle\Domain\Task\Event\TaskDone;
+use AppBundle\Domain\Task\Event\TaskFailed;
+use AppBundle\Domain\Task\Event\TaskIncidentReported;
+use AppBundle\Domain\Task\Event\TaskStarted;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Message\Webhook;
 use AppBundle\Message\WoopitWebhook;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[AsMessageHandler()]
 class TriggerWebhook
 {
     public function __construct(
@@ -18,7 +25,7 @@ class TriggerWebhook
         private EntityManagerInterface $entityManager)
     {}
 
-    public function __invoke(Event $event)
+    public function __invoke(TaskAssigned|TaskStarted|TaskFailed|TaskIncidentReported|TaskDone $event)
     {
         $task = $event->getTask();
 

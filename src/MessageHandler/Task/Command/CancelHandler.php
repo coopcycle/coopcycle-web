@@ -1,12 +1,14 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\Cancel;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
+use AppBundle\Message\Task\Command\Cancel as CommandCancel;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class CancelHandler
 {
     private $eventRecorder;
@@ -16,7 +18,7 @@ class CancelHandler
         $this->eventRecorder = $eventRecorder;
     }
 
-    public function __invoke(Cancel $command)
+    public function __invoke(CommandCancel $command)
     {
         $task = $command->getTask();
 

@@ -1,18 +1,20 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\Reschedule;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
-use Doctrine\ORM\EntityManager;
+use AppBundle\Message\Task\Command\Reschedule;
+use Doctrine\ORM\EntityManagerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class RescheduleHandler
 {
 
     public function __construct(
-        private EntityManager $doctrine,
+        private EntityManagerInterface $em,
         private RecordsMessages $eventRecorder
     )
     { }
@@ -26,7 +28,7 @@ class RescheduleHandler
         $this->eventRecorder->record(new Event\TaskRescheduled($task, $rescheduledAfter, $rescheduledBefore));
 
         $task->unassign();
-        $this->doctrine->flush();
+        $this->em->flush();
         $task->setAfter($rescheduledAfter);
         $task->setBefore($rescheduledBefore);
         $task->setMetadata('rescheduled', true);
