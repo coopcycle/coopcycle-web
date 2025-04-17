@@ -10,11 +10,26 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
 use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\State\CalculateRetailPriceProcessor;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new Post(uriTemplate: '/retail_prices/calculate', input: DeliveryInput::class, controller: CalculateRetailPrice::class, status: 200, write: false, denormalizationContext: ['groups' => ['pricing_deliveries']], security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')', openapiContext: ['summary' => 'Calculates price of a Delivery'])], normalizationContext: ['groups' => ['pricing_deliveries']])]
+#[ApiResource(
+    operations: [
+        new Get(controller: NotFoundAction::class, read: false, output: false),
+        new Post(
+            uriTemplate: '/retail_prices/calculate',
+            input: DeliveryInput::class,
+            processor: CalculateRetailPriceProcessor::class,
+            status: 200,
+            denormalizationContext: ['groups' => ['pricing_deliveries']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
+            openapiContext: ['summary' => 'Calculates price of a Delivery']
+        )
+    ],
+    normalizationContext: ['groups' => ['pricing_deliveries']]
+)]
 final class RetailPrice
 {
     /**
