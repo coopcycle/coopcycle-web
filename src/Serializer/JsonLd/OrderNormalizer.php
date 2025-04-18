@@ -24,11 +24,11 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
+class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     public function __construct(
         private ItemNormalizer $normalizer,
@@ -259,8 +259,11 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         return $order;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null, array $context = [])
     {
+        if (array_key_exists('input', $context)) {
+            return false;
+        }
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Order::class;
     }
 }
