@@ -15,10 +15,12 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
+use Carbon\Carbon;
 use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
+use Redis;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -36,13 +38,23 @@ class ImportDeliveriesHandler
         private LiveUpdates $liveUpdates,
         private DeliveryManager $deliveryManager,
         private LoggerInterface $logger,
-        private TourRepository $tourRepository
+        private TourRepository $tourRepository,
+        private Redis $redis,
+        private string $environment,
         )
     {
     }
 
     public function __invoke(ImportDeliveries $message)
     {
+        //FIXME: move into a middleware?
+        if ('test' === $this->environment) {
+            if ($this->redis->exists('datetime:now')) {
+                $now = $this->redis->get('datetime:now');
+                Carbon::setTestNow(Carbon::parse($now));
+            }
+        }
+
         RemotePushNotificationManager::disable();
 
         // Download file locally
