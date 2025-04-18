@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -17,13 +19,10 @@ use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItem as BaseOrderItem;
 use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 
-use AppBundle\Api\Dto\CartItemInput;
-use AppBundle\Api\State\CartItemProcessor;
-
 #[ApiResource(
     uriTemplate: '/orders/{order}/items/{id}',
     uriVariables: [
-        'order' => new Link(fromClass: Order::class),
+        'order' => new Link(fromClass: Order::class, toProperty: 'order'),
         'id' => new Link(fromClass: self::class),
     ],
     operations: [
@@ -45,6 +44,7 @@ use AppBundle\Api\State\CartItemProcessor;
             validationContext: ['groups' => ['cart']],
             denormalizationContext: ['groups' => ['cart']],
             normalizationContext: ['groups' => ['cart']],
+            // FIXME Implement security
             // security: 'is_granted(\'edit\', object)',
             openapiContext: ['summary' => 'Adds items to a Order resource.']
         )
@@ -108,12 +108,6 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
-    }
-
-    #[ApiProperty(identifier: true)]
-    public function getOrder(): ?OrderInterface
-    {
-        return parent::getOrder();
     }
 
     public function hasOverridenLoopeatQuantityForPackaging(ReusablePackaging $packaging): bool
