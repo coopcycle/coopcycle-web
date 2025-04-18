@@ -18,6 +18,7 @@ use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
 use AppBundle\Api\Dto\RestaurantInput;
+use AppBundle\Api\State\UpdateRestaurantProcessor;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
@@ -52,7 +53,32 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 /**
  * @Vich\Uploadable
  */
-#[ApiResource(operations: [new Get(normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']], security: 'is_granted(\'view\', object)'), new Delete(security: 'is_granted(\'ROLE_ADMIN\')'), new Get(uriTemplate: '/restaurants/{id}/menu', controller: Menu::class, normalizationContext: ['groups' => ['restaurant_menu']]), new Get(uriTemplate: '/restaurants/{id}/menus', controller: Menus::class, normalizationContext: ['groups' => ['restaurant_menus']]), new Put(input: RestaurantInput::class, denormalizationContext: ['groups' => ['restaurant_update']], security: 'is_granted(\'edit\', object)'), new Put(uriTemplate: '/restaurants/{id}/close', controller: Close::class, security: 'is_granted(\'edit\', object)'), new Get(uriTemplate: '/restaurants/{id}/deliveries/{date}', controller: Deliveries::class, security: 'is_granted(\'ROLE_ADMIN\')', normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]), new Get(uriTemplate: '/restaurants/{id}/timing', controller: Timing::class, normalizationContext: ['groups' => ['restaurant_timing']]), new Get(uriTemplate: '/restaurants/{id}/orders', controller: Orders::class, security: 'is_granted(\'edit\', object)'), new GetCollection(paginationEnabled: false, normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]), new GetCollection(uriTemplate: '/me/restaurants', controller: MyRestaurants::class)], shortName: 'Restaurant', denormalizationContext: ['groups' => ['order_create', 'restaurant_update']], normalizationContext: ['groups' => ['restaurant', 'address', 'order']])]
+#[ApiResource(
+    operations: [
+        new Get(
+            normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Get(uriTemplate: '/restaurants/{id}/menu', controller: Menu::class, normalizationContext: ['groups' => ['restaurant_menu']]),
+        new Get(uriTemplate: '/restaurants/{id}/menus', controller: Menus::class, normalizationContext: ['groups' => ['restaurant_menus']]),
+        new Put(
+            input: RestaurantInput::class,
+            processor: UpdateRestaurantProcessor::class,
+            denormalizationContext: ['groups' => ['restaurant_update']],
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Put(uriTemplate: '/restaurants/{id}/close', controller: Close::class, security: 'is_granted(\'edit\', object)'),
+        new Get(uriTemplate: '/restaurants/{id}/deliveries/{date}', controller: Deliveries::class, security: 'is_granted(\'ROLE_ADMIN\')', normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]),
+        new Get(uriTemplate: '/restaurants/{id}/timing', controller: Timing::class, normalizationContext: ['groups' => ['restaurant_timing']]),
+        new Get(uriTemplate: '/restaurants/{id}/orders', controller: Orders::class, security: 'is_granted(\'edit\', object)'),
+        new GetCollection(paginationEnabled: false, normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]),
+        new GetCollection(uriTemplate: '/me/restaurants', controller: MyRestaurants::class)
+    ],
+    shortName: 'Restaurant',
+    denormalizationContext: ['groups' => ['order_create', 'restaurant_update']],
+    normalizationContext: ['groups' => ['restaurant', 'address', 'order']]
+)]
 #[AssertIsActivableRestaurant(groups: ['activable'])]
 class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,

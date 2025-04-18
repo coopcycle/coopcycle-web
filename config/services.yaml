@@ -1131,13 +1131,7 @@ services:
     # decorates: AppBundle\Api\State\DeliveryProcessor
     tags: [ 'api_platform.state_processor' ]
 
-  # AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer:
-  #   tags: [ 'api_platform.data_transformer' ]
-
   # AppBundle\Api\DataTransformer\ConfigurePaymentInputDataTransformer:
-  #   tags: [ 'api_platform.data_transformer' ]
-
-  # AppBundle\Api\DataTransformer\DeliveryInputDataTransformer:
   #   tags: [ 'api_platform.data_transformer' ]
 
   AppBundle\Twig\CoopCycleExtension:
