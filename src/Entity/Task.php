@@ -34,6 +34,7 @@ use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
+use AppBundle\Api\State\BioDeliverProcessor;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
@@ -81,7 +82,13 @@ use stdClass;
         new Put(uriTemplate: '/tasks/{id}/incidents', controller: Incident::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Creates an incident for a Task']),
         new Get(uriTemplate: '/tasks/{id}/events', controller: Events::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Retrieves events for a Task']),
         new Put(uriTemplate: '/tasks/{id}/restore', controller: Restore::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\')', openapiContext: ['summary' => 'Restores a Task']),
-        new Put(uriTemplate: '/tasks/{id}/bio_deliver', security: 'is_granted(\'ROLE_OAUTH2_TASKS\')', input: BioDeliverInput::class, denormalizationContext: ['groups' => ['task_edit']]),
+        new Put(
+            uriTemplate: '/tasks/{id}/bio_deliver',
+            security: 'is_granted(\'ROLE_OAUTH2_TASKS\')',
+            input: BioDeliverInput::class,
+            processor: BioDeliverProcessor::class,
+            denormalizationContext: ['groups' => ['task_edit']]
+        ),
         new Get(uriTemplate: '/tasks/{id}/context', controller: Context::class, security: 'is_granted(\'view\', object)'),
         new Put(uriTemplate: '/tasks/{id}/append_to_comment', controller: AppendToComment::class, security: 'is_granted(\'view\', object)'),
         new GetCollection(

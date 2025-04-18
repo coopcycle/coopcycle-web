@@ -14,10 +14,10 @@ use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
+class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     public function __construct(
         private readonly ItemNormalizer $normalizer,
@@ -281,8 +281,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         return $task;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = [])
     {
+        if (array_key_exists('input', $context)) {
+            return false;
+        }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Task::class;
     }
 }
