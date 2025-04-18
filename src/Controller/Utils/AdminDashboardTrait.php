@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Sylius\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -30,7 +30,7 @@ final class OrderInvitationContext
             return false;
         }
 
-        $iriOrder = $this->iriConverter->getIriFromItem($order);
+        $iriOrder = $this->iriConverter->getIriFromResource($order);
         return $iriOrder === $payload['order'];
 
     }
@@ -45,7 +45,7 @@ final class OrderInvitationContext
             return null;
         }
 
-        return $this->iriConverter->getItemFromIri($payload['player']);
+        return $this->iriConverter->getResourceFromIri($payload['player']);
     }
 
     private function getPayload(): ?array

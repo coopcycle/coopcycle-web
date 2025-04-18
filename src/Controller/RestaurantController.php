@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
@@ -500,7 +500,7 @@ class RestaurantController extends AbstractController
 
             try {
 
-                $shippingAddress = $iriConverter->getItemFromIri($addressIRI);
+                $shippingAddress = $iriConverter->getResourceFromIri($addressIRI);
 
                 if ($user->getAddresses()->contains($shippingAddress)) {
                     $cart->setShippingAddress($shippingAddress);

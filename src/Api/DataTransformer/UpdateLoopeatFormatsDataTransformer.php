@@ -2,7 +2,7 @@
 
 namespace AppBundle\Api\DataTransformer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
 use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use AppBundle\Api\Dto\LoopeatFormats;
@@ -27,7 +27,7 @@ class UpdateLoopeatFormatsDataTransformer implements DataTransformerInterface
 
         foreach ($data->items as $item) {
 
-            $orderItem = $this->iriConverter->getItemFromIri($item->orderItem['@id']);
+            $orderItem = $this->iriConverter->getResourceFromIri($item->orderItem['@id']);
 
             if (!$order->hasItem($orderItem)) {
                 throw new BadRequestHttpException(sprintf('Item #%s does not belong to order #%s', $orderItem->getId(), $order->getId()));

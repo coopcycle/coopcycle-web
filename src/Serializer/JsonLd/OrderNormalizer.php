@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer\JsonLd;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
@@ -214,7 +214,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 }
 
                 if (is_array($item['product']) && isset($item['product']['@id'])) {
-                    $product = $this->iriConverter->getItemFromIri($item['product']['@id']);
+                    $product = $this->iriConverter->getResourceFromIri($item['product']['@id']);
                 } else {
                     $product = $this->productRepository->findOneByCode($item['product']);
                 }

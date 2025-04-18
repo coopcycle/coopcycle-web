@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\SynchronizerClient;
@@ -257,7 +257,7 @@ trait RestaurantTrait
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($restaurant),
+                'sub' => $iriConverter->getIriFromResource($restaurant),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -776,7 +776,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
-            'restaurant_iri' => $iriConverter->getIriFromItem($restaurant),
+            'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
         ], $routes));
     }
 
@@ -1133,7 +1133,7 @@ trait RestaurantTrait
             // The "iss" (Issuer) claim contains a redirect URL
             'iss' => $redirectAfterUri,
             // The "sub" (Subject) claim contains a restaurant IRI
-            'sub' => $iriConverter->getIriFromItem($restaurant),
+            'sub' => $iriConverter->getIriFromResource($restaurant),
             // The custom "mplm" (Mercado Pago livemode) contains a boolean
             'mplm' => 'no',
         ]);

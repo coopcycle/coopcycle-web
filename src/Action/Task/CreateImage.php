@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskImage;
@@ -31,7 +31,7 @@ class CreateImage
         // Ugly hack to improve task validation speed
         if ($request->headers->has('X-Attach-To')) {
             $tasks = array_map(function(string $task): Task {
-                return $this->iriConverter->getItemFromIri($task);
+                return $this->iriConverter->getResourceFromIri($task);
             }, explode(';', $request->headers->get('X-Attach-To')));
         }
 
