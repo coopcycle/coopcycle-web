@@ -16,6 +16,7 @@ class TourProcessor implements ProcessorInterface
 {
     public function __construct(
         private RoutingInterface $routing,
+        private ProcessorInterface $persistProcessor,
         private ItemProvider $provider)
     {}
 
@@ -54,8 +55,6 @@ class TourProcessor implements ProcessorInterface
 
         $tour->setDistance(ceil($distance));
 
-        // TODO Check if persisted
-
-        return $tour;
+        return $this->persistProcessor->process($tour, $operation, $uriVariables, $context);
     }
 }
