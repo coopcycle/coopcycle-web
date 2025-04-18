@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\ArgumentResolver;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\Exception\ItemNotFoundException;
 use AppBundle\Entity\Address;
@@ -54,7 +54,7 @@ class AddressValueResolver implements ArgumentValueResolverInterface
 
         if (is_object($user) && count($user->getAddresses()) > 0 && isset($data['@id'])) {
             try {
-                $address = $this->iriConverter->getItemFromIri($data['@id']);
+                $address = $this->iriConverter->getResourceFromIri($data['@id']);
 
                 if ($user->getAddresses()->contains($address)) {
                     return yield $address;

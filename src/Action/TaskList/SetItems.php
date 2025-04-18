@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\TaskList;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;

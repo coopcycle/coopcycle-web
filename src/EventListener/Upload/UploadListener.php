@@ -2,7 +2,7 @@
 
 namespace AppBundle\EventListener\Upload;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
@@ -59,7 +59,7 @@ final class UploadListener
                     throw new \Exception(ValidationUtils::serializeToString($violations));
                 }
 
-                $restaurant = $this->iriConverter->getItemFromIri($request->get('restaurant'));
+                $restaurant = $this->iriConverter->getResourceFromIri($request->get('restaurant'));
 
                 $products = $this->productSpreadsheetParser->parse($file);
                 foreach ($products as $product) {

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -67,7 +67,7 @@ class BarcodeController extends AbstractController
         $this->taskManager->scan($task);
         $this->doctrine->getManager()->flush();
 
-        $iri = $iriConverter->getIriFromItem($task);
+        $iri = $iriConverter->getIriFromResource($task);
         return $this->json([
             "ressource" => $iri,
             "client_action" => $clientAction,

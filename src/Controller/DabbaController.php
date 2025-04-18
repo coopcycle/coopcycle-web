@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -63,7 +63,7 @@ class DabbaController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $subject = $iriConverter->getItemFromIri($payload['sub']);
+        $subject = $iriConverter->getResourceFromIri($payload['sub']);
 
         if (!$subject instanceof Order) {
             throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s"', Order::class));

@@ -56,7 +56,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('time_range_for_humans_short', array(OrderRuntime::class, 'timeRangeForHumansShort')),
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
             new TwigFilter('promotion_action_for_humans', array(PromotionRuntime::class, 'actionForHumans')),
-            new TwigFilter('get_iri_from_item', array($this, 'getIriFromItem')),
+            new TwigFilter('get_iri_from_item', array($this, 'getIriFromResource')),
             new TwigFilter('oauth2_proxy', array(OAuthRuntime::class, 'modifyUrl')),
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
@@ -200,9 +200,9 @@ class CoopCycleExtension extends AbstractExtension
         return $var instanceof $class;
     }
 
-    public function getIriFromItem($item)
+    public function getIriFromResource($item)
     {
-        return $this->iriConverter->getIriFromItem($item);
+        return $this->iriConverter->getIriFromResource($item);
     }
 
     public function gramsToKilos($grams)

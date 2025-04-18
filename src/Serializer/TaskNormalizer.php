@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Task;
@@ -67,12 +67,12 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
             $data['previous'] = null;
             if ($object->hasPrevious()) {
-                $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
+                $data['previous'] = $this->iriConverter->getIriFromResource($object->getPrevious());
             }
 
             $data['next'] = null;
             if ($object->hasNext()) {
-                $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
+                $data['next'] = $this->iriConverter->getIriFromResource($object->getNext());
             }
         }
 
@@ -191,7 +191,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         $address = null;
         if (isset($data['address']) && is_string($data['address'])) {
             try {
-                $this->iriConverter->getItemFromIri($data['address']);
+                $this->iriConverter->getResourceFromIri($data['address']);
             } catch (InvalidArgumentException $e) {
                 $addressAsString = $data['address'];
                 unset($data['address']);

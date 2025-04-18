@@ -2,7 +2,7 @@
 
 namespace AppBundle\LoopEat;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\LoopEat\OAuthCredentialsInterface;
@@ -185,7 +185,7 @@ class Client
     {
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-            'sub' => $this->iriConverter->getIriFromItem($customer),
+            'sub' => $this->iriConverter->getIriFromResource($customer),
             // Custom claims
             self::JWT_CLAIM_SUCCESS_REDIRECT =>
                 $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
@@ -198,7 +198,7 @@ class Client
     {
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-            'sub' => $this->iriConverter->getIriFromItem($order),
+            'sub' => $this->iriConverter->getIriFromResource($order),
             // Custom claims
             self::JWT_CLAIM_SUCCESS_REDIRECT =>
                 $useDeepLink ? 'coopcycle://loopeat_oauth_redirect' : $this->urlGenerator->generate('loopeat_success', [], UrlGeneratorInterface::ABSOLUTE_URL),
