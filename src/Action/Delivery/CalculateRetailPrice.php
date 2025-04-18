@@ -60,7 +60,7 @@ class CalculateRetailPrice implements TaxableInterface
             throw new BadRequestHttpException($message);
         }
 
-        $calculation = $priceCalculation->getCalculation();
+        $calculation = $priceCalculation->calculation;
 
         $calculationItems = [];
         foreach ($calculation->resultsPerEntity as $item) {
@@ -85,7 +85,7 @@ class CalculateRetailPrice implements TaxableInterface
             $calculationItems
         );
 
-        $order = $priceCalculation->getOrder();
+        $order = $priceCalculation->order;
 
         if (null === $order) {
             $message = 'delivery.price.error.priceCalculation';

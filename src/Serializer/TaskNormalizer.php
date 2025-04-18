@@ -13,6 +13,7 @@ use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -26,7 +27,8 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         private readonly UserManagerInterface $userManager,
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LoggerInterface $logger,
     )
     {}
 
@@ -178,6 +180,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
+        /**
+         * FIXME: Avoid using this method in the new code
+         * It exists only to support legacy use cases
+         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
+         */
+
+        $this->logger->info('Deprecated: TaskNormalizer::denormalize', [
+            'class' => $class,
+            'data' => $data,
+            'context' => $context,
+        ]);
+
         // Legacy props
         if (isset($data['doneAfter']) && !isset($data['after'])) {
             $data['after'] = $data['doneAfter'];

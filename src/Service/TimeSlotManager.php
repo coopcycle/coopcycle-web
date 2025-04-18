@@ -2,15 +2,20 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Form\Type\TimeSlotChoice;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use Doctrine\ORM\EntityManagerInterface;
-
 
 class TimeSlotManager
 {
-    public function __construct(private EntityManagerInterface $entityManager)
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly string $country,
+    )
     {}
 
     /**
@@ -45,5 +50,40 @@ class TimeSlotManager
      */
     public function getDeliveryForms(TimeSlot $timeSlot) {
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['timeSlot' => $timeSlot]);
+    }
+
+    /**
+     * Find a time slot that has a given range among it's choices.
+     */
+    public function findByRange(Store $store, TsRange $range): TimeSlot|null {
+        $storeTimeSlots = $store->getTimeSlots();
+
+        foreach ($storeTimeSlots as $storeTimeSlot) {
+            if ($this->isChoice($storeTimeSlot, $range)) {
+                return $storeTimeSlot;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if a time slot has a given range among it's choices.
+     */
+    public function isChoice(TimeSlot $timeSlot, TsRange $range): bool
+    {
+        $choiceLoader = new TimeSlotChoiceLoader($timeSlot, $this->country);
+        $choiceList = $choiceLoader->loadChoiceList();
+
+        /**
+         * @var TimeSlotChoice $choice
+         */
+        foreach ($choiceList->getChoices() as $choice) {
+            if ($choice->equals($range)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

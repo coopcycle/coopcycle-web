@@ -128,6 +128,17 @@ class TimeSlotChoice
         return $range;
     }
 
+    public function equals(TsRange $range): bool
+    {
+        $rangeToString = function (TsRange $r) {
+            return sprintf('%s - %s', $r->lower->format('Y-m-d H:i'), $r->upper->format('Y-m-d H:i'));
+        };
+
+        $thisRange = $this->toTsRange();
+
+        return $rangeToString($thisRange) === $rangeToString($range);
+    }
+
     public function __toString()
     {
         return sprintf('%s %s', $this->date->format('Y-m-d'), implode('-', $this->timeRange));

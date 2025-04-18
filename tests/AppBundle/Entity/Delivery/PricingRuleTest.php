@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Delivery;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
@@ -13,6 +14,13 @@ use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class PricingRuleTest extends TestCase
 {
+
+    private function toExpressionLanguageValues(Delivery $delivery): array
+    {
+        $deliveryExpressionLanguageVisitor = new DeliveryExpressionLanguageVisitor();
+        return $deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
+    }
+
     public function testMatches()
     {
         $rule = new PricingRule();
@@ -22,15 +30,15 @@ class PricingRuleTest extends TestCase
 
         $delivery->setDistance(1500);
         $delivery->setWeight(500);
-        $this->assertTrue($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         $delivery->setDistance(3500);
         $delivery->setWeight(500);
-        $this->assertFalse($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertFalse($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         $delivery->setDistance(1500);
         $delivery->setWeight(1500);
-        $this->assertFalse($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertFalse($rule->matches($this->toExpressionLanguageValues($delivery)));
     }
 
     public function testNullVariable()
@@ -41,7 +49,7 @@ class PricingRuleTest extends TestCase
         $delivery = new Delivery();
         $delivery->setDistance(null);
 
-        $this->assertFalse($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertFalse($rule->matches($this->toExpressionLanguageValues($delivery)));
     }
 
     public function testUnknownVariable()
@@ -54,7 +62,7 @@ class PricingRuleTest extends TestCase
         $delivery = new Delivery();
         $delivery->setDistance(null);
 
-        $this->assertFalse($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertFalse($rule->matches($this->toExpressionLanguageValues($delivery)));
     }
 
     public function testEvaluateDistanceBasedExpression()
@@ -67,10 +75,10 @@ class PricingRuleTest extends TestCase
         $delivery = new Delivery();
         $delivery->setDistance(2500);
 
-        $this->assertTrue($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         // 15€ + 3€ per km = 15 + 2,5 * 3
-        $this->assertEquals(2250, $rule->apply(Delivery::toExpressionLanguageValues($delivery))->getPriceAdditive());
+        $this->assertEquals(2250, $rule->apply($this->toExpressionLanguageValues($delivery))->getPriceAdditive());
     }
 
     public function testEvaluatePackageBasedExpression()
@@ -87,7 +95,7 @@ class PricingRuleTest extends TestCase
         $delivery->addPackageWithQuantity($mediumPackage, 1);
 
         // 7€ + 2,5€ per package
-        $this->assertEquals(950, $rule->apply(Delivery::toExpressionLanguageValues($delivery))->getPriceAdditive());
+        $this->assertEquals(950, $rule->apply($this->toExpressionLanguageValues($delivery))->getPriceAdditive());
     }
 
     public function testEvaluateFixedPriceExpression()
@@ -99,10 +107,10 @@ class PricingRuleTest extends TestCase
         $delivery = new Delivery();
         $delivery->setDistance(2500);
 
-        $this->assertTrue($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         // 15€
-        $this->assertEquals(1500, $rule->apply(Delivery::toExpressionLanguageValues($delivery))->getPriceAdditive());
+        $this->assertEquals(1500, $rule->apply($this->toExpressionLanguageValues($delivery))->getPriceAdditive());
     }
 
     public function testEvaluatePricePercentageExpression()
@@ -114,13 +122,13 @@ class PricingRuleTest extends TestCase
         $delivery = new Delivery();
         $delivery->setDistance(2500);
 
-        $this->assertTrue($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         $language = new ExpressionLanguage();
         $language->registerProvider(new PricePercentageExpressionLanguageProvider());
 
         // +15%
-        $this->assertEquals(11500, $rule->apply(Delivery::toExpressionLanguageValues($delivery), $language)->getPriceMultiplier());
+        $this->assertEquals(11500, $rule->apply($this->toExpressionLanguageValues($delivery), $language)->getPriceMultiplier());
     }
 
     public function testEvaluatePriceRangeExpression()
@@ -132,14 +140,14 @@ class PricingRuleTest extends TestCase
         $delivery = new Delivery();
         $delivery->setDistance(2500);
 
-        $this->assertTrue($rule->matches(Delivery::toExpressionLanguageValues($delivery)));
+        $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         $language = new ExpressionLanguage();
         $language->registerProvider(new PriceRangeExpressionLanguageProvider());
 
 
         // 1€ per km = 3
-        $this->assertEquals(300, $rule->apply(Delivery::toExpressionLanguageValues($delivery), $language)->getPriceAdditive());
+        $this->assertEquals(300, $rule->apply($this->toExpressionLanguageValues($delivery), $language)->getPriceAdditive());
     }
 
     public function testEvaluatePricePerPackageExpression()
@@ -158,6 +166,6 @@ class PricingRuleTest extends TestCase
         $language->registerProvider(new PricePerPackageExpressionLanguageProvider());
 
         // 2,5€ per package
-        $this->assertEquals(250, $rule->apply(Delivery::toExpressionLanguageValues($delivery), $language)->getPriceAdditive());
+        $this->assertEquals(250, $rule->apply($this->toExpressionLanguageValues($delivery), $language)->getPriceAdditive());
     }
 }
