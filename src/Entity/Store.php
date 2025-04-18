@@ -32,8 +32,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
-use AppBundle\Action\Store\Packages as Packages;
+use AppBundle\Action\TimeSlot\StoreTimeSlots;
+use AppBundle\Action\Store\Packages;
 
 
 /**

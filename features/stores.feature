@@ -896,7 +896,7 @@ Feature: Stores
       """
       {
         "@context": "/api/contexts/Store",
-        "@id": "/api/stores",
+        "@id": "/api/stores/1/time_slots",
         "@type": "hydra:Collection",
         "hydra:member": [
             {
@@ -978,7 +978,7 @@ Feature: Stores
       """
       {
            "@context": "/api/contexts/Store",
-           "@id": "/api/stores",
+           "@id": "/api/stores/1/packages",
            "@type": "hydra:Collection",
            "hydra:member": [
                {
