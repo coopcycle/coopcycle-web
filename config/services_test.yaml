@@ -39,3 +39,6 @@ services:
           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
           $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
           $appName: '%env(COOPCYCLE_APP_NAME)%'
+
+    security.csrf.token_manager:
+      class: AppBundle\Service\MockCsrfTokenManager

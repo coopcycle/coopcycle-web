@@ -5,6 +5,8 @@ framework:
     test: ~
     session:
         storage_id: session.storage.mock_file
+    # normally cypress e2e tests should run with CSRF protection enabled, but once in a while they fail
+    csrf_protection: false
     cache:
         prefix_seed: "%database_name%_test"
         app: cache.adapter.array
