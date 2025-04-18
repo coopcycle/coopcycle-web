@@ -1,31 +1,29 @@
 <?php
 
-namespace AppBundle\Api\DataTransformer;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\DataTransformer\DataTransformerInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Doctrine\Orm\State\ItemProvider;
+use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\TourInput;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Tour;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
-class TourInputDataTransformer implements DataTransformerInterface
+class TourProcessor implements ProcessorInterface
 {
-    private $routing;
+    public function __construct(
+        private RoutingInterface $routing,
+        private ItemProvider $provider)
+    {}
 
-    public function __construct(RoutingInterface $routing)
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $this->routing = $routing;
-    }
+        if ($operation instanceof Put) {
 
-    /**
-     * {@inheritdoc}
-     */
-    public function transform($data, string $to, array $context = [])
-    {
-        if ($context["operation_type"] == "item" && $context["item_operation_name"] == "put") {
-            $tour = $context['object_to_populate'];
+            $tour = $this->provider->provide($operation, $uriVariables, $context);
 
             if (!empty($data->name)) {
                 $tour->setName($data->name);
@@ -34,10 +32,10 @@ class TourInputDataTransformer implements DataTransformerInterface
             $tour->setTasks($data->tasks);
 
         } else {
+
             $tour = new Tour();
 
             $tour->setName($data->name);
-
             $tour->setDate(new \DateTime($data->date));
 
             foreach ($data->tasks as $task) {
@@ -56,18 +54,8 @@ class TourInputDataTransformer implements DataTransformerInterface
 
         $tour->setDistance(ceil($distance));
 
+        // TODO Check if persisted
+
         return $tour;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsTransformation($data, string $to, array $context = []): bool
-    {
-        if ($data instanceof Tour) {
-            return false;
-        }
-
-        return $to === Tour::class && ($context['input']['class'] ?? null) === TourInput::class;
     }
 }
