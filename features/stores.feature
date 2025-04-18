@@ -701,6 +701,7 @@ Feature: Stores
       }
       """
 
+  @deprecated
   Scenario: Retrieve store dropoff addresses
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -775,7 +776,7 @@ Feature: Stores
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
-    And the response should be in JSON
+    Then the response should be in JSON
     And the JSON should match:
       """
       {
