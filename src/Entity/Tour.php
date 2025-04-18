@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\TourInput;
+use AppBundle\Api\State\TourProcessor;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -20,7 +21,25 @@ use AppBundle\Entity\TaskList\Item;
 use AppBundle\Vroom\Job as VroomJob;
 use AppBundle\Vroom\Shipment as VroomShipment;
 
-#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_DISPATCHER\')'), new Put(input: TourInput::class, security: 'is_granted(\'ROLE_DISPATCHER\')'), new Delete(security: 'is_granted(\'ROLE_DISPATCHER\')'), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false), new Post(input: TourInput::class, security: 'is_granted(\'ROLE_DISPATCHER\')')], denormalizationContext: ['groups' => ['tour']], normalizationContext: ['groups' => ['task_collection', 'tour']])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Put(
+            input: TourInput::class,
+            processor: TourProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Delete(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false),
+        new Post(
+            input: TourInput::class,
+            processor: TourProcessor::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        )
+    ],
+    denormalizationContext: ['groups' => ['tour']],
+    normalizationContext: ['groups' => ['task_collection', 'tour']]
+)]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
