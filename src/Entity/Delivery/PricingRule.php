@@ -22,13 +22,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             status: 200,
             uriTemplate: '/pricing_rules/{id}/evaluate',
-            // controller: Evaluate::class,
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')',
             input: DeliveryInput::class,
             processor: EvaluatePricingRuleProcessor::class,
             output: YesNoOutput::class,
             denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
-            // write: false,
             openapiContext: ['summary' => 'Evaluates a PricingRule']
         )
     ]
