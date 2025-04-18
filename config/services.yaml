@@ -1122,9 +1122,13 @@ services:
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\CalculateRetailPriceProcessor:
-    decorates: AppBundle\Api\State\DeliveryProcessor
+    # decorates: AppBundle\Api\State\DeliveryProcessor
     arguments:
       $state: "%region_iso%"
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\EvaluatePricingRuleProcessor:
+    # decorates: AppBundle\Api\State\DeliveryProcessor
     tags: [ 'api_platform.state_processor' ]
 
   # AppBundle\Api\DataTransformer\BioDeliverInputDataTransformer:

@@ -5,11 +5,9 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -77,25 +75,5 @@ class DeliveryProcessor implements ProcessorInterface
         $delivery->setWeight($data->weight ?? null);
 
         return $delivery;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsTransformation($data, string $to, array $context = []): bool
-    {
-        if ($data instanceof RetailPrice) {
-          return false;
-        }
-
-        if ($data instanceof DeliveryQuote) {
-          return false;
-        }
-
-        if ($data instanceof Delivery) {
-          return false;
-        }
-
-        return in_array($to, [ RetailPrice::class, DeliveryQuote::class, Delivery::class ]) && null !== ($context['input']['class'] ?? null);
     }
 }

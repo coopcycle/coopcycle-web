@@ -40,7 +40,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":true
       }
@@ -87,7 +87,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":false
       }
@@ -137,7 +137,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":true
       }
@@ -187,7 +187,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":true
       }
@@ -235,7 +235,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":true
       }
@@ -302,7 +302,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":false
       }
@@ -363,7 +363,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"YesNoOutput",
+        "@type":"PricingRule",
         "@id":@string@,
         "result":true
       }
