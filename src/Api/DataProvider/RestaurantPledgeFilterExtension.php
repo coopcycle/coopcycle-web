@@ -2,8 +2,10 @@
 
 namespace AppBundle\Api\DataProvider;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use AppBundle\Entity\LocalBusiness;
 use Doctrine\ORM\QueryBuilder;
 
@@ -16,13 +18,14 @@ class RestaurantPledgeFilterExtension implements QueryCollectionExtensionInterfa
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
         string $resourceClass,
-        string $operationName = null)
+        Operation $operation = null,
+        array $context = []): void
     {
         if (LocalBusiness::class !== $resourceClass) {
             return;
         }
 
-        if ($operationName !== 'get') {
+        if (!$operation instanceof GetCollection) {
             return;
         }
 
