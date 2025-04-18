@@ -1,9 +1,11 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\AddToGroup;
+use AppBundle\Message\Task\Command\AddToGroup;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class AddToGroupHandler
 {
     public function __invoke(AddToGroup $command)

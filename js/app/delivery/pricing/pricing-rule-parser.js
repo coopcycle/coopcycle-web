@@ -240,6 +240,13 @@ export class FixedPrice extends Price {
   }
 }
 
+export class PercentagePrice extends Price {
+  constructor(percentage) {
+    super()
+    this.percentage = percentage
+  }
+}
+
 export class PriceRange extends Price {
   constructor(attribute, price, step, threshold) {
     super()
@@ -310,6 +317,15 @@ const parsePriceNode = (node, expression) => {
     const discountPrice = args[4].attributes.value
 
     return new PricePerPackage(packageName, unitPrice, offset, discountPrice)
+  }
+
+  if (node.attributes.name === 'price_percentage') {
+
+    const args = node.nodes.arguments.nodes
+
+    const percentage = args[0].attributes.value
+
+    return new PercentagePrice(percentage)
   }
 
   if (node.nodes.length === 0 && typeof node.attributes.value === 'number') {

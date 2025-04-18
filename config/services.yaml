@@ -5,6 +5,7 @@ imports:
   - { resource: services/validators.yml }
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
+  - { resource: services/messenger.yaml }
   - { resource: services/message_bus/order.yml }
   - { resource: services/message_bus/task.yml }
 
@@ -564,6 +565,8 @@ services:
 
   AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider: ~
 
+  AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider: ~
+
   AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider: ~
 
   AppBundle\ExpressionLanguage\ExpressionLanguage:
@@ -573,6 +576,7 @@ services:
         - '@coopcycle.expression_language.zone.provider'
         - '@AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider'
+        - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
   AppBundle\EventListener\RegistrationListener:
@@ -1657,3 +1661,18 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  # TODO : delete this once migration is done
+  AppBundle\MessageHandler\Task\PickOrDrop:
+    arguments:
+      $eventBus: '@simple_bus.event_bus'
+
+  coopcycle.domain.event_store:
+    class: AppBundle\Domain\EventStore
+    arguments:
+      - '@security.token_storage'
+      - '@request_stack'
+
+  AppBundle\Messenger\EventStoreMiddleware:
+    arguments:
+      - '@coopcycle.domain.event_store'

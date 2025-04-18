@@ -1,17 +1,15 @@
 <?php
 
-namespace AppBundle\MessageHandler\Task\Command;
+namespace AppBundle\Domain\Task\Handler;
 
+use AppBundle\Domain\Task\Command\MarkAsFailed;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
-use AppBundle\Message\Task\Command\MarkAsFailed;
 use SimpleBus\Message\Recorder\RecordsMessages;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(bus: 'commandbusnew.bus')]
 class MarkAsFailedHandler
 {
     private $eventRecorder;

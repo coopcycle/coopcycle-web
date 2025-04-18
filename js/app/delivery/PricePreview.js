@@ -1,51 +1,12 @@
+import React, { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
 import axios from 'axios'
+import { PriceCalculation } from './PriceCalculation'
 
 const baseURL = location.protocol + '//' + location.host
 
 // @see https://gist.github.com/anvk/5602ec398e4fdc521e2bf9940fd90f84
 
-function asyncFunc(item, payload, token) {
-  return new Promise((resolve) => {
-
-    $(item.element).find('.fa-spinner').removeClass('hidden')
-
-    axios({
-      method: 'post',
-      url: `${baseURL}${item.pricingRule}/evaluate`,
-      data: payload,
-      headers: {
-        Accept: 'application/ld+json',
-        'Content-Type': 'application/ld+json',
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then(response => {
-        // TODO Check response is OK, reject promise
-        $(item.element).find('.fa-spinner').addClass('hidden')
-        if (response.data.result === true) {
-          $(item.element).addClass('list-group-item-success')
-        } else {
-          $(item.element).addClass('list-group-item-danger')
-        }
-        resolve(response.data)
-      })
-  })
-}
-
-function workMyCollection(strategy, items, payload, token) {
-  return items.reduce((promise, current) => {
-    return promise
-      .then((previous) => {
-        if (strategy === 'find' && previous && previous.result === true) {
-          return Promise.resolve(previous)
-        }
-
-        return asyncFunc(current, payload, token)
-      })
-      // eslint-disable-next-line no-console
-      .catch(console.error)
-  }, Promise.resolve())
-}
 
 function createPricingPromise(delivery, token, $container) {
   return new Promise((resolve) => {
@@ -70,15 +31,13 @@ function createPricingPromise(delivery, token, $container) {
           }
         }
 
-        resolve({ success: false, message })
+        resolve({ success: false, data: e.response.data, message })
       })
   })
 }
 
 class PricePreview {
-  constructor(strategy, uris) {
-    this.strategy = strategy
-    this.uris = uris
+  constructor() {
     this.token = null
   }
   getToken() {
@@ -104,24 +63,14 @@ class PricePreview {
       .find('[data-tax]')
       .text((0).formatMoney())
 
-    $('#pricing-rules-debug li')
-      .removeClass('list-group-item-success')
-      .removeClass('list-group-item-danger')
-
     return this.getToken().then((token) => {
-      const pricingPromise = createPricingPromise(delivery, token, $container)
-      const debugPromise = workMyCollection(this.strategy, this.uris, delivery, token)
-
-      return Promise
-        .all([ pricingPromise, debugPromise ])
+      return createPricingPromise(delivery, token, $container)
     })
-   .then(values => {
-
-     const priceResult = values[0]
+   .then(priceResult => {
+     const { data } = priceResult
 
      if (priceResult.success) {
 
-       const { data } = priceResult
        const taxExcluded = data.amount - data.tax.amount
 
        $('#delivery_price')
@@ -135,21 +84,23 @@ class PricePreview {
        $('#delivery_price_error').text(priceResult.message)
      }
 
+     $('#pricing-rules-debug').each(function (index, item) {
+       const root = createRoot(item)
+       root.render(
+         <StrictMode>
+           <PriceCalculation
+             calculation={data.calculation}
+             orderItems={data.items}
+             itemsTotal={data.amount} />
+         </StrictMode>,
+       )
+     })
+
      $container.removeClass('delivery-price--loading')
    })
   }
 }
 
-export default function(el) {
-
-  const strategy =  $(el).find('#pricing-rules-debug').data('strategy')
-
-  const uris = $(el).find('ul li').map(function() {
-    return {
-      pricingRule: $(this).data('pricing-rule'),
-      element: $(this),
-    }
-  }).toArray()
-
-  return new PricePreview(strategy, uris)
+export default function() {
+  return new PricePreview()
 }

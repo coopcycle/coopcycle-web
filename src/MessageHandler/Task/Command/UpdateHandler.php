@@ -1,11 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Task\Handler;
+namespace AppBundle\MessageHandler\Task\Command;
 
-use AppBundle\Domain\Task\Command\Update;
 use AppBundle\Domain\Task\Event;
+use AppBundle\Message\Task\Command\Update;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class UpdateHandler
 {
     private $eventRecorder;

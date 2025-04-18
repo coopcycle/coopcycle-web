@@ -401,6 +401,7 @@ trait StoreTrait
                 'back_route' => $routes['back'],
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
+                'debug_pricing' => $request->query->getBoolean('debug', false),
         ]));
     }
 
@@ -489,6 +490,7 @@ trait StoreTrait
             'recurrenceRule' => $recurrenceRule,
             'delivery' => $tempDelivery,
             'form' => $form->createView(),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
         ]);
     }
 
