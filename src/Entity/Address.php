@@ -11,16 +11,37 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\CreateAddress;
+use AppBundle\Api\State\StoreAddressesProvider;
 use AppBundle\Entity\Base\BaseAddress;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @see http://schema.org/Place Documentation on Schema.org
  */
-#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\')'), new Patch(security: 'is_granted(\'edit\', object)'), new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'), new Post(uriTemplate: '/me/addresses', controller: CreateAddress::class)], types: ['http://schema.org/Place'], normalizationContext: ['groups' => ['address']])]
-#[ApiResource(uriTemplate: '/stores/{id}/addresses.{_format}', uriVariables: ['id' => new Link(fromClass: \AppBundle\Entity\Store::class, identifiers: ['id'])], status: 200, types: ['http://schema.org/Place'], normalizationContext: ['groups' => ['address']], operations: [new GetCollection()])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Patch(security: 'is_granted(\'edit\', object)'),
+        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Post(uriTemplate: '/me/addresses', controller: CreateAddress::class)
+    ],
+    types: ['http://schema.org/Place'],
+    normalizationContext: ['groups' => ['address']]
+)]
+#[ApiResource(
+    uriTemplate: '/stores/{id}/addresses',
+    uriVariables: [
+        'id' => new Link(fromClass: Store::class, fromProperty: 'addresses')
+    ],
+    status: 200,
+    types: ['http://schema.org/Place'],
+    normalizationContext: ['groups' => ['address']],
+    operations: [new GetCollection()],
+    provider: StoreAddressesProvider::class
+)]
 class Address extends BaseAddress
 {
     /**
@@ -28,7 +49,7 @@ class Address extends BaseAddress
      */
     private $id;
     private $company;
-    #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit'])]
+    #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit', 'address'])]
     private $contactName;
     private $complete;
     /**

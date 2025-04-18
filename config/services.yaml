@@ -1030,14 +1030,6 @@ services:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
-  AppBundle\Api\DataProvider\StoreAddressesSubresourceDataProvider:
-    arguments:
-      $requestStack: '@request_stack'
-      $doctrine: '@doctrine'
-    tags:
-      - { name: 'api_platform.subresource_data_provider', priority: 2 }
-    autoconfigure: false
-
   AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
   AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
