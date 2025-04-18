@@ -56,6 +56,8 @@ class CartItemProcessor implements ProcessorInterface
 
         $this->orderModifier->addToOrder($cart, $orderItem);
 
+        // TODO Use PersistProcessor
+
         $this->entityManager->flush();
 
         return $cart;

@@ -38,7 +38,6 @@ use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
-use AppBundle\Action\Order\UpdateLoopeatFormats as UpdateLoopeatFormatsController;
 use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
@@ -47,12 +46,13 @@ use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
-use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsOutput;
+use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\Api\Dto\LoopeatReturns;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
+use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -143,23 +143,40 @@ use Webmozart\Assert\Assert as WMAssert;
         new Get(
             uriTemplate: '/orders/{id}/loopeat_formats',
             controller: LoopeatFormatsController::class,
-            output: LoopeatFormatsOutput::class,
+            output: LoopeatFormats::class,
             normalizationContext: ['api_sub_level' => true],
             security: 'is_granted(\'view\', object)',
             openapiContext: ['summary' => 'Get Loopeat formats for an order']
         ),
         new Put(
             uriTemplate: '/orders/{id}/loopeat_formats',
-            controller: UpdateLoopeatFormatsController::class,
             security: 'is_granted(\'view\', object)',
-            input: LoopeatFormatsOutput::class,
+            input: LoopeatFormats::class,
+            processor: LoopeatFormatsProcessor::class,
             validate: false,
             normalizationContext: ['groups' => ['cart', 'order']],
             denormalizationContext: ['groups' => ['update_loopeat_formats']],
             openapiContext: ['summary' => 'Update Loopeat formats for an order']
         ),
-        new Post(uriTemplate: '/orders/{id}/loopeat_returns', controller: UpdateLoopeatReturns::class, security: 'is_granted(\'edit\', object)', input: LoopeatReturns::class, validate: false, normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['update_loopeat_returns']], openapiContext: ['summary' => 'Update Loopeat returns for an order']),
-        new Put(uriTemplate: '/orders/{id}/edenred_credentials', security: 'is_granted(\'edit\', object)', input: EdenredCredentialsInput::class, validate: false, normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['update_edenred_credentials']], openapiContext: ['summary' => 'Update Edenred credentials for an order']),
+        new Post(
+            uriTemplate: '/orders/{id}/loopeat_returns',
+            controller: UpdateLoopeatReturns::class,
+            security: 'is_granted(\'edit\', object)',
+            input: LoopeatReturns::class,
+            validate: false,
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['update_loopeat_returns']],
+            openapiContext: ['summary' => 'Update Loopeat returns for an order']
+        ),
+        new Put(
+            uriTemplate: '/orders/{id}/edenred_credentials',
+            security: 'is_granted(\'edit\', object)',
+            input: EdenredCredentialsInput::class,
+            validate: false,
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['update_edenred_credentials']],
+            openapiContext: ['summary' => 'Update Edenred credentials for an order']
+        ),
         new Put(uriTemplate: '/orders/{id}/payment', security: 'is_granted(\'edit\', object)', input: ConfigurePaymentInput::class, controller: ConfigurePayment::class, output: ConfigurePaymentOutput::class, validate: false, denormalizationContext: ['groups' => ['order_configure_payment']], normalizationContext: ['api_sub_level' => true, 'groups' => ['order_configure_payment']], openapiContext: ['summary' => 'Configure payment for a Order resource.']),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Post(denormalizationContext: ['groups' => ['order_create', 'address_create']]),
