@@ -41,21 +41,12 @@ class LiveUpdates
 
     public function toAdmins($message, array $data = [])
     {
-        $admins = $this->userManager->findUsersByRole('ROLE_ADMIN');
-
-        $this->toUsers($admins, $message, $data);
+        $this->toRoles(['ROLE_ADMIN'], $message, $data);
     }
 
     public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
     {
-        $users = $this->userManager->findUsersByRole('ROLE_ADMIN');
-
-        // If the user is also an admin, don't notify twice
-        if (!in_array($user, $users, true)) {
-            $users[] = $user;
-        }
-
-        $this->toUsers($users, $message, $data);
+        $this->toUserAndRoles($user, ['ROLE_ADMIN'], $message, $data);
     }
 
     public function toOrderWatchers(OrderInterface $order, $message, array $data = [])
@@ -81,6 +72,34 @@ class LiveUpdates
             $channel,
             ['event' => $payload]
         );
+    }
+
+    /**
+     * @param string[] $roles
+     * @param NamedMessage|string $message
+     */
+    public function toRoles($roles, $message, array $data = [])
+    {
+        $users = $this->userManager->findUsersByRoles($roles);
+
+        $this->toUsers($users, $message, $data);
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param string[] $roles
+     * @param NamedMessage|string $message
+     */
+    public function toUserAndRoles($user, $roles, $message, array $data = [])
+    {
+        $users = $this->userManager->findUsersByRoles($roles);
+
+        // If the user has any role selected, don't notify twice
+        if (!in_array($user, $users, true)) {
+            $users[] = $user;
+        }
+
+        $this->toUsers($users, $message, $data);
     }
 
     /**
