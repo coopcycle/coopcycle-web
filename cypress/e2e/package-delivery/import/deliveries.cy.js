@@ -21,5 +21,8 @@ context('Import deliveries (role: admin)', () => {
     cy.wait(10000)
 
     //TODO: verify imported deliveries
+    cy.get('[data-testid="tab:/admin/deliveries"]').click();
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/admin/deliveries')
+
   })
 })
