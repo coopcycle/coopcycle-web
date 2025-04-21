@@ -686,6 +686,48 @@ Feature: Dispatch
       }
       """
 
+  Scenario: Create tour with tasks
+    Given the fixtures files are loaded:
+      | dispatch.yml |
+      | tours.yml    |
+    And the user "sarah" has role "ROLE_ADMIN"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/tours" with body:
+      """
+      {
+        "name":"Monday tour",
+        "date": "2018-03-02",
+        "tasks":[
+          "/api/tasks/3",
+          "/api/tasks/2",
+          "/api/tasks/1"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+         "@context":"/api/contexts/Tour",
+         "@id":"/api/tours/3",
+         "@type":"Tour",
+         "name":"Monday tour",
+         "date": "2018-03-02",
+         "items":[
+          "/api/tasks/3",
+          "/api/tasks/2",
+          "/api/tasks/1"
+        ],
+         "distance":@integer@,
+         "duration":@integer@,
+         "polyline":@string@,
+         "createdAt":"@string@.isDateTime()",
+         "updatedAt":"@string@.isDateTime()"
+      }
+      """
 
   Scenario: Administrator can assign multiple tasks at once
     Given the fixtures files are loaded:
