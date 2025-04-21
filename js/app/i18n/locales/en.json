@@ -423,6 +423,7 @@
             "ABOVE": "above",
             "TYPE_FIXED": "Fixed price incl. VAT",
             "TYPE_PERCENTAGE": "Percentage",
+            "TYPE_PERCENTAGE_HELP": "In most use cases, the Method of calculation: 'All the matching rules' is required for the percentage-based price.",
             "TYPE_RANGE": "Price by ranges incl. VAT",
             "TYPE_PER_PACKAGE": "Price per package incl. VAT",
             "PER_PACKAGE": "per package",
