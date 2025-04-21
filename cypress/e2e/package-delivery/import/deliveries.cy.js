@@ -17,7 +17,8 @@ context('Import deliveries (role: admin)', () => {
     cy.location('pathname', { timeout: 10000 }).should('eq', '/admin/deliveries')
     cy.location('search').should('include', 'section=imports')
 
-    cy.consumeMessages()
+    // Allow the import to be processed
+    cy.wait(10000)
 
     //TODO: verify imported deliveries
   })

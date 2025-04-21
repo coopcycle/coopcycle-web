@@ -42,10 +42,6 @@ Cypress.Commands.add('symfonyConsole', command => {
   cy.exec(cmd)
 })
 
-Cypress.Commands.add('consumeMessages', () => {
-  cy.symfonyConsole('messenger:consume async --time-limit=30');
-})
-
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.location('pathname').should('match', pathnameRegexp)
