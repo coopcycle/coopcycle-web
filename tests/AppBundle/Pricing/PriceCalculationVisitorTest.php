@@ -10,6 +10,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
@@ -44,6 +45,9 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->expressionLanguage->registerProvider(
             new PriceRangeExpressionLanguageProvider()
         );
+        $this->expressionLanguage->registerProvider(
+            new PricePercentageExpressionLanguageProvider()
+        );
     }
 
     public function tearDown(): void
@@ -59,14 +63,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('distance in 0..3000');
         $rule1->setPrice(599);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('distance in 3000..5000');
         $rule2->setPrice(699);
+        $rule2->setPosition(1);
 
         $rule3 = new PricingRule();
         $rule3->setExpression('distance in 5000..7500');
         $rule3->setPrice(899);
+        $rule3->setPosition(2);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -91,14 +98,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('true');
         $rule1->setPrice(599);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('distance in 0..3000');
         $rule2->setPrice(100);
+        $rule2->setPosition(1);
 
         $rule3 = new PricingRule();
         $rule3->setExpression('distance in 3000..5000');
         $rule3->setPrice(200);
+        $rule3->setPosition(2);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -122,14 +132,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('true');
         $rule1->setPrice(599);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('distance in 0..3000');
         $rule2->setPrice(100);
+        $rule2->setPosition(1);
 
         $rule3 = new PricingRule();
         $rule3->setExpression('distance in 3000..5000');
         $rule3->setPrice(200);
+        $rule3->setPosition(2);
 
         foreach ([
                      $rule1,
@@ -156,7 +169,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(699, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithMapStrategyAndDifferentTargets()
+    public function testMultiPointGetPriceWithMapStrategyAndMixedTargets()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -164,12 +177,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('diff_hours(pickup, "< 3")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
         $rule2->setTarget(PricingRule::TARGET_TASK);
 
+        $rule2->setPosition(1);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -201,7 +216,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithMapStrategyAndTaskTarget()
+    public function testMultiPointGetPriceWithMapStrategyAndTaskTarget()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -210,12 +225,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('diff_hours(pickup, "< 3")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
         $rule2->setTarget(PricingRule::TARGET_TASK);
 
+        $rule2->setPosition(1);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -247,7 +264,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithMapStrategyAndDeliveryTarget()
+    public function testMultiPointGetPriceWithMapStrategyAndDeliveryTarget()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
@@ -255,12 +272,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('diff_hours(pickup, "< 3")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
         //Testing: that 'weight' rule is applied once on entire order (TARGET_DELIVERY) and NOT on each task (TARGET_TASK)
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
         $rule2->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule2->setPosition(1);
 
 
         $ruleSet = new PricingRuleSet();
@@ -293,7 +312,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(300, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithZones()
+    public function testMultiPointGetPriceWithZones()
     {
         $pickupAddress = new Address();
         $pickupAddress->setStreetAddress('Pickup 1');
@@ -307,10 +326,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('in_zone(pickup.address, "Zone A")');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('in_zone(dropoff.address, "Zone B")');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -385,7 +406,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithZones()
+    public function testLegacyMultiPointGetPriceWithZones()
     {
         $pickupAddress = new Address();
         $pickupAddress->setStreetAddress('Pickup 1');
@@ -399,10 +420,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('in_zone(pickup.address, "Zone A")');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('in_zone(dropoff.address, "Zone B")');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -477,15 +500,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithDiffHoursGreaterThan()
+    public function testMultiPointGetPriceWithDiffHoursGreaterThan()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('diff_hours(pickup, "> 3")');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -521,15 +546,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(400, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithDiffHoursGreaterThan()
+    public function testLegacyMultiPointGetPriceWithDiffHoursGreaterThan()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('diff_hours(pickup, "> 3")');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -565,17 +592,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(400, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithDiffHoursLessThan()
+    public function testMultiPointGetPriceWithDiffHoursLessThan()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
         $rule1 = new PricingRule();
         $rule1->setExpression('diff_hours(pickup, "< 3")');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -612,17 +641,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(100, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithDiffHoursLessThan()
+    public function testLegacyMultiPointGetPriceWithDiffHoursLessThan()
     {
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
         $rule1 = new PricingRule();
         $rule1->setExpression('diff_hours(pickup, "< 3")');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('weight > 5000');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -667,6 +698,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('diff_days(pickup, "> 3")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -703,6 +735,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('diff_days(pickup, "< 3")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -731,15 +764,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(100, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithTaskTypeCondition()
+    public function testMultiPointGetPriceWithTaskTypeCondition()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('task.type == "DROPOFF"');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -773,15 +808,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(500, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithTaskTypeCondition()
+    public function testLegacyMultiPointGetPriceWithTaskTypeCondition()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('task.type == "DROPOFF"');
         $rule2->setPrice(200);
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -822,6 +859,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('weight > 11000');
         $rule1->setPrice(200);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
 
         $ruleSet = new PricingRuleSet();
@@ -856,6 +894,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('weight > 5000');
         $rule1->setPrice(200);
         $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
 
 
         $ruleSet = new PricingRuleSet();
@@ -891,10 +930,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('time_range_length(pickup, "hours", "< 1")');
         $rule1->setPrice(599);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('time_range_length(pickup, "hours", "> 1")');
         $rule2->setPrice(301);
+        $rule2->setPosition(1);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -927,10 +968,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1 = new PricingRule();
         $rule1->setExpression('time_range_length(pickup, "hours", "< 1")');
         $rule1->setPrice(599);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('time_range_length(pickup, "hours", "> 1")');
         $rule2->setPrice(301);
+        $rule2->setPosition(1);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -960,6 +1003,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('packages.containsAtLeastOne("XXL")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -996,6 +1040,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('packages.containsAtLeastOne("XXL")');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -1032,6 +1077,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('packages.totalVolumeUnits() > 29');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_DELIVERY);
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -1069,6 +1115,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('packages.totalVolumeUnits() > 9');
         $rule1->setPrice(100);
         $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setStrategy('map');
@@ -1100,15 +1147,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(200, $visitor->getPrice());
     }
 
-    public function testGetMultiPriceWithPricePerPackage()
+    public function testMultiPointGetPriceWithPricePerPackage()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('task.type == "DROPOFF"');
         $rule2->setPrice('price_per_package(packages, "XXL", 100, 0, 0)');
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -1147,15 +1196,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $this->assertEquals(400, $visitor->getPrice());
     }
 
-    public function testLegacyGetMultiPriceWithPricePerPackage()
+    public function testLegacyMultiPointGetPriceWithPricePerPackage()
     {
         $rule1 = new PricingRule();
         $rule1->setExpression('task.type == "PICKUP"');
         $rule1->setPrice(100);
+        $rule1->setPosition(0);
 
         $rule2 = new PricingRule();
         $rule2->setExpression('task.type == "DROPOFF"');
         $rule2->setPrice('price_per_package(packages, "XXL", 100, 0, 0)');
+        $rule2->setPosition(1);
 
         foreach ([
                      $rule1,
@@ -1203,6 +1254,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('distance > 0');
         // 2 EUR per 1 km above 3 km
         $rule1->setPrice('price_range(distance, 200, 1000, 3000)');
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -1227,6 +1279,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('weight > 0');
         // 2 EUR per 1 kg above 0 kg
         $rule1->setPrice('price_range(weight, 200, 1000, 0)');
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -1261,6 +1314,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $rule1->setExpression('distance > 0'); // a hack to match any order/delivery
         // 2 EUR per 1 volume unit above 0
         $rule1->setPrice('price_range(packages.totalVolumeUnits(), 200, 1, 0)');
+        $rule1->setPosition(0);
 
         $ruleSet = new PricingRuleSet();
         $ruleSet->setRules(new ArrayCollection([
@@ -1289,5 +1343,199 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         $visitor->visit($delivery);
         $this->assertEquals(6000, $visitor->getPrice());
+    }
+
+    public function testGetPriceWithMapStrategyAndPricePercentageSurcharge()
+    {
+        // default: Target "DELIVERY"
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0'); // a hack to match any order/delivery
+        // base price: 5 EUR
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('diff_days(pickup, "< 3")');
+        // short notice: 15% surcharge
+        $rule2->setPrice('price_percentage(11500)');
+        $rule2->setPosition(1);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(575, $visitor->getPrice());
+    }
+
+    public function testGetPriceWithMapStrategyAndPricePercentageDiscount()
+    {
+        // default: Target "DELIVERY"
+
+        Carbon::setTestNow(Carbon::parse('2024-06-12 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setExpression('distance > 0'); // a hack to match any order/delivery
+        // base price: 5 EUR
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setExpression('diff_days(pickup, "> 3")');
+        // advance notice: 15% discount
+        $rule2->setPrice('price_percentage(8500)');
+        $rule2->setPosition(1);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(425, $visitor->getPrice());
+    }
+
+    /**
+     * Tests that the price percentage is applied separately on each task
+     */
+    public function testGetPriceWithMapStrategyAndPricePercentageOnEachTask()
+    {
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('task.type == "DROPOFF"'); // a hack to match any dropoff task
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $rule2 = new PricingRule();
+        $rule2->setTarget(PricingRule::TARGET_TASK);
+        $rule2->setExpression('weight > 5000 and weight < 10000');
+        // weight > 5kg: 15% surcharge
+        $rule2->setPrice('price_percentage(11500)');
+        $rule2->setPosition(1);
+
+        $rule3 = new PricingRule();
+        $rule3->setTarget(PricingRule::TARGET_TASK);
+        $rule3->setExpression('weight > 10000');
+        // weight > 10kg: 50% surcharge
+        $rule3->setPrice('price_percentage(15000)');
+        $rule3->setPosition(2);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+            $rule3,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setWeight(6000);
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setWeight(12500);
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(1325, $visitor->getPrice());
+    }
+
+    /**
+     * Tests that the price percentage is applied on the entire order (sum of all tasks and all previous delivery-based rules)
+     */
+    public function testGetPriceWithMapStrategyAndPricePercentageOnEntireOrder()
+    {
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        // price per dropoff point
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('task.type == "DROPOFF"'); // a hack to match any dropoff task
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        // base price per order
+        $rule2 = new PricingRule();
+        $rule2->setExpression('distance > 0'); // a hack to match any order/delivery
+        // base price: 3 EUR
+        $rule2->setPrice('300');
+        $rule2->setPosition(1);
+
+        $rule3 = new PricingRule();
+        $rule3->setExpression('diff_days(pickup, "< 3")');
+        // short notice: 15% surcharge
+        $rule3->setPrice('price_percentage(11500)');
+        $rule3->setPosition(2);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+            $rule2,
+            $rule3,
+        ]));
+
+        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
+        $delivery->setDistance(1500);
+
+        $visitor->visit($delivery);
+        $this->assertEquals(1495, $visitor->getPrice());
     }
 }

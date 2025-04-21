@@ -6,31 +6,27 @@ use AppBundle\Entity\Address;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
-class PriceRangeExpressionLanguageProvider implements ExpressionFunctionProviderInterface
+class PricePercentageExpressionLanguageProvider implements ExpressionFunctionProviderInterface
 {
+
     public function getFunctions()
     {
         $compiler = function (Address $address, $zoneName) {
             // FIXME Need to test compilation
         };
 
-        $evaluator = function ($arguments, $value, $price, $step, $threshold): int {
+        $evaluator = function ($arguments, $value): int {
 
             if (!$value) {
 
-                return 0;
+                return 10000; // 100.00%
             }
 
-            if ($value < $threshold) {
-
-                return 0;
-            }
-
-            return (int) ceil(($value - $threshold) / $step) * $price;
+            return $value;
         };
 
         return array(
-            new ExpressionFunction('price_range', $compiler, $evaluator),
+            new ExpressionFunction('price_percentage', $compiler, $evaluator),
         );
     }
 }

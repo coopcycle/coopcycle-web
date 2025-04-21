@@ -1,4 +1,12 @@
-import parsePricingRule, { parseAST, parsePriceAST, FixedPrice, PriceRange, PricePerPackage, RawPriceExpression } from '../pricing/pricing-rule-parser'
+import parsePricingRule, {
+  parseAST,
+  parsePriceAST,
+  FixedPrice,
+  PriceRange,
+  PricePerPackage,
+  RawPriceExpression,
+  PercentagePrice,
+} from '../pricing/pricing-rule-parser'
 import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'
@@ -13,6 +21,7 @@ import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
 import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
 
 import fixedPrice from './fixed-price.json'
+import pricePercentage from './price-percentage.json'
 import priceRange from './price-range.json'
 import rawPriceFormula from './raw-price-formula.json'
 import pricePerPackageFormula from './price-per-package.json'
@@ -343,6 +352,12 @@ describe('Pricing rule price parser (AST)', function() {
     const result = parsePriceAST(fixedPrice, '1053')
     expect(result).toBeInstanceOf(FixedPrice);
     expect(result.value).toBe(1053);
+  })
+
+  it('should parse price percentage', function() {
+    const result = parsePriceAST(pricePercentage, 'price_percentage(8500)')
+    expect(result).toBeInstanceOf(PercentagePrice);
+    expect(result.percentage).toBe(8500);
   })
 
   it('should parse price range', function() {
