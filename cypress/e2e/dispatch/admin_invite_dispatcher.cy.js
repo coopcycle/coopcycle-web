@@ -19,7 +19,7 @@ describe('Dispatch; admin; invite dispatcher', () => {
     // users page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
-      /\/admin\/users$/,
+      /\/admin\/users\/invite$/,
     )
 
     cy.get('.alert-success').should(
