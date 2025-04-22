@@ -41,22 +41,19 @@ class SendEmail
             return;
         }
 
-        if ($event instanceof Event\TaskDone || $event instanceof Event\TaskFailed) {
+        // Send email to store owners
+        $owners = $store->getOwners()->toArray();
+        if (count($owners) > 0) {
 
-            // Send email to store owners
-            $owners = $store->getOwners()->toArray();
-            if (count($owners) > 0) {
-
-                $ownerMails = [];
-                foreach ($owners as $owner) {
-                    $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
-                }
-
-                $this->emailManager->sendTo(
-                    $this->emailManager->createTaskCompletedMessage($task),
-                    ...$ownerMails
-                );
+            $ownerMails = [];
+            foreach ($owners as $owner) {
+                $ownerMails[] = sprintf('%s <%s>', $owner->getFullName(), $owner->getEmail());
             }
+
+            $this->emailManager->sendTo(
+                $this->emailManager->createTaskCompletedMessage($task),
+                ...$ownerMails
+            );
         }
     }
 }

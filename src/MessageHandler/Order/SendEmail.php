@@ -32,7 +32,7 @@ class SendEmail
     {
     }
 
-    public function __invoke(OrderCreated|OrderAccepted|OrderRefused|OrderCancelled|OrderDelayed $event)
+    public function __invoke(OrderCreated|OrderAccepted|OrderRefused|OrderCancelled|OrderDelayed|OrderFulfilled $event)
     {
         $order = $event->getOrder();
         $customer = $order->getCustomer();
