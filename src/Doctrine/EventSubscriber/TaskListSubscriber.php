@@ -2,9 +2,9 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
+use AppBundle\Domain\TaskList\Event\TaskListUpdated;
+use AppBundle\Domain\TaskList\Event\TaskListUpdatedv2;
 use AppBundle\Entity\TaskList;
-use AppBundle\Domain\Task\Event\TaskListUpdated;
-use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Message\PushNotification;

@@ -1,9 +1,9 @@
 <?php
 
-namespace AppBundle\Domain\Task\Event;
+namespace AppBundle\Domain\TaskList\Event;
 
 use AppBundle\Api\Dto\MyTaskListDto;
-use AppBundle\Domain\Task\Event as BaseEvent;
+use AppBundle\Domain\TaskList\Event as BaseEvent;
 use AppBundle\Domain\SerializableEventInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;

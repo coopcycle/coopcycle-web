@@ -1,22 +1,19 @@
 <?php
 
-namespace AppBundle\Domain\Task\Event;
+namespace AppBundle\Domain\TaskList;
 
-use AppBundle\Domain\Task\Event as BaseEvent;
+use AppBundle\Api\Dto\MyTaskListDto;
+use AppBundle\Domain\Event as BaseEvent;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Entity\TaskList;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class TaskListUpdatedv2 extends BaseEvent implements SerializableEventInterface
+abstract class Event extends BaseEvent implements SerializableEventInterface
 {
-    protected $collection;
+    public function __construct(private readonly TaskList $collection)
+    {}
 
-    public function __construct(TaskList $collection)
-    {
-        $this->collection = $collection;
-    }
-
-    public function getTaskList(): TaskList
+    public function getTaskList(): TaskList|MyTaskListDto
     {
         return $this->collection;
     }
@@ -33,10 +30,5 @@ class TaskListUpdatedv2 extends BaseEvent implements SerializableEventInterface
         return [
             'task_list' => $normalized
         ];
-    }
-
-    public static function messageName(): string
-    {
-        return 'v2:task_list:updated';
     }
 }
