@@ -43,7 +43,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             write: false,
             denormalizationContext: ['groups' => ['woopit_delivery_input']],
             normalizationContext: ['groups' => ['woopit_delivery_output']],
-            penapiContext: ['summary' => 'Receives requests to update a delivery.']
+            openapiContext: ['summary' => 'Receives requests to update a delivery.']
         ),
         new Post(
             uriTemplate: '/woopit/quotes',
