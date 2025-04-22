@@ -25,8 +25,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
@@ -55,7 +55,7 @@ class TaskSubscriberTest extends TestCase
 
     public function setUp(): void
     {
-        $this->eventBus = $this->prophesize(MessageBus::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
         $this->taskListRepository = $this->prophesize(ObjectRepository::class);
 

@@ -10,25 +10,16 @@ use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Vendor;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Persistence\ManagerRegistry;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use SimpleBus\Message\Bus\MessageBus;
-use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
-use SM\StateMachine\StateMachineInterface;
 use Stripe;
-use Sylius\Component\Currency\Context\CurrencyContextInterface;
-use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
-use Sylius\Component\Payment\PaymentTransitions;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Tests\AppBundle\StripeTrait;
 
 class StripeManagerTest extends TestCase

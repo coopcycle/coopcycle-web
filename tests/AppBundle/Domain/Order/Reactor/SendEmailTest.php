@@ -7,7 +7,6 @@ use AppBundle\MessageHandler\Order\SendEmail;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Message\OrderReceiptEmail;
 use AppBundle\Service\EmailManager;
@@ -22,7 +21,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Symfony\Component\Mime\Email;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -34,13 +32,12 @@ class SendEmailTest extends TestCase
     {
         $this->emailManager = $this->prophesize(EmailManager::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
-        $this->eventBus = $this->prophesize(MessageBus::class);
-        $this->messageBus = $this->prophesize(MessageBusInterface::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
         $this->notificationPreferences = $this->prophesize(NotificationPreferences::class);
 
         $this->settingsManager->get('administrator_email')->willReturn('admin@acme.com');
 
-        $this->messageBus
+        $this->eventBus
             ->dispatch(Argument::type(OrderReceiptEmail::class))
             ->will(function ($args) {
                 return new Envelope($args[0]);
@@ -54,7 +51,6 @@ class SendEmailTest extends TestCase
             $this->emailManager->reveal(),
             $this->settingsManager->reveal(),
             $this->eventBus->reveal(),
-            $this->messageBus->reveal(),
             $this->notificationPreferences->reveal()
         );
     }
@@ -131,7 +127,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(3);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -226,7 +222,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(2);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -262,7 +258,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(3);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -303,7 +299,7 @@ class SendEmailTest extends TestCase
         call_user_func_array($this->sendEmail, [ new Event\OrderFulfilled($order->reveal()) ]);
 
         $this
-            ->messageBus
+            ->eventBus
             ->dispatch(new OrderReceiptEmail('ABC123'))
             ->shouldHaveBeenCalled();
     }
@@ -371,7 +367,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(2);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 

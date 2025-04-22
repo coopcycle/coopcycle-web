@@ -7,14 +7,13 @@ use AppBundle\Domain\Order\Event\OrderRefused;
 use AppBundle\MessageHandler\Order\Command\RefuseOrderHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
-use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Tests\AppBundle\StripeTrait;
 
 class RefuseOrderHandlerTest extends TestCase
@@ -24,7 +23,7 @@ class RefuseOrderHandlerTest extends TestCase
         setUp as setUpStripe;
     }
 
-    private $eventRecorder;
+    private $eventBus;
     private $stripeManager;
 
     private $handler;
@@ -33,11 +32,11 @@ class RefuseOrderHandlerTest extends TestCase
     {
         $this->setUpStripe();
 
-        $this->eventRecorder = $this->prophesize(RecordsMessages::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
 
         $this->handler = new RefuseOrderHandler(
-            $this->eventRecorder->reveal()
+            $this->eventBus->reveal()
         );
     }
 
@@ -56,7 +55,7 @@ class RefuseOrderHandlerTest extends TestCase
         $order = new Order();
         $order->addPayment($payment);
 
-        $this->eventRecorder
+        $this->eventBus
             ->record(Argument::type(OrderRefused::class))
             ->shouldBeCalled();
 

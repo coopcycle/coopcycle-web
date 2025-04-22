@@ -8,26 +8,26 @@ use AppBundle\MessageHandler\Order\Command\OnDemandHandler;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Prophecy\Argument;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class OnDemandHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
-    private $eventRecorder;
+    private $messageBus;
     private $orderNumberAssigner;
 
     private $handler;
 
     public function setUp(): void
     {
-        $this->eventRecorder = $this->prophesize(RecordsMessages::class);
+        $this->messageBus = $this->prophesize(MessageBusInterface::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
 
         $this->handler = new OnDemandHandler(
-            $this->eventRecorder->reveal(),
+            $this->messageBus->reveal(),
             $this->orderNumberAssigner->reveal()
         );
     }
@@ -40,8 +40,8 @@ class OnDemandHandlerTest extends TestCase
             ->assignNumber($order)
             ->shouldBeCalled();
 
-        $this->eventRecorder
-            ->record(Argument::type(OrderCreated::class))
+        $this->messageBus
+            ->dispatch(Argument::type(OrderCreated::class))
             ->shouldBeCalled();
 
         $command = new OnDemand($order->reveal());

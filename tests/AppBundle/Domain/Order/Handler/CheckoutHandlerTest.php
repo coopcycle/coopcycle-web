@@ -18,18 +18,18 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethod;
 use Prophecy\Argument;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class CheckoutHandlerTest extends TestCase
 {
     use ProphecyTrait;
 
-    private $eventRecorder;
+    private $eventBus;
     private $orderNumberAssigner;
     private $stripeManager;
 
@@ -37,7 +37,7 @@ class CheckoutHandlerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->eventRecorder = $this->prophesize(RecordsMessages::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
@@ -55,7 +55,7 @@ class CheckoutHandlerTest extends TestCase
         );
 
         $this->handler = new CheckoutHandler(
-            $this->eventRecorder->reveal(),
+            $this->eventBus->reveal(),
             $this->orderNumberAssigner->reveal(),
             $this->gateway,
             new NullLogger(),
@@ -89,8 +89,8 @@ class CheckoutHandlerTest extends TestCase
             ->confirmIntent($payment)
             ->willReturn($paymentIntent);
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
+        $this->eventBus
+            ->dispatch(Argument::type(CheckoutSucceeded::class))
             ->shouldBeCalled();
 
         $command = new Checkout($order, 'pi_12345678');
@@ -124,12 +124,12 @@ class CheckoutHandlerTest extends TestCase
             ->confirmIntent($payment)
             ->willThrow(new \Exception('Lorem ipsum'));
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
+        $this->eventBus
+            ->dispatch(Argument::type(CheckoutSucceeded::class))
             ->shouldNotBeCalled();
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutFailed::class))
+        $this->eventBus
+            ->dispatch(Argument::type(CheckoutFailed::class))
             ->shouldBeCalled();
 
         $command = new Checkout($order, 'tok_123456');
@@ -155,8 +155,8 @@ class CheckoutHandlerTest extends TestCase
             ->confirmIntent(Argument::type(Payment::class))
             ->shouldNotBeCalled();
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
+        $this->eventBus
+            ->dispatch(Argument::type(CheckoutSucceeded::class))
             ->shouldBeCalled();
 
         $command = new Checkout($order->reveal());
@@ -199,14 +199,14 @@ class CheckoutHandlerTest extends TestCase
             ->getPayments()
             ->willReturn(new ArrayCollection([$edenredPayment, $cardPayment]));
 
-        $this->eventRecorder
-            ->record(Argument::type(CheckoutSucceeded::class))
+        $this->eventBus
+            ->dispatch(Argument::type(CheckoutSucceeded::class))
             ->shouldBeCalled();
 
         $this->gateway = $this->prophesize(Gateway::class);
 
         $this->handler = new CheckoutHandler(
-            $this->eventRecorder->reveal(),
+            $this->eventBus->reveal(),
             $this->orderNumberAssigner->reveal(),
             $this->gateway->reveal(),
             new NullLogger(),

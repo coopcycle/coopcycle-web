@@ -10,12 +10,10 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Sylius\Order\OrderInterface;
 use Prophecy\PhpUnit\ProphecyTrait;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use SM\Factory\FactoryInterface;
-use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Prophecy\Argument;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class RefundHandlerTest extends KernelTestCase
 {
@@ -23,7 +21,7 @@ class RefundHandlerTest extends KernelTestCase
 
     private $stripeManager;
     private $stateMachineFactory;
-    private $eventRecorder;
+    private $eventBus;
 
     private $handler;
 
@@ -36,12 +34,12 @@ class RefundHandlerTest extends KernelTestCase
         $this->gateway = $this->prophesize(Gateway::class);
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
         $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
-        $this->eventRecorder = $this->prophesize(RecordsMessages::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
         $this->handler = new RefundHandler(
             $this->gateway->reveal(),
             $this->stateMachineFactory,
-            $this->eventRecorder->reveal()
+            $this->eventBus->reveal()
         );
     }
 
