@@ -22,8 +22,24 @@ use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(), new Put(denormalizationContext: ['groups' => ['product_update']], security: 'is_granted(\'edit\', object)'), new Delete(security: 'is_granted(\'edit\', object)')], normalizationContext: ['groups' => ['product']])]
-#[ApiResource(uriTemplate: '/restaurants/{id}/products.{_format}', uriVariables: ['id' => new Link(fromClass: \AppBundle\Entity\LocalBusiness::class, identifiers: ['id'])], status: 200, normalizationContext: ['groups' => ['product']], operations: [new GetCollection()])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(denormalizationContext: ['groups' => ['product_update']], security: 'is_granted(\'edit\', object)'),
+        new Delete(security: 'is_granted(\'edit\', object)')
+    ],
+    normalizationContext: ['groups' => ['product']]
+)]
+#[ApiResource(
+    uriTemplate: '/restaurants/{id}/products',
+    uriVariables: [
+        'id' => new Link(fromClass: LocalBusiness::class, toProperty: 'restaurant')
+    ],
+    status: 200,
+    normalizationContext: ['groups' => ['product']],
+    operations: [
+        new GetCollection()
+    ])]
 class Product extends BaseProduct implements ProductInterface, Comparable
 {
     protected $deletedAt;
