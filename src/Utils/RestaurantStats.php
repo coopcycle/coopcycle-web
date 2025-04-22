@@ -50,6 +50,13 @@ class RestaurantStats implements \Countable
 
     private $messengers;
 
+    private $mealVoucherCodes = [
+        'EDENRED',
+        'SWILE',
+        'CONECS',
+        'RESTOFLASH',
+    ];
+
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         \DateTime $start,
@@ -333,17 +340,19 @@ class RestaurantStats implements \Countable
 
             $codes = $paymentMethods[$order->id] ?? [];
 
-            // Even if the order was partially paid with Edenred,
+            // Even if the order was partially paid with meal vouchers,
             // we only show one payment method.
-            $code = array_reduce($codes, function ($carry, $item) {
-                if ('EDENRED' === $carry || 'EDENRED' === $item) {
-                    return 'EDENRED';
+
+            if (count($codes) === 1) {
+                $order->paymentMethod = current($codes);
+            } else {
+                $matches = array_intersect($this->mealVoucherCodes, $codes);
+                if (count($matches) > 0) {
+                    $order->paymentMethod = current($matches);
+                } else {
+                    $order->paymentMethod = current($codes);
                 }
-
-                return $item;
-            }, null);
-
-            $order->paymentMethod = $code;
+            }
 
             return $order;
 
@@ -393,19 +402,13 @@ class RestaurantStats implements \Countable
 
             $payments = $paymentsByOrder[$order->id] ?? [];
 
-            $cardPayments = array_filter($payments, function ($payment) {
-                return $payment['method'] === 'CARD';
-            });
-
-            if (count($cardPayments) === 1) {
-                $cardPayment = current($cardPayments);
-                $details = $cardPayment['details'];
-                if (array_key_exists('paygreen_payment_order_id', $details)) {
-                    $order->paymentGateway = 'paygreen';
+            $order->paymentGateway = array_reduce($payments, function ($carry, $item) {
+                if (array_key_exists('paygreen_payment_order_id', $item['details'])) {
+                    return 'paygreen';
                 } else {
-                    $order->paymentGateway = 'stripe';
+                    return 'stripe';
                 }
-            }
+            }, null);
 
             return $order;
 

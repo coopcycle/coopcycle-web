@@ -39,12 +39,12 @@ trait DeliveryTrait
             'order' => $delivery->getOrder(),
             'store' => $delivery->getStore(),
             'layout' => $request->attributes->get('layout'),
-            'debug_pricing' => $request->query->getBoolean('debug', false),
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'back_route' => $routes['back'],
             'show_left_menu' => true,
             'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
         ]));
     }
 

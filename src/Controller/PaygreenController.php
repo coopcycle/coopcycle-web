@@ -84,9 +84,12 @@ class PaygreenController extends AbstractController
 
         $paymentOrderId = $request->query->get('po_id');
 
-        $this->paygreenManager->getPaymentOrder($paymentOrderId);
-
-        // TODO Check if things are corresponding
+        // There is a "status" query parameter,
+        // but do not trust it as it could be changed
+        $po = $this->paygreenManager->getPaymentOrder($paymentOrderId);
+        if (!in_array($po['status'], ['payment_order.authorized', 'payment_order.successed', 'payment_order.completed'])) {
+            return $this->redirectToRoute('order_payment');
+        }
 
         $payments = $order->getPayments();
         foreach ($payments as $payment) {

@@ -521,7 +521,7 @@ form.pricing_rule_set.rules.label: Rules
 form.pricing_rule_set.rules.docs_path: /en/admin/pricing_rule/
 form.pricing_rule_set.strategy.label: Method of calculation
 form.pricing_rule_set.strategy.docs_path: /en/admin/pricing_method_of_calculation
-form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom, and 'Rules per point' are applied before 'Rules per order'.
+form.pricing_rule_set.strategy.help: The rules are evaluated from top to bottom, and 'Rules per point' are evaluated before 'Rules per order'.
   Depending on the method of calculation selected, either the first rule that matches will decide the price,
   or the price will be calculated by adding all the matching rules.
 form.pricing_rule_set.strategy.find.label: The first rule that matches
@@ -1560,6 +1560,8 @@ payment_method:
   conecs: Conecs
   swile: Swile
   restoflash: Restoflash
+  apple_pay: Apple Pay
+  google_pay: Google Pay
 registration.navigation.title: "Personal account creation"
 registration.info.title: "What is %brandName%?"
 registration.info.text: "On %brandName%, you can order food provided by restaurants near you and delivered by your local cooperative. We are proud to be an ethical alternative to the uberization of our society!"
