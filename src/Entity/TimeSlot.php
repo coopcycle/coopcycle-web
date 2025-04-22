@@ -23,7 +23,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
-        new Get(),
+        new Get(
+            // Make sure to add requirements for operations like "/time_slots/choices" to work
+            requirements: ['id' => '[0-9]+']
+        ),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
             validationContext: ['groups' => ['deleteValidation']]
@@ -38,9 +41,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(
             uriTemplate: '/time_slots/choices',
             controller: ChoicesController::class,
-            status: 200,
-            read: false,
-            write: false,
             normalizationContext: ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
             security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
             openapiContext: ['summary' => 'Retrieves choices for time slot']
