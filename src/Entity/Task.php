@@ -149,6 +149,7 @@ use stdClass;
             uriTemplate: '/tasks/images',
             denormalizationContext: ['groups' => ['tasks_images']],
             controller: AddImagesToTasks::class,
+            write: false,
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             openapiContext: [
                 'summary' => '',
