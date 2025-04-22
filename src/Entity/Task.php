@@ -68,7 +68,12 @@ use stdClass;
 #[ApiResource(
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
-        new Put(security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', denormalizationContext: ['groups' => ['task_edit']]),
+        new Put(
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))',
+            denormalizationContext: ['groups' => ['task_edit']],
+            // Make sure to add requirements for operations like "/tasks/assign" to work
+            requirements: ['id' => '[0-9]+']
+        ),
         new Put(uriTemplate: '/tasks/{id}/start', controller: TaskStart::class, security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Marks a Task as started']),
         new Put(uriTemplate: '/tasks/{id}/done', controller: TaskDone::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Marks a Task as done', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['notes' => ['type' => 'string']]], 'style' => 'form']]]),
         new Put(uriTemplate: '/tasks/{id}/failed', controller: TaskFailed::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Marks a Task as failed', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['notes' => ['type' => 'string']]], 'style' => 'form']]]),
@@ -97,9 +102,75 @@ use stdClass;
             paginationClientEnabled: true
         ),
         new Post(security: 'is_granted(\'ROLE_DISPATCHER\')', denormalizationContext: ['groups' => ['task_create']], validationContext: ['groups' => ['Default']]),
-        new Put(uriTemplate: '/tasks/assign', controller: TaskBulkAssign::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', openapiContext: ['summary' => 'Assigns multiple Tasks at once to a messenger', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['username' => ['type' => 'string'], 'tasks' => ['type' => 'array']]], 'style' => 'form']]]),
-        new Put(uriTemplate: '/tasks/done', controller: TaskBulkMarkAsDone::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', openapiContext: ['summary' => 'Mark multiple Tasks as done at once', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['tasks' => ['type' => 'array']]], 'style' => 'form']]]),
-        new Put(uriTemplate: '/tasks/images', denormalizationContext: ['groups' => ['tasks_images']], controller: AddImagesToTasks::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', openapiContext: ['summary' => '', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['tasks' => ['type' => 'array'], 'images' => ['type' => 'array']]], 'style' => 'form']]])], normalizationContext: ['groups' => ['task', 'delivery', 'address']])]
+        new Put(
+            uriTemplate: '/tasks/assign',
+            controller: TaskBulkAssign::class,
+            write: false,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            openapiContext: [
+                'summary' => 'Assigns multiple Tasks at once to a messenger',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'username' => ['type' => 'string'],
+                                'tasks' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ]),
+        new Put(
+            uriTemplate: '/tasks/done',
+            controller: TaskBulkMarkAsDone::class,
+            write: false,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            openapiContext: [
+                'summary' => 'Mark multiple Tasks as done at once',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'tasks' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ]),
+        new Put(
+            uriTemplate: '/tasks/images',
+            denormalizationContext: ['groups' => ['tasks_images']],
+            controller: AddImagesToTasks::class,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            openapiContext: [
+                'summary' => '',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'tasks' => ['type' => 'array'],
+                                'images' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ]
+        )
+    ],
+    normalizationContext: ['groups' => ['task', 'delivery', 'address']]
+)]
 #[UniqueEntity(fields: ['organization', 'ref'], errorPath: 'ref')]
 #[AssertTask]
 #[ApiFilter(filterClass: TaskOrderFilter::class)]

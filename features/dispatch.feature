@@ -853,7 +853,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/assign",
         "@type":"hydra:Collection",
         "hydra:member": [
           {
