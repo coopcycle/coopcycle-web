@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 /**
  * Re-triggers an event in the order domain.
  */
-#[AsMessageHandler(handles: TaskDone::class)]
+#[AsMessageHandler]
  class PickOrDrop
 {
 
