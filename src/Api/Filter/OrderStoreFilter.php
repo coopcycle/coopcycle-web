@@ -2,7 +2,6 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Core\Api\IdentifiersExtractorInterface;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
@@ -25,7 +24,6 @@ final class OrderStoreFilter extends SearchFilter
         IriConverterInterface $iriConverter,
         PropertyAccessorInterface $propertyAccessor = null,
         LoggerInterface $logger = null,
-        IdentifiersExtractorInterface $identifiersExtractor = null,
         NameConverterInterface $nameConverter = null
     )
     {
@@ -44,7 +42,7 @@ final class OrderStoreFilter extends SearchFilter
 
         // expose alias in the API instead of a path to a nested property
         if ($this->storeIdAlias === $property) {
-            parent::filterProperty('delivery.store.id', $value, $queryBuilder, $queryNameGenerator, $resourceClass, $operationName);
+            parent::filterProperty('delivery.store.id', $value, $queryBuilder, $queryNameGenerator, $resourceClass, $operation, $context);
         }
     }
 
