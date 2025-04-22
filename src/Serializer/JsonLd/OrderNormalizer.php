@@ -261,9 +261,10 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
 
     public function supportsDenormalization($data, $type, $format = null, array $context = [])
     {
-        if (array_key_exists('input', $context)) {
+        if (isset($context['input'])) {
             return false;
         }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Order::class;
     }
 }

@@ -129,7 +129,11 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'view\', object)',
             openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]
         ),
-        new Get(uriTemplate: '/orders/{id}/validate', normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
+        new Get(
+            uriTemplate: '/orders/{id}/validate',
+            normalizationContext: ['groups' => ['cart']],
+            security: 'is_granted(\'edit\', object)'
+        ),
         new Put(uriTemplate: '/orders/{id}', validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['order_update']], security: 'is_granted(\'edit\', object)'),
         new Put(uriTemplate: '/orders/{id}/items/{itemId}', controller: UpdateCartItem::class, validationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
         new Delete(uriTemplate: '/orders/{id}/items/{itemId}', controller: DeleteCartItem::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], validate: false, write: false, status: 200, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Deletes items from a Order resource.']),
