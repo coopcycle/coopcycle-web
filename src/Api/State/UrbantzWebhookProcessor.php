@@ -1,19 +1,26 @@
 <?php
 
-namespace AppBundle\Action\Urbantz;
+namespace AppBundle\Api\State;
 
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryRepository;
+use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
+use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
+use AppBundle\Security\TokenStoreExtractor;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TaskManager;
 use Carbon\Carbon;
+use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
 
-class ReceiveWebhook
+class UrbantzWebhookProcessor implements ProcessorInterface
 {
     private static $onTaskChangedEvents = ['DISCARDED'];
 
@@ -21,11 +28,17 @@ class ReceiveWebhook
         private DeliveryRepository $deliveryRepository,
         private TaskManager $taskManager,
         private PhoneNumberUtil $phoneNumberUtil,
+        private EntityManagerInterface $entityManager,
+        private TokenStoreExtractor $storeExtractor,
+        private DeliveryManager $deliveryManager,
         private LoggerInterface $logger,
         private string $country)
     {}
 
-    public function __invoke(UrbantzWebhook $data)
+    /**
+     * @param UrbantzWebhook $data
+     */
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         $event = $data->id;
 
@@ -42,6 +55,14 @@ class ReceiveWebhook
                     break;
             }
         }
+
+        foreach ($data->deliveries as $delivery) {
+            if (!$this->entityManager->contains($delivery)) {
+                $this->entityManager->persist($delivery);
+            }
+        }
+
+        $this->entityManager->flush();
 
         return $data;
     }
@@ -145,6 +166,14 @@ class ReceiveWebhook
         // This is what will be used to set the external tracking id
         $delivery->getDropoff()->setRef($task['id']);
 
+        $store = $this->resolveStore($task);
+
+        $store->addDelivery($delivery);
+
+        // Call DeliveryManager::setDefaults here,
+        // once the store has been associated
+        $this->deliveryManager->setDefaults($delivery);
+
         return $delivery;
     }
 
@@ -179,5 +208,31 @@ class ReceiveWebhook
         }
 
         return null;
+    }
+
+    private function resolveStore(array $task)
+    {
+        $this->logger->info(
+            sprintf('Looking for a store for hub "%s"', $task['hub'])
+        );
+
+        $hub = $this->entityManager
+            ->getRepository(UrbantzHub::class)
+            ->findOneBy(['hub' => $task['hub']]);
+
+        if (null !== $hub) {
+
+            $this->logger->info(
+                sprintf('Found store "%s" for hub "%s"', $hub->getStore()->getName(), $task['hub'])
+            );
+
+            return $hub->getStore();
+        }
+
+        $this->logger->info(
+            sprintf('No store found for hub "%s", resolving store from token', $task['hub'])
+        );
+
+        return $this->storeExtractor->extractStore();
     }
 }

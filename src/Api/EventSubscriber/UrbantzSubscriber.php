@@ -7,8 +7,6 @@ use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Pricing\PricingManager;
-use AppBundle\Security\TokenStoreExtractor;
-use AppBundle\Service\DeliveryManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
@@ -26,8 +24,6 @@ final class UrbantzSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly HttpClientInterface $urbantzClient,
         private readonly EntityManagerInterface $entityManager,
-        private readonly TokenStoreExtractor $storeExtractor,
-        private readonly DeliveryManager $deliveryManager,
         private readonly PricingManager $pricingManager,
         private readonly LoggerInterface $logger,
         private readonly string $secret)
@@ -39,81 +35,20 @@ final class UrbantzSubscriber implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
+        // @see https://api-platform.com/docs/v2.7/core/events/#built-in-event-listeners
         return [
             KernelEvents::VIEW => [
-                ['addToStore', EventPriorities::PRE_WRITE],
                 ['setTrackingId', EventPriorities::POST_WRITE],
                 ['createOrder', EventPriorities::POST_WRITE],
             ],
         ];
     }
 
-    public function addToStore(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if ('api_urbantz_webhooks_receive_webhook_item' !== $request->attributes->get('_route')) {
-            return;
-        }
-
-        $webhook = $event->getControllerResult();
-
-        if ($webhook->id !== UrbantzWebhook::TASKS_ANNOUNCED) {
-            return;
-        }
-
-        $store = $this->resolveStore($webhook);
-
-        if (null === $store) {
-            return;
-        }
-
-        foreach ($webhook->deliveries as $delivery) {
-            $store->addDelivery($delivery);
-            // Call DeliveryManager::setDefaults here,
-            // once the store has been associated
-            $this->deliveryManager->setDefaults($delivery);
-        }
-    }
-
-    private function resolveStore(UrbantzWebhook $webhook)
-    {
-        // Check if this needs to be assigned to another store
-        if (null !== $webhook->hub) {
-
-            $this->logger->info(
-                sprintf('Looking for a store for hub "%s"', $webhook->hub)
-            );
-
-            $hub = $this->entityManager
-                ->getRepository(UrbantzHub::class)
-                ->findOneBy(['hub' => $webhook->hub]);
-
-            if (null !== $hub) {
-
-                $this->logger->info(
-                    sprintf('Found store "%s" for hub "%s"', $hub->getStore()->getName(), $webhook->hub)
-                );
-
-                return $hub->getStore();
-            }
-
-            $this->logger->info(
-                sprintf('No store found for hub "%s"', $webhook->hub)
-            );
-        }
-
-        $this->logger->info('Resolving store from token');
-
-        return $this->storeExtractor->extractStore();
-    }
-
     public function setTrackingId(ViewEvent $event)
     {
         $request = $event->getRequest();
 
-        if ('api_urbantz_webhooks_receive_webhook_item' !== $request->attributes->get('_route')) {
+        if ('_api_/urbantz/webhook/{id}_post' !== $request->attributes->get('_route')) {
             return;
         }
 
@@ -165,7 +100,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ('api_urbantz_webhooks_receive_webhook_item' !== $request->attributes->get('_route')) {
+        if ('_api_/urbantz/webhook/{id}_post' !== $request->attributes->get('_route')) {
             return;
         }
 

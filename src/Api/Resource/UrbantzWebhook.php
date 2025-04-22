@@ -8,12 +8,26 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
-use AppBundle\Action\Urbantz\ReceiveWebhook as ReceiveWebhookController;
-use AppBundle\Api\Dto\UrbantzOrderInput;
+use AppBundle\Api\State\UrbantzWebhookProvider;
+use AppBundle\Api\State\UrbantzWebhookProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new Post(uriTemplate: '/urbantz/webhook/{id}', input: UrbantzOrderInput::class, controller: ReceiveWebhook::class, denormalizationContext: ['groups' => ['urbantz_input']], normalizationContext: ['groups' => ['urbantz_output']], security: 'is_granted(\'ROLE_API_KEY\')', status: 200, openapiContext: ['summary' => 'Receives a webhook from Urbantz.'])])]
+#[ApiResource(
+    operations: [
+        new Get(controller: NotFoundAction::class, read: false, output: false),
+        new Post(
+            uriTemplate: '/urbantz/webhook/{id}',
+            provider: UrbantzWebhookProvider::class,
+            processor: UrbantzWebhookProcessor::class,
+            denormalizationContext: ['groups' => ['urbantz_input']],
+            normalizationContext: ['groups' => ['urbantz_output']],
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            status: 200,
+            openapiContext: ['summary' => 'Receives a webhook from Urbantz.']
+        )
+    ]
+)]
 final class UrbantzWebhook
 {
     const TASKS_ANNOUNCED = 'tasks_announced';

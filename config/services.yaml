@@ -958,13 +958,6 @@ services:
     arguments:
       $centrifugoNamespace: '%centrifugo_namespace%'
 
-  AppBundle\Action\Urbantz\ReceiveWebhook:
-    public: true
-    arguments:
-      $country: "%country_iso%"
-    tags:
-      - { name: monolog.logger, channel: urbantz }
-
   AppBundle\Action\GoogleSignIn:
     public: true
     arguments:
@@ -1029,8 +1022,6 @@ services:
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
-
-  AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
 
   AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
     tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
@@ -1115,17 +1106,19 @@ services:
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\CalculateRetailPriceProcessor:
-    # decorates: AppBundle\Api\State\DeliveryProcessor
     arguments:
       $state: "%region_iso%"
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\EvaluatePricingRuleProcessor:
-    # decorates: AppBundle\Api\State\DeliveryProcessor
     tags: [ 'api_platform.state_processor' ]
 
-  # AppBundle\Api\DataTransformer\ConfigurePaymentInputDataTransformer:
-  #   tags: [ 'api_platform.data_transformer' ]
+  AppBundle\Api\State\UrbantzWebhookProcessor:
+    arguments:
+      $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: urbantz }
+      - { name: api_platform.state_processor }
 
   AppBundle\Twig\CoopCycleExtension:
     arguments:
@@ -1455,8 +1448,6 @@ services:
       $country: '%region_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
-
-  AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
 
   AppBundle\Api\DataPersister\DeleteValidationAwareDataPersister:
     arguments:
