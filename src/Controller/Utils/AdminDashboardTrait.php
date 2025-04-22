@@ -8,7 +8,6 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
-use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;

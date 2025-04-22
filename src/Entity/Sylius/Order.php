@@ -37,7 +37,6 @@ use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
-use AppBundle\Action\Order\UpdateLoopeatReturns as UpdateLoopeatReturnsController;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
@@ -53,6 +52,7 @@ use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
+use AppBundle\Api\State\LoopeatReturnsProcessor;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -160,9 +160,9 @@ use Webmozart\Assert\Assert as WMAssert;
         ),
         new Post(
             uriTemplate: '/orders/{id}/loopeat_returns',
-            controller: UpdateLoopeatReturns::class,
             security: 'is_granted(\'edit\', object)',
             input: LoopeatReturns::class,
+            processor: LoopeatReturnsProcessor::class,
             validate: false,
             normalizationContext: ['groups' => ['cart']],
             denormalizationContext: ['groups' => ['update_loopeat_returns']],
