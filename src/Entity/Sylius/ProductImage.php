@@ -18,9 +18,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @Vich\Uploadable
- */
+#[Vich\Uploadable]
 class ProductImage
 {
     use TimestampableTrait;
@@ -30,9 +28,9 @@ class ProductImage
     private $product;
 
     /**
-     * @Vich\UploadableField(mapping="product_image", fileNameProperty="imageName")
      * @var File
      */
+    #[Vich\UploadableField(mapping: "product_image", fileNameProperty: "imageName")]
     #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 

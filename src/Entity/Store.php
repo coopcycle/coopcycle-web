@@ -40,9 +40,8 @@ use AppBundle\Action\Store\Packages;
  * A retail good store.
  *
  * @see http://schema.org/Store Documentation on Schema.org
- *
- * @Vich\Uploadable
  */
+#[Vich\Uploadable]
 #[ApiResource(
     operations: [
         new Get(security: 'is_granted(\'edit\', object)'),
@@ -102,10 +101,10 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     protected $enabled = false;
 
     /**
-     * @Vich\UploadableField(mapping="store_image", fileNameProperty="imageName")
      * @var File
      */
-    #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
+    #[Vich\UploadableField(mapping: "store_image", fileNameProperty: "imageName")]
+    // #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 
     /**

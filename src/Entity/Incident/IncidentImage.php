@@ -14,9 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @Vich\Uploadable
- */
+#[Vich\Uploadable]
 #[ApiResource(operations: [new Get(), new Post(controller: CreateImage::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', defaults: ['_api_receive' => false])], types: ['http://schema.org/MediaObject'], normalizationContext: ['groups' => ['incident_image']])]
 class IncidentImage
 {
@@ -26,9 +24,9 @@ class IncidentImage
     private $incident;
 
     /**
-     * @Vich\UploadableField(mapping="incident_image", fileNameProperty="imageName")
      * @var File
      */
+    #[Vich\UploadableField(mapping: "incident_image", fileNameProperty: "imageName")]
     #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $file;
 

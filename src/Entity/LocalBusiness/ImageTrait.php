@@ -10,9 +10,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 trait ImageTrait
 {
     /**
-     * @Vich\UploadableField(mapping="restaurant_image", fileNameProperty="imageName")
      * @var File
      */
+    #[Vich\UploadableField(mapping: "restaurant_image", fileNameProperty: "imageName")]
     #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 
@@ -27,9 +27,9 @@ trait ImageTrait
     private $bannerImageName;
 
     /**
-     * @Vich\UploadableField(mapping="restaurant_banner_image", fileNameProperty="bannerImageName")
      * @var File
      */
+    #[Vich\UploadableField(mapping: "restaurant_banner_image", fileNameProperty: "bannerImageName")]
     #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $bannerImageFile;
 
