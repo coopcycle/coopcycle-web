@@ -14,10 +14,20 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @Vich\Uploadable
- */
-#[ApiResource(operations: [new Get(), new Post(controller: CreateImage::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', defaults: ['_api_receive' => false])], types: ['http://schema.org/MediaObject'], normalizationContext: ['groups' => ['task_image']])]
+#[Vich\Uploadable]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Post(
+            deserialize: false,
+            controller: CreateImage::class,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            validationContext: ['groups' => ['task_image_create']],
+        )
+    ],
+    types: ['http://schema.org/MediaObject'],
+    normalizationContext: ['groups' => ['task_image']]
+)]
 class TaskImage
 {
     #[Groups(['task'])]
@@ -26,10 +36,11 @@ class TaskImage
     private $task;
 
     /**
-     * @Vich\UploadableField(mapping="task_image", fileNameProperty="imageName")
      * @var File
      */
-    #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
+    #[Vich\UploadableField(mapping: 'task_image', fileNameProperty: 'imageName')]
+    // FIXME Make validation work again
+    // #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'], groups: ['task_image_create'])]
     private $file;
 
     #[Groups(['task_image'])]
