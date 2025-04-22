@@ -60,7 +60,7 @@ class LiveUpdates
 
     public function toOrderWatchers(OrderInterface $order, $message, array $data = [])
     {
-        $messageName = $message instanceof NamedM ? $message::messageName() : $message;
+        $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
 
         if ($message instanceof SerializableEventInterface && empty($data)) {
             $data = $message->normalize($this->serializer);
