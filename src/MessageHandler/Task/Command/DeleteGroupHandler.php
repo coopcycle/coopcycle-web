@@ -7,14 +7,16 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Message\Task\Command\DeleteGroup;
 use Doctrine\Persistence\ManagerRegistry;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Middleware\DispatchAfterCurrentBusMiddleware;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class DeleteGroupHandler
 {
 
-    public function __construct(private ManagerRegistry $doctrine, private  RecordsMessages $eventRecorder)
+    public function __construct(private ManagerRegistry $doctrine, private  MessageBusInterface $eventBus)
     {}
 
     public function __invoke(DeleteGroup $command)
@@ -27,7 +29,10 @@ class DeleteGroupHandler
 
             if (!$task->isAssigned()) {
                 // FIXME This duplicates the code to cancel a task
-                $this->eventRecorder->record(new Event\TaskCancelled($task));
+                $event = new Event\TaskCancelled($task);
+                $this->eventBus->dispatch(
+                    (new Envelope($event))->with(new DispatchAfterCurrentBusMiddleware())
+                );
                 $task->setStatus(Task::STATUS_CANCELLED);
             }
         }

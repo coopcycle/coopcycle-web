@@ -5,18 +5,16 @@ namespace AppBundle\MessageHandler\Task\Command;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Message\Task\Command\Cancel as CommandCancel;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class CancelHandler
 {
-    private $eventRecorder;
-
-    public function __construct(RecordsMessages $eventRecorder)
-    {
-        $this->eventRecorder = $eventRecorder;
-    }
+    public function __construct(private MessageBusInterface $eventBus)
+    {}
 
     public function __invoke(CommandCancel $command)
     {
@@ -24,7 +22,10 @@ class CancelHandler
 
         // TODO Reorder linked tasks?
 
-        $this->eventRecorder->record(new Event\TaskCancelled($task));
+        $event = new Event\TaskCancelled($task);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
 
         $task->setStatus(Task::STATUS_CANCELLED);
     }

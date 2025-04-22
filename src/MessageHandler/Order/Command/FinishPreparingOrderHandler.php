@@ -4,13 +4,15 @@ namespace AppBundle\MessageHandler\Order\Command;
 
 use AppBundle\Message\Order\Command\FinishPreparingOrder;
 use AppBundle\Domain\Order\Event;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class FinishPreparingOrderHandler
 {
-    public function __construct(private RecordsMessages $eventRecorder)
+    public function __construct(private MessageBusInterface $eventBus)
     {
     }
 
@@ -18,6 +20,9 @@ class FinishPreparingOrderHandler
     {
         $order = $command->getOrder();
 
-        $this->eventRecorder->record(new Event\OrderPreparationFinished($order));
+        $event = new Event\OrderPreparationFinished($order);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

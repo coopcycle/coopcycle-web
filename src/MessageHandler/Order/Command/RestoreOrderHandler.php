@@ -6,22 +6,18 @@ use AppBundle\Message\Order\Command\RestoreOrder;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class RestoreOrderHandler
 {
-    private $eventRecorder;
-    private $stateMachineFactory;
-
     public function __construct(
-        RecordsMessages $eventRecorder,
-        StateMachineFactoryInterface $stateMachineFactory)
-    {
-        $this->eventRecorder = $eventRecorder;
-        $this->stateMachineFactory = $stateMachineFactory;
-    }
+        private MessageBusInterface $eventBus,
+        private StateMachineFactoryInterface $stateMachineFactory)
+    {}
 
     public function __invoke(RestoreOrder $command)
     {
@@ -35,6 +31,9 @@ class RestoreOrderHandler
             );
         }
 
-        $this->eventRecorder->record(new Event\OrderRestored($order));
+        $event = new Event\OrderRestored($order);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

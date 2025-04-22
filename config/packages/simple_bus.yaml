@@ -1,7 +1,7 @@
-command_bus:
-    middlewares:
-        logger: true
+# command_bus:
+#     middlewares:
+#         logger: true
 
-event_bus:
-    event_name_resolver_strategy: named_message
-    logging: ~
+# event_bus:
+#     event_name_resolver_strategy: named_message
+#     logging: ~

@@ -4,23 +4,25 @@ namespace AppBundle\MessageHandler\Order\Command;
 
 use AppBundle\Message\Order\Command\DelayOrder;
 use AppBundle\Domain\Order\Event;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class DelayOrderHandler
 {
-    private $eventRecorder;
 
-    public function __construct(RecordsMessages $eventRecorder)
-    {
-        $this->eventRecorder = $eventRecorder;
-    }
+    public function __construct(private MessageBusInterface $eventBus)
+    {}
 
     public function __invoke(DelayOrder $command)
     {
         $order = $command->getOrder();
 
-        $this->eventRecorder->record(new Event\OrderDelayed($order, $command->getDelay()));
+        $event = new Event\OrderDelayed($order, $command->getDelay());
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

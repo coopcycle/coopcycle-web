@@ -6,14 +6,18 @@ use AppBundle\Message\Order\Command\AcceptOrder;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Exception\LoopeatInsufficientStockException;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class AcceptOrderHandler
 {
-    public function __construct(private RecordsMessages $eventRecorder, private ValidatorInterface $validator)
+    public function __construct(
+        private MessageBusInterface $eventBus,
+        private ValidatorInterface $validator)
     {}
 
     public function __invoke(AcceptOrder $command)
@@ -25,6 +29,9 @@ class AcceptOrderHandler
             throw new LoopeatInsufficientStockException($violations);
         }
 
-        $this->eventRecorder->record(new Event\OrderAccepted($order));
+        $event = new Event\OrderAccepted($order);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

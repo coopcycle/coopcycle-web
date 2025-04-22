@@ -8,16 +8,18 @@ use AppBundle\Payment\Gateway;
 use AppBundle\Service\LoggingUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class CheckoutHandler
 {
     public function __construct(
-        private RecordsMessages $eventRecorder,
+        private MessageBusInterface $eventBus,
         private OrderNumberAssignerInterface $orderNumberAssigner,
         private Gateway $gateway,
         private LoggerInterface $checkoutLogger,
@@ -35,7 +37,10 @@ class CheckoutHandler
 
         // Bail early if order is free
         if ($order->isFree()) {
-            $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
+            $event = new Event\CheckoutSucceeded($order);
+            $this->eventBus->dispatch(
+                (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+            );
             return;
         }
 
@@ -93,11 +98,17 @@ class CheckoutHandler
                 $this->checkoutLogger->error(sprintf('CheckoutHandler | CheckoutFailed: %s', $e->getMessage()),
                     ['order' => $this->loggingUtils->getOrderId($order), 'exception' => $e]);
 
-                $this->eventRecorder->record(new Event\CheckoutFailed($order, $payment, $e->getMessage()));
+                $event = new Event\CheckoutFailed($order, $payment, $e->getMessage());
+                $this->eventBus->dispatch(
+                    (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+                );
                 return;
             }
         }
 
-        $this->eventRecorder->record(new Event\CheckoutSucceeded($order, $payments));
+        $event = new Event\CheckoutSucceeded($order, $payments);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

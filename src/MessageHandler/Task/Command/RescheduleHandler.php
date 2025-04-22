@@ -6,8 +6,10 @@ use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
 use AppBundle\Message\Task\Command\Reschedule;
 use Doctrine\ORM\EntityManagerInterface;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class RescheduleHandler
@@ -15,7 +17,7 @@ class RescheduleHandler
 
     public function __construct(
         private EntityManagerInterface $em,
-        private RecordsMessages $eventRecorder
+        private MessageBusInterface $eventBus
     )
     { }
 
@@ -25,7 +27,10 @@ class RescheduleHandler
         $rescheduledAfter = $command->getRescheduleAfter();
         $rescheduledBefore = $command->getRescheduledBefore();
 
-        $this->eventRecorder->record(new Event\TaskRescheduled($task, $rescheduledAfter, $rescheduledBefore));
+        $event = new Event\TaskRescheduled($task, $rescheduledAfter, $rescheduledBefore);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
 
         $task->unassign();
         $this->em->flush();

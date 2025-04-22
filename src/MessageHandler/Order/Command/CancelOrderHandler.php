@@ -8,14 +8,16 @@ use AppBundle\Exception\OrderNotCancellableException;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class CancelOrderHandler
 {
     public function __construct(
-        private RecordsMessages $eventRecorder,
+        private MessageBusInterface $eventBus,
         private StateMachineFactoryInterface $stateMachineFactory)
     {}
 
@@ -39,6 +41,9 @@ class CancelOrderHandler
             );
         }
 
-        $this->eventRecorder->record(new Event\OrderCancelled($order, $reason));
+        $event = new Event\OrderCancelled($order, $reason);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

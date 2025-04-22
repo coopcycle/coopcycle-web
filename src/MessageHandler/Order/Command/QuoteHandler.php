@@ -4,23 +4,19 @@ namespace AppBundle\MessageHandler\Order\Command;
 
 use AppBundle\Message\Order\Command\Quote;
 use AppBundle\Domain\Order\Event;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class QuoteHandler
 {
-    private $eventRecorder;
-    private $orderNumberAssigner;
-
     public function __construct(
-        RecordsMessages $eventRecorder,
-        OrderNumberAssignerInterface $orderNumberAssigner)
-    {
-        $this->eventRecorder = $eventRecorder;
-        $this->orderNumberAssigner = $orderNumberAssigner;
-    }
+        private MessageBusInterface $eventBus,
+        private OrderNumberAssignerInterface $orderNumberAssigner)
+    {}
 
     public function __invoke(Quote $command)
     {
@@ -28,6 +24,9 @@ class QuoteHandler
 
         $this->orderNumberAssigner->assignNumber($order);
 
-        $this->eventRecorder->record(new Event\CheckoutSucceeded($order));
+        $event = new Event\CheckoutSucceeded($order);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }

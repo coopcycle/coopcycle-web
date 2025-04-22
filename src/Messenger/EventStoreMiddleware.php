@@ -8,9 +8,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
 
-/**
- * @see http://docs.simplebus.io/en/latest/Guides/event_bus.html#implementing-your-own-event-bus-middleware
- */
+
 class EventStoreMiddleware implements MiddlewareInterface
 {
 

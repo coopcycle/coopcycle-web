@@ -70,8 +70,6 @@ return [
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true],
     Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true],
     Twig\Extra\TwigExtraBundle\TwigExtraBundle::class => ['all' => true],
-    SimpleBus\SymfonyBridge\SimpleBusCommandBusBundle::class => ['all' => true],
-    SimpleBus\SymfonyBridge\SimpleBusEventBusBundle::class => ['all' => true],
     Cocur\Slugify\Bridge\Symfony\CocurSlugifyBundle::class => ['all' => true],
     AppBundle\AppBundle::class => ['all' => true],
 ];

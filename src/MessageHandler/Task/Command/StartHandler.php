@@ -7,15 +7,17 @@ use AppBundle\Entity\Task;
 use AppBundle\Integration\Standtrack\StandtrackClient;
 use AppBundle\Message\Task\Command\Start;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Workflow\WorkflowInterface;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class StartHandler
 {
     public function __construct(
-        private readonly RecordsMessages $eventRecorder,
+        private readonly MessageBusInterface $eventBus,
         private readonly WorkflowInterface $taskStateMachine,
         private readonly LoggerInterface $logger,
         private readonly StandtrackClient $standtrackClient
@@ -44,7 +46,10 @@ class StartHandler
 
         if ($this->taskStateMachine->can($task, 'start')) {
             $this->taskStateMachine->apply($task, 'start');
-            $this->eventRecorder->record(new Event\TaskStarted($task));
+            $event = new Event\TaskStarted($task);
+            $this->eventBus->dispatch(
+                (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+            );
         }
     }
 }

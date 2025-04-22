@@ -2,7 +2,6 @@
 
 namespace AppBundle\Domain;
 
-use SimpleBus\Message\Name\NamedMessage;
 
 abstract class Event implements NamedMessage
 {

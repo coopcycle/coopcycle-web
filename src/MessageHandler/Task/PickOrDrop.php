@@ -6,9 +6,9 @@ use AppBundle\Domain\Order\Event\OrderPicked;
 use AppBundle\Domain\Order\Event\OrderDropped;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Task\Event\TaskDone;
-use SimpleBus\Message\Bus\MessageBus;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 /**
  * Re-triggers an event in the order domain.
@@ -16,12 +16,9 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(handles: TaskDone::class)]
  class PickOrDrop
 {
-    private $eventBus;
 
-    public function __construct(MessageBus $eventBus)
-    {
-        $this->eventBus = $eventBus;
-    }
+    public function __construct(private MessageBusInterface $eventBus)
+    {}
 
     public function __invoke(TaskDone $event)
     {
@@ -39,7 +36,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
             return;
         }
 
-        $this->eventBus->handle($task->isDropoff() ? new OrderDropped($order) : new OrderPicked($order));
+        $this->eventBus->dispatch($task->isDropoff() ? new OrderDropped($order) : new OrderPicked($order));
 
         // FIXME
         // The order should be fulfilled when the last dropoff is completed
@@ -53,7 +50,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
                 $shouldCompletePayment = false;
             }
 
-            $this->eventBus->handle(new OrderFulfilled($order, $shouldCompletePayment));
+            $this->eventBus->dispatch(new OrderFulfilled($order, $shouldCompletePayment));
         }
     }
 }

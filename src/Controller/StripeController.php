@@ -2,8 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Domain\Order\Event\CheckoutFailed;
-use AppBundle\Entity\LocalBusiness;
+
 use AppBundle\Entity\StripeAccount;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Service\EmailManager;
@@ -17,7 +16,6 @@ use Hashids\Hashids;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Psr\Log\LoggerInterface;
-use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Stripe;
 use Stripe\Exception\ApiErrorException;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
@@ -28,8 +26,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * @see https://stripe.com/docs/connect/standard-accounts
@@ -162,11 +160,8 @@ class StripeController extends AbstractController
     #[Route(path: '/stripe/webhook', name: 'stripe_webhook', methods: ['POST'])]
     public function webhookAction(Request $request,
         StripeManager $stripeManager,
-        SettingsManager $settingsManager,
-        OrderManager $orderManager,
-        EventBus $eventBus,
-        EmailManager $emailManager)
-    {
+        SettingsManager $settingsManager
+    ) {
         $this->logger->info('Received webhook');
 
         $stripeManager->setupStripeApi();

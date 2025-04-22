@@ -11,8 +11,8 @@ use AppBundle\Message\CalculateRoute;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class CalculateRouteHandler
@@ -25,7 +25,7 @@ class CalculateRouteHandler
     public function __construct(
         EntityManagerInterface $objectManager,
         RoutingInterface $routing,
-        MessageBus $eventBus,
+        MessageBusInterface $eventBus,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
@@ -81,7 +81,7 @@ class CalculateRouteHandler
         $this->objectManager->flush();
 
         // Send only one event to avoid flooding
-        $this->eventBus->handle(
+        $this->eventBus->dispatch(
             new Event\TaskCollectionsUpdated($toUpdate)
         );
     }

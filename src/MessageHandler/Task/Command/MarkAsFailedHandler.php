@@ -8,18 +8,16 @@ use AppBundle\Exception\PreviousTaskNotCompletedException;
 use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use AppBundle\Message\Task\Command\MarkAsFailed;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class MarkAsFailedHandler
 {
-    private $eventRecorder;
-
-    public function __construct(RecordsMessages $eventRecorder)
-    {
-        $this->eventRecorder = $eventRecorder;
-    }
+    public function __construct(private MessageBusInterface $eventBus)
+    {}
 
     public function __invoke(MarkAsFailed $command)
     {
@@ -40,10 +38,16 @@ class MarkAsFailedHandler
         }
 
         if (!is_null($command->getReason())) {
-            $this->eventRecorder->record(new Event\TaskIncidentReported($task, $command->getReason(), $command->getNotes()));
+            $event = new Event\TaskIncidentReported($task, $command->getReason(), $command->getNotes());
+            $this->eventBus->dispatch(
+                (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+            );
         }
 
-        $this->eventRecorder->record(new Event\TaskFailed($task, $command->getNotes(), $command->getReason()));
+        $event = new Event\TaskFailed($task, $command->getNotes(), $command->getReason());
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
 
         $task->setStatus(Task::STATUS_FAILED);
 

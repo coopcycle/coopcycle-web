@@ -800,15 +800,12 @@ services:
 
   # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 48 }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     arguments:
-      $eventBus: '@event_bus'
       $eventStore: '@coopcycle.domain.event_store'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
@@ -820,8 +817,6 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
@@ -1205,8 +1200,6 @@ services:
   AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
-    arguments:
-      $eventBus: '@simple_bus.event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
 
@@ -1659,31 +1652,6 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
-
-  # TODO : delete this once migration is done
-  AppBundle\MessageHandler\Task\PickOrDrop:
-    arguments:
-      $eventBus: '@simple_bus.event_bus'
-
-  AppBundle\MessageHandler\Order\CalculateTimeline:
-    arguments:
-      - '@coopcycle.order_timeline_calculator'
-      - '@event_bus'
-
-  AppBundle\MessageHandler\Order\SendEmail:
-    arguments:
-      - '@coopcycle.email_manager'
-      - '@coopcycle.settings_manager'
-      - '@event_bus'
-      - '@Symfony\Component\Messenger\MessageBusInterface'
-      - '@AppBundle\Service\NotificationPreferences'
-  
-  AppBundle\MessageHandler\Order\UpdateState:
-    arguments:
-      - '@sm.factory'
-      - '@sylius.order_processing.order_payment_processor'
-      - '@event_bus'
-      - '@AppBundle\Utils\OrderTimeHelper'
 
   coopcycle.domain.event_store:
     class: AppBundle\Domain\EventStore
