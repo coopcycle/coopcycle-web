@@ -101,7 +101,11 @@ use stdClass;
             paginationEnabled: false,
             paginationClientEnabled: true
         ),
-        new Post(security: 'is_granted(\'ROLE_DISPATCHER\')', denormalizationContext: ['groups' => ['task_create']], validationContext: ['groups' => ['Default']]),
+        new Post(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            denormalizationContext: ['groups' => ['task_create']],
+            validationContext: ['groups' => ['Default']]
+        ),
         new Put(
             uriTemplate: '/tasks/assign',
             controller: TaskBulkAssign::class,

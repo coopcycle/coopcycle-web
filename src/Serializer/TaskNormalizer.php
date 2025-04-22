@@ -283,7 +283,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
     public function supportsDenormalization($data, string $type, ?string $format = null, array $context = [])
     {
-        if (array_key_exists('input', $context)) {
+        if (isset($context['input'])) {
             return false;
         }
 

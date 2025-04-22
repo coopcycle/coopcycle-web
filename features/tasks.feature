@@ -1103,6 +1103,7 @@ Feature: Tasks
     Then the response status code should be 400
     And the response should be in JSON
 
+  @debug
   Scenario: Create task
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1131,6 +1132,7 @@ Feature: Tasks
         "weight": 800
       }
       """
+    Then print last response
     Then the response status code should be 201
     And the JSON should match:
       """
@@ -2185,7 +2187,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/pick",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
@@ -2244,7 +2246,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/drop",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
@@ -2643,7 +2645,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/1/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -2930,7 +2932,6 @@ Feature: Tasks
       """
     Then the response status code should be 200
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
       """
       {

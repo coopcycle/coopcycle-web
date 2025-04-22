@@ -20,12 +20,11 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class DeliverySubscriber implements EventSubscriberInterface
 {
-
     private static $matchingRoutes = [
-        'api_deliveries_get_item',
-        'api_deliveries_post_collection',
-        'api_deliveries_check_collection',
-        'api_deliveries_suggest_optimizations_collection',
+        '_api_/deliveries/{id}.{_format}_get',
+        '_api_/deliveries.{_format}_post',
+        '_api_/deliveries/assert_post',
+        '_api_/deliveries/suggest_optimizations_post',
     ];
 
     public function __construct(
@@ -65,7 +64,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+        if ('_api_/deliveries.{_format}_post' !== $request->attributes->get('_route')) {
             return;
         }
 
@@ -99,7 +98,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+        if ('_api_/deliveries.{_format}_post' !== $request->attributes->get('_route')) {
             return;
         }
 
@@ -123,7 +122,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     public function handleCheckResponse(ViewEvent $event)
     {
         $request = $event->getRequest();
-        if ('api_deliveries_check_collection' !== $request->attributes->get('_route')) {
+        if ('_api_/deliveries/assert_post' !== $request->attributes->get('_route')) {
             return;
         }
 

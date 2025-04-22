@@ -4,6 +4,7 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -142,7 +143,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
             $address = null;
             if (is_string($data['address'])) {
-                $addressIRI = $this->iriConverter->getIriFromResource(Address::class);
+                $addressIRI = $this->iriConverter->getIriFromResource(Address::class, operation: new GetCollection());
                 if (0 === strpos($data['address'], $addressIRI)) {
                     $address = $this->iriConverter->getResourceFromIri($data['address']);
                 } else {
