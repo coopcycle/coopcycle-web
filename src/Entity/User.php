@@ -27,7 +27,16 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
-#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\') or user == object'), new Put(security: 'is_granted(\'ROLE_ADMIN\') or user == object', denormalizationContext: ['groups' => ['user_update']]), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false, paginationClientEnabled: false), new GetCollection(uriTemplate: '/me/stripe-payment-methods', controller: MyStripePaymentMethods::class, output: StripePaymentMethodsOutput::class, normalizationContext: ['api_sub_level' => true])], shortName: 'User', normalizationContext: ['groups' => ['user', 'order']])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\') or user == object'),
+        new Put(security: 'is_granted(\'ROLE_ADMIN\') or user == object', denormalizationContext: ['groups' => ['user_update']]),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false, paginationClientEnabled: false),
+        new GetCollection(uriTemplate: '/me/stripe-payment-methods', controller: MyStripePaymentMethods::class, output: StripePaymentMethodsOutput::class, normalizationContext: ['api_sub_level' => true])
+    ],
+    shortName: 'User',
+    normalizationContext: ['groups' => ['user', 'order']]
+)]
 #[UniqueEntity('facebookId')]
 #[ApiFilter(filterClass: UserRoleFilter::class, properties: ['roles'])]
 class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable
