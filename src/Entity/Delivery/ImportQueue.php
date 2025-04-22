@@ -15,7 +15,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(normalizationContext: ['groups' => ['delivery_import_queue']], security: 'is_granted(\'view\', object)'), new Get(uriTemplate: '/delivery_import_queues/{id}/csv', controller: ImportQueueCsv::class, security: 'is_granted(\'view\', object)'), new Get(uriTemplate: '/delivery_import_queues/{id}/redownload', controller: ImportQueueRedownload::class, security: 'is_granted(\'view\', object)')], shortName: 'DeliveryImportQueue', normalizationContext: ['groups' => ['delivery_import_queue']])]
+#[ApiResource(
+    operations: [
+        new Get(normalizationContext: ['groups' => ['delivery_import_queue']], security: 'is_granted(\'view\', object)'),
+        new Get(uriTemplate: '/delivery_import_queues/{id}/csv', controller: CsvController::class, security: 'is_granted(\'view\', object)'),
+        new Get(uriTemplate: '/delivery_import_queues/{id}/redownload', controller: RedownloadController::class, security: 'is_granted(\'view\', object)')
+    ],
+    shortName: 'DeliveryImportQueue',
+    normalizationContext: ['groups' => ['delivery_import_queue']]
+)]
 class ImportQueue
 {
     use Timestampable;

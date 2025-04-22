@@ -16,7 +16,7 @@ use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
 use AppBundle\Action\MyOrders;
 use AppBundle\Action\Order\Accept as OrderAccept;
-use AppBundle\Action\Order\AddPlayer as AddPlayer;
+use AppBundle\Action\Order\AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
 use AppBundle\Action\Order\Cancel as OrderCancel;
 use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
@@ -100,30 +100,30 @@ use Webmozart\Assert\Assert as WMAssert;
         new Get(security: 'is_granted(\'view\', object)'),
         new Get(
             uriTemplate: '/orders/{id}/payment',
-            controller: PaymentDetails::class,
+            controller: PaymentDetailsController::class,
             normalizationContext: ['api_sub_level' => true, 'groups' => ['payment_details']],
             security: 'is_granted(\'edit\', object)',
             openapiContext: ['summary' => 'Get payment details for a Order resource.']
         ),
         new Get(
             uriTemplate: '/orders/{id}/payment_methods',
-            controller: PaymentMethods::class,
+            controller: PaymentMethodsController::class,
             output: PaymentMethodsOutput::class,
             normalizationContext: ['api_sub_level' => true],
             security: 'is_granted(\'edit\', object)',
             openapiContext: ['summary' => 'Get available payment methods for a Order resource.']
         ),
-        new Put(uriTemplate: '/orders/{id}/pay', controller: Pay::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Pays a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/accept', controller: Accept::class, security: 'is_granted(\'accept\', object)', deserialize: false, openapiContext: ['summary' => 'Accepts a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/refuse', controller: Refuse::class, security: 'is_granted(\'refuse\', object)', openapiContext: ['summary' => 'Refuses a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/delay', controller: Delay::class, security: 'is_granted(\'delay\', object)', openapiContext: ['summary' => 'Delays a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/fulfill', controller: Fulfill::class, security: 'is_granted(\'fulfill\', object)', openapiContext: ['summary' => 'Fulfills a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/cancel', controller: Cancel::class, security: 'is_granted(\'cancel\', object)', openapiContext: ['summary' => 'Cancels a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/start_preparing', controller: StartPreparing::class, security: 'is_granted(\'start_preparing\', object)', openapiContext: ['summary' => 'Starts preparing an Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/finish_preparing', controller: FinishPreparing::class, security: 'is_granted(\'finish_preparing\', object)', openapiContext: ['summary' => 'Finishes preparing an Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/restore', controller: Restore::class, security: 'is_granted(\'restore\', object)', openapiContext: ['summary' => 'Restores a cancelled Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/assign', controller: Assign::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Assigns a Order resource to a User.']),
-        new Put(uriTemplate: '/orders/{id}/tip', controller: Tip::class, validationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Updates tip amount of an Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/pay', controller: OrderPay::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Pays a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/accept', controller: OrderAccept::class, security: 'is_granted(\'accept\', object)', deserialize: false, openapiContext: ['summary' => 'Accepts a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/refuse', controller: OrderRefuse::class, security: 'is_granted(\'refuse\', object)', openapiContext: ['summary' => 'Refuses a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/delay', controller: OrderDelay::class, security: 'is_granted(\'delay\', object)', openapiContext: ['summary' => 'Delays a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/fulfill', controller: OrderFulfill::class, security: 'is_granted(\'fulfill\', object)', openapiContext: ['summary' => 'Fulfills a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/cancel', controller: OrderCancel::class, security: 'is_granted(\'cancel\', object)', openapiContext: ['summary' => 'Cancels a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/start_preparing', controller: OrderStartPreparing::class, security: 'is_granted(\'start_preparing\', object)', openapiContext: ['summary' => 'Starts preparing an Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/finish_preparing', controller: OrderFinishPreparing::class, security: 'is_granted(\'finish_preparing\', object)', openapiContext: ['summary' => 'Finishes preparing an Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/restore', controller: OrderRestore::class, security: 'is_granted(\'restore\', object)', openapiContext: ['summary' => 'Restores a cancelled Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/assign', controller: OrderAssign::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Assigns a Order resource to a User.']),
+        new Put(uriTemplate: '/orders/{id}/tip', controller: OrderTip::class, validationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Updates tip amount of an Order resource.']),
         new Get(
             uriTemplate: '/orders/{id}/timing',
             security: 'is_granted(\'view\', object)',
@@ -131,15 +131,21 @@ use Webmozart\Assert\Assert as WMAssert;
         ),
         new Get(uriTemplate: '/orders/{id}/validate', normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
         new Put(uriTemplate: '/orders/{id}', validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['order_update']], security: 'is_granted(\'edit\', object)'),
-        new Put(uriTemplate: '/orders/{id}/items/{itemId}', controller: UpdateItem::class, validationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
-        new Delete(uriTemplate: '/orders/{id}/items/{itemId}', controller: DeleteItem::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], validate: false, write: false, status: 200, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Deletes items from a Order resource.']),
-        new Get(uriTemplate: '/orders/{id}/centrifugo', controller: Centrifugo::class, normalizationContext: ['groups' => ['centrifugo', 'centrifugo_for_order']], security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Centrifugo connection details for a Order resource.']),
+        new Put(uriTemplate: '/orders/{id}/items/{itemId}', controller: UpdateCartItem::class, validationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
+        new Delete(uriTemplate: '/orders/{id}/items/{itemId}', controller: DeleteCartItem::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], validate: false, write: false, status: 200, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Deletes items from a Order resource.']),
+        new Get(
+            uriTemplate: '/orders/{id}/centrifugo',
+            controller: CentrifugoController::class,
+            normalizationContext: ['groups' => ['centrifugo', 'centrifugo_for_order']],
+            security: 'is_granted(\'view\', object)',
+            openapiContext: ['summary' => 'Get Centrifugo connection details for a Order resource.']
+        ),
         new Get(uriTemplate: '/orders/{id}/mercadopago-preference', controller: MercadopagoPreference::class, output: MercadopagoPreferenceResponse::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Creates a MercadoPago preference and returns its ID.']),
-        new Get(uriTemplate: '/orders/{id}/invoice', controller: Invoice::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Invoice for a Order resource.']),
-        new Post(uriTemplate: '/orders/{id}/invoice', normalizationContext: ['groups' => ['order']], controller: GenerateInvoice::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Generate Invoice for a Order resource.']),
+        new Get(uriTemplate: '/orders/{id}/invoice', controller: InvoiceController::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Invoice for a Order resource.']),
+        new Post(uriTemplate: '/orders/{id}/invoice', normalizationContext: ['groups' => ['order']], controller: GenerateInvoiceController::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Generate Invoice for a Order resource.']),
         new Get(uriTemplate: '/orders/{id}/stripe/clone-payment-method/{paymentMethodId}', controller: CloneStripePayment::class, output: StripePaymentMethodOutput::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => '']),
         new Post(uriTemplate: '/orders/{id}/stripe/create-setup-intent-or-attach-pm', controller: CreateSetupIntentOrAttachPM::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => '']),
-        new Post(uriTemplate: '/orders/{id}/create_invitation', status: 200, security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], controller: CreateInvitation::class, validate: false, openapiContext: ['summary' => 'Generates an invitation link for an order']),
+        new Post(uriTemplate: '/orders/{id}/create_invitation', status: 200, security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], controller: CreateInvitationController::class, validate: false, openapiContext: ['summary' => 'Generates an invitation link for an order']),
         new Post(uriTemplate: '/orders/{id}/players', controller: AddPlayer::class),
         new Get(
             uriTemplate: '/orders/{id}/loopeat_formats',

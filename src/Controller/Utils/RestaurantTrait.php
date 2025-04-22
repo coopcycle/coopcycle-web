@@ -382,7 +382,7 @@ trait RestaurantTrait
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'restaurantId' => $restaurant->getId(),
                     'date' => $date->format('Y-m-d'),
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }

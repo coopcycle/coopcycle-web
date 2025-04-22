@@ -142,7 +142,7 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
 
             $address = null;
             if (is_string($data['address'])) {
-                $addressIRI = $this->iriConverter->getIriFromResourceClass(Address::class);
+                $addressIRI = $this->iriConverter->getIriFromResource(Address::class);
                 if (0 === strpos($data['address'], $addressIRI)) {
                     $address = $this->iriConverter->getResourceFromIri($data['address']);
                 } else {

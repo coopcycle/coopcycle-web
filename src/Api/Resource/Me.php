@@ -8,9 +8,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Me as MeController;
-use AppBundle\Action\DeleteMe as DeleteMeController;
+use AppBundle\Action\DeleteMe;
 
-#[ApiResource(operations: [new Get(uriTemplate: '/me', controller: Me::class, read: false, normalizationContext: ['groups' => ['user', 'address', 'api_app']], openapiContext: ['summary' => 'Retrieves information about the authenticated token', 'responses' => [['description' => 'Authenticated token information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['addresses' => ['type' => 'array', 'items' => ['$ref' => '#/definitions/Address']], 'username' => ['type' => 'string'], 'email' => ['type' => 'string'], 'roles' => ['type' => 'array', 'items' => ['type' => 'string']]]]]]]]]), new Delete(uriTemplate: '/me', controller: DeleteMe::class, read: false, write: false)])]
+#[ApiResource(operations: [new Get(uriTemplate: '/me', controller: MeController::class, read: false, normalizationContext: ['groups' => ['user', 'address', 'api_app']], openapiContext: ['summary' => 'Retrieves information about the authenticated token', 'responses' => [['description' => 'Authenticated token information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['addresses' => ['type' => 'array', 'items' => ['$ref' => '#/definitions/Address']], 'username' => ['type' => 'string'], 'email' => ['type' => 'string'], 'roles' => ['type' => 'array', 'items' => ['type' => 'string']]]]]]]]]), new Delete(uriTemplate: '/me', controller: DeleteMe::class, read: false, write: false)])]
 final class Me
 {
     // FIXME

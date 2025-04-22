@@ -394,7 +394,7 @@ class AdminController extends AbstractController
             if (is_numeric($order)) {
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'date' => $date,
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }

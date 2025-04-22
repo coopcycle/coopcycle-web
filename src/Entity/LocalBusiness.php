@@ -68,8 +68,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             denormalizationContext: ['groups' => ['restaurant_update']],
             security: 'is_granted(\'edit\', object)'
         ),
-        new Put(uriTemplate: '/restaurants/{id}/close', controller: Close::class, security: 'is_granted(\'edit\', object)'),
-        new Get(uriTemplate: '/restaurants/{id}/deliveries/{date}', controller: Deliveries::class, security: 'is_granted(\'ROLE_ADMIN\')', normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]),
+        new Put(uriTemplate: '/restaurants/{id}/close', controller: CloseController::class, security: 'is_granted(\'edit\', object)'),
+        new Get(uriTemplate: '/restaurants/{id}/deliveries/{date}', controller: RestaurantDeliveriesController::class, security: 'is_granted(\'ROLE_ADMIN\')', normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]),
         new Get(uriTemplate: '/restaurants/{id}/timing', controller: Timing::class, normalizationContext: ['groups' => ['restaurant_timing']]),
         new Get(uriTemplate: '/restaurants/{id}/orders', controller: Orders::class, security: 'is_granted(\'edit\', object)'),
         new GetCollection(paginationEnabled: false, normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]),
