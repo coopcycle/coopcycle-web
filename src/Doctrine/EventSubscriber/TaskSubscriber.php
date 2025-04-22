@@ -100,7 +100,7 @@ class TaskSubscriber implements EventSubscriber
             $this->processor->process($task, $uow->getEntityChangeSet($task));
         }
 
-        foreach ($this->processor->recordedMessages() as $recordedMessage) {
+        foreach ($this->processor->recordedMessages as $recordedMessage) {
             // If the task is not persisted yet (i.e entity insertions),
             // we handle the event in postFlush
             if ($uow->isScheduledForInsert($recordedMessage->getTask())) {
@@ -110,7 +110,7 @@ class TaskSubscriber implements EventSubscriber
             $this->eventBus->dispatch($recordedMessage);
         }
 
-        if (count($this->processor->recordedMessages()) > 0) {
+        if (count($this->processor->recordedMessages) > 0) {
             $uow->computeChangeSets();
         }
     }

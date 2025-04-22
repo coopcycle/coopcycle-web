@@ -13,7 +13,7 @@ use Psr\Log\NullLogger;
 
 class EntityChangeSetProcessor
 {
-    private $recordedMessages = [];
+    public $recordedMessages = [];
     private $taskListProvider;
     private $logger;
     private $tourRepository;
