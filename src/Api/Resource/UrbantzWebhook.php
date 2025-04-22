@@ -45,8 +45,6 @@ final class UrbantzWebhook
     #[Groups(['urbantz_output'])]
     public $deliveries = [];
 
-    public $hub;
-
     public function __construct(string $id = null)
     {
         $this->id = $id;

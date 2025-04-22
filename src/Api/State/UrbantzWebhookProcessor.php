@@ -46,7 +46,6 @@ class UrbantzWebhookProcessor implements ProcessorInterface
             switch ($event) {
                 case UrbantzWebhook::TASKS_ANNOUNCED:
                     $data->deliveries[] = $this->onTaskAnnounced($task);
-                    $data->hub = $task['hub'];
                     break;
                 case UrbantzWebhook::TASK_CHANGED:
                     if ($delivery = $this->onTaskChanged($task)) {
