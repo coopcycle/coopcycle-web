@@ -9,9 +9,26 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CreateRemotePushTokenRequest;
-use AppBundle\Action\DeleteToken as DeleteTokenController;
+use AppBundle\Api\State\RemotePushTokenProcessor;
+use AppBundle\Action\DeleteToken;
 
-#[ApiResource(operations: [new Get(), new Delete(uriTemplate: '/me/remote_push_tokens/{token}', read: false, write: false, controller: DeleteToken::class, requirements: ['token' => '.+']), new Post(uriTemplate: '/me/remote_push_tokens', input: CreateRemotePushTokenRequest::class)])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Delete(
+            uriTemplate: '/me/remote_push_tokens/{token}',
+            read: false,
+            write: false,
+            controller: DeleteToken::class,
+            requirements: ['token' => '.+']
+        ),
+        new Post(
+            uriTemplate: '/me/remote_push_tokens',
+            input: CreateRemotePushTokenRequest::class,
+            processor: RemotePushTokenProcessor::class
+        )
+    ]
+)]
 class RemotePushToken
 {
     protected $id;
