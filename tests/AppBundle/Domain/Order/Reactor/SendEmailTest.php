@@ -140,7 +140,8 @@ class SendEmailTest extends TestCase
 
                 return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
@@ -235,7 +236,8 @@ class SendEmailTest extends TestCase
                 // when it is a multi vendor order
                 return isset($payload['recipient']) && !in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
@@ -271,7 +273,8 @@ class SendEmailTest extends TestCase
 
                 return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));
 
         call_user_func_array($this->sendEmail, [ new Event\OrderAccepted($order->reveal()) ]);
     }
@@ -380,7 +383,8 @@ class SendEmailTest extends TestCase
 
                 return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));;
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }

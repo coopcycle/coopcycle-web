@@ -23,6 +23,7 @@ use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethod;
 use Prophecy\Argument;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class CheckoutHandlerTest extends TestCase
@@ -38,6 +39,7 @@ class CheckoutHandlerTest extends TestCase
     public function setUp(): void
     {
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
+
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
@@ -90,8 +92,12 @@ class CheckoutHandlerTest extends TestCase
             ->willReturn($paymentIntent);
 
         $this->eventBus
-            ->dispatch(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                $this->assertInstanceOf(CheckoutSucceeded::class, $envelope->getMessage());
+                return true;
+            }))
+            ->willReturn(new Envelope(new CheckoutSucceeded($order)))
+            ->shouldBeCalledOnce();
 
         $command = new Checkout($order, 'pi_12345678');
 
@@ -125,12 +131,23 @@ class CheckoutHandlerTest extends TestCase
             ->willThrow(new \Exception('Lorem ipsum'));
 
         $this->eventBus
-            ->dispatch(Argument::type(CheckoutSucceeded::class))
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                if ($envelope->getMessage() instanceof CheckoutSucceeded) {
+                    return true;
+                }
+                return false;
+            }))
+            ->willReturn(new Envelope(new CheckoutSucceeded($order)))
             ->shouldNotBeCalled();
 
         $this->eventBus
-            ->dispatch(Argument::type(CheckoutFailed::class))
-            ->shouldBeCalled();
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                if ($envelope->getMessage() instanceof CheckoutFailed) {
+                    return true;
+                }
+            }))
+            ->willReturn(new Envelope(new CheckoutFailed($order, $payment, 'Lorem ipsum')))
+            ->shouldBeCalledOnce();
 
         $command = new Checkout($order, 'tok_123456');
 
@@ -156,8 +173,14 @@ class CheckoutHandlerTest extends TestCase
             ->shouldNotBeCalled();
 
         $this->eventBus
-            ->dispatch(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                if ($envelope->getMessage() instanceof CheckoutSucceeded) {
+                    return true;
+                }
+                return false;
+            }))
+            ->willReturn(new Envelope(new CheckoutSucceeded($order->reveal())))
+            ->shouldBeCalledOnce();
 
         $command = new Checkout($order->reveal());
 
@@ -200,8 +223,23 @@ class CheckoutHandlerTest extends TestCase
             ->willReturn(new ArrayCollection([$edenredPayment, $cardPayment]));
 
         $this->eventBus
-            ->dispatch(Argument::type(CheckoutSucceeded::class))
-            ->shouldBeCalled();
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                if ($envelope->getMessage() instanceof CheckoutSucceeded) {
+                    return true;
+                }
+                return false;
+            }))
+            ->willReturn(new Envelope(new CheckoutSucceeded($order->reveal())))
+            ->shouldBeCalledOnce();
+
+        $this->eventBus
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                if ($envelope->getMessage() instanceof CheckoutFailed) {
+                    return true;
+                }
+            }))
+            ->willReturn(new Envelope(new CheckoutFailed($order->reveal(), $cardPayment, 'Lorem ipsum')))
+            ->shouldNotBeCalled();
 
         $this->gateway = $this->prophesize(Gateway::class);
 

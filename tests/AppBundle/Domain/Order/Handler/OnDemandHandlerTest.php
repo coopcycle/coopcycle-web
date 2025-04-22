@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Prophecy\Argument;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class OnDemandHandlerTest extends TestCase
@@ -41,7 +42,8 @@ class OnDemandHandlerTest extends TestCase
             ->shouldBeCalled();
 
         $this->messageBus
-            ->dispatch(Argument::type(OrderCreated::class))
+            ->dispatch(Argument::that(function (Envelope $envelope) { return $envelope->getMessage() instanceof OrderCreated; }))
+            ->willReturn(new Envelope(new OrderCreated($order->reveal())))
             ->shouldBeCalled();
 
         $command = new OnDemand($order->reveal());

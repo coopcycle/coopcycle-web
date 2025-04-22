@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Controller\RestaurantController;
+use AppBundle\Domain\Order\Event;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -43,6 +44,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -126,6 +128,13 @@ class RestaurantControllerTest extends WebTestCase
             ->willReturn($parameterBag->reveal());
 
         $eventBus = $this->prophesize(MessageBusInterface::class);
+        $eventBus
+            ->dispatch(Argument::type(Event::class))
+            ->will(function ($args) {
+                return new Envelope($args[0]);
+        });
+
+
         $jwtTokenManager = $this->prophesize(JWTTokenManagerInterface::class);
 
         $this->controller = new RestaurantController(

@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\MessageHandler\Order\Command;
 
+use AppBundle\Domain\Order\Event;
 use AppBundle\Message\Order\Command\CancelOrder;
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\MessageHandler\Order\Command\CancelOrderHandler;
@@ -13,6 +14,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Tests\AppBundle\StripeTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use SM\Factory\FactoryInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class CancelOrderHandlerTest extends KernelTestCase
@@ -22,7 +24,7 @@ class CancelOrderHandlerTest extends KernelTestCase
         setUp as setUpStripe;
     }
 
-    private $messageBus;
+    private $eventBus;
     private $stripeManager;
     private $handler;
 
@@ -34,13 +36,13 @@ class CancelOrderHandlerTest extends KernelTestCase
 
         $this->setUpStripe();
 
-        $this->messageBus = $this->prophesize(MessageBusInterface::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
         $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
 
         $this->handler = new CancelOrderHandler(
-            $this->messageBus->reveal(),
+            $this->eventBus->reveal(),
             $this->stateMachineFactory
         );
     }
@@ -53,7 +55,7 @@ class CancelOrderHandlerTest extends KernelTestCase
         $order->setState(OrderInterface::STATE_NEW);
         $order->setFulfillmentMethod('delivery');
 
-        $this->messageBus
+        $this->eventBus
             ->dispatch(Argument::type(OrderCancelled::class))
             ->shouldNotBeCalled();
 
@@ -67,10 +69,13 @@ class CancelOrderHandlerTest extends KernelTestCase
         $order = new Order();
         $order->setState(OrderInterface::STATE_ACCEPTED);
 
-        $this->messageBus
-            ->dispatch(Argument::type(OrderCancelled::class))
-            ->shouldBeCalled();
-
+        $this->eventBus
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                $this->assertInstanceOf(OrderCancelled::class, $envelope->getMessage());
+                return true;
+            }))
+            ->willReturn(new Envelope(new OrderCancelled($order)))
+            ->shouldBeCalledOnce();
         $command = new CancelOrder($order);
 
         call_user_func_array($this->handler, [ $command ]);
@@ -84,7 +89,7 @@ class CancelOrderHandlerTest extends KernelTestCase
         $order = new Order();
         $order->setState(OrderInterface::STATE_FULFILLED);
 
-        $this->messageBus
+        $this->eventBus
             ->dispatch(Argument::type(OrderCancelled::class))
             ->shouldNotBeCalled();
 

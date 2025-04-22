@@ -6,6 +6,7 @@ use AppBundle\Doctrine\EventSubscriber\TaskSubscriber;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Domain\EventStore;
+use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
@@ -26,6 +27,7 @@ use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -56,6 +58,11 @@ class TaskSubscriberTest extends TestCase
     public function setUp(): void
     {
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
+        $this->eventBus
+            ->dispatch(Argument::type(Event::class))
+            ->will(function ($args) {
+                return new Envelope($args[0]);
+        });
 
         $this->taskListRepository = $this->prophesize(ObjectRepository::class);
 
@@ -127,7 +134,7 @@ class TaskSubscriberTest extends TestCase
 
         $this->assertCount(1, $task->getEvents());
         $this->eventBus
-            ->handle(Argument::type(TaskCreated::class))
+            ->dispatch(Argument::type(TaskCreated::class))
             ->shouldHaveBeenCalledTimes(1);
 
         // Make sure it can be called several
@@ -199,10 +206,10 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this->eventBus
-            ->handle(Argument::type(TaskCreated::class))
+            ->dispatch(Argument::type(TaskCreated::class))
             ->shouldHaveBeenCalledTimes(1);
         $this->eventBus
-            ->handle(Argument::type(TaskAssigned::class))
+            ->dispatch(Argument::type(TaskAssigned::class))
             ->shouldHaveBeenCalledTimes(1);
 
         // Make sure it can be called several
@@ -287,10 +294,10 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this->eventBus
-            ->handle(Argument::type(TaskCreated::class))
+            ->dispatch(Argument::type(TaskCreated::class))
             ->shouldHaveBeenCalledTimes(1);
         $this->eventBus
-            ->handle(Argument::type(TaskAssigned::class))
+            ->dispatch(Argument::type(TaskAssigned::class))
             ->shouldHaveBeenCalledTimes(1);
 
         // Make sure it can be called several
@@ -359,10 +366,10 @@ class TaskSubscriberTest extends TestCase
 
         $this->assertCount(0, $task->getEvents());
         $this->eventBus
-            ->handle(Argument::type(TaskCreated::class))
+            ->dispatch(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();
         $this->eventBus
-            ->handle(Argument::type(TaskAssigned::class))
+            ->dispatch(Argument::type(TaskAssigned::class))
             ->shouldHaveBeenCalledTimes(1);
 
         // Make sure it can be called several
@@ -445,7 +452,7 @@ class TaskSubscriberTest extends TestCase
         $this->assertCount(0, $task2->getEvents());
 
         $this->eventBus
-            ->handle(Argument::type(TaskCreated::class))
+            ->dispatch(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();
     }
 
@@ -499,10 +506,10 @@ class TaskSubscriberTest extends TestCase
 
         $this->assertCount(0, $task->getEvents());
         $this->eventBus
-            ->handle(Argument::type(TaskCreated::class))
+            ->dispatch(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();
         $this->eventBus
-            ->handle(Argument::type(TaskAssigned::class))
+            ->dispatch(Argument::type(TaskAssigned::class))
             ->shouldHaveBeenCalledTimes(1);
     }
 
@@ -566,7 +573,7 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this->eventBus
-            ->handle(Argument::type(TaskUnassigned::class))
+            ->dispatch(Argument::type(TaskUnassigned::class))
             ->shouldHaveBeenCalledTimes(1);
 
         // Make sure it can be called several
@@ -668,7 +675,7 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this->eventBus
-            ->handle(Argument::type(TaskUnassigned::class))
+            ->dispatch(Argument::type(TaskUnassigned::class))
             ->shouldHaveBeenCalledTimes(1);
 
         $this->assertFalse($pickup->isAssigned());
@@ -766,7 +773,7 @@ class TaskSubscriberTest extends TestCase
         );
 
         $this->eventBus
-            ->handle(Argument::type(TaskAssigned::class))
+            ->dispatch(Argument::type(TaskAssigned::class))
             ->shouldHaveBeenCalledTimes(1);
 
         $this->assertTrue($pickup->isAssigned());

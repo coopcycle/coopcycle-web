@@ -3,12 +3,11 @@
 namespace Tests\AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Task\Event\TaskDone;
-use AppBundle\Domain\Task\Event\TaskFailed;
-use AppBundle\Domain\Task\Reactor\SendEmail;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\MessageHandler\Task\SendEmail;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;

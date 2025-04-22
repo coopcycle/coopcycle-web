@@ -13,6 +13,7 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Tests\AppBundle\StripeTrait;
 
@@ -56,8 +57,13 @@ class RefuseOrderHandlerTest extends TestCase
         $order->addPayment($payment);
 
         $this->eventBus
-            ->record(Argument::type(OrderRefused::class))
-            ->shouldBeCalled();
+            ->dispatch(Argument::that(function(Envelope $envelope){
+                if ($envelope->getMessage() instanceof OrderRefused) {
+                    return true;
+                }
+            }))
+            ->willReturn(new Envelope(new OrderRefused($order)))
+            ->shouldBeCalledOnce();
 
         $command = new RefuseOrder($order, 'Out of stock');
 
