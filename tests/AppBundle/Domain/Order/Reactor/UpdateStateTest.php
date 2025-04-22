@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Domain\Order\Reactor\UpdateState;
+use AppBundle\MessageHandler\Order\UpdateState;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;

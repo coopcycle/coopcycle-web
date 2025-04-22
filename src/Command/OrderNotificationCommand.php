@@ -3,8 +3,8 @@
 namespace AppBundle\Command;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Domain\Order\Reactor\PublishLiveUpdate;
-use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
+use AppBundle\MessageHandler\Order\PublishLiveUpdate;
+use AppBundle\MessageHandler\Order\SendRemotePushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;

@@ -6,7 +6,6 @@ imports:
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
   - { resource: services/messenger.yaml }
-  - { resource: services/message_bus/order.yml }
 
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
@@ -1665,6 +1664,26 @@ services:
   AppBundle\MessageHandler\Task\PickOrDrop:
     arguments:
       $eventBus: '@simple_bus.event_bus'
+
+  AppBundle\MessageHandler\Order\CalculateTimeline:
+    arguments:
+      - '@coopcycle.order_timeline_calculator'
+      - '@event_bus'
+
+  AppBundle\MessageHandler\Order\SendEmail:
+    arguments:
+      - '@coopcycle.email_manager'
+      - '@coopcycle.settings_manager'
+      - '@event_bus'
+      - '@Symfony\Component\Messenger\MessageBusInterface'
+      - '@AppBundle\Service\NotificationPreferences'
+  
+  AppBundle\MessageHandler\Order\UpdateState:
+    arguments:
+      - '@sm.factory'
+      - '@sylius.order_processing.order_payment_processor'
+      - '@event_bus'
+      - '@AppBundle\Utils\OrderTimeHelper'
 
   coopcycle.domain.event_store:
     class: AppBundle\Domain\EventStore
