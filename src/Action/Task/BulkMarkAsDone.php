@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BulkMarkAsDone extends Base
 {
@@ -25,9 +26,11 @@ class BulkMarkAsDone extends Base
         TaskManager $taskManager,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
-        NormalizerInterface $normalizerInterface)
+        NormalizerInterface $normalizerInterface,
+        TranslatorInterface $translator
+    )
     {
-        parent::__construct($tokenStorage, $taskManager);
+        parent::__construct($tokenStorage, $taskManager, $translator);
 
         $this->iriConverter = $iriConverter;
         $this->entityManager = $entityManager;
