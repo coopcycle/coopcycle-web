@@ -38,28 +38,12 @@ class PublishLiveUpdate
         if ($event instanceof TaskListUpdated) {
             $user = $event->getCourier();
             $this->liveUpdates->toUsers([$user], $event);
-        }
-        // The app now support this events for admins and dispatchers
-        else if ($event instanceof TaskAssigned
-            || $event instanceof TaskCancelled
-            || $event instanceof TaskCreated
-            || $event instanceof TaskDone
-            || $event instanceof TaskFailed
-            || $event instanceof TaskRescheduled
-            || $event instanceof TaskStarted
-            || $event instanceof TaskUnassigned
-            || $event instanceof TaskUpdated
-        ) {
-            $this->liveUpdates->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
         } else if ($event instanceof TaskListUpdatedv2) {
-            $user = $event->getTaskList()->getCourier();
+            $user = $event->getTaskList()->getCourier(); // Not used in the rider part of the app yet
             $this->liveUpdates->toUserAndRoles($user, ['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
-        } else if ($event instanceof TourCreated
-            || $event instanceof TourUpdated
-        ) {
-            $this->liveUpdates->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
         } else {
-            $this->liveUpdates->toAdmins($event);
+            // Can be safely broadcasted both to admins and dispatchers
+            $this->liveUpdates->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], $event);
         }
     }
 }
