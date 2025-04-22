@@ -2,6 +2,7 @@
 
 namespace AppBundle\MessageHandler\Order;
 
+use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\EmailSent;
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Domain\Order\Event\OrderCancelled;
