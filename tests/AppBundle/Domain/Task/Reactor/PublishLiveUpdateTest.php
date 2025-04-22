@@ -139,7 +139,8 @@ class PublishLiveUpdateTest extends TestCase
     {
         $event = $this->prophesize(Event::class);
 
-        $this->liveUpdates->toAdmins(
+        $this->liveUpdates->toRoles(
+            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
             $event->reveal()
         )->shouldBeCalledOnce();
 

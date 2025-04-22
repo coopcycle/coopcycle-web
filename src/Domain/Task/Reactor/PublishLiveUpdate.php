@@ -3,19 +3,8 @@
 namespace AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Event;
-use AppBundle\Domain\Task\Event\TaskAssigned;
-use AppBundle\Domain\Task\Event\TaskCancelled;
-use AppBundle\Domain\Task\Event\TaskCreated;
-use AppBundle\Domain\Task\Event\TaskDone;
-use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Domain\Task\Event\TaskListUpdated;
 use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
-use AppBundle\Domain\Task\Event\TaskRescheduled;
-use AppBundle\Domain\Task\Event\TaskStarted;
-use AppBundle\Domain\Task\Event\TaskUnassigned;
-use AppBundle\Domain\Task\Event\TaskUpdated;
-use AppBundle\Domain\Tour\Event\TourCreated;
-use AppBundle\Domain\Tour\Event\TourUpdated;
 use AppBundle\Service\LiveUpdates;
 
 class PublishLiveUpdate
