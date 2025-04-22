@@ -49,7 +49,7 @@ class SendRemotePushNotification
         }
     }
 
-    public function __invoke(Event $event)
+    public function __invoke(OrderCreated|OrderAccepted|OrderStateChanged $event)
     {
         if (!$this->shouldSendNotification($event)) {
             return;
