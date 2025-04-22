@@ -1684,6 +1684,3 @@ services:
     arguments:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
-    tags:
-      - name: event_subscriber
-        subscribes_to: task:incident-reported
