@@ -18,7 +18,7 @@ class StoreAddressProcessor implements ProcessorInterface
     {}
 
     /**
-     * @var Address $data
+     * @param Address $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

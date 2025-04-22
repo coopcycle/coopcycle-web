@@ -51,6 +51,7 @@ use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
+use AppBundle\Api\State\EdenredCredentialsProcessor;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
 use AppBundle\DataType\TsRange;
@@ -172,6 +173,7 @@ use Webmozart\Assert\Assert as WMAssert;
             uriTemplate: '/orders/{id}/edenred_credentials',
             security: 'is_granted(\'edit\', object)',
             input: EdenredCredentialsInput::class,
+            processor: EdenredCredentialsProcessor::class,
             validate: false,
             normalizationContext: ['groups' => ['cart']],
             denormalizationContext: ['groups' => ['update_edenred_credentials']],

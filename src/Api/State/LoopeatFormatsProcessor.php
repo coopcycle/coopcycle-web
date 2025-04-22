@@ -23,7 +23,7 @@ class LoopeatFormatsProcessor implements ProcessorInterface
     {}
 
     /**
-     * @var LoopeatFormats $data
+     * @param LoopeatFormats $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

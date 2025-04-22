@@ -18,7 +18,7 @@ class RemotePushTokenProcessor implements ProcessorInterface
     {}
 
     /**
-     * @var CreateRemotePushTokenRequest $data
+     * @param CreateRemotePushTokenRequest $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

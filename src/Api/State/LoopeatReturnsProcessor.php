@@ -18,7 +18,7 @@ class LoopeatReturnsProcessor implements ProcessorInterface
     {}
 
     /**
-     * @var LoopeatReturns $data
+     * @param LoopeatReturns $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
