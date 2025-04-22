@@ -34,25 +34,6 @@ class MarkAsDoneHandler
         /** @var Task $task */
         $task = $command->getTask();
 
-        // TODO Use StateMachine?
-
-        if ($task->isCompleted()) {
-            throw new TaskAlreadyCompletedException(sprintf('Task #%d is already completed', $task->getId()));
-        }
-
-        if ($task->isCancelled()) {
-            throw new TaskCancelledException(sprintf('Task #%d is cancelled', $task->getId()));
-        }
-
-        if ($task->hasPrevious() && !$task->getPrevious()->isCompleted()) {
-            throw new PreviousTaskNotCompletedException(
-                $this->translator->trans('tasks.mark_as_done.has_previous', [
-                    '%failed_task%' => $task->getId(),
-                    '%previous_task%' => $task->getPrevious()->getId(),
-                ])
-            );
-        }
-
         $event = new Event\TaskDone($task, $command->getNotes());
         $this->eventBus->dispatch(
             (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())

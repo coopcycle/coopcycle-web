@@ -6,18 +6,18 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Service\TaskManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class Base
 {
-    protected $tokenStorage;
-    protected $taskManager;
-
     use TokenStorageTrait;
 
-    public function __construct(TokenStorageInterface $tokenStorage, TaskManager $taskManager)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        protected TaskManager $taskManager,
+        protected TranslatorInterface $translator)
     {
         $this->tokenStorage = $tokenStorage;
-        $this->taskManager = $taskManager;
     }
 
     protected function getNotes(Request $request)
