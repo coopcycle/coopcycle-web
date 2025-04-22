@@ -3,7 +3,7 @@
 namespace AppBundle\Domain\Task\Event;
 
 use AppBundle\Api\Dto\MyTaskListDto;
-use AppBundle\Domain\Event as BaseEvent;
+use AppBundle\Domain\Task\Event as BaseEvent;
 use AppBundle\Domain\SerializableEventInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
