@@ -14,7 +14,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 
-#[ApiResource(operations: [new Get(security: 'is_granted(\'view\', object)'), new Delete(security: 'is_granted(\'edit\', object)'), new Post(controller: Create::class, securityPostDenormalize: 'is_granted(\'create\', object)', denormalizationContext: ['groups' => ['webhook_create']], normalizationContext: ['groups' => ['webhook', 'webhook_with_secret']])], normalizationContext: ['groups' => ['webhook']])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'view\', object)'),
+        new Delete(security: 'is_granted(\'edit\', object)'),
+        new Post(controller: CreateController::class, securityPostDenormalize: 'is_granted(\'create\', object)', denormalizationContext: ['groups' => ['webhook_create']], normalizationContext: ['groups' => ['webhook', 'webhook_with_secret']])
+    ],
+    normalizationContext: ['groups' => ['webhook']]
+)]
 class Webhook
 {
     use Timestampable;

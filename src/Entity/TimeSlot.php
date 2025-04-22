@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\TimeSlot\Choices as ChoicesController;
+use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
@@ -19,7 +20,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
-use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
 #[ApiResource(
     operations: [
@@ -30,14 +30,14 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
         ),
         new Get(
             uriTemplate: '/time_slots/{id}/choices',
-            controller: StoreOpeningHours::class,
+            controller: OpeningHours::class,
             normalizationContext: ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
             security: 'is_granted(\'edit\', object)'
         ),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new GetCollection(
             uriTemplate: '/time_slots/choices',
-            controller: Choices::class,
+            controller: ChoicesController::class,
             status: 200,
             read: false,
             write: false,

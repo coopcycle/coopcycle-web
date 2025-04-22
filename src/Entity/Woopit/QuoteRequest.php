@@ -19,7 +19,60 @@ use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new Delete(uriTemplate: '/woopit/deliveries/{deliveryId}', controller: DeliveryCancel::class, security: 'is_granted(\'ROLE_API_KEY\')', read: false, write: false, openapiContext: ['summary' => 'Cancel a delivery.']), new Patch(uriTemplate: '/woopit/deliveries/{deliveryId}', controller: DeliveryUpdate::class, security: 'is_granted(\'ROLE_API_KEY\')', status: 204, read: false, write: false, denormalizationContext: ['groups' => ['woopit_delivery_input']], normalizationContext: ['groups' => ['woopit_delivery_output']], openapiContext: ['summary' => 'Receives requests to update a delivery.']), new Post(uriTemplate: '/woopit/quotes', controller: QuoteRequest::class, security: 'is_granted(\'ROLE_API_KEY\')', status: 201, denormalizationContext: ['groups' => ['woopit_quote_input']], normalizationContext: ['groups' => ['woopit_quote_output']], openapiContext: ['summary' => 'Receives requests for quotes.']), new Post(uriTemplate: '/woopit/deliveries', controller: DeliveryRequest::class, security: 'is_granted(\'ROLE_API_KEY\')', status: 201, write: false, denormalizationContext: ['groups' => ['woopit_delivery_input']], normalizationContext: ['groups' => ['woopit_delivery_output']], openapiContext: ['summary' => 'Receives requests for deliveries.']), new GetCollection(controller: NotFoundAction::class, uriTemplate: '/woopit/quotes', read: false, output: false)], formats: ['json'])]
+#[ApiResource(
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            read: false,
+            output: false
+        ),
+        new Delete(
+            uriTemplate: '/woopit/deliveries/{deliveryId}',
+            controller: DeliveryCancelController::class,
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            read: false,
+            write: false,
+            openapiContext: ['summary' => 'Cancel a delivery.']
+        ),
+        new Patch(
+            uriTemplate: '/woopit/deliveries/{deliveryId}',
+            controller: DeliveryUpdateController::class,
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            status: 204,
+            read: false,
+            write: false,
+            denormalizationContext: ['groups' => ['woopit_delivery_input']],
+            normalizationContext: ['groups' => ['woopit_delivery_output']],
+            penapiContext: ['summary' => 'Receives requests to update a delivery.']
+        ),
+        new Post(
+            uriTemplate: '/woopit/quotes',
+            controller: QuoteRequestController::class,
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            status: 201,
+            denormalizationContext: ['groups' => ['woopit_quote_input']],
+            normalizationContext: ['groups' => ['woopit_quote_output']],
+            openapiContext: ['summary' => 'Receives requests for quotes.']
+        ),
+        new Post(
+            uriTemplate: '/woopit/deliveries',
+            controller: DeliveryRequestController::class,
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            status: 201,
+            write: false,
+            denormalizationContext: ['groups' => ['woopit_delivery_input']],
+            normalizationContext: ['groups' => ['woopit_delivery_output']],
+            openapiContext: ['summary' => 'Receives requests for deliveries.']
+        ),
+        new GetCollection(
+            controller: NotFoundAction::class,
+            uriTemplate: '/woopit/quotes',
+            read: false,
+            output: false
+        )
+    ],
+    formats: ['json']
+)]
 class QuoteRequest
 {
     use Timestampable;
