@@ -32,7 +32,7 @@ class OrderRepository extends BaseOrderRepository
      * @param $indexBy
      * @return QueryBuilder
      */
-    public function createOpmizedQueryBuilder($alias, $indexBy = null)
+    public function createOptimizedQueryBuilder($alias, $indexBy = null)
     {
         $qb = parent::createQueryBuilder($alias, $indexBy);
 
@@ -56,7 +56,7 @@ class OrderRepository extends BaseOrderRepository
     }
 
     public function findCartById($id) : ?Order {
-        $qb = $this->createOpmizedQueryBuilder('o');
+        $qb = $this->createOptimizedQueryBuilder('o');
         
         return $qb->where('o.id = :id')
             ->andWhere('o.state = :state')
@@ -251,7 +251,7 @@ class OrderRepository extends BaseOrderRepository
 
     public function search($q): QueryBuilder
     {
-        $qb = $this->createOpmizedQueryBuilder('o');
+        $qb = $this->createOptimizedQueryBuilder('o');
 
         $qb
             ->leftJoin(Customer::class, 'c', Join::WITH, 'o.customer = c.id')

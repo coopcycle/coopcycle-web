@@ -36,7 +36,7 @@ final class InvoiceLineItemCollectionDataProvider implements ContextAwareCollect
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $qb = $this->entityManager->getRepository(Order::class)->createOpmizedQueryBuilder('o')
+        $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o')
             // Additional optimization: preload relations with composite keys
             ->addSelect('v', 'ex')
             ->leftJoin('o.vendors', 'v')
