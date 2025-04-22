@@ -23,7 +23,6 @@ use AppBundle\Action\Order\StartPreparing as OrderStartPreparing;
 use AppBundle\Action\Order\FinishPreparing as OrderFinishPreparing;
 use AppBundle\Action\Order\Centrifugo as CentrifugoController;
 use AppBundle\Action\Order\CloneStripePayment;
-use AppBundle\Action\Order\ConfigurePayment as ConfigurePaymentController;
 use AppBundle\Action\Order\CreateInvitation as CreateInvitationController;
 use AppBundle\Action\Order\CreateSetupIntentOrAttachPM;
 use AppBundle\Action\Order\Delay as OrderDelay;
@@ -52,6 +51,7 @@ use AppBundle\Api\Dto\EdenredCredentialsInput;
 use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
+use AppBundle\Api\State\ConfigurePaymentProcessor;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
@@ -177,7 +177,17 @@ use Webmozart\Assert\Assert as WMAssert;
             denormalizationContext: ['groups' => ['update_edenred_credentials']],
             openapiContext: ['summary' => 'Update Edenred credentials for an order']
         ),
-        new Put(uriTemplate: '/orders/{id}/payment', security: 'is_granted(\'edit\', object)', input: ConfigurePaymentInput::class, controller: ConfigurePayment::class, output: ConfigurePaymentOutput::class, validate: false, denormalizationContext: ['groups' => ['order_configure_payment']], normalizationContext: ['api_sub_level' => true, 'groups' => ['order_configure_payment']], openapiContext: ['summary' => 'Configure payment for a Order resource.']),
+        new Put(
+            uriTemplate: '/orders/{id}/payment',
+            security: 'is_granted(\'edit\', object)',
+            input: ConfigurePaymentInput::class,
+            processor: ConfigurePaymentProcessor::class,
+            output: ConfigurePaymentOutput::class,
+            validate: false,
+            denormalizationContext: ['groups' => ['order_configure_payment']],
+            normalizationContext: ['api_sub_level' => true, 'groups' => ['order_configure_payment']],
+            openapiContext: ['summary' => 'Configure payment for a Order resource.']
+        ),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Post(denormalizationContext: ['groups' => ['order_create', 'address_create']]),
         new Post(uriTemplate: '/orders/timing', write: false, status: 200, denormalizationContext: ['groups' => ['order_create', 'address_create']], normalizationContext: ['groups' => ['cart_timing']], openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]),

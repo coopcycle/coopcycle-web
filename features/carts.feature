@@ -2354,7 +2354,7 @@ Feature: Carts
       """
       {
         "@context": {"@*@": "@*@"},
-        "@type": "ConfigurePaymentOutput",
+        "@type": "http://schema.org/Order",
         "@id": "@string@",
         "payments": [
           {
