@@ -16,7 +16,15 @@ use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 
 #[ApiResource(operations: [new Get()], normalizationContext: ['groups' => ['product_option']])]
 #[AssertProductOption]
-#[ApiResource(uriTemplate: '/restaurants/{id}/product_options.{_format}', uriVariables: ['id' => new Link(fromClass: \AppBundle\Entity\LocalBusiness::class, identifiers: ['id'])], status: 200, normalizationContext: ['groups' => ['product_option']], operations: [new GetCollection()])]
+#[ApiResource(
+    uriTemplate: '/restaurants/{id}/product_options.{_format}',
+    uriVariables: [
+        'id' => new Link(fromClass: LocalBusiness::class, toProperty: 'restaurant')
+    ],
+    status: 200,
+    normalizationContext: ['groups' => ['product_option']],
+    operations: [new GetCollection()]
+)]
 class ProductOption extends BaseProductOption implements ProductOptionInterface
 {
     /**
