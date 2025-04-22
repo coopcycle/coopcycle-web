@@ -1,16 +1,14 @@
 <?php
 
-namespace AppBundle\Domain\Order\Handler;
+namespace AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\Refund as RefundCommand;
-use AppBundle\Domain\Order\Event;
-use AppBundle\Entity\Refund;
+use AppBundle\Message\Order\Command\Refund as RefundCommand;
 use AppBundle\Payment\Gateway;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
-use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class RefundHandler
 {
     private $gateway;

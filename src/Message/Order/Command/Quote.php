@@ -1,13 +1,10 @@
 <?php
 
-namespace AppBundle\Domain\Order\Command;
+namespace AppBundle\Message\Order\Command;
 
 use AppBundle\Sylius\Order\OrderInterface;
 
-/**
- * Creates an order for an "on-demand" delivery.
- */
-class OnDemand
+class Quote
 {
     private $order;
 
@@ -21,3 +18,4 @@ class OnDemand
         return $this->order;
     }
 }
+

@@ -1,10 +1,10 @@
 <?php
 
-namespace AppBundle\Domain\Order\Command;
+namespace AppBundle\Message\Order\Command;
 
 use AppBundle\Sylius\Order\OrderInterface;
 
-class RestoreOrder
+class AcceptOrder
 {
     private $order;
 
@@ -18,4 +18,3 @@ class RestoreOrder
         return $this->order;
     }
 }
-

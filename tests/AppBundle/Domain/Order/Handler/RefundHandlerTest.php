@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Handler;
+namespace Tests\AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\Refund as RefundCommand;
+use AppBundle\Message\Order\Command\Refund as RefundCommand;
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Domain\Order\Handler\RefundHandler;
+use AppBundle\MessageHandler\Order\Command\RefundHandler;
 use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;

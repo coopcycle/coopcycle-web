@@ -1,11 +1,11 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Handler;
+namespace Tests\AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\Checkout;
+use AppBundle\Message\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event\CheckoutFailed;
 use AppBundle\Domain\Order\Event\CheckoutSucceeded;
-use AppBundle\Domain\Order\Handler\CheckoutHandler;
+use AppBundle\MessageHandler\Order\Command\CheckoutHandler;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;

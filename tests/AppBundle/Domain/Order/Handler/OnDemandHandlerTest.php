@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Handler;
+namespace Tests\AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\OnDemand;
+use AppBundle\Message\Order\Command\OnDemand;
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Domain\Order\Handler\OnDemandHandler;
+use AppBundle\MessageHandler\Order\Command\OnDemandHandler;
 use AppBundle\Sylius\Order\OrderInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;

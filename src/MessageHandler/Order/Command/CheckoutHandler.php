@@ -1,18 +1,19 @@
 <?php
 
-namespace AppBundle\Domain\Order\Handler;
+namespace AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\Checkout;
+use AppBundle\Message\Order\Command\Checkout;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Payment\Gateway;
 use AppBundle\Service\LoggingUtils;
-use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Psr\Log\LoggerInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class CheckoutHandler
 {
     public function __construct(

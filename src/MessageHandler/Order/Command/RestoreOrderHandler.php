@@ -1,15 +1,15 @@
 <?php
 
-namespace AppBundle\Domain\Order\Handler;
+namespace AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\RestoreOrder;
+use AppBundle\Message\Order\Command\RestoreOrder;
 use AppBundle\Domain\Order\Event;
-// use AppBundle\Exception\OrderNotCancellableException;
 use AppBundle\Sylius\Order\OrderTransitions;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
-use Sylius\Component\Payment\Model\PaymentInterface;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class RestoreOrderHandler
 {
     private $eventRecorder;

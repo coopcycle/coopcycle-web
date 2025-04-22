@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Handler;
+namespace Tests\AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\RefuseOrder;
+use AppBundle\Message\Order\Command\RefuseOrder;
 use AppBundle\Domain\Order\Event\OrderRefused;
-use AppBundle\Domain\Order\Handler\RefuseOrderHandler;
+use AppBundle\MessageHandler\Order\Command\RefuseOrderHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Sylius\Order\OrderInterface;

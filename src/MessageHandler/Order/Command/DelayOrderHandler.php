@@ -1,12 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Order\Handler;
+namespace AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\DelayOrder;
+use AppBundle\Message\Order\Command\DelayOrder;
 use AppBundle\Domain\Order\Event;
 use SimpleBus\Message\Recorder\RecordsMessages;
-use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class DelayOrderHandler
 {
     private $eventRecorder;

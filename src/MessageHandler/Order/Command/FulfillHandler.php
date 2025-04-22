@@ -1,11 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Order\Handler;
+namespace AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\Fulfill;
+use AppBundle\Message\Order\Command\Fulfill;
 use AppBundle\Domain\Order\Event;
 use SimpleBus\Message\Recorder\RecordsMessages;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'commandnew.bus')]
 class FulfillHandler
 {
     private $eventRecorder;

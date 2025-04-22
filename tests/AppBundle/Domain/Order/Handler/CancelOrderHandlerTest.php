@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Handler;
+namespace Tests\AppBundle\MessageHandler\Order\Command;
 
-use AppBundle\Domain\Order\Command\CancelOrder;
+use AppBundle\Message\Order\Command\CancelOrder;
 use AppBundle\Domain\Order\Event\OrderCancelled;
-use AppBundle\Domain\Order\Handler\CancelOrderHandler;
+use AppBundle\MessageHandler\Order\Command\CancelOrderHandler;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Exception\OrderNotCancellableException;

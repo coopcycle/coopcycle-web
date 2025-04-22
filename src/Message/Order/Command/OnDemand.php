@@ -1,10 +1,13 @@
 <?php
 
-namespace AppBundle\Domain\Order\Command;
+namespace AppBundle\Message\Order\Command;
 
 use AppBundle\Sylius\Order\OrderInterface;
 
-class StartPreparingOrder
+/**
+ * Creates an order for an "on-demand" delivery.
+ */
+class OnDemand
 {
     private $order;
 

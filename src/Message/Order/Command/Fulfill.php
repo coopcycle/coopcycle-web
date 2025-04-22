@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Domain\Order\Command;
+namespace AppBundle\Message\Order\Command;
 
 use AppBundle\Sylius\Order\OrderInterface;
 
