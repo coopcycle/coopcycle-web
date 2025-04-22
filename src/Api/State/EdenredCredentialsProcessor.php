@@ -6,7 +6,8 @@ use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\EdenredCredentialsInput;
-use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 
 class EdenredCredentialsProcessor implements ProcessorInterface
 {
@@ -20,8 +21,10 @@ class EdenredCredentialsProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        /** @var OrderInterface */
         $order = $this->itemProvider->provide($operation, $uriVariables, $context);
 
+        /** @var CustomerInterface */
         $customer = $order->getCustomer();
 
         $customer->setEdenredAccessToken($data->accessToken);

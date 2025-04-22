@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\LoopeatReturns;
-use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Order\OrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 
 class LoopeatReturnsProcessor implements ProcessorInterface
@@ -22,6 +22,7 @@ class LoopeatReturnsProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        /** @var OrderInterface */
         $order = $this->provider->provide($operation, $uriVariables, $context);
 
         $order->setLoopeatReturns($data->returns);

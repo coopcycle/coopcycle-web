@@ -15,6 +15,7 @@ class UpdateRestaurantProcessor implements ProcessorInterface
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        /** @var LocalBusiness */
         $restaurant = $this->provider->provide($operation, $uriVariables, $context);
 
         if (is_object($data->hasMenu)) {

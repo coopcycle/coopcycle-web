@@ -22,6 +22,7 @@ class StoreAddressProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        /** @var Store */
         $store = $this->provider->provide($operation, $uriVariables, $context);
 
         $store->addAddress($data);

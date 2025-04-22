@@ -18,6 +18,7 @@ class BioDeliverProcessor implements ProcessorInterface
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        /** @var Task */
         $task = $this->provider->provide($operation, $uriVariables, $context);
 
         if (is_array($data->address) && isset($data->address['name']) && !empty($data->address['name'])) {

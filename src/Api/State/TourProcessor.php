@@ -24,6 +24,7 @@ class TourProcessor implements ProcessorInterface
     {
         if ($operation instanceof Put) {
 
+            /** @var Tour */
             $tour = $this->provider->provide($operation, $uriVariables, $context);
 
             if (!empty($data->name)) {

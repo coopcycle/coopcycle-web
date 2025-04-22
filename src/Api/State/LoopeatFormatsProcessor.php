@@ -8,6 +8,7 @@ use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\LoopEat\Client as LoopEatClient;
+use AppBundle\Sylius\Order\OrderInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -27,6 +28,7 @@ class LoopeatFormatsProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        /** @var OrderInterface */
         $order = $this->provider->provide($operation, $uriVariables, $context);
 
         $deliver = [];
