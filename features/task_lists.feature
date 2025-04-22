@@ -28,6 +28,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }
@@ -62,6 +63,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }
@@ -88,6 +90,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }
@@ -122,6 +125,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }
@@ -148,6 +152,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }
@@ -182,6 +187,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }
@@ -208,6 +214,7 @@ Feature: Tasks lists
       "updatedAt":"@string@.isDateTime()",
       "date":"2018-03-02",
       "username":"bob",
+      "color": "#867d2d",
       "vehicle": null,
       "trailer": null
     }

@@ -53,6 +53,7 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"sarah",
+            "color": "#865c2d",
             "date":"2018-12-01",
             "vehicle": null,
             "trailer": null
@@ -68,6 +69,7 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"bob",
+            "color": "#867d2d",
             "date":"2018-12-01",
             "vehicle": null,
             "trailer": null
@@ -266,7 +268,7 @@ Feature: Dispatch
       """
     Then the response status code should be 200
     And the response should be in JSON
-    
+
   Scenario: Courier can unassign task assigned to him/her
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -411,6 +413,7 @@ Feature: Dispatch
             "polyline":"iyfiH}tfM??",
             "date":"2018-12-01",
             "username":"sarah",
+            "color": "#865c2d",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "vehicle": null,
@@ -434,6 +437,7 @@ Feature: Dispatch
             "polyline":"iyfiH}tfM??",
             "date":"2018-12-01",
             "username":"bob",
+            "color": "#867d2d",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "vehicle": null,
