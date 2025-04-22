@@ -6,7 +6,6 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Service\TaskManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class Base
 {
@@ -14,8 +13,8 @@ abstract class Base
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        protected TaskManager $taskManager,
-        protected TranslatorInterface $translator)
+        protected TaskManager $taskManager
+    )
     {
         $this->tokenStorage = $tokenStorage;
     }

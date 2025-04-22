@@ -7,6 +7,7 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class Assign extends Base
 {
@@ -16,7 +17,8 @@ class Assign extends Base
         TokenStorageInterface $tokenStorage,
         TaskManager $taskManager,
         protected UserManagerInterface $userManager,
-        protected AuthorizationCheckerInterface $authorization
+        protected AuthorizationCheckerInterface $authorization,
+        protected TranslatorInterface $translator
     )
     {
         parent::__construct($tokenStorage, $taskManager);

@@ -4,9 +4,6 @@ namespace AppBundle\MessageHandler\Task\Command;
 
 use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Task;
-use AppBundle\Exception\PreviousTaskNotCompletedException;
-use AppBundle\Exception\TaskAlreadyCompletedException;
-use AppBundle\Exception\TaskCancelledException;
 use AppBundle\Integration\Standtrack\StandtrackClient;
 use AppBundle\Message\CalculateTaskDistance;
 use AppBundle\Message\Task\Command\MarkAsDone;
@@ -15,14 +12,12 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsMessageHandler(bus: 'commandnew.bus')]
 class MarkAsDoneHandler
 {
 
     public function __construct(
-        private TranslatorInterface $translator,
         private LoggerInterface $logger,
         private StandtrackClient $standtrackClient,
         private MessageBusInterface $eventBus
