@@ -10,13 +10,33 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
 use AppBundle\Action\Delivery\ConfirmQuote as ConfirmDeliveryQuoteController;
-use AppBundle\Action\Delivery\Quote as DeliveryQuoteController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\State\DeliveryQuoteProcessor;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new Put(uriTemplate: '/deliveries/quotes/{id}/confirm', controller: ConfirmDeliveryQuoteController::class, normalizationContext: ['groups' => ['delivery_quote_confirm']], security: 'is_granted(\'confirm\', object)', openapiContext: ['summary' => 'Confirms a delivery quote']), new Post(uriTemplate: '/deliveries/quotes', input: DeliveryInput::class, controller: DeliveryQuoteController::class, normalizationContext: ['groups' => ['delivery_quote']], denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']], security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')', openapiContext: ['summary' => 'Creates a delivery quote'])])]
+#[ApiResource(
+    operations: [
+        new Get(controller: NotFoundAction::class, read: false, output: false),
+        new Put(
+            uriTemplate: '/deliveries/quotes/{id}/confirm',
+            controller: ConfirmDeliveryQuoteController::class,
+            normalizationContext: ['groups' => ['delivery_quote_confirm']],
+            security: 'is_granted(\'confirm\', object)',
+            openapiContext: ['summary' => 'Confirms a delivery quote']
+        ),
+        new Post(
+            uriTemplate: '/deliveries/quotes',
+            input: DeliveryInput::class,
+            processor: DeliveryQuoteProcessor::class,
+            normalizationContext: ['groups' => ['delivery_quote']],
+            denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
+            openapiContext: ['summary' => 'Creates a delivery quote']
+        )
+    ]
+)]
 class DeliveryQuote
 {
     use Timestampable;
