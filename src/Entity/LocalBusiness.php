@@ -58,24 +58,51 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             security: 'is_granted(\'view\', object)'
         ),
         new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
-        new Get(uriTemplate: '/restaurants/{id}/menu', controller: Menu::class, normalizationContext: ['groups' => ['restaurant_menu']]),
-        new Get(uriTemplate: '/restaurants/{id}/menus', controller: Menus::class, normalizationContext: ['groups' => ['restaurant_menus']]),
+        new Get(
+            uriTemplate: '/restaurants/{id}/menu',
+            controller: Menu::class,
+            normalizationContext: ['groups' => ['restaurant_menu']]
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/menus',
+            controller: Menus::class,
+            normalizationContext: ['groups' => ['restaurant_menus']]
+        ),
         new Put(
             input: RestaurantInput::class,
             processor: UpdateRestaurantProcessor::class,
             denormalizationContext: ['groups' => ['restaurant_update']],
             security: 'is_granted(\'edit\', object)'
         ),
-        new Put(uriTemplate: '/restaurants/{id}/close', controller: CloseController::class, security: 'is_granted(\'edit\', object)'),
-        new Get(uriTemplate: '/restaurants/{id}/deliveries/{date}', controller: RestaurantDeliveriesController::class, security: 'is_granted(\'ROLE_ADMIN\')', normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]),
-        new Get(uriTemplate: '/restaurants/{id}/timing', controller: Timing::class, normalizationContext: ['groups' => ['restaurant_timing']]),
+        new Put(
+            uriTemplate: '/restaurants/{id}/close',
+            controller: CloseController::class,
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/deliveries',
+            controller: RestaurantDeliveriesController::class,
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/timing',
+            controller: Timing::class,
+            normalizationContext: ['groups' => ['restaurant_timing']]
+        ),
         new Get(
             uriTemplate: '/restaurants/{id}/orders',
             controller: Orders::class,
             security: 'is_granted(\'edit\', object)'
         ),
-        new GetCollection(paginationEnabled: false, normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]),
-        new GetCollection(uriTemplate: '/me/restaurants', controller: MyRestaurants::class)
+        new GetCollection(
+            paginationEnabled: false,
+            normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]
+        ),
+        new GetCollection(
+            uriTemplate: '/me/restaurants',
+            controller: MyRestaurants::class
+        )
     ],
     shortName: 'Restaurant',
     denormalizationContext: ['groups' => ['order_create', 'restaurant_update']],

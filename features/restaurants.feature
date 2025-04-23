@@ -914,14 +914,14 @@ Feature: Manage restaurants
     And the response should be in JSON
     Given I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "GET" request to "/api/restaurants/1/deliveries/2020-05-09"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/deliveries?date=2020-05-09"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
         "@context":"/api/contexts/Restaurant",
-        "@id":"/api/restaurants",
+        "@id":"/api/restaurants/1/deliveries",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -996,7 +996,11 @@ Feature: Manage restaurants
             "trackingUrl": @string@
           }
         ],
-        "hydra:totalItems":1
+        "hydra:totalItems":1,
+        "hydra:view":{
+          "@id":"/api/restaurants/1/deliveries?date=2020-05-09",
+          "@type":"hydra:PartialCollectionView"
+        }
       }
       """
 
