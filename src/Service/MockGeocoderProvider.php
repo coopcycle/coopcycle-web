@@ -24,7 +24,7 @@ class MockGeocoderProvider implements GeocoderInterface
         $value = preg_replace('/[^a-zA-Z0-9\s]/', '', $value);
         $value = strtolower($value);
 
-        if (str_contains($value, '24 rue de la paix paris')) {
+        if (str_contains($value, '24 rue de la paix')) {
             $address = new Address(
                 $this->getName(),
                 new AdminLevelCollection([
@@ -42,7 +42,7 @@ class MockGeocoderProvider implements GeocoderInterface
             );
 
             return new AddressCollection([$address]);
-        } else if (str_contains($value, '44 rue de rivoli paris')) {
+        } else if (str_contains($value, '44 rue de rivoli')) {
             $address = new Address(
                 $this->getName(),
                 new AdminLevelCollection([
@@ -60,7 +60,7 @@ class MockGeocoderProvider implements GeocoderInterface
             );
 
             return new AddressCollection([$address]);
-        } else if (str_contains($value, '48 rue de rivoli paris')) {
+        } else if (str_contains($value, '48 rue de rivoli')) {
             $address = new Address(
                 $this->getName(),
                 new AdminLevelCollection([
