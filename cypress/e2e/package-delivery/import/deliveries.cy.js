@@ -24,5 +24,14 @@ context('Import deliveries (role: admin)', () => {
     cy.get('[data-testid="tab:/admin/deliveries"]').click();
     cy.location('pathname', { timeout: 10000 }).should('eq', '/admin/deliveries')
 
+    // deliveries.csv; line 2; pricing_rule_2
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€2.00/)
+      .should('exist')
+
+    // deliveries.csv; line 3; pricing_rule_1 + pricing_rule_2
+    cy.get('[data-testid=delivery__list_item]')
+      .contains(/€6.99/)
+      .should('exist')
   })
 })
