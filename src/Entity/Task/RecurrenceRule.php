@@ -23,11 +23,26 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new Get(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new Put(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
-        new Post(uriTemplate: '/recurrence_rules/{id}/between', security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')', controller: BetweenController::class),
+        new Get(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
+        new Put(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(
+            uriTemplate: '/recurrence_rules/{id}/between',
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')',
+            controller: BetweenController::class,
+            write: false
+        ),
         new Delete(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
-        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'), new Post(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
-        new Post(uriTemplate: '/recurrence_rules/generate_orders', security: 'is_granted(\'ROLE_DISPATCHER\')', controller: GenerateOrders::class)], shortName: 'RecurrenceRule', normalizationContext: ['groups' => ['task_recurrence_rule']])]
+        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(
+            uriTemplate: '/recurrence_rules/generate_orders',
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            controller: GenerateOrders::class
+        )
+    ],
+    shortName: 'RecurrenceRule',
+    normalizationContext: ['groups' => ['task_recurrence_rule']]
+)]
 class RecurrenceRule
 {
     use SoftDeleteable;
