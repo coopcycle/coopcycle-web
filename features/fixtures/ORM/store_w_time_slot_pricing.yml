@@ -4,24 +4,6 @@ AppBundle\Entity\Base\GeoCoordinates:
   geo_2:
     __construct: [ "48.846656", "2.369052" ]
 
-AppBundle\Entity\Delivery\PricingRuleSet:
-  pricing_rule_set_1:
-    name: Default
-
-AppBundle\Entity\Delivery\PricingRule:
-  pricing_rule_1:
-    expression: 'time_slot == "/api/time_slots/1" and task.type == "PICKUP"'
-    price: 499
-    target: 'TASK'
-    position: 0
-    ruleSet: '@pricing_rule_set_1'
-  pricing_rule_2:
-    expression: 'task.type == "DROPOFF"'
-    price: 200
-    target: 'TASK'
-    position: 1
-    ruleSet: '@pricing_rule_set_1'
-
 AppBundle\Entity\Address:
   address_1:
     addressLocality: 'Paris'
@@ -40,6 +22,24 @@ AppBundle\Entity\TimeSlot:
     openingHours:
       - 'Mo-Su 12:00-14:00'
       - 'Mo-Su 14:00-17:00'
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'time_slot == "/api/time_slots/1" and task.type == "PICKUP"'
+    price: 499
+    target: 'TASK'
+    position: 0
+    ruleSet: '@pricing_rule_set_1'
+  pricing_rule_2:
+    expression: 'task.type == "DROPOFF"'
+    price: 200
+    target: 'TASK'
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
 
 AppBundle\Entity\Store:
   store_1:

@@ -1672,3 +1672,5 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  AppBundle\Fixtures\DatabasePurger: ~

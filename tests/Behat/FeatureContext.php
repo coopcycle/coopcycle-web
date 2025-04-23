@@ -19,6 +19,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
+use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -34,7 +35,6 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker\Generator as FakerGenerator;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
@@ -85,6 +85,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(
         protected ManagerRegistry $doctrine,
+        protected DatabasePurger $databasePurger,
         protected PhoneNumberUtil $phoneNumberUtil,
         protected LoaderInterface $fixturesLoader,
         protected SettingsManager $settingsManager,
@@ -100,7 +101,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected OrderRepository $orderRepository,
         protected KernelInterface $kernel,
         protected UserManager $userManager,
-        protected CollectionManager $typesenseCollectionManager)
+        protected CollectionManager $typesenseCollectionManager
+    )
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -129,8 +131,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function clearData()
     {
-        $purger = new ORMPurger($this->doctrine->getManager());
-        $purger->purge();
+        $this->databasePurger->purge();
     }
 
     /**
@@ -138,11 +139,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function resetSequences()
     {
-        $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
-        foreach ($rows as $row) {
-            $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
-        }
+        $this->databasePurger->resetSequences();
     }
 
     /**
