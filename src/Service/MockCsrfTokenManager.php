@@ -25,6 +25,6 @@ class MockCsrfTokenManager implements CsrfTokenManagerInterface
 
     public function isTokenValid(CsrfToken $token)
     {
-        return false;
+        return $token->getValue() === 'mocked_token';
     }
 }
