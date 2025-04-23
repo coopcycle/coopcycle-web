@@ -1,4 +1,5 @@
 Feature: Package set
+
   Scenario: Get the applications of a package set
     Given the fixtures files are loaded:
     | sylius_channels.yml |

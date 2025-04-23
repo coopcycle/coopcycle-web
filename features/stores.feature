@@ -71,7 +71,7 @@ Feature: Stores
       """
       {
         "@context":"/api/contexts/Store",
-        "@id":"/api/stores",
+        "@id":"api/me/stores",
         "@type":"hydra:Collection",
         "hydra:member":[
           {

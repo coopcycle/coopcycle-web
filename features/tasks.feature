@@ -331,7 +331,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
         "hydra:totalItems":2,
@@ -809,7 +809,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           "@...@",

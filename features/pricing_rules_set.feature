@@ -87,7 +87,7 @@ Feature: Pricing rules set
     """
       {
           "@context": "/api/contexts/PricingRuleSet",
-          "@id": "/api/pricing_rule_sets",
+          "@id": "/api/pricing_rule_sets/1/applications",
           "@type": "hydra:Collection",
           "hydra:member": [
               {
