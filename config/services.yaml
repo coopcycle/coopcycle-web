@@ -805,8 +805,6 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 48 }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
-    arguments:
-      $eventStore: '@coopcycle.domain.event_store'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 32 }
@@ -1653,15 +1651,7 @@ services:
 
   AppBundle\Utils\Defaults: ~
 
-  coopcycle.domain.event_store:
-    class: AppBundle\Domain\EventStore
-    arguments:
-      - '@security.token_storage'
-      - '@request_stack'
-
-  AppBundle\Messenger\EventStoreMiddleware:
-    arguments:
-      - '@coopcycle.domain.event_store'
+  AppBundle\Domain\EventStore: ~
 
   AppBundle\MessageHandler\Task\SendSms:
     arguments:
