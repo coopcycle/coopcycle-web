@@ -10,7 +10,7 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
-#[AsMessageHandler(bus: 'commandnew.bus')]
+#[AsMessageHandler(bus: 'command.bus')]
 class QuoteHandler
 {
     public function __construct(

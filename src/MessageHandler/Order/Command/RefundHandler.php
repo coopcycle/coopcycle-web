@@ -8,7 +8,7 @@ use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(bus: 'commandnew.bus')]
+#[AsMessageHandler(bus: 'command.bus')]
 class RefundHandler
 {
     private $gateway;

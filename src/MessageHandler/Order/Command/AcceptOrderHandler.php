@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-#[AsMessageHandler(bus: 'commandnew.bus')]
+#[AsMessageHandler(bus: 'command.bus')]
 class AcceptOrderHandler
 {
     public function __construct(

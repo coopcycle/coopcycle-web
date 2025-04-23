@@ -17,7 +17,7 @@ class OrderManager
 {
     public function __construct(
         private readonly StateMachineFactoryInterface $stateMachineFactory,
-        private MessageBusInterface $commandnewBus,
+        private MessageBusInterface $commandBus,
         private readonly EntityManagerInterface $entityManager,
         private readonly Security $security)
     {
@@ -25,12 +25,12 @@ class OrderManager
 
     public function accept(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\AcceptOrder($order));
+        $this->commandBus->dispatch(new OrderCommand\AcceptOrder($order));
     }
 
     public function refuse(OrderInterface $order, $reason = null)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\RefuseOrder($order, $reason));
+        $this->commandBus->dispatch(new OrderCommand\RefuseOrder($order, $reason));
     }
 
     /**
@@ -38,42 +38,42 @@ class OrderManager
      */
     public function checkout(OrderInterface $order, $data = null)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\Checkout($order, $data));
+        $this->commandBus->dispatch(new OrderCommand\Checkout($order, $data));
     }
 
     public function quote(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\Quote($order));
+        $this->commandBus->dispatch(new OrderCommand\Quote($order));
     }
 
     public function fulfill(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\Fulfill($order));
+        $this->commandBus->dispatch(new OrderCommand\Fulfill($order));
     }
 
     public function cancel(OrderInterface $order, $reason = null)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\CancelOrder($order, $reason));
+        $this->commandBus->dispatch(new OrderCommand\CancelOrder($order, $reason));
     }
 
     public function startPreparing(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\StartPreparingOrder($order));
+        $this->commandBus->dispatch(new OrderCommand\StartPreparingOrder($order));
     }
 
     public function finishPreparing(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\FinishPreparingOrder($order));
+        $this->commandBus->dispatch(new OrderCommand\FinishPreparingOrder($order));
     }
 
     public function onDemand(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\OnDemand($order));
+        $this->commandBus->dispatch(new OrderCommand\OnDemand($order));
     }
 
     public function delay(OrderInterface $order, $delay = 10)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\DelayOrder($order, $delay));
+        $this->commandBus->dispatch(new OrderCommand\DelayOrder($order, $delay));
     }
 
     public function completePayment(PaymentInterface $payment)
@@ -84,12 +84,12 @@ class OrderManager
 
     public function refundPayment(PaymentInterface $payment, $amount = null, $liableParty = Refund::LIABLE_PARTY_PLATFORM, $comments = '')
     {
-        $this->commandnewBus->dispatch(new OrderCommand\Refund($payment, $amount, $liableParty, $comments));
+        $this->commandBus->dispatch(new OrderCommand\Refund($payment, $amount, $liableParty, $comments));
     }
 
     public function restore(OrderInterface $order)
     {
-        $this->commandnewBus->dispatch(new OrderCommand\RestoreOrder($order));
+        $this->commandBus->dispatch(new OrderCommand\RestoreOrder($order));
     }
 
     private function getBookmark(OrderInterface $order): ?OrderBookmark

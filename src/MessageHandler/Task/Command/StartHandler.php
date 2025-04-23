@@ -13,7 +13,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 use Symfony\Component\Workflow\WorkflowInterface;
 
-#[AsMessageHandler(bus: 'commandnew.bus')]
+#[AsMessageHandler(bus: 'command.bus')]
 class StartHandler
 {
     public function __construct(

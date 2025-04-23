@@ -5,7 +5,7 @@ namespace AppBundle\MessageHandler\Task\Command;
 use AppBundle\Message\Task\Command\RemoveFromGroup;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(bus: 'commandnew.bus')]
+#[AsMessageHandler(bus: 'command.bus')]
 class RemoveFromGroupHandler
 {
     public function __invoke(RemoveFromGroup $command)

@@ -3,7 +3,7 @@ framework:
     messenger:
         default_bus: event.bus
         buses:
-            commandnew.bus:
+            command.bus:
                 default_middleware: true
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:

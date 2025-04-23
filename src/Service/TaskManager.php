@@ -23,65 +23,65 @@ class TaskManager
 {
 
     public function __construct(
-        private MessageBusInterface $commandnewBus
+        private MessageBusInterface $commandBus
     ) {}
 
     public function markAsDone(Task $task, $notes = null, $contactName = null)
     {
-        $this->commandnewBus->dispatch(new MarkAsDone($task, $notes, $contactName));
+        $this->commandBus->dispatch(new MarkAsDone($task, $notes, $contactName));
     }
 
     public function cancel(Task $task)
     {
-        $this->commandnewBus->dispatch(new Cancel($task));
+        $this->commandBus->dispatch(new Cancel($task));
     }
 
     public function deleteGroup(TaskGroup $taskGroup)
     {
-        $this->commandnewBus->dispatch(new DeleteGroup($taskGroup));
+        $this->commandBus->dispatch(new DeleteGroup($taskGroup));
     }
 
     public function addToGroup(array $tasks, TaskGroup $taskGroup)
     {
-        $this->commandnewBus->dispatch(new AddToGroup($tasks, $taskGroup));
+        $this->commandBus->dispatch(new AddToGroup($tasks, $taskGroup));
     }
 
     public function removeFromGroup(Task $task)
     {
-        $this->commandnewBus->dispatch(new RemoveFromGroup($task));
+        $this->commandBus->dispatch(new RemoveFromGroup($task));
     }
 
     public function markAsFailed(Task $task, $notes = null, $contactName = null, $reason = null)
     {
-        $this->commandnewBus->dispatch(new MarkAsFailed($task, $notes, $contactName, $reason));
+        $this->commandBus->dispatch(new MarkAsFailed($task, $notes, $contactName, $reason));
     }
 
     public function start(Task $task)
     {
-        $this->commandnewBus->dispatch(new Start($task));
+        $this->commandBus->dispatch(new Start($task));
     }
 
     public function update(Task $task)
     {
-        $this->commandnewBus->dispatch(new Update($task));
+        $this->commandBus->dispatch(new Update($task));
     }
 
     public function restore(Task $task)
     {
-        $this->commandnewBus->dispatch(new Restore($task));
+        $this->commandBus->dispatch(new Restore($task));
     }
 
     public function reschedule(Task $task, \DateTime $rescheduledAfter, \DateTime $rescheduledBefore){
-        $this->commandnewBus->dispatch(new Reschedule($task, $rescheduledAfter, $rescheduledBefore));
+        $this->commandBus->dispatch(new Reschedule($task, $rescheduledAfter, $rescheduledBefore));
     }
 
     public function incident(Task $task, string $reason, ?string $notes = null, array $data = [], Incident $incident = null): void
     {
-        $this->commandnewBus->dispatch(new IncidentCommand($task, $reason, $notes, $data, $incident));
+        $this->commandBus->dispatch(new IncidentCommand($task, $reason, $notes, $data, $incident));
     }
 
     public function scan(Task $task): void
     {
-        $this->commandnewBus->dispatch(new ScanBarcode($task));
+        $this->commandBus->dispatch(new ScanBarcode($task));
     }
 }
