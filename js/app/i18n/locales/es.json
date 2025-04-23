@@ -663,6 +663,7 @@
         "ADMIN_ORDERS_TO_INVOICE_FILE_NAME_PREFIX": "facturacion",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_STANDARD": "Estándar (CSV)",
         "ADMIN_ORDERS_TO_INVOICE_DESTINATION_ODOO": "Odoo (CSV)",
-        "VIEW": "Ver"
+        "VIEW": "Ver",
+        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "No hay opciones disponibles para esta franja horaria. Contacta con un administrador si no te permite crear una entrega."
     }
 }
