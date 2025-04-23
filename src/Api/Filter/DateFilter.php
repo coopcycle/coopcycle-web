@@ -2,37 +2,21 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use Doctrine\Persistence\ManagerRegistry;
+use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
-use Psr\Log\LoggerInterface;
 
-final class DateFilter extends AbstractContextAwareFilter
+final class DateFilter extends AbstractFilter
 {
-    private $property;
-
-    public function __construct(
-        ManagerRegistry $managerRegistry,
-        $requestStack = null,
-        LoggerInterface $logger = null,
-        array $properties = null,
-        string $property = null)
-    {
-        parent::__construct($managerRegistry, $requestStack, $logger, $properties);
-
-        $this->property = $property;
-    }
-
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
     {
         // otherwise filter is applied to order and page as well
-        if (!$this->isPropertyEnabled($property, $resourceClass)) {
+        if (
+            !$this->isPropertyEnabled($property, $resourceClass) ||
+            !$this->isPropertyMapped($property, $resourceClass)
+        ) {
             return;
-        }
-
-        if (!$this->isPropertyMapped($property, $resourceClass) && $this->property) {
-            $property = $this->property;
         }
 
         $parameterName = $queryNameGenerator->generateParameterName($property);
