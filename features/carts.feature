@@ -761,7 +761,6 @@ Feature: Carts
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":@integer@
                 }

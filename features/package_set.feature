@@ -17,7 +17,7 @@ Feature: Package set
     """
       {
           "@context": "/api/contexts/PackageSet",
-          "@id": "/api/package_sets",
+          "@id": "/api/package_sets/1/applications",
           "@type": "hydra:Collection",
           "hydra:member": [
               {

@@ -141,7 +141,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -316,7 +317,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -639,7 +641,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "isOpen":false,
@@ -804,7 +807,8 @@ Feature: Orders
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
             "telephone": null,
-            "description": null
+            "description": null,
+            "contactName": null
           },
           "telephone":"+33612345678",
           "isOpen":true,
@@ -948,7 +952,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "telephone":null,
         "name":null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {

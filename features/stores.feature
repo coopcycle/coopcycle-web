@@ -211,7 +211,8 @@ Feature: Stores
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,

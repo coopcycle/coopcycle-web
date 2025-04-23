@@ -515,7 +515,7 @@ Feature: Manage restaurants
     """
     {
       "@context":"/api/contexts/Restaurant",
-      "@id":"/api/restaurants",
+      "@id":"/api/restaurants/1/menus",
       "@type":"hydra:Collection",
       "hydra:member":[
         {
