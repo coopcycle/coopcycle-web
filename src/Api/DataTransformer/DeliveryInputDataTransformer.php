@@ -91,11 +91,6 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
 
         $this->deliveryManager->setDefaults($delivery);
 
-        $coords = array_map(fn($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
-
-        $delivery->setDistance(ceil($distance));
-
         if ($data instanceof DeliveryInput) {
             if ($data->packages) {
                 $packageRepository = $this->entityManager->getRepository(Package::class);
