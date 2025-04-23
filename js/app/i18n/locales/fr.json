@@ -668,6 +668,7 @@
         "VIEW": "Voir",
         "SWITCH_BACK_TIMESLOTPICKER": "Returner au timeslot picker",
         "PAYMENT_FORM_ERROR": "Désolé, nous n'avons pas pu procéder au paiement",
-        "TRY_AGAIN": "Réessayer"
+        "TRY_AGAIN": "Réessayer",
+        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "Aucun choix n'est disponible pour ce créneau horaire. Veuillez contacter un administrateur si vous ne pouvez pas créer de livraison."
     }
 }
