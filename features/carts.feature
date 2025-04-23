@@ -755,7 +755,6 @@ Feature: Carts
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
@@ -865,7 +864,6 @@ Feature: Carts
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
@@ -1415,7 +1413,6 @@ Feature: Carts
         "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":"/api/customers/1",

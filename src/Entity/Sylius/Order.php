@@ -37,6 +37,7 @@ use AppBundle\Action\Order\PaymentMethods as PaymentMethodsController;
 use AppBundle\Action\Order\Refuse as OrderRefuse;
 use AppBundle\Action\Order\Restore as OrderRestore;
 use AppBundle\Action\Order\Tip as OrderTip;
+use AppBundle\Action\Order\Timing as OrderTiming;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
@@ -126,6 +127,7 @@ use Webmozart\Assert\Assert as WMAssert;
         new Put(uriTemplate: '/orders/{id}/tip', controller: OrderTip::class, validationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], openapiContext: ['summary' => 'Updates tip amount of an Order resource.']),
         new Get(
             uriTemplate: '/orders/{id}/timing',
+            controller: OrderTiming::class,
             security: 'is_granted(\'view\', object)',
             openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]
         ),
@@ -209,7 +211,15 @@ use Webmozart\Assert\Assert as WMAssert;
         new Post(
             denormalizationContext: ['groups' => ['order_create', 'address_create']]
         ),
-        new Post(uriTemplate: '/orders/timing', write: false, status: 200, denormalizationContext: ['groups' => ['order_create', 'address_create']], normalizationContext: ['groups' => ['cart_timing']], openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]),
+        new Post(
+            uriTemplate: '/orders/timing',
+            controller: OrderTiming::class,
+            write: false,
+            status: 200,
+            denormalizationContext: ['groups' => ['order_create', 'address_create']],
+            normalizationContext: ['groups' => ['cart_timing']],
+            openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]
+        ),
         new GetCollection(uriTemplate: '/me/orders', controller: MyOrders::class),
         new GetCollection(uriTemplate: '/invoice_line_items/grouped_by_organization', security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItemGroupedByOrganization::class, normalizationContext: ['groups' => ['default_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the number of orders and sum total grouped by organization', 'description' => 'Retrieves the collection of organizations with the number of orders and sum total for the specified filter, for example: ?state[]=new&state[]=accepted&state[]=fulfilled&date[after]=2025-02-01&date[before]=2025-02-28']),
         new GetCollection(uriTemplate: '/invoice_line_items', security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['default_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders', 'description' => 'Retrieves the collection of Order resources for the given organizations and the specified filter']),
