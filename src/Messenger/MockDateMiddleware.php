@@ -3,7 +3,6 @@
 namespace AppBundle\Messenger;
 
 use Carbon\Carbon;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
