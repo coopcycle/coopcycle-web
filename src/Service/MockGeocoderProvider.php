@@ -14,7 +14,7 @@ use Geocoder\Model\AddressCollection;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
 
-class MockGeocoder implements GeocoderInterface
+class MockGeocoderProvider implements GeocoderInterface
 {
 
     public function geocode(string $value): Collection

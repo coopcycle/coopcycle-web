@@ -54,7 +54,7 @@ class Geocoder
     private function getGeocoder()
     {
         if ($this->environment === 'test') {
-            return new MockGeocoder();
+            return new MockGeocoderProvider();
         }
 
         if (null === $this->geocoder) {
