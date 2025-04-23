@@ -8,13 +8,10 @@ use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Core\EventListener\EventPriorities;
-use ApiPlatform\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
-use Carbon\Carbon;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -29,7 +26,6 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function __construct(
         private TokenStorageInterface $tokenStorage,
         private OrderTimeHelper $orderTimeHelper,
-        private ApiPlatformValidatorInterface $validator,
         private DataPersisterInterface $dataPersister,
         private OrderProcessorInterface $orderProcessor,
         private BaseValidatorInterface $baseValidator,
@@ -47,8 +43,6 @@ final class OrderSubscriber implements EventSubscriberInterface
             ],
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
-                ['timingResponse', EventPriorities::PRE_VALIDATE],
-                ['validateResponse', EventPriorities::POST_VALIDATE],
                 ['process', EventPriorities::PRE_WRITE],
                 ['deleteItemPostWrite', EventPriorities::POST_WRITE],
             ],
@@ -119,53 +113,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         $event->setControllerResult($order);
-    }
-
-    // FIXME Remove this listener once https://github.com/api-platform/core/pull/3150 is merged
-    public function timingResponse(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        $routes = [
-            'api_orders_get_cart_timing_item', // GET /api/orders/{id}/timing
-            'api_orders_timing_collection', // GET /api/orders/timing
-        ];
-
-        if (!in_array($request->attributes->get('_route'), $routes)) {
-            return;
-        }
-
-        $order = $event->getControllerResult();
-
-        if (!$order->hasVendor()) {
-            return;
-        }
-
-        $timing = $this->orderTimeHelper->getTimeInfo($order);
-
-        $timing['choices'] = array_map(function ($range) {
-            [ $lower, $upper ] = $range;
-
-            return Carbon::instance(Carbon::parse($lower))
-                ->average(Carbon::parse($upper))
-                ->format(\DateTime::ATOM);
-        }, $timing['ranges']);
-
-        $event->setControllerResult(new JsonResponse($timing));
-    }
-
-    public function validateResponse(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        // GET /api/orders/{id}/validate
-        if ($request->attributes->get('_route') !== 'api_orders_validate_item') {
-            return;
-        }
-
-        $controllerResult = $event->getControllerResult();
-
-        $this->validator->validate($controllerResult);
     }
 
     public function deleteItemPostWrite(ViewEvent $event)

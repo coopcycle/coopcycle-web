@@ -55,6 +55,7 @@ use AppBundle\Api\State\ConfigurePaymentProcessor;
 use AppBundle\Api\State\EdenredCredentialsProcessor;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
+use AppBundle\Api\State\ValidateOrderProvider;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -115,7 +116,13 @@ use Webmozart\Assert\Assert as WMAssert;
             openapiContext: ['summary' => 'Get available payment methods for a Order resource.']
         ),
         new Put(uriTemplate: '/orders/{id}/pay', controller: OrderPay::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Pays a Order resource.']),
-        new Put(uriTemplate: '/orders/{id}/accept', controller: OrderAccept::class, security: 'is_granted(\'accept\', object)', deserialize: false, openapiContext: ['summary' => 'Accepts a Order resource.']),
+        new Put(
+            uriTemplate: '/orders/{id}/accept',
+            controller: OrderAccept::class,
+            security: 'is_granted(\'accept\', object)',
+            deserialize: false,
+            openapiContext: ['summary' => 'Accepts a Order resource.']
+        ),
         new Put(uriTemplate: '/orders/{id}/refuse', controller: OrderRefuse::class, security: 'is_granted(\'refuse\', object)', openapiContext: ['summary' => 'Refuses a Order resource.']),
         new Put(uriTemplate: '/orders/{id}/delay', controller: OrderDelay::class, security: 'is_granted(\'delay\', object)', openapiContext: ['summary' => 'Delays a Order resource.']),
         new Put(uriTemplate: '/orders/{id}/fulfill', controller: OrderFulfill::class, security: 'is_granted(\'fulfill\', object)', openapiContext: ['summary' => 'Fulfills a Order resource.']),
@@ -133,6 +140,7 @@ use Webmozart\Assert\Assert as WMAssert;
         ),
         new Get(
             uriTemplate: '/orders/{id}/validate',
+            provider: ValidateOrderProvider::class,
             normalizationContext: ['groups' => ['cart']],
             security: 'is_granted(\'edit\', object)'
         ),
