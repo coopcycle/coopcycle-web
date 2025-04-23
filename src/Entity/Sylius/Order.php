@@ -206,14 +206,23 @@ use Webmozart\Assert\Assert as WMAssert;
             openapiContext: ['summary' => 'Configure payment for a Order resource.']
         ),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
-        new Post(denormalizationContext: ['groups' => ['order_create', 'address_create']]),
+        new Post(
+            denormalizationContext: ['groups' => ['order_create', 'address_create']]
+        ),
         new Post(uriTemplate: '/orders/timing', write: false, status: 200, denormalizationContext: ['groups' => ['order_create', 'address_create']], normalizationContext: ['groups' => ['cart_timing']], openapiContext: ['summary' => 'Retrieves timing information about a Order resource.', 'responses' => [['description' => 'Order timing information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['preparation' => ['type' => 'string'], 'shipping' => ['type' => 'string'], 'asap' => ['type' => 'string', 'format' => 'date-time'], 'today' => ['type' => 'boolean'], 'fast' => ['type' => 'boolean'], 'diff' => ['type' => 'string'], 'choices' => ['type' => 'array', 'item' => ['type' => 'string', 'format' => 'date-time']]]]]]]]]),
         new GetCollection(uriTemplate: '/me/orders', controller: MyOrders::class),
         new GetCollection(uriTemplate: '/invoice_line_items/grouped_by_organization', security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItemGroupedByOrganization::class, normalizationContext: ['groups' => ['default_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the number of orders and sum total grouped by organization', 'description' => 'Retrieves the collection of organizations with the number of orders and sum total for the specified filter, for example: ?state[]=new&state[]=accepted&state[]=fulfilled&date[after]=2025-02-01&date[before]=2025-02-28']),
         new GetCollection(uriTemplate: '/invoice_line_items', security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['default_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders', 'description' => 'Retrieves the collection of Order resources for the given organizations and the specified filter']),
         new GetCollection(uriTemplate: '/invoice_line_items/export', paginationEnabled: false, security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['export_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the default format']),
-        new GetCollection(uriTemplate: '/invoice_line_items/export/odoo', paginationEnabled: false, security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['odoo_export_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the Odoo format'])], types: ['http://schema.org/Order'], denormalizationContext: ['groups' => ['order_create']], normalizationContext: ['groups' => ['order', 'address']])
-]
+        new GetCollection(
+            uriTemplate: '/invoice_line_items/export/odoo',
+            paginationEnabled: false, security: 'is_granted(\'ROLE_ADMIN\')', output: InvoiceLineItem::class, normalizationContext: ['groups' => ['odoo_export_invoice_line_item']], openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the Odoo format']
+        )
+    ],
+    types: ['http://schema.org/Order'],
+    denormalizationContext: ['groups' => ['order_create']],
+    normalizationContext: ['groups' => ['order', 'address']]
+)]
 #[AssertOrder(groups: ['Default'])]
 #[AssertOrderIsModifiable(groups: ['cart'])]
 #[AssertLoopEatOrder(groups: ['loopeat'])]

@@ -2552,19 +2552,18 @@ Feature: Deliveries
             },
             "streetAddress": "48 Rue de Rivoli, 59800 Lille",
             "telephone": null,
-            "name": null
+            "name": null,
+            "contactName": null
         },
         "events": [
             {
                 "@type": "OrderEvent",
-                "@id": "@string@",
                 "type": "order:created",
                 "data": [],
                 "createdAt": "@string@.isDateTime()"
             },
             {
                 "@type": "OrderEvent",
-                "@id": "@string@",
                 "type": "order:state_changed",
                 "data": {
                     "newState": "new",
@@ -2588,7 +2587,6 @@ Feature: Deliveries
                 "adjustments": {
                     "tax": [
                         {
-                            "id": "@string@",
                             "label": "TVA 0%",
                             "amount": 0
                         }
@@ -2603,7 +2601,7 @@ Feature: Deliveries
                     "email": "bob@coopcycle.org",
                     "phoneNumber": null,
                     "tags": [],
-          "metadata": {"@*@": "@*@"},
+                    "metadata": {"@*@": "@*@"},
                     "telephone": null,
                     "username": "bob",
                     "fullName": ""
@@ -2663,19 +2661,18 @@ Feature: Deliveries
           },
           "streetAddress": "48 Rue de Rivoli, 59800 Lille",
           "telephone": null,
-          "name": null
+          "name": null,
+          "contactName": null
       },
       "events": [
           {
               "@type": "OrderEvent",
-              "@id": "@string@",
               "type": "order:created",
               "data": [],
               "createdAt": "@string@.isDateTime()"
           },
           {
               "@type": "OrderEvent",
-              "@id": "@string@",
               "type": "order:state_changed",
               "data": {
                   "newState": "new",
@@ -2699,7 +2696,6 @@ Feature: Deliveries
               "adjustments": {
                   "tax": [
                       {
-                          "id": "@string@",
                           "label": "TVA 0%",
                           "amount": 0
                       }

@@ -597,7 +597,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          }
+          },
+          "contactName": null
         },
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
@@ -752,7 +753,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          }
+          },
+          "contactName": null
         },
         "items": [{
           "product": "PIZZA",

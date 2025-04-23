@@ -1374,7 +1374,6 @@ Feature: Carts
         "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":"/api/customers/1",
@@ -1464,7 +1463,6 @@ Feature: Carts
         "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -2120,7 +2118,6 @@ Feature: Carts
       }
       """
 
-  @debug
   Scenario: Validate cart (with session)
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -2161,7 +2158,6 @@ Feature: Carts
       }
       """
 
-  @debug
   Scenario: Start cart session with address
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -2215,7 +2211,6 @@ Feature: Carts
       }
       """
 
-  @debug
   Scenario: Start cart session as an authenticated user with existing address not belonging to user
     Given the fixtures files are loaded:
       | sylius_channels.yml |
