@@ -39,7 +39,3 @@ services:
           $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
           $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
           $appName: '%env(COOPCYCLE_APP_NAME)%'
-
-    # normally, cypress e2e tests should run with CSRF protection enabled, but once in a while, they fail
-    security.csrf.token_manager:
-      class: AppBundle\Service\MockCsrfTokenManager
