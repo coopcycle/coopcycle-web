@@ -9,10 +9,11 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
-use AppBundle\Action\Task\AddToGroup as AddTasksToGroup;
 use AppBundle\Action\Task\Bulk as TaskBulk;
 use AppBundle\Action\Task\BulkAsync as TaskBulkAsync;
 use AppBundle\Action\Task\DeleteGroup as DeleteGroupController;
+use AppBundle\Api\Dto\ArrayOfTasksInput;
+use AppBundle\Api\State\AddTasksToGroupProcessor;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Store;
@@ -28,8 +29,19 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(normalizationContext: ['groups' => ['task_group']], security: 'is_granted(\'view\', object)'),
         new Put(denormalizationContext: ['groups' => ['task_group']], security: 'is_granted(\'edit\', object)'),
         new Delete(controller: DeleteGroupController::class, security: 'is_granted(\'edit\', object)'),
-        new Post(uriTemplate: '/task_groups/{id}/tasks', controller: AddTasksToGroup::class, deserialize: false, write: false, security: 'is_granted(\'edit\', object)'),
-        new Post(uriTemplate: '/tasks/import', inputFormats: ['csv' => ['text/csv']], denormalizationContext: ['groups' => ['task', 'task_create']], controller: TaskBulk::class, security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'),
+        new Post(
+            uriTemplate: '/task_groups/{id}/tasks',
+            input: ArrayOfTasksInput::class,
+            processor: AddTasksToGroupProcessor::class,
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Post(
+            uriTemplate: '/tasks/import',
+            inputFormats: ['csv' => ['text/csv']],
+            denormalizationContext: ['groups' => ['task', 'task_create']],
+            controller: TaskBulk::class,
+            security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'
+        ),
         new Post(uriTemplate: '/tasks/import_async', inputFormats: ['csv' => ['text/csv']], deserialize: false, controller: TaskBulkAsync::class, security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'),
         new Post(securityPostDenormalize: 'is_granted(\'create\', object)')
     ],

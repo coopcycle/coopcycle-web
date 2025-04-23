@@ -447,7 +447,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
+        "@id":"/api/tasks/2/reschedule",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -565,7 +565,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
+        "@id":"/api/tasks/2/start",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -632,7 +632,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
+        "@id":"/api/tasks/2/done",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -706,7 +706,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
+        "@id":"/api/tasks/2/failed",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -768,7 +768,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2",
+        "@id":"/api/tasks/2/failed",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -1103,7 +1103,6 @@ Feature: Tasks
     Then the response status code should be 400
     And the response should be in JSON
 
-  @debug
   Scenario: Create task
     Given the fixtures files are loaded:
       | sylius_channels.yml |
@@ -1132,7 +1131,6 @@ Feature: Tasks
         "weight": 800
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the JSON should match:
       """
