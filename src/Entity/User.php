@@ -12,9 +12,9 @@ use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use AppBundle\Action\Me as MeController;
-use AppBundle\Action\MyStripePaymentMethods;
 use AppBundle\Api\Dto\StripePaymentMethodsOutput;
 use AppBundle\Api\Filter\UserRoleFilter;
+use AppBundle\Api\State\StripePaymentMethodsProvider;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use Nucleos\UserBundle\Model\User as BaseUser;
@@ -30,9 +30,21 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
 #[ApiResource(
     operations: [
         new Get(security: 'is_granted(\'ROLE_ADMIN\') or user == object'),
-        new Put(security: 'is_granted(\'ROLE_ADMIN\') or user == object', denormalizationContext: ['groups' => ['user_update']]),
-        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false, paginationClientEnabled: false),
-        new GetCollection(uriTemplate: '/me/stripe-payment-methods', controller: MyStripePaymentMethods::class, output: StripePaymentMethodsOutput::class, normalizationContext: ['api_sub_level' => true])
+        new Put(
+            security: 'is_granted(\'ROLE_ADMIN\') or user == object',
+            denormalizationContext: ['groups' => ['user_update']]
+        ),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            paginationEnabled: false,
+            paginationClientEnabled: false
+        ),
+        new Get(
+            uriTemplate: '/me/stripe-payment-methods',
+            provider: StripePaymentMethodsProvider::class,
+            output: StripePaymentMethodsOutput::class,
+            types: ['StripePaymentMethodsOutput']
+        )
     ],
     shortName: 'User',
     normalizationContext: ['groups' => ['user', 'order']]
