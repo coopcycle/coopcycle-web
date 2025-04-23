@@ -53,10 +53,6 @@ class Geocoder
 
     private function getGeocoder()
     {
-        if ($this->environment === 'test') {
-            return new MockGeocoderProvider();
-        }
-
         if (null === $this->geocoder) {
             $providers = [];
 
@@ -70,9 +66,12 @@ class Geocoder
 
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';
-            
-            // Add OpenCage provider only if api key is configured
-            if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
+
+            if ($this->environment === 'test') {
+                $providers[] = new MockGeocoderProvider();
+
+                // Add OpenCage provider only if api key is configured
+            } else if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();
             } elseif ('google' === $geocodingProvider) {
                 $providers[] = $this->createGoogleMapsProvider();
