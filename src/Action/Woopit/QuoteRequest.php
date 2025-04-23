@@ -6,6 +6,7 @@ use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\PriceHelper;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,6 +18,7 @@ class QuoteRequest
     use CreateDeliveryTrait;
 
     public function __construct(
+        private readonly DeliveryManager $deliveryManager,
         private readonly PricingManager $pricingManager,
         private readonly Geocoder $geocoder,
         private readonly PriceHelper $priceHelper,
