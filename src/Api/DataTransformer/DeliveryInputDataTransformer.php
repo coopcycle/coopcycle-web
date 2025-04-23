@@ -21,7 +21,6 @@ use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
@@ -44,7 +43,6 @@ final class DeliveryInputDataTransformer implements DataTransformerInterface
         private readonly TagManager $tagManager,
         private readonly UserManagerInterface $userManager,
         private readonly Geocoder $geocoder,
-        private readonly RoutingInterface $routing,
         private readonly EntityManagerInterface $entityManager,
         private readonly DeliveryManager $deliveryManager,
         private readonly TimeSlotManager $timeSlotManager,
