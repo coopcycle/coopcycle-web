@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * Operations on the Delivery entity for both FoodTech and Package Delivery/'LastMile' activities
- * (don't confuse with a (Package Delivery/'LastMile') orders)
+ * (don't confuse with (Package Delivery/'LastMile') orders)
  */
 class DeliveryManager
 {
@@ -43,17 +43,12 @@ class DeliveryManager
         }
 
         $output = $this->getPriceCalculation($delivery, $ruleSet);
-        // if the Pricing Rules are configured but none of them matched, the price is null
+        // if the Pricing Rules are configured but none of them match, the price is null
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, ?PricingRuleSet $ruleSet): ?Output
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?Output
     {
-        // if no Pricing Rules are defined, the default rule is to set the price to 0
-        if (null === $ruleSet) {
-            return null;
-        }
-
         return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
     }
 

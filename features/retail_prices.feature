@@ -411,7 +411,7 @@ Feature: Retail prices
       }
       """
 
-  Scenario: Get delivery price with timeSlotUrl and timeSlot range in ISO 8601 for admin user
+  Scenario: Get delivery price for an admin user with timeSlotUrl and timeSlot range in ISO 8601
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
@@ -462,7 +462,7 @@ Feature: Retail prices
       }
       """
 
-  Scenario: Get delivery price with implicit timeSlot for admin user
+  Scenario: Get delivery price for an admin user with implicit timeSlot
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
@@ -500,10 +500,10 @@ Feature: Retail prices
         "@context":"/api/contexts/RetailPrice",
         "@id":@string@,
         "@type":"RetailPrice",
-        "amount":499,
+        "amount":699,
         "currency":"EUR",
         "tax":{
-          "amount":83,
+          "amount":117,
           "included": true
         },
         "items": [
@@ -513,9 +513,7 @@ Feature: Retail prices
       }
       """
 
-# The price can be calculated in this case
-# the response is 400 only because there is no other pricing rules provided
-  Scenario: Get delivery price with a range not from a timeSlot for admin user
+  Scenario: Get delivery price for an admin user with a range not belonging to a timeSlot
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |
@@ -545,15 +543,23 @@ Feature: Retail prices
         }
       }
       """
-    Then the response status code should be 400
+    Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Error",
-        "@type":"hydra:Error",
-        "hydra:title":"An error occurred",
-        "hydra:description": "delivery.price.error.priceCalculation",
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":200,
+        "currency":"EUR",
+        "tax":{
+          "amount":33,
+          "included": true
+        },
+        "items": [
+          @...@
+        ],
         "calculation": {"@*@":"@*@"}
       }
       """
