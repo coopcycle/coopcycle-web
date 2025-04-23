@@ -1649,3 +1649,9 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  AppBundle\Api\Filter\AssignedFilter:
+    arguments:
+      $properties: { assigned: ~ }
+      $security: '@security.helper'
+    tags: [ 'api_platform.filter' ]
