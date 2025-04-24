@@ -1,13 +1,6 @@
 context('Delivery (role: admin)', () => {
     beforeEach(() => {
-      const prefix = Cypress.env('COMMAND_PREFIX')
-      cmd =
-        'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-      if (prefix) {
-        cmd = `${prefix} ${cmd}`
-      }
-  
-      cy.exec(cmd)
+      cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
   
       cy.visit('/login')
       cy.login('admin', '12345678')
