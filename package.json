@@ -29,6 +29,7 @@
     "lodash": "^4.17.21",
     "promise": "^8.3.0",
     "react-leaflet": "^4.2.1",
+    "react-rnd": "^10.5.2",
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {

@@ -1,9 +1,9 @@
-import React, { useState } from "react"
+import React, { useEffect, useRef } from "react"
 import _ from "lodash"
 import { connect } from "react-redux"
 import { useTranslation } from "react-i18next"
 import { Form, Slider, Switch } from "antd"
-import { Formik } from "formik"
+import { Formik, useFormikContext } from "formik"
 
 import Avatar from "../../components/Avatar"
 import {
@@ -54,10 +54,24 @@ const timeStepsWithStyle = _.mapValues(timeSteps, (value) => ({
 
 const onlyFilterColor = "#8250df"
 
+const FormikObserver = ({ onChange }) => {
+  const { values, initialValues } = useFormikContext();
+  const previousValues = useRef(initialValues);
+
+  useEffect(() => {
+    if (!_.isEqual(previousValues.current, values)) {
+      previousValues.current = values;
+      onChange(values);
+    }
+  }, [values, initialValues, onChange]);
+
+  return null;
+}
+
 function FiltersModalContent(props) {
   const { t } = useTranslation()
   
-  const onSubmit = (values) => {
+  const onChange = (values) => {
     props.setFilterValue("onlyFilter", null)
     props.setFilterValue("showFinishedTasks", values.showFinishedTasks)
     props.setFilterValue("showCancelledTasks", values.showCancelledTasks)
@@ -75,8 +89,6 @@ function FiltersModalContent(props) {
     props.setFilterValue("excludedOrgs", values.excludedOrgs)
     props.setFilterValue("hiddenCouriers", values.hiddenCouriers)
     props.setFilterValue("timeRange", values.timeRange)
-
-    props.closeFiltersModal()
   }
 
   const { onlyFilter } = props
@@ -96,16 +108,13 @@ function FiltersModalContent(props) {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={onSubmit}
       validateOnBlur={false}
       validateOnChange={false}
     >
-      {({ values, handleSubmit, setFieldValue }) => (
-        <form
-          onSubmit={handleSubmit}
-          autoComplete="off"
-          className="form-horizontal"
-        >
+      {({ values, setFieldValue }) => (
+        <div className="dashboard__filters-panel p-3">
+          <a className="pull-right fa fa-close text-muted" onClick={props.closeFiltersModal} />
+          <FormikObserver onChange={onChange} />
           <ul className="nav nav-tabs" role="tablist">
             <li role="presentation" className="active">
               <a
@@ -154,7 +163,7 @@ function FiltersModalContent(props) {
               className="tab-pane active"
               id="filters_general"
             >
-              <div className="dashboard__modal-filters__tabpane">
+              <div className="dashboard__filters-panel__tabpane p-4">
                 <Form
                   layout="horizontal"
                   component="div"
@@ -265,15 +274,15 @@ function FiltersModalContent(props) {
               </div>
             </div>
             <div role="tabpanel" className="tab-pane" id="filters_tags">
-              <div className="dashboard__modal-filters__tabpane">
+              <div className="dashboard__filters-panel__tabpane p-4">
                 <OrganizationsOrTagsSelect setFieldValue={setFieldValue} />
               </div>
             </div>
             <div role="tabpanel" className="tab-pane" id="filters_couriers">
-              <div className="dashboard__modal-filters__tabpane my-4">
-                <div>
+              <div className="dashboard__filters-panel__tabpane p-4">
+                <div className="text-right mb-2">
                   <a
-                    className="text-muted pull-right"
+                    className="text-muted"
                     onClick={() => setFieldValue("hiddenCouriers", [])}
                   >
                     {t("ADMIN_DASHBOARD_FILTERS_SHOW_ALL")}
@@ -281,12 +290,12 @@ function FiltersModalContent(props) {
                 </div>
                 {props.couriers.map((username) => (
                   <div
-                    className="dashboard__modal-filters__courier"
+                    className="dashboard__modal-filters__courier d-flex justify-content-between mb-2"
                     key={username}
                   >
-                    <span>
+                    <div>
                       <Avatar username={username} /> <span>{username}</span>
-                    </span>
+                    </div>
                     <div>
                       <Switch
                         checkedChildren={t("ADMIN_DASHBOARD_FILTERS_SHOW")}
@@ -329,7 +338,7 @@ function FiltersModalContent(props) {
               </div>
             </div>
             <div role="tabpanel" className="tab-pane" id="filters_timerange">
-              <div className="dashboard__modal-filters__tabpane mx-4">
+              <div className="dashboard__filters-panel__tabpane p-4 mx-2">
                 <Slider
                   range
                   marks={timeStepsWithStyle}
@@ -341,11 +350,13 @@ function FiltersModalContent(props) {
               </div>
             </div>
           </div>
-          <button type="submit" className="btn btn-block btn-primary">
-            {t("ADMIN_DASHBOARD_FILTERS_APPLY")}
-          </button>
-        </form>
-      )}
+          <div className="text-center">
+            <button type="submit" className="btn btn-primary" onClick={props.closeFiltersModal}>
+              {t("CLOSE")}
+            </button>
+          </div>
+        </div>
+        )}
     </Formik>
   )
 }
