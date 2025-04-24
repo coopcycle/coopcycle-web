@@ -157,14 +157,28 @@ use Webmozart\Assert\Assert as WMAssert;
         new Get(uriTemplate: '/orders/{id}/mercadopago-preference', controller: MercadopagoPreference::class, output: MercadopagoPreferenceResponse::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Creates a MercadoPago preference and returns its ID.']),
         new Get(uriTemplate: '/orders/{id}/invoice', controller: InvoiceController::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Get Invoice for a Order resource.']),
         new Post(uriTemplate: '/orders/{id}/invoice', normalizationContext: ['groups' => ['order']], controller: GenerateInvoiceController::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Generate Invoice for a Order resource.']),
-        new Get(uriTemplate: '/orders/{id}/stripe/clone-payment-method/{paymentMethodId}', controller: CloneStripePayment::class, output: StripePaymentMethodOutput::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => '']),
+        new Get(
+            uriTemplate: '/orders/{id}/stripe/clone-payment-method/{paymentMethodId}',
+            uriVariables: ['id'],
+            controller: CloneStripePayment::class,
+            output: StripePaymentMethodOutput::class,
+            security: 'is_granted(\'edit\', object)',
+            types: ['StripePaymentMethodOutput']
+        ),
         new Post(
             uriTemplate: '/orders/{id}/stripe/create-setup-intent-or-attach-pm',
             controller: CreateSetupIntentOrAttachPM::class,
-            security: 'is_granted(\'edit\', object)',
-            openapiContext: ['summary' => '']
+            security: 'is_granted(\'edit\', object)'
         ),
-        new Post(uriTemplate: '/orders/{id}/create_invitation', status: 200, security: 'is_granted(\'edit\', object)', normalizationContext: ['groups' => ['cart']], controller: CreateInvitationController::class, validate: false, openapiContext: ['summary' => 'Generates an invitation link for an order']),
+        new Post(
+            uriTemplate: '/orders/{id}/create_invitation',
+            status: 200,
+            security: 'is_granted(\'edit\', object)',
+            normalizationContext: ['groups' => ['cart']],
+            controller: CreateInvitationController::class,
+            validate: false,
+            openapiContext: ['summary' => 'Generates an invitation link for an order']
+        ),
         new Post(uriTemplate: '/orders/{id}/players', controller: AddPlayer::class),
         new Get(
             uriTemplate: '/orders/{id}/loopeat_formats',
