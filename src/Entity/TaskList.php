@@ -17,6 +17,7 @@ use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
+use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use AppBundle\Entity\TaskList\Item;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -40,12 +41,40 @@ use Symfony\Component\Validator\Constraints as Assert;
             read: false,
             write: false
         ),
-        new Get(uriTemplate: '/me/tasks/{date}', controller: MyTasksController::class, output: MyTaskListDto::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', read: false, write: false, normalizationContext: ['groups' => ['task_list', 'task', 'delivery', 'address']], openapiContext: ['summary' => 'Retrieves the collection of Task resources assigned to the authenticated token.', 'parameters' => [['in' => 'path', 'name' => 'date', 'required' => true, 'type' => 'string', 'format' => 'date']]]),
-        new Get(uriTemplate: '/task_lists/{id}/optimize', controller: OptimizeController::class, security: 'is_granted(\'ROLE_ADMIN\')', serialize: false),
-        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')', openapiContext: ['summary' => 'Legacy endpoint, please use \'/api/task_lists/v2\' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses.'], normalizationContext: ['groups' => ['task_list', 'task_collection', 'task', 'delivery', 'address']]),
-        new Post(controller: CreateTaskListController::class, security: 'is_granted(\'ROLE_DISPATCHER\')'),
-        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')', uriTemplate: '/task_lists/v2', openapiContext: ['summary' => 'Retrieves TaskLists as lists of tours and tasks.'])], normalizationContext: ['groups' => ['task_list']
-    ]
+        new Get(
+            uriTemplate: '/me/tasks/{date}',
+            controller: MyTasksController::class,
+            output: MyTaskListDto::class,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            read: false,
+            write: false,
+            normalizationContext: ['groups' => ['task_list', 'task', 'delivery', 'address']],
+            openapiContext: ['summary' => 'Retrieves the collection of Task resources assigned to the authenticated token.', 'parameters' => [['in' => 'path', 'name' => 'date', 'required' => true, 'type' => 'string', 'format' => 'date']]]
+        ),
+        new Get(
+            uriTemplate: '/task_lists/{id}/optimize',
+            controller: OptimizeController::class,
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            serialize: false
+        ),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
+            openapiContext: ['summary' => 'Legacy endpoint, please use \'/api/task_lists/v2\' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses.'],
+            normalizationContext: ['groups' => ['task_list', 'task_collection', 'task', 'delivery', 'address']],
+            provider: TaskListProvider::class
+        ),
+        new Post(
+            controller: CreateTaskListController::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
+            uriTemplate: '/task_lists/v2',
+            openapiContext: ['summary' => 'Retrieves TaskLists as lists of tours and tasks.'],
+            provider: TaskListProvider::class
+        )
+    ],
+    normalizationContext: ['groups' => ['task_list']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class TaskList implements TaskCollectionInterface

@@ -1,9 +1,10 @@
 <?php
 
-namespace AppBundle\Api\DataProvider;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\CollectionDataProvider;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Doctrine\Orm\State\CollectionProvider;
+use ApiPlatform\State\ProviderInterface;
 use AppBundle\Entity\TaskList;
 use AppBundle\Security\TokenStoreExtractor;
 
@@ -11,23 +12,17 @@ use AppBundle\Security\TokenStoreExtractor;
  * Custom list collection data provider that is able to retrieve task lists
  * with only tasks belonging to a store.
  */
-final class TaskListCollectionDataProvider extends CollectionDataProvider
+final class TaskListProvider implements ProviderInterface
 {
-    private $extractor;
+    public function __construct(
+        private CollectionProvider $provider,
+        private TokenStoreExtractor $extractor
+    )
+    {}
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
     {
-        return TaskList::class === $resourceClass && $operationName === 'get';
-    }
-
-    public function setTokenExtractor(TokenStoreExtractor $extractor)
-    {
-        $this->extractor = $extractor;
-    }
-
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
-    {
-        $collection = parent::getCollection($resourceClass, $operationName, $context);
+        $collection = $this->provider->provide($operation, $uriVariables, $context);
 
         $store = $this->extractor->extractStore();
 
