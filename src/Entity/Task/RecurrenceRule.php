@@ -14,6 +14,7 @@ use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
 use AppBundle\Action\Task\GenerateOrders;
 use AppBundle\Entity\Store;
 use AppBundle\Validator\Constraints\RecurrenceRuleTemplate as AssertRecurrenceRuleTemplate;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Recurr\Rule;
@@ -43,7 +44,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     shortName: 'RecurrenceRule',
     normalizationContext: ['groups' => ['task_recurrence_rule']]
 )]
-class RecurrenceRule
+class RecurrenceRule implements SoftDeleteableInterface
 {
     use SoftDeleteable;
     use Timestampable;

@@ -17,6 +17,8 @@ use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Comparable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
@@ -40,14 +42,16 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new GetCollection()
     ])]
-class Product extends BaseProduct implements ProductInterface, Comparable
+class Product extends BaseProduct implements ProductInterface, Comparable, SoftDeleteableInterface
 {
-    protected $deletedAt;
+    use SoftDeleteable;
+
     protected $reusablePackagingEnabled = false;
     protected $reusablePackagings;
     protected $images;
     protected $restaurant;
     protected $alcohol = false;
+
     public function __construct()
     {
         parent::__construct();

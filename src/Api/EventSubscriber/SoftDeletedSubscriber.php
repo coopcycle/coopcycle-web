@@ -3,7 +3,10 @@
 namespace AppBundle\Api\EventSubscriber;
 
 use Doctrine\Persistence\ManagerRegistry;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Core\EventListener\EventPriorities;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -13,10 +16,6 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
     private $doctrine;
 
     private $routes = [
-        'api_restaurants_products_get_subresource',
-        'api_restaurants_get_collection',
-        'api_recurrence_rules_get_collection',
-        'api_recurrence_rules_get_item',
         'api_organizations_get_collection',
         'admin_restaurants_search',
         'admin_stores_search',
@@ -45,8 +44,19 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (!in_array($request->attributes->get('_route'), $this->routes)) {
+        if (!$request->attributes->has('_api_resource_class') || !$request->attributes->has('_api_operation')) {
+            return;
+        }
 
+        $operation = $request->attributes->get('_api_operation');
+
+        if (!($operation instanceof Get) && !($operation instanceof GetCollection)) {
+            return;
+        }
+
+        $resourceClass = $request->attributes->get('_api_resource_class');
+
+        if (!in_array(SoftDeleteableInterface::class, class_implements($resourceClass))) {
             return;
         }
 

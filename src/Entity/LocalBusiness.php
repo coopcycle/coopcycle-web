@@ -44,6 +44,7 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -115,7 +116,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     OrganizationAwareInterface,
     ShippingOptionsInterface,
     CustomFailureReasonInterface,
-    Vendor
+    Vendor,
+    SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;
