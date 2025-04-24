@@ -7,6 +7,7 @@ use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverlappingOpeningHours;
+use AppBundle\Validator\Constraints\TimeSlotDelete as AssertCanDelete;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -31,7 +32,11 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
     ],
     itemOperations: [
         'get' => ['method' => 'GET'],
-        'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"],
+        'delete' => [
+            'method' => 'DELETE',
+            'security' => "is_granted('ROLE_ADMIN')",
+            'validation_groups' => ['deleteValidation']
+        ],
         'choices' => [
             'method' => 'GET',
             'path' => '/time_slots/{id}/choices',
@@ -42,6 +47,7 @@ use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
     normalizationContext: ['groups' => ['time_slot']],
     paginationClientEnabled: true
 )]
+#[AssertCanDelete(groups: ['deleteValidation'])]
 class TimeSlot
 {
     use Timestampable;
