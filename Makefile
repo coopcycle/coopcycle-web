@@ -1,8 +1,15 @@
+.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata testdata2 testdata3 testdata4 testserver console log log-requests ftp
+
+setup: install migrations perms testdata
+
 install:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	"$(MAKE)" osrm
+	@$(MAKE) osrm
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker compose exec php php bin/console doctrine:schema:create --env=dev
+	@docker compose exec php php bin/console doctrine:schema:create --env=test
+	@docker compose exec php php bin/console typesense:create --env=test
+	@docker compose exec php php bin/console coopcycle:setup --env=test
 	@docker compose exec php bin/demo --env=dev
 	@docker compose exec php php bin/console doctrine:migrations:sync-metadata-storage
 	@docker compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
@@ -16,12 +23,31 @@ osrm:
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
 	@docker compose exec php php vendor/bin/phpunit
+# Add as annotation in any testcase:
+# /**
+# * @group only
+# */
+# public function testSomething()..
+phpunit-only:
+	@clear && docker compose exec php php vendor/bin/phpunit --group only
 
 behat:
 	@docker compose exec php php vendor/bin/behat
+behat-only:
+	@clear && docker compose exec php php vendor/bin/behat features/stores.feature:96
+
+cypress:
+	@clear && npm run e2e
+cypress-open:
+	@cypress open
+cypress-install:
+	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm install -g cypress@13.15.0 @cypress/webpack-preprocessor@6.0.2 @cypress/react18@2.0.1
+	@npm install -g cypress@13.15.0 @cypress/webpack-preprocessor@6.0.2 @cypress/react18@2.0.1
 
 jest:
-	@docker compose exec -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
+	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
+
+migrations: migrations-migrate
 
 migrations-diff:
 	@docker compose exec php php bin/console doctrine:migrations:diff --no-interaction
@@ -37,8 +63,45 @@ enable-xdebug:
 	@docker compose exec php /usr/local/bin/enable-xdebug
 	@docker compose restart php nginx
 
+start:
+	@clear && docker compose up --remove-orphans
+
+# Once everything is restarted, you need to run in another terminal: make setup
+start-fresh: fresh-db fresh
+
 fresh:
-	@docker compose down
+	@clear && docker compose down
+	@docker compose up --build --remove-orphans
+
+fresh-db:
+	@docker compose up -d postgres
+	@docker compose exec -T postgres dropdb -U postgres coopcycle
+	@docker compose exec -T postgres dropdb -U postgres coopcycle_test
+
+perms:
+	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/"
+
+lint:
+	@docker compose exec php php vendor/bin/phpstan analyse -v
+
+test: phpunit jest behat cypress
+
+testdata:
+	@docker compose exec php bin/demo --env=dev
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test
+testdata2:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
+testdata3:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/package_delivery_orders.yml --env test
+testdata4:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/restaurant.yml --env test
+
+# This one seems to be not needed..!
+testserver:
+	@docker compose run --service-ports -e APP_ENV=test php
+
+console:
+	@clear && docker compose exec php sh
 
 log:
 	@docker compose exec php tail -f var/logs/dev-$(shell date --rfc-3339=date).log | grep -v "restart_requested_timestamp" | sed --unbuffered \
@@ -51,6 +114,10 @@ log:
     -e 's/\(.*EMERGENCY\)/\o033[95m\1\o033[39m/' \
     -e 's/\(.*DEBUG\)/\o033[90m\1\o033[39m/' \
     -e 's/\(stacktrace\)/\o033[37m\1\o033[39m/'
+# Request loglines appears as "request.INFO"
+log-requests:
+	@clear && docker compose exec php tail -f var/logs/dev-$(shell date --rfc-3339=date).log | grep "request.INFO" | sed --unbuffered \
+    -e 's/\(.*INFO\)/\n\o033[90m\1\o033[39m/' \
 
 ftp:
 	$(eval TMP := $(shell mktemp -d))
