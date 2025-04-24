@@ -1449,10 +1449,6 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
-  AppBundle\Api\DataPersister\DeleteValidationAwareDataPersister:
-    arguments:
-      $dataPersister: '@api_platform.doctrine.orm.data_persister'
-
   AppBundle\Security\BearerTokenAuthenticator:
     abstract: true
 

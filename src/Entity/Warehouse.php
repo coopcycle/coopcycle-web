@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use AppBundle\Validator\Constraints\WarehouseDelete as AssertCanDelete;
@@ -22,7 +23,8 @@ use Gedmo\Timestampable\Traits\Timestampable;
         new Get(security: "is_granted('ROLE_DISPATCHER')"),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
-            validationContext: ['groups' => ['deleteValidation']]
+            validationContext: ['groups' => ['deleteValidation']],
+            processor: ValidationAwareRemoveProcessor::class
         ),
         new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Post(security: 'is_granted(\'ROLE_ADMIN\')')

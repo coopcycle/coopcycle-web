@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
 use AppBundle\Action\PackageSet\Applications;
+use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Validator\Constraints\PackageSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -24,6 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
+            processor: ValidationAwareRemoveProcessor::class,
             validationContext: ['groups' => ['deleteValidation']]
         ),
         new Get(

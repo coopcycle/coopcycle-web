@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\TimeSlot\Choices as ChoicesController;
 use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
+use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
@@ -28,7 +29,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
-            validationContext: ['groups' => ['deleteValidation']]
+            validationContext: ['groups' => ['deleteValidation']],
+            processor: ValidationAwareRemoveProcessor::class
         ),
         new Get(
             uriTemplate: '/time_slots/{id}/choices',

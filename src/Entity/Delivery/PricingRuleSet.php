@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Core\Action\NotFoundAction;
 use AppBundle\Action\PricingRuleSet\Applications;
+use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Validator\Constraints\PricingRuleSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,7 +22,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
         new Get(controller: NotFoundAction::class),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
-            validationContext: ['groups' => ['deleteValidation']]
+            validationContext: ['groups' => ['deleteValidation']],
+            processor: ValidationAwareRemoveProcessor::class,
         ),
         new Get(
             uriTemplate: '/pricing_rule_sets/{id}/applications',
