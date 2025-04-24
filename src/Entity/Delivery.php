@@ -98,7 +98,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[AssertCheckDelivery(groups: ['delivery_check'])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
 #[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
-#[ApiResource(uriTemplate: '/stores/{id}/deliveries.{_format}', uriVariables: ['id' => new Link(fromClass: \AppBundle\Entity\Store::class, identifiers: ['id'])], status: 200, types: ['http://schema.org/ParcelDelivery'], filters: ['annotated_app_bundle_entity_delivery_api_platform_core_bridge_doctrine_orm_filter_order_filter', 'annotated_app_bundle_entity_delivery_app_bundle_api_filter_delivery_order_filter'], normalizationContext: ['groups' => ['delivery', 'address']], operations: [new GetCollection()])]
+#[ApiResource(
+    uriTemplate: '/stores/{id}/deliveries',
+    uriVariables: [
+        'id' => new Link(fromClass: Store::class, toProperty: 'store')
+    ],
+    status: 200,
+    types: ['http://schema.org/ParcelDelivery'],
+    normalizationContext: ['groups' => ['delivery', 'address']],
+    operations: [new GetCollection()]
+)]
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
     use PackagesAwareTrait;
