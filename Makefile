@@ -33,6 +33,7 @@ phpunit-only:
 
 behat:
 	@docker compose exec php php vendor/bin/behat
+# For now, just change here the `features/file.feature:xx` to run a specific test
 behat-only:
 	@clear && docker compose exec php php vendor/bin/behat features/stores.feature:96
 
@@ -40,6 +41,8 @@ cypress:
 	@clear && npm run e2e
 cypress-open:
 	@cypress open
+# NOTE: This command is not needed if you run `npm run e2e` or `npm run e2e:headless`
+# in the terminal, as it will install cypress automatically
 cypress-install:
 	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm install -g cypress@13.15.0 @cypress/webpack-preprocessor@6.0.2 @cypress/react18@2.0.1
 	@npm install -g cypress@13.15.0 @cypress/webpack-preprocessor@6.0.2 @cypress/react18@2.0.1
@@ -47,14 +50,15 @@ cypress-install:
 jest:
 	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
 
+# Just an alias
 migrations: migrations-migrate
-
-migrations-diff:
-	@docker compose exec php php bin/console doctrine:migrations:diff --no-interaction
 
 migrations-migrate:
 	@docker compose exec php php bin/console doctrine:migrations:migrate
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --complete
+
+migrations-diff:
+	@docker compose exec php php bin/console doctrine:migrations:diff --no-interaction
 
 email-preview:
 	@docker compose exec php php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.html
@@ -66,7 +70,7 @@ enable-xdebug:
 start:
 	@clear && docker compose up --remove-orphans
 
-# Once everything is restarted, you need to run in another terminal: make setup
+# Once everything is restarted, you need to run in another terminal: `make setup`
 start-fresh: fresh-db fresh
 
 fresh:
@@ -78,6 +82,8 @@ fresh-db:
 	@docker compose exec -T postgres dropdb -U postgres coopcycle
 	@docker compose exec -T postgres dropdb -U postgres coopcycle_test
 
+# This one solves weird file permissions issues when
+# browsing the `test` env at http://localhost:9080/
 perms:
 	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/"
 
