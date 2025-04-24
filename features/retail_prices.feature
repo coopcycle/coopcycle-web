@@ -462,7 +462,7 @@ Feature: Retail prices
       }
       """
 
-  Scenario: Get delivery price for an admin user with implicit timeSlot
+  Scenario: Get delivery price for an admin user with an implicit timeSlot
     Given the fixtures files are loaded:
       | sylius_channels.yml |
       | sylius_taxation.yml |

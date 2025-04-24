@@ -16,6 +16,7 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
@@ -1293,5 +1294,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $store->setDefaultCourier($user);
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Then the database should contain an order with a total price :price
+     */
+    public function theDatabaseShouldContainAnOrderWithATotalPrice($price)
+    {
+        $order = $this->doctrine->getRepository(Order::class)->findOneBy(['total' => $price]);
+
+        if (null === $order) {
+            Assert::fail(sprintf('No order found with total price %s', $price));
+        }
     }
 }
