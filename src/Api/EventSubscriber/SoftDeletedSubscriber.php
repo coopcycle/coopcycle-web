@@ -17,9 +17,9 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
 
     private $routes = [
         'api_organizations_get_collection',
+        // FIXME Also manage web routes
         'admin_restaurants_search',
         'admin_stores_search',
-        'api_stores_get_collection',
         'api_warehouses_get_collection',
         'api_vehicles_get_collection',
         'api_trailers_get_collection'

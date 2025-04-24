@@ -25,6 +25,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -73,7 +74,7 @@ use AppBundle\Action\Store\Packages;
     types: ['http://schema.org/Store'],
     normalizationContext: ['groups' => ['store', 'address']]
 )]
-class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
+class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface, SoftDeleteableInterface
 {
     use SoftDeleteable;
     use TaggableTrait;
