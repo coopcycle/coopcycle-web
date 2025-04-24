@@ -22,6 +22,7 @@ use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsContro
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Api\State\DeliveryPersistProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
@@ -78,6 +79,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             uriTemplate: '/deliveries/from_tasks',
             input: DeliveryInput::class,
+            processor: DeliveryPersistProcessor::class,
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')'
         ),
