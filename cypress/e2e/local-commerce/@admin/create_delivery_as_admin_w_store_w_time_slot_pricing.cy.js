@@ -4,7 +4,7 @@ context('Delivery (role: admin)', () => {
       'coopcycle:fixtures:load ' +
         '-s cypress/fixtures/setup.yml ' +
         '-f cypress/fixtures/admin_user.yml ' +
-        '-f features/fixtures/ORM/store_w_distance_pricing.yml',
+        '-f features/fixtures/ORM/store_w_time_slot_pricing.yml',
     )
 
     cy.visit('/login')
@@ -51,7 +51,7 @@ context('Delivery (role: admin)', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-    cy.get('[data-tax="included"]').contains('1,99 €')
+    cy.get('[data-tax="included"]').contains('6,99 €')
 
     cy.get('#delivery-submit').click()
 
@@ -67,7 +67,7 @@ context('Delivery (role: admin)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€1.99/)
+      .contains(/€6.99/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -92,6 +92,6 @@ context('Delivery (role: admin)', () => {
 
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
-      .contains('€1.99')
+      .contains('€6.99')
   })
 })
