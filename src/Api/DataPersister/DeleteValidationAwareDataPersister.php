@@ -3,7 +3,7 @@
 namespace AppBundle\Api\DataPersister;
 
 use ApiPlatform\Core\DataPersister\DataPersisterInterface;
-use ApiPlatform\Core\Validator\ValidatorInterface;
+use ApiPlatform\Validator\ValidatorInterface;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\TimeSlot;

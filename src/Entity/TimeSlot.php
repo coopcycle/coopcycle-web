@@ -15,7 +15,6 @@ use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverlappingOpeningHours;
 use AppBundle\Validator\Constraints\TimeSlotDelete as AssertCanDelete;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\SerializedName;
