@@ -55,8 +55,9 @@ class PublicController extends AbstractController
 
         $this->denyAccessUnlessGranted('view_public', $order);
 
-        $completedPayment = $order->getPayments()
-            ->filter(fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_COMPLETED)
+        // payment may be in "authorized" state (waiting for capture by finishing the drop)
+        $completedOrAuthorizedPayment = $order->getPayments()
+            ->filter(fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_COMPLETED || $payment->getState() === PaymentInterface::STATE_AUTHORIZED)
             ->first();
 
         $failedPayment = $order->getPayments()
@@ -65,11 +66,11 @@ class PublicController extends AbstractController
 
         $parameters = [
             'order' => $order,
-            'completed_payment' => $completedPayment,
+            'completed_payment' => $completedOrAuthorizedPayment,
             'failed_payment' => $failedPayment,
         ];
 
-        if (!$completedPayment) {
+        if (!$completedOrAuthorizedPayment) {
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
