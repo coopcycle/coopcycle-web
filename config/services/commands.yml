@@ -60,6 +60,10 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:datetime:mock' }
 
+  AppBundle\Command\LogTestRunCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:tests:log' }
+
   AppBundle\Command\SetupCommand:
     arguments:
       $productRepository: '@sylius.repository.product'
