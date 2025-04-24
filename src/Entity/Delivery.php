@@ -90,7 +90,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             normalizationContext: ['groups' => ['optimization_suggestions'], 'api_sub_level' => true],
             securityPostDenormalize: 'is_granted(\'create\', object)',
-            openapiContext: ['summary' => 'Suggests optimizations for a delivery', 'parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]]
+            openapiContext: ['summary' => 'Suggests optimizations for a delivery', 'parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]],
+            types: ['OptimizationSuggestions'],
         ),
         new Post(
             uriTemplate: '/deliveries/import_async', deserialize: false, inputFormats: ['csv' => ['text/csv']], controller: BulkAsyncDelivery::class, security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')')], types: ['http://schema.org/ParcelDelivery'], order: ['createdAt' => 'DESC'], denormalizationContext: ['groups' => ['order_create']], normalizationContext: ['groups' => ['delivery', 'address']], paginationItemsPerPage: 15)]
