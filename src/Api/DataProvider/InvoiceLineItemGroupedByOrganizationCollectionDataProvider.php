@@ -30,7 +30,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
-        $qb = $this->entityManager->getRepository(Order::class)->createOpmizedQueryBuilder('o');
+        $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {

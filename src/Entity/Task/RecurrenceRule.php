@@ -15,7 +15,46 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(shortName: 'RecurrenceRule', normalizationContext: ['groups' => ['task_recurrence_rule']], collectionOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'generate_orders' => ['method' => 'POST', 'path' => '/recurrence_rules/generate_orders', 'security' => "is_granted('ROLE_DISPATCHER')", 'controller' => GenerateOrders::class]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'put' => ['method' => 'PUT', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"], 'between' => ['method' => 'POST', 'path' => '/recurrence_rules/{id}/between', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')", 'controller' => BetweenController::class], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"]])]
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'method' => 'GET',
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
+        ],
+        'post' => [
+            'method' => 'POST',
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
+        ],
+        'generate_orders' => [
+            'method' => 'POST',
+            'path' => '/recurrence_rules/generate_orders',
+            'security' => "is_granted('ROLE_DISPATCHER')",
+            'controller' => GenerateOrders::class
+        ]
+    ],
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
+        ],
+        'put' => [
+            'method' => 'PUT',
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
+        ],
+        'between' => [
+            'method' => 'POST',
+            'path' => '/recurrence_rules/{id}/between',
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')",
+            'controller' => BetweenController::class
+        ],
+        'delete' => [
+            'method' => 'DELETE',
+            'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
+        ]
+    ],
+    shortName: 'RecurrenceRule',
+    normalizationContext: ['groups' => ['task_recurrence_rule']]
+)]
 class RecurrenceRule
 {
     use SoftDeleteable;

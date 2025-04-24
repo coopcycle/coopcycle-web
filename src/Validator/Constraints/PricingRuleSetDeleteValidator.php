@@ -2,20 +2,16 @@
 
 namespace AppBundle\Validator\Constraints;
 
-
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\PricingRuleSetManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-
 class PricingRuleSetDeleteValidator extends ConstraintValidator
 {
-    public function __construct(
-        protected PricingRuleSetManager $pricingRuleSetManager,
-        protected ApplicationsNormalizer $normalizer
-    ) {}
+    public function __construct(protected PricingRuleSetManager $pricingRuleSetManager)
+    {}
 
     public function validate($object, Constraint $constraint)
     {
@@ -26,15 +22,13 @@ class PricingRuleSetDeleteValidator extends ConstraintValidator
         $relatedEntities = $this->pricingRuleSetManager->getPricingRuleSetApplications($object);
 
         if (count($relatedEntities) > 0) {
-            $this->context
-                ->buildViolation(
-                    json_encode(array_map(
-                        function ($entity) {return $this->normalizer->normalize($entity);},
-                        $relatedEntities
-                    ))
-                )
-                ->atPath('error')
-                ->addViolation();
+            foreach ($relatedEntities as $entity) {
+                $this->context
+                    ->buildViolation(
+                        sprintf('%s is used by %s#%d', get_class($object), get_class($entity), $entity->getId())
+                    )
+                    ->addViolation();
+            }
         }
     }
 }

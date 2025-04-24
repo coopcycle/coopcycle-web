@@ -2,20 +2,15 @@
 
 namespace AppBundle\Validator\Constraints;
 
-
 use AppBundle\Entity\PackageSet;
-use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\PackageSetManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-
 class PackageSetDeleteValidator extends ConstraintValidator
 {
-    public function __construct(
-        protected PackageSetManager $packageSetManager,
-        protected ApplicationsNormalizer $normalizer
-    ) {}
+    public function __construct(protected PackageSetManager $packageSetManager)
+    {}
 
     public function validate($object, Constraint $constraint)
     {
@@ -26,15 +21,13 @@ class PackageSetDeleteValidator extends ConstraintValidator
         $relatedEntities = $this->packageSetManager->getPackageSetApplications($object);
 
         if (count($relatedEntities) > 0) {
-            $this->context
-                ->buildViolation(
-                    json_encode(array_map(
-                        function ($entity) {return $this->normalizer->normalize($entity);},
-                        $relatedEntities
-                    ))
-                )
-                ->atPath('error')
-                ->addViolation();
+            foreach ($relatedEntities as $entity) {
+                $this->context
+                    ->buildViolation(
+                        sprintf('%s is used by %s#%d', get_class($object), get_class($entity), $entity->getId())
+                    )
+                    ->addViolation();
+            }
         }
     }
 }

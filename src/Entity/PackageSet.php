@@ -5,13 +5,32 @@ namespace AppBundle\Entity;
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\PackageSet\Applications;
+use AppBundle\Validator\Constraints\PackageSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-
-#[ApiResource(itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')", 'controller' => NotFoundAction::class], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'applications' => ['method' => 'GET', 'path' => '/package_sets/{id}/applications', 'controller' => Applications::class, 'security' => "is_granted('ROLE_ADMIN')", 'openapi_context' => ['summary' => 'Get the objects to which this pricing rule set is applied']]])]
+#[ApiResource(
+    itemOperations: [
+        'get' => [
+            'method' => 'GET',
+            'access_control' => "is_granted('ROLE_ADMIN')",
+            'controller' => NotFoundAction::class
+        ],
+        'delete' => [
+            'method' => 'DELETE',
+            'security' => "is_granted('ROLE_ADMIN')",
+            'validation_groups' => ['deleteValidation']
+        ],
+        'applications' => [
+            'method' => 'GET',
+            'path' => '/package_sets/{id}/applications',
+            'controller' => Applications::class,
+            'security' => "is_granted('ROLE_ADMIN')",
+            'openapi_context' => ['summary' => 'Get the objects to which this pricing rule set is applied']]
+    ]
+)]
+#[AssertCanDelete(groups: ['deleteValidation'])]
 class PackageSet
 {
     use Timestampable;
