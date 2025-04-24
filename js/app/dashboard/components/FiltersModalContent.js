@@ -113,7 +113,13 @@ function FiltersModalContent(props) {
     >
       {({ values, setFieldValue }) => (
         <div className="dashboard__filters-panel p-3">
-          <a className="pull-right fa fa-close text-muted" onClick={props.closeFiltersModal} />
+          <h4>
+            {t("ADMIN_DASHBOARD_FILTERS_MODAL_TITLE")}
+            <a className="pull-right fa fa-close text-muted" onClick={props.closeFiltersModal} />
+          </h4>
+          <p className="text-muted">
+            {t("ADMIN_DASHBOARD_FILTERS_MODAL_HELP")}
+          </p>
           <FormikObserver onChange={onChange} />
           <ul className="nav nav-tabs" role="tablist">
             <li role="presentation" className="active">

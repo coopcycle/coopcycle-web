@@ -408,6 +408,12 @@ html, body {
   }
 }
 
+.dashboard__filters-panel {
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+}
+
 .dashboard__filters-panel__tabpane {
     display: flex;
     flex-direction: column;

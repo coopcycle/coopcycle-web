@@ -22,11 +22,13 @@ const App = ({ loadingAnim }) => {
       localStorage.setItem('cpccl__dshbd__fltrs__size', JSON.stringify({width: ref.style.width, height: ref.style.height}))
     }
     const saveFilterPanelPosition = ({d}) => {
+      // FIXME : I don't really get what x, y values from the "d" variable are indicating... position is not saved correctly between page loads
       localStorage.setItem('cpccl__dshbd__fltrs__position', JSON.stringify({x: d.x, y: d.y}))
     }
 
-    const initialFilterPanelSize = {width: 1000, height: 400,...JSON.parse(localStorage.getItem('cpccl__dshbd__fltrs__size'))}
-    const initialFilterPanelPosition = {x: 0, y: 0,...JSON.parse(localStorage.getItem('cpccl__dshbd__fltrs__position'))}
+    const initialFilterPanelSize = {width: 1000, height: 510}
+    // const initialFilterPanelPosition = {x: 0, y: 0,...JSON.parse(localStorage.getItem('cpccl__dshbd__fltrs__position'))}
+    const initialFilterPanelPosition = {x: 0, y: 0}
     
     return (
     <>

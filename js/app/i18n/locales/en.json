@@ -79,6 +79,8 @@
         "ADMIN_DASHBOARD_ORDERS_TAKEAWAY_ALERT": "This order will be collected by the customer",
         "ADMIN_DASHBOARD_USERS_SEARCHSTORE": "Search store…",
         "ADMIN_DASHBOARD_USERS_SEARCHRESTAURANT": "Search restaurant…",
+        "ADMIN_DASHBOARD_FILTERS_MODAL_TITLE": "Filters",
+        "ADMIN_DASHBOARD_FILTERS_MODAL_HELP": "Drag me and resize me!",
         "ADMIN_DASHBOARD_FILTERS_COMPLETED_TASKS": "Finished tasks",
         "ADMIN_DASHBOARD_FILTERS_CANCELLED_TASKS": "Cancelled tasks",
         "ADMIN_DASHBOARD_FILTERS_ALWAYS_SHOW_UNASSIGNED": "Always show unassigned tasks",
