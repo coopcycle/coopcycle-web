@@ -1,4 +1,4 @@
-context('Delivery (role: admin)', () => {
+context('Delivery (role: admin) with arbitrary price', () => {
   beforeEach(() => {
     cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
 
@@ -6,7 +6,7 @@ context('Delivery (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  it('create delivery order', function () {
+  it('create delivery order with arbitrary price', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -46,7 +46,11 @@ context('Delivery (role: admin)', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-    cy.get('[data-tax="included"]').contains('4,99 €')
+    cy.get('#delivery_arbitraryPrice').check()
+    cy.get('#delivery_variantName').clear()
+    cy.get('#delivery_variantName').type('Test product')
+    cy.get('#delivery_variantPrice').clear()
+    cy.get('#delivery_variantPrice').type('72')
 
     cy.get('#delivery-submit').click()
 
@@ -62,7 +66,7 @@ context('Delivery (role: admin)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€4.99/)
+      .contains(/€72.00/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -70,7 +74,6 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Delivery page
-    //TODO: verify that all input data is saved correctly
     cy.get('[data-testid="breadcrumb"]')
       .find('[data-testid="order_id"]')
       .should('exist')
@@ -84,9 +87,11 @@ context('Delivery (role: admin)', () => {
       'match',
       /\/admin\/orders\/[0-9]+$/,
     )
-
+    cy.get('[data-testid="order_item"]')
+      .find('[data-testid="name"]')
+      .contains('Test product')
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
-      .contains('€4.99')
+      .contains('€72.00')
   })
 })
