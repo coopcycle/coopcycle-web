@@ -13,8 +13,7 @@ class Done extends Base
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        TaskManager $taskManager,
-        protected TranslatorInterface $translator
+        TaskManager $taskManager
     )
     {
         parent::__construct($tokenStorage, $taskManager);
