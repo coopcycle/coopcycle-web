@@ -37,11 +37,9 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 // Log the test name before and after each test
 beforeEach(function () {
-  const testName = this.currentTest.title;
-  cy.symfonyConsole(`coopcycle:tests:log -m "Before test: ${testName}"`);
+  cy.symfonyConsole(`coopcycle:tests:log -m "Before test: ${this.currentTest.fullTitle()}"`);
 });
 
 afterEach(function () {
-  const testName = this.currentTest.title;
-  cy.symfonyConsole(`coopcycle:tests:log -m "After test: ${testName}"`);
+  cy.symfonyConsole(`coopcycle:tests:log -m "After test: ${this.currentTest.fullTitle()}"`);
 });
