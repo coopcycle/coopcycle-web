@@ -113,7 +113,8 @@ use Webmozart\Assert\Assert as WMAssert;
             output: PaymentMethodsOutput::class,
             normalizationContext: ['api_sub_level' => true],
             security: 'is_granted(\'edit\', object)',
-            openapiContext: ['summary' => 'Get available payment methods for a Order resource.']
+            openapiContext: ['summary' => 'Get available payment methods for a Order resource.'],
+            types: ['PaymentMethodsOutput']
         ),
         new Put(uriTemplate: '/orders/{id}/pay', controller: OrderPay::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Pays a Order resource.']),
         new Put(

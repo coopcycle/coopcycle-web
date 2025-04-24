@@ -1484,9 +1484,11 @@ Feature: Orders
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1552,9 +1554,11 @@ Feature: Orders
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
