@@ -4,12 +4,29 @@ namespace AppBundle\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-
 use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Validator\Constraints\WarehouseDelete as AssertCanDelete;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['warehouse', 'address']], 'denormalization_context' => ['groups' => ['warehouse_create', 'address_create']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'access_control' => "is_granted('ROLE_ADMIN')"]])]
+#[ApiResource(
+    attributes: [
+        'normalization_context' => ['groups' => ['warehouse', 'address']],
+        'denormalization_context' => ['groups' => ['warehouse_create', 'address_create']]
+    ],
+    collectionOperations: [
+        'get' => ['method' => 'GET', 'security' => "is_granted('ROLE_DISPATCHER')"],
+        'post' => ['method' => 'POST', 'security' => "is_granted('ROLE_ADMIN')"]
+    ],
+    itemOperations: [
+        'delete' => [
+            'method' => 'DELETE',
+            'security' => "is_granted('ROLE_ADMIN')",
+            'validation_groups' => ['deleteValidation']
+        ],
+    ]
+)]
+#[AssertCanDelete(groups: ['deleteValidation'])]
 class Warehouse
 {
     use Timestampable;

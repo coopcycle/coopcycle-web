@@ -887,18 +887,6 @@ services:
         - '@translator'
     tags: [ 'kernel.event_subscriber' ]
 
-  AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\WarehouseDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
@@ -1477,6 +1465,10 @@ services:
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
   AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
+
+  AppBundle\Api\DataPersister\DeleteValidationAwareDataPersister:
+    arguments:
+      $dataPersister: '@api_platform.doctrine.orm.data_persister'
 
   AppBundle\Security\BearerTokenAuthenticator:
     abstract: true

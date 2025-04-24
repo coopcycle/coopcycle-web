@@ -5,12 +5,31 @@ namespace AppBundle\Entity\Delivery;
 use ApiPlatform\Core\Action\NotFoundAction;
 use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\PricingRuleSet\Applications;
+use AppBundle\Validator\Constraints\PricingRuleSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-
-#[ApiResource(itemOperations: ['get' => ['controller' => NotFoundAction::class], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'applications' => ['method' => 'GET', 'path' => '/pricing_rule_sets/{id}/applications', 'controller' => Applications::class, 'security' => "is_granted('ROLE_ADMIN')", 'openapi_context' => ['summary' => 'Get the objects to which this pricing rule set is applied']]])]
+#[ApiResource(
+    itemOperations: [
+        'get' => [
+            'controller' => NotFoundAction::class
+        ],
+        'delete' => [
+            'method' => 'DELETE',
+            'security' => "is_granted('ROLE_ADMIN')",
+            'validation_groups' => ['deleteValidation']
+        ],
+        'applications' => [
+            'method' => 'GET',
+            'path' => '/pricing_rule_sets/{id}/applications',
+            'controller' => Applications::class,
+            'security' => "is_granted('ROLE_ADMIN')",
+            'openapi_context' => ['summary' => 'Get the objects to which this pricing rule set is applied']
+        ]
+    ]
+)]
+#[AssertCanDelete(groups: ['deleteValidation'])]
 class PricingRuleSet
 {
     /**

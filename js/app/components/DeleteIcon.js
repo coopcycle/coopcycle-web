@@ -5,7 +5,8 @@ import { useTranslation } from 'react-i18next'
 export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessage, afterDeleteFetch }) {
 
   errorMessage = errorMessage || "ADMIN_DEFAULT_DELETION_ERROR_MESSAGE"
-  afterDeleteFetch = afterDeleteFetch || window.location.reload
+  // https://stackoverflow.com/questions/39407803/why-does-settimeoutlocation-reload-throw-a-typeerror/39407908
+  afterDeleteFetch = afterDeleteFetch || window.location.reload.bind(window.location)
 
   const { t } = useTranslation(),
     [loading, setLoading] = useState(false),

@@ -245,3 +245,30 @@ Feature: Tasks lists
       "@*@": "@*@"
     }
     """
+
+  Scenario: Delete warehouse fails
+    Given the fixtures files are loaded:
+      | sylius_channels.yml |
+      | task_list.yml       |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "DELETE" request to "/api/warehouses/1"
+    Then the response status code should be 400
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":"error: Vehicles are linked to this warehouse",
+        "violations":[
+          {
+            "propertyPath":"error",
+            "message":"Vehicles are linked to this warehouse",
+            "code":null
+          }
+        ]
+      }
+      """
