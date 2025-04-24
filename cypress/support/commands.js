@@ -42,6 +42,16 @@ Cypress.Commands.add('symfonyConsole', command => {
   cy.exec(cmd)
 })
 
+Cypress.Commands.add('setMockDateTime', dateTime => {
+  cy.symfonyConsole(`coopcycle:datetime:mock -d "${dateTime}"`)
+  cy.clock(new Date(dateTime), ['Date'])
+})
+
+Cypress.Commands.add('resetMockDateTime', () => {
+  cy.symfonyConsole('coopcycle:datetime:mock --reset')
+  // cy.clock() will be reset automatically
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.location('pathname').should('match', pathnameRegexp)

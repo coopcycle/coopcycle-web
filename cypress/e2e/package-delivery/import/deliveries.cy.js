@@ -1,14 +1,14 @@
 context('Import deliveries (role: admin)', () => {
   beforeEach(() => {
     cy.symfonyConsole('coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/admin_user.yml -f features/fixtures/ORM/store_w_time_slot_pricing.yml')
-    cy.symfonyConsole('coopcycle:datetime:mock -d "2019-12-12 8:00:00"')
+    cy.setMockDateTime('2019-12-12 8:00:00')
 
     cy.visit('/login')
     cy.login('admin', '12345678')
   })
 
   afterEach(() => {
-    cy.symfonyConsole('coopcycle:datetime:mock --reset')
+    cy.resetMockDateTime()
   })
 
   it('imports deliveries', function () {
