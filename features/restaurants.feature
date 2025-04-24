@@ -77,7 +77,8 @@ Feature: Manage restaurants
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
-            "description": null
+            "description": null,
+            "contactName": null
           },
           "state":"normal",
           "openingHoursSpecification":[

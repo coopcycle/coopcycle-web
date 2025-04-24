@@ -6,6 +6,7 @@ use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Doctrine\ORM\EntityManagerInterface;
 
+// FIXME Make it work with 2.7
 class RestaurantFilterConfigurator
 {
     protected $em;
