@@ -32,26 +32,30 @@ context('Import deliveries (role: admin)', () => {
     cy.location('search').should('include', 'section=imports')
 
     // Allow the import to be processed
-    const checkImportStatus = (attempts = 4) => {
-      if (attempts === 0) {
-        throw new Error('Import status check failed after 3 attempts')
-      }
+    cy.consumeMessages()
+    // const checkImportStatus = (attempts = 4) => {
+    //   if (attempts === 0) {
+    //     throw new Error('Import status check failed after 3 attempts')
+    //   }
+    //
+    //   // The first attempt most likely fails, hence attempts = 4
+    //
+    //   cy.get('body').then($body => {
+    //     if ($body.find('i.fa-check[data-delivery-import-status]').length) {
+    //       // Element exists, proceed
+    //     } else {
+    //       // Element does not exist, refresh and retry
+    //       cy.wait(10000) // wait for 10 seconds
+    //       cy.reload()
+    //       checkImportStatus(attempts - 1)
+    //     }
+    //   })
+    // }
+    //
+    // checkImportStatus()
 
-      // The first attempt most likely fails, hence attempts = 4
-
-      cy.get('body').then($body => {
-        if ($body.find('i.fa-check[data-delivery-import-status]').length) {
-          // Element exists, proceed
-        } else {
-          // Element does not exist, refresh and retry
-          cy.wait(10000) // wait for 10 seconds
-          cy.reload()
-          checkImportStatus(attempts - 1)
-        }
-      })
-    }
-
-    checkImportStatus()
+    cy.reload()
+    cy.get('i.fa-check[data-delivery-import-status]').should('exist')
 
     // verify imported deliveries
     cy.get('[data-testid="tab:/admin/deliveries"]').click()

@@ -68,6 +68,10 @@ Cypress.Commands.add('resetMockDateTime', () => {
   // cy.clock() will be reset automatically
 })
 
+Cypress.Commands.add('consumeMessages', () => {
+  cy.symfonyConsole('messenger:consume async --env=test --time-limit=10');
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.location('pathname').should('match', pathnameRegexp)
