@@ -98,6 +98,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             security: 'is_granted(\'edit\', object)'
         ),
         new GetCollection(
+            uriTemplate: '/restaurants',
             paginationEnabled: false,
             normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']],
             provider: RestaurantProvider::class
