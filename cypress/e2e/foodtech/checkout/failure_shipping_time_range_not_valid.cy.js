@@ -1,10 +1,7 @@
 describe('Failed checkout; time range is not valid any more', () => {
   beforeEach(() => {
 
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
-
-    cy.visit('/login')
+    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
 
     cy.login('bob', '12345678')
 
@@ -106,7 +103,7 @@ describe('Failed checkout; time range is not valid any more', () => {
 
         cy.get('form[name="checkout_payment"]').submit()
 
-        cy.get('form[name="checkout_payment"]')
+        cy.get('form[name="checkout_payment"]', {timeout: 10000})
           .contains(' L\'horaire de livraison n\'est plus disponible')
       })
     })

@@ -2,23 +2,12 @@ import moment from 'moment'
 
 context('Invoicing (role: admin)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/package_delivery_orders.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
-
-    cy.visit('/login')
+    cy.symfonyConsole('coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/package_delivery_orders.yml')
     cy.login('admin', '12345678')
   })
 
   it('show data for invoicing using custom date picker', function () {
     cy.visit('/admin/invoicing')
-
     cy.get('[data-testid="invoicing.toggleRangePicker"]').click()
 
     // Choose 1 month
@@ -32,7 +21,7 @@ context('Invoicing (role: admin)', () => {
     cy.get('[data-testid="invoicing.refresh"]').click()
 
     cy.get('[data-testid="invoicing.organizations"]')
-      .contains(/Acme/, { timeout: 10000 })
+      .contains(/Acme/, {timeout: 10000})
       .should('exist')
   })
 })
