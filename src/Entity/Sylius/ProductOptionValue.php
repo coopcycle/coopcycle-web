@@ -13,7 +13,17 @@ use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(), new Put(denormalizationContext: ['groups' => ['product_option_value_update']], security: 'is_granted(\'edit\', object)')], normalizationContext: ['groups' => ['product_option']])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(
+            uriTemplate: '/product_option_values/{id}',
+            denormalizationContext: ['groups' => ['product_option_value_update']],
+            security: 'is_granted(\'edit\', object)'
+        )
+    ],
+    normalizationContext: ['groups' => ['product_option']]
+)]
 class ProductOptionValue extends BaseProductOptionValue implements ProductOptionValueInterface
 {
     use ToggleableTrait;
