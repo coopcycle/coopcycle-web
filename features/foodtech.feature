@@ -293,9 +293,9 @@ Feature: Food Tech
         "@context":"/api/contexts/Order",
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
-        "customer":@...@,
-        "restaurant":@...@,
-        "shippingAddress":@...@,
+        "customer":{"@*@":"@*@"},
+        "restaurant":{"@*@":"@*@"},
+        "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
@@ -314,8 +314,27 @@ Feature: Food Tech
           "delivery":@array@,
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
-        }
+          "reusable_packaging":[],
+          "tax":@array@,
+          "tip":@array@,
+          "incident":@array@
+        },
+        "events":@array@,
+        "shippingTimeRange": @array@,
+        "takeaway":@boolean@,
+        "vendor":{"@*@":"@*@"},
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@",
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
+        "paymentMethod": "CARD",
+        "hasReceipt":@boolean@,
+        "invitation": "@string@||@null@",
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@,
+        "assignedTo": "@string@||@null@"
       }
       """
 
@@ -355,9 +374,9 @@ Feature: Food Tech
         "@context":"/api/contexts/Order",
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
-        "customer":@...@,
-        "restaurant":@...@,
-        "shippingAddress":@...@,
+        "customer":{"@*@":"@*@"},
+        "restaurant":{"@*@":"@*@"},
+        "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
@@ -376,8 +395,27 @@ Feature: Food Tech
           "delivery":@array@,
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
-        }
+          "reusable_packaging":[],
+          "tax":@array@,
+          "tip":@array@,
+          "incident":@array@
+        },
+        "events":@array@,
+        "shippingTimeRange": @array@,
+        "takeaway":@boolean@,
+        "vendor":{"@*@":"@*@"},
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@",
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
+        "paymentMethod": "CARD",
+        "hasReceipt":@boolean@,
+        "invitation": "@string@||@null@",
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@,
+        "assignedTo": "@string@||@null@"
       }
       """
 
