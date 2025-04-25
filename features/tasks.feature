@@ -447,7 +447,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2/reschedule",
+        "@id":"/api/tasks/2",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -565,7 +565,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2/start",
+        "@id":"/api/tasks/2",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -632,7 +632,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2/done",
+        "@id":"/api/tasks/2",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -706,7 +706,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2/failed",
+        "@id":"/api/tasks/2",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
@@ -768,7 +768,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks/2/failed",
+        "@id":"/api/tasks/2",
         "@type":"Task",
         "id":2,
         "type":"DROPOFF",
