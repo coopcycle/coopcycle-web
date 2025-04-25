@@ -1,6 +1,6 @@
-.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata testdata2 testdata3 testdata4 testserver console log log-requests ftp
+.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata1 testdata2 testdata3 testdata4 demodata testserver console log log-requests ftp
 
-setup: install migrations perms testdata
+setup: install migrations perms
 
 install:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
@@ -10,7 +10,7 @@ install:
 	@docker compose exec php php bin/console doctrine:schema:create --env=test
 	@docker compose exec php php bin/console typesense:create --env=test
 	@docker compose exec php php bin/console coopcycle:setup --env=test
-	@docker compose exec php bin/demo --env=dev
+	@$(MAKE) demodata testdata2
 	@docker compose exec php php bin/console doctrine:migrations:sync-metadata-storage
 	@docker compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
@@ -38,7 +38,10 @@ behat-only:
 	@clear && docker compose exec php php vendor/bin/behat features/stores.feature:96
 
 cypress:
-	@clear && npm run e2e
+	@npm run e2e
+# For now, just change here the `cypress/e2e/xxx/file.cy.js` to run a specific test
+cypress-only:
+	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/dispatch/admin_invite_dispatcher.cy.js
 cypress-open:
 	@cypress open
 # NOTE: This command is not needed if you run `npm run e2e` or `npm run e2e:headless`
@@ -85,22 +88,24 @@ fresh-db:
 # This one solves weird file permissions issues when
 # browsing the `test` env at http://localhost:9080/
 perms:
-	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/"
+	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/ && chmod 777 web/ var/"
 
 lint:
 	@docker compose exec php php vendor/bin/phpstan analyse -v
 
 test: phpunit jest behat cypress
 
-testdata:
-	@docker compose exec php bin/demo --env=dev
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test
-testdata2:
+testdata1:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
+testdata2:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test
 testdata3:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/package_delivery_orders.yml --env test
 testdata4:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/restaurant.yml --env test
+
+demodata:
+	@docker compose exec php bin/demo --env=dev
 
 # This one seems to be not needed..!
 testserver:
