@@ -296,7 +296,7 @@ Feature: Food Tech
         "restaurant":{
           "@id": "/api/restaurants/1",
           "@*@":"@*@"
-        }
+        },
         "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
@@ -321,7 +321,6 @@ Feature: Food Tech
           "tip":@array@,
           "incident":@array@
         },
-        "events":@array@,
         "shippingTimeRange": @array@,
         "takeaway":@boolean@,
         "vendor":{"@*@":"@*@"},
@@ -405,7 +404,6 @@ Feature: Food Tech
           "tip":@array@,
           "incident":@array@
         },
-        "events":@array@,
         "shippingTimeRange": @array@,
         "takeaway":@boolean@,
         "vendor":{"@*@":"@*@"},
