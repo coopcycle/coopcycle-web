@@ -16,7 +16,6 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders"
     Then the response status code should be 403
 
-  @debug
   Scenario: Retrieve restaurant orders
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
@@ -293,9 +292,12 @@ Feature: Food Tech
         "@context":"/api/contexts/Order",
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
-        "customer":@...@,
-        "restaurant":@...@,
-        "shippingAddress":@...@,
+        "customer":{"@*@":"@*@"},
+        "restaurant":{
+          "@id": "/api/restaurants/1",
+          "@*@":"@*@"
+        },
+        "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
@@ -314,8 +316,26 @@ Feature: Food Tech
           "delivery":@array@,
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
-        }
+          "reusable_packaging":[],
+          "tax":@array@,
+          "tip":@array@,
+          "incident":@array@
+        },
+        "shippingTimeRange": @array@,
+        "takeaway":@boolean@,
+        "vendor":{"@*@":"@*@"},
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@",
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
+        "paymentMethod": "CARD",
+        "hasReceipt":@boolean@,
+        "invitation": "@string@||@null@",
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@,
+        "assignedTo": "@string@||@null@"
       }
       """
 
@@ -355,9 +375,12 @@ Feature: Food Tech
         "@context":"/api/contexts/Order",
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
-        "customer":@...@,
-        "restaurant":@...@,
-        "shippingAddress":@...@,
+        "customer":{"@*@":"@*@"},
+        "restaurant":{
+          "@id": "/api/restaurants/1",
+          "@*@":"@*@"
+        },
+        "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn": 0,
@@ -376,8 +399,26 @@ Feature: Food Tech
           "delivery":@array@,
           "delivery_promotion":[],
           "order_promotion":[],
-          "reusable_packaging":[]
-        }
+          "reusable_packaging":[],
+          "tax":@array@,
+          "tip":@array@,
+          "incident":@array@
+        },
+        "shippingTimeRange": @array@,
+        "takeaway":@boolean@,
+        "vendor":{"@*@":"@*@"},
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@",
+        "reusablePackagingEnabled":false,
+        "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
+        "paymentMethod": "CARD",
+        "hasReceipt":@boolean@,
+        "invitation": "@string@||@null@",
+        "events":@array@,
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@,
+        "assignedTo": "@string@||@null@"
       }
       """
 
