@@ -162,7 +162,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -338,7 +339,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -662,7 +664,8 @@ Feature: Orders
         "streetAddress":"190 Rue de Rivoli, Paris",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -827,7 +830,8 @@ Feature: Orders
           "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "items":[
           {

@@ -1024,7 +1024,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/1/items/1",
+        "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":"/api/customers/1",
         "restaurant":"/api/restaurants/1",
@@ -1101,7 +1101,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/1/items/1",
+        "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":null,
         "restaurant":"/api/restaurants/1",
@@ -1174,7 +1174,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/1/items/1",
+        "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":"/api/customers/1",
         "restaurant":"/api/restaurants/1",
@@ -1234,7 +1234,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/1/items/1",
+        "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":null,
         "restaurant":"/api/restaurants/1",
@@ -1709,7 +1709,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/1/assign",
+        "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":"/api/customers/1",
         "restaurant":"/api/restaurants/1",
@@ -1800,7 +1800,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/2/assign",
+        "@id":"/api/orders/2",
         "@type":"http://schema.org/Order",
         "customer":"/api/customers/2",
         "restaurant":"/api/restaurants/1",
@@ -2289,6 +2289,9 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
           "@id":"/api/orders/1",
