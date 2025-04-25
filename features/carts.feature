@@ -869,7 +869,6 @@ Feature: Carts
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":@integer@
                 }
@@ -887,7 +886,7 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":4,
+              "id": @integer@,
               "label":"Livraison",
               "amount":350
             }
@@ -897,7 +896,7 @@ Feature: Carts
           "reusable_packaging":[],
           "tax":[
             {
-              "id":@integer@,
+              "id": @integer@,
               "label":"TVA 20%",
               "amount":@integer@
             }
@@ -2371,11 +2370,9 @@ Feature: Carts
           {
             "@context": {"@*@": "@*@"},
             "@type": "@string@",
-            "@id": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
               "@type": "@string@",
-              "@id": "@string@",
               "code": "CARD"
             },
             "amount": @integer@
@@ -2383,11 +2380,9 @@ Feature: Carts
           {
             "@context": {"@*@": "@*@"},
             "@type": "@string@",
-            "@id": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
               "@type": "@string@",
-              "@id": "@string@",
               "code": "EDENRED"
             },
             "amount": @integer@
