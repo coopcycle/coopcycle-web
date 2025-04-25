@@ -1579,7 +1579,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/1/assign",
+        "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":"/api/customers/1",
         "restaurant":"/api/restaurants/1",
@@ -1891,7 +1891,7 @@ Feature: Carts
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders/3/assign",
+        "@id":"/api/orders/3",
         "@type":"http://schema.org/Order",
         "customer":"/api/customers/1",
         "restaurant":"/api/restaurants/1",

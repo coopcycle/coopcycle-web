@@ -5,6 +5,7 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\Exception\InvalidArgumentException;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
@@ -26,12 +27,19 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         private readonly UserManagerInterface $userManager,
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory
     )
     {}
 
     public function normalize($object, $format = null, array $context = array())
     {
+        // Since API Platform 2.7, IRIs for custom operations have changed
+        // It means that when doing PUT /api/tasks/{id}/assign, the @id will be /api/tasks/{id}/assign, not /api/tasks/{id} like before
+        // In our JS code, we often override the state with the entire response
+        // This custom code makes sure it works like before, by tricking IriConverter
+        $context['operation'] = $this->resourceMetadataFactory->create(Task::class)->getOperation();
+
         $data = $this->normalizer->normalize($object, $format, $context);
 
         if (!is_array($data)) {
