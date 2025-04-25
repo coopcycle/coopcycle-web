@@ -16,7 +16,6 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders"
     Then the response status code should be 403
 
-  @debug
   Scenario: Retrieve restaurant orders
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
@@ -294,7 +293,10 @@ Feature: Food Tech
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":{"@*@":"@*@"},
-        "restaurant":{"@*@":"@*@"},
+        "restaurant":{
+          "@id": "/api/restaurants/1",
+          "@*@":"@*@"
+        }
         "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
@@ -375,7 +377,10 @@ Feature: Food Tech
         "@id":"/api/orders/1",
         "@type":"http://schema.org/Order",
         "customer":{"@*@":"@*@"},
-        "restaurant":{"@*@":"@*@"},
+        "restaurant":{
+          "@id": "/api/restaurants/1",
+          "@*@":"@*@"
+        },
         "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
