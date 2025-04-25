@@ -1,5 +1,4 @@
-//FIXME; WIP; debugging failing test; remove 'only' when finished
-context.only('Import deliveries (role: admin)', () => {
+context('Import deliveries (role: admin)', () => {
   beforeEach(() => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load ' +
