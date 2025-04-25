@@ -58,8 +58,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Put(
             uriTemplate: '/deliveries/{id}/drop',
-            controller: DropDelivery::class, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Marks a Delivery as dropped']),
-        new Delete(controller: CancelDelivery::class, write: false, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Cancels a Delivery'], name: 'cancel'),
+            controller: DropDelivery::class,
+            security: 'is_granted(\'edit\', object)',
+            openapiContext: ['summary' => 'Marks a Delivery as dropped']
+        ),
+        new Delete(
+            controller: CancelDelivery::class,
+            write: false,
+            security: 'is_granted(\'edit\', object)',
+            openapiContext: ['summary' => 'Cancels a Delivery'],
+            name: 'cancel'
+        ),
         new Post(
             denormalizationContext: ['groups' => ['delivery_create']],
             controller: CreateDelivery::class,
@@ -96,7 +105,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
             types: ['OptimizationSuggestions'],
         ),
         new Post(
-            uriTemplate: '/deliveries/import_async', deserialize: false, inputFormats: ['csv' => ['text/csv']], controller: BulkAsyncDelivery::class, security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')')], types: ['http://schema.org/ParcelDelivery'], order: ['createdAt' => 'DESC'], denormalizationContext: ['groups' => ['order_create']], normalizationContext: ['groups' => ['delivery', 'address']], paginationItemsPerPage: 15)]
+            uriTemplate: '/deliveries/import_async',
+            deserialize: false,
+            inputFormats: ['csv' => ['text/csv']],
+            controller: BulkAsyncDelivery::class,
+            security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')'
+        )
+    ],
+    types: ['http://schema.org/ParcelDelivery'],
+    order: ['createdAt' => 'DESC'],
+    denormalizationContext: ['groups' => ['order_create']],
+    normalizationContext: ['groups' => ['delivery', 'address']],
+    paginationItemsPerPage: 15
+)]
 #[AssertDelivery]
 #[AssertCheckDelivery(groups: ['delivery_check'])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
@@ -106,10 +127,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     uriVariables: [
         'id' => new Link(fromClass: Store::class, toProperty: 'store')
     ],
-    status: 200,
     types: ['http://schema.org/ParcelDelivery'],
     normalizationContext: ['groups' => ['delivery', 'address']],
-    operations: [new GetCollection()]
+    operations: [new GetCollection()],
+    security: "is_granted('edit', request)"
 )]
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {

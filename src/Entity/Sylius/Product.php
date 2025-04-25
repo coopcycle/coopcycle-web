@@ -39,9 +39,8 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     status: 200,
     normalizationContext: ['groups' => ['product']],
-    operations: [
-        new GetCollection()
-    ])]
+    operations: [new GetCollection()]
+)]
 class Product extends BaseProduct implements ProductInterface, Comparable, SoftDeleteableInterface
 {
     use SoftDeleteable;
