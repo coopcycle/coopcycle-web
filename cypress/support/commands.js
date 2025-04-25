@@ -39,7 +39,7 @@ Cypress.Commands.add('symfonyConsole', command => {
   if (prefix) {
     cmd = `${prefix} ${cmd}`
   }
-  cy.exec(cmd)
+  cy.exec(cmd, {timeout: 60000})
 })
 
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
@@ -79,6 +79,7 @@ Cypress.Commands.add('addProduct',
   })
 
 Cypress.Commands.add('login', (username, password) => {
+  cy.visit('/login')
   cy.get('[name="_username"]').type(username)
   cy.get('[name="_password"]').type(password)
   cy.get('[name="_submit"]').click()
@@ -92,14 +93,12 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
   cy.get(selector)
     .should('be.visible')
 
-  cy.wait(500)
-
-  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`, { timeout: 5000 })
     .should('be.visible')
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
-    .type(search, { timeout: 5000, delay: 50 })
+    .type(search, { timeout: 5000, delay: 100 })
 
   cy.get(selector)
     .find('ul[role="listbox"] li', { timeout: 10000 })
@@ -135,7 +134,7 @@ Cypress.Commands.add('newPickupAddress',
         addressSearch,
         addressMatch,
       )
-  
+
       cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
       cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
 
@@ -147,7 +146,6 @@ Cypress.Commands.add('newPickupAddress',
 
       cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
       cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
-  
     })
 
 Cypress.Commands.add('chooseSavedPickupAddress',
