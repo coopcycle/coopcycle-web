@@ -970,14 +970,12 @@ Feature: Orders
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":@string@,
                 "label":"1 × Pepperoni",
                 "amount":0
               }
             ],
             "tax":[
               {
-                "id":@string@,
                 "label":"TVA 10%",
                 "amount":82
               }
@@ -998,14 +996,12 @@ Feature: Orders
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":@string@,
                 "label":"1 × Gluten free",
                 "amount":0
               }
             ],
             "tax":[
               {
-                "id":@string@,
                 "label":"TVA 10%",
                 "amount":127
               }
@@ -1230,14 +1226,12 @@ Feature: Orders
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":245
                 }
