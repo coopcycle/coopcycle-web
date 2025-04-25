@@ -340,9 +340,35 @@ Feature: Dispatch
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "GET" request to "/api/task_lists/1/optimize"
+    And the user "bob" sends a "GET" request to "/api/task_lists/3/optimize"
     Then the response status code should be 200
     And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "solution":{
+          "@context":"/api/contexts/TaskList",
+          "@id":"/api/task_lists/3",
+          "@type":"TaskList",
+          "id":3,
+          "items":[
+            "/api/tasks/3",
+            "/api/tasks/4",
+            "/api/tasks/5"
+          ],
+          "vehicle":null,
+          "trailer":null,
+          "distance":@integer@,
+          "duration":@integer@,
+          "polyline":@string@,
+          "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
+          "date":"2018-12-02",
+          "username":"bob"
+        },
+        "unassignedCount":0
+      }
+      """
 
   Scenario: Create task group
     Given the fixtures files are loaded:
