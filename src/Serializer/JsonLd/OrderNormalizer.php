@@ -4,6 +4,7 @@ namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopeatClient;
@@ -48,7 +49,9 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
         private LoopeatClient $loopeatClient,
         private LoopeatContextInitializer $loopeatContextInitializer,
         private GatewayResolver $paymentGatewayResolver,
-        private EdenredClient $edenredClient)
+        private EdenredClient $edenredClient,
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory
+        )
     {}
 
     public function normalize($object, $format = null, array $context = array())
@@ -75,6 +78,12 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
                 $shippingAddressData = $this->objectNormalizer->normalize($shippingAddress, $format, $context);
                 $fixShippingAddress = true;
             }
+
+            // Since API Platform 2.7, IRIs for custom operations have changed
+            // It means that when doing PUT /api/orders/{id}/accept, the @id will be /api/orders/{id}/accept, not /api/orders/{id} like before
+            // In our JS code, we often override the state with the entire response
+            // This custom code makes sure it works like before, by tricking IriConverter
+            $context['operation'] = $this->resourceMetadataFactory->create(Order::class)->getOperation();
 
             $data = $this->normalizer->normalize($object, $format, $context);
 
