@@ -754,7 +754,8 @@ class AdminController extends AbstractController
         Filesystem $deliveryImportsFilesystem,
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
-        SlugifyInterface $slugify
+        SlugifyInterface $slugify,
+        LoggerInterface $logger,
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -762,20 +763,25 @@ class AdminController extends AbstractController
         ]);
 
         $deliveryImportForm->handleRequest($request);
-        if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
+        if ($deliveryImportForm->isSubmitted()) {
+            if ($deliveryImportForm->isValid()) {
+                $store = $deliveryImportForm->get('store')->getData();
 
-            $store = $deliveryImportForm->get('store')->getData();
-
-            return $this->handleDeliveryImportForStore(
-                store: $store,
-                form: $deliveryImportForm,
-                messageBus: $messageBus,
-                entityManager: $this->entityManager,
-                filesystem: $deliveryImportsFilesystem,
-                hashids: $hashids8,
-                routeTo: 'admin_deliveries',
-                slugify: $slugify
-            );
+                return $this->handleDeliveryImportForStore(
+                    store: $store,
+                    form: $deliveryImportForm,
+                    messageBus: $messageBus,
+                    entityManager: $this->entityManager,
+                    filesystem: $deliveryImportsFilesystem,
+                    hashids: $hashids8,
+                    routeTo: 'admin_deliveries',
+                    slugify: $slugify
+                );
+            } else {
+                $logger->warning('Delivery import form is not valid', [
+                    'errors' => $deliveryImportForm->getErrors(true, false),
+                ]);
+            }
         }
 
         $dataExportForm = $this->createForm(DataExportType::class);
