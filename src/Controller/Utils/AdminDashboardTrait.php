@@ -168,7 +168,7 @@ trait AdminDashboardTrait
             );
 
         $addressIris = array_map(
-            fn ($address) => $iriConverter->getIriFromResource(Address::class, context: ['uri_variables' => [$address]]),
+            fn ($address) => $iriConverter->getIriFromResource(Address::class, context: ['uri_variables' => $address]),
             $qb->getQuery()->getArrayResult()
         );
 
