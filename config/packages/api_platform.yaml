@@ -13,8 +13,8 @@ api_platform:
             - '%kernel.project_dir%/src/Api/Resource'
     exception_to_status:
         Symfony\Component\Serializer\Exception\ExceptionInterface: 400
-        ApiPlatform\Core\Exception\InvalidArgumentException: 400
-        ApiPlatform\Core\Validator\Exception\ValidationException: 400
+        ApiPlatform\Exception\InvalidArgumentException: 400
+        ApiPlatform\Validator\Exception\ValidationException: 400
         AppBundle\Api\Exception\BadRequestHttpException: 400
         AppBundle\Exception\LoopeatInsufficientStockException: 400
     # see https://github.com/api-platform/core/pull/2721

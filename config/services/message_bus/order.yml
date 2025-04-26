@@ -351,7 +351,7 @@ services:
     class: AppBundle\Domain\Order\Reactor\TriggerWebhook
     arguments:
       - '@messenger.default_bus'
-      - '@api_platform.iri_converter'
+      - '@ApiPlatform\Api\IriConverterInterface'
     tags:
       - name: event_subscriber
         subscribes_to: order:created
