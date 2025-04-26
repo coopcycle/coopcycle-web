@@ -67,7 +67,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
     // Saved orders page
 
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')

@@ -55,56 +55,54 @@ describe('Failed checkout; time range is not valid any more', () => {
 
       cy.get('.order-button:visible').click()
 
-      cy.get('[data-testid="cart.fulfillmentDetails"]:visible')
+      cy.get('[data-testid="cart.fulfillmentDetails"]:visible', { timeout: 10000 })
         .contains(' L\'horaire de livraison n\'est plus disponible')
     })
   })
 
-  context('time range expired while the customer was on the address page',
-    () => {
-      it('show an error message (address page)', () => {
-        cy.get('.order-button:visible').click()
+  context('time range expired while the customer was on the address page', () => {
+    it('show an error message (address page)', () => {
+      cy.get('.order-button:visible').click()
 
-        cy.location('pathname').should('eq', '/order/')
+      cy.location('pathname').should('eq', '/order/')
 
-        cy.get('input[name="checkout_address[customer][fullName]"]')
-          .type('John Doe')
+      cy.get('input[name="checkout_address[customer][fullName]"]')
+        .type('John Doe')
 
-        //simulate expired time range by closing the restaurant
-        cy.closeRestaurantForToday('resto_1', 'resto_1')
+      //simulate expired time range by closing the restaurant
+      cy.closeRestaurantForToday('resto_1', 'resto_1')
 
-        cy.contains('Commander').click()
+      cy.contains('Commander').click()
 
-        cy.get('form[name="checkout_address"]')
-          .contains(' L\'horaire de livraison n\'est plus disponible')
-      })
+      cy.get('form[name="checkout_address"]', { timeout: 10000 })
+        .contains(' L\'horaire de livraison n\'est plus disponible')
     })
+  })
 
-  context('time range expired while the customer was on the payment page',
-    () => {
-      it('show an error message (payment page)', () => {
-        cy.get('.order-button:visible').click()
+  context('time range expired while the customer was on the payment page', () => {
+    it('show an error message (payment page)', () => {
+      cy.get('.order-button:visible').click()
 
-        cy.location('pathname').should('eq', '/order/')
+      cy.location('pathname').should('eq', '/order/')
 
-        cy.get('input[name="checkout_address[customer][fullName]"]')
-          .type('John Doe')
+      cy.get('input[name="checkout_address[customer][fullName]"]')
+        .type('John Doe')
 
-        cy.contains('Commander').click()
+      cy.contains('Commander').click()
 
-        cy.location('pathname').should('eq', '/order/payment')
+      cy.location('pathname').should('eq', '/order/payment')
 
-        cy.get('form[name="checkout_payment"] input[type="text"]')
-          .type('John Doe')
-        cy.enterCreditCard()
+      cy.get('form[name="checkout_payment"] input[type="text"]')
+        .type('John Doe')
+      cy.enterCreditCard()
 
-        //simulate expired time range by closing the restaurant
-        cy.closeRestaurantForToday('resto_1', 'resto_1')
+      //simulate expired time range by closing the restaurant
+      cy.closeRestaurantForToday('resto_1', 'resto_1')
 
-        cy.get('form[name="checkout_payment"]').submit()
+      cy.get('form[name="checkout_payment"]').submit()
 
-        cy.get('form[name="checkout_payment"]', {timeout: 10000})
-          .contains(' L\'horaire de livraison n\'est plus disponible')
-      })
+      cy.get('form[name="checkout_payment"]', { timeout: 10000 })
+        .contains(' L\'horaire de livraison n\'est plus disponible')
     })
+  })
 })

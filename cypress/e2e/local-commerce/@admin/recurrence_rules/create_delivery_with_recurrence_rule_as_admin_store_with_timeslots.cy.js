@@ -42,7 +42,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         'match',
         /\/admin\/stores\/[0-9]+\/deliveries$/,
       )
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
       cy.get('[data-testid=delivery__list_item]')

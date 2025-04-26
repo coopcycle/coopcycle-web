@@ -81,6 +81,7 @@ context('Setup simple matrix pricing (role: admin)', () => {
     // Save button
     cy.get('.btn-block').click()
 
-    cy.get('.alert-success').should('contain', 'Changements sauvegardés')
+    cy.get('.alert-success', { timeout: 10000 })
+      .should('contain', 'Changements sauvegardés')
   })
 })

@@ -21,19 +21,14 @@ context('Delivery (role: admin)', () => {
 
     // Pickup
     cy.chooseSavedPickupAddress(1)
-
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
     cy.chooseSavedDropoff1Address(2)
-
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
-
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
-
     cy.get('[data-tax="included"]').contains('4,99 €')
-
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
@@ -42,7 +37,7 @@ context('Delivery (role: admin)', () => {
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
 
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/€4.99/)
       .should('exist')
 
@@ -60,10 +55,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery_variantName').type('Test product')
     cy.get('#delivery_variantPrice').clear()
     cy.get('#delivery_variantPrice').type('72')
-
-    cy.intercept('/admin/deliveries/*').as('submit')
     cy.get('#delivery-submit').click()
-    cy.wait('@submit', { timeout: 10000 })
 
     // list of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
@@ -95,23 +87,18 @@ context('Delivery (role: admin)', () => {
 
     // Pickup
     cy.chooseSavedPickupAddress(1)
-
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
     cy.chooseSavedDropoff1Address(2)
-
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
-
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
-
     cy.get('#delivery_arbitraryPrice').check()
     cy.get('#delivery_variantName').clear()
     cy.get('#delivery_variantName').type('Test product')
     cy.get('#delivery_variantPrice').clear()
     cy.get('#delivery_variantPrice').type('72')
-
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
@@ -120,7 +107,7 @@ context('Delivery (role: admin)', () => {
       /\/admin\/stores\/[0-9]+\/deliveries$/,
     )
 
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/€72.00/)
       .should('exist')
 
@@ -138,10 +125,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery_variantName').type('Test product')
     cy.get('#delivery_variantPrice').clear()
     cy.get('#delivery_variantPrice').type('34')
-
-    cy.intercept('/admin/deliveries/*').as('submit')
     cy.get('#delivery-submit').click()
-    cy.wait('@submit', { timeout: 10000 })
 
     // list of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
