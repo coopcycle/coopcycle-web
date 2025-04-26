@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
@@ -130,6 +131,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -387,7 +389,7 @@ class AdminController extends AbstractController
         ]));
     }
 
-    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
+    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter, NormalizerInterface $normalizer)
     {
         if ($request->query->has('order')) {
             $order = $request->query->get('order');
@@ -403,10 +405,9 @@ class AdminController extends AbstractController
 
         $orders = $this->orderRepository->findOrdersByDate($date);
 
-        $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
+        $ordersNormalized = $normalizer->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
+            'operation' => new GetCollection(),
             'groups' => ['order_minimal']
         ]);
 
