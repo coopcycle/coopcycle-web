@@ -42,8 +42,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             uriTemplate: '/task_lists/set_items/{date}/{username}',
             controller: SetTaskListItemsController::class,
-            read: false,
-            write: false
+            read: false
         ),
         new Get(
             uriTemplate: '/me/tasks/{date}',
