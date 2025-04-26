@@ -106,7 +106,7 @@ final class OrderSubscriber implements EventSubscriberInterface
             $order->setCustomer($this->getUser()->getCustomer());
         }
 
-        if ($request->attributes->get('_route') === 'api_orders_post_collection'
+        if ($request->attributes->get('_route') === '_api_/orders.{_format}_post'
             && $order->hasVendor() && null === $order->getId() && null === $order->getShippingTimeRange()) {
             $shippingTimeRange = $this->orderTimeHelper->getShippingTimeRange($order);
             $order->setShippingTimeRange($shippingTimeRange);
