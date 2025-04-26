@@ -1,14 +1,6 @@
 context('store with invalid pricing (role: store)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
+    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
   })
 
   it('create delivery for store with invalid pricing', () => {
@@ -23,7 +15,7 @@ context('store with invalid pricing (role: store)', () => {
     cy.get('a').contains('Créer une livraison').click()
 
     // Pickup
-  
+
     cy.betaEnterAddressAtPosition(
       0,
       '23 Avenue Claude Vellefaux, 75010 Paris, France',

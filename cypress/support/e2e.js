@@ -38,13 +38,5 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 
 // before(() => {
 //   /* code that needs to run before all specs */
-//   const prefix = Cypress.env('COMMAND_PREFIX')
-
-//   let cmd =
-//     'bin/console coopcycle:setup --env=test'
-//   if (prefix) {
-//     cmd = `${prefix} ${cmd}`
-//   }
-
-//   cy.exec(cmd)
+//   cy.symfonyConsole('coopcycle:setup --env=test')
 // })

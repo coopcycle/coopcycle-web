@@ -1,16 +1,6 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-    if (prefix) {
-      cmd = `${ prefix } ${ cmd }`
-    }
-
-    cy.exec(cmd)
-
-    cy.visit('/login')
+    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
     cy.login('admin', '12345678')
   })
 
@@ -153,5 +143,4 @@ context('Delivery (role: admin)', () => {
       .contains(/€34.00/)
       .should('exist')
   })
-
 })
