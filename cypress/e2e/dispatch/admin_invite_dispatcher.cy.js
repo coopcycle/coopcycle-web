@@ -14,12 +14,12 @@ describe('Dispatch; admin; invite dispatcher', () => {
       /\/admin\/users\/invite$/,
     )
 
-    cy.intercept('/admin/users/invite').as('submit')
     cy.get('#invite_user_email').clear('')
     cy.get('#invite_user_email').type('dispatch01@demo.coopcycle.org')
     cy.get('#invite_user_roles_2').check()
-    cy.get('.btn').click()
 
+    cy.intercept('/admin/users/invite').as('submit')
+    cy.get('.btn').click()
     cy.wait('@submit', {timeout: 10000})
 
     // users page

@@ -60,14 +60,20 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery_variantName').type('Test product')
     cy.get('#delivery_variantPrice').clear()
     cy.get('#delivery_variantPrice').type('72')
+
+    cy.intercept('/admin/deliveries/*').as('submit')
     cy.get('#delivery-submit').click()
+    cy.wait('@submit', { timeout: 10000 })
 
     // list of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/deliveries$/,
     )
-    cy.get('[data-testid=delivery__list_item]')
+
+    // list of upcoming deliveries page
+    cy.visit('/admin/deliveries?section=upcoming')
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/€72.00/)
       .should('exist')
   })
@@ -132,14 +138,21 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery_variantName').type('Test product')
     cy.get('#delivery_variantPrice').clear()
     cy.get('#delivery_variantPrice').type('34')
+
+    cy.intercept('/admin/deliveries/*').as('submit')
     cy.get('#delivery-submit').click()
+    cy.wait('@submit', { timeout: 10000 })
 
     // list of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/deliveries$/,
     )
-    cy.get('[data-testid=delivery__list_item]')
+
+    // list of upcoming deliveries page
+    cy.visit('/admin/deliveries?section=upcoming')
+
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/€34.00/)
       .should('exist')
   })
