@@ -102,7 +102,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists",
+        "@id":"/api/task_lists/v2",
         "@type":"hydra:Collection",
         "hydra:member":[
           {

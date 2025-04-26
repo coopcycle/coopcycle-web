@@ -32,7 +32,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 #[ApiResource(
     operations: [
-        new Get(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Get(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            // Make sure to add requirements for operations like "/task_lists/v2" to work
+            requirements: ['id' => '[0-9]+']
+        ),
         new Patch(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Put(
             security: 'is_granted(\'ROLE_DISPATCHER\')',
