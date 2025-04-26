@@ -24,7 +24,7 @@ Feature: Dispatch
     And the user "bob" sends a "GET" request to "/api/task_lists/1"
     Then the response status code should be 403
 
-  Scenario: Retrieve task lists
+  Scenario: Retrieve task lists (legacy)
     Given the fixtures files are loaded:
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
@@ -83,6 +83,80 @@ Feature: Dispatch
           "hydra:template":"/api/task_lists{?date}",
           "hydra:variableRepresentation":"BasicRepresentation",
           "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Retrieve task lists
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_COURIER"
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists/v2?date=2018-12-01"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@id":"/api/task_lists/1",
+            "@type":"TaskList",
+            "id":1,
+            "items":[
+              "/api/tasks/1"
+            ],
+            "vehicle":null,
+            "trailer":null,
+            "distance":0,
+            "duration":0,
+            "polyline":"",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "date":"2018-12-01",
+            "username":"sarah"
+          },
+          {
+            "@id":"/api/task_lists/4",
+            "@type":"TaskList",
+            "id":4,
+            "items":[
+              "/api/tasks/7"
+            ],
+            "vehicle":null,
+            "trailer":null,
+            "distance":0,
+            "duration":0,
+            "polyline":"",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "date":"2018-12-01",
+            "username":"bob"
+          }
+        ],
+        "hydra:totalItems":2,
+        "hydra:view":{
+          "@id":"/api/task_lists/v2?date=2018-12-01",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/task_lists/v2{?date}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":[
+            {
+              "@type":"IriTemplateMapping",
+              "variable":"date",
+              "property":"date",
+              "required":false
+            }
+          ]
         }
       }
       """
