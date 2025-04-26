@@ -149,9 +149,6 @@ trait AdminDashboardTrait
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
-                'resource_class' => Store::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['store', 'store_with_packages']
             ]);
         }, $stores);
