@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer;
 
 use AppBundle\Entity\Task;
-use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
+use ApiPlatform\Serializer\SerializerContextBuilderInterface;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 

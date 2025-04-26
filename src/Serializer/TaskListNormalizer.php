@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;

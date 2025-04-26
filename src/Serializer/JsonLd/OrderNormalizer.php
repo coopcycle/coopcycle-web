@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;

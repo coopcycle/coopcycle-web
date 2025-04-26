@@ -6,7 +6,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Serializer\TaskNormalizer as BaseTaskNormalizer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
-use ApiPlatform\Core\Serializer\ItemNormalizer;
+use ApiPlatform\Serializer\ItemNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;

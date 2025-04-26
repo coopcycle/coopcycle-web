@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
