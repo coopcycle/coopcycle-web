@@ -846,7 +846,6 @@ Feature: Stores
     When the user "bob" sends a "PATCH" request to "/api/stores/6" with body:
       """
       {
-        "@id": "/api/stores/6",
         "timeSlots": [
           "/api/time_slots/2",
           "/api/time_slots/1",
