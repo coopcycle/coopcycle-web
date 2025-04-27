@@ -15,6 +15,8 @@ module.exports = {
   nodeVersion: "system",
   viewportWidth: 1600,
 
+  defaultCommandTimeout: 10000,
+
   retries: {
     // Configure retry attempts for `cypress run`
     runMode: 2,
@@ -30,6 +32,7 @@ module.exports = {
     },
     baseUrl: "http://localhost:9080",
     experimentalStudio: true,
+    experimentalMemoryManagement: true,
   },
 
   component: {

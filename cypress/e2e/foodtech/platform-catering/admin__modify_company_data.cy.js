@@ -14,7 +14,7 @@ describe('Platform catering; admin; modify company data', () => {
 
     cy.get('#company_name').clear('')
     cy.get('#company_name').type('NEW NAME')
-    cy.get('button[type="submit"]').click()
+    cy.get('form[name="company"]').submit()
 
     cy.urlmatch(/\/admin\/restaurants\/business-accounts/)
     cy.get('.alert-success').should('exist')
