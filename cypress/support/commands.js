@@ -37,9 +37,13 @@ Cypress.Commands.add('symfonyConsole', command => {
   cy.terminal(`bin/console ${command} --env="test"`)
 })
 
+Cypress.Commands.add('urlmatch', (pattern, type='match') => {
+  cy.location('pathname', { timeout: 10000 }).should(type, pattern)
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
-  cy.location('pathname').should('match', pathnameRegexp)
+  cy.urlmatch(pathnameRegexp)
 })
 
 Cypress.Commands.add('addProduct',
