@@ -12,9 +12,11 @@ describe('Platform catering; admin; modify company data', () => {
     cy.get('tbody > :nth-child(1) a').click()
     cy.urlmatch(/\/admin\/restaurants\/business-account\/*/)
 
+    cy.intercept('/admin/restaurants/business-account/*').as('submit')
     cy.get('#company_name').clear('')
     cy.get('#company_name').type('NEW NAME')
     cy.get('form[name="company"]').submit()
+    cy.wait('@submit', {timeout: 10000})
 
     cy.urlmatch(/\/admin\/restaurants\/business-accounts/)
     cy.get('.alert-success').should('exist')

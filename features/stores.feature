@@ -763,7 +763,7 @@ Feature: Stores
         "contactName":null,
         "geo":{
           "latitude":48.864577,
-          "longitude":2.326347
+          "longitude":2.333338
         },
         "streetAddress":"10 rue Mouton Duvernet, Paris",
         "telephone":null,
@@ -791,7 +791,7 @@ Feature: Stores
             "geo":{
               "@type":"GeoCoordinates",
               "latitude":48.864577,
-              "longitude":2.326347
+              "longitude":2.333338
             },
             "streetAddress":"10 rue Mouton Duvernet, Paris",
             "telephone":null,
