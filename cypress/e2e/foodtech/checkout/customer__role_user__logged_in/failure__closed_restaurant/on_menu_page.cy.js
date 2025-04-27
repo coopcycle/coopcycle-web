@@ -6,11 +6,7 @@ describe(
       describe(` (${ customerType })`, () => {
 
         beforeEach(() => {
-
-          cy.symfonyConsole(
-            'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
-
-          cy.visit('/login')
+          cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
           cy.login('bob', '12345678')
         })
 

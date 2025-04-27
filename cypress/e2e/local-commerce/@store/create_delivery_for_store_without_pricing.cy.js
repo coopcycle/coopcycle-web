@@ -6,8 +6,6 @@ context('store without pricing (role: store)', () => {
   it('create delivery for store without pricing', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
-    cy.visit('/login')
-
     cy.login('store_no_pricing', 'password')
 
     cy.urlmatch(/\/dashboard$/)

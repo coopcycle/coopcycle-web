@@ -9,7 +9,6 @@ describe('Checkout (happy path); (business context)', () => {
   })
 
   it('order something at restaurant', () => {
-    cy.visit('/login')
     cy.login('employee', '12345678')
 
     cy.visit('/fr/?_business=true')

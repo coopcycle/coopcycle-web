@@ -9,8 +9,6 @@ describe('Checkout; non business context; logged in customer; fulfilment method:
   })
 
   it('order something at restaurant', () => {
-    cy.visit('/login')
-
     cy.login('bob', '12345678')
 
     cy.visit('/fr/')

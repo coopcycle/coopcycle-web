@@ -6,7 +6,6 @@ describe('Platform catering; admin; invite manager', () => {
   })
 
   it("should send an invitation to a business account's manager", () => {
-    cy.visit('/login')
     cy.login('admin', '12345678')
 
     cy.visit('/admin/restaurants/business-accounts')

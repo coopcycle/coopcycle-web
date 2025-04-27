@@ -6,8 +6,6 @@ context('store with invalid pricing (role: store)', () => {
   it('create delivery for store with invalid pricing', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
-    cy.visit('/login')
-
     cy.login('store_invalid_pricing', 'password')
 
     cy.urlmatch(/\/dashboard$/)

@@ -6,8 +6,6 @@ context('Delivery (role: store)', () => {
   it('create delivery', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
-    cy.visit('/login')
-
     cy.login('store_1', 'store_1')
 
     cy.urlmatch(/\/dashboard$/)

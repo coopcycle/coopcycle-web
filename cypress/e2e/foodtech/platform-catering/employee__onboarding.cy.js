@@ -33,7 +33,6 @@ describe('Platform catering; employee; onboarding', () => {
       'coopcycle:fixtures:load -f cypress/fixtures/business_account_employee_invitation_existing_user.yml',
     )
 
-    cy.visit('/login')
     cy.login('user01', '12345678')
 
     cy.visit('/invitation/define-password/INVITATION_EMPLOYEE')
