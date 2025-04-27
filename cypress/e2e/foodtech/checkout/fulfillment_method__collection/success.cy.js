@@ -61,7 +61,7 @@ describe('Checkout; non business context; logged in customer; fulfilment method:
 
     cy.get('form[name="cart"]').submit()
 
-    cy.location('pathname').should('eq', '/order/')
+    cy.urlmatch(/\/order\/$/)
 
     cy.get('input[name="checkout_address[customer][fullName]"]').type(
       'John Doe',
@@ -69,17 +69,14 @@ describe('Checkout; non business context; logged in customer; fulfilment method:
 
     cy.contains('Commander').click()
 
-    cy.location('pathname').should('eq', '/order/payment')
+    cy.urlmatch(/\/order\/payment$/)
 
     cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe')
     cy.enterCreditCard()
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname', { timeout: 30000 }).should(
-      'match',
-      /\/order\/confirm\/[a-zA-Z0-9]+/,
-    )
+    cy.urlmatch(/\/order\/confirm\/[a-zA-Z0-9]+/)
 
     cy.get('#order-timeline').contains('Commande en attente de validation')
   })

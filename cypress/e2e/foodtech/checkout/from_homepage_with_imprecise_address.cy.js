@@ -20,11 +20,11 @@ context('Checkout', () => {
           .contains('Rue de Rivoli, Paris, France')
           .click()
 
-        cy.location('pathname').should('match', /\/fr\/restaurants/)
+        cy.urlmatch(/\/fr\/restaurants$/)
 
         cy.contains('Crazy Hamburger').click()
 
-        cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
+        cy.urlmatch(/\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
 
         cy.get('#restaurant__fulfilment-details__container [data-testid="cart.shippingAddress"]')
           .should('have.text', 'Rue de Rivoli, Paris, France')

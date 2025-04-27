@@ -45,10 +45,7 @@ context('Delivery via form (payment options: Stripe only)', () => {
 
     cy.get('form[name="delivery"]').submit()
 
-    cy.location('pathname').should(
-      'match',
-      /\/fr\/forms\/[a-zA-Z0-9]+\/summary/,
-    )
+    cy.urlmatch(/\/fr\/forms\/[a-zA-Z0-9]+\/summary/)
 
     cy.get('.alert-info')
       .invoke('text')
@@ -62,9 +59,6 @@ context('Delivery via form (payment options: Stripe only)', () => {
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname', { timeout: 30000 }).should(
-      'match',
-      /\/fr\/pub\/o\/[a-zA-Z0-9]+/,
-    )
+    cy.urlmatch(/\/fr\/pub\/o\/[a-zA-Z0-9]+/)
   })
 })

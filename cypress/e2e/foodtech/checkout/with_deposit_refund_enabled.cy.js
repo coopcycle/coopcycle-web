@@ -16,7 +16,7 @@ context('Checkout', () => {
 
         cy.contains('Zero Waste Inc.').click()
 
-        cy.location('pathname').should('match', /\/fr\/restaurant\/[0-9]+-zero-waste/)
+        cy.urlmatch(/\/fr\/restaurant\/[0-9]+-zero-waste/)
 
         cy.wait('@postRestaurantCart')
 
@@ -60,7 +60,7 @@ context('Checkout', () => {
         // FIXME Use click instead of submit
         cy.get('form[name="cart"]').submit()
 
-        cy.location('pathname').should('eq', '/order/')
+        cy.urlmatch(/\/order\/$/)
 
         // fails on github CI
         // cy.get('.table-order-items tfoot tr:last-child td')
@@ -78,7 +78,7 @@ context('Checkout', () => {
 
         cy.get('#checkout_address_reusablePackagingEnabled').click()
 
-        cy.location('pathname').should('eq', '/order/')
+        cy.urlmatch(/\/order\/$/)
 
         // fails on github CI
         // cy.get('.table-order-items tfoot tr:last-child td')

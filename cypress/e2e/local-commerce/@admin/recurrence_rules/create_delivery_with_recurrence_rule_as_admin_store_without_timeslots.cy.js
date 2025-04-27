@@ -64,10 +64,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery-submit').click()
 
       // list of deliveries page
-      cy.location('pathname', { timeout: 10000 }).should(
-        'match',
-        /\/admin\/stores\/[0-9]+\/deliveries$/,
-      )
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
       cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
@@ -118,10 +115,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
-      cy.location('pathname', { timeout: 10000 }).should(
-        'match',
-        /\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/,
-      )
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
       //pickup time range:
       cy.get(

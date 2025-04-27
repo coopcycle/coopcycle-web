@@ -9,10 +9,7 @@ describe('Dispatch; admin; invite dispatcher', () => {
     cy.get('.btn-info').click()
 
     // user invite page
-    cy.location('pathname', {timeout: 10000}).should(
-      'match',
-      /\/admin\/users\/invite$/,
-    )
+    cy.urlmatch(/\/admin\/users\/invite$/)
 
     cy.get('#invite_user_email').clear('')
     cy.get('#invite_user_email').type('dispatch01@demo.coopcycle.org')
@@ -23,10 +20,7 @@ describe('Dispatch; admin; invite dispatcher', () => {
     cy.wait('@submit', {timeout: 10000})
 
     // users page
-    cy.location('pathname', {timeout: 10000}).should(
-      'match',
-      /\/admin\/users$/,
-    )
+    cy.urlmatch(/\/admin\/users$/)
 
     cy.get('.alert-success', {timeout: 10000}).should(
       'contain',

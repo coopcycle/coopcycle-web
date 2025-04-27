@@ -23,12 +23,12 @@ describe('Dispatch; dispatcher; onboarding', () => {
     cy.get('button[name="registration_form[save]"]').click()
 
     // Confirmation page
-    cy.url().should('include', '/register/confirmed')
+    cy.urlmatch('/register/confirmed', 'include')
 
     // 'Dispatch' button
     cy.get('.hidden-sm').click()
 
     // Dispatch dashboard
-    cy.url().should('include', '/admin/dashboard')
+    cy.urlmatch('/admin/dashboard', 'include')
   })
 })

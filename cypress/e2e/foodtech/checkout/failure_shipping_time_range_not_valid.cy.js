@@ -64,7 +64,7 @@ describe('Failed checkout; time range is not valid any more', () => {
     it('show an error message (address page)', () => {
       cy.get('.order-button:visible').click()
 
-      cy.location('pathname').should('eq', '/order/')
+      cy.urlmatch(/\/order\/$/)
 
       cy.get('input[name="checkout_address[customer][fullName]"]')
         .type('John Doe')
@@ -83,14 +83,14 @@ describe('Failed checkout; time range is not valid any more', () => {
     it('show an error message (payment page)', () => {
       cy.get('.order-button:visible').click()
 
-      cy.location('pathname').should('eq', '/order/')
+      cy.urlmatch(/\/order\/$/)
 
       cy.get('input[name="checkout_address[customer][fullName]"]')
         .type('John Doe')
 
       cy.contains('Commander').click()
 
-      cy.location('pathname').should('eq', '/order/payment')
+      cy.urlmatch(/\/order\/payment$/)
 
       cy.get('form[name="checkout_payment"] input[type="text"]')
         .type('John Doe')

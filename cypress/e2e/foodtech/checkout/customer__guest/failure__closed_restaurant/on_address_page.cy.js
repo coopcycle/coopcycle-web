@@ -61,7 +61,7 @@ describe(
 
               cy.get('.order-button:visible').click()
 
-              cy.location('pathname').should('eq', '/order/')
+              cy.urlmatch(/\/order\/$/)
 
               cy.get('input[name="checkout_address[customer][fullName]"]')
                 .type('John Doe')
@@ -97,7 +97,7 @@ describe(
 
               cy.contains('Commander').click()
 
-              cy.location('pathname').should('eq', '/order/payment')
+              cy.urlmatch(/\/order\/payment$/)
             })
           })
       })

@@ -32,10 +32,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
     cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/€4.99/)
@@ -46,10 +43,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Delivery page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries\/[0-9]+$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
     cy.get('#delivery_arbitraryPrice').check()
     cy.get('#delivery_variantName').clear()
     cy.get('#delivery_variantName').type('Test product')
@@ -58,10 +52,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
 
     // list of upcoming deliveries page
     cy.visit('/admin/deliveries?section=upcoming')
@@ -102,10 +93,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
     cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/€72.00/)
@@ -116,10 +104,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Delivery page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries\/[0-9]+$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
     cy.get('#delivery_arbitraryPrice').check()
     cy.get('#delivery_variantName').clear()
     cy.get('#delivery_variantName').type('Test product')
@@ -128,10 +113,7 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
 
     // list of upcoming deliveries page
     cy.visit('/admin/deliveries?section=upcoming')

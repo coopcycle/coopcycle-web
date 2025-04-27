@@ -10,15 +10,13 @@ describe('Platform catering; admin; modify company data', () => {
 
     // First business account in the list
     cy.get('tbody > :nth-child(1) a').click()
+    cy.urlmatch(/\/admin\/restaurants\/business-account\/*/)
 
     cy.get('#company_name').clear('')
     cy.get('#company_name').type('NEW NAME')
-
-    cy.intercept('POST', '/admin/restaurants/business-account/*').as('submit')
     cy.get('button[type="submit"]').click()
-    cy.wait('@submit', {timeout: 10000})
 
-    cy.url().should('include', '/admin/restaurants/business-accounts')
+    cy.urlmatch(/\/admin\/restaurants\/business-accounts/)
     cy.get('.alert-success').should('exist')
     cy.get('tbody').contains('NEW NAME').should('exist')
   })

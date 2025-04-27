@@ -24,7 +24,7 @@ describe('Platform catering; employee; onboarding', () => {
     cy.get('button[name="registration_form[save]"]').click()
 
     // Confirmation page
-    cy.url().should('include', '/register/confirmed')
+    cy.urlmatch('/register/confirmed', 'include')
     cy.get('.content').should('contain', 'Félicitations')
   })
 

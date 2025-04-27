@@ -8,10 +8,7 @@ context('Dispatch', () => {
     cy.login('admin', '12345678')
 
     cy.visit('/admin/dashboard')
-
-    cy.location('pathname').should('eq', '/admin/dashboard')
-
-    cy.wait(1500)
+    cy.urlmatch(/\/admin\/dashboard$/)
   })
 
   it('creates a task', () => {

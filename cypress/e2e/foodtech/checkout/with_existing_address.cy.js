@@ -6,12 +6,9 @@ context('Checkout', () => {
     })
 
     it('order something at restaurant with existing address', () => {
-
-        cy.visit('/login')
-
         cy.login('jane', '12345678')
 
-        cy.location('pathname').should('eq', '/fr/')
+        cy.urlmatch(/\/fr\/$/)
 
         cy.get('[data-search="address"] input[type="search"]')
           .type('1 rue de', { timeout: 5000, delay: 300 })
@@ -40,10 +37,8 @@ context('Checkout', () => {
           .contains('1, Rue de Rivoli, Paris, France')
           .click()
 
-        cy.location().then((loc) => {
-          expect(loc.pathname).to.eq('/fr/restaurants')
-          expect(loc.search).to.match(/\?geohash=[a-z0-9]+&address=[A-Za-z0-9%=]+/)
-        })
+        cy.urlmatch(/\/fr\/restaurants$/)
+        cy.urlmatch(/\?geohash=[a-z0-9]+&address=[A-Za-z0-9%=]+/, 'match', 'search')
 
         cy.contains('Crazy Hamburger').click()
 

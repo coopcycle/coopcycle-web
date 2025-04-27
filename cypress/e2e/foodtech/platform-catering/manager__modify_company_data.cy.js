@@ -10,12 +10,9 @@ describe('Platform catering; manager; modify company data', () => {
 
     cy.get('#company_name').clear('')
     cy.get('#company_name').type('NEW NAME')
-
-    cy.intercept('POST', '/profile/business-account').as('submit')
     cy.get('button[name="company[save]"]').click()
-    cy.wait('@submit', {timeout: 10000})
 
-    cy.url().should('include', '/profile/business-account')
+    cy.urlmatch('/profile/business-account', 'include')
     cy.get('.alert-success').should('exist')
     cy.get('input[id=company_name]').should('have.value', 'NEW NAME')
   })

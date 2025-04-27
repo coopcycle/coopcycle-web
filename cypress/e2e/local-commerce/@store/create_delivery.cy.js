@@ -10,7 +10,7 @@ context('Delivery (role: store)', () => {
 
     cy.login('store_1', 'store_1')
 
-    cy.location('pathname').should('eq', '/dashboard')
+    cy.urlmatch(/\/dashboard$/)
 
     cy.get('a').contains('Créer une livraison').click()
 
@@ -49,12 +49,9 @@ context('Delivery (role: store)', () => {
       .invoke('text')
       .should('contains', 'Distance : 1.50 kms')
 
-      cy.get('button[type="submit"]').click()
+    cy.get('button[type="submit"]').click()
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/dashboard\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/dashboard\/stores\/[0-9]+\/deliveries$/)
     cy.get('[data-testid=delivery__list_item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

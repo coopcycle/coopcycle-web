@@ -24,7 +24,7 @@ describe('Platform catering; admin; invite manager', () => {
     cy.get('#company_businessRestaurantGroup').select('0')
     cy.get('button[type="submit"]').click()
 
-    cy.url().should('include', '/admin/restaurants/business-account')
+    cy.urlmatch(/\/admin\/restaurants\/business-accounts/)
     cy.get('.alert-success').should('exist')
     cy.get('table').contains('Business01').should('exist')
   })

@@ -85,7 +85,7 @@ describe(
 
               cy.get('.order-button:visible').click()
 
-              cy.location('pathname').should('eq', '/order/')
+              cy.urlmatch(/\/order\/$/)
             })
         })
 

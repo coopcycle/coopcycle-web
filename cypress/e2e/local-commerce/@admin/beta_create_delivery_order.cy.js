@@ -52,15 +52,9 @@ context('Delivery (role: admin)', () => {
 
     // list of deliveries page
     // TODO : check for proper redirect when implemented
-    // cy.location('pathname', { timeout: 10000 }).should(
-    //   'match',
-    //   /\/admin\/stores\/[0-9]+\/deliveries$/,
-    // )
+    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
 
     cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
@@ -87,10 +81,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Order page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/orders\/[0-9]+$/,
-    )
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')

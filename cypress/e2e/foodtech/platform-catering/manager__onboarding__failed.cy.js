@@ -17,6 +17,6 @@ describe('Platform catering; manager; onboarding; failed', () => {
     cy.get('.btn-primary').click()
 
     // Staying on the same page due to the missing info
-    cy.url().should('include', '/invitation/define-password/INVITATION_MANAGER')
+    cy.urlmatch('/invitation/define-password/INVITATION_MANAGER', 'include')
   })
 })

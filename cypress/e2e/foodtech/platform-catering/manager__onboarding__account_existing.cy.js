@@ -25,7 +25,7 @@ describe('Platform catering; manager; onboarding with an existing user account',
     cy.get('.btn-primary').click()
 
     // Confirmation page
-    cy.url().should('include', '/register/confirmed')
+    cy.urlmatch('/register/confirmed', 'include')
     cy.get('.content').should('contain', 'Félicitations')
   })
 })

@@ -51,18 +51,18 @@ describe('Checkout (happy path); with guest checkout disabled', () => {
 
     cy.get('form[name="cart"]').submit()
 
-    cy.location('pathname').should('eq', '/login')
+    cy.urlmatch(/\/login$/)
 
     cy.login('bob', '12345678')
 
-    cy.location('pathname').should('eq', '/order/')
+    cy.urlmatch(/\/order\/$/)
 
     cy.get('input[name="checkout_address[customer][fullName]"]')
       .type('John Doe')
 
     cy.contains('Commander').click()
 
-    cy.location('pathname').should('eq', '/order/payment')
+    cy.urlmatch(/\/order\/payment$/)
 
     cy.get('form[name="checkout_payment"] input[type="text"]')
       .type('John Doe')
@@ -70,8 +70,7 @@ describe('Checkout (happy path); with guest checkout disabled', () => {
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname', { timeout: 30000 })
-      .should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
+    cy.urlmatch(/\/order\/confirm\/[a-zA-Z0-9]+/)
 
     cy.get('#order-timeline').contains('Commande en attente de validation')
   })

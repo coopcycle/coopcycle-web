@@ -37,8 +37,8 @@ Cypress.Commands.add('symfonyConsole', command => {
   cy.terminal(`bin/console ${command} --env="test"`)
 })
 
-Cypress.Commands.add('urlmatch', (pattern, type='match') => {
-  cy.location('pathname', { timeout: 10000 }).should(type, pattern)
+Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
+  cy.location(from, { timeout: 10000 }).should(type, pattern)
 })
 
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {

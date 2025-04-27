@@ -49,15 +49,9 @@ context('Delivery (role: admin)', () => {
     cy.get('button[type="submit"]').click()
 
     // TODO : check for proper redirect when implemented
-    // cy.location('pathname', { timeout: 10000 }).should(
-    //   'match',
-    //   /\/admin\/stores\/[0-9]+\/deliveries$/,
-    // )
+    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
 
     cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)

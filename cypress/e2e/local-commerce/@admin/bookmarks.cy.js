@@ -38,10 +38,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
   it('should add a bookmark to an existing order', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
     cy.get('[data-testid="delivery__list_item"]')
       .find('[data-testid="delivery_id"]')
@@ -54,10 +51,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // (all) Deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
     cy.get('[href="/admin/stores"]').click()
     cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
 
