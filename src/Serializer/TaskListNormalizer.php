@@ -83,12 +83,6 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
             }
         }
 
-        // Legacy
-        if (isset($context['item_operation_name']) && $context['item_operation_name'] === 'my_tasks') {
-            $data['hydra:member'] = $data['items'];
-            $data['hydra:totalItems'] = count($data['items']);
-        }
-
         return $data;
     }
 
