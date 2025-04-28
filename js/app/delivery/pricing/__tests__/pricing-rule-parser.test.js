@@ -6,7 +6,7 @@ import parsePricingRule, {
   PricePerPackage,
   RawPriceExpression,
   PercentagePrice,
-} from '../pricing/pricing-rule-parser'
+} from '../pricing-rule-parser'
 import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'

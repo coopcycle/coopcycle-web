@@ -1,4 +1,4 @@
-import { numericTypes, isNum, lineToString } from '../pricing/expresssion-builder'
+import { numericTypes, isNum, lineToString } from '../expresssion-builder'
 
 describe('isNum', () => {
   it('should return true for numeric types', () => {
