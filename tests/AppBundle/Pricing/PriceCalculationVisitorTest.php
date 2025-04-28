@@ -39,7 +39,6 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $expressionLanguage,
             new DeliveryExpressionLanguageVisitor(),
             new TaskExpressionLanguageVisitor(
-                new DeliveryExpressionLanguageVisitor(),
                 self::getContainer()->get(IriConverterInterface::class)
             )
         );
@@ -1500,7 +1499,6 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
-        // price per dropoff point
         $rule1 = new PricingRule();
         $rule1->setTarget(PricingRule::TARGET_TASK);
         $rule1->setExpression('time_slot == "/api/time_slots/1"');
@@ -1537,7 +1535,6 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
 
-        // price per dropoff point
         $rule1 = new PricingRule();
         $rule1->setTarget(PricingRule::TARGET_TASK);
         $rule1->setExpression('time_slot != "/api/time_slots/1"');

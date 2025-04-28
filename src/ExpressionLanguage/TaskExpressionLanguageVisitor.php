@@ -3,13 +3,13 @@
 namespace AppBundle\ExpressionLanguage;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 
 class TaskExpressionLanguageVisitor
 {
 
     public function __construct(
-        private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
         private readonly IriConverterInterface $iriConverter,
     )
     {
@@ -31,10 +31,6 @@ class TaskExpressionLanguageVisitor
 
     public function toExpressionLanguageValues(Task $task): array
     {
-        //FIXME: to be removed?; for now it might still be needed to maintain backwards compatibility
-        // for move information see app/DoctrineMigrations/Version20250304220001.php
-        $values = $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($task->getDelivery());
-
         $emptyObject = new \stdClass();
         $emptyObject->address = null;
         $emptyObject->createdAt = null;
@@ -44,10 +40,20 @@ class TaskExpressionLanguageVisitor
 
         $thisObj = self::toExpressionLanguageObject($task);
 
-        $values['distance'] = -1;
+        //FIXME: legacy properties from the days when Task and Delivery shared the same expression language structure
+        // to be removed? For now, they might still be needed to maintain backwards compatibility
+        // for more information see app/DoctrineMigrations/Version20250304220001.php
+        $values = [
+            'distance' => -1,
+            //FIXME; 'vehicle' is deprecated
+            'vehicle' => Delivery::VEHICLE_BIKE,
+            'pickup' => $task->isPickup() ? $thisObj : $emptyObject,
+            'dropoff' => $task->isDropoff() ? $thisObj : $emptyObject,
+            'order' => new \stdClass(),
+            'task' => $thisObj,
+        ];
+
         $values['weight'] = $task->getWeight();
-        $values['pickup'] = $task->isPickup() ? $thisObj : $emptyObject;
-        $values['dropoff'] = $task->isDropoff() ? $thisObj : $emptyObject;
         $values['packages'] = new PackagesResolver($task);
 
         if (null !== $task->getTimeSlot()) {
@@ -55,8 +61,6 @@ class TaskExpressionLanguageVisitor
         } else {
             $values['time_slot'] = null;
         }
-
-        $values['task'] = $thisObj;
 
         return $values;
     }
