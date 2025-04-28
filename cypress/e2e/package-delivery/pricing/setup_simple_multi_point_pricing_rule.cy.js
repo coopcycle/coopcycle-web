@@ -43,8 +43,9 @@ context('Setup simple multi-point pricing (role: admin)', () => {
     // Save button
     cy.intercept('POST', '/admin/deliveries/pricing/new').as('submit')
     cy.get('.btn-block').click()
-    cy.wait('@submit', {timeout: 10000})
+    cy.wait('@submit', { timeout: 10000 })
 
-    cy.get('.alert-success').should('contain', 'Changements sauvegardés')
+    cy.get('.alert-success', { timeout: 10000 })
+      .should('contain', 'Changements sauvegardés')
   })
 })

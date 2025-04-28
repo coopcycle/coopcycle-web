@@ -1,4 +1,4 @@
-.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata1 testdata2 testdata3 testdata4 demodata testserver console log log-requests ftp
+.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata1 testdata2 testdata3 testdata4 demodata testserver console log log-requests ftp
 
 setup: install migrations perms
 
@@ -41,7 +41,9 @@ cypress:
 	@npm run e2e
 # For now, just change here the `cypress/e2e/xxx/file.cy.js` to run a specific test
 cypress-only:
-	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/dispatch/admin_invite_dispatcher.cy.js
+	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/local-commerce/@admin/update_price.cy.js
+cypress-only-until-fail:
+	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/local-commerce/@admin/update_price.cy.js; do :; done
 cypress-open:
 	@cypress open
 # NOTE: This command is not needed if you run `npm run e2e` or `npm run e2e:headless`

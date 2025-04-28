@@ -21,7 +21,7 @@ context('Invoicing (role: admin)', () => {
     cy.get('[data-testid="invoicing.refresh"]').click()
 
     cy.get('[data-testid="invoicing.organizations"]')
-      .contains(/Acme/, {timeout: 10000})
+      .contains(/Acme/, { timeout: 10000 })
       .should('exist')
   })
 })
