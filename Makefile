@@ -88,7 +88,7 @@ fresh-db:
 # This one solves weird file permissions issues when
 # browsing the `test` env at http://localhost:9080/
 perms:
-	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/ && chmod 777 web/ var/"
+	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/ && chmod 777 web/ var/ && chmod 666 web/build/entrypoints.json"
 
 lint:
 	@docker compose exec php php vendor/bin/phpstan analyse -v

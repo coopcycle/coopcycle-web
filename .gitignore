@@ -20,6 +20,11 @@
 /web/build/
 /web/build-cypress/
 
+# Cypress stuff
+/cypress/coverage
+/cypress/screenshots
+/cypress/videos
+
 # Symfony bundles
 /web/bundles/
 
