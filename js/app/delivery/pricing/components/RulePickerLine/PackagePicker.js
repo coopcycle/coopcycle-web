@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectPackages } from '../redux/pricingSlice'
+import { selectPackages } from '../../redux/pricingSlice'
 
 export default function PackagePicker({ value, onChange }) {
   const packages = useSelector(selectPackages)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGetTimeSlotsQuery } from '../../../api/slice'
+import { useGetTimeSlotsQuery } from '../../../../api/slice'
 import PickerIsLoading from './PickerIsLoading'
 import PickerIsError from './PickerIsError'
 

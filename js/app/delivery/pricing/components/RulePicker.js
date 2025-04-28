@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
+import './RulePicker.scss'
+
 import RulePickerLine from './RulePickerLine'
 import { parseAST } from '../pricing-rule-parser'
 import { linesToString } from '../expresssion-builder'

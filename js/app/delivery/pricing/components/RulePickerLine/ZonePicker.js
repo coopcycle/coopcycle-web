@@ -1,6 +1,6 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
-import { selectZones } from '../redux/pricingSlice'
+import { selectZones } from '../../redux/pricingSlice'
 
 export default function ZonePicker({ value, onChange }) {
   const zones = useSelector(selectZones)
