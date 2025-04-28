@@ -69,3 +69,5 @@ export function lineToString(line) {
       return `${line.left} ${line.operator} "${line.right}"`
   }
 }
+
+export const linesToString = lines => lines.map(line => lineToString(line)).join(' and ')

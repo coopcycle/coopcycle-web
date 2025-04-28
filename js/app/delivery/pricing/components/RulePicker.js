@@ -4,9 +4,7 @@ import { withTranslation } from 'react-i18next'
 
 import RulePickerLine from './RulePickerLine'
 import { parseAST } from '../pricing-rule-parser'
-import { lineToString } from '../expresssion-builder'
-
-const linesToString = lines => lines.map(line => lineToString(line)).join(' and ')
+import { linesToString } from '../expresssion-builder'
 
 class RulePicker extends React.Component {
 
