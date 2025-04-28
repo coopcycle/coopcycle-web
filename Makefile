@@ -46,11 +46,9 @@ cypress-only-until-fail:
 	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/local-commerce/@admin/update_price.cy.js; do :; done
 cypress-open:
 	@cypress open
-# NOTE: This command is not needed if you run `npm run e2e` or `npm run e2e:headless`
-# in the terminal, as it will install cypress automatically
 cypress-install:
-	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm install -g cypress@13.15.0 @cypress/webpack-preprocessor@6.0.2 @cypress/react18@2.0.1
-	@npm install -g cypress@13.15.0 @cypress/webpack-preprocessor@6.0.2 @cypress/react18@2.0.1
+	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
+	@npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
 
 jest:
 	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
