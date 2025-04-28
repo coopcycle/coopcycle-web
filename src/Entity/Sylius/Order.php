@@ -1630,6 +1630,11 @@ class Order extends BaseOrder implements OrderInterface
         return $this->getLoopeatDetails()->hasReturns();
     }
 
+    public function countLoopeatReturns()
+    {
+        return $this->getLoopeatDetails()->countReturns();
+    }
+
     public function getReturnsAmountForLoopeat(): int
     {
         $reusablePackagings = $this->getRestaurant()->getReusablePackagings();

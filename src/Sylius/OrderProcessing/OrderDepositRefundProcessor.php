@@ -11,6 +11,7 @@ use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class OrderDepositRefundProcessor implements OrderProcessorInterface
@@ -28,7 +29,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
     public function __construct(
         private AdjustmentFactoryInterface $adjustmentFactory,
         private TranslatorInterface $translator,
-        private int $loopeatProcessingFee = 0,
+        private string $loopeatProcessingFee = '0',
         private string $loopeatProcessingFeeBehavior = self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS)
     {
         $this->loopeatProcessingFee = $loopeatProcessingFee;
@@ -104,13 +105,19 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
         // Collect an additional fee for LoopEat, *PER ORDER*
         // https://github.com/coopcycle/coopcycle-web/issues/2284
-        if ($restaurant->isLoopeatEnabled() && $this->loopeatProcessingFee > 0) {
+        if ($restaurant->isLoopeatEnabled() && $this->loopeatProcessingFee !== '0') {
             if (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS === $this->loopeatProcessingFeeBehavior
                 || (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS === $this->loopeatProcessingFeeBehavior && $order->hasLoopeatReturns())) {
+
+                $language = new ExpressionLanguage();
+                $loopeatProcessingFee = $language->evaluate($this->loopeatProcessingFee, [
+                    'returns_count' => $order->countLoopeatReturns(),
+                ]);
+
                 $order->addAdjustment($this->adjustmentFactory->createWithData(
                     AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
                     $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
-                    $this->loopeatProcessingFee,
+                    $loopeatProcessingFee,
                     $neutral = false
                 ));
             }
