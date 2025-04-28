@@ -4,11 +4,11 @@ import isScalar from 'locutus/php/var/is_scalar'
 import { useTranslation, withTranslation } from 'react-i18next'
 import numbro from 'numbro'
 
-import { numericTypes, isNum } from './RulePicker'
 import './RulePicker.scss'
 import ZonePicker from './ZonePicker'
 import PackagePicker from './PackagePicker'
 import TimeSlotPicker from './TimeSlotPicker'
+import { numericTypes, isNum } from '../expresssion-builder'
 
 /*
 
@@ -43,7 +43,7 @@ const typeToOperators = {
   'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
   'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
   'task.type': ['=='],
-  'time_slot': ['=='],
+  'time_slot': ['==', '!='],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
@@ -326,7 +326,7 @@ class RulePickerLine extends React.Component {
       state.value = ['0', isK(this.state.type) ? '1000' : '1']
     }
 
-    if (_.includes(['==', '<', '>'], operator)) {
+    if (_.includes(['==', '!=', '<', '>'], operator)) {
       state.value = isNum(this.state.type) ? '0' : ''
     }
 
@@ -377,8 +377,9 @@ class RulePickerLine extends React.Component {
       return (
         <ZonePicker onChange={this.handleValueChange} value={this.state.value} />
       )
-    // vehicle, diff_days(pickup)
+
     case '==':
+    case '!=':
 
       if (this.state.type === 'vehicle') {
         return (
