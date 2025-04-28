@@ -9,6 +9,7 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
@@ -1492,5 +1493,83 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
         $this->assertEquals(1495, $output->getPrice());
+    }
+
+    public function testGetPriceWithMatchingTimeSlot()
+    {
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        // price per dropoff point
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('time_slot == "/api/time_slots/1"');
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $timeSlot = $this->prophesize(TimeSlot::class);
+        $timeSlot->getId()->willReturn(1);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+        $pickup->setTimeSlot($timeSlot->reveal());
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
+    }
+
+    public function testGetPriceWithNotMatchingTimeSlot()
+    {
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        // price per dropoff point
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('time_slot != "/api/time_slots/1"');
+        $rule1->setPrice('550');
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $timeSlot1 = $this->prophesize(TimeSlot::class);
+        $timeSlot1->getId()->willReturn(1);
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+        $pickup->setTimeSlot($timeSlot1->reveal());
+
+        $timeSlot2 = $this->prophesize(TimeSlot::class);
+        $timeSlot2->getId()->willReturn(2);
+
+        $dropoff1 = new Task();
+        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+        $dropoff1->setTimeSlot($timeSlot2->reveal());
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(550, $output->getPrice());
     }
 }
