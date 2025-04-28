@@ -21,18 +21,13 @@ final class Optimize
 
         $data->clear();
 
-        foreach ($optim["solution"] as $item) {
+        foreach ($optim['solution'] as $item) {
             $data->addItem($item);
         }
 
         return new JsonResponse([
-            "solution" => $this->taskListNormalizer->normalize($data, 'jsonld', [
-                'resource_class' => TaskList::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['task_list']
-            ]),
-            "unassignedCount" => $optim["unassignedCount"]
+            'solution' => $this->taskListNormalizer->normalize($data, 'jsonld', ['groups' => ['task_list']]),
+            'unassignedCount' => $optim['unassignedCount']
         ]);
     }
 }
