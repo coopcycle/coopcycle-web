@@ -34,7 +34,7 @@ context('Delivery (role: admin)', () => {
     // list of deliveries page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10001 })
       .contains(/€4.99/)
       .should('exist')
 
@@ -56,7 +56,7 @@ context('Delivery (role: admin)', () => {
 
     // list of upcoming deliveries page
     cy.visit('/admin/deliveries?section=upcoming')
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10002 })
       .contains(/€72.00/)
       .should('exist')
   })
@@ -95,7 +95,7 @@ context('Delivery (role: admin)', () => {
     // list of deliveries page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10003 })
       .contains(/€72.00/)
       .should('exist')
 
@@ -118,7 +118,7 @@ context('Delivery (role: admin)', () => {
     // list of upcoming deliveries page
     cy.visit('/admin/deliveries?section=upcoming')
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10004 })
       .contains(/€34.00/)
       .should('exist')
   })

@@ -81,13 +81,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       //pickup time range:
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10000 }
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10001 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':12')
       })
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10000 }
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10002 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':27')
@@ -95,13 +95,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       //dropoff time range:
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10000 }
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10003 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':24')
       })
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10000 }
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10004 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':58')
@@ -119,13 +119,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       //pickup time range:
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10000 }
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10005 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':12')
       })
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10000 }
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10006 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':27')
@@ -133,13 +133,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       //dropoff time range:
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10000 }
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10007 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':24')
       })
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10000 }
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10008 }
       ).should($input => {
         const val = $input.val()
         expect(val).to.include(':58')
