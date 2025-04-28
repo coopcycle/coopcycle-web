@@ -6,6 +6,8 @@ import numbro from 'numbro'
 
 import { numericTypes, isNum } from './RulePicker'
 import './RulePicker.scss'
+import ZonePicker from './ZonePicker'
+import PackagePicker from './PackagePicker'
 
 /*
 
@@ -368,12 +370,7 @@ class RulePickerLine extends React.Component {
     case 'in_zone':
     case 'out_zone':
       return (
-        <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-          <option value="">-</option>
-          { this.props.zones.map((item, index) => {
-            return (<option value={item} key={index}>{item}</option>)
-          })}
-        </select>
+        <ZonePicker onChange={this.handleValueChange} value={this.state.value} />
       )
     // vehicle, diff_days(pickup)
     case '==':
@@ -420,12 +417,7 @@ class RulePickerLine extends React.Component {
       return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
     case 'containsAtLeastOne':
       return (
-        <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-          <option value="">-</option>
-          { this.props.packages.map((item, index) => {
-            return (<option value={item} key={index}>{item}</option>)
-          })}
-        </select>
+        <PackagePicker onChange={this.handleValueChange} value={this.state.value} />
       )
     }
   }

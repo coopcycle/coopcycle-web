@@ -136,8 +136,6 @@ class RulePicker extends React.Component {
               type={ line.left }
               operator={ line.operator }
               value={ line.right }
-              zones={ this.props.zones }
-              packages={ this.props.packages }
               onUpdate={ this.updateLine }
               onDelete={ this.deleteLine } />
           )) }
@@ -162,16 +160,12 @@ RulePicker.defaultProps = {
   ruleTarget: 'DELIVERY',
   expression: '',
   onExpressionChange: () => {},
-  zones: [],
-  packages: [],
 }
 
 RulePicker.propTypes = {
   ruleTarget: PropTypes.string,
   expression: PropTypes.string.isRequired,
   onExpressionChange: PropTypes.func.isRequired,
-  zones: PropTypes.arrayOf(PropTypes.string),
-  packages: PropTypes.arrayOf(PropTypes.string),
 }
 
 export default withTranslation()(RulePicker)
