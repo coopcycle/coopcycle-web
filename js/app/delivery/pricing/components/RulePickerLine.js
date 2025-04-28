@@ -8,6 +8,7 @@ import { numericTypes, isNum } from './RulePicker'
 import './RulePicker.scss'
 import ZonePicker from './ZonePicker'
 import PackagePicker from './PackagePicker'
+import TimeSlotPicker from './TimeSlotPicker'
 
 /*
 
@@ -42,6 +43,7 @@ const typeToOperators = {
   'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
   'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
   'task.type': ['=='],
+  'time_slot': ['=='],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
@@ -86,6 +88,7 @@ const TASK_TYPES = [
   { name: 'weight' },
   { name: 'packages' },
   { name: 'packages.totalVolumeUnits()' },
+  { name: 'time_slot' },
   { name: 'diff_hours(pickup)', deprecated: true },
   { name: 'diff_days(pickup)', deprecated: true },
   { name: 'vehicle', deprecated: true },
@@ -172,6 +175,8 @@ function RulePickerType({ ruleTarget, type }) {
         return t('RULE_PICKER_LINE_BIKE_TYPE')
       case 'dropoff.doorstep':
         return t('RULE_PICKER_LINE_DROPOFF_DOORSTEP')
+      case 'time_slot':
+        return t('RULE_PICKER_LINE_TIME_SLOT')
       default:
         return type
     }
@@ -397,6 +402,12 @@ class RulePickerLine extends React.Component {
 
       if (this.state.type === 'dropoff.doorstep') {
         return this.renderBooleanInput()
+      }
+
+      if (this.state.type === 'time_slot') {
+        return (
+          <TimeSlotPicker onChange={this.handleValueChange} value={this.state.value} />
+        )
       }
 
       return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
