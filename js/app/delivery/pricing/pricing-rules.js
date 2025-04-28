@@ -340,8 +340,8 @@ $('#pricing-rule-set-footer').each(function (index, item) {
   root.render(
     <RenderRoot>
       <div className="mb-5 d-flex justify-content-end gap-4">
-        <AddRulePerDelivery onAddRule={addPricingRule} />
         <AddRulePerTask onAddRule={addPricingRule} />
+        <AddRulePerDelivery onAddRule={addPricingRule} />
       </div>
     </RenderRoot>,
   )
