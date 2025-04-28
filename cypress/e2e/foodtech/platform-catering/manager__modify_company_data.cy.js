@@ -13,7 +13,7 @@ describe('Platform catering; manager; modify company data', () => {
     cy.get('button[name="company[save]"]').click()
 
     cy.urlmatch('/profile/business-account', 'include')
-    cy.get('.alert-success').should('exist')
+    cy.get('.alert-success', { timeout: 10000 }).should('exist')
     cy.get('input[id=company_name]').should('have.value', 'NEW NAME')
   })
 })

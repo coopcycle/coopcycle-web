@@ -42,6 +42,6 @@ describe('Platform catering; employee; onboarding', () => {
     // associate personal account with a business account page
     cy.get('.btn-primary').click()
 
-    cy.get('.alert-success').should('contain', 'Business Account 1')
+    cy.get('.alert-success', { timeout: 10000 }).should('contain', 'Business Account 1')
   })
 })

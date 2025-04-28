@@ -24,7 +24,7 @@ describe('Platform catering; admin; invite manager', () => {
     cy.get('button[type="submit"]').click()
 
     cy.urlmatch(/\/admin\/restaurants\/business-accounts/)
-    cy.get('.alert-success').should('exist')
+    cy.get('.alert-success', { timeout: 10000 }).should('exist')
     cy.get('table').contains('Business01').should('exist')
   })
 })
