@@ -49,6 +49,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuthClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
@@ -218,6 +219,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theFixturesFileIsLoaded($filename)
     {
+        $filename = $this->transformFixtureFilename($filename);
+
         $this->fixturesLoader->load([
             __DIR__.'/../../features/fixtures/ORM/'.$filename
         ], $_SERVER, [], PurgeMode::createNoPurgeMode());
@@ -229,10 +232,34 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theFixturesFilesAreLoaded(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
-            return __DIR__.'/../../features/fixtures/ORM/'.current($row);
+            return $this->transformFixtureFilename(current($row));
         }, $table->getRows());
 
         $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
+    }
+
+    /**
+     * @Given the fixtures files are loaded with no purge:
+     */
+    public function theFixturesFilesAreLoadedWithNoPurge(TableNode $table)
+    {
+        $filenames = array_map(function (array $row) {
+            return $this->transformFixtureFilename(current($row));
+        }, $table->getRows());
+
+        $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
+    }
+
+    private function transformFixtureFilename($filename)
+    {
+        $dir = __DIR__.'/../../features/fixtures/ORM/';
+
+        if (str_starts_with($filename, 'cypress://')) {
+            $filename = substr($filename, strlen('cypress://'));
+            $dir = __DIR__.'/../../cypress/fixtures/';
+        }
+
+        return $dir . $filename;
     }
 
     /**
