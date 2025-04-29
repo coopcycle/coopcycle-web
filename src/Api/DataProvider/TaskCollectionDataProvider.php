@@ -114,7 +114,7 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
         foreach ($tasks as $task) {
             $input = $res[$task->getId()];
             $task->setPrefetchedPackagesAndWeight([
-                    'packages' => json_decode($input['packages'], true),
+                    'packages' => json_decode($input['packages'] ?? '[]', true),
                     'weight' => $input['weight']]
             );
         }
