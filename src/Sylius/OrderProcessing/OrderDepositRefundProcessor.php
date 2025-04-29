@@ -105,21 +105,19 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
         // Collect an additional fee for LoopEat, *PER ORDER*
         // https://github.com/coopcycle/coopcycle-web/issues/2284
-        if ($restaurant->isLoopeatEnabled() && $this->loopeatProcessingFee !== '0') {
+        if ($restaurant->isLoopeatEnabled()) {
             if (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ALWAYS === $this->loopeatProcessingFeeBehavior
                 || (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS === $this->loopeatProcessingFeeBehavior && $order->hasLoopeatReturns())) {
 
-                $language = new ExpressionLanguage();
-                $loopeatProcessingFee = $language->evaluate($this->loopeatProcessingFee, [
-                    'returns_count' => $order->countLoopeatReturns(),
-                ]);
-
-                $order->addAdjustment($this->adjustmentFactory->createWithData(
-                    AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
-                    $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
-                    $loopeatProcessingFee,
-                    $neutral = false
-                ));
+                $processingFee = $this->getLoopeatProcessingFee($order);
+                if ($processingFee > 0) {
+                    $order->addAdjustment($this->adjustmentFactory->createWithData(
+                        AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+                        $this->translator->trans('order.adjustment_type.reusable_packaging.loopeat'),
+                        $processingFee,
+                        $neutral = false
+                    ));
+                }
             }
         } else if ($totalAmount > 0) {
             $order->addAdjustment($this->adjustmentFactory->createWithData(
@@ -153,5 +151,23 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
         }
 
         return ceil($reusablePackaging->getUnits() * $item->getQuantity());
+    }
+
+    private function getLoopeatProcessingFee(BaseOrderInterface $order): int
+    {
+        $language = new ExpressionLanguage();
+
+        return $language->evaluate($this->loopeatProcessingFee, [
+            'returns_count' => $order->countLoopeatReturns(),
+        ]);
+    }
+
+    public function getLoopeatReturnsFee(BaseOrderInterface $order): int
+    {
+        if (self::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS === $this->loopeatProcessingFeeBehavior && $order->hasLoopeatReturns()) {
+            return $this->getLoopeatProcessingFee($order);
+        }
+
+        return 0;
     }
 }
