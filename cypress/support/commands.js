@@ -37,6 +37,18 @@ Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
   cy.location(from, { timeout: 10000 }).should(type, pattern)
 })
 
+Cypress.Commands.add('getIfExists', (selector, callbackWhenNotFound=null) => {
+  cy.document().then(($document) => {
+    if ($document.querySelectorAll(selector).length) {
+      return cy.get(selector, { timeout: 5000 }).should('exist')
+    }
+
+    return cy.log(`The element '${selector}' was not found in DOM!`).then(() => {
+        return callbackWhenNotFound ? callbackWhenNotFound(selector) : null
+      })
+  })
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.urlmatch(pathnameRegexp)
