@@ -13,11 +13,12 @@ use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\')'), new Patch(security: 'is_granted(\'ROLE_ADMIN\')'), new Delete(security: 'is_granted(\'ROLE_ADMIN\')'), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'), new Post(security: 'is_granted(\'ROLE_ADMIN\')')], normalizationContext: ['groups' => ['vehicle', 'warehouse']], denormalizationContext: ['groups' => ['vehicle_create']], order: ['name' => 'ASC'])]
-class Vehicle
+class Vehicle implements SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;

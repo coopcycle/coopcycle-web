@@ -15,6 +15,7 @@ use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use AppBundle\Validator\Constraints\WarehouseDelete as AssertCanDelete;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 
@@ -33,7 +34,7 @@ use Gedmo\Timestampable\Traits\Timestampable;
     denormalizationContext: ['groups' => ['warehouse_create', 'address_create']]
 )]
 #[AssertCanDelete(groups: ['deleteValidation'])]
-class Warehouse
+class Warehouse implements SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;

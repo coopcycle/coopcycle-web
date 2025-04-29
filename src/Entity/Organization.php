@@ -11,12 +11,12 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 #[ApiResource(operations: [new Get(), new Put(), new Patch(), new Delete(), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_ADMIN\')')], normalizationContext: ['groups' => ['org']], order: ['name' => 'ASC'])]
-class Organization
+class Organization implements SoftDeleteableInterface
 {
     use SoftDeleteable;
 
