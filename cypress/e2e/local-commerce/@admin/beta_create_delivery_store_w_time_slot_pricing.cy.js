@@ -7,8 +7,14 @@ context('Delivery (role: admin); store with time slot pricing', () => {
         '-f features/fixtures/ORM/store_w_time_slot_pricing.yml',
     )
 
+    cy.setMockDateTime('2025-04-23 8:30:00')
+
     cy.visit('/login')
     cy.login('admin', '12345678')
+  })
+
+  afterEach(() => {
+    cy.resetMockDateTime()
   })
 
   it('[beta form] create delivery order', function () {
