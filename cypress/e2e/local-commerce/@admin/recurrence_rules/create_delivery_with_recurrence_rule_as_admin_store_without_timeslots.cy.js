@@ -80,32 +80,28 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_form__recurrence__container').should('not.exist')
 
       //pickup time range:
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10001 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':12')
-      })
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10002 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':27')
-      })
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':12')
+        })
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':27')
+        })
 
       //dropoff time range:
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10003 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':24')
-      })
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10004 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':58')
-      })
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':24')
+        })
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':58')
+        })
 
       cy.get('[data-testid="breadcrumb"]')
         .find('[data-testid="order_id"]')
@@ -118,32 +114,28 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
       //pickup time range:
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10005 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':12')
-      })
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10006 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':27')
-      })
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':12')
+        })
+      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':27')
+        })
 
       //dropoff time range:
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input', { timeout: 10007 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':24')
-      })
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input', { timeout: 10008 }
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':58')
-      })
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':24')
+        })
+      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input')
+        .should($input => {
+          const val = $input.val()
+          expect(val).to.include(':58')
+        })
 
       cy.get('[data-tax="included"]').contains('4,99 €')
 

@@ -26,11 +26,7 @@
 
 Cypress.Commands.add('terminal', command => {
   const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `${command}`
-  if (prefix) {
-    cmd = `${prefix} ${cmd}`
-  }
-  cy.exec(cmd, {timeout: 60000})
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {

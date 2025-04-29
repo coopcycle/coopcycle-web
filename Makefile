@@ -1,4 +1,4 @@
-.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata1 testdata2 testdata3 testdata4 demodata testserver console log log-requests ftp
+.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata-dispatch testdata-restaurant testdata-package-delivery-orders testdata-high-volume-instance demodata testserver console log log-requests ftp
 
 setup: install migrations perms
 
@@ -10,7 +10,7 @@ install:
 	@docker compose exec php php bin/console doctrine:schema:create --env=test
 	@docker compose exec php php bin/console typesense:create --env=test
 	@docker compose exec php php bin/console coopcycle:setup --env=test
-	@$(MAKE) demodata testdata2
+	@$(MAKE) demodata testdata-dispatch
 	@docker compose exec php php bin/console doctrine:migrations:sync-metadata-storage
 	@docker compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
@@ -23,7 +23,7 @@ osrm:
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
 	@docker compose exec php php vendor/bin/phpunit
-# Add as annotation in any testcase:
+# Add as annotation at the top of any testcase:
 # /**
 # * @group only
 # */
@@ -33,9 +33,11 @@ phpunit-only:
 
 behat:
 	@docker compose exec php php vendor/bin/behat
-# For now, just change here the `features/file.feature:xx` to run a specific test
+# Add as annotation at the top of any scenario/feature:
+# @only
+# Scenario: Some description..
 behat-only:
-	@clear && docker compose exec php php vendor/bin/behat features/stores.feature:96
+	@clear && docker compose exec php php vendor/bin/behat --tags="@only"
 
 cypress:
 	@npm run e2e
@@ -47,11 +49,11 @@ cypress-only-until-fail:
 cypress-open:
 	@cypress open
 cypress-install:
-	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
+	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
 	@npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
 
 jest:
-	@docker compose exec -e APP_ENV=test -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
+	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest
 
 # Just an alias
 migrations: migrations-migrate
@@ -95,14 +97,14 @@ lint:
 
 test: phpunit jest behat cypress
 
-testdata1:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
-testdata2:
+testdata-dispatch:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test
-testdata3:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/package_delivery_orders.yml --env test
-testdata4:
+testdata-restaurant:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/restaurant.yml --env test
+testdata-package-delivery-orders:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/package_delivery_orders.yml --env test
+testdata-high-volume-instance:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
 
 demodata:
 	@docker compose exec php bin/demo --env=dev
