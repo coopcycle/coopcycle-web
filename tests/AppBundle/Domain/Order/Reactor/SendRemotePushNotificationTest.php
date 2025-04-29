@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use ApiPlatform\Core\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
+use AppBundle\MessageHandler\Order\SendRemotePushNotification;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
