@@ -3,6 +3,10 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: latlng
     value: '48.857498,2.335402'
+  setting_geocoding_provider:
+    section: general
+    name: geocoding_provider
+    value: 'mock'
   setting_default_tax_category:
     section: general
     name: default_tax_category
@@ -19,15 +23,3 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: administrator_email
     value: 'dev@coopcycle.org'
-  setting_stripe_test_publishable_key:
-    section: general
-    name: stripe_test_publishable_key
-    value: '<{STRIPE_PUBLISHABLE_KEY}>'
-  setting_stripe_test_secret_key:
-    section: general
-    name: stripe_test_secret_key
-    value: '<{STRIPE_SECRET_KEY}>'
-  setting_stripe_connect_client_id:
-    section: general
-    name: stripe_test_connect_client_id
-    value: '<{STRIPE_CONNECT_CLIENT_ID}>'

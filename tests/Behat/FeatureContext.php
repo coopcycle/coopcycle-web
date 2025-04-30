@@ -37,6 +37,7 @@ use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Generator as FakerGenerator;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
 use PHPUnit\Framework\Assert;
@@ -155,17 +156,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @BeforeScenario
      */
-    public function createChannels()
+    public function setupMandatoryEntities()
     {
-        $this->theFixturesFileIsLoaded('sylius_channels.yml');
-    }
-
-    /**
-     * @BeforeScenario
-     */
-    public function createMandatorySettings()
-    {
-        $this->theSettingHasValue('latlng', '48.856613,2.352222');
+        $this->fixturesLoader->load([
+            __DIR__.'/../../cypress/fixtures/settings_mandatory.yml'
+            # FIXME: preload all mandatory entities via setup.yml?
+//            __DIR__.'/../../cypress/fixtures/setup.yml'
+        ]);
     }
 
     /**
@@ -224,7 +221,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->fixturesLoader->load([
             __DIR__.'/../../features/fixtures/ORM/'.$filename
-        ]);
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -236,7 +233,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             return __DIR__.'/../../features/fixtures/ORM/'.current($row);
         }, $table->getRows());
 
-        $this->fixturesLoader->load($filenames);
+        $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**

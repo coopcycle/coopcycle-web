@@ -8,9 +8,10 @@
 # and taxes to be present in the database
 
 include:
-  - settings.yml
+  - settings_mandatory.yml
   - sylius_channels.yml
   - sylius_currency.yml
-  - payment_methods.yml
   - sylius_taxation.yml
+  - settings_payments.yml
+  - payment_methods.yml
   - sylius_on_demand_delivery_product.yml

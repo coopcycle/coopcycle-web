@@ -44,7 +44,6 @@ class Geocoder
         private readonly string $locale,
         private readonly int $rateLimitPerSecond,
         private readonly RateLimiterStore $geocodeEarthRateLimiterStore,
-        private readonly string $environment,
         private readonly bool $autoconfigure = true,
         private readonly LoggerInterface $logger = new NullLogger()
     )
@@ -67,9 +66,8 @@ class Geocoder
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';
 
-            if ($this->environment === 'test') {
+            if ('mock' === $geocodingProvider) {
                 $providers[] = new MockGeocoderProvider();
-
                 // Add OpenCage provider only if api key is configured
             } else if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();
