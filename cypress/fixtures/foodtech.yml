@@ -1,7 +1,5 @@
 include:
   - setup.yml
   - user_admin.yml
-  - user_dispatcher.yml
-  - user_courier.yml
   - addresses.yml
   - restaurants.yml
