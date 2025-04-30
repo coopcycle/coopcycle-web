@@ -32,7 +32,7 @@ context('Import deliveries (role: admin)', () => {
     cy.location('search').should('include', 'section=imports')
 
     // Allow the import to be processed
-    cy.consumeMessages()
+    cy.consumeMessages(30)
     // const checkImportStatus = (attempts = 4) => {
     //   if (attempts === 0) {
     //     throw new Error('Import status check failed after 3 attempts')
