@@ -7,18 +7,6 @@ Craue\ConfigBundle\Entity\Setting:
     section: general
     name: geocoding_provider
     value: 'mock'
-  setting_default_tax_category:
-    section: general
-    name: default_tax_category
-    value: 'tva_livraison'
-  setting_subject_to_vat:
-    section: general
-    name: subject_to_vat
-    value: '1'
-  setting_accounting_account:
-    section: general
-    name: accounting_account
-    value: '411100'
   setting_administrator_email:
     section: general
     name: administrator_email

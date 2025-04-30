@@ -2,7 +2,7 @@ context('Import deliveries (role: admin)', () => {
   beforeEach(() => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load ' +
-        '-s cypress/fixtures/setup.yml ' +
+        '-s cypress/fixtures/setup_default.yml ' +
         '-f cypress/fixtures/admin_user.yml ' +
         '-f features/fixtures/ORM/store_w_time_slot_pricing.yml',
     )

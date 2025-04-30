@@ -1,4 +1,4 @@
-# 'excl_setup' means that the file does not include the 'setup.yml' file; see the 'setup.yml' file for more information.
+# 'excl_setup' means that the file does not include the 'setup_default.yml' file; see the 'setup_default.yml' file for more information.
 include:
   - admin_user.yml
   - user_courier.yml
