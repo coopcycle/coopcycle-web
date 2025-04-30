@@ -20,7 +20,7 @@ context('Import deliveries (role: admin)', () => {
     cy.visit('/admin/deliveries')
 
     cy.get('[data-target="#import-deliveries-modal"]').click()
-    cy.get('input[type=file]').selectFile('cypress/fixtures/csv/deliveries.csv')
+    cy.get('input[type=file]').selectFile('fixtures/csv/deliveries.csv')
     cy.get(
       '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
     ).click()
