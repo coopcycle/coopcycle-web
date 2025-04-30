@@ -84,11 +84,11 @@ class MockGeocoderProvider implements GeocoderInterface
                 new AdminLevelCollection([
                     new AdminLevel(1, 'Île-de-France', 'IDF')
                 ]),
-                new Coordinates(48.8566, 2.3522),
+                new Coordinates(48.854034, 2.395023),
                 new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
                 '64',
                 'Rue Alexandre Dumas',
-                '75001',
+                '75011',
                 'Paris',
                 null,
                 new Country('France', 'FR'),
