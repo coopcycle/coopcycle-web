@@ -141,18 +141,25 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         <div className="address-infos__item">
           <Field name={`tasks[${index}].address.name`}>
             {({ field, form }) => (
-              <Input
-                {...field}
-                value={form.values.tasks[index].address.name}
-                onChange={e => {
-                  handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.name`,
-                    e.target.value,
-                  )
-                }}
-                placeholder={t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL')}
-              />
+              <>
+                <Input
+                  {...field}
+                  value={form.values.tasks[index].address.name}
+                  onChange={e => {
+                    handleModifyAddress()
+                    form.setFieldValue(
+                      `tasks[${index}].address.name`,
+                      e.target.value,
+                    )
+                  }}
+                  placeholder={t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL')}
+                />
+                {errors.tasks?.[index]?.address?.name && (
+                  <div className="text-danger">
+                    {errors.tasks[index].address.name}
+                  </div>
+                )}
+              </>
             )}
           </Field>
         </div>
@@ -183,18 +190,25 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         <div className="address-infos__item">
           <Field name={`tasks[${index}].address.contactName`}>
             {({ field, form }) => (
-              <Input
-                {...field}
-                value={form.values.tasks[index].address.contactName}
-                onChange={e => {
-                  handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.contactName`,
-                    e.target.value,
-                  )
-                }}
-                placeholder={t('DELIVERY_FORM_CONTACT_PLACEHOLDER')}
-              />
+              <>
+                <Input
+                  {...field}
+                  value={form.values.tasks[index].address.contactName}
+                  onChange={e => {
+                    handleModifyAddress()
+                    form.setFieldValue(
+                      `tasks[${index}].address.contactName`,
+                      e.target.value,
+                    )
+                  }}
+                  placeholder={t('DELIVERY_FORM_CONTACT_PLACEHOLDER')}
+                />
+                {errors.tasks?.[index]?.address?.contactName && (
+                  <div className="text-danger">
+                    {errors.tasks[index].address.contactName}
+                  </div>
+                )}
+              </>
             )}
           </Field>
         </div>

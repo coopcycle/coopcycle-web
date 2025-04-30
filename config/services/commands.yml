@@ -198,3 +198,7 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:standtrack:iub_range_setup' }
+
+  AppBundle\Command\SyncPaygreenOrders:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:paygreen:sync' }
