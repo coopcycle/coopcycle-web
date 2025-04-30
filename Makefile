@@ -1,6 +1,6 @@
-.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata-dispatch testdata-restaurant testdata-package-delivery-orders testdata-high-volume-instance demodata testserver console log log-requests ftp
+.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata testdata-dispatch testdata-foodtech testdata-high-volume-instance demodata testserver console log log-requests ftp
 
-setup: install migrations perms
+setup: install migrations perms demodata testdata
 
 install:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
@@ -10,7 +10,6 @@ install:
 	@docker compose exec php php bin/console doctrine:schema:create --env=test
 	@docker compose exec php php bin/console typesense:create --env=test
 	@docker compose exec php php bin/console coopcycle:setup --env=test
-	@$(MAKE) demodata testdata-dispatch
 	@docker compose exec php php bin/console doctrine:migrations:sync-metadata-storage
 	@docker compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
@@ -97,12 +96,12 @@ lint:
 
 test: phpunit jest behat cypress
 
+testdata: testdata-dispatch testdata-foodtech
+
 testdata-dispatch:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test
-testdata-restaurant:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/restaurant.yml --env test
-testdata-package-delivery-orders:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/package_delivery_orders.yml --env test
+testdata-foodtech:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/foodtech.yml --env test
 testdata-high-volume-instance:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
 
