@@ -2,7 +2,6 @@ Feature: Deliveries
 
   Scenario: Not authorized to create deliveries
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -27,7 +26,6 @@ Feature: Deliveries
 
   Scenario: Not authorized to read delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
@@ -38,7 +36,6 @@ Feature: Deliveries
 
   Scenario: Missing time window
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -78,7 +75,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit pickup address with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -198,7 +194,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with weight in dropoff task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -320,7 +315,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with weight and packages
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -462,7 +456,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit pickup address with OAuth (with before & after)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -564,7 +557,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -666,7 +658,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as an admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -772,7 +763,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as an admin in a store without pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -878,7 +868,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as an admin in a store with invalid pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -984,7 +973,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with timeSlot and range in ISO 8601 as an admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1093,7 +1081,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit timeSlot as an admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1202,7 +1189,6 @@ Feature: Deliveries
 
   Scenario: Can't create a delivery with invalid timeSlotUrl as an admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1246,7 +1232,6 @@ Feature: Deliveries
     
   Scenario: Can't create a delivery with invalid timeSlot range as an admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1290,7 +1275,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as a store owner
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1397,7 +1381,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as a store owner in a store without pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1504,7 +1487,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as a store owner in a store with invalid pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1611,7 +1593,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit pickup address & implicit time with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1709,7 +1690,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with details with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1811,7 +1791,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with latLng with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1915,7 +1894,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with latLng & timeSlot with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2017,7 +1995,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with latLng & timeSlot ISO 8601 with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2120,7 +2097,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with existing address & timeSlot with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2205,7 +2181,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with address.telephone = false with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2232,7 +2207,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 400
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has check expression "distance < 4000"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -2269,7 +2243,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 400 (with JWT) when dropoff is outside check zone
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has check expression "distance < 4000"
     Given the user "bob" is loaded:
@@ -2311,7 +2284,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 200 when dropoff is in check zone
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has check expression "distance < 10000"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -2331,7 +2303,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 201 when creating order and sending "store" key as defaut pickup
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2430,7 +2401,6 @@ Feature: Deliveries
 
   Scenario: Cancel delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2441,7 +2411,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with dates in UTC
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2544,7 +2513,6 @@ Feature: Deliveries
 
   Scenario: Send delivery CSV to async import endpoint with Oauth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2568,7 +2536,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with tag and then update it with another tag
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2760,7 +2727,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with default courier
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2804,7 +2770,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with given price and variant as an admin then edit it with a new price
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |

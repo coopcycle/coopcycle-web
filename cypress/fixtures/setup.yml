@@ -8,8 +8,8 @@
 # and taxes to be present in the database
 
 include:
-  - settings_mandatory.yml
-  - sylius_channels.yml
+  - ../../fixtures/ORM/settings_mandatory.yml
+  - ../../fixtures/ORM/sylius_channels.yml
   - sylius_currency.yml
   - sylius_taxation.yml
   - settings_payments.yml

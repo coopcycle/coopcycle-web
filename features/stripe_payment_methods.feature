@@ -2,7 +2,6 @@ Feature: Stripe Payment Methods
 
 Scenario: Get user saved stripe payment methods
   Given the fixtures files are loaded:
-    | sylius_channels.yml |
   And the setting "stripe_test_secret_key" has value "sk_test_123"
   And the setting "stripe_test_publishable_key" has value "pk_1234567890"
   Given stripe client is ready to use
@@ -37,7 +36,6 @@ Scenario: Get user saved stripe payment methods
 Scenario: Stripe clone payment method
   Given the current time is "2023-01-24 11:00:00"
   And the fixtures files are loaded:
-    | sylius_channels.yml |
     | payment_methods.yml |
     | products.yml        |
     | restaurants.yml     |
@@ -173,7 +171,6 @@ Scenario: Stripe clone payment method
 Scenario: Stripe create setup intent
   Given the current time is "2023-01-24 11:00:00"
   And the fixtures files are loaded:
-    | sylius_channels.yml |
     | payment_methods.yml |
     | products.yml        |
     | restaurants.yml     |

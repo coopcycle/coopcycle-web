@@ -159,9 +159,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function setupMandatoryEntities()
     {
         $this->fixturesLoader->load([
-            __DIR__.'/../../cypress/fixtures/settings_mandatory.yml'
+            __DIR__.'/../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../fixtures/ORM/sylius_channels.yml'
             # FIXME: preload all mandatory entities via setup.yml?
-//            __DIR__.'/../../cypress/fixtures/setup.yml'
+//            __DIR__.'/../../fixtures/ORM/setup.yml'
         ]);
     }
 

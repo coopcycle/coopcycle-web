@@ -2,7 +2,6 @@ Feature: Task recurrence rules
 
   Scenario: Create recurrence rule (single task)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
       | stores.yml          |
     And the user "bob" has role "ROLE_ADMIN"
@@ -51,7 +50,6 @@ Feature: Task recurrence rules
 
   Scenario: Create recurrence rule (multiple tasks)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
       | stores.yml          |
     And the user "bob" has role "ROLE_ADMIN"
@@ -127,7 +125,6 @@ Feature: Task recurrence rules
 
   Scenario: Update recurrence rule (single task, new address)
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -174,7 +171,6 @@ Feature: Task recurrence rules
 
   Scenario: Update recurrence rule address telephone (multiple tasks)
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -249,7 +245,6 @@ Feature: Task recurrence rules
 
   Scenario: List recurrence rules
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -273,7 +268,6 @@ Feature: Task recurrence rules
 
   Scenario: Get soft deleted recurrence rules
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -286,7 +280,6 @@ Feature: Task recurrence rules
 
   Scenario: Delete recurrence rules
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -299,7 +292,6 @@ Feature: Task recurrence rules
 
   Scenario: Apply recurrence rule
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | users.yml            |
       | addresses.yml        |
       | recurrence_rules.yml |
@@ -342,7 +334,6 @@ Feature: Task recurrence rules
 
   Scenario: Apply recurrence rule creates delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | sylius_products.yml  |
       | sylius_taxation.yml  |
       | payment_methods.yml  |
@@ -395,7 +386,6 @@ Feature: Task recurrence rules
 
   Scenario: Generate orders based on the recurrence rules with an implicit timeSlot
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | sylius_products.yml  |
       | sylius_taxation.yml  |
       | payment_methods.yml  |
@@ -438,7 +428,6 @@ Feature: Task recurrence rules
 
   Scenario: Generate orders based on the recurrence rules with a range not belonging to a timeSlot
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | sylius_products.yml  |
       | sylius_taxation.yml  |
       | payment_methods.yml  |
@@ -481,7 +470,6 @@ Feature: Task recurrence rules
 
   Scenario: Can not generate orders based on the recurrence rules in the past
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | sylius_products.yml  |
       | sylius_taxation.yml  |
       | payment_methods.yml  |
