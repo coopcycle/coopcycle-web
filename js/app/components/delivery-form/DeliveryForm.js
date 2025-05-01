@@ -263,6 +263,14 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
     Promise.all(promises).then(() => setIsLoading(false))
   }, [])
 
+  const convertValuesToPayload = useCallback((values) => {
+    const infos = {
+      store: storeDeliveryInfos["@id"],
+      tasks: structuredClone(values.tasks),
+    };
+    return infos
+  }, [storeDeliveryInfos])
+
   const handleSubmit = useCallback(async (values) => {
     const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
 
@@ -280,10 +288,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       const url = getUrl(deliveryId);
       const method = deliveryId ? 'put' : 'post';
       deliveryId && !isDispatcher
-      let data = {
-        store: storeDeliveryInfos['@id'],
-        tasks: values.tasks
-      }
+      let data = convertValuesToPayload(values)
 
       if (values.variantIncVATPrice && values.variantName) {
         data = {
@@ -333,18 +338,12 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const getPrice = _.debounce(
     (values) => {
 
-      const tasksCopy = structuredClone(values.tasks)
-      const tasksWithoutId = tasksCopy.map(task => {
+      const infos = convertValuesToPayload(values)
+      infos.tasks.forEach(task => {
         if (task["@id"]) {
           delete task["@id"]
         }
-        return task
       })
-
-      const infos = {
-        store: storeDeliveryInfos["@id"],
-        tasks: tasksWithoutId,
-      };
 
       const calculatePrice = async () => {
 
@@ -370,10 +369,17 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
 
       }
 
-      if (values.tasks.every(task => task.address.streetAddress)) {
-        calculatePrice()
+      // Don't calculate price until all tasks have an address
+      if (!values.tasks.every(task => task.address.streetAddress)) {
+        return
       }
 
+      // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
+      if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
+        return
+      }
+
+      calculatePrice()
     },
     800
   )

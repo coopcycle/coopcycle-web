@@ -36,6 +36,12 @@ const formatSlots = (timeSlotChoices) => {
   return formattedSlots
 }
 
+const InputLabel = () => {
+  const { t } = useTranslation()
+
+  return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
+}
+
 export default ({ storeId, index, timeSlotLabels }) => {
 
   const httpClient = useMemo(() => {
@@ -44,26 +50,54 @@ export default ({ storeId, index, timeSlotLabels }) => {
 
   const { data: store } = useGetStoreQuery(storeId)
 
-  const timeSlotIds = store?.timeSlots
-  const defaultTimeSlotId = store?.timeSlot
-
   const { t } = useTranslation()
 
   const { isModifyOrderMode, taskValues, setFieldValue } = useDeliveryFormFormikContext({
     taskIndex: index,
   })
 
+  const storeTimeSlotIds = store?.timeSlots
+  const storeDefaultTimeSlotId = store?.timeSlot
+
   const [formattedTimeslots, setFormattedTimeslots] = useState({})
   const [isLoadingChoices, setIsLoadingChoices] = useState(false)
+
+  const setTimeSlotUrl = useCallback((timeSlotUrl) => {
+    setFieldValue(`tasks[${index}].timeSlotUrl`, timeSlotUrl)
+  }, [index, setFieldValue])
+
+  const setTimeSlot = useCallback((timeSlot) => {
+    setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
+  }, [index, setFieldValue])
+
 
   const setTimeSlotFromDateAndRange = useCallback((date, hourRange) => {
     const [first, second] = hourRange.split('-')
     const startTime = date.clone().hours(first.split(':')[0]).minutes(first.split(':')[1])
     const endTime = date.clone().hours(second.split(':')[0]).minutes(second.split(':')[1])
     const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
-    setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
-  }, [index, setFieldValue])
+    setTimeSlot(timeSlot)
+  }, [setTimeSlot])
 
+  // Preselect a time slot if no time slot is selected
+  useEffect(() => {
+    if (isModifyOrderMode) {
+      return
+    }
+
+    if (taskValues.timeSlotUrl) {
+      return
+    }
+
+    if (storeTimeSlotIds.length === 0) {
+      return
+    }
+
+    setTimeSlotUrl(storeDefaultTimeSlotId ?? storeTimeSlotIds[0])
+
+  }, [storeTimeSlotIds, storeDefaultTimeSlotId, taskValues.timeSlotUrl, setTimeSlotUrl, isModifyOrderMode])
+
+  // Load time slot choices when timeSlotUrl changes
   useEffect(() => {
     const getTimeSlotChoices = async timeSlotUrl => {
       setIsLoadingChoices(true)
@@ -72,8 +106,14 @@ export default ({ storeId, index, timeSlotLabels }) => {
       const { response } = await httpClient.get(url)
 
       if (response['choices'].length === 0) {
-        setFieldValue(`tasks[${index}].timeSlot`, null)
+        // Remove a time slot if no choices are available
+
+        setTimeSlotUrl(null)
+        setTimeSlot(null)
+
       } else {
+        // Preselect the first available time slot choice
+
         const formattedSlots = formatSlots(response['choices'])
         setFormattedTimeslots(formattedSlots)
 
@@ -90,28 +130,11 @@ export default ({ storeId, index, timeSlotLabels }) => {
     }
 
     getTimeSlotChoices(taskValues.timeSlotUrl)
-  }, [taskValues.timeSlotUrl, index, setFieldValue, httpClient, setTimeSlotFromDateAndRange])
-
-  useEffect(() => {
-    if (isModifyOrderMode) {
-      return
-    }
-
-    if (taskValues.timeSlotUrl) {
-      return
-    }
-
-    if (timeSlotIds.length === 0) {
-      return
-    }
-
-    setFieldValue(`tasks[${index}].timeSlotUrl`, defaultTimeSlotId ?? timeSlotIds[0])
-
-  }, [timeSlotIds, defaultTimeSlotId, index, taskValues.timeSlotUrl, isModifyOrderMode, setFieldValue])
+  }, [taskValues.timeSlotUrl, httpClient, setTimeSlotFromDateAndRange, setTimeSlotUrl, setTimeSlot])
 
   const handleTimeSlotLabelChange = e => {
-    setFieldValue(`tasks[${index}].timeSlot`, null)
-    setFieldValue(`tasks[${index}].timeSlotUrl`, e.target.value)
+    setTimeSlotUrl(e.target.value)
+    setTimeSlot(null) // Will be set after the choices are loaded
   }
 
   const handleDateChange = newDate => {
@@ -124,12 +147,10 @@ export default ({ storeId, index, timeSlotLabels }) => {
     setTimeSlotFromDateAndRange(date, hourRange)
   }
 
-  const inputLabel = () => <div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>
-
   if (isLoadingChoices || !taskValues.timeSlot) {
     return (
       <>
-        {inputLabel()}
+        <InputLabel />
         <Spinner />
       </>)
   }
@@ -147,7 +168,7 @@ export default ({ storeId, index, timeSlotLabels }) => {
 
   return (
     <>
-      {inputLabel()}
+      <InputLabel />
 
       {timeSlotLabels.length > 1 ?
         <Radio.Group

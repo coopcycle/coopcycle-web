@@ -19,16 +19,16 @@ export const TaskDateTime = ({ isDispatcher, storeId, timeSlots, index }) => {
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
   useEffect(() => {
-    if (isTimeSlotSelect && timeSlotIds?.length > 0) {
-      if (isModifyOrderMode) {
-        setFieldValue(`tasks[${index}].timeSlot`, null)
-      } else {
+    if (isModifyOrderMode) {
+      setFieldValue(`tasks[${index}].timeSlot`, null)
+    } else {
+      if (isTimeSlotSelect && timeSlotIds?.length > 0) {
         setFieldValue(`tasks[${index}].after`, null)
         setFieldValue(`tasks[${index}].before`, null)
+      } else {
+        setFieldValue(`tasks[${index}].timeSlot`, null)
+        setFieldValue(`tasks[${index}].timeSlotUrl`, null)
       }
-    } else {
-      setFieldValue(`tasks[${index}].timeSlot`, null)
-      setFieldValue(`tasks[${index}].timeSlotUrl`, null)
     }
   }, [isTimeSlotSelect, timeSlotIds, index, setFieldValue, isModifyOrderMode])
 
