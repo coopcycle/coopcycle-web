@@ -1,11 +1,16 @@
 context('Delivery (role: admin)', () => {
     beforeEach(() => {
       cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+      cy.setMockDateTime('2025-04-23 8:30:00')
 
       cy.visit('/login')
       cy.login('admin', '12345678')
     })
-  
+
+    afterEach(() => {
+      cy.resetMockDateTime()
+    })
+
     it('[beta form] create delivery for store with invalid pricing', function () {
       cy.visit('/admin/stores')
   
