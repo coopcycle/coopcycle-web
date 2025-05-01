@@ -40,11 +40,15 @@ behat-only:
 
 cypress:
 	@npm run e2e
-# For now, just change here the `cypress/e2e/xxx/file.cy.js` to run a specific test
+# You can set the `TESTFILE` env var when running the target:
+#    make cypress-only TESTFILE=invoicing/export_data_for_invoicing.cy.js
+# Or just change here the `TESTFILE` env var to run the desired test
+cypress-only: TESTFILE?=local-commerce/@admin/update_price.cy.js
 cypress-only:
-	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/local-commerce/@admin/update_price.cy.js
+	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}
+cypress-only-until-fail: TESTFILE?=local-commerce/@admin/update_price.cy.js
 cypress-only-until-fail:
-	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/local-commerce/@admin/update_price.cy.js; do :; done
+	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}; do :; done
 cypress-open:
 	@cypress open
 cypress-install:
