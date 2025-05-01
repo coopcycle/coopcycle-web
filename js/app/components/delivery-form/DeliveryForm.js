@@ -105,10 +105,10 @@ const pickupSchema = {
 
 
 const baseURL = location.protocol + '//' + location.host
+//FIXME: prefer using RTK query instead of httpClient
+const httpClient = new window._auth.httpClient()
 
 export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
-
-  const httpClient = new window._auth.httpClient()
 
   const isEditMode = useMemo(() => {
     return Boolean(deliveryId)

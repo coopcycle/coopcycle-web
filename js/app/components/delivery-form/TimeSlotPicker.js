@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
@@ -42,11 +42,11 @@ const InputLabel = () => {
   return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
 }
 
-export default ({ storeId, index, timeSlotLabels }) => {
+//FIXME: prefer using RTK query instead of httpClient
+const httpClient = new window._auth.httpClient()
 
-  const httpClient = useMemo(() => {
-    return new window._auth.httpClient()
-  }, [])
+
+export default ({ storeId, index, timeSlotLabels }) => {
 
   const { data: store } = useGetStoreQuery(storeId)
 

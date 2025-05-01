@@ -54,6 +54,9 @@ const OverridePriceForm = ({ setCalculatePrice, taxRate }) => {
   )
 }
 
+//FIXME: prefer using RTK query instead of httpClient
+const httpClient = new window._auth.httpClient()
+
 export default ({
   deliveryId,
   deliveryPrice,
@@ -85,8 +88,6 @@ export default ({
       setFieldValue('variantName', null)
     }
   }, [calculatedPrice, overridePrice])
-
-  const httpClient = new window._auth.httpClient()
 
   useEffect(() => {
     const getDeliveryTaxs = async () => {
