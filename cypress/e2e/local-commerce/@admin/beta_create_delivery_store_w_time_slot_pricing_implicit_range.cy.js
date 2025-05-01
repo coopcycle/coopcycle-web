@@ -16,7 +16,7 @@ context('Delivery (role: admin); store with time slot pricing', () => {
     cy.resetMockDateTime()
   })
 
-  it('WIP: [beta form] create delivery order with manually selected range', function () {
+  it('[beta form] create delivery order with manually selected range', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -43,31 +43,12 @@ context('Delivery (role: admin); store with time slot pricing', () => {
       'Pickup comments',
     )
 
-    // //FIXME: set pickup time range to 12:00 - 14:00 manually
-    // cy.get('[data-testid-form="task-0"]').within(() => {
-    //   cy.get('.timeslot-container > .timeslot-container__icon').click()
-    //   cy.get('.text-secondary').click()
-    //   cy.get('.ant-picker-input')
-    //     .eq(0)
-    //     .within(() => {
-    //       cy.get('input').click()
-    //       cy.get('input').type(
-    //         '{backspace}{backspace}{backspace}{backspace}{backspace}12:00',
-    //       )
-    //     })
-    // })
-    // cy.get('.ant-picker-ok:visible > .ant-btn').click()
-    // cy.get('[data-testid-form="task-0"]').within(() => {
-    //   cy.get('.ant-picker-input')
-    //     .eq(1)
-    //     .within(() => {
-    //       cy.get('input').click()
-    //       cy.get('input').type(
-    //         '{backspace}{backspace}{backspace}{backspace}{backspace}14:00',
-    //       )
-    //     })
-    // })
-    // cy.get('.ant-picker-ok:visible > .ant-btn').click()
+    //Set pickup time range to 12:00 - 14:00 manually
+    cy.get('[data-testid-form="task-0"]').within(() => {
+      cy.get('.timeslot-container > .timeslot-container__icon').click()
+      cy.antdSelect('.ant-select[data-testid="select-after"]', '12:00')
+      cy.antdSelect('.ant-select[data-testid="select-before"]', '14:00')
+    })
 
     // Dropoff
 

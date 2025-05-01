@@ -184,6 +184,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         />
 
         <Select
+          data-testid={`select-after`}
           className="picker-container__select-left mr-2"
           format={format}
           value={moment(task.after).format('HH:mm')}
@@ -201,6 +202,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         </Select>
 
         <Select
+          data-testid={`select-before`}
           className="picker-container__select-right"
           format={format}
           value={moment(task.before).format('HH:mm')}

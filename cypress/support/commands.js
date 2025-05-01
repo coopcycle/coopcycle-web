@@ -72,6 +72,52 @@ Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 10) => {
   cy.symfonyConsole(`messenger:consume async --env=test --time-limit=${ timeLimitInSeconds }`);
 })
 
+Cypress.Commands.add('antdSelect', (selector, text) => {
+  // open select
+  cy.get(selector).click()
+
+  cy.wait(100)
+
+  cy.root()
+    .parents('body')
+    .find('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+    .within(() => {
+      let attempts = 0
+      const maxAttempts = 10
+
+      function tryFindOption() {
+        return cy
+          .get('.rc-virtual-list-holder-inner .ant-select-item-option')
+          .then($options => {
+            const option = $options.filter((_, el) =>
+              el.textContent.includes(text),
+            )
+
+            if (option.length) {
+              cy.wrap(option).click()
+              return
+            }
+
+            if (attempts >= maxAttempts) {
+              throw new Error(
+                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+              )
+            }
+
+            attempts++
+            cy.get('.rc-virtual-list-holder').trigger('wheel', {
+              deltaX: 0,
+              deltaY: 100,
+            })
+            cy.wait(100)
+            tryFindOption()
+          })
+      }
+
+      tryFindOption()
+    })
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.location('pathname').should('match', pathnameRegexp)
