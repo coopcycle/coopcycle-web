@@ -21,10 +21,13 @@ describe('Platform catering; employee; onboarding', () => {
     cy.get('#registration_form_plainPassword_second').clear('')
     cy.get('#registration_form_plainPassword_second').type('12345678')
     cy.get('#registration_form_legal').check()
+
+    cy.intercept('/invitation/define-password/INVITATION_EMPLOYEE').as('submit')
     cy.get('button[name="registration_form[save]"]').click()
+    cy.wait('@submit', { timeout: 10000 })
 
     // Confirmation page
-    cy.urlmatch('/register/confirmed', 'include')
+    cy.urlmatch(/\/register\/confirmed/)
     cy.get('.content').should('contain', 'Félicitations')
   })
 
