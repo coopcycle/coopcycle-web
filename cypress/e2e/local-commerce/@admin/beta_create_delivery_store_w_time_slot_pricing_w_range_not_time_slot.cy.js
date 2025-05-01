@@ -16,7 +16,7 @@ context('Delivery (role: admin); store with time slot pricing', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery order with manually selected range that is one of the time slot choices', function () {
+  it('[beta form] create delivery order with manually selected range NOT belonging to a time slot choices', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -43,11 +43,11 @@ context('Delivery (role: admin); store with time slot pricing', () => {
       'Pickup comments',
     )
 
-    //Set pickup time range to 12:00 - 14:00 manually
+    //Set pickup time range to 12:30 - 13:30 manually
     cy.get('[data-testid-form="task-0"]').within(() => {
       cy.get('.timeslot-container > .timeslot-container__icon').click()
-      cy.antdSelect('.ant-select[data-testid="select-after"]', '12:00')
-      cy.antdSelect('.ant-select[data-testid="select-before"]', '14:00')
+      cy.antdSelect('.ant-select[data-testid="select-after"]', '12:30')
+      cy.antdSelect('.ant-select[data-testid="select-before"]', '13:30')
     })
 
     // Dropoff
@@ -65,7 +65,7 @@ context('Delivery (role: admin); store with time slot pricing', () => {
     cy.get(`[name="tasks[${1}].weight"]`).clear()
     cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
 
-    cy.get('[data-testid="tax-included"]').contains('6,99 €')
+    cy.get('[data-testid="tax-included"]').contains('2,00 €')
 
     cy.get('button[type="submit"]').click()
 
@@ -88,7 +88,7 @@ context('Delivery (role: admin); store with time slot pricing', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€6.99/)
+      .contains(/€2.00/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -113,6 +113,6 @@ context('Delivery (role: admin); store with time slot pricing', () => {
 
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
-      .contains('€6.99')
+      .contains('€2.00')
   })
 })
