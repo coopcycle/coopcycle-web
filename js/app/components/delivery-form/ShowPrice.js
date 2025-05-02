@@ -9,6 +9,7 @@ import Spinner from '../core/Spinner'
 import { PriceCalculation } from '../../delivery/PriceCalculation'
 
 import './ShowPrice.scss'
+import { useHttpClient } from '../../user/useHttpClient'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -54,9 +55,6 @@ const OverridePriceForm = ({ setCalculatePrice, taxRate }) => {
   )
 }
 
-//FIXME: prefer using RTK query instead of httpClient
-const httpClient = new window._auth.httpClient()
-
 export default ({
   deliveryId,
   deliveryPrice,
@@ -72,6 +70,8 @@ export default ({
 }) => {
   const { t } = useTranslation()
   const { setFieldValue } = useFormikContext()
+
+  const { httpClient } = useHttpClient()
 
   const [taxRate, setTaxRate] = useState(null)
 

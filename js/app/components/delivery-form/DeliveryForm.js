@@ -19,6 +19,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import "./DeliveryForm.scss"
 import _ from 'lodash'
 import { useLazyGetStoreQuery } from '../../api/slice'
+import { useHttpClient } from '../../user/useHttpClient'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -105,11 +106,10 @@ const pickupSchema = {
 
 
 const baseURL = location.protocol + '//' + location.host
-//FIXME: prefer using RTK query instead of httpClient
-const httpClient = new window._auth.httpClient()
 
 export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
-
+  const { httpClient } = useHttpClient()
+  
   const isEditMode = useMemo(() => {
     return Boolean(deliveryId)
   }, [deliveryId])

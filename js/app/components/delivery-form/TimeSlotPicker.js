@@ -9,6 +9,7 @@ import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
+import { useHttpClient } from '../../user/useHttpClient'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -42,13 +43,10 @@ const InputLabel = () => {
   return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
 }
 
-//FIXME: prefer using RTK query instead of httpClient
-const httpClient = new window._auth.httpClient()
-
-
 export default ({ storeId, index, timeSlotLabels }) => {
 
   const { data: store } = useGetStoreQuery(storeId)
+  const { httpClient } = useHttpClient()
 
   const { t } = useTranslation()
 
