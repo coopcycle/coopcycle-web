@@ -7,14 +7,20 @@ use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use AppBundle\Api\Dto\PricingRuleEvaluate;
 use AppBundle\Entity\Delivery\PricingRule;
 
-final class PricingRuleEvaluateInputDataTransformer extends DeliveryInputDataTransformer
+final class PricingRuleEvaluateInputDataTransformer implements DataTransformerInterface
 {
+    public function __construct(
+        private readonly DeliveryInputDataTransformer $deliveryInputDataTransformer,
+    )
+    {
+    }
+
     /**
      * {@inheritdoc}
      */
     public function transform($data, string $to, array $context = [])
     {
-        $delivery = parent::transform($data, $to, $context);
+        $delivery = $this->deliveryInputDataTransformer->transform($data, $to, $context);
 
         $output = new PricingRuleEvaluate();
 

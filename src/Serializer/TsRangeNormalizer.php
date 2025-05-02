@@ -3,6 +3,7 @@
 namespace AppBundle\Serializer;
 
 use AppBundle\DataType\TsRange;
+use Carbon\CarbonPeriod;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -37,6 +38,39 @@ class TsRangeNormalizer implements NormalizerInterface, DenormalizerInterface
             $tsRange->setUpper(new \DateTime($data[1]));
 
             return $tsRange;
+        } else if (is_string($data)) {
+            //example: 2024-01-01 14:30-18:45
+            if (1 === preg_match('/^([0-9]{4}-[0-9]{2}-[0-9]{2}) ([0-9:]+-[0-9:]+)$/', $data, $matches)) {
+
+                $date = $matches[1];
+                $timeRange = $matches[2];
+
+                [ $start, $end ] = explode('-', $timeRange);
+
+                [ $startHour, $startMinute ] = explode(':', $start);
+                [ $endHour, $endMinute ] = explode(':', $end);
+
+                $lower = new \DateTime($date);
+                $lower->setTime($startHour, $startMinute);
+
+                $upper = new \DateTime($date);
+                $upper->setTime($endHour, $endMinute);
+
+                return TsRange::create($lower, $upper);
+            } else {
+
+                //example: 2022-08-12T10:00:00Z/2022-08-12T12:00:00Z
+
+                $tz = date_default_timezone_get();
+
+                // FIXME Catch Exception
+                $period = CarbonPeriod::createFromIso($data);
+
+                $lower = $period->getStartDate()->tz($tz)->toDateTime();
+                $upper = $period->getEndDate()->tz($tz)->toDateTime();
+
+                return TsRange::create($lower, $upper);
+            }
         }
 
         return [];

@@ -3,44 +3,40 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Task;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 final class DeliveryInput
 {
-    /**
-     * @var Store|null
-     */
-    #[Groups(['pricing_deliveries', 'delivery_create_from_tasks'])]
-    public $store;
+
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
+    public Store|null $store = null;
+
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
+    public TaskInput|null $pickup = null;
+
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
+    public TaskInput|null $dropoff = null;
 
     /**
-     * @var int|null
+     * @var TaskInput[]|null
      */
-    #[Groups(['delivery_create', 'pricing_deliveries'])]
-    public $weight;
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
+    public array|null $tasks = null;
 
     /**
-     * @var Task|null
+     * @deprecated Set weight via TaskInput
      */
-    #[Groups(['delivery_create', 'pricing_deliveries'])]
-    public $pickup;
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
+    public int|null $weight = null;
 
     /**
-     * @var Task
+     * @deprecated set packages via TaskInput
+     * @var TaskPackageInput[]|null
      */
-    #[Groups(['delivery_create', 'pricing_deliveries'])]
-    public $dropoff;
+    #[Groups(['pricing_deliveries', 'delivery_create'])]
+    public array|null $packages = null;
 
-    /**
-     * @var array|null
-     */
-    #[Groups(['pricing_deliveries'])]
-    public $packages;
-
-    /**
-     * @var Task[]
-     */
-    #[Groups(['delivery_create', 'delivery_create_from_tasks', 'pricing_deliveries'])]
-    public $tasks;
+    #[Groups(['delivery_create'])]
+    public ArbitraryPrice|null $arbitraryPrice = null;
 }

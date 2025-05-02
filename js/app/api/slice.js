@@ -58,6 +58,9 @@ export const apiSlice = createApi({
         body: patch,
       }),
     }),
+    getTimeSlots: builder.query({
+      query: () => `api/time_slots`,
+    }),
   }),
 })
 
@@ -69,4 +72,5 @@ export const {
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
+  useGetTimeSlotsQuery,
 } = apiSlice

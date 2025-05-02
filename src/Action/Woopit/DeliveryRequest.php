@@ -21,20 +21,14 @@ class DeliveryRequest
     use CreateDeliveryTrait;
 
     public function __construct(
-        private DeliveryManager $deliveryManager,
-        private Geocoder $geocoder,
-        private Hashids $hashids12,
-        private EntityManagerInterface $entityManager,
-        private PhoneNumberUtil $phoneNumberUtil,
-        private ValidatorInterface $checkDeliveryValidator,
-        private UrlGeneratorInterface $urlGenerator)
+        private readonly DeliveryManager $deliveryManager,
+        private readonly Geocoder $geocoder,
+        private readonly Hashids $hashids12,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PhoneNumberUtil $phoneNumberUtil,
+        private readonly ValidatorInterface $checkDeliveryValidator,
+        private readonly UrlGeneratorInterface $urlGenerator)
     {
-        $this->deliveryManager = $deliveryManager;
-        $this->geocoder = $geocoder;
-        $this->hashids12 = $hashids12;
-        $this->entityManager = $entityManager;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->checkDeliveryValidator = $checkDeliveryValidator;
     }
 
     public function __invoke(WoopitQuoteRequest $data)

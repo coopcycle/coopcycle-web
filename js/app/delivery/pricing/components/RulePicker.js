@@ -1,75 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
-import _ from 'lodash'
+
+import './RulePicker.scss'
 
 import RulePickerLine from './RulePickerLine'
 import { parseAST } from '../pricing-rule-parser'
-
-export const numericTypes = [
-  'distance',
-  'weight',
-  'diff_days(pickup)',
-  'diff_hours(pickup)',
-  'order.itemsTotal',
-]
-
-export const isNum = (type) => _.includes(numericTypes, type)
-
-const convertToRange = (value) => {
-  if (Array.isArray(value) && value.length === 2) {
-    return `${value[0]}..${value[1]}`
-  }
-
-  return value
-}
-
-const lineToString = state => {
-  /*
-  Build the expression line from the user's input stored in state.
-  Returns nothing if we can't build the line.
-  */
-
-  if (state.left === 'diff_days(pickup)') {
-    return `diff_days(pickup, '${state.operator} ${convertToRange(state.right)}')`
-  }
-
-  if (state.left === 'diff_hours(pickup)') {
-    return `diff_hours(pickup, '${state.operator} ${convertToRange(state.right)}')`
-  }
-
-  if (state.left === `time_range_length(pickup, 'hours')`) {
-    return `time_range_length(pickup, 'hours', '${state.operator} ${convertToRange(state.right)}')`
-  }
-
-  if (state.left === `time_range_length(dropoff, 'hours')`) {
-    return `time_range_length(dropoff, 'hours', '${state.operator} ${convertToRange(state.right)}')`
-  }
-
-  if (state.operator === 'in' && Array.isArray(state.right) && state.right.length === 2) {
-    return `${state.left} in ${state.right[0]}..${state.right[1]}`
-  }
-
-  if (state.left === 'packages' && state.operator === 'containsAtLeastOne') {
-    return `packages.containsAtLeastOne("${state.right}")`
-  }
-
-  switch (state.operator) {
-  case '<':
-  case '>':
-    return `${state.left} ${state.operator} ${state.right}`
-  case 'in_zone':
-  case 'out_zone':
-    return `${state.operator}(${state.left}, "${state.right}")`
-  case '==':
-    if (state.left === 'dropoff.doorstep' || _.includes(numericTypes, state.left)) {
-      return `${state.left} == ${state.right}`
-    }
-    return `${state.left} == "${state.right}"`
-  }
-}
-
-const linesToString = lines => lines.map(line => lineToString(line)).join(' and ')
+import { linesToString } from '../expresssion-builder'
 
 class RulePicker extends React.Component {
 
@@ -136,8 +73,6 @@ class RulePicker extends React.Component {
               type={ line.left }
               operator={ line.operator }
               value={ line.right }
-              zones={ this.props.zones }
-              packages={ this.props.packages }
               onUpdate={ this.updateLine }
               onDelete={ this.deleteLine } />
           )) }
@@ -162,16 +97,12 @@ RulePicker.defaultProps = {
   ruleTarget: 'DELIVERY',
   expression: '',
   onExpressionChange: () => {},
-  zones: [],
-  packages: [],
 }
 
 RulePicker.propTypes = {
   ruleTarget: PropTypes.string,
   expression: PropTypes.string.isRequired,
   onExpressionChange: PropTypes.func.isRequired,
-  zones: PropTypes.arrayOf(PropTypes.string),
-  packages: PropTypes.arrayOf(PropTypes.string),
 }
 
 export default withTranslation()(RulePicker)
