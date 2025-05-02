@@ -3,13 +3,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
-use AppBundle\Pricing\Output;
-use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
@@ -31,26 +28,8 @@ class DeliveryManager
         private readonly OrderTimelineCalculator $orderTimelineCalculator,
         private readonly TokenStoreExtractor $storeExtractor,
         private readonly EntityManagerInterface $entityManager,
-        private readonly PriceCalculationVisitor $priceCalculationVisitor,
     )
     {}
-
-    public function getPrice(Delivery $delivery, ?PricingRuleSet $ruleSet): ?int
-    {
-        // if no Pricing Rules are defined, the default rule is to set the price to 0
-        if (null === $ruleSet) {
-            return 0;
-        }
-
-        $output = $this->getPriceCalculation($delivery, $ruleSet);
-        // if the Pricing Rules are configured but none of them match, the price is null
-        return $output->getPrice();
-    }
-
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?Output
-    {
-        return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
-    }
 
     public function createFromOrder(OrderInterface $order)
     {

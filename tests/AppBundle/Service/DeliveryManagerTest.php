@@ -9,7 +9,6 @@ use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderTimeline;
 use AppBundle\Exception\ShippingAddressMissingException;
-use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\RoutingInterface;
@@ -37,7 +36,6 @@ class DeliveryManagerTest extends KernelTestCase
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
         $this->storeExtractor = $this->prophesize(TokenStoreExtractor::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->priceCalculationVisitor = $this->prophesize(PriceCalculationVisitor::class);
     }
 
     public function tearDown(): void
@@ -96,7 +94,6 @@ class DeliveryManagerTest extends KernelTestCase
             $this->orderTimelineCalculator->reveal(),
             $this->storeExtractor->reveal(),
             $this->entityManager->reveal(),
-            $this->priceCalculationVisitor->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);
@@ -138,7 +135,6 @@ class DeliveryManagerTest extends KernelTestCase
             $this->orderTimelineCalculator->reveal(),
             $this->storeExtractor->reveal(),
             $this->entityManager->reveal(),
-            $this->priceCalculationVisitor->reveal()
         );
 
         $delivery = $deliveryManager->createFromOrder($order);

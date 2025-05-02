@@ -35,7 +35,11 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Operations related to Package Delivery/'LastMile' activity/orders
+ * PricingManager is responsible for calculating the price of a "delivery".
+ * "Delivery" here includes both delivery of foodtech orders (where price is added as an order adjustment)
+ * and Package Delivery/'LastMile' orders (where price is added as an order item).
+ *
+ * FIXME: Should we move non-price-related methods into the OrderManager class?
  */
 class PricingManager
 {
@@ -52,6 +56,7 @@ class PricingManager
         private readonly OrderFactory $orderFactory,
         private readonly CreateIncident $createIncident,
         private readonly TimeSlotManager $timeSlotManager,
+        private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly LoggerInterface $logger
     ) {
         $this->tokenStorage = $tokenStorage;
@@ -124,7 +129,7 @@ class PricingManager
             }
         }
 
-        return $this->deliveryManager->getPriceCalculation($delivery, $ruleSet);
+        return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
     }
 
     /**
