@@ -1,17 +1,14 @@
 describe('Delivery with recurrence rule (role: admin)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
+    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.setMockDateTime('2025-04-23 8:30:00')
 
     cy.visit('/login')
     cy.login('admin', '12345678')
+  })
+
+  afterEach(() => {
+    cy.resetMockDateTime()
   })
 
   describe('store without time slots', function () {

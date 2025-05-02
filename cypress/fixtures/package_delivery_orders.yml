@@ -9,11 +9,11 @@ AppBundle\Entity\Delivery:
         - "@client_1"
     __calls:
       - setPickupRange:
-          - <identity(new \DateTime('yesterday 18:00:00'))>
-          - <identity(new \DateTime('yesterday 18:30:00'))>
+          - <identity(new \DateTime('today 18:00:00'))>
+          - <identity(new \DateTime('today 18:30:00'))>
       - setDropoffRange:
-          - <identity(new \DateTime('yesterday 19:00:00'))>
-          - <identity(new \DateTime('yesterday 19:30:00'))>
+          - <identity(new \DateTime('today 19:00:00'))>
+          - <identity(new \DateTime('today 19:30:00'))>
     store: "@store_1"
 
   delivery_{251..1000}:
@@ -23,11 +23,11 @@ AppBundle\Entity\Delivery:
         - "@client_1"
     __calls:
       - setPickupRange:
-          - <identity(new \DateTime('yesterday 18:00:00'))>
-          - <identity(new \DateTime('yesterday 18:30:00'))>
+          - <identity(new \DateTime('today 18:00:00'))>
+          - <identity(new \DateTime('today 18:30:00'))>
       - setDropoffRange:
-          - <identity(new \DateTime('yesterday 19:00:00'))>
-          - <identity(new \DateTime('yesterday 19:30:00'))>
+          - <identity(new \DateTime('today 19:00:00'))>
+          - <identity(new \DateTime('today 19:30:00'))>
     store: '@store_*'
 
 AppBundle\Entity\Sylius\PricingRulesBasedPrice:

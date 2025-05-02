@@ -3,7 +3,7 @@ context('Setup simple multi-point pricing (role: admin)', () => {
     const prefix = Cypress.env('COMMAND_PREFIX')
 
     let cmd =
-      'bin/console coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/pricing.yml --env test'
+      'bin/console coopcycle:fixtures:load -s cypress/fixtures/setup_default.yml -f cypress/fixtures/pricing.yml --env test'
     if (prefix) {
       cmd = `${prefix} ${cmd}`
     }

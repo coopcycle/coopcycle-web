@@ -42,6 +42,82 @@ Cypress.Commands.add('symfonyConsole', command => {
   cy.exec(cmd)
 })
 
+Cypress.Commands.add('setMockDateTime', dateTime => {
+  cy.symfonyConsole(`coopcycle:datetime:mock -d "${dateTime}"`)
+
+  cy.clock(new Date(dateTime), ['Date']).then((clock) => {
+    // Set up a timer to tick the clock forward every second (1000ms)
+    const timer = setInterval(() => {
+      clock.tick(1000);
+    }, 1000);
+
+    // Store the timer ID so it can be cleared later
+    Cypress.env('clockTimer', timer);
+  })
+})
+
+Cypress.Commands.add('resetMockDateTime', () => {
+  cy.symfonyConsole('coopcycle:datetime:mock --reset')
+
+  // Clear the interval that's advancing the clock
+  const timer = Cypress.env('clockTimer');
+  if (timer) {
+    clearInterval(timer);
+  }
+
+  // cy.clock() will be reset automatically
+})
+
+Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 10) => {
+  cy.symfonyConsole(`messenger:consume async --env=test --time-limit=${ timeLimitInSeconds }`);
+})
+
+Cypress.Commands.add('antdSelect', (selector, text) => {
+  // open select
+  cy.get(selector).click()
+
+  cy.wait(100)
+
+  cy.root()
+    .parents('body')
+    .find('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+    .within(() => {
+      let attempts = 0
+      const maxAttempts = 10
+
+      function tryFindOption() {
+        return cy
+          .get('.rc-virtual-list-holder-inner .ant-select-item-option')
+          .then($options => {
+            const option = $options.filter((_, el) =>
+              el.textContent.includes(text),
+            )
+
+            if (option.length) {
+              cy.wrap(option).click()
+              return
+            }
+
+            if (attempts >= maxAttempts) {
+              throw new Error(
+                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+              )
+            }
+
+            attempts++
+            cy.get('.rc-virtual-list-holder').trigger('wheel', {
+              deltaX: 0,
+              deltaY: 100,
+            })
+            cy.wait(100)
+            tryFindOption()
+          })
+      }
+
+      tryFindOption()
+    })
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.location('pathname').should('match', pathnameRegexp)
@@ -135,7 +211,7 @@ Cypress.Commands.add('newPickupAddress',
         addressSearch,
         addressMatch,
       )
-  
+
       cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
       cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
 
@@ -147,7 +223,7 @@ Cypress.Commands.add('newPickupAddress',
 
       cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
       cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
-  
+
     })
 
 Cypress.Commands.add('chooseSavedPickupAddress',

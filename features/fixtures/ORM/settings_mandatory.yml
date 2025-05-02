@@ -1,0 +1,13 @@
+Craue\ConfigBundle\Entity\Setting:
+  setting_latlng:
+    section: general
+    name: latlng
+    value: '48.857498,2.335402'
+  setting_geocoding_provider:
+    section: general
+    name: geocoding_provider
+    value: 'mock'
+  setting_administrator_email:
+    section: general
+    name: administrator_email
+    value: 'dev@coopcycle.org'

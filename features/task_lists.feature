@@ -1,7 +1,6 @@
 Feature: Tasks lists
   Scenario: Assign tasks and tours with PUT
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml        |
       | users.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
@@ -35,7 +34,6 @@ Feature: Tasks lists
 
   Scenario: Assign task and tour with PUT then remove the task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml        |
       | users.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
@@ -95,7 +93,6 @@ Feature: Tasks lists
 
   Scenario: Assign a bunch of tasks and reorder them
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml        |
       | users.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
@@ -155,7 +152,6 @@ Feature: Tasks lists
 
    Scenario: Assign task with PUT then add a tour to the tasklist
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml        |
       | users.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
@@ -215,7 +211,6 @@ Feature: Tasks lists
 
    Scenario: Assign a tour with PUT, then add a task to the tour -> task.assignedTo is set correctly
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml        |
       | users.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
@@ -248,7 +243,6 @@ Feature: Tasks lists
 
   Scenario: Delete warehouse fails
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | task_list.yml       |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated

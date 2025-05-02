@@ -16,9 +16,11 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
+use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -34,8 +36,8 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker\Generator as FakerGenerator;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
 use PHPUnit\Framework\Assert;
@@ -85,6 +87,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(
         protected ManagerRegistry $doctrine,
+        protected DatabasePurger $databasePurger,
         protected PhoneNumberUtil $phoneNumberUtil,
         protected LoaderInterface $fixturesLoader,
         protected SettingsManager $settingsManager,
@@ -100,7 +103,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected OrderRepository $orderRepository,
         protected KernelInterface $kernel,
         protected UserManager $userManager,
-        protected CollectionManager $typesenseCollectionManager)
+        protected CollectionManager $typesenseCollectionManager
+    )
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -129,8 +133,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function clearData()
     {
-        $purger = new ORMPurger($this->doctrine->getManager());
-        $purger->purge();
+        $this->databasePurger->purge();
     }
 
     /**
@@ -138,11 +141,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function resetSequences()
     {
-        $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
-        foreach ($rows as $row) {
-            $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
-        }
+        $this->databasePurger->resetSequences();
     }
 
     /**
@@ -157,17 +156,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @BeforeScenario
      */
-    public function createChannels()
+    public function setupMandatoryEntities()
     {
-        $this->theFixturesFileIsLoaded('sylius_channels.yml');
-    }
-
-    /**
-     * @BeforeScenario
-     */
-    public function createMandatorySettings()
-    {
-        $this->theSettingHasValue('latlng', '48.856613,2.352222');
+        $this->fixturesLoader->load([
+            __DIR__.'/../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../fixtures/ORM/sylius_channels.yml'
+        ]);
     }
 
     /**
@@ -226,7 +220,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->fixturesLoader->load([
             __DIR__.'/../../features/fixtures/ORM/'.$filename
-        ]);
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -238,7 +232,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
             return __DIR__.'/../../features/fixtures/ORM/'.current($row);
         }, $table->getRows());
 
-        $this->fixturesLoader->load($filenames);
+        $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -1296,5 +1290,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $store->setDefaultCourier($user);
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Then the database should contain an order with a total price :price
+     */
+    public function theDatabaseShouldContainAnOrderWithATotalPrice($price)
+    {
+        $order = $this->doctrine->getRepository(Order::class)->findOneBy(['total' => $price]);
+
+        if (null === $order) {
+            Assert::fail(sprintf('No order found with total price %s', $price));
+        }
     }
 }
