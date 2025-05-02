@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { DatePicker, Select } from 'antd'
@@ -55,9 +55,9 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   const { t } = useTranslation()
   const { values, setFieldValue, errors } = useFormikContext()
 
-  const task = values.tasks[index]
+  const task = useMemo(() => values.tasks[index], [values.tasks, index])
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!values.tasks[index].after && !values.tasks[index].before) {
         const after = getNextRoundedTime()
         const before = after.clone().add(10, 'minutes')
@@ -65,12 +65,12 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         setFieldValue(`tasks[${index}].before`, before.toISOString(true))
       }
     },
-    [values.tasks[index].after, values.tasks[index].before]
+    [task.after, task.before, index, setFieldValue],
   )
 
   const [isComplexPicker, setIsComplexPicker] = useState(
-    moment(values.tasks[index].after).isBefore(
-      values.tasks[index].before,
+    moment(task.after).isBefore(
+      task.before,
       'day',
     ),
   )
@@ -80,14 +80,14 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
 
 
   useEffect(() => {
-    if (values.tasks[index].after) {
-      setSecondSelectOptions(generateTimeSlots(moment(values.tasks[index].after)))
+    if (task.after) {
+      setSecondSelectOptions(generateTimeSlots(moment(task.after)))
     }
-  }, [values.tasks[index].after])
+  }, [task.after])
 
   const handleDateChange = newValue => {
-    const afterHour = moment(values.tasks[index].after).format('HH:mm:ss')
-    const beforeHour = moment(values.tasks[index].before).format('HH:mm:ss')
+    const afterHour = moment(task.after).format('HH:mm:ss')
+    const beforeHour = moment(task.before).format('HH:mm:ss')
     const newDate = newValue.format('YYYY-MM-DD')
 
     setFieldValue(`tasks[${index}].after`, moment(`${newDate} ${afterHour}`).toISOString(true))
@@ -95,7 +95,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   }
 
   const handleAfterHourChange = newValue => {
-    const date = moment(values.tasks[index].after).format('YYYY-MM-DD')
+    const date = moment(task.after).format('YYYY-MM-DD')
     const newAfter = moment(`${date} ${newValue}:00`)
     const newBefore = newAfter.clone().add(10, 'minutes')
 
@@ -104,7 +104,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   }
 
   const handleBeforeHourChange = newValue => {
-    const date = moment(values.tasks[index].after).format('YYYY-MM-DD')
+    const date = moment(task.after).format('YYYY-MM-DD')
     const newBefore = moment(`${date} ${newValue}:00`)
     setFieldValue(`tasks[${index}].before`, newBefore.toISOString(true))
   }
@@ -117,7 +117,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   // When we switch back to simple picker, we need to set back after and before at the same day
   const handleSwitchComplexAndSimplePicker = () => {
     if (isComplexPicker === true) {
-      const before = moment(values.tasks[index].after).clone().add(1, 'hours')
+      const before = moment(task.after).clone().add(1, 'hours')
       setFieldValue(`tasks[${index}].before`, before.toISOString(true))
     }
     setIsComplexPicker(!isComplexPicker)
@@ -143,7 +143,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
           //     ? [afterValue, beforeValue]
           //     : [defaultAfterValue, defaultBeforeValue]
           // }
-          value={[moment(values.tasks[index].after), moment(values.tasks[index].before)]}
+          value={[moment(task.after), moment(task.before)]}
           onChange={handleComplexPickerDateChange}
           showTime={{
             ...timePickerProps,
@@ -177,16 +177,17 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
           className="picker-container__datepicker mr-2"
           format={format}
           // defaultValue={afterValue || defaultAfterValue}
-          value={moment(values.tasks[index].after)}
+          value={moment(task.after)}
           onChange={newDate => {
             handleDateChange(newDate)
           }}
         />
 
         <Select
+          data-testid={`select-after`}
           className="picker-container__select-left mr-2"
           format={format}
-          value={moment(values.tasks[index].after).format('HH:mm')}
+          value={moment(task.after).format('HH:mm')}
           onChange={newAfterHour => {
             handleAfterHourChange(newAfterHour)
           }}>
@@ -201,9 +202,10 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         </Select>
 
         <Select
+          data-testid={`select-before`}
           className="picker-container__select-right"
           format={format}
-          value={moment(values.tasks[index].before).format('HH:mm')}
+          value={moment(task.before).format('HH:mm')}
           onChange={newBeforeHour => {
             handleBeforeHourChange(newBeforeHour)
           }}>
