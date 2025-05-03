@@ -15,4 +15,4 @@ fr:
       - 12 Rue De Rivoli, 75004 Paris, France
   - search: 56 bd de l'hopi
     expect:
-      - 56 Bd De l'Hopital, Paris, France
+      - - 56 Boulevard De l'Hôpital, 75013 Paris, France
