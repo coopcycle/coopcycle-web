@@ -11,7 +11,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\StyleInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\HttpKernel\KernelInterface;
 
 class LoadFixturesCommand extends Command
 {
@@ -20,7 +19,6 @@ class LoadFixturesCommand extends Command
     public function __construct(
         private readonly DatabasePurger $databasePurger,
         private readonly LoaderInterface $fixturesLoader,
-        private readonly KernelInterface $kernel,
         private readonly string $projectDir,
         private readonly string $environment
     )
@@ -65,13 +63,6 @@ class LoadFixturesCommand extends Command
         $output->writeln('Purging database…');
         $this->databasePurger->purge();
         $this->databasePurger->resetSequences();
-
-        // Clear the session directory
-        $sessionDir = $this->kernel->getContainer()->getParameter('kernel.cache_dir').'/sessions';
-        $sessionFiles = glob($sessionDir . '/*.mocksess');
-        foreach ($sessionFiles as $file) {
-            unlink($file);
-        }
 
         $setupFile = $input->getOption('setup');
 
