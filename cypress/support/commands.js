@@ -33,6 +33,14 @@ Cypress.Commands.add('symfonyConsole', command => {
   cy.terminal(`bin/console ${command} --env="test"`)
 })
 
+Cypress.Commands.add('loadFixtures', (fixture, setup=false) => {
+  cy.symfonyConsole(`coopcycle:fixtures:load ${setup ? '-s cypress/fixtures/setup.yml' : ''} -f cypress/fixtures/${fixture}`)
+})
+
+Cypress.Commands.add('loadFixturesWithSetup', fixture => {
+  cy.loadFixtures(fixture, true)
+})
+
 Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
   cy.location(from, { timeout: 10000 }).should(type, pattern)
 })

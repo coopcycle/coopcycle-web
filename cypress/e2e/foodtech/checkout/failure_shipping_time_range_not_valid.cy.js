@@ -1,7 +1,6 @@
 describe('Failed checkout; time range is not valid any more', () => {
   beforeEach(() => {
-
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
+    cy.loadFixtures('checkout.yml')
 
     cy.login('bob', '12345678')
 

@@ -1,6 +1,6 @@
 context('Delivery (role: store)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores.yml')
   })
 
   it('create delivery', () => {

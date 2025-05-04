@@ -1,8 +1,6 @@
 describe('Platform catering; admin; invite manager', () => {
   beforeEach(() => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/foodtech.yml',
-    )
+    cy.loadFixtures('foodtech.yml')
   })
 
   it("should send an invitation to a business account's manager", () => {

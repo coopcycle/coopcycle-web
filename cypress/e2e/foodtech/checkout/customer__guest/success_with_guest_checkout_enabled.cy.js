@@ -1,17 +1,11 @@
 describe('Checkout (happy path); with guest checkout enabled', () => {
   beforeEach(() => {
+    cy.loadFixtures('checkout.yml')
 
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
+    cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
-
-  })
-
-  beforeEach(() => {
-    cy.symfonyConsole(
-      'craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
   })
 
   it('order something at restaurant (guest)', () => {

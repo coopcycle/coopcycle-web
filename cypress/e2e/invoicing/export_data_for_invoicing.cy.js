@@ -2,7 +2,7 @@ import moment from 'moment'
 
 context('Invoicing (role: admin)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/package_delivery_orders.yml')
+    cy.loadFixturesWithSetup('package_delivery_orders.yml')
     cy.login('admin', '12345678')
   })
 

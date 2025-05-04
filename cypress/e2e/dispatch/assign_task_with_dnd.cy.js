@@ -1,6 +1,6 @@
 context('Dispatch', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml')
+    cy.loadFixtures('dispatch.yml')
 
     cy.intercept('POST', '/api/tasks').as('postTask')
     cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')

@@ -6,12 +6,9 @@ describe(
       describe(` (${ customerType })`, () => {
 
         beforeEach(() => {
+          cy.loadFixtures('checkout.yml')
 
-          cy.symfonyConsole(
-            'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
-
-          cy.symfonyConsole(
-            'craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
+          cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
         })
 
         context(

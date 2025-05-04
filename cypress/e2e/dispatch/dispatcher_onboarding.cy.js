@@ -4,9 +4,7 @@ describe('Dispatch; dispatcher; onboarding', () => {
 
   // It's not possible for an admin to send an invite to an existing user (and doesn't make sense to do so), so we only support/test the case where the user has to create a new account
   it('should onboard a dispatcher with a new user account', () => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/dispatcher_invitation_new_user.yml',
-    )
+    cy.loadFixtures('dispatcher_invitation_new_user.yml')
 
     cy.visit('/invitation/define-password/INVITATION_DISPATCHER')
 

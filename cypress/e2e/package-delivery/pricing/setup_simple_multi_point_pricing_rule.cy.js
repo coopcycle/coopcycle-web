@@ -1,6 +1,6 @@
 context('Setup simple multi-point pricing (role: admin)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -s cypress/fixtures/setup.yml -f cypress/fixtures/pricing.yml')
+    cy.loadFixturesWithSetup('pricing.yml')
     cy.login('admin', '12345678')
   })
 

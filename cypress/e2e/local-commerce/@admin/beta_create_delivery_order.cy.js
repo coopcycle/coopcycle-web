@@ -1,6 +1,6 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores.yml')
     cy.login('admin', '12345678')
   })
 

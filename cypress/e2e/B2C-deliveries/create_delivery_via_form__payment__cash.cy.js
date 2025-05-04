@@ -1,6 +1,6 @@
 context('Delivery via form (payment options: Stripe or Cash)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores.yml')
     cy.terminal('echo CASH_ON_DELIVERY_ENABLED=1 >> .env.test')
   })
   afterEach(() => {

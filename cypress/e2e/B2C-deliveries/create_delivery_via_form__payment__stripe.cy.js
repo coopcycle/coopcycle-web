@@ -1,6 +1,6 @@
 context('Delivery via form (payment options: Stripe only)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores.yml')
   })
 
   it('should create a delivery', () => {

@@ -1,6 +1,6 @@
 context('Bookmarks (Saved orders) (role: admin)', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores.yml')
 
     // Login
     cy.login('admin', '12345678')

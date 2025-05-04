@@ -1,6 +1,6 @@
 describe('Dispatch; admin; invite dispatcher', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/setup.yml -f cypress/fixtures/user_admin.yml')
+    cy.loadFixturesWithSetup('user_admin.yml')
     cy.login('admin', '12345678')
   })
 

@@ -3,9 +3,7 @@ describe('Platform catering; employee; onboarding', () => {
   })
 
   it('should onboard an employee with a new user account', () => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_employee_invitation_new_user.yml',
-    )
+    cy.loadFixtures('business_account_employee_invitation_new_user.yml')
 
     cy.visit('/invitation/define-password/INVITATION_EMPLOYEE')
 
@@ -32,9 +30,7 @@ describe('Platform catering; employee; onboarding', () => {
   })
 
   it('should onboard an employee with an existing user account', () => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_employee_invitation_existing_user.yml',
-    )
+    cy.loadFixtures('business_account_employee_invitation_existing_user.yml')
 
     cy.login('user01', '12345678')
 
