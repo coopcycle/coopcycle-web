@@ -24,7 +24,6 @@ import {
   closeTaskRescheduleModal
 } from '../redux/actions'
 import TaskModalContent from './TaskModalContent'
-import FiltersModalContent from './FiltersModalContent'
 import SettingsModalContent from './SettingsModalContent'
 import ImportModalContent from './ImportModalContent'
 import AddUserModalContent from './AddUserModalContent'
@@ -54,15 +53,6 @@ class Modals extends React.Component {
           className="ReactModal__Content--task-form"
           shouldCloseOnOverlayClick={ true }>
           <TaskModalContent />
-        </Modal>
-        <Modal
-          appElement={ document.getElementById('dashboard') }
-          style={customStyle}
-          isOpen={ this.props.filtersModalIsOpen }
-          onRequestClose={ () => this.props.closeFiltersModal() }
-          className="ReactModal__Content--filters"
-          shouldCloseOnOverlayClick={ true }>
-          <FiltersModalContent />
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }

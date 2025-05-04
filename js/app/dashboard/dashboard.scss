@@ -187,6 +187,10 @@ html, body {
   }
 }
 
+.dashboard__filters-panel {
+  background-color: white;
+}
+
 .task-list__badges > * {
   margin-right: $base-margin-xs;
 }
@@ -396,9 +400,6 @@ html, body {
 .ReactModal__Content--task-report-incident {
   min-width: 40%;
 }
-.ReactModal__Content--filters {
-  min-width: 66.666%;
-}
 
 .ReactModal__Content--task-form {
   max-height: 100%;
@@ -407,25 +408,16 @@ html, body {
   }
 }
 
-.ReactModal__Content--filters {
-  padding: 15px;
-  max-height: calc(100vh - 30px);
-  .dashboard {
-    &__modal-filters {
-      &__tabpane {
-        min-height: 150px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        padding-top: 15px;
-      }
-      &__courier {
-        padding: 5px 0;
-        display: flex;
-        justify-content: space-between;
-      }
-    }
-  }
+.dashboard__filters-panel {
+  overflow-y: scroll;
+  height: 100%;
+  width: 100%;
+}
+
+.dashboard__filters-panel__tabpane {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .ReactModal__Content--settings {
