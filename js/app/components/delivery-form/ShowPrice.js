@@ -9,6 +9,7 @@ import Spinner from '../core/Spinner'
 import { PriceCalculation } from '../../delivery/PriceCalculation'
 
 import './ShowPrice.scss'
+import { useHttpClient } from '../../user/useHttpClient'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -70,6 +71,8 @@ export default ({
   const { t } = useTranslation()
   const { setFieldValue } = useFormikContext()
 
+  const { httpClient } = useHttpClient()
+
   const [taxRate, setTaxRate] = useState(null)
 
   useEffect(() => {
@@ -85,8 +88,6 @@ export default ({
       setFieldValue('variantName', null)
     }
   }, [calculatedPrice, overridePrice])
-
-  const httpClient = new window._auth.httpClient()
 
   useEffect(() => {
     const getDeliveryTaxs = async () => {
@@ -108,7 +109,7 @@ export default ({
     }
     getDeliveryTaxs()
   }, [])
-  
+
   return (
     <div className="mb-1 pl-2">
       {
@@ -146,7 +147,7 @@ export default ({
               </div>
             )}
           </>
-        : 
+        :
           <>
             <div className="font-weight-bold mb-1 total__price">
               {t('DELIVERY_FORM_TOTAL_PRICE')}
@@ -158,9 +159,9 @@ export default ({
                 </div>
               ) :
               !overridePrice ?
-                priceLoading ? 
+                priceLoading ?
                   <Spinner /> :
-                  calculatedPrice.amount ? 
+                  calculatedPrice.amount ?
                     <>
                       <span>{money(calculatedPrice.amount - calculatedPrice.tax.amount,)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br />
                       <span data-testid="tax-included">{money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
