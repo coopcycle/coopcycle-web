@@ -205,7 +205,10 @@ Installation:
 
 ```sh
 make cypress-install
+```
+
 # install typesense for test env (automatically done with `make install` or `make setup`)
+```sh
 docker compose exec -T php bin/console typesense:create --env=test
 ```
 
