@@ -122,7 +122,8 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "date":"2018-12-01",
-            "username":"sarah"
+            "username":"sarah",
+            "color":"#865c2d"
           },
           {
             "@id":"/api/task_lists/4",
@@ -139,7 +140,8 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "date":"2018-12-01",
-            "username":"bob"
+            "username":"bob",
+            "color":"#867d2d"
           }
         ],
         "hydra:totalItems":2,
@@ -440,7 +442,8 @@ Feature: Dispatch
           "createdAt":"@string@.isDateTime()",
           "updatedAt":"@string@.isDateTime()",
           "date":"2018-12-02",
-          "username":"bob"
+          "username":"bob",
+          "color":"#867d2d"
         },
         "unassignedCount":0
       }
