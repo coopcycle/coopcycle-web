@@ -26,19 +26,21 @@
 
 Cypress.Commands.add('terminal', command => {
   const prefix = Cypress.env('COMMAND_PREFIX')
-  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000})
+  console.log("COMMANDDDD:", prefix ? `${prefix} ${command}` : command)
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 130000})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {
   cy.terminal(`bin/console ${command} --env="test"`)
 })
 
-Cypress.Commands.add('loadFixtures', (fixture, setup=false) => {
-  cy.symfonyConsole(`coopcycle:fixtures:load ${setup ? '-s cypress/fixtures/setup_default.yml' : ''} -f cypress/fixtures/${fixture}`)
+Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
+  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f cypress/fixtures/${f}`).join(' ')
+  cy.symfonyConsole(`coopcycle:fixtures:load${setup ? ' -s cypress/fixtures/setup_default.yml' : ''} ${fixturesString}`)
 })
 
-Cypress.Commands.add('loadFixturesWithSetup', fixture => {
-  cy.loadFixtures(fixture, true)
+Cypress.Commands.add('loadFixturesWithSetup', fixtures => {
+  cy.loadFixtures(fixtures, true)
 })
 
 Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
@@ -84,7 +86,7 @@ Cypress.Commands.add('resetMockDateTime', () => {
 })
 
 Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 10) => {
-  cy.symfonyConsole(`messenger:consume async --env=test --time-limit=${ timeLimitInSeconds }`);
+  cy.symfonyConsole(`messenger:consume async --time-limit=${ timeLimitInSeconds }`);
 })
 
 Cypress.Commands.add('antdSelect', (selector, text) => {

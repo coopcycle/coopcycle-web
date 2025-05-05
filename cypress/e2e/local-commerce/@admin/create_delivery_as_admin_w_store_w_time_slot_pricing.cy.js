@@ -1,11 +1,6 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load ' +
-        '-s cypress/fixtures/setup_default.yml ' +
-        '-f cypress/fixtures/user_admin.yml ' +
-        '-f features/fixtures/ORM/store_w_time_slot_pricing.yml',
-    )
+    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
