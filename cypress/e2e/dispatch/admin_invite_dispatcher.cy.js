@@ -14,7 +14,10 @@ describe('Dispatch; admin; invite dispatcher', () => {
     cy.get('#invite_user_email').clear('')
     cy.get('#invite_user_email').type('dispatch01@demo.coopcycle.org')
     cy.get('#invite_user_roles_2').check()
-    cy.get('.btn').click()
+
+    cy.intercept('/admin/users/invite').as('submit')
+    cy.get('button[type="submit"]').click()
+    cy.wait('@submit', { timeout: 10000 })
 
     // users page
     cy.location('pathname', { timeout: 10000 }).should(
@@ -22,7 +25,7 @@ describe('Dispatch; admin; invite dispatcher', () => {
       /\/admin\/users$/,
     )
 
-    cy.get('.alert-success').should(
+    cy.get('.alert-success', { timeout: 10000 }).should(
       'contain',
       'Votre invitation a bien été envoyée ! Vous pouvez à présent éditer les paramètres du nouvel utilisateur.',
     )
