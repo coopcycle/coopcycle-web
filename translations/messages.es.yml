@@ -1,4 +1,5 @@
 global.changesSaved: Tus cambios han sido guardados.
+visitDocumentation.label: Consultar la documentación
 navbar.login: Iniciar sesión
 navbar.myAccount: Mi cuenta
 base.footer.contactUs: Contáctanos
@@ -770,6 +771,7 @@ form.time_slot_choice.start_time.label: Hora de inicio
 form.time_slot_choice.end_time.label: Hora de finalización
 form.package_set.name.label: Nombre
 form.package_set.packages.label: Paquetes
+form.package_set.duplicatePackageNames: Los nombres de los paquetes deben ser únicos
 form.package.enter_details: Mostrar/ocultar detalles
 form.package.name.label: Nombre
 form.package.description.label: Descripción para el cliente
