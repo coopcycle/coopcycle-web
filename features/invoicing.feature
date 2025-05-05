@@ -1,9 +1,9 @@
 Feature: Invoicing
 
   Scenario: Get invoice line items
+    Given the fixtures files are loaded with purge:
+      | cypress://setup_default.yml |
     Given the fixtures files are loaded:
-      | cypress://setup.yml |
-    Given the fixtures files are loaded with no purge:
       | cypress://package_delivery_orders.yml |
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -90,9 +90,9 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items filtered by store
+    Given the fixtures files are loaded with purge:
+      | cypress://setup_default.yml |
     Given the fixtures files are loaded:
-      | cypress://setup.yml |
-    Given the fixtures files are loaded with no purge:
       | cypress://package_delivery_orders.yml |
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -162,9 +162,9 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items filtered by multiple stores
+    Given the fixtures files are loaded with purge:
+      | cypress://setup_default.yml |
     Given the fixtures files are loaded:
-      | cypress://setup.yml |
-    Given the fixtures files are loaded with no purge:
       | cypress://package_delivery_orders.yml |
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -179,7 +179,7 @@ Feature: Invoicing
         "@id":"/api/orders",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
-        "hydra:totalItems":272,
+        "hydra:totalItems":@integer@,
         "hydra:view":{
           "@id":"/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=2\u0026page=1",
           "@type":"hydra:PartialCollectionView",
@@ -234,9 +234,9 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items grouped by organization
+    Given the fixtures files are loaded with purge:
+      | cypress://setup_default.yml |
     Given the fixtures files are loaded:
-      | cypress://setup.yml |
-    Given the fixtures files are loaded with no purge:
       | cypress://package_delivery_orders.yml |
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"

@@ -49,7 +49,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
-use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuthClient;
 use League\Bundle\OAuth2ServerBundle\Model\Grant;
 use League\Bundle\OAuth2ServerBundle\Model\Scope;
@@ -62,7 +61,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
-
 
 /**
  * Defines application features from the specific context.
@@ -221,9 +219,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $filename = $this->transformFixtureFilename($filename);
 
-        $this->fixturesLoader->load([
-            __DIR__.'/../../features/fixtures/ORM/'.$filename
-        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
+        $this->fixturesLoader->load([ $filename ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -239,15 +235,25 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given the fixtures files are loaded with no purge:
+     * @Given the fixtures file :filename is loaded with purge
      */
-    public function theFixturesFilesAreLoadedWithNoPurge(TableNode $table)
+    public function theFixturesFileIsLoadedWithPurge($filename)
+    {
+        $filename = $this->transformFixtureFilename($filename);
+
+        $this->fixturesLoader->load([ $filename ], $_SERVER);
+    }
+
+    /**
+     * @Given the fixtures files are loaded with purge:
+     */
+    public function theFixturesFilesAreLoadedWithPurge(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
             return $this->transformFixtureFilename(current($row));
         }, $table->getRows());
 
-        $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
+        $this->fixturesLoader->load($filenames, $_SERVER);
     }
 
     private function transformFixtureFilename($filename)
