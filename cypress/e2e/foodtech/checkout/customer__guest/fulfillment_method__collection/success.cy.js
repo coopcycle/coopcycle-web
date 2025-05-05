@@ -1,17 +1,10 @@
 describe('Checkout; non business context; quest; fulfilment method: collection: happy path', () => {
   beforeEach(() => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml',
-    )
+    cy.loadFixtures('checkout.yml')
+    cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
-  })
-
-  beforeEach(() => {
-    cy.symfonyConsole(
-      'craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force',
-    )
   })
 
   it('order something at restaurant', () => {
@@ -63,7 +56,7 @@ describe('Checkout; non business context; quest; fulfilment method: collection: 
 
     cy.get('form[name="cart"]').submit()
 
-    cy.location('pathname').should('eq', '/order/')
+    cy.urlmatch(/\/order\/$/)
 
     cy.get('input[name="checkout_address[customer][email]"]').type(
       'e2e-web@demo.coopcycle.org',
@@ -81,17 +74,14 @@ describe('Checkout; non business context; quest; fulfilment method: collection: 
 
     cy.contains('Commander').click()
 
-    cy.location('pathname').should('eq', '/order/payment')
+    cy.urlmatch(/\/order\/payment$/)
 
     cy.get('form[name="checkout_payment"] input[type="text"]').type('John Doe')
     cy.enterCreditCard()
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname', { timeout: 30000 }).should(
-      'match',
-      /\/order\/confirm\/[a-zA-Z0-9]+/,
-    )
+    cy.urlmatch(/\/order\/confirm\/[a-zA-Z0-9]+/)
 
     cy.get('#order-timeline').contains('Commande en attente de validation')
   })

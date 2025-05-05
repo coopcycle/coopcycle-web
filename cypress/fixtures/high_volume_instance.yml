@@ -1,17 +1,9 @@
 include:
   - stores_excl_setup.yml
+  - user_admin.yml
+  - user_dispatcher.yml
 
 AppBundle\Entity\User:
-  dispatcher_01:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'dispatcher'
-        - '12345678'
-        - 'dispatcher@demo.coopcycle.org'
-        - true
-        - false
-    roles: [ 'ROLE_DISPATCHER' ]
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
   courier_{1..50}:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':

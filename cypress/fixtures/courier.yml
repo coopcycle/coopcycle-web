@@ -1,6 +1,6 @@
 include:
   - setup_default.yml
-  - admin_user.yml
+  - user_admin.yml
   - user_courier.yml
   - addresses.yml
 

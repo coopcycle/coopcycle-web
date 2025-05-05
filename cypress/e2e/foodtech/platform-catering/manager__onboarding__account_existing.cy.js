@@ -1,8 +1,6 @@
 describe('Platform catering; manager; onboarding with an existing user account', () => {
   beforeEach(() => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_existing_user.yml',
-    )
+    cy.loadFixtures('business_account_manager_invitation_existing_user.yml')
   })
 
   it('should activate a business account', () => {
@@ -25,7 +23,7 @@ describe('Platform catering; manager; onboarding with an existing user account',
     cy.get('.btn-primary').click()
 
     // Confirmation page
-    cy.url().should('include', '/register/confirmed')
+    cy.urlmatch('/register/confirmed', 'include')
     cy.get('.content').should('contain', 'Félicitations')
   })
 })

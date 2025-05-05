@@ -1,24 +1,14 @@
 context('store without pricing (role: store)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
+    cy.loadFixtures('stores.yml')
   })
 
   it('create delivery for store without pricing', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
-    cy.visit('/login')
-
     cy.login('store_no_pricing', 'password')
 
-    cy.location('pathname').should('eq', '/dashboard')
+    cy.urlmatch(/\/dashboard$/)
 
     cy.get('a').contains('Créer une livraison').click()
 
@@ -51,10 +41,7 @@ context('store without pricing (role: store)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/dashboard\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/dashboard\/stores\/[0-9]+\/deliveries$/)
     cy.get('[data-testid=delivery__list_item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

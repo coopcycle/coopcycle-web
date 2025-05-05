@@ -1,17 +1,8 @@
 context('Bookmarks (Saved orders) (role: admin)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
+    cy.loadFixtures('stores.yml')
 
     // Login
-    cy.visit('/login')
     cy.login('admin', '12345678')
 
     // Create a delivery order
@@ -47,10 +38,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
   it('should add a bookmark to an existing order', function () {
     // List of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
     cy.get('[data-testid="delivery__list_item"]')
       .find('[data-testid="delivery_id"]')
@@ -63,10 +51,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
     cy.get('#delivery-submit').click()
 
     // (all) Deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/deliveries$/,
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
     cy.get('[href="/admin/stores"]').click()
     cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
 
@@ -76,7 +61,7 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
     // Saved orders page
 
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')

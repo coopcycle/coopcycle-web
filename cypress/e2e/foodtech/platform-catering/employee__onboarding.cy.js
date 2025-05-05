@@ -3,9 +3,7 @@ describe('Platform catering; employee; onboarding', () => {
   })
 
   it('should onboard an employee with a new user account', () => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_employee_invitation_new_user.yml',
-    )
+    cy.loadFixtures('business_account_employee_invitation_new_user.yml')
 
     cy.visit('/invitation/define-password/INVITATION_EMPLOYEE')
 
@@ -21,19 +19,19 @@ describe('Platform catering; employee; onboarding', () => {
     cy.get('#registration_form_plainPassword_second').clear('')
     cy.get('#registration_form_plainPassword_second').type('12345678')
     cy.get('#registration_form_legal').check()
+
+    cy.intercept('/invitation/define-password/INVITATION_EMPLOYEE').as('submit')
     cy.get('button[name="registration_form[save]"]').click()
+    cy.wait('@submit', { timeout: 10000 })
 
     // Confirmation page
-    cy.url().should('include', '/register/confirmed')
+    cy.urlmatch(/\/register\/confirmed/)
     cy.get('.content').should('contain', 'Félicitations')
   })
 
   it('should onboard an employee with an existing user account', () => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_employee_invitation_existing_user.yml',
-    )
+    cy.loadFixtures('business_account_employee_invitation_existing_user.yml')
 
-    cy.visit('/login')
     cy.login('user01', '12345678')
 
     cy.visit('/invitation/define-password/INVITATION_EMPLOYEE')
@@ -43,6 +41,6 @@ describe('Platform catering; employee; onboarding', () => {
     // associate personal account with a business account page
     cy.get('.btn-primary').click()
 
-    cy.get('.alert-success').should('contain', 'Business Account 1')
+    cy.get('.alert-success', { timeout: 10000 }).should('contain', 'Business Account 1')
   })
 })

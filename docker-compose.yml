@@ -247,6 +247,7 @@ services:
       - ./cube.js:/cube/conf/cube.js
     logging:
       driver: none
+    attach: false
 
   typesense:
     image: typesense/typesense:0.22.2
@@ -259,6 +260,7 @@ services:
       - typesense_data:/data
     logging:
       driver: none
+    attach: false
 
   storybook-react:
     build:

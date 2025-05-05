@@ -1,9 +1,15 @@
+.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata testdata-dispatch testdata-foodtech testdata-high-volume-instance demodata testserver console log log-requests ftp
+
+setup: install migrations perms demodata testdata
+
 install:
 	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	"$(MAKE)" osrm
+	@$(MAKE) osrm
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker compose exec php php bin/console doctrine:schema:create --env=dev
-	@docker compose exec php bin/demo --env=dev
+	@docker compose exec php php bin/console doctrine:schema:create --env=test
+	@docker compose exec php php bin/console typesense:create --env=test
+	@docker compose exec php php bin/console coopcycle:setup --env=test
 	@docker compose exec php php bin/console doctrine:migrations:sync-metadata-storage
 	@docker compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
@@ -16,19 +22,51 @@ osrm:
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
 	@docker compose exec php php vendor/bin/phpunit
+# Add as annotation at the top of any testcase:
+# /**
+# * @group only
+# */
+# public function testSomething()..
+phpunit-only:
+	@clear && docker compose exec php php vendor/bin/phpunit --group only
 
 behat:
 	@docker compose exec php php vendor/bin/behat
+# Add as annotation at the top of any scenario/feature:
+# @only
+# Scenario: Some description..
+behat-only:
+	@clear && docker compose exec php php vendor/bin/behat --tags="@only"
+
+cypress:
+	@npm run e2e
+# You can set the `TESTFILE` env var when running the target:
+#    make cypress-only TESTFILE=invoicing/export_data_for_invoicing.cy.js
+# Or just change here the `TESTFILE` env var to run the desired test
+cypress-only: TESTFILE?=local-commerce/@admin/update_price.cy.js
+cypress-only:
+	@clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}
+cypress-only-until-fail: TESTFILE?=local-commerce/@admin/update_price.cy.js
+cypress-only-until-fail:
+	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}; do :; done
+cypress-open:
+	@cypress open
+cypress-install:
+	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
+	@npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
 
 jest:
-	@docker compose exec -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest
+	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest
 
-migrations-diff:
-	@docker compose exec php php bin/console doctrine:migrations:diff --no-interaction
+# Just an alias
+migrations: migrations-migrate
 
 migrations-migrate:
 	@docker compose exec php php bin/console doctrine:migrations:migrate
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --complete
+
+migrations-diff:
+	@docker compose exec php php bin/console doctrine:migrations:diff --no-interaction
 
 email-preview:
 	@docker compose exec php php bin/console coopcycle:email:preview > /tmp/coopcycle_email_layout.html && open /tmp/coopcycle_email_layout.html
@@ -37,8 +75,49 @@ enable-xdebug:
 	@docker compose exec php /usr/local/bin/enable-xdebug
 	@docker compose restart php nginx
 
+start:
+	@clear && docker compose up --remove-orphans
+
+# Once everything is restarted, you need to run in another terminal: `make setup`
+start-fresh: fresh-db fresh
+
 fresh:
-	@docker compose down
+	@clear && docker compose down
+	@docker compose up --build --remove-orphans
+
+fresh-db:
+	@docker compose up -d postgres
+	@docker compose exec -T postgres dropdb -U postgres coopcycle
+	@docker compose exec -T postgres dropdb -U postgres coopcycle_test
+
+# This one solves weird file permissions issues when
+# browsing the `test` env at http://localhost:9080/
+perms:
+	@docker compose exec php sh -c "chown -R www-data:www-data web/ var/ && chmod 777 web/ var/ && chmod 666 web/build/entrypoints.json"
+
+lint:
+	@docker compose exec php php vendor/bin/phpstan analyse -v
+
+test: phpunit jest behat cypress
+
+testdata: testdata-dispatch testdata-foodtech
+
+testdata-dispatch:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test
+testdata-foodtech:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/foodtech.yml --env test
+testdata-high-volume-instance:
+	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
+
+demodata:
+	@docker compose exec php bin/demo --env=dev
+
+# This one seems to be not needed..!
+testserver:
+	@docker compose run --service-ports -e APP_ENV=test php
+
+console:
+	@clear && docker compose exec php sh
 
 log:
 	@docker compose exec php tail -f var/logs/dev-$(shell date --rfc-3339=date).log | grep -v "restart_requested_timestamp" | sed --unbuffered \
@@ -51,6 +130,10 @@ log:
     -e 's/\(.*EMERGENCY\)/\o033[95m\1\o033[39m/' \
     -e 's/\(.*DEBUG\)/\o033[90m\1\o033[39m/' \
     -e 's/\(stacktrace\)/\o033[37m\1\o033[39m/'
+# Request loglines appears as "request.INFO"
+log-requests:
+	@clear && docker compose exec php tail -f var/logs/dev-$(shell date --rfc-3339=date).log | grep "request.INFO" | sed --unbuffered \
+    -e 's/\(.*INFO\)/\n\o033[90m\1\o033[39m/' \
 
 ftp:
 	$(eval TMP := $(shell mktemp -d))
