@@ -62,7 +62,6 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
 
-
 /**
  * Defines application features from the specific context.
  */
@@ -218,9 +217,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theFixturesFileIsLoaded($filename)
     {
-        $this->fixturesLoader->load([
-            __DIR__.'/../../features/fixtures/ORM/'.$filename
-        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
+        $filename = $this->transformFixtureFilename($filename);
+
+        $this->fixturesLoader->load([ $filename ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -229,10 +228,44 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theFixturesFilesAreLoaded(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
-            return __DIR__.'/../../features/fixtures/ORM/'.current($row);
+            return $this->transformFixtureFilename(current($row));
         }, $table->getRows());
 
         $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
+    }
+
+    /**
+     * @Given the fixtures file :filename is loaded with purge
+     */
+    public function theFixturesFileIsLoadedWithPurge($filename)
+    {
+        $filename = $this->transformFixtureFilename($filename);
+
+        $this->fixturesLoader->load([ $filename ], $_SERVER);
+    }
+
+    /**
+     * @Given the fixtures files are loaded with purge:
+     */
+    public function theFixturesFilesAreLoadedWithPurge(TableNode $table)
+    {
+        $filenames = array_map(function (array $row) {
+            return $this->transformFixtureFilename(current($row));
+        }, $table->getRows());
+
+        $this->fixturesLoader->load($filenames, $_SERVER);
+    }
+
+    private function transformFixtureFilename($filename)
+    {
+        $dir = __DIR__.'/../../features/fixtures/ORM/';
+
+        if (str_starts_with($filename, 'cypress://')) {
+            $filename = substr($filename, strlen('cypress://'));
+            $dir = __DIR__.'/../../cypress/fixtures/';
+        }
+
+        return $dir . $filename;
     }
 
     /**

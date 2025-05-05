@@ -1091,7 +1091,10 @@ class AdminController extends AbstractController
 
             foreach ($originalRules as $originalRule) {
                 if (!$ruleSet->getRules()->contains($originalRule)) {
-                    $em->remove($originalRule);
+                    // When duplicating a pricing rule, entities are detached
+                    if ($em->contains($originalRule)) {
+                        $em->remove($originalRule);
+                    }
                 }
             }
 
