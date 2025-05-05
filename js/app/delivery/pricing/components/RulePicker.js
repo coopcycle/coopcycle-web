@@ -6,7 +6,7 @@ import './RulePicker.scss'
 
 import RulePickerLine from './RulePickerLine'
 import { parseAST } from '../pricing-rule-parser'
-import { linesToString } from '../expresssion-builder'
+import { linesToString } from '../expression-builder'
 
 class RulePicker extends React.Component {
 

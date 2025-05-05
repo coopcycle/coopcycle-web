@@ -1,4 +1,4 @@
-import { numericTypes, isNum, lineToString } from '../expresssion-builder'
+import { numericTypes, isNum, lineToString } from '../expression-builder'
 
 describe('isNum', () => {
   it('should return true for numeric types', () => {
