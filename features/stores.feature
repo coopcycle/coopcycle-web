@@ -750,7 +750,7 @@ Feature: Stores
           "latitude":48.864577,
           "longitude":2.333338
         },
-        "streetAddress":"10 rue Mouton Duvernet, Paris",
+        "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
         "telephone":null,
         "name":null,
         "description": null
@@ -778,7 +778,7 @@ Feature: Stores
               "latitude":48.864577,
               "longitude":2.333338
             },
-            "streetAddress":"10 rue Mouton Duvernet, Paris",
+            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
             "description": null
