@@ -82,6 +82,7 @@ services:
       - php
     restart: always
     environment:
+      - APP_ENV
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY

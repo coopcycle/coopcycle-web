@@ -1,7 +1,19 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixtures('stores.yml')
+    cy.symfonyConsole(
+      'coopcycle:fixtures:load ' +
+      '-s cypress/fixtures/setup_default.yml ' +
+      '-f cypress/fixtures/admin_user.yml ' +
+      '-f features/fixtures/ORM/store_w_distance_pricing.yml',
+    )
+
+    cy.setMockDateTime('2025-04-23 8:30:00')
+
     cy.login('admin', '12345678')
+  })
+
+  afterEach(() => {
+    cy.resetMockDateTime()
   })
 
   it('[beta form] create delivery order', function () {
@@ -46,7 +58,7 @@ context('Delivery (role: admin)', () => {
     cy.get(`[name="tasks[${1}].weight"]`).clear()
     cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
 
-    cy.get('[data-testid="tax-included"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('1,99 €')
 
     cy.get('button[type="submit"]').click()
 
@@ -63,7 +75,7 @@ context('Delivery (role: admin)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€4.99/)
+      .contains(/€1.99/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -85,6 +97,6 @@ context('Delivery (role: admin)', () => {
 
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
-      .contains('€4.99')
+      .contains('€1.99')
   })
 })

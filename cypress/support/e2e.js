@@ -35,8 +35,11 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     // errors, so we let them fail the test
   })
 
+// Log the test name before and after each test
+beforeEach(function () {
+  cy.symfonyConsole(`coopcycle:tests:log -m "Before test: ${this.currentTest.fullTitle()}"`);
+});
 
-// before(() => {
-//   /* code that needs to run before all specs */
-//   cy.symfonyConsole('coopcycle:setup --env=test')
-// })
+afterEach(function () {
+  cy.symfonyConsole(`coopcycle:tests:log -m "After test: ${this.currentTest.fullTitle()}"`);
+});

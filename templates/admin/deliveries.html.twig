@@ -77,7 +77,7 @@
     {% if filters is defined and filters.query == null and filters.range == null %}
     {% for tab_item in tab_items %}
     <li role="presentation" class="{% if tab_item.active %}active{% endif %}">
-      <a href="{{ tab_item.path }}">
+      <a href="{{ tab_item.path }}" data-testid="tab:{{ tab_item.path }}">
         {{ tab_item.title }}
       </a>
     </li>

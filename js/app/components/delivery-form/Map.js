@@ -86,7 +86,15 @@ export default ({ storeDeliveryInfos, tasks }) => {
       }))
       .filter(item => item.latLng[0] && item.latLng[1])
 
-    const latLngArray = allLatLng.map(item => item.latLng)
+    // update deliveryGeo ONLY if it has changed
+    if (JSON.stringify(allLatLng) !== JSON.stringify(deliveryGeo)) {
+      setDeliveryGeo(allLatLng)
+    }
+
+  }, [tasks, deliveryGeo, setDeliveryGeo])
+
+  useEffect(() => {
+    const latLngArray = deliveryGeo.map(item => item.latLng)
 
     if (latLngArray.length > 1) {
       MapHelper.route(latLngArray).then(route => {
@@ -99,8 +107,7 @@ export default ({ storeDeliveryInfos, tasks }) => {
       })
     }
 
-    setDeliveryGeo(allLatLng)
-  }, [tasks])
+  }, [deliveryGeo])
 
   return (
     <>

@@ -1,7 +1,12 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixtures('stores.yml')
+    cy.setMockDateTime('2025-04-23 8:30:00')
     cy.login('admin', '12345678')
+  })
+
+  afterEach(() => {
+    cy.resetMockDateTime()
   })
 
   it('update price calculated by pricing rules', function () {

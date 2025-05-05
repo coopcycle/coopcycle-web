@@ -13,7 +13,6 @@ module.exports = defineConfig({
     coverage: false
   },
 
-  nodeVersion: "system",
   viewportWidth: 1600,
 
   defaultCommandTimeout: 10000,

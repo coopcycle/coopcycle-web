@@ -2,7 +2,6 @@ Feature: Carts
 
   Scenario: Can't update order when state is cart
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -41,7 +40,6 @@ Feature: Carts
 
   Scenario: Update cart restaurant
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -103,7 +101,6 @@ Feature: Carts
 
   Scenario: Update cart shipping address
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -183,7 +180,6 @@ Feature: Carts
 
   Scenario: Update cart shipping address (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -263,7 +259,6 @@ Feature: Carts
 
   Scenario: Update cart shipping time (legacy)
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -328,7 +323,6 @@ Feature: Carts
 
   Scenario: Update cart shipping time
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -396,7 +390,6 @@ Feature: Carts
 
   Scenario: Clear cart shipping time
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -458,7 +451,6 @@ Feature: Carts
 
   Scenario: Add promotion coupon (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -527,7 +519,6 @@ Feature: Carts
 
   Scenario: Enable reusable packaging (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -589,7 +580,6 @@ Feature: Carts
 
   Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -699,7 +689,6 @@ Feature: Carts
 
   Scenario: Add items to cart
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -809,7 +798,6 @@ Feature: Carts
 
   Scenario: Add items to cart (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -919,7 +907,6 @@ Feature: Carts
 
   Scenario: Obtain reusable packaging potential action (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml    |
       | payment_methods.yml    |
       | products.yml           |
       | restaurants.yml        |
@@ -985,7 +972,6 @@ Feature: Carts
 
   Scenario: Update cart items quantity
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1063,7 +1049,6 @@ Feature: Carts
 
   Scenario: Update cart items quantity (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1140,7 +1125,6 @@ Feature: Carts
 
   Scenario: Delete cart item
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1201,7 +1185,6 @@ Feature: Carts
 
   Scenario: Delete cart item (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1261,7 +1244,6 @@ Feature: Carts
 
   Scenario: Start cart session
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1345,7 +1327,6 @@ Feature: Carts
 
   Scenario: Start cart session as an authenticated user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1434,7 +1415,6 @@ Feature: Carts
 
   Scenario: Start cart session (with collection fulfillment method)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1479,7 +1459,6 @@ Feature: Carts
 
   Scenario: Wrong cart session token
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1510,7 +1489,6 @@ Feature: Carts
 
   Scenario: Update cart shipping address with expired session
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1548,7 +1526,6 @@ Feature: Carts
 
   Scenario: Assign cart to customer
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1613,7 +1590,6 @@ Feature: Carts
 
   Scenario: Can't assign cart to customer
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1640,7 +1616,6 @@ Feature: Carts
 
   Scenario: Assign cart to guest customer
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1919,7 +1894,6 @@ Feature: Carts
 
   Scenario: Update cart with invalid phone number
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1967,7 +1941,6 @@ Feature: Carts
 
   Scenario: Update cart fulfillment method
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2023,7 +1996,6 @@ Feature: Carts
 
   Scenario: Update cart fulfillment method (not enabled)
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2063,7 +2035,6 @@ Feature: Carts
   Scenario: Get cart timing (with session)
     Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2105,7 +2076,6 @@ Feature: Carts
 
   Scenario: Validate cart (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2145,7 +2115,6 @@ Feature: Carts
 
   Scenario: Start cart session with address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2196,7 +2165,6 @@ Feature: Carts
 
   Scenario: Start cart session as an authenticated user with existing address not belonging to user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2248,7 +2216,6 @@ Feature: Carts
 
   Scenario: Start cart session as an authenticated user with existing address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2300,7 +2267,6 @@ Feature: Carts
 
   Scenario: Don't allow negative tip amount
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2323,7 +2289,6 @@ Feature: Carts
 
   Scenario: Select Edenred payment method
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
