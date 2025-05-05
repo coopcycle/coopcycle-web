@@ -1,6 +1,6 @@
 context('Delivery (role: admin) for a store without pricing', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores.yml')
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
