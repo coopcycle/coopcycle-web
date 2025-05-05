@@ -1581,7 +1581,6 @@ api_apps.regenerate_secret_warning: Cualquier app usando esta salida de API con 
   secreto anterior dejará de funcionar.
 restaurant.form.cash_on_delivery_enabled.help: Esto permitirá clientes pagar en efectivo
   al repartidor. Use con cuidado.
-docs.label: Documentos
 roles.ROLE_DISPATCHER.help: "Dispatcher: Acceso total a las tareas\n"
 activity.order.restored: 'El pedido #order/%aggregate_id% ha sido restablecido'
 order.cart.donation: Donación
