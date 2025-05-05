@@ -52,7 +52,6 @@ cypress-only-until-fail:
 cypress-open:
 	@cypress open
 cypress-install:
-	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
 	@npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
 
 jest:
@@ -100,7 +99,7 @@ lint:
 
 test: phpunit jest behat cypress
 
-testdata: testdata-dispatch testdata-foodtech
+testdata: testdata-dispatch
 
 testdata-dispatch:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test

@@ -91,10 +91,11 @@ To avoid building those images locally, you can pull them first.
 docker compose pull
 ```
 
-Populate your local `.env` file:
+Populate your local `.env` and `.env.test.local` files:
 
 ```sh
 cp .env.dist .env
+cp .env.test .env.test.local
 ```
 
 #### Start the Docker containers
