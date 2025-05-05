@@ -123,7 +123,8 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             attempts++
             cy.get('.rc-virtual-list-holder').trigger('wheel', {
               deltaX: 0,
-              deltaY: 100,
+              deltaY: 150,
+              deltaMode: 0,
             })
             cy.wait(100)
             tryFindOption()
