@@ -106,7 +106,24 @@ Feature: Invoicing
         "@context":"/api/contexts/Order",
         "@id":"/api/orders",
         "@type":"hydra:Collection",
-        "hydra:member":@array@,
+        "hydra:member":[
+          {
+            "@type":"Order",
+            "@id":@string@,
+            "storeId":@integer@,
+            "date":"@string@.isDateTime()",
+            "orderId":@integer@,
+            "orderNumber":@string@,
+            "description":@string@,
+            "subTotal":@integer@,
+            "tax":@integer@,
+            "total":@integer@,
+            "exports":[],
+            "invitation":null,
+            "paymentGateway":@string@
+          },
+          "@array_previous_repeat@"
+        ],
         "hydra:totalItems":259,
         "hydra:view":{
           "@id":"/api/invoice_line_items?store=1\u0026page=1",
@@ -178,7 +195,24 @@ Feature: Invoicing
         "@context":"/api/contexts/Order",
         "@id":"/api/orders",
         "@type":"hydra:Collection",
-        "hydra:member":@array@,
+        "hydra:member":[
+          {
+            "@type":"Order",
+            "@id":@string@,
+            "storeId":@integer@,
+            "date":"@string@.isDateTime()",
+            "orderId":@integer@,
+            "orderNumber":@string@,
+            "description":@string@,
+            "subTotal":@integer@,
+            "tax":@integer@,
+            "total":@integer@,
+            "exports":[],
+            "invitation":null,
+            "paymentGateway":@string@
+          },
+          "@array_previous_repeat@"
+        ],
         "hydra:totalItems":@integer@,
         "hydra:view":{
           "@id":"/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=2\u0026page=1",
