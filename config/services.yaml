@@ -82,6 +82,8 @@ services:
     public: false
     bind:
       $locale: "%env(COOPCYCLE_LOCALE)%"
+      $country: "%country_iso%"
+      $environment: "%kernel.environment%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -124,9 +126,19 @@ services:
   AppBundle\Api\DataTransformer\:
     resource: '../src/Api/DataTransformer/*'
 
+  AppBundle\Api\DataTransformer\DeliveryInputDataTransformer:
+    arguments:
+      $normalizer: '@api_platform.jsonld.normalizer.item'
+
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
     tags: ['api_platform.filter']
+
+  AppBundle\ExpressionLanguage\:
+    resource: '../src/ExpressionLanguage/*'
+
+  AppBundle\Pricing\:
+    resource: '../src/Pricing/*'
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
@@ -578,6 +590,12 @@ services:
         - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
+  AppBundle\Pricing\PriceCalculationVisitor:
+    arguments:
+      $expressionLanguage: "@coopcycle.expression_language"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
   AppBundle\EventListener\RegistrationListener:
     tags:
       - { name: kernel.event_subscriber }
@@ -600,10 +618,6 @@ services:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
-    tags:
-      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
@@ -1560,8 +1574,6 @@ services:
     arguments:
       $fleetKey: '%tile38_fleet_key%'
 
-  AppBundle\Pricing\PricingManager: ~
-
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
 
@@ -1612,7 +1624,7 @@ services:
 
   AppBundle\Paygreen\EnvironmentFactory:
     arguments:
-      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+      $paygreenEnvironment: '%env(PAYGREEN_ENVIRONMENT)%'
 
   Paygreen\Sdk\Payment\V3\Environment:
     factory: '@AppBundle\Paygreen\EnvironmentFactory'
@@ -1652,3 +1664,5 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  AppBundle\Fixtures\DatabasePurger: ~

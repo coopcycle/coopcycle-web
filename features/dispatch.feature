@@ -201,7 +201,6 @@ Feature: Dispatch
 
   Scenario: Administrator can assign task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -332,7 +331,6 @@ Feature: Dispatch
 
   Scenario: Administrator can self-assign task already assigned to someone else
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -838,7 +836,6 @@ Feature: Dispatch
 
   Scenario: Administrator can assign multiple tasks at once
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated

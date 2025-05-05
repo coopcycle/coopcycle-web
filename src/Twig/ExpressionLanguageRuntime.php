@@ -30,6 +30,7 @@ class ExpressionLanguageRuntime implements RuntimeExtensionInterface
                 'packages',
                 'order',
                 'task',
+                'time_slot',
             ]);
 
         } catch (SyntaxError $e) {

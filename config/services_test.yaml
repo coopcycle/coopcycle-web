@@ -18,7 +18,7 @@ services:
         arguments:
             - '@snc_redis.default'
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 512 }
 
     AppBundle\Fixtures\AliceDataFixtures\SettingsProcessor:
         arguments:

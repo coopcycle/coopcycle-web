@@ -1,0 +1,27 @@
+include:
+  - addresses.yml
+  - store_w_time_slot_pricing.yml
+
+Recurr\Rule:
+  rrule_1:
+    __construct: [ 'FREQ=WEEKLY;BYDAY=MO,FR' ]
+
+AppBundle\Entity\Task\RecurrenceRule:
+  recurrence_rule_1__order_based:
+    store: '@store_1'
+    rule: '@rrule_1'
+    template:
+      '@type': 'hydra:Collection'
+      'hydra:member':
+        - 'address':
+            '@id': '/api/addresses/1'
+            'streetAddress': '272, rue Saint Honoré 75001 Paris 1er'
+          'type': 'PICKUP'
+          'after': '12:00:00'
+          'before': '14:00:00'
+        - 'address':
+            '@id': '/api/addresses/2'
+            'streetAddress': '18, avenue Ledru-Rollin 75012 Paris 12ème'
+          'after': '14:00:00'
+          'before': '17:00:00'
+    generateOrders: true

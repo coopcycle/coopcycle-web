@@ -2,7 +2,6 @@ Feature: Urbantz
 
   Scenario: Receive webhook for TasksAnnounced event
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -284,7 +283,6 @@ Feature: Urbantz
 
   Scenario: Receive webhook for TasksAnnounced event with multiple hubs
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -649,7 +647,6 @@ Feature: Urbantz
 
   Scenario: Receive webhook for TaskChanged event
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/ld+json"
@@ -928,7 +925,6 @@ Feature: Urbantz
 
   Scenario: Receive webhook for unknown event
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/ld+json"

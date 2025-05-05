@@ -4,7 +4,9 @@ imports:
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+      handler_id: 'session.handler.native_file'
+      storage_id: session.storage.mock_file
+      cookie_secure: false
     cache:
         prefix_seed: "%database_name%_test"
         app: cache.adapter.array

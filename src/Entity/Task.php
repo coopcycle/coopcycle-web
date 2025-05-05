@@ -43,7 +43,7 @@ use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
-use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Entity\TimeSlot\TimeSlotAwareInterface;
 use AppBundle\Utils\Barcode\Barcode;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use AppBundle\Validator\Constraints\Task as AssertTask;
@@ -56,7 +56,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
-use stdClass;
 
 #[ApiResource(
     collectionOperations: [
@@ -325,7 +324,7 @@ use stdClass;
 #[ApiFilter(OrganizationFilter::class, properties: ['organization'])]
 #[UniqueEntity(fields: ['organization', 'ref'], errorPath: 'ref')]
 #[AssertTask]
-class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, TimeSlotAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -357,7 +356,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $id;
 
     #[Assert\Choice(['PICKUP', 'DROPOFF'])]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'delivery'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery_create', 'delivery'])]
     private $type = self::TYPE_DROPOFF;
 
     #[Groups(['task', 'delivery'])]
@@ -367,7 +366,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     #[Assert\NotNull]
     #[Assert\Valid]
-    #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create'])]
     private $address;
 
     private $doneAfter;
@@ -438,7 +437,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * - PICKUP : sum of weight of all the dropoffs
      * @var int
      */
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     private $weight;
 
     #[Groups(['task'])]
@@ -456,6 +455,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     #[Groups(['task'])]
     private $traveledDistanceMeter = 0;
 
+    // Denormalized manually inside the TaskNormalizer
+    private ?TimeSlot $timeSlot = null;
 
     public function __construct()
     {
@@ -578,7 +579,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @return Task
      */
     #[SerializedName('after')]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     public function setAfter(?\DateTime $doneAfter)
     {
         $this->doneAfter = $doneAfter;
@@ -587,7 +588,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
     #[SerializedName('before')]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     public function getBefore()
     {
         return $this->doneBefore;
@@ -1141,48 +1142,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     {
         $this->setOrganization($store->getOrganization());
     }
-    /**
-     * @return stdClass
-     */
-    public function toExpressionLanguageObject()
-    {
-        $taskObject = new \stdClass();
-
-        $taskObject->type = $this->getType();
-        $taskObject->address = $this->getAddress();
-        $taskObject->createdAt = $this->getCreatedAt();
-        $taskObject->after = $this->getAfter();
-        $taskObject->before = $this->getBefore();
-        $taskObject->doorstep = $this->isDoorstep();
-
-        return $taskObject;
-    }
-
-    public function toExpressionLanguageValues()
-    {
-        //FIXME: to be removed?; for now it might still be needed to maintain backwards compatibility
-        // for move information see app/DoctrineMigrations/Version20250304220001.php
-        $values = Delivery::toExpressionLanguageValues($this->getDelivery());
-
-        $emptyObject = new \stdClass();
-        $emptyObject->address = null;
-        $emptyObject->createdAt = null;
-        $emptyObject->after = null;
-        $emptyObject->before = null;
-        $emptyObject->doorstep = false;
-
-        $thisObj = $this->toExpressionLanguageObject();
-
-        $values['distance'] = -1;
-        $values['weight'] = $this->getWeight();
-        $values['pickup'] = $this->isPickup() ? $thisObj : $emptyObject;
-        $values['dropoff'] = $this->isDropoff() ? $thisObj : $emptyObject;
-        $values['packages'] = new PackagesResolver($this);
-
-        $values['task'] = $thisObj;
-
-        return $values;
-    }
 
     /**
      * @return void
@@ -1365,4 +1324,15 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->setMetadata($metadata);
         return $this;
     }
+
+    public function getTimeSlot(): ?TimeSlot
+    {
+        return $this->timeSlot;
+    }
+
+    public function setTimeSlot(?TimeSlot $timeSlot): void
+    {
+        $this->timeSlot = $timeSlot;
+    }
+
 }
