@@ -32,6 +32,7 @@
     @extend .form-control;
     text-indent: $input-height-base;
     padding-right: $input-height-base;
+
     &--addon {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
@@ -65,6 +66,7 @@
       display: none;
       justify-content: flex-end;
       padding: 4px;
+
       img {
         display: inline-block;
       }
@@ -84,7 +86,8 @@
     padding-left: 12px;
     border-top-right-radius: 4px;
     border-bottom-right-radius: 4px;
-    > span {
+
+    >span {
       white-space: nowrap;
       font-size: 12px;
       font-weight: 700;
@@ -112,4 +115,9 @@
       }
     }
   }
+}
+
+
+.ReactModal__Content--mappicker {
+  max-width: 50%;
 }
