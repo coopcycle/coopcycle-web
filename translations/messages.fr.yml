@@ -1,4 +1,5 @@
 global.changesSaved: Changements sauvegardés.
+visitDocumentation.label: Consulter la documentation
 navbar.login: Connexion
 navbar.myAccount: Mon compte
 navbar.switch_to_business: Compte %name%

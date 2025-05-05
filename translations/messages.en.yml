@@ -1,5 +1,4 @@
 global.changesSaved: Your changes have been saved.
-docs.label: Docs
 visitDocumentation.label: Visit documentation
 navbar.login: Login
 navbar.myAccount: My Account
@@ -805,6 +804,7 @@ form.time_slot_choice.end_time.label: End time
 form.time_slot.prior_notice_hours.label: Prior notice (hours)
 form.package_set.name.label: Name
 form.package_set.packages.label: Packages
+form.package_set.duplicatePackageNames: Package names must be unique
 form.package.name.label: Name
 form.package.color.label: Color (click to select)
 form.package.enter_details: Show/hide details
