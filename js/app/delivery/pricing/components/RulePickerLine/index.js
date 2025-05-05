@@ -7,7 +7,7 @@ import numbro from 'numbro'
 import ZonePicker from './ZonePicker'
 import PackagePicker from './PackagePicker'
 import TimeSlotPicker from './TimeSlotPicker'
-import { numericTypes, isNum } from '../../expresssion-builder'
+import { numericTypes, isNum } from '../../expression-builder'
 import { RulePickerTypeSelect } from './RulePickerTypeSelect'
 
 /*
