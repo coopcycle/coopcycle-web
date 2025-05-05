@@ -95,8 +95,10 @@ Populate your local `.env` and `.env.test.local` files:
 
 ```sh
 cp .env.dist .env
-cp .env.test .env.test.local
+touch .env.test.local
 ```
+
+You only need to override the desired env vars at `.env.test.local`, like setting your `GEOCODE_EARTH_API_KEY=...`
 
 #### Start the Docker containers
 
