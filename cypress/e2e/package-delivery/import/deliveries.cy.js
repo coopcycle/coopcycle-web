@@ -3,7 +3,7 @@ context('Import deliveries (role: admin)', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load ' +
         '-s cypress/fixtures/setup_default.yml ' +
-        '-f cypress/fixtures/admin_user.yml ' +
+        '-f cypress/fixtures/user_admin.yml ' +
         '-f features/fixtures/ORM/store_w_time_slot_pricing.yml',
     )
     cy.setMockDateTime('2019-12-12 8:00:00')

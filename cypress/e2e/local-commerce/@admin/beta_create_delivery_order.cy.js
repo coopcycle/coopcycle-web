@@ -3,7 +3,7 @@ context('Delivery (role: admin)', () => {
     cy.symfonyConsole(
       'coopcycle:fixtures:load ' +
       '-s cypress/fixtures/setup_default.yml ' +
-      '-f cypress/fixtures/admin_user.yml ' +
+      '-f cypress/fixtures/user_admin.yml ' +
       '-f features/fixtures/ORM/store_w_distance_pricing.yml',
     )
 
