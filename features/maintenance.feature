@@ -4,7 +4,6 @@ Feature: Maintenance
     Given the current time is "2017-09-02 11:00:00"
     And the maintenance mode is on
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -58,7 +57,6 @@ Feature: Maintenance
 
   Scenario: Retrieve assigned tasks (maintenance enabled)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |

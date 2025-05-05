@@ -2,7 +2,6 @@ Feature: Users
 
   Scenario: Not authorized to list users
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -15,7 +14,6 @@ Feature: Users
 
   Scenario: Not authorized to retrieve user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -28,7 +26,6 @@ Feature: Users
 
   Scenario: User can retrieve him/herself
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -59,7 +56,6 @@ Feature: Users
 
   Scenario: Retrieve users filtered by role
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "sarah" has role "ROLE_COURIER"
@@ -114,7 +110,6 @@ Feature: Users
 
   Scenario: User can update his/her telephone
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -155,7 +150,6 @@ Feature: Users
   # https://github.com/coopcycle/coopcycle-app/blob/33135cffd10e54c271b581a9f7ce063f4200fff1/src/redux/Checkout/actions.js#L677-L688
   Scenario: User can update the phone number associated to his/her customer account
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | users.yml           |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |

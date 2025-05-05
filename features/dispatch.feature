@@ -197,7 +197,6 @@ Feature: Dispatch
 
   Scenario: Administrator can assign task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -328,7 +327,6 @@ Feature: Dispatch
 
   Scenario: Administrator can self-assign task already assigned to someone else
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -340,7 +338,7 @@ Feature: Dispatch
       """
     Then the response status code should be 200
     And the response should be in JSON
-    
+
   Scenario: Courier can unassign task assigned to him/her
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -831,7 +829,6 @@ Feature: Dispatch
 
   Scenario: Administrator can assign multiple tasks at once
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated

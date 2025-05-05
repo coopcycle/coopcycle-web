@@ -5,6 +5,7 @@ framework:
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    - 'AppBundle\Messenger\MockDateMiddleware'
                     - 'AppBundle\Messenger\RequestIdMiddleware'
                     - 'AppBundle\Messenger\RouteMiddleware'
                     # each time a message is handled, the Doctrine connection

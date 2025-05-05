@@ -2,7 +2,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve the restaurants list
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the current time is "2021-12-10 11:00:00"
@@ -42,7 +41,6 @@ Feature: Manage restaurants
   Scenario: Search restaurants
     Given the current time is "2021-12-22 20:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
@@ -123,7 +121,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a restaurant
     Given the current time is "2021-12-22 13:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -205,7 +202,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a closed restaurant
     Given the current time is "2021-12-19 12:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -288,7 +284,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a restaurant timing (tomorrow)
     Given the current time is "2020-09-17 15:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -329,7 +324,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a restaurant timing (today)
     Given the current time is "2020-09-17 12:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -369,7 +363,6 @@ Feature: Manage restaurants
 
   Scenario: Disabled restaurant can't be found
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | payment_methods.yml |
       | products.yml        |
@@ -392,7 +385,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -490,7 +482,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve all menus for a restaurant
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -537,7 +528,6 @@ Feature: Manage restaurants
 
   Scenario: Restaurant is deliverable
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
@@ -547,7 +537,6 @@ Feature: Manage restaurants
 
   Scenario: Restaurant is not deliverable
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
@@ -557,7 +546,6 @@ Feature: Manage restaurants
 
   Scenario: Change active menu
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -613,7 +601,6 @@ Feature: Manage restaurants
 
   Scenario: User has not sufficient access rights
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -632,7 +619,6 @@ Feature: Manage restaurants
 
   Scenario: User is not authorized to modify restaurant
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -653,7 +639,6 @@ Feature: Manage restaurants
 
   Scenario: Change restaurant state
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -696,7 +681,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve restaurant products
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -757,7 +741,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve restaurant product options
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -838,7 +821,6 @@ Feature: Manage restaurants
 
   Scenario: Deleted products are not retrieved
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -884,7 +866,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve restaurant deliveries
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | payment_methods.yml |
       | products.yml        |
@@ -1000,7 +981,6 @@ Feature: Manage restaurants
 
   Scenario: Delete closing rule
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
