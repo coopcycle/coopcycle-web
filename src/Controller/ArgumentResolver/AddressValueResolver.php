@@ -74,6 +74,10 @@ class AddressValueResolver implements ArgumentValueResolverInterface
                 $address->setGeo(new GeoCoordinates($latitude, $longitude));
             }
 
+            if (isset($data['isMapPicked']) && $data['isMapPicked']) {
+                $address->setIsMapPicked(true);
+            }
+
             return yield $address;
         }
 
