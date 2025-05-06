@@ -2,7 +2,6 @@
 
 namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\CartItemInput;

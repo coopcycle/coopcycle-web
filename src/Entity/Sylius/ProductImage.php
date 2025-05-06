@@ -3,7 +3,6 @@
 namespace AppBundle\Entity\Sylius;
 
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Product\ProductInterface;

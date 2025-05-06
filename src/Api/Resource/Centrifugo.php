@@ -7,7 +7,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
-use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\CentrifugoToken as TokenController;
 use Symfony\Component\Serializer\Annotation\Groups;
 

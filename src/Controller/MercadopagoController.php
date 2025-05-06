@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Entity\MercadopagoAccount;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;

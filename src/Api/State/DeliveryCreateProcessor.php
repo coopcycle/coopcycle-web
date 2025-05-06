@@ -40,7 +40,7 @@ class DeliveryCreateProcessor implements ProcessorInterface
 
         // The default API platform validator is called on the object returned by the Controller/Action
         // but we need to validate the delivery before we can create the order
-        // @see ApiPlatform\Core\Validator\EventListener\ValidateListener
+        // @see ApiPlatform\Symfony\EventListener\ValidateListener
         $errors = $this->validator->validate($delivery);
         if (count($errors) > 0) {
             throw new ValidationException($errors);

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Order;
 
-use ApiPlatform\Core\Validator\Exception\ValidationException;
+use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;

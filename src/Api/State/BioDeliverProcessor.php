@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Task;
-use ApiPlatform\Core\Serializer\AbstractItemNormalizer;
 
 /**
  * This is a special use case for Tricargo customers using BioDeliver software.

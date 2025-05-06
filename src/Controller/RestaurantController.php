@@ -3,7 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;

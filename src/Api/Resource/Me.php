@@ -32,7 +32,7 @@ final class Me
     // FIXME
     // Needed to avoid error
     // There is no PropertyInfo extractor supporting the class "AppBundle\Api\Resource\Me"
-    // You should add #[\ApiPlatform\Core\Annotation\ApiProperty(identifier: true)]" on the property identifying the resource
+    // You should add #[\ApiPlatform\Metadata\ApiProperty(identifier: true)]" on the property identifying the resource
     #[ApiProperty(identifier: true)]
     public $foo;
 }

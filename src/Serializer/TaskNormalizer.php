@@ -3,7 +3,7 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\InvalidArgumentException;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Task;

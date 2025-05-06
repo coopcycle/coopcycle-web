@@ -3,8 +3,8 @@
 namespace AppBundle\Controller\ArgumentResolver;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\HttpFoundation\Request;
