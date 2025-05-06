@@ -1,16 +1,17 @@
 <?php
 
-namespace AppBundle\Api\DataProvider;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProviderInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGenerator;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
-final class TaskCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+final class TasksProvider implements ProviderInterface
 {
 
     public function __construct(
@@ -20,15 +21,10 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
     {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
     {
-        return Task::class === $resourceClass && (
-                'get' === $operationName
-            );
-    }
+        $resourceClass = $operation->getClass();
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
-    {
         $qb = $this->entityManager->getRepository(Task::class)->createQueryBuilder('o'); // alias 'o' is used by paginator
 
         $queryNameGenerator = new QueryNameGenerator();
@@ -37,17 +33,17 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
                 $qb,
                 $queryNameGenerator,
                 $resourceClass,
-                $operationName,
+                $operation,
                 $context
             );
 
             if (
                 $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
+                $extension->supportsResult($resourceClass, $operation, $context) // @phpstan-ignore arguments.count
             ) {
                 return $this->postProcessResult(
-                    $extension->getResult($qb, $resourceClass, $operationName, $context) // @phpstan-ignore arguments.count
+                    $extension->getResult($qb, $resourceClass, $operation, $context) // @phpstan-ignore arguments.count
                 );
             }
         }
@@ -119,7 +115,7 @@ final class TaskCollectionDataProvider implements ContextAwareCollectionDataProv
             );
         }
 
-        //Optimization: to avoid extra queries preload one-to-many relations that will be used later
+        // Optimization: to avoid extra queries preload one-to-many relations that will be used later
         $this->preloadEntities($tasks);
 
         return $data;

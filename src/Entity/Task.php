@@ -35,6 +35,7 @@ use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
 use AppBundle\Api\State\BioDeliverProcessor;
+use AppBundle\Api\State\TasksProvider;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
@@ -98,7 +99,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
             paginationEnabled: false,
-            paginationClientEnabled: true
+            paginationClientEnabled: true,
+            provider: TasksProvider::class
         ),
         new Post(
             security: 'is_granted(\'ROLE_DISPATCHER\')',
