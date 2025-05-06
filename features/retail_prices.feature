@@ -1020,7 +1020,7 @@ Feature: Retail prices
         "@context":"/api/contexts/Error",
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
-        "hydra:description":"delivery.price.error.priceCalculation",
+        "hydra:description":"Le prix de la course n'a pas pu être calculé.",
         "calculation": {"@*@":"@*@"}
       }
       """
