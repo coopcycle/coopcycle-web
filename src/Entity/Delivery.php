@@ -13,7 +13,6 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
-use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\Edit as EditDelivery;
@@ -24,6 +23,7 @@ use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Api\State\DeliveryPersistProcessor;
+use AppBundle\Api\State\DeliveryCreateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
@@ -71,9 +71,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             denormalizationContext: ['groups' => ['delivery_create']],
-            controller: CreateDelivery::class,
             input: DeliveryInput::class,
-            processor: DeliveryPersistProcessor::class,
+            processor: DeliveryCreateProcessor::class,
             openapiContext: ['parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]],
             inputFormats: ['jsonld' => ['application/ld+json']],
             securityPostDenormalize: 'is_granted(\'create\', object)'

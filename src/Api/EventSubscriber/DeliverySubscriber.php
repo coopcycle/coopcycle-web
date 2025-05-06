@@ -21,14 +21,12 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 final class DeliverySubscriber implements EventSubscriberInterface
 {
     private static $matchingRoutes = [
-        '_api_/deliveries/{id}.{_format}_get',
-        '_api_/deliveries.{_format}_post',
         '_api_/deliveries/assert_post',
         '_api_/deliveries/suggest_optimizations_post',
     ];
 
     public function __construct(
-        private  ManagerRegistry $doctrine,
+        private ManagerRegistry $doctrine,
         private TokenStoreExtractor $storeExtractor,
         protected DeliveryManager $deliveryManager)
     {
@@ -45,7 +43,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
             KernelEvents::REQUEST => [
-                ['setStore', EventPriorities::POST_DESERIALIZE],
                 ['setDefaults', EventPriorities::POST_DESERIALIZE],
             ],
             KernelEvents::VIEW => [
@@ -60,29 +57,10 @@ final class DeliverySubscriber implements EventSubscriberInterface
         return in_array($request->attributes->get('_route'), self::$matchingRoutes);
     }
 
-    public function setStore(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if ('_api_/deliveries.{_format}_post' !== $request->attributes->get('_route')) {
-            return;
-        }
-
-        $store = $this->storeExtractor->extractStore();
-
-        if (null === $store) {
-            return;
-        }
-
-        $delivery = $request->attributes->get('data');
-
-        $delivery->setStore($store);
-    }
-
+    /**
+     * After denormalizing the request, we may deduce missing data from the delivery's store or from the pickup.
+     */
     public function setDefaults(RequestEvent $event)
-        /*
-        After denormalizing the request, we may deduce missing data from the delivery's store or from the pickup.
-        */
     {
         $request = $event->getRequest();
         if (!$this->matchRoute($request)) {
