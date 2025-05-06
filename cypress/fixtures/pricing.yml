@@ -1,5 +1,5 @@
 include:
-  - admin_user.yml
+  - user_admin.yml
   - packages.yml
 
 AppBundle\Entity\TimeSlot:

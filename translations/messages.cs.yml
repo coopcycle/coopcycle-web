@@ -1250,7 +1250,6 @@ restaurant.ordersRateLimiter.help: Funkce limitu objednávek umožňuje kontrolo
   maximální počet objednávek a dobu trvání časového období. Další objednávky se automaticky
   přesunou do dalšího volného časového úseku. Tato funkce vám pomůže lépe řídit výrobní
   kapacitu a vyhnout se zpožděním a chybám.
-docs.label: Dokumenty
 adminDashboard.users.export.optins.title: Vyberte, co chcete exportovat
 adminDashboard.users.export.optins.newsletter: Uživatelé, kteří souhlasí se zasíláním
   zpravodaje

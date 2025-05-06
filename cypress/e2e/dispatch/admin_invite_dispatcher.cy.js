@@ -1,15 +1,15 @@
 describe('Dispatch; admin; invite dispatcher', () => {
   beforeEach(() => {
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/setup_default.yml -f cypress/fixtures/admin_user.yml')
+    cy.loadFixturesWithSetup('user_admin.yml')
+    cy.login('admin', '12345678')
   })
 
   it('should send an invitation to a user', () => {
-    cy.visit('/login')
-    cy.login('admin', '12345678')
-
     cy.visit('/admin/users')
-
     cy.get('.btn-info').click()
+
+    // user invite page
+    cy.urlmatch(/\/admin\/users\/invite$/)
 
     cy.get('#invite_user_email').clear('')
     cy.get('#invite_user_email').type('dispatch01@demo.coopcycle.org')
@@ -20,10 +20,7 @@ describe('Dispatch; admin; invite dispatcher', () => {
     cy.wait('@submit', { timeout: 10000 })
 
     // users page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/users$/,
-    )
+    cy.urlmatch(/\/admin\/users$/)
 
     cy.get('.alert-success', { timeout: 10000 }).should(
       'contain',

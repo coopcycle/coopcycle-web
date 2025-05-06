@@ -26,20 +26,36 @@
 
 Cypress.Commands.add('terminal', command => {
   const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `${command}`
-  if (prefix) {
-    cmd = `${prefix} ${cmd}`
-  }
-  cy.exec(cmd)
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {
-  const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `bin/console ${command} --env="test"`
-  if (prefix) {
-    cmd = `${prefix} ${cmd}`
-  }
-  cy.exec(cmd)
+  cy.terminal(`bin/console ${command} --env="test"`)
+})
+
+Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
+  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f cypress/fixtures/${f}`).join(' ')
+  cy.symfonyConsole(`coopcycle:fixtures:load${setup ? ' -s cypress/fixtures/setup_default.yml' : ''} ${fixturesString}`)
+})
+
+Cypress.Commands.add('loadFixturesWithSetup', fixtures => {
+  cy.loadFixtures(fixtures, true)
+})
+
+Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
+  cy.location(from, { timeout: 10000 }).should(type, pattern)
+})
+
+Cypress.Commands.add('getIfExists', (selector, callbackWhenNotFound=null) => {
+  cy.document().then(($document) => {
+    if ($document.querySelectorAll(selector).length) {
+      return cy.get(selector, { timeout: 5000 }).should('exist')
+    }
+
+    return cy.log(`The element '${selector}' was not found in DOM!`).then(() => {
+        return callbackWhenNotFound ? callbackWhenNotFound(selector) : null
+      })
+  })
 })
 
 Cypress.Commands.add('setMockDateTime', dateTime => {
@@ -69,7 +85,7 @@ Cypress.Commands.add('resetMockDateTime', () => {
 })
 
 Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 10) => {
-  cy.symfonyConsole(`messenger:consume async --env=test --time-limit=${ timeLimitInSeconds }`);
+  cy.symfonyConsole(`messenger:consume async --time-limit=${ timeLimitInSeconds }`);
 })
 
 Cypress.Commands.add('antdSelect', (selector, text) => {
@@ -107,7 +123,8 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             attempts++
             cy.get('.rc-virtual-list-holder').trigger('wheel', {
               deltaX: 0,
-              deltaY: 100,
+              deltaY: 150,
+              deltaMode: 0,
             })
             cy.wait(100)
             tryFindOption()
@@ -120,7 +137,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
-  cy.location('pathname').should('match', pathnameRegexp)
+  cy.urlmatch(pathnameRegexp)
 })
 
 Cypress.Commands.add('addProduct',
@@ -155,6 +172,7 @@ Cypress.Commands.add('addProduct',
   })
 
 Cypress.Commands.add('login', (username, password) => {
+  cy.visit('/login')
   cy.get('[name="_username"]').type(username)
   cy.get('[name="_password"]').type(password)
   cy.get('[name="_submit"]').click()
@@ -168,14 +186,12 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
   cy.get(selector)
     .should('be.visible')
 
-  cy.wait(500)
-
-  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`, { timeout: 5000 })
     .should('be.visible')
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
-    .type(search, { timeout: 5000, delay: 50 })
+    .type(search, { timeout: 5000, delay: 100 })
 
   cy.get(selector)
     .find('ul[role="listbox"] li', { timeout: 10000 })

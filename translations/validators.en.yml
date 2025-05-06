@@ -3,6 +3,7 @@ restaurant.telephone.notBlank: Enter your phone number
 restaurant.name.notBlank: Enter your restaurant's name
 restaurant.contract.notValid: Enter the delivery contract terms (require administrator privileges)
 restaurant.stripeAccount.notSet: Link the restaurant to a Stripe account
+restaurant.mercadopagoAccount.notSet: Link the restaurant to a MercadoPago account
 restaurant.notActivable: You can't enable this restaurant yet
 restaurant.menu.notSet: Create and activate a menu
 

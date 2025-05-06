@@ -13,9 +13,7 @@ export const apiSlice = createApi({
         url: 'api/recurrence_rules/generate_orders',
         params: {
           date: date.format('YYYY-MM-DD'),
-        },
-        method: 'POST',
-        body: {},
+        }
       }),
     }),
     getInvoiceLineItemsGroupedByOrganization: builder.query({

@@ -24,7 +24,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
-        new Get(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
+        new Get(
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')',
+            // Make sure to add requirements for operations like "/recurrence_rules/generate_orders" to work
+            requirements: ['id' => '[0-9]+']
+        ),
         new Put(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
         new Post(
             uriTemplate: '/recurrence_rules/{id}/between',
@@ -35,10 +39,11 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
         new Post(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
-        new Post(
+        new Get(
             uriTemplate: '/recurrence_rules/generate_orders',
             security: 'is_granted(\'ROLE_DISPATCHER\')',
-            controller: GenerateOrders::class
+            controller: GenerateOrders::class,
+            status: 201
         )
     ],
     shortName: 'RecurrenceRule',

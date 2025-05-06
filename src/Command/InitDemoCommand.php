@@ -59,6 +59,10 @@ class InitDemoCommand extends Command
             'password' => 'admin',
             'roles' => ['ROLE_ADMIN']
         ],
+        'dispatcher' => [
+            'password' => 'dispatcher',
+            'roles' => ['ROLE_DISPATCHER']
+        ],
     ];
 
     private static $parisFranceCoords = [

@@ -1,17 +1,11 @@
 describe('Checkout (happy path); with guest checkout enabled', () => {
   beforeEach(() => {
+    cy.loadFixtures('checkout.yml')
 
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
+    cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')
-
-  })
-
-  beforeEach(() => {
-    cy.symfonyConsole(
-      'craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
   })
 
   it('order something at restaurant (guest)', () => {
@@ -22,8 +16,7 @@ describe('Checkout (happy path); with guest checkout enabled', () => {
 
     cy.contains('Crazy Hamburger').click()
 
-    cy.location('pathname')
-      .should('match', /\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
+    cy.urlmatch(/\/fr\/restaurant\/[0-9]+-crazy-hamburger/)
 
     cy.wait('@postRestaurantCart')
 
@@ -50,7 +43,7 @@ describe('Checkout (happy path); with guest checkout enabled', () => {
 
     cy.get('form[name="cart"]').submit()
 
-    cy.location('pathname').should('eq', '/order/')
+    cy.urlmatch(/\/order\/$/)
 
     //TODO; test adding tips separately
     // fails on github CI
@@ -84,7 +77,7 @@ describe('Checkout (happy path); with guest checkout enabled', () => {
 
     cy.contains('Commander').click()
 
-    cy.location('pathname').should('eq', '/order/payment')
+    cy.urlmatch(/\/order\/payment$/)
 
     cy.get('form[name="checkout_payment"] input[type="text"]')
       .type('John Doe')
@@ -92,8 +85,7 @@ describe('Checkout (happy path); with guest checkout enabled', () => {
 
     cy.get('form[name="checkout_payment"]').submit()
 
-    cy.location('pathname', { timeout: 30000 })
-      .should('match', /\/order\/confirm\/[a-zA-Z0-9]+/)
+    cy.urlmatch(/\/order\/confirm\/[a-zA-Z0-9]+/)
 
     cy.get('#order-timeline').contains('Commande en attente de validation')
 

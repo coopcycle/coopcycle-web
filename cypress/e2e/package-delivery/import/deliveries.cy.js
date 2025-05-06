@@ -1,14 +1,9 @@
 context('Import deliveries (role: admin)', () => {
   beforeEach(() => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load ' +
-        '-s cypress/fixtures/setup_default.yml ' +
-        '-f cypress/fixtures/admin_user.yml ' +
-        '-f features/fixtures/ORM/store_w_time_slot_pricing.yml',
-    )
+    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
+
     cy.setMockDateTime('2019-12-12 8:00:00')
 
-    cy.visit('/login')
     cy.login('admin', '12345678')
   })
 
@@ -25,11 +20,9 @@ context('Import deliveries (role: admin)', () => {
       '#import-deliveries-modal > .modal-dialog > .modal-content > .modal-footer > .btn-primary',
     ).click()
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'eq',
-      '/admin/deliveries',
-    )
-    cy.location('search').should('include', 'section=imports')
+    cy.wait(1000)
+    cy.urlmatch(/\/admin\/deliveries$/)
+    cy.urlmatch('section=imports', 'include', 'search')
 
     // Allow the import to be processed
     cy.consumeMessages(30)
@@ -59,10 +52,7 @@ context('Import deliveries (role: admin)', () => {
 
     // verify imported deliveries
     cy.get('[data-testid="tab:/admin/deliveries"]').click()
-    cy.location('pathname', { timeout: 10000 }).should(
-      'eq',
-      '/admin/deliveries',
-    )
+    cy.urlmatch(/\/admin\/deliveries$/)
 
     // deliveries.csv; line 2; pricing_rule_2
     cy.get('[data-testid=delivery__list_item]')
