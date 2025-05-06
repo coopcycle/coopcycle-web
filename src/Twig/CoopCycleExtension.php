@@ -154,8 +154,6 @@ class CoopCycleExtension extends AbstractExtension
         if ('jsonld' === $format) {
             $context = array_merge($context, [
                 'resource_class' => $resourceClass,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
             ]);
         }
 

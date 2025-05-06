@@ -135,11 +135,7 @@ trait AdminDashboardTrait
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
 
         $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
-            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
-                'resource_class' => TaskRecurrenceRule::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-            ]);
+            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld');
         }, $recurrenceRules);
 
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
@@ -284,9 +280,6 @@ trait AdminDashboardTrait
         }
 
         $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
-            'resource_class' => TaskList::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['task_list']
         ]);
 

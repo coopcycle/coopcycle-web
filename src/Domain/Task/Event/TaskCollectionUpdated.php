@@ -23,8 +23,6 @@ class TaskCollectionUpdated extends BaseEvent implements SerializableEventInterf
     {
         $normalized = $serializer->normalize($this->collection, 'jsonld', [
             'resource_class' => TaskList::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['task_collection']
         ]);
 
