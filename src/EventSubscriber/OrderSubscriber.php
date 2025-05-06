@@ -6,7 +6,6 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\LoopeatInsufficientStockException;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
-use ApiPlatform\Core\DataPersister\DataPersisterInterface;
 use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -26,7 +25,6 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function __construct(
         private TokenStorageInterface $tokenStorage,
         private OrderTimeHelper $orderTimeHelper,
-        private DataPersisterInterface $dataPersister,
         private OrderProcessorInterface $orderProcessor,
         private BaseValidatorInterface $baseValidator,
         private LoggerInterface $checkoutLogger
@@ -44,7 +42,6 @@ final class OrderSubscriber implements EventSubscriberInterface
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
                 ['process', EventPriorities::PRE_WRITE],
-                ['deleteItemPostWrite', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -113,20 +110,6 @@ final class OrderSubscriber implements EventSubscriberInterface
         }
 
         $event->setControllerResult($order);
-    }
-
-    public function deleteItemPostWrite(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        // DELETE /api/orders/{id}/items/{itemId}
-        if ($request->attributes->get('_route') !== 'api_orders_delete_item_item') {
-            return;
-        }
-
-        $controllerResult = $event->getControllerResult();
-        $persistResult = $this->dataPersister->persist($controllerResult);
-        $event->setControllerResult($persistResult);
     }
 
     public function process(ViewEvent $event)

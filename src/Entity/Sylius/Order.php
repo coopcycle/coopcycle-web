@@ -148,7 +148,18 @@ use Webmozart\Assert\Assert as WMAssert;
         ),
         new Put(uriTemplate: '/orders/{id}', validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['order_update']], security: 'is_granted(\'edit\', object)'),
         new Put(uriTemplate: '/orders/{id}/items/{itemId}', controller: UpdateCartItem::class, validationContext: ['groups' => ['cart']], denormalizationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], security: 'is_granted(\'edit\', object)'),
-        new Delete(uriTemplate: '/orders/{id}/items/{itemId}', controller: DeleteCartItem::class, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['cart']], validate: false, write: false, status: 200, security: 'is_granted(\'edit\', object)', openapiContext: ['summary' => 'Deletes items from a Order resource.']),
+        new Delete(
+            uriTemplate: '/orders/{id}/items/{itemId}',
+            controller: DeleteCartItem::class,
+            validationContext: ['groups' => ['cart']],
+            normalizationContext: ['groups' => ['cart']],
+            validate: false,
+            // Disable WriteListener to avoid having empty 204 response
+            write: false,
+            status: 200,
+            security: 'is_granted(\'edit\', object)',
+            openapiContext: ['summary' => 'Deletes items from a Order resource.']
+        ),
         new Get(
             uriTemplate: '/orders/{id}/centrifugo',
             controller: CentrifugoController::class,
