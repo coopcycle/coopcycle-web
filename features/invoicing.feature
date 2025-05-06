@@ -386,7 +386,7 @@ Feature: Invoicing
         "hydra:member":[],
         "hydra:totalItems":0,
         "hydra:view":{
-          "@id":"/api/invoice_line_items?date%5Bafter%5D=2025-05-01\u0026date%5Bbefore%5D=2025-05-03",
+          "@id":"/api/invoice_line_items?date%5Bafter%5D=2025-05-01&date%5Bbefore%5D=2025-05-03",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
