@@ -15,12 +15,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@type":"Order",
-            "@id":@string@,
+            "@type":"InvoiceLineItem",
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
@@ -29,9 +28,7 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[],
-            "invitation":null,
-            "paymentGateway":@string@
+            "exports":[]
           },
           "@array_previous_repeat@"
         ],
@@ -88,6 +85,31 @@ Feature: Invoicing
         }
       }
       """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?page=34"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":"@array@.count(10)",
+        "hydra:totalItems":1000,
+        "hydra:view":{
+          "@id":"/api/invoice_line_items?page=34",
+          "@type":"hydra:PartialCollectionView",
+          "hydra:first":"/api/invoice_line_items?page=1",
+          "hydra:last":"/api/invoice_line_items?page=34",
+          "hydra:previous":"/api/invoice_line_items?page=33"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
 
   Scenario: Get invoice line items filtered by store
     Given the fixtures files are loaded with purge:
@@ -104,12 +126,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@type":"Order",
-            "@id":@string@,
+            "@type":"InvoiceLineItem",
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
@@ -118,9 +139,7 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[],
-            "invitation":null,
-            "paymentGateway":@string@
+            "exports":[]
           },
           "@array_previous_repeat@"
         ],
@@ -193,12 +212,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@type":"Order",
-            "@id":@string@,
+            "@type":"InvoiceLineItem",
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
@@ -207,9 +225,7 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[],
-            "invitation":null,
-            "paymentGateway":@string@
+            "exports":[]
           },
           "@array_previous_repeat@"
         ],
@@ -282,12 +298,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items/grouped_by_organization",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
             "@type":"InvoiceLineItemGroupedByOrganization",
-            "@id":@string@,
             "storeId":@integer@,
             "organizationLegalName":@string@,
             "ordersCount":@integer@,

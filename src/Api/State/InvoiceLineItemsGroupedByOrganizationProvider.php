@@ -1,21 +1,21 @@
 <?php
 
-namespace AppBundle\Api\DataProvider;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProviderInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGenerator;
+use ApiPlatform\State\Pagination\ArrayPaginator;
 use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
-final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInterface
 {
-
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly iterable $collectionExtensions,
@@ -23,20 +23,16 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
     {
     }
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
+    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
     {
-        return Order::class === $resourceClass && 'invoice_line_items_grouped_by_organization' === $operationName;
-    }
-
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
-    {
+        $resourceClass = $operation->getClass();
         $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o');
 
         $queryNameGenerator = new QueryNameGenerator();
         foreach ($this->collectionExtensions as $extension) {
             $isPaginationExtension = $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operationName, $context); // @phpstan-ignore arguments.count
+                $extension->supportsResult($resourceClass, $operation, $context); // @phpstan-ignore arguments.count
 
             // Do not apply pagination extension directly, as it will conflict with the groupBy
             if (!$isPaginationExtension) {
@@ -44,7 +40,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                     $qb,
                     $queryNameGenerator,
                     $resourceClass,
-                    $operationName,
+                    $operation,
                     $context
                 );
             } else {
@@ -58,10 +54,10 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
                     $qb,
                     $queryNameGenerator,
                     $resourceClass,
-                    $operationName,
+                    $operation,
                     $context
                 );
-                $extension->getResult($qb, $resourceClass, $operationName, $context); // @phpstan-ignore arguments.count
+                $extension->getResult($qb, $resourceClass, $operation, $context); // @phpstan-ignore arguments.count
 
                 $offset = $qb->getFirstResult();
                 $itemsPerPage = $qb->getMaxResults();
@@ -71,6 +67,7 @@ final class InvoiceLineItemGroupedByOrganizationCollectionDataProvider implement
         }
 
         $orders = $this->getResultWithPreloadedEntities($qb);
+
         return $this->groupByStore($orders);
     }
 

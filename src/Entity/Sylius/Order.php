@@ -41,7 +41,6 @@ use AppBundle\Action\Order\Timing as OrderTiming;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
-use AppBundle\Api\Dto\InvoiceLineItem;
 use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
@@ -53,6 +52,8 @@ use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
 use AppBundle\Api\State\EdenredCredentialsProcessor;
+use AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider;
+use AppBundle\Api\State\InvoiceLineItemsProvider;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
 use AppBundle\Api\State\ValidateOrderProvider;
@@ -247,14 +248,14 @@ use Webmozart\Assert\Assert as WMAssert;
         new GetCollection(
             uriTemplate: '/invoice_line_items/grouped_by_organization',
             security: 'is_granted(\'ROLE_ADMIN\')',
-            output: InvoiceLineItemGroupedByOrganization::class,
+            provider: InvoiceLineItemsGroupedByOrganizationProvider::class,
             normalizationContext: ['groups' => ['default_invoice_line_item']],
             openapiContext: ['summary' => 'Invoicing: Get the number of orders and sum total grouped by organization', 'description' => 'Retrieves the collection of organizations with the number of orders and sum total for the specified filter, for example: ?state[]=new&state[]=accepted&state[]=fulfilled&date[after]=2025-02-01&date[before]=2025-02-28']
         ),
         new GetCollection(
             uriTemplate: '/invoice_line_items',
             security: 'is_granted(\'ROLE_ADMIN\')',
-            output: InvoiceLineItem::class,
+            provider: InvoiceLineItemsProvider::class,
             normalizationContext: ['groups' => ['default_invoice_line_item']],
             openapiContext: ['summary' => 'Invoicing: Get the collection of orders', 'description' => 'Retrieves the collection of Order resources for the given organizations and the specified filter']
         ),
@@ -262,7 +263,7 @@ use Webmozart\Assert\Assert as WMAssert;
             uriTemplate: '/invoice_line_items/export',
             paginationEnabled: false,
             security: 'is_granted(\'ROLE_ADMIN\')',
-            output: InvoiceLineItem::class,
+            provider: InvoiceLineItemsProvider::class,
             normalizationContext: ['groups' => ['export_invoice_line_item']],
             openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the default format']
         ),
@@ -270,7 +271,7 @@ use Webmozart\Assert\Assert as WMAssert;
             uriTemplate: '/invoice_line_items/export/odoo',
             paginationEnabled: false,
             security: 'is_granted(\'ROLE_ADMIN\')',
-            output: InvoiceLineItem::class,
+            provider: InvoiceLineItemsProvider::class,
             normalizationContext: ['groups' => ['odoo_export_invoice_line_item']],
             openapiContext: ['summary' => 'Invoicing: Get the collection of orders for export in the Odoo format']
         )
