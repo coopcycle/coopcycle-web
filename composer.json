@@ -174,8 +174,7 @@
         "twig/extra-bundle": "^2.12|^3.0",
         "symfony/workflow": "5.4.*",
         "symfony/lock": "5.4.*",
-        "symfony/proxy-manager-bridge": "5.4.*",
-        "nikic/php-parser": "^4"
+        "symfony/proxy-manager-bridge": "5.4.*"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
