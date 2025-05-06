@@ -863,11 +863,6 @@ services:
     tags:
       - { name: doctrine.event_subscriber, priority: -100 }
 
-  AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
-    arguments:
-        $denyAccessListener: '@api_platform.security.listener.request.deny_access'
-    tags: [ 'kernel.event_subscriber' ]
-
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
