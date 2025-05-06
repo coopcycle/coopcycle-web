@@ -715,6 +715,7 @@
         "SWITCH_BACK_TIMESLOTPICKER": "Back to timeslot picker",
         "PAYMENT_FORM_ERROR": "Sorry, we could not process your payment",
         "TRY_AGAIN": "Try again",
-        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery."
+        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery.",
+        "CART_SHIPPING_ADDRESS_MAP_PICKED": "Address selected via the map"
       }
 }
