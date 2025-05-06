@@ -1013,10 +1013,6 @@ services:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
-  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
-    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
-    autoconfigure: false
-
   AppBundle\Api\DataProvider\InvoiceLineItemGroupedByOrganizationCollectionDataProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection

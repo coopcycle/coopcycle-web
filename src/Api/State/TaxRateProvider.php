@@ -1,27 +1,22 @@
 <?php
 
-namespace AppBundle\Api\DataProvider;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProviderInterface;
 use AppBundle\Api\Resource\TaxRate;
 use AppBundle\Entity\Sylius\TaxRate as BaseTaxRate;
 use AppBundle\Sylius\Taxation\TaxesHelper;
 use Doctrine\ORM\EntityManagerInterface;
 
-final class TaxRateCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
+final class TaxRateProvider implements ProviderInterface
 {
     public function __construct(
         private TaxesHelper $taxesHelper,
         private EntityManagerInterface $entityManager)
     {}
 
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return TaxRate::class === $resourceClass;
-    }
-
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
+    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
     {
         $taxRates = $this->taxesHelper->getBaseRates();
         foreach ($taxRates as $taxRate) {
