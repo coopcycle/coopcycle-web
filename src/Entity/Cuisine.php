@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -20,7 +20,7 @@ class Cuisine
      * @var string The name of the item
      */
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'http://schema.org/name')]
+    #[ApiProperty(types: ['http://schema.org/name'])]
     #[Groups(['restaurant'])]
     protected $name;
 

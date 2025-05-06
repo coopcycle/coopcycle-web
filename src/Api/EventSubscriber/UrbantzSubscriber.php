@@ -2,7 +2,7 @@
 
 namespace AppBundle\Api\EventSubscriber;
 
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;

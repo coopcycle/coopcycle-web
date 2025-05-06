@@ -3,7 +3,7 @@
 namespace AppBundle\Action\Incident;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Form\IncidentImageType;

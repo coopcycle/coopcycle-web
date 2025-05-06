@@ -5,7 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\LocalBusiness;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use ApiPlatform\Core\Security\EventListener\DenyAccessListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

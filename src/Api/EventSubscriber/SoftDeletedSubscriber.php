@@ -5,7 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;

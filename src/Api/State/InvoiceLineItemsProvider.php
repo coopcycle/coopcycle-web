@@ -4,6 +4,7 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
+use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
@@ -69,6 +70,9 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         return $this->postProcessResult($qb->getQuery()->getResult(), $operation->getName());
     }
 
+    /**
+     * @param PaginatorInterface $data
+     */
     private function postProcessResult(iterable $data, string $operationName): iterable
     {
         $orders = iterator_to_array($data);

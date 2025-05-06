@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action;
 
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Form\ApiResetPasswordType;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;

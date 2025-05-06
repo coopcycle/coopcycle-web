@@ -40,10 +40,10 @@ final class TasksProvider implements ProviderInterface
             if (
                 $extension instanceof QueryResultCollectionExtensionInterface
                 &&
-                $extension->supportsResult($resourceClass, $operation, $context) // @phpstan-ignore arguments.count
+                $extension->supportsResult($resourceClass, $operation, $context)
             ) {
                 return $this->postProcessResult(
-                    $extension->getResult($qb, $resourceClass, $operation, $context) // @phpstan-ignore arguments.count
+                    $extension->getResult($qb, $resourceClass, $operation, $context)
                 );
             }
         }
