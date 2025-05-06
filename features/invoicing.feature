@@ -365,3 +365,32 @@ Feature: Invoicing
         }
       }
       """
+
+  Scenario: Get invoice line items by date
+    Given the fixtures files are loaded with purge:
+      | cypress://setup_default.yml |
+    Given the fixtures files are loaded:
+      | cypress://package_delivery_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?date[after]=2025-01-01&date[before]=2025-01-03"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[],
+        "hydra:totalItems":0,
+        "hydra:view":{
+          "@id":"/api/invoice_line_items?date%5Bafter%5D=2025-05-01\u0026date%5Bbefore%5D=2025-05-03",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
