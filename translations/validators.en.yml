@@ -78,3 +78,5 @@ siret.head_office: You must provide an establishment SIRET number, not head offi
 
 form.package_set.duplicatePackageNames: Package names must be unique in a package set
 restaurant.paygreenShopId.notSet: Configure the Paygreen Shop ID
+
+delivery.price.error.noPricingRuleSet: No pricing configured

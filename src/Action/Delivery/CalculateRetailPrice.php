@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalculateRetailPrice implements TaxableInterface
 {
@@ -34,6 +35,7 @@ class CalculateRetailPrice implements TaxableInterface
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
         private readonly NormalizerInterface $normalizer,
+        private readonly TranslatorInterface $translator,
         private readonly string $state
     ) {}
 
@@ -57,14 +59,14 @@ class CalculateRetailPrice implements TaxableInterface
         $pricingRuleSet = $store?->getPricingRuleSet();
 
         if (null === $pricingRuleSet) {
-            $message = 'delivery.price.error.noPricingRuleSet';
+            $message = $this->translator->trans('delivery.price.error.noPricingRuleSet', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
         $priceCalculation = $this->pricingManager->getPriceCalculation($data, $pricingRuleSet);
 
         if (null === $priceCalculation) {
-            $message = 'delivery.price.error.priceCalculation';
+            $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
@@ -96,7 +98,7 @@ class CalculateRetailPrice implements TaxableInterface
         $order = $priceCalculation->order;
 
         if (null === $order) {
-            $message = 'delivery.price.error.priceCalculation';
+            $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
 
             // Serialize manually to preserve backwards compatibility
             return new JsonResponse(
