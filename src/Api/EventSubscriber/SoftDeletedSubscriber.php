@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -40,22 +41,34 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if (!$request->attributes->has('_api_resource_class') || !$request->attributes->has('_api_operation')) {
-            return;
+        if ($this->isAllowedRoute($request) || $this->isSoftdeleteableOperation($request)) {
+            $this->doctrine->getManager()->getFilters()->enable('soft_deleteable');
+        }
+    }
+
+    private function isAllowedRoute(Request $request): bool
+    {
+        return in_array($request->attributes->get('_route'), $this->routes);
+    }
+
+    private function isSoftdeleteableOperation(Request $request): bool
+    {
+        if (!$request->attributes->has('_api_resource_class') && !$request->attributes->has('_api_operation')) {
+            return false;
         }
 
         $operation = $request->attributes->get('_api_operation');
 
         if (!($operation instanceof Get) && !($operation instanceof GetCollection)) {
-            return;
+            return false;
         }
 
         $resourceClass = $request->attributes->get('_api_resource_class');
 
         if (!in_array(SoftDeleteableInterface::class, class_implements($resourceClass))) {
-            return;
+            return false;
         }
 
-        $this->doctrine->getManager()->getFilters()->enable('soft_deleteable');
+        return true;
     }
 }
