@@ -19,17 +19,14 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
     private $taskListProvider;
     private $logger;
-    private $tourRepository;
 
     public function __construct(
         TaskListProvider $taskListProvider,
-        LoggerInterface $logger = null,
-        EntityManagerInterface $entityManager
+        LoggerInterface $logger = null
     )
     {
         $this->taskListProvider = $taskListProvider;
         $this->logger = $logger ? $logger : new NullLogger();
-        $this->tourRepository = $entityManager->getRepository(Tour::class);
     }
 
     public function process(Task $task, array $entityChangeSet)
