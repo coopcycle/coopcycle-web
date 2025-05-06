@@ -1,7 +1,6 @@
 Feature: Tasks
     Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
       Given the fixtures files are loaded:
-        | sylius_channels.yml |
         | tasks.yml           |
       And the courier "bob" is loaded:
         | email     | bob@coopcycle.org |
@@ -195,7 +194,6 @@ Feature: Tasks
 
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -281,7 +279,6 @@ Feature: Tasks
 
   Scenario: Retrieve assigned tasks when not created yet
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -314,7 +311,6 @@ Feature: Tasks
 
   Scenario: Retrieve task events
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -346,7 +342,6 @@ Feature: Tasks
 
   Scenario: Not authorized to retrieve task events
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -366,7 +361,6 @@ Feature: Tasks
 
   Scenario: Mark task as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -423,7 +417,6 @@ Feature: Tasks
 
   Scenario: Reschedule failed or cancelled task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -484,7 +477,6 @@ Feature: Tasks
 
   Scenario: Add task to a group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
@@ -516,7 +508,6 @@ Feature: Tasks
 
   Scenario: Remove task from a group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
@@ -545,7 +536,6 @@ Feature: Tasks
 
   Scenario: Start a task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -610,7 +600,6 @@ Feature: Tasks
 
   Scenario: Mark task as done with contact name
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -684,7 +673,6 @@ Feature: Tasks
 
   Scenario: Mark task as failed with notes
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -743,7 +731,6 @@ Feature: Tasks
 
   Scenario: Mark task as failed with failure reason via failed endpoint
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -837,7 +824,6 @@ Feature: Tasks
 
   Scenario: Report incident
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -882,7 +868,6 @@ Feature: Tasks
 
   Scenario: Report incident (with metadata)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -934,7 +919,6 @@ Feature: Tasks
 
   Scenario: Task is already completed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -963,7 +947,6 @@ Feature: Tasks
 
   Scenario: Previous task must be completed before marking as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -992,7 +975,6 @@ Feature: Tasks
 
   Scenario: Previous task must be completed before marking as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1021,7 +1003,6 @@ Feature: Tasks
 
   Scenario: Only assigned courier can mark a task as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1044,7 +1025,6 @@ Feature: Tasks
 
   Scenario: Only assigned courier can mark a task as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1067,7 +1047,6 @@ Feature: Tasks
 
   Scenario: Cancelled task can't be marked as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1086,7 +1065,6 @@ Feature: Tasks
 
   Scenario: Cancelled task can't be marked as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1105,7 +1083,6 @@ Feature: Tasks
 
   Scenario: Create task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -1188,7 +1165,6 @@ Feature: Tasks
 
   Scenario: Create task with after & before
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -1273,7 +1249,6 @@ Feature: Tasks
 
   Scenario: Not authorized to create task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -1296,7 +1271,6 @@ Feature: Tasks
 
   Scenario: Not authorized to retrieve task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -1312,7 +1286,6 @@ Feature: Tasks
 
   Scenario: Authorized to retrieve task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -1328,7 +1301,6 @@ Feature: Tasks
 
   Scenario: Not enough permissions to create task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1352,7 +1324,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
@@ -1456,7 +1427,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date for dispatcher without pagination
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
@@ -1644,7 +1614,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date for dispatcher with pagination
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
@@ -1757,7 +1726,6 @@ Feature: Tasks
 
   Scenario: Retrieve unassigned tasks filtered by date for dispatcher
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
@@ -1823,7 +1791,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date for dispatcher+courier (GH #4125)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
     And the user "bob" has role "ROLE_COURIER"
@@ -1996,7 +1963,6 @@ Feature: Tasks
 
   Scenario: Duplicate task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2049,7 +2015,6 @@ Feature: Tasks
 
   Scenario: Cannot edit task type
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2082,7 +2047,6 @@ Feature: Tasks
 
   Scenario: Can edit task type
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2099,7 +2063,6 @@ Feature: Tasks
 
   Scenario: Can't edit task status
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2167,7 +2130,6 @@ Feature: Tasks
 
   Scenario: Can complete pickup & dropoff
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2292,7 +2254,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | tags.yml            |
     Given the store with name "Acme" has an OAuth client named "Acme"
@@ -2332,7 +2293,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format (one line)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | tags.yml            |
     Given the store with name "Acme" has an OAuth client named "Acme"
@@ -2362,7 +2322,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format with duplicate ref
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2395,7 +2354,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format with existing ref
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2429,7 +2387,6 @@ Feature: Tasks
 
   Scenario: Authorized to retrieve task group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
@@ -2458,7 +2415,6 @@ Feature: Tasks
 
   Scenario: Not authorized to retrieve task group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
@@ -2473,7 +2429,6 @@ Feature: Tasks
 
   Scenario: Create task with invalid address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -2627,7 +2582,6 @@ Feature: Tasks
 
   Scenario: Authorized to retrieve task events
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
@@ -2663,7 +2617,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format (async)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | tags.yml            |
     Given the store with name "Acme" has an OAuth client named "Acme"
@@ -2690,7 +2643,6 @@ Feature: Tasks
 
   Scenario: Restore a cancelled task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2789,7 +2741,6 @@ Feature: Tasks
 
   Scenario: Doesn't double package quantity
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2827,7 +2778,6 @@ Feature: Tasks
 
   Scenario: Can update address.name & comments
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
@@ -2862,7 +2812,6 @@ Feature: Tasks
 
   Scenario: Mark multiple tasks as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -2908,7 +2857,6 @@ Feature: Tasks
 
   Scenario: Mark multiple tasks as done when they are in the same delivery and in wrong order regarding database IDs
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | mark_as_done_in_delivery.yml |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -2962,7 +2910,6 @@ Feature: Tasks
 
   Scenario: Mark one tasks as done and another one as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3003,7 +2950,6 @@ Feature: Tasks
 
   Scenario: Assign images to multiple tasks
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3056,7 +3002,6 @@ Feature: Tasks
 
   Scenario: Upload image
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3082,7 +3027,6 @@ Feature: Tasks
 
   Scenario: Upload image with task in header
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3109,7 +3053,6 @@ Feature: Tasks
 
   Scenario: Upload image with tasks in header
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3136,7 +3079,6 @@ Feature: Tasks
 
   Scenario: Retrieve custom failure reasons
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | tasks.yml            |
       | stores_with_orgs.yml |
       | failure_reasons.yml  |
@@ -3183,7 +3125,6 @@ Feature: Tasks
 
   Scenario: Retrieve default failure reasons
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | tasks.yml            |
       | stores_with_orgs.yml |
     And the courier "bob" is loaded:

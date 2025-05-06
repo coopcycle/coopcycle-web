@@ -6,7 +6,7 @@ import parsePricingRule, {
   PricePerPackage,
   RawPriceExpression,
   PercentagePrice,
-} from '../pricing/pricing-rule-parser'
+} from '../pricing-rule-parser'
 import withZone from './with-zone.json'
 
 import withPackages from './with-packages.json'
@@ -19,6 +19,7 @@ import withTotalVolumeUnitsRange from './with-packages-total-volume-units-range.
 import withTimeRangeLength from './with-time-range-length.json'
 import withDropoffTimeRangeLength from './with-time-range-length-dropoff.json'
 import withDropoffTimeRangeLengthWithRange from './with-time-range-length-dropoff-in.json'
+import withTimeSlot from './with-time-slot.json'
 
 import fixedPrice from './fixed-price.json'
 import pricePercentage from './price-percentage.json'
@@ -344,6 +345,19 @@ describe('Pricing rule parser (AST)', function() {
       ]
     )
   })
+
+  it('should parse AST with time slots', function() {
+
+    const result = parseAST(withTimeSlot)
+
+    expect(result).toEqual(
+      [
+        { left: 'time_slot', operator: '==', right: '/api/time_slots/2' },
+      ]
+    )
+
+  })
+
 })
 
 describe('Pricing rule price parser (AST)', function() {

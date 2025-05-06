@@ -8,17 +8,13 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Pricing\PriceCalculationVisitor;
-use AppBundle\ExpressionLanguage\ExpressionLanguage;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 final class EvaluatePricingRuleProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly DeliveryProcessor $decorated,
         private readonly ItemProvider $provider,
-        private readonly ExpressionLanguage $expressionLanguage,
-        private readonly LoggerInterface $logger = new NullLogger())
+        private readonly PriceCalculationVisitor $priceCalculationVisitor)
     {}
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
@@ -33,11 +29,10 @@ final class EvaluatePricingRuleProcessor implements ProcessorInterface
         $ruleSet = clone $pricingRuleSet;
         $ruleSet->setRules([$pricingRule]);
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
-        $visitor->visit($delivery);
+        $result = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
 
         $output = new YesNoOutput();
-        $output->result = count($visitor->getMatchedRules()) > 0;
+        $output->result = count($result->matchedRules) > 0;
 
         return $output;
     }

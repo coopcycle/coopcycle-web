@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
@@ -29,7 +30,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
 
 	public function __construct(
         private readonly DeliveryProcessor $decorated,
-        private readonly DeliveryManager $deliveryManager,
+        private readonly PricingManager $pricingManager,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly SettingsManager $settingsManager,
         private readonly TokenStoreExtractor $storeExtractor,
@@ -60,14 +61,21 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $store = $this->storeExtractor->extractStore();
         }
 
-        $priceCalculation = $this->deliveryManager->getPriceCalculation($data, $store->getPricingRuleSet());
+        $pricingRuleSet = $store?->getPricingRuleSet();
+
+        if (null === $pricingRuleSet) {
+            $message = 'delivery.price.error.noPricingRuleSet';
+            throw new BadRequestHttpException($message);
+        }
+
+        $priceCalculation = $this->pricingManager->getPriceCalculation($data, $pricingRuleSet);
 
         if (null === $priceCalculation) {
             $message = 'delivery.price.error.priceCalculation';
             throw new BadRequestHttpException($message);
         }
 
-        $calculation = $priceCalculation->getCalculation();
+        $calculation = $priceCalculation->calculation;
 
         $calculationItems = [];
         foreach ($calculation->resultsPerEntity as $item) {
@@ -92,7 +100,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $calculationItems
         );
 
-        $order = $priceCalculation->getOrder();
+        $order = $priceCalculation->order;
 
         if (null === $order) {
             $message = 'delivery.price.error.priceCalculation';

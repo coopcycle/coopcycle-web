@@ -2,7 +2,6 @@ Feature: Pricing rules set
 
   Scenario: Delete pricing rule set fails if store then succeed if store is deleted
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -36,7 +35,6 @@ Feature: Pricing rules set
 
     Scenario: Delete pricing rule set fails if restaurant then succeed if restaurant is deleted
         Given the fixtures files are loaded:
-        | sylius_channels.yml |
         | products.yml          |
         | restaurants.yml          |
         And the user "admin" is loaded:
@@ -71,7 +69,6 @@ Feature: Pricing rules set
 
   Scenario: Get the applications of a pricing rule set
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | pricing_rule_set.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |

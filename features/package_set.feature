@@ -2,7 +2,6 @@ Feature: Package set
 
   Scenario: Get the applications of a package set
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | packages.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
@@ -38,7 +37,6 @@ Feature: Package set
 
   Scenario: Delete a package set fails
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | dispatch.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
@@ -63,7 +61,6 @@ Feature: Package set
 
   Scenario: Delete a package set (of which a package has been linked to a task)
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | dispatch.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |

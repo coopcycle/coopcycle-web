@@ -4,7 +4,9 @@ namespace AppBundle\Pricing;
 
 use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Action\Utils\TokenStorageTrait;
+use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
@@ -20,6 +22,7 @@ use AppBundle\Entity\User;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use DateTime;
@@ -32,7 +35,11 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * FIXME: Should we merge this class into the OrderManager class?
+ * PricingManager is responsible for calculating the price of a "delivery".
+ * "Delivery" here includes both delivery of foodtech orders (where price is added as an order adjustment)
+ * and Package Delivery/'LastMile' orders (where price is added as an order item).
+ *
+ * FIXME: Should we move non-price-related methods into the OrderManager class?
  */
 class PricingManager
 {
@@ -40,20 +47,22 @@ class PricingManager
 
     public function __construct(
         TokenStorageInterface $tokenStorage,
-        private readonly DeliveryManager $deliveryManager,
-        private readonly OrderManager $orderManager,
-        private readonly OrderFactory $orderFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
         private readonly RequestStack $requestStack,
-        private readonly CreateIncident $createIncident,
         private readonly TranslatorInterface $translator,
+        private readonly DeliveryManager $deliveryManager,
+        private readonly OrderManager $orderManager,
+        private readonly OrderFactory $orderFactory,
+        private readonly CreateIncident $createIncident,
+        private readonly TimeSlotManager $timeSlotManager,
+        private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly LoggerInterface $logger
     ) {
         $this->tokenStorage = $tokenStorage;
     }
 
-    private function getDeliveryPrice(Delivery $delivery, PricingStrategy $pricingStrategy): ?PriceInterface
+    private function getPriceWithPricingStrategy(Delivery $delivery, PricingStrategy $pricingStrategy): ?PriceInterface
     {
         $store = $delivery->getStore();
 
@@ -64,7 +73,7 @@ class PricingManager
 
         if ($pricingStrategy instanceof UsePricingRules) {
             $pricingRuleSet = $store->getPricingRuleSet();
-            $price = $this->deliveryManager->getPrice($delivery, $pricingRuleSet);
+            $price = $this->getPrice($delivery, $pricingRuleSet);
 
             if (null === $price) {
                 $this->logger->warning('Price could not be calculated');
@@ -77,6 +86,50 @@ class PricingManager
             $this->logger->warning('Unsupported pricing config');
             return null;
         }
+    }
+
+    public function getPrice(Delivery $delivery, ?PricingRuleSet $ruleSet): ?int
+    {
+        // if no Pricing Rules are defined, the default rule is to set the price to 0
+        if (null === $ruleSet) {
+            return 0;
+        }
+
+        $output = $this->getPriceCalculation($delivery, $ruleSet);
+        // if the Pricing Rules are configured but none of them match, the price is null
+        return $output->getPrice();
+    }
+
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?Output
+    {
+        // Store might be null if it's an embedded form
+        $store = $delivery->getStore();
+        foreach ($delivery->getTasks() as $task) {
+            if (null === $task->getTimeSlot() && null !== $store) {
+                // Try to find a time slot by range, when a time slot is not set explicitly
+
+                Task::fixTimeWindow($task);
+                $range = TsRange::create($task->getAfter(), $task->getBefore());
+                $timeSlot = $this->timeSlotManager->findByRange($store, $range);
+
+                if ($timeSlot) {
+
+                    $task->setTimeSlot($timeSlot);
+
+                } else {
+
+                    $this->logger->warning('No time slot choice found: ', [
+                        'store' => $store->getId(),
+                        'range' => $range,
+                    ]);
+                    //FIXME: decide if we want to fail the request
+//                    throw new InvalidArgumentException('task.timeSlot.notFound');
+
+                }
+            }
+        }
+
+        return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
     }
 
     /**
@@ -103,7 +156,7 @@ class PricingManager
             $pricingStrategy = new UsePricingRules();
         }
 
-        $price = $this->getDeliveryPrice($delivery, $pricingStrategy);
+        $price = $this->getPriceWithPricingStrategy($delivery, $pricingStrategy);
         $incident = null;
 
         if (null === $price) {

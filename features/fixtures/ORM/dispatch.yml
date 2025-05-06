@@ -1,5 +1,4 @@
 include:
-  - sylius_channels.yml
   - packages.yml
 
 AppBundle\Entity\Base\GeoCoordinates:

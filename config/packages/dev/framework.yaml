@@ -1,6 +1,4 @@
 framework:
-    session:
-        save_path:   "/tmp"
 
 # Uncomment to send emails in dev
 # parameters:

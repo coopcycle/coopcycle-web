@@ -1,5 +1,5 @@
 include:
-  - setup.yml
+  - setup_default.yml
   - admin_user.yml
   - user_courier.yml
   - addresses.yml

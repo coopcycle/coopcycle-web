@@ -19,6 +19,7 @@ use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
@@ -31,7 +32,6 @@ use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\ExpressionLanguage\PackagesResolver;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
@@ -72,6 +72,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             denormalizationContext: ['groups' => ['delivery_create']],
             controller: CreateDelivery::class,
+            input: DeliveryInput::class,
+            processor: DeliveryPersistProcessor::class,
             openapiContext: ['parameters' => [['name' => 'delivery', 'in' => 'body', 'schema' => ['type' => 'object', 'required' => ['dropoff'], 'properties' => ['dropoff' => ['$ref' => '#/definitions/Task-task_create'], 'pickup' => ['$ref' => '#/definitions/Task-task_create']]], 'style' => 'form']]],
             inputFormats: ['jsonld' => ['application/ld+json']],
             securityPostDenormalize: 'is_granted(\'create\', object)'
@@ -87,7 +89,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         ),
         new Post(
             uriTemplate: '/deliveries/from_tasks',
-            input: DeliveryInput::class,
+            input: DeliveryFromTasksInput::class,
             processor: DeliveryPersistProcessor::class,
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')'
@@ -147,7 +149,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     private $vehicle = self::VEHICLE_BIKE;
 
-    #[Groups(['delivery_create', 'pricing_deliveries'])]
+    #[Groups(['delivery_create'])]
     private $store;
 
     /**
@@ -499,50 +501,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
                 break;
             }
         }
-    }
-
-    private static function createTaskObject(?Task $task)
-    {
-        $taskObject = new \stdClass();
-        if ($task) {
-
-            return $task->toExpressionLanguageObject();
-        }
-
-        return $taskObject;
-    }
-
-    private static function createOrderObject(?Order $order)
-    {
-        $object = new \stdClass();
-        if ($order) {
-            $object->itemsTotal = $order->getItemsTotal();
-        } else {
-            $object->itemsTotal = 0;
-        }
-
-        return $object;
-    }
-
-    public static function toExpressionLanguageValues(Delivery $delivery)
-    {
-        $pickup = self::createTaskObject($delivery->getPickup());
-        $dropoff = self::createTaskObject($delivery->getDropoff());
-        $order = self::createOrderObject($delivery->getOrder());
-
-        $emptyTaskObject = new \stdClass();
-        $emptyTaskObject->type = '';
-
-        return [
-            'distance' => $delivery->getDistance(),
-            'weight' => $delivery->getWeight(),
-            'vehicle' => $delivery->getVehicle(),
-            'pickup' => $pickup,
-            'dropoff' => $dropoff,
-            'packages' => new PackagesResolver($delivery),
-            'order' => $order,
-            'task' => $emptyTaskObject,
-        ];
     }
 
     public function setPickupRange(\DateTime $after, \DateTime $before)

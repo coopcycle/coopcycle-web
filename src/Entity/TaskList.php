@@ -21,6 +21,7 @@ use AppBundle\Api\State\TaskListProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use AppBundle\Entity\TaskList\Item;
 use Doctrine\Common\Collections\ArrayCollection;
+use Shahonseven\ColorHash;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -205,6 +206,17 @@ class TaskList implements TaskCollectionInterface
     public function getUsername()
     {
         return $this->getCourier()->getUsername();
+    }
+
+    #[SerializedName('color')]
+    #[Groups(['task_list'])]
+    public function getColor()
+    {
+        $colorHash = new ColorHash();
+        $username = $this->getCourier()->getUsername();
+        $hexColor = $colorHash->hex($username);
+
+        return $hexColor;
     }
 
     /**

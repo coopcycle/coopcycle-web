@@ -33,7 +33,7 @@ class PaygreenManager
         private string $country)
     {}
 
-    private function authenticate()
+    public function authenticate()
     {
         // https://developers.paygreen.fr/docs/auth#create-a-bearer-access-token
         $response = $this->paygreenClient->authenticate();

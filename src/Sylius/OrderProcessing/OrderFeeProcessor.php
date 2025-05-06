@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\OrderProcessing;
 
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -19,26 +20,16 @@ use Webmozart\Assert\Assert;
 
 final class OrderFeeProcessor implements OrderProcessorInterface
 {
-    private $adjustmentFactory;
-    private $translator;
-    private $deliveryManager;
-    private $promotionRepository;
-    private $logger;
-
     public function __construct(
-        AdjustmentFactoryInterface $adjustmentFactory,
-        TranslatorInterface $translator,
-        DeliveryManager $deliveryManager,
-        PromotionRepositoryInterface $promotionRepository,
-        LoggerInterface $logger,
-        private LoggingUtils $loggingUtils
+        private readonly AdjustmentFactoryInterface $adjustmentFactory,
+        private readonly TranslatorInterface $translator,
+        private readonly DeliveryManager $deliveryManager,
+        private readonly PricingManager $pricingManager,
+        private readonly PromotionRepositoryInterface $promotionRepository,
+        private readonly LoggerInterface $logger,
+        private readonly LoggingUtils $loggingUtils
     )
     {
-        $this->adjustmentFactory = $adjustmentFactory;
-        $this->translator = $translator;
-        $this->deliveryManager = $deliveryManager;
-        $this->promotionRepository = $promotionRepository;
-        $this->logger = $logger;
     }
 
     /**
@@ -75,7 +66,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
             if ($contract->isVariableCustomerAmountEnabled() && null !== $delivery) {
 
-                $customerAmount = $this->deliveryManager->getPrice(
+                $customerAmount = $this->pricingManager->getPrice(
                     $delivery,
                     $contract->getVariableCustomerAmount()
                 );
@@ -98,7 +89,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             $businessAmount = $contract->getFlatDeliveryPrice();
 
             if ($contract->isVariableDeliveryPriceEnabled() && null !== $delivery) {
-                $businessAmount = $this->deliveryManager->getPrice(
+                $businessAmount = $this->pricingManager->getPrice(
                     $delivery,
                     $contract->getVariableDeliveryPrice()
                 );

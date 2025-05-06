@@ -2,7 +2,6 @@ Feature: Stores
 
   Scenario: Not authorized to list stores
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -15,7 +14,6 @@ Feature: Stores
 
   Scenario: Not authorized to retrieve store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -28,7 +26,6 @@ Feature: Stores
 
   Scenario: Not authorized to list store deliveries with JWT
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -43,7 +40,6 @@ Feature: Stores
 
   Scenario: Not authorized to list store deliveries with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     Given the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
@@ -54,7 +50,6 @@ Feature: Stores
 
   Scenario: List my stores
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -95,7 +90,6 @@ Feature: Stores
 
   Scenario: List stores
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -136,7 +130,6 @@ Feature: Stores
 
   Scenario: Retrieve store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -183,7 +176,6 @@ Feature: Stores
 
   Scenario: Retrieve store with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -226,7 +218,6 @@ Feature: Stores
 
   Scenario: Retrieve time slot with opening hours
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -289,7 +280,6 @@ Feature: Stores
 
   Scenario: Retrieve time slot with opening hours with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -350,7 +340,6 @@ Feature: Stores
 
   Scenario: List store deliveries with JWT, ordered by dropoff desc
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -471,7 +460,6 @@ Feature: Stores
 
   Scenario: List store deliveries with JWT, ordered by dropoff asc
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -590,7 +578,6 @@ Feature: Stores
 
   Scenario: List store deliveries with OAuth, ordered by dropoff desc
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -706,7 +693,6 @@ Feature: Stores
   @deprecated
   Scenario: Retrieve store dropoff addresses
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -751,7 +737,6 @@ Feature: Stores
 
   Scenario: Add an adress to store saved addresses as admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -765,7 +750,7 @@ Feature: Stores
       {
         "contactName":null,
         "geo":{
-          "latitude":48.8317573,
+          "latitude":48.864577,
           "longitude":2.326347
         },
         "streetAddress":"10 rue Mouton Duvernet, Paris",
@@ -793,7 +778,7 @@ Feature: Stores
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.8317573,
+              "latitude":48.864577,
               "longitude":2.326347
             },
             "streetAddress":"10 rue Mouton Duvernet, Paris",
@@ -808,7 +793,6 @@ Feature: Stores
 
   Scenario: Reorder store time slots
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -880,7 +864,6 @@ Feature: Stores
 
   Scenario: Retrieve store timeslots
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -917,7 +900,6 @@ Feature: Stores
 
   Scenario: Retrieve timeslots opening hours
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the current time is "2024-05-31 11:00:00"
     And the user "bob" is loaded:
@@ -962,7 +944,6 @@ Feature: Stores
 
   Scenario: Retrieve packages
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |

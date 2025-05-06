@@ -65,9 +65,11 @@ class Geocoder
 
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
             $geocodingProvider = $geocodingProvider ?? 'opencage';
-            
-            // Add OpenCage provider only if api key is configured
-            if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
+
+            if ('mock' === $geocodingProvider) {
+                $providers[] = new MockGeocoderProvider();
+                // Add OpenCage provider only if api key is configured
+            } else if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();
             } elseif ('google' === $geocodingProvider) {
                 $providers[] = $this->createGoogleMapsProvider();
@@ -100,18 +102,18 @@ class Geocoder
 
         $rateLimiter =
             RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
-        
+
         $decider = function ($retries, $request, $response, $exception) {
             // Limit the number
             if ($retries >= 10) {
                 return false;
             }
-            
+
             // Retry on network exceptions
             if ($exception instanceof NetworkException) {
                 return true;
             }
-    
+
             return false;
         };
         $retryMiddleware = Middleware::retry($decider);

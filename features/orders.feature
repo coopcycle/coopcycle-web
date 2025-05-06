@@ -2,7 +2,6 @@ Feature: Orders
 
   Scenario: Not authorized to list orders
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -16,7 +15,6 @@ Feature: Orders
 
   Scenario: Not authorized to retrieve order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -35,7 +33,6 @@ Feature: Orders
 
   Scenario: User can retrieve own orders
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -51,7 +48,6 @@ Feature: Orders
 
   Scenario: Restaurant owner can retrieve order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -73,7 +69,6 @@ Feature: Orders
   Scenario: Create order (legacy options payload)
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -250,7 +245,6 @@ Feature: Orders
   Scenario: Create order
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -427,7 +421,6 @@ Feature: Orders
   Scenario: Calculate order timing
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -489,7 +482,6 @@ Feature: Orders
   Scenario: Get order timing
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -529,7 +521,6 @@ Feature: Orders
   Scenario: Get order timing with holidays
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -570,7 +561,6 @@ Feature: Orders
   Scenario: Create order with address
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -728,7 +718,6 @@ Feature: Orders
   Scenario: Create order without shipping date
     Given the current time is "2017-09-02 13:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -893,7 +882,6 @@ Feature: Orders
   Scenario: Create order with missing additional product option
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1046,7 +1034,6 @@ Feature: Orders
   Scenario: Refuse order when restaurant is closed
     Given the current time is "2017-09-02 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1101,7 +1088,6 @@ Feature: Orders
   Scenario: Delivery exceeds max distance
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1156,7 +1142,6 @@ Feature: Orders
   Scenario: Disabled product is ignored
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1272,7 +1257,6 @@ Feature: Orders
   Scenario: Shipping date is in the past
     Given the current time is "2017-09-03 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1327,7 +1311,6 @@ Feature: Orders
   Scenario: Amount is not sufficient
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1377,7 +1360,6 @@ Feature: Orders
 
   Scenario: Validate cart
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1418,7 +1400,6 @@ Feature: Orders
 
   Scenario: Get cart payment details
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1455,7 +1436,6 @@ Feature: Orders
 
   Scenario: Get cart payment methods for guest
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1528,7 +1508,6 @@ Feature: Orders
 
   Scenario: Get cart payment details for guest
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1598,7 +1577,6 @@ Feature: Orders
 
   Scenario: Get cart payment methods
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1639,7 +1617,6 @@ Feature: Orders
 
   Scenario: Retrieve Centrifugo connection details for order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |

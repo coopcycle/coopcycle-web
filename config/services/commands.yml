@@ -4,6 +4,8 @@ services:
     autowire: true
     autoconfigure: true
     public: false
+    bind:
+      $environment: "%kernel.environment%"
 
   AppBundle\Command\ApplyTaxesCommand:
     arguments:
@@ -51,9 +53,16 @@ services:
     arguments:
       $fixturesLoader: '@fidry_alice_data_fixtures.loader.doctrine'
       $projectDir: '%kernel.project_dir%'
-      $environment: '%kernel.environment%'
     tags:
       - { name: 'console.command', command: 'coopcycle:fixtures:load' }
+
+  AppBundle\Command\MockDatetimeCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:datetime:mock' }
+
+  AppBundle\Command\LogTestRunCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:tests:log' }
 
   AppBundle\Command\SetupCommand:
     arguments:
@@ -189,3 +198,7 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
     tags:
       - { name: 'console.command', command: 'coopcycle:standtrack:iub_range_setup' }
+
+  AppBundle\Command\SyncPaygreenOrders:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:paygreen:sync' }

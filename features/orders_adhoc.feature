@@ -3,7 +3,6 @@ Feature: Orders Adhoc
   Scenario: User without a restaurant or admin rol can not create an adhoc order
     Given the current time is "2022-09-21 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -36,7 +35,6 @@ Feature: Orders Adhoc
   Scenario: Create adhoc order
     Given the current time is "2022-09-21 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
       | products.yml        |
@@ -166,7 +164,6 @@ Feature: Orders Adhoc
   Scenario: Update existing order with a new restaurant
     Given the current time is "2022-09-21 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
       | products.yml        |

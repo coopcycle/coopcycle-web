@@ -7,8 +7,8 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryQuote;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
-use AppBundle\Service\DeliveryManager;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -19,7 +19,7 @@ class DeliveryQuoteProcessor implements ProcessorInterface
         private readonly DeliveryProcessor $decorated,
         private readonly ProcessorInterface $persistProcessor,
         private readonly TokenStoreExtractor $storeExtractor,
-        private readonly DeliveryManager $deliveryManager,
+        private readonly PricingManager $pricingManager,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly RequestStack $requestStack)
     {}
@@ -33,7 +33,7 @@ class DeliveryQuoteProcessor implements ProcessorInterface
         $data = $this->decorated->process($data, $operation, $uriVariables, $context);
 
         $store = $this->storeExtractor->extractStore();
-        $amount = $this->deliveryManager->getPrice($data, $store->getPricingRuleSet());
+        $amount = $this->pricingManager->getPrice($data, $store->getPricingRuleSet());
 
         if (null === $amount) {
             throw new BadRequestHttpException('Price could not be calculated');

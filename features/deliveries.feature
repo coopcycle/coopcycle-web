@@ -2,7 +2,6 @@ Feature: Deliveries
 
   Scenario: Not authorized to create deliveries
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -27,7 +26,6 @@ Feature: Deliveries
 
   Scenario: Not authorized to read delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
@@ -38,7 +36,6 @@ Feature: Deliveries
 
   Scenario: Missing time window
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -78,7 +75,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit pickup address with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -198,7 +194,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with weight in dropoff task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -320,7 +315,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with weight and packages
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -462,7 +456,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit pickup address with OAuth (with before & after)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -564,7 +557,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -666,7 +658,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as an admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -772,7 +763,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as an admin in a store without pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -878,7 +868,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as an admin in a store with invalid pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -982,9 +971,310 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with timeSlot and range in ISO 8601 as an admin
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Delivery",
+          "@id":"@string@.startsWith('/api/deliveries')",
+          "@type":"http://schema.org/ParcelDelivery",
+          "id":@integer@,
+          "tasks":@array@,
+          "pickup":{
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "status":"TODO",
+            "type":"PICKUP",
+            "address":{
+              "@id":"@string@.startsWith('/api/addresses')",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":@double@,
+                "longitude":@double@
+              },
+              "streetAddress":@string@,
+              "telephone":null,
+              "name":null,
+              "contactName": null,
+              "description": null
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "after":"@string@.isDateTime()",
+            "before":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "comments": "",
+            "weight": null,
+            "packages": [],
+            "barcode": {"@*@":"@*@"},
+            "createdAt":"@string@.isDateTime()",
+            "tags": [],
+            "metadata": {"@*@": "@*@"}
+          },
+          "dropoff":{
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "status":"TODO",
+            "type":"DROPOFF",
+            "address":{
+              "@id":"@string@.startsWith('/api/addresses')",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":@double@,
+                "longitude":@double@
+              },
+              "streetAddress":@string@,
+              "telephone":null,
+              "name":null,
+              "contactName": null,
+              "description": null
+            },
+            "doneAfter":"2020-04-02T12:00:00+02:00",
+            "after":"2020-04-02T12:00:00+02:00",
+            "before":"2020-04-02T14:00:00+02:00",
+            "doneBefore":"2020-04-02T14:00:00+02:00",
+            "comments": "",
+            "weight":null,
+            "packages": [],
+            "barcode": {"@*@":"@*@"},
+            "createdAt":"@string@.isDateTime()",
+            "tags": [],
+            "metadata": {"@*@": "@*@"}
+          },
+          "trackingUrl": @string@
+        }
+      """
+
+  Scenario: Create delivery with implicit timeSlot as an admin
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "after": "2020-04-02 12:00",
+          "before": "2020-04-02 14:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "after": "2020-04-02 12:00",
+          "before": "2020-04-02 14:00"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Delivery",
+          "@id":"@string@.startsWith('/api/deliveries')",
+          "@type":"http://schema.org/ParcelDelivery",
+          "id":@integer@,
+          "tasks":@array@,
+          "pickup":{
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "status":"TODO",
+            "type":"PICKUP",
+            "address":{
+              "@id":"@string@.startsWith('/api/addresses')",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":@double@,
+                "longitude":@double@
+              },
+              "streetAddress":@string@,
+              "telephone":null,
+              "name":null,
+              "contactName": null,
+              "description": null
+            },
+            "doneAfter":"@string@.isDateTime()",
+            "after":"@string@.isDateTime()",
+            "before":"@string@.isDateTime()",
+            "doneBefore":"@string@.isDateTime()",
+            "comments": "",
+            "weight": null,
+            "packages": [],
+            "barcode": {"@*@":"@*@"},
+            "createdAt":"@string@.isDateTime()",
+            "tags": [],
+            "metadata": {"@*@": "@*@"}
+          },
+          "dropoff":{
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "id":@integer@,
+            "status":"TODO",
+            "type":"DROPOFF",
+            "address":{
+              "@id":"@string@.startsWith('/api/addresses')",
+              "@type":"http://schema.org/Place",
+              "geo":{
+                "@type":"GeoCoordinates",
+                "latitude":@double@,
+                "longitude":@double@
+              },
+              "streetAddress":@string@,
+              "telephone":null,
+              "name":null,
+              "contactName": null,
+              "description": null
+            },
+            "doneAfter":"2020-04-02T12:00:00+02:00",
+            "after":"2020-04-02T12:00:00+02:00",
+            "before":"2020-04-02T14:00:00+02:00",
+            "doneBefore":"2020-04-02T14:00:00+02:00",
+            "comments": "",
+            "weight":null,
+            "packages": [],
+            "barcode": {"@*@":"@*@"},
+            "createdAt":"@string@.isDateTime()",
+            "tags": [],
+            "metadata": {"@*@": "@*@"}
+          },
+          "trackingUrl": @string@
+        }
+      """
+
+  Scenario: Can't create a delivery with invalid timeSlotUrl as an admin
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/123456",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/123456",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Error",
+          "@type":"hydra:Error",
+          "hydra:title":"An error occurred",
+          "hydra:description":"Item not found for \"/api/time_slots/123456\".",
+          "trace":@array@
+        }
+      """
+
+  Scenario: Can't create a delivery with invalid timeSlot range as an admin
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:05:00Z/2020-04-02T12:05:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:05:00Z/2020-04-02T12:05:00Z"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+        {
+          "@context":"/api/contexts/Error",
+          "@type":"hydra:Error",
+          "hydra:title":"An error occurred",
+          "hydra:description":"task.timeSlot.invalid",
+          "trace":@array@
+        }
+      """
+
   Scenario: Create delivery with pickup & dropoff as a store owner
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1091,7 +1381,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as a store owner in a store without pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1198,7 +1487,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with pickup & dropoff as a store owner in a store with invalid pricing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1305,7 +1593,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with implicit pickup address & implicit time with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1403,7 +1690,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with details with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1505,7 +1791,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with latLng with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1609,7 +1894,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with latLng & timeSlot with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1711,7 +1995,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with latLng & timeSlot ISO 8601 with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1814,7 +2097,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with existing address & timeSlot with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1899,7 +2181,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with address.telephone = false with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1926,7 +2207,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 400
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has check expression "distance < 4000"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -1963,7 +2243,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 400 (with JWT) when dropoff is outside check zone
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has check expression "distance < 4000"
     Given the user "bob" is loaded:
@@ -2005,7 +2284,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 200 when dropoff is in check zone
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has check expression "distance < 10000"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -2025,7 +2303,6 @@ Feature: Deliveries
 
   Scenario: Check delivery returns HTTP 201 when creating order and sending "store" key as defaut pickup
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2124,7 +2401,6 @@ Feature: Deliveries
 
   Scenario: Cancel delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2135,7 +2411,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with dates in UTC
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2238,7 +2513,6 @@ Feature: Deliveries
 
   Scenario: Send delivery CSV to async import endpoint with Oauth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2262,7 +2536,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with tag and then update it with another tag
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2450,11 +2723,10 @@ Feature: Deliveries
         "trackingUrl": @string@
       }
       """
-   
+
 
   Scenario: Create delivery with default courier
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2498,7 +2770,6 @@ Feature: Deliveries
 
   Scenario: Create delivery with given price and variant as an admin then edit it with a new price
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -2532,7 +2803,7 @@ Feature: Deliveries
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/orders/1"
-    Then the response status code should be 200    
+    Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
@@ -2641,7 +2912,7 @@ Feature: Deliveries
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/orders/1"
-    Then the response status code should be 200    
+    Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
     """

@@ -5,6 +5,7 @@ namespace AppBundle\Serializer;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\GetCollection;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -19,11 +20,12 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Doctrine\Persistence\ManagerRegistry;
 use Hashids\Hashids;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
+class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     use ParseMetadataTrait;
 
@@ -35,7 +37,8 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
         private readonly Tile38Helper $tile38Helper,
-        private readonly TagManager $tagManager
+        private readonly TagManager $tagManager,
+        private readonly LoggerInterface $logger,
     )
     {
     }
@@ -207,10 +210,17 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         $delivery = $this->normalizer->denormalize($data, $class, $format, $context);
 
-        $inputClass = ($context['input']['class'] ?? null);
-        if ($inputClass === DeliveryInput::class) {
-            return $delivery;
-        }
+        /**
+         * FIXME: Avoid using this method in the new code
+         * It exists only to support legacy use cases
+         * Prefer using the DeliveryInputDataTransformer instead
+         */
+
+        $this->logger->info('Deprecated: DeliveryNormalizer::denormalize', [
+            'class' => $class,
+            'data' => $data,
+            'context' => $context,
+        ]);
 
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
@@ -253,8 +263,14 @@ class DeliveryNormalizer implements NormalizerInterface, DenormalizerInterface
         return $delivery;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = [])
     {
+        $inputClass = ($context['input']['class'] ?? null);
+        if ($inputClass === DeliveryInput::class ||
+            $inputClass === DeliveryFromTasksInput::class) {
+            return false;
+        }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Delivery::class;
     }
 }
