@@ -23,6 +23,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterface
 {
@@ -39,6 +40,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         private readonly CalculatorInterface $calculator,
         private readonly NormalizerInterface $normalizer,
         private readonly RequestStack $requestStack,
+        private readonly TranslatorInterface $translator,
         private readonly string $state
     ) {}
 
@@ -64,14 +66,14 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         $pricingRuleSet = $store?->getPricingRuleSet();
 
         if (null === $pricingRuleSet) {
-            $message = 'delivery.price.error.noPricingRuleSet';
+            $message = $this->translator->trans('delivery.price.error.noPricingRuleSet', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
         $priceCalculation = $this->pricingManager->getPriceCalculation($data, $pricingRuleSet);
 
         if (null === $priceCalculation) {
-            $message = 'delivery.price.error.priceCalculation';
+            $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
@@ -103,7 +105,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         $order = $priceCalculation->order;
 
         if (null === $order) {
-            $message = 'delivery.price.error.priceCalculation';
+            $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
 
             // Serialize manually to preserve backwards compatibility
             return new JsonResponse(

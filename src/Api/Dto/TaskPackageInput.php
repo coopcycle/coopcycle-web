@@ -10,5 +10,5 @@ class TaskPackageInput
     public string $type;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]
-    public int $quantity;
+    public int|string $quantity;
 }
