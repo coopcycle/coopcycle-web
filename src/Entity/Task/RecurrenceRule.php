@@ -26,10 +26,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             'security' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_DISPATCHER')"
         ],
         'generate_orders' => [
-            'method' => 'POST',
+            'method' => 'GET',
             'path' => '/recurrence_rules/generate_orders',
             'security' => "is_granted('ROLE_DISPATCHER')",
-            'controller' => GenerateOrders::class
+            'controller' => GenerateOrders::class,
+            'status' => 201
         ]
     ],
     itemOperations: [

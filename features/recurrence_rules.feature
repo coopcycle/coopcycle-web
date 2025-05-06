@@ -396,11 +396,7 @@ Feature: Task recurrence rules
     Given the current time is "2025-04-14 9:00:00"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-14" with body:
-      """
-      {
-      }
-      """
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -438,11 +434,7 @@ Feature: Task recurrence rules
     Given the current time is "2025-04-21 11:00:00"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-21" with body:
-      """
-      {
-      }
-      """
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -479,11 +471,7 @@ Feature: Task recurrence rules
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "POST" request to "/api/recurrence_rules/generate_orders?date=2025-04-21" with body:
-      """
-      {
-      }
-      """
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
     Then the response status code should be 400
     And the response should be in JSON
     And the JSON should match:
