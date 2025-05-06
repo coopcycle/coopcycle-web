@@ -2362,7 +2362,6 @@ Feature: Carts
 
   Scenario: Update Edenred credentials
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
