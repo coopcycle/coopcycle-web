@@ -1163,11 +1163,6 @@ services:
 
   AppBundle\MessageHandler\EmailHandler: ~
 
-  AppBundle\Api\Swagger\SwaggerDecorator:
-      decorates: 'api_platform.openapi.factory'
-      arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
-      autoconfigure: false
-
   AppBundle\MessageHandler\ImportTasksHandler: ~
 
   AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
