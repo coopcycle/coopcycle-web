@@ -17,7 +17,6 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
     private $doctrine;
 
     private $routes = [
-        // FIXME Also manage web routes
         'admin_restaurants_search',
         'admin_stores_search',
     ];
@@ -53,7 +52,9 @@ final class SoftDeletedSubscriber implements EventSubscriberInterface
 
     private function isSoftdeleteableOperation(Request $request): bool
     {
-        if (!$request->attributes->has('_api_resource_class') && !$request->attributes->has('_api_operation')) {
+        $hasApiAttributes = $request->attributes->has('_api_resource_class') && $request->attributes->has('_api_operation');
+
+        if (!$hasApiAttributes) {
             return false;
         }
 
