@@ -24,7 +24,7 @@ class DeleteItem
         }
 
         // Make sure to flush changes as WriteListener is disabled
-        $this->entityManager->flush();,
+        $this->entityManager->flush();
 
         return $data;
     }
