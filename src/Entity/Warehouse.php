@@ -19,6 +19,7 @@ use Gedmo\Timestampable\Traits\Timestampable;
         'post' => ['method' => 'POST', 'security' => "is_granted('ROLE_ADMIN')"]
     ],
     itemOperations: [
+        'get' => ['method' => 'GET', 'security' => "is_granted('ROLE_DISPATCHER')"],
         'delete' => [
             'method' => 'DELETE',
             'security' => "is_granted('ROLE_ADMIN')",
