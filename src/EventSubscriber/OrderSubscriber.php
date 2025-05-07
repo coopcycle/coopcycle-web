@@ -65,7 +65,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // PUT /api/orders/{id}/accept
-        if ($request->attributes->get('_route') === 'api_orders_accept_item') {
+        if ($request->attributes->get('_route') === '_api_/orders/{id}/accept_put') {
 
             $order = $request->attributes->get('data');
 
