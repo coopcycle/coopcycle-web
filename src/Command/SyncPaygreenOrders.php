@@ -81,7 +81,7 @@ class SyncPaygreenOrders extends Command
                 $data['data']['fees'],
             ]);
 
-            if ('successed' === $status && 'bank_card' === 'platforms') {
+            if ('successed' === $status && 'bank_card' === $platforms) {
                 $feesTotal += $data['data']['fees'];
             }
         }

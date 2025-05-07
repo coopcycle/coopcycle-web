@@ -71,7 +71,7 @@ class RestaurantStats implements \Countable
         private readonly bool $nonProfitsEnabled = false,
         private readonly bool $withBillingMethod = false,
         private readonly bool $includeTaxes = true,
-        private readonly bool $showOnlyMealVouchers = false
+        bool $showOnlyMealVouchers = false
     )
     {
 
