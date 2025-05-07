@@ -5,18 +5,13 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Pricing\PricingManager;
-use AppBundle\Security\TokenStoreExtractor;
-use AppBundle\Service\DeliveryManager;
-use Sylius\Component\Currency\Context\CurrencyContextInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -31,7 +26,7 @@ class DeliveryCreateProcessor implements ProcessorInterface
     {}
 
     /**
-     * @param DeliveryInput $data
+     * @param DeliveryInput|DeliveryFromTasksInput $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
@@ -46,13 +41,17 @@ class DeliveryCreateProcessor implements ProcessorInterface
             throw new ValidationException($errors);
         }
 
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $delivery->hasArbitraryPrice();
+        /**
+         * @var ArbitraryPrice $arbitraryPrice
+         */
+        $arbitraryPrice = null;
+        if ($data instanceof DeliveryInput) {
+            $arbitraryPrice = $data->arbitraryPrice;
+        }
+
+        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $arbitraryPrice;
 
         if ($useArbitraryPrice) {
-            $arbitraryPrice = new ArbitraryPrice(
-                $delivery->getArbitraryPrice()->getVariantName(),
-                $delivery->getArbitraryPrice()->getValue()
-            );
             $this->pricingManager->createOrder(
                 $delivery,
                 ['pricingStrategy' => new UseArbitraryPrice($arbitraryPrice)]

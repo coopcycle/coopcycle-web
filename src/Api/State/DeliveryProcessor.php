@@ -17,7 +17,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
@@ -102,10 +101,6 @@ class DeliveryProcessor implements ProcessorInterface
             }
 
             $delivery->setWeight($data->weight ?? null);
-
-            if ($data->arbitraryPrice) {
-                $delivery->setArbitraryPrice($data->arbitraryPrice);
-            }
         }
 
         return $delivery;
