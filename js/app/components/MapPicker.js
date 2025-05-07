@@ -68,12 +68,18 @@ export default function MapPicker({ onSelect, isOpen }) {
 
   const mapHeight = window.innerHeight * 0.7
 
-  const [lat, lng] = JSON.parse(
-    document.getElementById('cpccl_settings').dataset.latlng,
-  ).split(',')
-  const [coordinates, setCoordinates] = useState(
-    [parseFloat(lat), parseFloat(lng)] || [0, 0],
-  )
+  const [coordinates, setCoordinates] = useState(() => {
+    const element = document.getElementById('cpccl_settings')
+    if (!element) return [0, 0]
+
+    try {
+      const coordString = JSON.parse(element.dataset.latlng)
+      const [lat, lng] = coordString.split(',').map(s => s.trim())
+      return [parseFloat(lat), parseFloat(lng)]
+    } catch {
+      return [0, 0]
+    }
+  })
 
   return (
     <Modal
