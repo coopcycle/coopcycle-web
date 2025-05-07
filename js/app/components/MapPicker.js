@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
 import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import MarkerIcon from 'leaflet/dist/images/marker-icon.png'
+
 import { useTranslation } from 'react-i18next'
 
 import Modal from 'react-modal'
@@ -34,9 +36,7 @@ function CenterMarker({ onPositionChange }) {
         style={{
           width: '25px',
           height: '41px',
-          //TODO: Import local icon
-          backgroundImage:
-            'url(https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png)',
+          backgroundImage: `url(${MarkerIcon})`,
           backgroundSize: 'contain',
           backgroundRepeat: 'no-repeat',
           marginLeft: '-12px',
