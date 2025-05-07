@@ -62,7 +62,7 @@ class SyncPaygreenOrders extends Command
         $paymentOrders = $this->loadPaymentOrders($start, $end);
 
         $table = new Table($output);
-        $table->setHeaders(['Created at', 'Description', 'Status', 'Fees']);
+        $table->setHeaders(['Created at', 'Description', 'Platforms', 'Status', 'Fees']);
 
         $feesTotal = 0;
 
@@ -71,20 +71,23 @@ class SyncPaygreenOrders extends Command
             $data = json_decode($response->getBody()->getContents(), true);
 
             $status = str_replace('payment_order.', '', $data['data']['status']);
+            $platforms = implode(',', $data['data']['platforms']);
 
             $table->addRow([
                 $data['data']['created_at'],
                 $data['data']['description'],
+                $platforms,
                 $status,
                 $data['data']['fees'],
             ]);
 
-            if ('successed' === $status) {
+            if ('successed' === $status && 'bank_card' === 'platforms') {
                 $feesTotal += $data['data']['fees'];
             }
         }
 
         $table->addRow([
+            '',
             '',
             '',
             'Total fees',
