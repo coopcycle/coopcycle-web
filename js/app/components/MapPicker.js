@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Button } from 'antd'
 
 import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import { useTranslation } from 'react-i18next'
 
 import Modal from 'react-modal'
 import ngeohash from 'ngeohash'
@@ -15,7 +15,7 @@ function CenterMarker({ onPositionChange }) {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    zIndex: 1000,
+    zIndex: 1002,
     pointerEvents: 'none',
   }
 
@@ -63,7 +63,8 @@ async function reverseGeocode([lat, lng]) {
   }
 }
 
-export default function MapPicker({ onSelect, isOpen }) {
+export default function MapPicker({ onSelect, onClose = () => { }, isOpen }) {
+  const { t } = useTranslation()
   const [isLoading, setLoading] = useState(false)
 
   const mapHeight = window.innerHeight * 0.7
@@ -83,16 +84,22 @@ export default function MapPicker({ onSelect, isOpen }) {
 
   return (
     <Modal
-      overlayClassName="ReactModal__Overlay--zIndex-1001"
+      overlayClassName="ReactModal__Overlay ReactModal__Overlay--zIndex-1001"
       className="ReactModal__Content--mappicker"
+      onRequestClose={onClose}
       isOpen={isOpen}>
-      <h2>Map</h2>
+      <h3 className="mb-3">{t('SELECT_YOUR_LOCATION')}</h3>
       <MapContainer
         className="mb-3"
         center={coordinates}
         zoom={16}
         scrollWheelZoom={true}
-        style={{ height: `${mapHeight}px`, width: '100%' }}>
+        style={{
+          height: `${mapHeight}px`,
+          width: '100%',
+          border: '1px solid #ccc',
+          borderRadius: '8px',
+        }}>
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -101,17 +108,17 @@ export default function MapPicker({ onSelect, isOpen }) {
         />
         <CenterMarker onPositionChange={setCoordinates} />
       </MapContainer>
-      <Button
+      <button
+        className="btn btn-primary float-right my-2"
         onClick={async () => {
           setLoading(true)
           const address = await reverseGeocode(coordinates)
           setLoading(false)
           onSelect(address)
         }}
-        loading={isLoading}
-        type="primary">
-        OK
-      </Button>
+        disabled={isLoading}>
+        {t('CONFIRM_LOCATION')}
+      </button>
     </Modal>
   )
 }
