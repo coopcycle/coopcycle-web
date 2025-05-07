@@ -2,7 +2,9 @@
 
 @mixin modal-content-border() {
   border-radius: 8px;
-  box-shadow: 4px 4px 4px 0 $dark-gray;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1),
+    0 6px 12px rgba(0, 0, 0, 0.08),
+    0 3px 6px rgba(0, 0, 0, 0.06);
 }
 
 /* Vertically centered modal */
