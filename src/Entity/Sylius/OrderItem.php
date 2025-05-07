@@ -21,33 +21,33 @@ use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 
 #[ApiResource(
     uriTemplate: '/orders/{order}/items/{id}',
+    operations: [
+        new Get()
+    ],
     uriVariables: [
         'order' => new Link(fromClass: Order::class, toProperty: 'order'),
         'id' => new Link(fromClass: self::class),
-    ],
-    operations: [
-        new Get()
     ],
     normalizationContext: ['groups' => ['order']],
 )]
 // https://github.com/api-platform/api-platform/issues/571#issuecomment-1473665701
 #[ApiResource(
     uriTemplate: '/orders/{id}/items',
-    uriVariables: [
-        'id' => new Link(fromClass: Order::class, fromProperty: 'items')
-    ],
     operations: [
         new Post(
-            read: false,
-            input: CartItemInput::class,
-            processor: CartItemProcessor::class,
-            validationContext: ['groups' => ['cart']],
-            denormalizationContext: ['groups' => ['cart']],
+            openapiContext: ['summary' => 'Adds items to a Order resource.'],
             normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            validationContext: ['groups' => ['cart']],
+            input: CartItemInput::class,
+            read: false,
             // FIXME Implement security
             // security: 'is_granted(\'edit\', object)',
-            openapiContext: ['summary' => 'Adds items to a Order resource.']
+            processor: CartItemProcessor::class
         )
+    ],
+    uriVariables: [
+        'id' => new Link(fromClass: Order::class, fromProperty: 'items')
     ]
 )]
 class OrderItem extends BaseOrderItem implements OrderItemInterface

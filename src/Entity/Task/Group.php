@@ -25,33 +25,38 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
+    shortName: 'TaskGroup',
     operations: [
-        new Get(normalizationContext: ['groups' => ['task_group']], security: 'is_granted(\'view\', object)'),
-        new Put(denormalizationContext: ['groups' => ['task_group']], security: 'is_granted(\'edit\', object)'),
-        new Delete(controller: DeleteGroupController::class, security: 'is_granted(\'edit\', object)'),
+        new Get(normalizationContext: ['groups' => ['task_group']],
+            security: 'is_granted(\'view\', object)'),
+        new Put(denormalizationContext: ['groups' => ['task_group']],
+            security: 'is_granted(\'edit\', object)'),
+        new Delete(
+            controller: DeleteGroupController::class,
+            security: 'is_granted(\'edit\', object)'
+        ),
         new Post(
             uriTemplate: '/task_groups/{id}/tasks',
+            security: 'is_granted(\'edit\', object)',
             input: ArrayOfTasksInput::class,
-            processor: AddTasksToGroupProcessor::class,
-            security: 'is_granted(\'edit\', object)'
+            processor: AddTasksToGroupProcessor::class
         ),
         new Post(
             uriTemplate: '/tasks/import',
             inputFormats: ['csv' => ['text/csv']],
-            denormalizationContext: ['groups' => ['task', 'task_create']],
             controller: TaskBulk::class,
+            denormalizationContext: ['groups' => ['task', 'task_create']],
             security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'
         ),
         new Post(
             uriTemplate: '/tasks/import_async',
             inputFormats: ['csv' => ['text/csv']],
-            deserialize: false,
             controller: TaskBulkAsync::class,
-            security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'
+            security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')',
+            deserialize: false
         ),
         new Post(securityPostDenormalize: 'is_granted(\'create\', object)')
     ],
-    shortName: 'TaskGroup',
     normalizationContext: ['groups' => ['task_group']]
 )]
 #[AssertTaskGroup]

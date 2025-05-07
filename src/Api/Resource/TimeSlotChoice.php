@@ -12,7 +12,15 @@ use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false)])]
+#[ApiResource(
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        )
+    ]
+)]
 final class TimeSlotChoice
 {
     /**

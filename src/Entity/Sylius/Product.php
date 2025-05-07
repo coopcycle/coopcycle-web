@@ -34,12 +34,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[ApiResource(
     uriTemplate: '/restaurants/{id}/products',
+    operations: [new GetCollection()],
     uriVariables: [
         'id' => new Link(fromClass: LocalBusiness::class, toProperty: 'restaurant')
     ],
     status: 200,
-    normalizationContext: ['groups' => ['product']],
-    operations: [new GetCollection()]
+    normalizationContext: ['groups' => ['product']]
 )]
 class Product extends BaseProduct implements ProductInterface, Comparable, SoftDeleteableInterface
 {

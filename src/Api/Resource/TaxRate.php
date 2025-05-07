@@ -15,8 +15,15 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
     operations: [
-        new Get(controller: NotFoundAction::class, read: false, output: false),
-        new GetCollection(uriTemplate: '/tax_rates', provider: TaxRateProvider::class)
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        ),
+        new GetCollection(
+            uriTemplate: '/tax_rates',
+            provider: TaxRateProvider::class
+        )
     ]
 )]
 final class TaxRate

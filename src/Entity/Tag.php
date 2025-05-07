@@ -14,7 +14,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(), new Put(), new Patch(), new Delete(), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')', paginationEnabled: false)], normalizationContext: ['groups' => ['tag']])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+        new GetCollection(
+            paginationEnabled: false,
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')'
+        )
+    ],
+    normalizationContext: ['groups' => ['tag']]
+)]
 class Tag
 {
     use Timestampable;

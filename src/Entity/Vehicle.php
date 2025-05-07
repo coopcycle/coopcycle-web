@@ -17,7 +17,23 @@ use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\')'), new Patch(security: 'is_granted(\'ROLE_ADMIN\')'), new Delete(security: 'is_granted(\'ROLE_ADMIN\')'), new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'), new Post(security: 'is_granted(\'ROLE_ADMIN\')')], normalizationContext: ['groups' => ['vehicle', 'warehouse']], denormalizationContext: ['groups' => ['vehicle_create']], order: ['name' => 'ASC'])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Patch(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(security: 'is_granted(\'ROLE_ADMIN\')')
+    ],
+    normalizationContext: [
+        'groups' => [
+            'vehicle',
+            'warehouse'
+        ]
+    ],
+    denormalizationContext: ['groups' => ['vehicle_create']],
+    order: ['name' => 'ASC']
+)]
 class Vehicle implements SoftDeleteableInterface
 {
     use Timestampable;
@@ -241,7 +257,7 @@ class Vehicle implements SoftDeleteableInterface
 
     /**
      * Get the value of co2emissions
-     */ 
+     */
     public function getCo2emissions()
     {
         return $this->co2emissions;
@@ -251,7 +267,7 @@ class Vehicle implements SoftDeleteableInterface
      * Set the value of co2emissions
      *
      * @return  self
-     */ 
+     */
     public function setCo2emissions($co2emissions)
     {
         $this->co2emissions = $co2emissions;

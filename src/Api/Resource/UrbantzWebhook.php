@@ -15,16 +15,20 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
     operations: [
-        new Get(controller: NotFoundAction::class, read: false, output: false),
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        ),
         new Post(
             uriTemplate: '/urbantz/webhook/{id}',
-            provider: UrbantzWebhookProvider::class,
-            processor: UrbantzWebhookProcessor::class,
-            denormalizationContext: ['groups' => ['urbantz_input']],
-            normalizationContext: ['groups' => ['urbantz_output']],
-            security: 'is_granted(\'ROLE_API_KEY\')',
             status: 200,
-            openapiContext: ['summary' => 'Receives a webhook from Urbantz.']
+            openapiContext: ['summary' => 'Receives a webhook from Urbantz.'],
+            normalizationContext: ['groups' => ['urbantz_output']],
+            denormalizationContext: ['groups' => ['urbantz_input']],
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            provider: UrbantzWebhookProvider::class,
+            processor: UrbantzWebhookProcessor::class
         )
     ]
 )]

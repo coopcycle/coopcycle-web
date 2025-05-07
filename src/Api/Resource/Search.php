@@ -10,7 +10,20 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\Search\ShopsProducts as SearchShopsProducts;
 
-#[ApiResource(operations: [new Get(controller: NotFoundAction::class, read: false, output: false), new GetCollection(uriTemplate: '/search/shops_products', read: false, controller: SearchShopsProducts::class)])]
+#[ApiResource(
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        ),
+        new GetCollection(
+            uriTemplate: '/search/shops_products',
+            controller: SearchShopsProducts::class,
+            read: false
+        )
+    ]
+)]
 final class Search
 {
 	/**

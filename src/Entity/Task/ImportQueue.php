@@ -11,7 +11,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(normalizationContext: ['groups' => ['task_import_queue']])], shortName: 'TaskImportQueue', normalizationContext: ['groups' => ['task_import_queue']])]
+#[ApiResource(
+    shortName: 'TaskImportQueue',
+    operations: [
+        new Get(normalizationContext: ['groups' => ['task_import_queue']])
+    ],
+    normalizationContext: ['groups' => ['task_import_queue']]
+)]
 class ImportQueue
 {
     use Timestampable;

@@ -15,7 +15,13 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 /**
  * @see https://schema.org/SoftwareApplication Documentation on Schema.org
  */
-#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\')')], types: ['http://schema.org/SoftwareApplication'], normalizationContext: ['groups' => ['api_app']])]
+#[ApiResource(
+    types: ['http://schema.org/SoftwareApplication'],
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')')
+    ],
+    normalizationContext: ['groups' => ['api_app']]
+)]
 class ApiApp
 {
     use Timestampable;

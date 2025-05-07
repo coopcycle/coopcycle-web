@@ -16,16 +16,16 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[Vich\Uploadable]
 #[ApiResource(
+    types: ['http://schema.org/MediaObject'],
     operations: [
         new Get(),
         new Post(
-            deserialize: false,
             controller: CreateImage::class,
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             validationContext: ['groups' => ['task_image_create']],
+            deserialize: false,
         )
     ],
-    types: ['http://schema.org/MediaObject'],
     normalizationContext: ['groups' => ['task_image']]
 )]
 class TaskImage

@@ -15,7 +15,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[Vich\Uploadable]
-#[ApiResource(operations: [new Get(), new Post(controller: CreateImage::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')', defaults: ['_api_receive' => false])], types: ['http://schema.org/MediaObject'], normalizationContext: ['groups' => ['incident_image']])]
+#[ApiResource(
+    types: ['http://schema.org/MediaObject'],
+    operations: [
+        new Get(),
+        new Post(
+            defaults: ['_api_receive' => false],
+            controller: CreateImage::class,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')'
+        )
+    ],
+    normalizationContext: ['groups' => ['incident_image']]
+)]
 class IncidentImage
 {
     #[Groups(['incident'])]

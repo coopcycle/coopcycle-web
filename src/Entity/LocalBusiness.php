@@ -54,9 +54,17 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[Vich\Uploadable]
 #[ApiResource(
+    shortName: 'Restaurant',
     operations: [
         new Get(
-            normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']],
+            normalizationContext: [
+                'groups' => [
+                    'restaurant',
+                    'address',
+                    'order',
+                    'restaurant_potential_action'
+                ]
+            ],
             security: 'is_granted(\'view\', object)'
         ),
         new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
@@ -71,10 +79,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             normalizationContext: ['groups' => ['restaurant_menus']]
         ),
         new Put(
-            input: RestaurantInput::class,
-            processor: UpdateRestaurantProcessor::class,
             denormalizationContext: ['groups' => ['restaurant_update']],
-            security: 'is_granted(\'edit\', object)'
+            security: 'is_granted(\'edit\', object)',
+            input: RestaurantInput::class,
+            processor: UpdateRestaurantProcessor::class
         ),
         new Put(
             uriTemplate: '/restaurants/{id}/close',
@@ -84,8 +92,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         new Get(
             uriTemplate: '/restaurants/{id}/deliveries',
             controller: RestaurantDeliveriesController::class,
-            security: 'is_granted(\'ROLE_ADMIN\')',
-            normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']]
+            normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']],
+            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
         new Get(
             uriTemplate: '/restaurants/{id}/timing',
@@ -100,7 +108,14 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         new GetCollection(
             uriTemplate: '/restaurants',
             paginationEnabled: false,
-            normalizationContext: ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']],
+            normalizationContext: [
+                'groups' => [
+                    'restaurant',
+                    'address',
+                    'order',
+                    'restaurant_list'
+                ]
+            ],
             provider: RestaurantProvider::class
         ),
         new GetCollection(
@@ -108,9 +123,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             controller: MyRestaurants::class
         )
     ],
-    shortName: 'Restaurant',
-    denormalizationContext: ['groups' => ['order_create', 'restaurant_update']],
-    normalizationContext: ['groups' => ['restaurant', 'address', 'order']]
+    normalizationContext: ['groups' => ['restaurant', 'address', 'order']],
+    denormalizationContext: ['groups' => ['order_create', 'restaurant_update']]
 )]
 #[AssertIsActivableRestaurant(groups: ['activable'])]
 class LocalBusiness extends BaseLocalBusiness implements

@@ -16,7 +16,16 @@ use AppBundle\Action\UpdateOptinConsent;
 /**
  * @see https://law.stackexchange.com/questions/29190/gdpr-where-to-store-users-consent
  */
-#[ApiResource(operations: [new Get(), new Put(), new Patch(), new Delete(), new GetCollection(uriTemplate: '/me/optin-consents', controller: MyOptinConsents::class), new Put(uriTemplate: '/me/optin-consents', controller: UpdateOptinConsent::class)])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(),
+        new Patch(),
+        new Delete(),
+        new GetCollection(uriTemplate: '/me/optin-consents', controller: MyOptinConsents::class),
+        new Put(uriTemplate: '/me/optin-consents', controller: UpdateOptinConsent::class)
+    ]
+)]
 class OptinConsent
 {
     private $id;

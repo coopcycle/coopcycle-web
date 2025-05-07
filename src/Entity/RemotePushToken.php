@@ -17,10 +17,10 @@ use AppBundle\Action\DeleteToken;
         new Get(),
         new Delete(
             uriTemplate: '/me/remote_push_tokens/{token}',
-            read: false,
-            write: false,
+            requirements: ['token' => '.+'],
             controller: DeleteToken::class,
-            requirements: ['token' => '.+']
+            read: false,
+            write: false
         ),
         new Post(
             uriTemplate: '/me/remote_push_tokens',

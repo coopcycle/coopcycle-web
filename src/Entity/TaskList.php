@@ -34,26 +34,37 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(
-            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            requirements: ['id' => '[0-9]+'],
             // Make sure to add requirements for operations like "/task_lists/v2" to work
-            requirements: ['id' => '[0-9]+']
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
         new Patch(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Put(
-            security: 'is_granted(\'ROLE_DISPATCHER\')',
             uriTemplate: '/task_lists/set_items/{date}/{username}',
             controller: SetTaskListItemsController::class,
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
             read: false
         ),
         new Get(
             uriTemplate: '/me/tasks/{date}',
             controller: MyTasksController::class,
-            output: MyTaskListDto::class,
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
-            read: false,
-            write: false,
+            openapiContext: [
+                'summary' => 'Retrieves the collection of Task resources assigned to the authenticated token.',
+                'parameters' => [
+                    [
+                        'in' => 'path',
+                        'name' => 'date',
+                        'required' => true,
+                        'type' => 'string',
+                        'format' => 'date'
+                    ]
+                ]
+            ],
             normalizationContext: ['groups' => ['task_list', 'task', 'delivery', 'address']],
-            openapiContext: ['summary' => 'Retrieves the collection of Task resources assigned to the authenticated token.', 'parameters' => [['in' => 'path', 'name' => 'date', 'required' => true, 'type' => 'string', 'format' => 'date']]]
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            output: MyTaskListDto::class,
+            read: false,
+            write: false
         ),
         new Get(
             uriTemplate: '/task_lists/{id}/optimize',
@@ -62,9 +73,17 @@ use Symfony\Component\Validator\Constraints as Assert;
             serialize: false
         ),
         new GetCollection(
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
             openapiContext: ['summary' => 'Legacy endpoint, please use \'/api/task_lists/v2\' instead. Retrieves Tasklists as lists of tasks, not tasks and tours, with expanded tasks. Used by store integrations that wants to track tasks statuses.'],
-            normalizationContext: ['groups' => ['task_list', 'task_collection', 'task', 'delivery', 'address']],
+            normalizationContext: [
+                'groups' => [
+                    'task_list',
+                    'task_collection',
+                    'task',
+                    'delivery',
+                    'address'
+                ]
+            ],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
             provider: TaskListProvider::class
         ),
         new Post(
@@ -72,9 +91,9 @@ use Symfony\Component\Validator\Constraints as Assert;
             security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
         new GetCollection(
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
             uriTemplate: '/task_lists/v2',
             openapiContext: ['summary' => 'Retrieves TaskLists as lists of tours and tasks.'],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
             provider: TaskListProvider::class
         )
     ],

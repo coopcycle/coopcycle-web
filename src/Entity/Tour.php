@@ -25,20 +25,20 @@ use AppBundle\Vroom\Shipment as VroomShipment;
     operations: [
         new Get(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Put(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
             input: TourInput::class,
-            processor: TourProcessor::class,
-            security: 'is_granted(\'ROLE_DISPATCHER\')'
+            processor: TourProcessor::class
         ),
         new Delete(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false),
         new Post(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
             input: TourInput::class,
-            processor: TourProcessor::class,
-            security: 'is_granted(\'ROLE_DISPATCHER\')'
+            processor: TourProcessor::class
         )
     ],
-    denormalizationContext: ['groups' => ['tour']],
-    normalizationContext: ['groups' => ['task_collection', 'tour']]
+    normalizationContext: ['groups' => ['task_collection', 'tour']],
+    denormalizationContext: ['groups' => ['tour']]
 )]
 #[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class Tour extends TaskCollection implements TaskCollectionInterface

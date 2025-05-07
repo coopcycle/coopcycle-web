@@ -20,19 +20,19 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     operations: [
         new Get(
-            security: 'is_granted(\'ROLE_ADMIN\')',
-            controller: NotFoundAction::class
+            controller: NotFoundAction::class,
+            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
-            processor: ValidationAwareRemoveProcessor::class,
-            validationContext: ['groups' => ['deleteValidation']]
+            validationContext: ['groups' => ['deleteValidation']],
+            processor: ValidationAwareRemoveProcessor::class
         ),
         new Get(
             uriTemplate: '/package_sets/{id}/applications',
             controller: Applications::class,
-            security: 'is_granted(\'ROLE_ADMIN\')',
-            openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied']
+            openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied'],
+            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
         new Post(),
         new GetCollection()

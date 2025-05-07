@@ -22,7 +22,18 @@ use AppBundle\Action\Incident\CreateIncident;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(operations: [new Get(), new Patch(), new Put(), new Post(uriTemplate: '/incidents/{id}/comments', controller: CreateComment::class), new Put(uriTemplate: '/incidents/{id}/action', controller: IncidentAction::class), new GetCollection(controller: IncidentFastList::class), new Post(controller: CreateIncident::class)], normalizationContext: ['groups' => ['incident']])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Patch(),
+        new Put(),
+        new Post(uriTemplate: '/incidents/{id}/comments', controller: CreateComment::class),
+        new Put(uriTemplate: '/incidents/{id}/action', controller: IncidentAction::class),
+        new GetCollection(controller: IncidentFastList::class),
+        new Post(controller: CreateIncident::class)
+    ],
+    normalizationContext: ['groups' => ['incident']]
+)]
 class Incident implements TaggableInterface {
     use TaggableTrait;
 

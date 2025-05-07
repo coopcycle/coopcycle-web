@@ -19,15 +19,19 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
     operations: [
-        new Get(controller: NotFoundAction::class, read: false, output: false),
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        ),
         new Post(
             uriTemplate: '/retail_prices/calculate',
-            input: DeliveryInput::class,
-            processor: CalculateRetailPriceProcessor::class,
             status: 200,
+            openapiContext: ['summary' => 'Calculates price of a Delivery'],
             denormalizationContext: ['groups' => ['pricing_deliveries']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
-            openapiContext: ['summary' => 'Calculates price of a Delivery']
+            input: DeliveryInput::class,
+            processor: CalculateRetailPriceProcessor::class
         )
     ],
     normalizationContext: ['groups' => ['pricing_deliveries']]

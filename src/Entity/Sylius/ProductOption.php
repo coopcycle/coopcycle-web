@@ -18,11 +18,11 @@ use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
 #[AssertProductOption]
 #[ApiResource(
     uriTemplate: '/restaurants/{id}/product_options',
+    operations: [new GetCollection()],
     uriVariables: [
         'id' => new Link(fromClass: LocalBusiness::class, toProperty: 'restaurant')
     ],
-    normalizationContext: ['groups' => ['product_option']],
-    operations: [new GetCollection()]
+    normalizationContext: ['groups' => ['product_option']]
 )]
 class ProductOption extends BaseProductOption implements ProductOptionInterface
 {

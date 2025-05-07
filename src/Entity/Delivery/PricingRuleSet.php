@@ -28,8 +28,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
         new Get(
             uriTemplate: '/pricing_rule_sets/{id}/applications',
             controller: Applications::class,
-            security: 'is_granted(\'ROLE_ADMIN\')',
-            openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied']
+            openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied'],
+            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
         new Post(),
         new GetCollection()

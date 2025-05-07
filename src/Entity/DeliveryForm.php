@@ -14,7 +14,13 @@ use Gedmo\Timestampable\Traits\Timestampable;
 /**
  * A form to order deliveries, to be embedded anywhere.
  */
-#[ApiResource(operations: [new Delete(security: 'is_granted(\'ROLE_ADMIN\')'), new Post(), new GetCollection()])]
+#[ApiResource(
+    operations: [
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Post(),
+        new GetCollection()
+    ]
+)]
 class DeliveryForm
 {
     use Timestampable;

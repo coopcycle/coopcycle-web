@@ -15,7 +15,32 @@ use AppBundle\Action\Order\SearchAdhoc as SearchAdhocOrdersController;
 use AppBundle\Entity\LocalBusiness;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(operations: [new Get(uriTemplate: '/orders/adhoc/{id}'), new Put(uriTemplate: '/orders/adhoc/{id}', controller: UpdateAdhocOrderController::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_RESTAURANT\')', read: false, write: false, validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['order']]), new Post(uriTemplate: '/orders/adhoc', controller: AdhocOrderController::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_RESTAURANT\')', validationContext: ['groups' => ['cart']], normalizationContext: ['groups' => ['order']]), new GetCollection(uriTemplate: '/orders/adhoc/search', controller: SearchAdhocOrdersController::class, security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_RESTAURANT\')', normalizationContext: ['groups' => ['order']])])]
+#[ApiResource(
+    operations: [
+        new Get(uriTemplate: '/orders/adhoc/{id}'),
+        new Put(
+            uriTemplate: '/orders/adhoc/{id}',
+            controller: UpdateAdhocOrderController::class,
+            normalizationContext: ['groups' => ['order']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_RESTAURANT\')',
+            validationContext: ['groups' => ['cart']],
+            read: false,
+            write: false
+        ),
+        new Post(
+            uriTemplate: '/orders/adhoc',
+            controller: AdhocOrderController::class,
+            normalizationContext: ['groups' => ['order']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_RESTAURANT\')',
+            validationContext: ['groups' => ['cart']]
+        ),
+        new GetCollection(
+            uriTemplate: '/orders/adhoc/search',
+            controller: SearchAdhocOrdersController::class,
+            normalizationContext: ['groups' => ['order']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_RESTAURANT\')'
+        )
+    ])]
 final class OrderAdhoc
 {
     #[ApiProperty(identifier: true)]

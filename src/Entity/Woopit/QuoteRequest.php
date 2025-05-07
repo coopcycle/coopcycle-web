@@ -23,52 +23,52 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(
             controller: NotFoundAction::class,
-            read: false,
-            output: false
+            output: false,
+            read: false
         ),
         new Delete(
             uriTemplate: '/woopit/deliveries/{deliveryId}',
             controller: DeliveryCancelController::class,
+            openapiContext: ['summary' => 'Cancel a delivery.'],
             security: 'is_granted(\'ROLE_API_KEY\')',
             read: false,
-            write: false,
-            openapiContext: ['summary' => 'Cancel a delivery.']
+            write: false
         ),
         new Patch(
             uriTemplate: '/woopit/deliveries/{deliveryId}',
-            controller: DeliveryUpdateController::class,
-            security: 'is_granted(\'ROLE_API_KEY\')',
             status: 204,
-            read: false,
-            write: false,
-            denormalizationContext: ['groups' => ['woopit_delivery_input']],
+            controller: DeliveryUpdateController::class,
+            openapiContext: ['summary' => 'Receives requests to update a delivery.'],
             normalizationContext: ['groups' => ['woopit_delivery_output']],
-            openapiContext: ['summary' => 'Receives requests to update a delivery.']
+            denormalizationContext: ['groups' => ['woopit_delivery_input']],
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            read: false,
+            write: false
         ),
         new Post(
             uriTemplate: '/woopit/quotes',
-            controller: QuoteRequestController::class,
-            security: 'is_granted(\'ROLE_API_KEY\')',
             status: 201,
-            denormalizationContext: ['groups' => ['woopit_quote_input']],
+            controller: QuoteRequestController::class,
+            openapiContext: ['summary' => 'Receives requests for quotes.'],
             normalizationContext: ['groups' => ['woopit_quote_output']],
-            openapiContext: ['summary' => 'Receives requests for quotes.']
+            denormalizationContext: ['groups' => ['woopit_quote_input']],
+            security: 'is_granted(\'ROLE_API_KEY\')'
         ),
         new Post(
             uriTemplate: '/woopit/deliveries',
-            controller: DeliveryRequestController::class,
-            security: 'is_granted(\'ROLE_API_KEY\')',
             status: 201,
-            write: false,
-            denormalizationContext: ['groups' => ['woopit_delivery_input']],
+            controller: DeliveryRequestController::class,
+            openapiContext: ['summary' => 'Receives requests for deliveries.'],
             normalizationContext: ['groups' => ['woopit_delivery_output']],
-            openapiContext: ['summary' => 'Receives requests for deliveries.']
+            denormalizationContext: ['groups' => ['woopit_delivery_input']],
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            write: false
         ),
         new GetCollection(
-            controller: NotFoundAction::class,
             uriTemplate: '/woopit/quotes',
-            read: false,
-            output: false
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
         )
     ],
     formats: ['json']

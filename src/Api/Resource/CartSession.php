@@ -14,10 +14,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Post(
             uriTemplate: '/carts/session',
-            input: CartSessionInput::class,
-            processor: CartSessionProcessor::class,
             status: 200,
-            normalizationContext: ['groups' => ['cart']]
+            normalizationContext: ['groups' => ['cart']],
+            input: CartSessionInput::class,
+            processor: CartSessionProcessor::class
         )
     ]
 )]

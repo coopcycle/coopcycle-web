@@ -22,18 +22,18 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         new Put(
             uriTemplate: '/deliveries/quotes/{id}/confirm',
             controller: ConfirmDeliveryQuoteController::class,
+            openapiContext: ['summary' => 'Confirms a delivery quote'],
             normalizationContext: ['groups' => ['delivery_quote_confirm']],
-            security: 'is_granted(\'confirm\', object)',
-            openapiContext: ['summary' => 'Confirms a delivery quote']
+            security: 'is_granted(\'confirm\', object)'
         ),
         new Post(
             uriTemplate: '/deliveries/quotes',
-            input: DeliveryInput::class,
-            processor: DeliveryQuoteProcessor::class,
+            openapiContext: ['summary' => 'Creates a delivery quote'],
             normalizationContext: ['groups' => ['delivery_quote']],
             denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
-            openapiContext: ['summary' => 'Creates a delivery quote']
+            input: DeliveryInput::class,
+            processor: DeliveryQuoteProcessor::class
         )
     ]
 )]

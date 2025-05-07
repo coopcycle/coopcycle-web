@@ -18,7 +18,12 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
         new Delete(security: 'is_granted(\'edit\', object)'),
-        new Post(controller: CreateController::class, securityPostDenormalize: 'is_granted(\'create\', object)', denormalizationContext: ['groups' => ['webhook_create']], normalizationContext: ['groups' => ['webhook', 'webhook_with_secret']])
+        new Post(
+            controller: CreateController::class,
+            normalizationContext: ['groups' => ['webhook', 'webhook_with_secret']],
+            denormalizationContext: ['groups' => ['webhook_create']],
+            securityPostDenormalize: 'is_granted(\'create\', object)'
+        )
     ],
     normalizationContext: ['groups' => ['webhook']]
 )]

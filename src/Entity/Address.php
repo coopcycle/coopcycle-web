@@ -22,24 +22,24 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  * @see http://schema.org/Place Documentation on Schema.org
  */
 #[ApiResource(
+    types: ['http://schema.org/Place'],
     operations: [
         new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Patch(security: 'is_granted(\'edit\', object)'),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Post(uriTemplate: '/me/addresses', controller: CreateAddress::class)
     ],
-    types: ['http://schema.org/Place'],
     normalizationContext: ['groups' => ['address']]
 )]
 #[ApiResource(
     uriTemplate: '/stores/{id}/addresses',
+    types: ['http://schema.org/Place'],
+    operations: [new GetCollection()],
     uriVariables: [
         'id' => new Link(fromClass: Store::class, fromProperty: 'addresses')
     ],
     status: 200,
-    types: ['http://schema.org/Place'],
     normalizationContext: ['groups' => ['address']],
-    operations: [new GetCollection()],
     provider: StoreAddressesProvider::class
 )]
 class Address extends BaseAddress

@@ -28,25 +28,25 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 
 #[ApiResource(
+    shortName: 'User',
     operations: [
         new Get(security: 'is_granted(\'ROLE_ADMIN\') or user == object'),
         new Put(
-            security: 'is_granted(\'ROLE_ADMIN\') or user == object',
-            denormalizationContext: ['groups' => ['user_update']]
+            denormalizationContext: ['groups' => ['user_update']],
+            security: 'is_granted(\'ROLE_ADMIN\') or user == object'
         ),
         new GetCollection(
-            security: 'is_granted(\'ROLE_DISPATCHER\')',
             paginationEnabled: false,
-            paginationClientEnabled: false
+            paginationClientEnabled: false,
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
         new Get(
             uriTemplate: '/me/stripe-payment-methods',
-            provider: StripePaymentMethodsProvider::class,
+            types: ['StripePaymentMethodsOutput'],
             output: StripePaymentMethodsOutput::class,
-            types: ['StripePaymentMethodsOutput']
+            provider: StripePaymentMethodsProvider::class
         )
     ],
-    shortName: 'User',
     normalizationContext: ['groups' => ['user', 'order']]
 )]
 #[UniqueEntity('facebookId')]

@@ -15,9 +15,35 @@ use AppBundle\Action\DeleteMe;
         new Get(
             uriTemplate: '/me',
             controller: MeController::class,
-            read: false,
+            openapiContext: [
+                'summary' => 'Retrieves information about the authenticated token',
+                'responses' => [
+                    [
+                        'description' => 'Authenticated token information',
+                        'content' => [
+                            'application/json' => [
+                                'schema' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'addresses' => [
+                                            'type' => 'array',
+                                            'items' => ['$ref' => '#/definitions/Address']
+                                        ],
+                                        'username' => ['type' => 'string'],
+                                        'email' => ['type' => 'string'],
+                                        'roles' => [
+                                            'type' => 'array',
+                                            'items' => ['type' => 'string']
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
             normalizationContext: ['groups' => ['user', 'address', 'api_app']],
-            openapiContext: ['summary' => 'Retrieves information about the authenticated token', 'responses' => [['description' => 'Authenticated token information', 'content' => ['application/json' => ['schema' => ['type' => 'object', 'properties' => ['addresses' => ['type' => 'array', 'items' => ['$ref' => '#/definitions/Address']], 'username' => ['type' => 'string'], 'email' => ['type' => 'string'], 'roles' => ['type' => 'array', 'items' => ['type' => 'string']]]]]]]]]
+            read: false
         ),
         new Delete(
             uriTemplate: '/me',

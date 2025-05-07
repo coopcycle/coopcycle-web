@@ -10,7 +10,14 @@ use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Restaurant\DeleteClosingRule;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(operations: [new Get(), new Delete(controller: DeleteClosingRule::class, security: 'is_granted(\'delete\', object)')], shortName: 'OpeningHoursSpecification', types: ['https://schema.org/OpeningHoursSpecification'])]
+#[ApiResource(
+    shortName: 'OpeningHoursSpecification',
+    types: ['https://schema.org/OpeningHoursSpecification'],
+    operations: [
+        new Get(),
+        new Delete(controller: DeleteClosingRule::class, security: 'is_granted(\'delete\', object)')
+    ]
+)]
 class ClosingRule
 {
     /**

@@ -27,11 +27,23 @@ use Webmozart\Assert\Assert;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 
-#[ApiResource(operations: [new Get(security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'), new Put(security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object', denormalizationContext: ['groups' => ['customer_update']])], shortName: 'Customer', normalizationContext: ['groups' => ['customer']])]
+#[ApiResource(
+    shortName: 'Customer',
+    operations: [
+    new Get(
+        security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'
+    ),
+    new Put(
+        denormalizationContext: ['groups' => ['customer_update']],
+        security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'
+    )
+],
+    normalizationContext: ['groups' => ['customer']]
+)]
 class Customer extends BaseCustomer implements TaggableInterface, CustomerInterface
 {
     use TaggableTrait;
-    
+
     /** @var User */
     protected $user;
 

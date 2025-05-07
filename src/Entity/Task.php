@@ -69,49 +69,188 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
         new Put(
-            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))',
+            requirements: ['id' => '[0-9]+'],
             denormalizationContext: ['groups' => ['task_edit']],
             // Make sure to add requirements for operations like "/tasks/assign" to work
-            requirements: ['id' => '[0-9]+']
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
         ),
-        new Put(uriTemplate: '/tasks/{id}/start', controller: TaskStart::class, security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Marks a Task as started']),
-        new Put(uriTemplate: '/tasks/{id}/done', controller: TaskDone::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Marks a Task as done', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['notes' => ['type' => 'string']]], 'style' => 'form']]]),
-        new Put(uriTemplate: '/tasks/{id}/failed', controller: TaskFailed::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Marks a Task as failed', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['notes' => ['type' => 'string']]], 'style' => 'form']]]),
-        new Put(uriTemplate: '/tasks/{id}/assign', controller: TaskAssign::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')', openapiContext: ['summary' => 'Assigns a Task to a messenger', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['username' => ['type' => 'string']]], 'style' => 'form']]]),
-        new Delete(uriTemplate: '/tasks/{id}/group', controller: RemoveFromGroup::class, write: false, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)', openapiContext: ['summary' => 'Remove a task from the group to which it belongs']),
-        new Put(uriTemplate: '/tasks/{id}/unassign', controller: TaskUnassign::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))', openapiContext: ['summary' => 'Unassigns a Task from a messenger']),
-        new Put(uriTemplate: '/tasks/{id}/cancel', controller: TaskCancel::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\')', openapiContext: ['summary' => 'Cancels a Task']),
-        new Post(uriTemplate: '/tasks/{id}/duplicate', controller: TaskDuplicate::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\')', openapiContext: ['summary' => 'Duplicates a Task']),
-        new Put(uriTemplate: '/tasks/{id}/reschedule', controller: TaskReschedule::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\')', openapiContext: ['summary' => 'Reschedules a Task', 'parameters' => [['in' => 'body', 'name' => 'N/A', 'schema' => ['type' => 'object', 'properties' => ['after' => ['type' => 'string', 'format' => 'date-time'], 'before' => ['type' => 'string', 'format' => 'date-time']]], 'style' => 'form']]]),
-        new Get(uriTemplate: '/tasks/{id}/failure_reasons', controller: TaskFailureReasons::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Retrieves possible failure reasons for a Task']),
-        new Put(uriTemplate: '/tasks/{id}/incidents', controller: TaskIncident::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Creates an incident for a Task']),
-        new Get(uriTemplate: '/tasks/{id}/events', controller: TaskEvents::class, security: 'is_granted(\'view\', object)', openapiContext: ['summary' => 'Retrieves events for a Task']),
-        new Put(uriTemplate: '/tasks/{id}/restore', controller: TaskRestore::class, denormalizationContext: ['groups' => ['task_operation']], security: 'is_granted(\'ROLE_DISPATCHER\')', openapiContext: ['summary' => 'Restores a Task']),
+        new Put(
+            uriTemplate: '/tasks/{id}/start',
+            controller: TaskStart::class,
+            openapiContext: ['summary' => 'Marks a Task as started'],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/done',
+            controller: TaskDone::class,
+            openapiContext: [
+            'summary' => 'Marks a Task as done',
+            'parameters' => [
+                [
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['notes' => ['type' => 'string']]
+                    ],
+                    'style' => 'form'
+                ]
+            ]
+        ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/failed',
+            controller: TaskFailed::class,
+            openapiContext: [
+            'summary' => 'Marks a Task as failed',
+            'parameters' => [
+                [
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['notes' => ['type' => 'string']]
+                    ],
+                    'style' => 'form'
+                ]
+            ]
+        ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/assign',
+            controller: TaskAssign::class,
+            openapiContext: [
+            'summary' => 'Assigns a Task to a messenger',
+            'parameters' => [
+                [
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => ['username' => ['type' => 'string']]
+                    ],
+                    'style' => 'form'
+                ]
+            ]
+        ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')'
+        ),
+        new Delete(
+            uriTemplate: '/tasks/{id}/group',
+            controller: RemoveFromGroup::class,
+            openapiContext: ['summary' => 'Remove a task from the group to which it belongs'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)',
+            write: false
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/unassign',
+            controller: TaskUnassign::class,
+            openapiContext: ['summary' => 'Unassigns a Task from a messenger'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/cancel',
+            controller: TaskCancel::class,
+            openapiContext: ['summary' => 'Cancels a Task'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Post(
+            uriTemplate: '/tasks/{id}/duplicate',
+            controller: TaskDuplicate::class,
+            openapiContext: ['summary' => 'Duplicates a Task'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/reschedule',
+            controller: TaskReschedule::class,
+            openapiContext: [
+            'summary' => 'Reschedules a Task',
+            'parameters' => [
+                [
+                    'in' => 'body',
+                    'name' => 'N/A',
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'after' => [
+                                'type' => 'string',
+                                'format' => 'date-time'
+                            ],
+                            'before' => ['type' => 'string', 'format' => 'date-time']
+                        ]
+                    ],
+                    'style' => 'form'
+                ]
+            ]
+        ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/failure_reasons',
+            controller: TaskFailureReasons::class,
+            openapiContext: ['summary' => 'Retrieves possible failure reasons for a Task'],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/incidents',
+            controller: TaskIncident::class,
+            openapiContext: ['summary' => 'Creates an incident for a Task'],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/events',
+            controller: TaskEvents::class,
+            openapiContext: ['summary' => 'Retrieves events for a Task'],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/restore',
+            controller: TaskRestore::class,
+            openapiContext: ['summary' => 'Restores a Task'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
         new Put(
             uriTemplate: '/tasks/{id}/bio_deliver',
+            denormalizationContext: ['groups' => ['task_edit']],
             security: 'is_granted(\'ROLE_OAUTH2_TASKS\')',
             input: BioDeliverInput::class,
-            processor: BioDeliverProcessor::class,
-            denormalizationContext: ['groups' => ['task_edit']]
+            processor: BioDeliverProcessor::class
         ),
-        new Get(uriTemplate: '/tasks/{id}/context', controller: TaskContext::class, security: 'is_granted(\'view\', object)'),
-        new Put(uriTemplate: '/tasks/{id}/append_to_comment', controller: TaskAppendToComment::class, security: 'is_granted(\'view\', object)'),
+        new Get(
+            uriTemplate: '/tasks/{id}/context',
+            controller: TaskContext::class,
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/append_to_comment',
+            controller: TaskAppendToComment::class,
+            security: 'is_granted(\'view\', object)'
+        ),
         new GetCollection(
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
             paginationEnabled: false,
             paginationClientEnabled: true,
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
             provider: TasksProvider::class
         ),
         new Post(
-            security: 'is_granted(\'ROLE_DISPATCHER\')',
             denormalizationContext: ['groups' => ['task_create']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
             validationContext: ['groups' => ['Default']]
         ),
         new Put(
             uriTemplate: '/tasks/assign',
             controller: TaskBulkAssign::class,
-            write: false,
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             openapiContext: [
                 'summary' => 'Assigns multiple Tasks at once to a messenger',
                 'parameters' => [
@@ -128,12 +267,13 @@ use Symfony\Component\Validator\Constraints as Assert;
                         'style' => 'form'
                     ]
                 ]
-            ]),
+            ],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            write: false
+        ),
         new Put(
             uriTemplate: '/tasks/done',
             controller: TaskBulkMarkAsDone::class,
-            write: false,
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             openapiContext: [
                 'summary' => 'Mark multiple Tasks as done at once',
                 'parameters' => [
@@ -149,13 +289,13 @@ use Symfony\Component\Validator\Constraints as Assert;
                         'style' => 'form'
                     ]
                 ]
-            ]),
+            ],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            write: false
+        ),
         new Put(
             uriTemplate: '/tasks/images',
-            denormalizationContext: ['groups' => ['tasks_images']],
             controller: AddImagesToTasks::class,
-            write: false,
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             openapiContext: [
                 'summary' => '',
                 'parameters' => [
@@ -172,7 +312,10 @@ use Symfony\Component\Validator\Constraints as Assert;
                         'style' => 'form'
                     ]
                 ]
-            ]
+            ],
+            denormalizationContext: ['groups' => ['tasks_images']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            write: false
         )
     ],
     normalizationContext: ['groups' => ['task', 'delivery', 'address']]

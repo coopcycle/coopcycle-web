@@ -16,16 +16,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Get(
             uriTemplate: '/centrifugo/token',
             controller: TokenController::class,
-            read: false,
+            openapiContext: ['summary' => 'Retrieves Centrifugo token'],
             normalizationContext: ['groups' => ['centrifugo']],
-            openapiContext: ['summary' => 'Retrieves Centrifugo token']
+            read: false
         ),
         new Post(
             uriTemplate: '/centrifugo/token/refresh',
             controller: TokenController::class,
-            read: false,
+            openapiContext: ['summary' => 'Refreshes Centrifugo token'],
             normalizationContext: ['groups' => ['centrifugo_refresh']],
-            openapiContext: ['summary' => 'Refreshes Centrifugo token']
+            read: false
         )
     ]
 )]

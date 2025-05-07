@@ -44,6 +44,7 @@ use AppBundle\Action\Store\Packages;
  */
 #[Vich\Uploadable]
 #[ApiResource(
+    types: ['http://schema.org/Store'],
     operations: [
         new Get(security: 'is_granted(\'edit\', object)'),
         new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
@@ -71,7 +72,6 @@ use AppBundle\Action\Store\Packages;
         ),
         new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class)
     ],
-    types: ['http://schema.org/Store'],
     normalizationContext: ['groups' => ['store', 'address']]
 )]
 class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface, SoftDeleteableInterface

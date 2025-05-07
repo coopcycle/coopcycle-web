@@ -20,14 +20,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new Post(
-            status: 200,
             uriTemplate: '/pricing_rules/{id}/evaluate',
+            status: 200,
+            openapiContext: ['summary' => 'Evaluates a PricingRule'],
+            denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')',
             input: DeliveryInput::class,
-            processor: EvaluatePricingRuleProcessor::class,
             output: YesNoOutput::class,
-            denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
-            openapiContext: ['summary' => 'Evaluates a PricingRule']
+            processor: EvaluatePricingRuleProcessor::class
         )
     ]
 )]
