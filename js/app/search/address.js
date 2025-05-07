@@ -38,6 +38,7 @@ document.querySelectorAll('[data-search="address"]').forEach(container => {
         addresses={addresses}
         restaurants={restaurants}
         geohash={store.get('search_geohash', '')}
+        mapPickerEnabled={true}
         onClear={() => {
           // clear geohash and address query params but keep others (filters)
           const addressInput = form.querySelector('input[name="address"]')

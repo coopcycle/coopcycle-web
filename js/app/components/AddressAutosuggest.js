@@ -329,16 +329,16 @@ const SuggestionsContainer = ({
   children,
   poweredBy,
   onMapPickerLabelClick,
+  mapPickerEnabled
 }) => {
-  const showMapLabel = onMapPickerLabelClick !== null
   const { t } = useTranslation()
   return (
     <div {...containerProps}>
       {children}
       <div
         className="address-autosuggest__suggestions-container__footer"
-        style={{ justifyContent: showMapLabel ? 'space-between' : 'flex-end' }}>
-        {showMapLabel && (
+        style={{ justifyContent: mapPickerEnabled ? 'space-between' : 'flex-end' }}>
+        {mapPickerEnabled && (
           <span className="text-info">
             <i
               className="fa fa-question-circle"
@@ -649,6 +649,13 @@ class AddressAutosuggest extends Component {
   }
 
   renderSuggestionsContainer({ containerProps, children }) {
+
+    // Hide suggestions when the map picker is open to avoid
+    // the map picker to be covered by the suggestions
+    if (this.state.showMapPicker) {
+      return null;
+    }
+
     // https://github.com/moroshko/react-autosuggest/issues/699#issuecomment-568798287
     if (this.props.attachToBody && this.autosuggest) {
       // this.input is the input ref as received from Autosuggest
@@ -669,9 +676,8 @@ class AddressAutosuggest extends Component {
             ...containerProps,
             style,
           }}
-          onMapPickerLabelClick={() =>
-            this.setState({ showMapPicker: true, suggestions: [] })
-          }
+          mapPickerEnabled={this.props.mapPickerEnabled}
+          onMapPickerLabelClick={() => this.setState({ showMapPicker: true })}
           poweredBy={this.poweredBy()}>
           {children}
         </SuggestionsContainer>,
@@ -682,9 +688,8 @@ class AddressAutosuggest extends Component {
     return (
       <SuggestionsContainer
         containerProps={containerProps}
-        onMapPickerLabelClick={() =>
-          this.setState({ showMapPicker: true, suggestions: [] })
-        }
+        mapPickerEnabled={this.props.mapPickerEnabled}
+        onMapPickerLabelClick={() => this.setState({ showMapPicker: true })}
         poweredBy={this.poweredBy()}>
         {children}
       </SuggestionsContainer>
@@ -783,13 +788,14 @@ class AddressAutosuggest extends Component {
           containerProps={this.props.containerProps}
           {...otherProps}
         />
-        <MapPicker
+        {this.props.mapPickerEnabled && <MapPicker
           isOpen={this.state.showMapPicker}
+          onClose={() => this.setState({ showMapPicker: false })}
           onSelect={address => {
             this.setState({ showMapPicker: false })
             this.props.onAddressSelected('[isMapPicked]', address)
           }}
-        />
+        />}
       </>
     )
   }
@@ -811,7 +817,7 @@ AddressAutosuggest.defaultProps = {
   inputProps: {},
   autofocus: false,
   error: false,
-  onMapPickerLabelClick: null,
+  mapPickerEnabled: false
 }
 
 AddressAutosuggest.propTypes = {
@@ -833,7 +839,7 @@ AddressAutosuggest.propTypes = {
   autofocus: PropTypes.bool,
   error: PropTypes.bool,
   onClear: PropTypes.func,
-  onMapPickerLabelClick: PropTypes.func,
+  mapPickerEnabled: PropTypes.bool
 }
 
 export default withTranslation()(AddressAutosuggest)
