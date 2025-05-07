@@ -70,7 +70,8 @@ class RestaurantStats implements \Countable
         private readonly bool $withMessenger = false,
         private readonly bool $nonProfitsEnabled = false,
         private readonly bool $withBillingMethod = false,
-        private readonly bool $includeTaxes = true
+        private readonly bool $includeTaxes = true,
+        private readonly bool $showOnlyMealVouchers = false
     )
     {
 
@@ -97,6 +98,10 @@ class RestaurantStats implements \Countable
 
         if ($nonProfitsEnabled) {
             $this->addNonprofits();
+        }
+
+        if ($showOnlyMealVouchers) {
+            $this->filterMealVouchers();
         }
     }
 
@@ -612,6 +617,26 @@ class RestaurantStats implements \Countable
             return $messengers;
 
         }, []);
+    }
+
+    public function hasMealVouchers(): bool
+    {
+        foreach ($this->result as $order) {
+            if (in_array($order->paymentMethod, $this->mealVoucherCodes)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function filterMealVouchers()
+    {
+        $this->result = array_filter($this->result, function ($order) {
+            return in_array($order->paymentMethod, $this->mealVoucherCodes);
+        });
+
+        $this->result = array_values($this->result);
     }
 
     public function isTaxColumn($column)
