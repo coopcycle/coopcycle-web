@@ -105,7 +105,7 @@ class DeliveryProcessor implements ProcessorInterface
                 }
             }
 
-            if (null !== $data->weight) {
+            if ($data->weight) {
                 $delivery->setWeight($data->weight);
             }
         }
