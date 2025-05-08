@@ -21,6 +21,7 @@ import _ from 'lodash'
 import { useLazyGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
 import { RecurrenceRules } from './RecurrenceRules'
+import useSubmit from './hooks/useSubmit'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -125,7 +126,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const [addresses, setAddresses] = useState([])
   const [calculateResponseData, setCalculateResponseData] = useState(null)
   const [calculatedPrice, setCalculatePrice] = useState(0)
-  const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
@@ -136,6 +136,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
+  const { handleSubmit, error } = useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos)
 
   let deliveryPrice
 
@@ -271,68 +272,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
     };
     return infos
   }, [storeDeliveryInfos])
-
-  const handleSubmit = useCallback(async (values) => {
-    const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
-
-    const getUrl = (deliveryId) => {
-      if (deliveryId) {
-        const editDeliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
-        return editDeliveryURL
-      } else {
-        const createDeliveryUrl = `${baseURL}/api/deliveries`
-        return createDeliveryUrl
-      }
-    }
-
-    const createOrEditADelivery = async (deliveryId) => {
-      const url = getUrl(deliveryId);
-      const method = deliveryId ? 'put' : 'post';
-      deliveryId && !isDispatcher
-      let data = convertValuesToPayload(values)
-
-      if (values.variantIncVATPrice) {
-        data = {
-          ...data,
-          arbitraryPrice: {
-            variantPrice: values.variantIncVATPrice,
-            variantName: values.variantName ?? '',
-          }
-        }
-      }
-
-      return await httpClient[method](url, data);
-    }
-
-    const { response, error } = await createOrEditADelivery(deliveryId)
-
-    if (error) {
-      setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
-      return
-    }
-
-    if (response) {
-      for (const task of values.tasks) {
-        if (task.saveInStoreAddresses) {
-          await httpClient.post(saveAddressUrl, task.address)
-          if (error) {
-            setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
-            return
-          }
-        }
-        if (task.updateInStoreAddresses) {
-          await httpClient.patch(`${baseURL}${task.address['@id']}`, task.address)
-          if (error) {
-            setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
-            return
-          }
-        }
-      }
-
-      // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
-      window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
-    }
-  }, [convertValuesToPayload, storeId, deliveryId, isDispatcher, httpClient])
 
   const getPrice = _.debounce(
     (values) => {
