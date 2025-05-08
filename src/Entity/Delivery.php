@@ -14,7 +14,6 @@ use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
-use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
@@ -27,7 +26,6 @@ use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
-use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
@@ -44,9 +42,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
         new Put(
-            controller: EditDelivery::class,
             denormalizationContext: ['groups' => ['delivery_create']],
-            security: 'is_granted(\'edit\', object)'
+            security: 'is_granted(\'edit\', object)',
+            input: DeliveryInput::class,
+            processor: DeliveryCreateProcessor::class
         ),
         new Put(
             uriTemplate: '/deliveries/{id}/pick',
@@ -200,26 +199,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     #[Groups(['delivery_create'])]
     private $store;
-
-    /**
-     * @var ?ArbitraryPrice
-     */
-    #[Groups(['delivery_create'])]
-    private $arbitraryPrice;
-
-    const OPENAPI_CONTEXT_POST_PARAMETERS = [[
-        "name" => "delivery",
-        "in" => "body",
-        "schema" => [
-            "type" => "object",
-            "required" => ["dropoff"],
-            "properties" => [
-                "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
-                "pickup" => ['$ref' => '#/definitions/Task-task_create'],
-            ]
-        ],
-        "style" => "form"
-    ]];
 
     public function __construct()
     {
@@ -622,31 +601,5 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }, $this->getTasks()));
         usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
         return $messages;
-    }
-
-    /**
-     * Get the value of arbitraryPrice
-     */
-    public function hasArbitraryPrice(): bool
-    {
-        return !is_null($this->arbitraryPrice);
-    }
-
-    /**
-     * Get the value of arbitraryPrice
-     */
-    public function getArbitraryPrice(): ?ArbitraryPrice
-    {
-        return $this->arbitraryPrice;
-    }
-
-    /**
-     * Set the value of arbitraryPrice
-     */
-    public function setArbitraryPrice(ArbitraryPrice $arbitraryPrice): self
-    {
-        $this->arbitraryPrice = $arbitraryPrice;
-
-        return $this;
     }
 }

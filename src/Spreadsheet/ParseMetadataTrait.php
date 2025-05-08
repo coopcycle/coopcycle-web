@@ -6,7 +6,7 @@ use AppBundle\Entity\Task;
 
 trait ParseMetadataTrait
 {
-    private function parseAndApplyMetadata(Task $task, $metadataRecord)
+    private function parseAndApplyMetadata(Task $task, string $metadataRecord)
     {
         array_map(function ($metaString) use ($task) {
             [$metaKey, $metaValue] = explode("=", $metaString);

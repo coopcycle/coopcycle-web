@@ -65,7 +65,7 @@ final class TaskInput
      * FIXME: parse metadata in a separate denormalizer
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
-    public string|null $metadata = null;
+    public array|string|null $metadata = null;
 
     /**
      * FIXME: parse username in a separate denormalizer

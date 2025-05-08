@@ -66,19 +66,24 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($data instanceof DeliveryInput) {
-            if (is_array($data->tasks) && count($data->tasks) > 0) {
-                $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
-                $delivery = Delivery::createWithTasks(...$tasks);
-
+            // PUT request
+            $previousData = $context['previous_data'] ?? null;
+            if ($previousData instanceof Delivery) {
+                $delivery = $previousData;
             } else {
                 $delivery = Delivery::create();
+            }
 
+            if (is_array($data->tasks) && count($data->tasks) > 0) {
+                $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
+                $delivery->withTasks(...$tasks);
+
+            } else {
                 $this->transformIntoDeliveryTask($data->pickup, $delivery->getPickup(), Task::TYPE_PICKUP, $store);
                 $this->transformIntoDeliveryTask($data->dropoff, $delivery->getDropoff(), Task::TYPE_DROPOFF, $store);
             }
-        }
 
-        if ($data instanceof DeliveryFromTasksInput) {
+        } elseif ($data instanceof DeliveryFromTasksInput) {
             $delivery = Delivery::createWithTasks(...$data->tasks);
         }
 
@@ -100,7 +105,9 @@ class DeliveryProcessor implements ProcessorInterface
                 }
             }
 
-            $delivery->setWeight($data->weight ?? null);
+            if (null !== $data->weight) {
+                $delivery->setWeight($data->weight);
+            }
         }
 
         return $delivery;
@@ -271,8 +278,15 @@ class DeliveryProcessor implements ProcessorInterface
             }
         }
 
-        if ($data->metadata) { // we support here metadata send as a string from a CSV file
-            $this->parseAndApplyMetadata($outputTask, $data->metadata);
+        if ($data->metadata) {
+            // When editing a delivery, the metadata is passed as an array
+            if (is_array($data->metadata)) {
+                foreach ($data->metadata as $key => $value) {
+                    $outputTask->setMetadata($key, $value);
+                }
+            } elseif (is_string($data->metadata)) {
+                $this->parseAndApplyMetadata($outputTask, $data->metadata);
+            }
         }
 
         if ($data->assignedTo) {
