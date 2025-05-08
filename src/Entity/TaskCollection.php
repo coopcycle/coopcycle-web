@@ -22,6 +22,9 @@ abstract class TaskCollection
 
     protected $id;
 
+    /**
+     * @var TaskCollectionItem[] $items
+     */
     #[Assert\Valid]
     #[Groups(['task_collection', 'task'])]
     protected $items;
