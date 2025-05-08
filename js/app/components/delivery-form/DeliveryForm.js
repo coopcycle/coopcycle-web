@@ -330,7 +330,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
       window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
     }
-  }, [storeDeliveryInfos])
+  }, [convertValuesToPayload, storeId, deliveryId, isDispatcher, httpClient])
 
   const isStoreOwnerAndEdit = isEditMode && !isDispatcher
 
