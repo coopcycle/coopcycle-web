@@ -20,6 +20,7 @@ import "./DeliveryForm.scss"
 import _ from 'lodash'
 import { useLazyGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
+import { RecurrenceRules } from './RecurrenceRules'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -110,12 +111,13 @@ const baseURL = location.protocol + '//' + location.host
 export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
   const { httpClient } = useHttpClient()
 
-  const isEditMode = useMemo(() => {
-    return Boolean(deliveryId)
-  }, [deliveryId])
   const isCreateOrderMode = useMemo(() => {
-    return !isEditMode
-  }, [isEditMode])
+    return !Boolean(deliveryId)
+  }, [deliveryId])
+
+  const isModifyOrderMode = useMemo(() => {
+    return !isCreateOrderMode
+  }, [isCreateOrderMode])
 
   const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeId)
   const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
@@ -137,7 +139,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
 
   let deliveryPrice
 
-  if (isEditMode && order) {
+  if (isModifyOrderMode && order) {
     const orderInfos = JSON.parse(order)
     deliveryPrice = { exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal, }
   }
@@ -230,7 +232,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       })
 
     const fetchDeliveryInfos = () => new Promise(resolve => {
-      if (isEditMode) {
+      if (isModifyOrderMode) {
         httpClient.get(`/api/deliveries/${deliveryId}?groups=barcode,address,delivery`).then(result => {
           let response = result.response
 
@@ -255,7 +257,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       promises.push(fetchTags())
     }
 
-    if (isEditMode) {
+    if (isModifyOrderMode) {
       promises.push(fetchDeliveryInfos())
     }
 
@@ -331,8 +333,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
     }
   }, [convertValuesToPayload, storeId, deliveryId, isDispatcher, httpClient])
-
-  const isStoreOwnerAndEdit = isEditMode && !isDispatcher
 
   const getPrice = _.debounce(
     (values) => {
@@ -476,7 +476,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
-                                    isEditMode={Boolean(deliveryId)}
+                                    isEditMode={isModifyOrderMode}
                                     key={originalIndex}
                                     task={task}
                                     index={originalIndex}
@@ -502,7 +502,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
-                                    isEditMode={isEditMode}
+                                    isEditMode={isModifyOrderMode}
                                     index={originalIndex}
                                     addresses={addresses}
                                     storeId={storeId}
@@ -518,7 +518,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                               );
                             })}
 
-                          {storeDeliveryInfos.multiDropEnabled && !(isStoreOwnerAndEdit) ? <div
+                          {storeDeliveryInfos.multiDropEnabled && (isCreateOrderMode || isDispatcher) ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
@@ -542,9 +542,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                   </FieldArray>
 
                   <div className="order-informations">
-
-                    {isEditMode && (
-
+                    {isModifyOrderMode && (
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                           {t("DELIVERY_FORM_TRACKING_LINK")}
@@ -563,7 +561,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                       />
                     </div>
 
-                    <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
+                    <div className="order-informations__total-price border-top py-3">
                       <ShowPrice
                         isDispatcher={isDispatcher}
                         deliveryPrice={deliveryPrice}
@@ -578,25 +576,32 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                       />
                     </div>
 
-                    {!(isEditMode && !isDispatcher) ?
-                      <div className='order-informations__complete-order'>
+                    {isCreateOrderMode && isDispatcher ? (
+                      <div className="border-top pt-2 pb-3">
+                        <RecurrenceRules />
+                      </div>
+                    ) : null}
+
+                    {isCreateOrderMode || isDispatcher ? (
+                      <div className="order-informations__complete-order border-top py-3">
                         <Button
                           type="primary"
                           style={{ height: '2.5em' }}
                           htmlType="submit"
                           disabled={isSubmitting || priceLoading}>
-                          {t("DELIVERY_FORM_SUBMIT")}
+                          {t('DELIVERY_FORM_SUBMIT')}
                         </Button>
-                      </div> : null
-                    }
-
-                    {error.isError ?
-                      <div className="alert alert-danger mt-4" role="alert">
-                        {error.errorMessage}
                       </div>
-                      : null}
-                  </div>
+                    ) : null}
 
+                    {error.isError ? (
+                      <div className="border-top py-3">
+                        <div className="alert alert-danger" role="alert">
+                          {error.errorMessage}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </Form>
             )
