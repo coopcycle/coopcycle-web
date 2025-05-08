@@ -62,6 +62,25 @@ export const apiSlice = createApi({
     getStore: builder.query({
       query: (storeId) => `/api/stores/${storeId}`,
     }),
+    postDelivery: builder.mutation({
+      query(body) {
+        return {
+          url: `/api/deliveries`,
+          method: 'POST',
+          body,
+        }
+      },
+    }),
+    putDelivery: builder.mutation({
+      query(data) {
+        const { deliveryId, ...body } = data
+        return {
+          url: `/api/deliveries/${deliveryId}`,
+          method: 'PUT',
+          body,
+        }
+      },
+    }),
   }),
 })
 
@@ -76,4 +95,6 @@ export const {
   useGetTimeSlotsQuery,
   useGetStoreQuery,
   useLazyGetStoreQuery,
+  usePostDeliveryMutation,
+  usePutDeliveryMutation,
 } = apiSlice

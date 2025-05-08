@@ -1,61 +1,56 @@
 import { useCallback, useState } from 'react'
 import { useHttpClient } from '../../../user/useHttpClient'
+import {
+  usePostDeliveryMutation, usePutDeliveryMutation,
+} from '../../../api/slice'
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos) {
+export default function useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos, isCreateOrderMode) {
   const { httpClient } = useHttpClient()
 
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
 
+  const [createDelivery] = usePostDeliveryMutation()
+  const [modifyDelivery] = usePutDeliveryMutation()
+
   const convertValuesToPayload = useCallback((values) => {
-    const infos = {
+    let data = {
       store: storeDeliveryInfos["@id"],
       tasks: structuredClone(values.tasks),
     };
-    return infos
+
+    if (values.variantIncVATPrice) {
+      data = {
+        ...data,
+        arbitraryPrice: {
+          variantPrice: values.variantIncVATPrice,
+          variantName: values.variantName ?? '',
+        }
+      }
+    }
+
+    return data
   }, [storeDeliveryInfos])
 
   const handleSubmit = useCallback(async (values) => {
-    const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
 
-    const getUrl = (deliveryId) => {
-      if (deliveryId) {
-        const editDeliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
-        return editDeliveryURL
-      } else {
-        const createDeliveryUrl = `${baseURL}/api/deliveries`
-        return createDeliveryUrl
-      }
+    let result
+    if (isCreateOrderMode) {
+      result = await createDelivery(convertValuesToPayload(values))
+    } else {
+      result = await modifyDelivery({ deliveryId, ...convertValuesToPayload(values) })
     }
 
-    const createOrEditADelivery = async (deliveryId) => {
-      const url = getUrl(deliveryId);
-      const method = deliveryId ? 'put' : 'post';
-      deliveryId && !isDispatcher
-      let data = convertValuesToPayload(values)
-
-      if (values.variantIncVATPrice) {
-        data = {
-          ...data,
-          arbitraryPrice: {
-            variantPrice: values.variantIncVATPrice,
-            variantName: values.variantName ?? '',
-          }
-        }
-      }
-
-      return await httpClient[method](url, data);
-    }
-
-    const { response, error } = await createOrEditADelivery(deliveryId)
+    const { data, error } = result
 
     if (error) {
-      setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
+      setError({ isError: true, errorMessage: error.data['hydra:description'] })
       return
     }
 
-    if (response) {
+    const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
+    if (data) {
       for (const task of values.tasks) {
         if (task.saveInStoreAddresses) {
           await httpClient.post(saveAddressUrl, task.address)

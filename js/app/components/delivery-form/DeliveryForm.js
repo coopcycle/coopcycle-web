@@ -136,7 +136,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
-  const { handleSubmit, error } = useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos)
+  const { handleSubmit, error } = useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos, isCreateOrderMode)
 
   let deliveryPrice
 
