@@ -5,6 +5,7 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Exception\InvalidArgumentException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
@@ -66,10 +67,9 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($data instanceof DeliveryInput) {
-            // PUT request
-            $previousData = $context['previous_data'] ?? null;
-            if ($previousData instanceof Delivery) {
-                $delivery = $previousData;
+            $id = $uriVariables['id'] ?? null;
+            if ($id && $operation instanceof Put) {
+                $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
             } else {
                 $delivery = Delivery::create();
             }
