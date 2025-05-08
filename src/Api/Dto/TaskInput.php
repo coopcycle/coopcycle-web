@@ -8,7 +8,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class TaskInput
 {
-    // set only in a PUT request
+    // used only in a PUT request
     #[Groups(['delivery_create'])]
     public int|null $id = null;
 
@@ -68,6 +68,8 @@ final class TaskInput
     /**
      * FIXME: parse metadata in a separate denormalizer
      */
+    // array in a PUT request
+    // string in a POST request
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|string|null $metadata = null;
 
