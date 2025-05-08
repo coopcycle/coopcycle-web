@@ -26,30 +26,26 @@ use Symfony\Component\Validator\Constraints as Assert;
     shortName: 'RecurrenceRule',
     operations: [
         new Get(
-            requirements: ['id' => '[0-9]+'],
             // Make sure to add requirements for operations like "/recurrence_rules/generate_orders" to work
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'
+            requirements: ['id' => '[0-9]+'],
         ),
-        new Put(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
+        new Put(),
+        new Post(),
+        new Delete(),
+        new GetCollection(),
         new Post(
             uriTemplate: '/recurrence_rules/{id}/between',
             controller: BetweenController::class,
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')',
             write: false
         ),
-        new Delete(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
         new GetCollection(
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'
-        ),
-        new Post(security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_DISPATCHER\')'),
-        new Get(
             uriTemplate: '/recurrence_rules/generate_orders',
             status: 201,
             controller: GenerateOrders::class,
-            security: 'is_granted(\'ROLE_DISPATCHER\')'
-        )
+        ),
     ],
-    normalizationContext: ['groups' => ['task_recurrence_rule']]
+    normalizationContext: ['groups' => ['task_recurrence_rule']],
+    security: "is_granted('ROLE_DISPATCHER')"
 )]
 class RecurrenceRule implements SoftDeleteableInterface
 {
