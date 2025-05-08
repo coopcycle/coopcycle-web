@@ -66,17 +66,40 @@ class DeliveryProcessor implements ProcessorInterface
             }
         }
 
+        $isPutOperation = $operation instanceof Put;
+
         if ($data instanceof DeliveryInput) {
             $id = $uriVariables['id'] ?? null;
-            if ($id && $operation instanceof Put) {
+            if ($id && $isPutOperation) {
                 $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
+                if (null === $delivery) {
+                    $this->logger->warning('Delivery not found', [
+                        'id' => $id,
+                    ]);
+                    throw new InvalidArgumentException('delivery.id');
+                }
             } else {
                 $delivery = Delivery::create();
             }
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
-                $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
-                $delivery->withTasks(...$tasks);
+                if ($isPutOperation) {
+                    $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
+
+                    //remove tasks that are not in the request
+                    foreach ($delivery->getTasks() as $task) {
+                        if (!in_array($task, $tasks)) {
+                            $delivery->removeTask($task);
+                            $this->entityManager->remove($task);
+                        }
+                    }
+
+                } else {
+                    $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
+                    $delivery->withTasks(...$tasks);
+                }
+
+
 
             } else {
                 $this->transformIntoDeliveryTask($data->pickup, $delivery->getPickup(), Task::TYPE_PICKUP, $store);
@@ -119,6 +142,27 @@ class DeliveryProcessor implements ProcessorInterface
     ): Task
     {
         return $this->transformIntoTaskImpl($data, new Task(), $store);
+    }
+
+    /**
+     * @param Task[] $tasks
+     */
+    private function transformIntoExistingTask(
+        TaskInput $data,
+        array $tasks,
+        Store|null $store = null
+    ): Task
+    {
+        foreach ($tasks as $task) {
+            if ($task->getId() === $data->id) {
+                return $this->transformIntoTaskImpl($data, $task, $store);
+            }
+        }
+
+        $this->logger->warning('Task not found', [
+            'id' => $data->id,
+        ]);
+        throw new InvalidArgumentException('task.id');
     }
 
     private function transformIntoDeliveryTask(

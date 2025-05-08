@@ -8,6 +8,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class TaskInput
 {
+    // set only in a PUT request
+    #[Groups(['delivery_create'])]
+    public int|null $id = null;
+
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public string|null $type = null;
 
