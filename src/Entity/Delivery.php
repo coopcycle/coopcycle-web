@@ -20,7 +20,7 @@ use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
-use AppBundle\Api\State\DeliveryCreateProcessor;
+use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
@@ -45,7 +45,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
             input: DeliveryInput::class,
-            processor: DeliveryCreateProcessor::class
+            processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Put(
             uriTemplate: '/deliveries/{id}/pick',
@@ -88,7 +88,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
             input: DeliveryInput::class,
-            processor: DeliveryCreateProcessor::class
+            processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
             uriTemplate: '/deliveries/assert',
@@ -121,7 +121,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             input: DeliveryFromTasksInput::class,
-            processor: DeliveryCreateProcessor::class
+            processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
             uriTemplate: '/deliveries/suggest_optimizations',

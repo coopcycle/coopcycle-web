@@ -16,7 +16,7 @@ use AppBundle\Sylius\Order\OrderFactory;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class DeliveryCreateProcessor implements ProcessorInterface
+class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly DeliveryProcessor $decorated,
