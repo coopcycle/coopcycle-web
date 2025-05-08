@@ -47,6 +47,7 @@ abstract class TaskCollection
         $iterator = $this->items->getIterator();
 
         // front end code regarding tasklist expects "itemIds" array to be sorted according positions, please don't remove this :)
+        // phpstan: Call to an undefined method Traversable<(int|string), mixed>::uasort().
         /** @phpstan-ignore method.notFound */
         $iterator->uasort(function ($a, $b) {
             if ($a->getPosition() === $b->getPosition()) {
