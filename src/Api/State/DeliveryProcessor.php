@@ -181,7 +181,7 @@ class DeliveryProcessor implements ProcessorInterface
 
     private function transformIntoTaskImpl(
         TaskInput $data,
-        Task $outputTask,
+        Task $task,
         Store|null $store = null,
         string|null $taskType = null,
     ): Task
@@ -196,7 +196,7 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($type) {
-            $outputTask->setType($type);
+            $task->setType($type);
         }
 
         // Legacy props
@@ -216,8 +216,8 @@ class DeliveryProcessor implements ProcessorInterface
 
             $range = $data->timeSlot;
 
-            $outputTask->setAfter($range->getLower());
-            $outputTask->setBefore($range->getUpper());
+            $task->setAfter($range->getLower());
+            $task->setBefore($range->getUpper());
 
         } elseif ($data->before || $data->after) {
 
@@ -238,10 +238,10 @@ class DeliveryProcessor implements ProcessorInterface
             }
 
             if ($after) {
-                $outputTask->setAfter($after);
+                $task->setAfter($after);
             }
             if ($before) {
-                $outputTask->setBefore($before);
+                $task->setBefore($before);
             }
         }
 
@@ -249,7 +249,7 @@ class DeliveryProcessor implements ProcessorInterface
             $timeSlot = $data->timeSlotUrl;
 
             if ($this->timeSlotManager->isChoice($timeSlot, $range)) {
-                $outputTask->setTimeSlot($timeSlot);
+                $task->setTimeSlot($timeSlot);
             } else {
                 $this->logger->warning('Invalid time slot range: ', [
                     'timeSlot' => $timeSlot->getId(),
@@ -287,27 +287,27 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($address) {
-            $outputTask->setAddress($address);
+            $task->setAddress($address);
         }
 
         if ($data->comments) {
-            $outputTask->setComments($data->comments);
+            $task->setComments($data->comments);
         }
 
         if ($data->tags) {
-            $outputTask->setTags($data->tags);
-            $this->tagManager->update($outputTask);
+            $task->setTags($data->tags);
+            $this->tagManager->update($task);
         }
 
         // Ignore weight & packages for pickup tasks
         // @see https://github.com/coopcycle/coopcycle-web/issues/3461
-        if ($outputTask->isPickup()) {
+        if ($task->isPickup()) {
             $data->weight = null;
             $data->packages = null;
         }
 
         if ($data->weight) {
-            $outputTask->setWeight($data->weight);
+            $task->setWeight($data->weight);
         }
 
         if ($data->packages) {
@@ -317,7 +317,7 @@ class DeliveryProcessor implements ProcessorInterface
             foreach ($data->packages as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p->type, $store);
                 if ($package) {
-                    $outputTask->setQuantityForPackage($package, $p->quantity);
+                    $task->setQuantityForPackage($package, $p->quantity);
                 }
             }
         }
@@ -326,20 +326,20 @@ class DeliveryProcessor implements ProcessorInterface
             // When editing a delivery, the metadata is passed as an array
             if (is_array($data->metadata)) {
                 foreach ($data->metadata as $key => $value) {
-                    $outputTask->setMetadata($key, $value);
+                    $task->setMetadata($key, $value);
                 }
             } elseif (is_string($data->metadata)) {
-                $this->parseAndApplyMetadata($outputTask, $data->metadata);
+                $this->parseAndApplyMetadata($task, $data->metadata);
             }
         }
 
         if ($data->assignedTo) {
             $user = $this->userManager->findUserByUsername($data->assignedTo);
             if ($user && $user->hasRole('ROLE_COURIER')) {
-                $outputTask->assignTo($user);
+                $task->assignTo($user);
             }
         }
 
-        return $outputTask;
+        return $task;
     }
 }
