@@ -38,7 +38,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             controller: BetweenController::class,
             write: false
         ),
-        new Get(
+        new GetCollection(
             uriTemplate: '/recurrence_rules/generate_orders',
             status: 201,
             controller: GenerateOrders::class,
