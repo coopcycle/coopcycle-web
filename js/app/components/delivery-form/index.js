@@ -3,8 +3,8 @@ import { Provider } from 'react-redux'
 import { ConfigProvider } from 'antd'
 import { antdLocale } from '../../i18n'
 import { accountSlice } from '../../entities/account/reduxSlice'
-import { createStoreFromPreloadedState } from '../../delivery/pricing/redux/store'
 import DeliveryForm from './DeliveryForm.js'
+import { createStoreFromPreloadedState } from './redux/store'
 
 const buildInitialState = () => {
   return {
