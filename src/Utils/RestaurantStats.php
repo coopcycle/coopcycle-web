@@ -70,7 +70,9 @@ class RestaurantStats implements \Countable
         private readonly bool $withMessenger = false,
         private readonly bool $nonProfitsEnabled = false,
         private readonly bool $withBillingMethod = false,
-        private readonly bool $includeTaxes = true
+        private readonly bool $includeTaxes = true,
+        bool $showOnlyMealVouchers = false,
+        private readonly bool $includePaymentGateway = true
     )
     {
 
@@ -86,7 +88,9 @@ class RestaurantStats implements \Countable
         $this->addRefunds();
         $this->addStores();
         $this->addPaymentMethods();
-        $this->addPaymentGateways();
+        if ($this->includePaymentGateway) {
+            $this->addPaymentGateways();
+        }
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -97,6 +101,10 @@ class RestaurantStats implements \Countable
 
         if ($nonProfitsEnabled) {
             $this->addNonprofits();
+        }
+
+        if ($showOnlyMealVouchers) {
+            $this->filterMealVouchers();
         }
     }
 
@@ -614,6 +622,26 @@ class RestaurantStats implements \Countable
         }, []);
     }
 
+    public function hasMealVouchers(): bool
+    {
+        foreach ($this->result as $order) {
+            if (in_array($order->paymentMethod, $this->mealVoucherCodes)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function filterMealVouchers()
+    {
+        $this->result = array_filter($this->result, function ($order) {
+            return in_array($order->paymentMethod, $this->mealVoucherCodes);
+        });
+
+        $this->result = array_values($this->result);
+    }
+
     public function isTaxColumn($column)
     {
         return in_array($column, $this->taxColumns);
@@ -669,7 +697,9 @@ class RestaurantStats implements \Countable
         $headings[] = 'promotions';
         $headings[] = 'total_incl_tax';
         $headings[] = 'payment_method';
-        $headings[] = 'payment_gateway';
+        if ($this->includePaymentGateway) {
+            $headings[] = 'payment_gateway';
+        }
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';

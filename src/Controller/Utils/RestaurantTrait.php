@@ -1250,6 +1250,8 @@ trait RestaurantTrait
                 $end
             );
 
+        $showOnlyMealVouchers = $request->query->has('show_only') && 'meal_vouchers' === $request->query->get('show_only');
+
         $stats = new RestaurantStats(
             $entityManager,
             $start,
@@ -1259,8 +1261,10 @@ trait RestaurantTrait
             $this->getParameter('kernel.default_locale'),
             $translator,
             $taxesHelper,
-            false, false,
-            $this->getParameter('nonprofits_enabled')
+            withVendorName: false,
+            withMessenger: false,
+            nonProfitsEnabled: $this->getParameter('nonprofits_enabled'),
+            showOnlyMealVouchers: $showOnlyMealVouchers
         );
 
         if ($request->isMethod('POST')) {
@@ -1291,6 +1295,7 @@ trait RestaurantTrait
             'cube_token' => $tokenFactory->createToken(['vendor_id' => $restaurant->getId()]),
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
+            'show_only_meal_vouchers' => $showOnlyMealVouchers
         ]));
     }
 
