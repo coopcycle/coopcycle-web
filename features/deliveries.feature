@@ -2876,6 +2876,7 @@ Feature: Deliveries
         "trackingUrl": @string@
       }
       """
+    Then the database should contain an order with a total price 1200
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/orders/1"
@@ -2973,7 +2974,6 @@ Feature: Deliveries
         "@*@": "@*@"
       }
       """
-    Then the database should contain an order with a total price 1200
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
