@@ -1,10 +1,11 @@
-import React, { StrictMode } from 'react'
+import React, { StrictMode, useEffect } from 'react'
 import { Provider } from 'react-redux'
 import { ConfigProvider } from 'antd'
 import { antdLocale } from '../../i18n'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from './DeliveryForm.js'
 import { createStoreFromPreloadedState } from './redux/store'
+import Modal from 'react-modal'
 
 const buildInitialState = () => {
   return {
@@ -23,6 +24,10 @@ export default function ({
   isDispatcher,
   isDebugPricing,
 }) {
+  useEffect(() => {
+    Modal.setAppElement('.content');
+  }, [])
+
   return (
     <StrictMode>
       <Provider store={store}>
