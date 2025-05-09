@@ -121,7 +121,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
 
   const [addresses, setAddresses] = useState([])
-  // const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculateResponseData, setCalculateResponseData] = useState(null)
   const [calculatedPrice, setCalculatePrice] = useState(0)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
@@ -290,12 +289,12 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       deliveryId && !isDispatcher
       let data = convertValuesToPayload(values)
 
-      if (values.variantIncVATPrice && values.variantName) {
+      if (values.variantIncVATPrice) {
         data = {
           ...data,
           arbitraryPrice: {
             variantPrice: values.variantIncVATPrice,
-            variantName: values.variantName
+            variantName: values.variantName ?? '',
           }
         }
       }
@@ -331,7 +330,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
       window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
     }
-  }, [storeDeliveryInfos])
+  }, [convertValuesToPayload, storeId, deliveryId, isDispatcher, httpClient])
 
   const isStoreOwnerAndEdit = isEditMode && !isDispatcher
 
@@ -567,7 +566,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                     <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
                       <ShowPrice
                         isDispatcher={isDispatcher}
-                        deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
                         isDebugPricing={isDebugPricing}
                         calculatedPrice={calculatedPrice}

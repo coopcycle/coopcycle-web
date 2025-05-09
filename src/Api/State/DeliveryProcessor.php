@@ -5,6 +5,7 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Exception\InvalidArgumentException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
@@ -17,7 +18,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
@@ -66,20 +66,47 @@ class DeliveryProcessor implements ProcessorInterface
             }
         }
 
-        if ($data instanceof DeliveryInput) {
-            if (is_array($data->tasks) && count($data->tasks) > 0) {
-                $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
-                $delivery = Delivery::createWithTasks(...$tasks);
+        $isPutOperation = $operation instanceof Put;
 
+        if ($data instanceof DeliveryInput) {
+            $id = $uriVariables['id'] ?? null;
+            if ($id && $isPutOperation) {
+                $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
+                if (null === $delivery) {
+                    $this->logger->warning('Delivery not found', [
+                        'id' => $id,
+                    ]);
+                    throw new InvalidArgumentException('delivery.id');
+                }
             } else {
                 $delivery = Delivery::create();
+            }
 
+            if (is_array($data->tasks) && count($data->tasks) > 0) {
+                if ($isPutOperation) {
+                    $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
+
+                    //remove tasks that are not in the request
+                    foreach ($delivery->getTasks() as $task) {
+                        if (!in_array($task, $tasks)) {
+                            $delivery->removeTask($task);
+                            $this->entityManager->remove($task);
+                        }
+                    }
+
+                } else {
+                    $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
+                    $delivery->withTasks(...$tasks);
+                }
+
+
+
+            } else {
                 $this->transformIntoDeliveryTask($data->pickup, $delivery->getPickup(), Task::TYPE_PICKUP, $store);
                 $this->transformIntoDeliveryTask($data->dropoff, $delivery->getDropoff(), Task::TYPE_DROPOFF, $store);
             }
-        }
 
-        if ($data instanceof DeliveryFromTasksInput) {
+        } elseif ($data instanceof DeliveryFromTasksInput) {
             $delivery = Delivery::createWithTasks(...$data->tasks);
         }
 
@@ -101,10 +128,8 @@ class DeliveryProcessor implements ProcessorInterface
                 }
             }
 
-            $delivery->setWeight($data->weight ?? null);
-
-            if ($data->arbitraryPrice) {
-                $delivery->setArbitraryPrice($data->arbitraryPrice);
+            if ($data->weight) {
+                $delivery->setWeight($data->weight);
             }
         }
 
@@ -117,6 +142,27 @@ class DeliveryProcessor implements ProcessorInterface
     ): Task
     {
         return $this->transformIntoTaskImpl($data, new Task(), $store);
+    }
+
+    /**
+     * @param Task[] $tasks
+     */
+    private function transformIntoExistingTask(
+        TaskInput $data,
+        array $tasks,
+        Store|null $store = null
+    ): Task
+    {
+        foreach ($tasks as $task) {
+            if ($task->getId() === $data->id) {
+                return $this->transformIntoTaskImpl($data, $task, $store);
+            }
+        }
+
+        $this->logger->warning('Task not found', [
+            'id' => $data->id,
+        ]);
+        throw new InvalidArgumentException('task.id');
     }
 
     private function transformIntoDeliveryTask(
@@ -135,7 +181,7 @@ class DeliveryProcessor implements ProcessorInterface
 
     private function transformIntoTaskImpl(
         TaskInput $data,
-        Task $outputTask,
+        Task $task,
         Store|null $store = null,
         string|null $taskType = null,
     ): Task
@@ -150,7 +196,7 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($type) {
-            $outputTask->setType($type);
+            $task->setType($type);
         }
 
         // Legacy props
@@ -170,8 +216,8 @@ class DeliveryProcessor implements ProcessorInterface
 
             $range = $data->timeSlot;
 
-            $outputTask->setAfter($range->getLower());
-            $outputTask->setBefore($range->getUpper());
+            $task->setAfter($range->getLower());
+            $task->setBefore($range->getUpper());
 
         } elseif ($data->before || $data->after) {
 
@@ -192,10 +238,10 @@ class DeliveryProcessor implements ProcessorInterface
             }
 
             if ($after) {
-                $outputTask->setAfter($after);
+                $task->setAfter($after);
             }
             if ($before) {
-                $outputTask->setBefore($before);
+                $task->setBefore($before);
             }
         }
 
@@ -203,7 +249,7 @@ class DeliveryProcessor implements ProcessorInterface
             $timeSlot = $data->timeSlotUrl;
 
             if ($this->timeSlotManager->isChoice($timeSlot, $range)) {
-                $outputTask->setTimeSlot($timeSlot);
+                $task->setTimeSlot($timeSlot);
             } else {
                 $this->logger->warning('Invalid time slot range: ', [
                     'timeSlot' => $timeSlot->getId(),
@@ -241,27 +287,27 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($address) {
-            $outputTask->setAddress($address);
+            $task->setAddress($address);
         }
 
         if ($data->comments) {
-            $outputTask->setComments($data->comments);
+            $task->setComments($data->comments);
         }
 
         if ($data->tags) {
-            $outputTask->setTags($data->tags);
-            $this->tagManager->update($outputTask);
+            $task->setTags($data->tags);
+            $this->tagManager->update($task);
         }
 
         // Ignore weight & packages for pickup tasks
         // @see https://github.com/coopcycle/coopcycle-web/issues/3461
-        if ($outputTask->isPickup()) {
+        if ($task->isPickup()) {
             $data->weight = null;
             $data->packages = null;
         }
 
         if ($data->weight) {
-            $outputTask->setWeight($data->weight);
+            $task->setWeight($data->weight);
         }
 
         if ($data->packages) {
@@ -271,22 +317,29 @@ class DeliveryProcessor implements ProcessorInterface
             foreach ($data->packages as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p->type, $store);
                 if ($package) {
-                    $outputTask->setQuantityForPackage($package, $p->quantity);
+                    $task->setQuantityForPackage($package, $p->quantity);
                 }
             }
         }
 
-        if ($data->metadata) { // we support here metadata send as a string from a CSV file
-            $this->parseAndApplyMetadata($outputTask, $data->metadata);
+        if ($data->metadata) {
+            // When editing a delivery, the metadata is passed as an array
+            if (is_array($data->metadata)) {
+                foreach ($data->metadata as $key => $value) {
+                    $task->setMetadata($key, $value);
+                }
+            } elseif (is_string($data->metadata)) {
+                $this->parseAndApplyMetadata($task, $data->metadata);
+            }
         }
 
         if ($data->assignedTo) {
             $user = $this->userManager->findUserByUsername($data->assignedTo);
             if ($user && $user->hasRole('ROLE_COURIER')) {
-                $outputTask->assignTo($user);
+                $task->assignTo($user);
             }
         }
 
-        return $outputTask;
+        return $task;
     }
 }
