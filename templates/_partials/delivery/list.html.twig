@@ -101,7 +101,12 @@
         <small class="text-muted">{{ delivery.createdAt|time_diff }}</small>
       </td>
       <td class="text-right">
-        <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+        {% if is_granted('ROLE_DISPATCHER') %}
+          <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.edit'|trans }}</a>
+        {% else %}
+          <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+        {% endif %}
+
         <div {{ react_component('BarcodesModal', {
           deliveryId: delivery.id
           }) }}></div>
