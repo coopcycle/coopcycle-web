@@ -71,7 +71,8 @@ class RestaurantStats implements \Countable
         private readonly bool $nonProfitsEnabled = false,
         private readonly bool $withBillingMethod = false,
         private readonly bool $includeTaxes = true,
-        bool $showOnlyMealVouchers = false
+        bool $showOnlyMealVouchers = false,
+        private readonly bool $includePaymentGateway = true
     )
     {
 
@@ -87,7 +88,9 @@ class RestaurantStats implements \Countable
         $this->addRefunds();
         $this->addStores();
         $this->addPaymentMethods();
-        $this->addPaymentGateways();
+        if ($this->includePaymentGateway) {
+            $this->addPaymentGateways();
+        }
 
         $this->computeTaxes();
         $this->computeColumnTotals();
@@ -694,7 +697,9 @@ class RestaurantStats implements \Countable
         $headings[] = 'promotions';
         $headings[] = 'total_incl_tax';
         $headings[] = 'payment_method';
-        $headings[] = 'payment_gateway';
+        if ($this->includePaymentGateway) {
+            $headings[] = 'payment_gateway';
+        }
         $headings[] = 'stripe_fee';
         $headings[] = 'platform_fee';
         $headings[] = 'refund_total';
