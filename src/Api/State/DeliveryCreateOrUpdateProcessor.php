@@ -26,8 +26,8 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
         private readonly OrderFactory $orderFactory,
-        private readonly ValidatorInterface $validator,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
+        private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
     )
     {}
@@ -50,18 +50,16 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         /** @var ArbitraryPrice $arbitraryPrice */
         $arbitraryPrice = null;
-        if ($data instanceof DeliveryInput) {
+        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput) {
             $arbitraryPrice = $data->arbitraryPrice;
         }
-
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $arbitraryPrice;
 
         if (null === $delivery->getId()) {
             // New delivery
 
             $pricingStrategy = new UsePricingRules;
 
-            if ($useArbitraryPrice) {
+            if ($arbitraryPrice) {
                 $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
             }
 
@@ -72,8 +70,13 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 ]
             );
 
-            $createRecurrenceRule = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data->rrule;
-            if ($createRecurrenceRule) {
+            /** @var string $rrule */
+            $rrule = null;
+            if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput) {
+                $rrule = $data->rrule;
+            }
+
+            if ($rrule) {
                 $store = $delivery->getStore();
 
                 $recurrRule = null;
@@ -107,7 +110,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         } else {
             // Existing delivery
 
-            if ($useArbitraryPrice) {
+            if ($arbitraryPrice) {
                 $order = $delivery->getOrder();
                 if (null === $order) {
                     // Should not happen normally, but just in case
