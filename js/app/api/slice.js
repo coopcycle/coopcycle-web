@@ -16,6 +16,7 @@ export const apiSlice = createApi({
         }
       }),
     }),
+
     getInvoiceLineItemsGroupedByOrganization: builder.query({
       query: args => {
         return {
@@ -40,6 +41,7 @@ export const apiSlice = createApi({
         }
       },
     }),
+
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
     }),
@@ -56,12 +58,34 @@ export const apiSlice = createApi({
         body: patch,
       }),
     }),
+
     getTimeSlots: builder.query({
       query: () => `api/time_slots`,
     }),
+
+    patchAddress: builder.mutation({
+      query({ nodeId, ...patch }) {
+        return {
+          url: nodeId,
+          method: 'PATCH',
+          body: patch,
+        }
+      },
+    }),
+
     getStore: builder.query({
       query: (nodeId) => nodeId,
     }),
+    postStoreAddress: builder.mutation({
+      query({storeNodeId, ...body}) {
+        return {
+          url: `${storeNodeId}/addresses`,
+          method: 'POST',
+          body,
+        }
+      },
+    }),
+
     postDelivery: builder.mutation({
       query(body) {
         return {
@@ -72,8 +96,7 @@ export const apiSlice = createApi({
       },
     }),
     putDelivery: builder.mutation({
-      query(data) {
-        const { nodeId, ...body } = data
+      query({ nodeId, ...body }) {
         return {
           url: nodeId,
           method: 'PUT',
@@ -95,6 +118,8 @@ export const {
   useGetTimeSlotsQuery,
   useGetStoreQuery,
   useLazyGetStoreQuery,
+  usePostStoreAddressMutation,
+  usePatchAddressMutation,
   usePostDeliveryMutation,
   usePutDeliveryMutation,
 } = apiSlice
