@@ -2,7 +2,10 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Comparable;
@@ -10,7 +13,16 @@ use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
 use AppBundle\Action\Restaurant\ActivateMenu;
 
-#[ApiResource(iri: 'http://schema.org/Menu', shortName: 'Menu', attributes: ['normalization_context' => ['groups' => ['restaurant']]], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'path' => '/restaurants/menus/{id}']])]
+#[ApiResource(
+    shortName: 'Menu',
+    types: ['http://schema.org/Menu'],
+    operations: [
+    new Get(
+        uriTemplate: '/restaurants/menus/{id}'
+    )
+],
+    normalizationContext: ['groups' => ['restaurant']]
+)]
 class Taxon extends BaseTaxon implements Comparable
 {
     private $taxonProducts;

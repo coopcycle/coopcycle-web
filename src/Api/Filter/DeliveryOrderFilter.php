@@ -4,19 +4,25 @@ namespace AppBundle\Api\Filter;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryBuilderHelper;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-class DeliveryOrderFilter extends OrderFilter
+class DeliveryOrderFilter extends AbstractFilter
 {
-    protected function filterProperty(string $property, $direction, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
     {
         if (Delivery::class !== $resourceClass) {
             return;
         }
+
+        if (!in_array('dropoff.before', array_keys($context['filters'][$property]))) {
+            return;
+        }
+
+        $direction = $context['filters'][$property]['dropoff.before'];
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
 
@@ -73,6 +79,10 @@ class DeliveryOrderFilter extends OrderFilter
             $expr->eq(sprintf('%s.parent', $itemsAlias), sprintf('%s.delivery', $taskAlias)),
             $expr->eq(sprintf('%s.type', $taskAlias), ':task_type')
         );
+
+        // Write the condition as string or FilterEagerLoadingExtension will break
+        $condition = (string) $condition;
+
         $queryBuilder->leftJoin(Task::class, $taskAlias, Join::WITH, $condition);
         $queryBuilder->setParameter('task_type', 'DROPOFF');
 
@@ -83,5 +93,23 @@ class DeliveryOrderFilter extends OrderFilter
         // LEFT JOIN (
         //   SELECT task.* FROM task INNER JOIN task_collection_item task_collection_item.task_id = task.id WHERE task.type = 'DROPOFF'
         // ) AS dropoff_task ON dropoff_task.parent_id = delivery.id
+    }
+
+    public function getDescription(string $resourceClass): array
+    {
+        if (!$this->properties) {
+            return [];
+        }
+
+        $description = [];
+        foreach ($this->properties as $property => $strategy) {
+            $description[$property] = [
+                'property' => $property,
+                'type' => 'string',
+                'required' => false,
+            ];
+        }
+
+        return $description;
     }
 }

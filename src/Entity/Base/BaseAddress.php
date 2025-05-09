@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Base;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,7 +13,7 @@ class BaseAddress extends Place
      */
     #[Groups(['address', 'address_create', 'task', 'task_create', 'task_edit', 'order_update', 'restaurant_delivery'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/addressLocality')]
+    #[ApiProperty(types: ['https://schema.org/addressLocality'])]
     protected $description;
 
     /**

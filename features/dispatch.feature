@@ -104,7 +104,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists",
+        "@id":"/api/task_lists/v2",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -857,7 +857,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/assign",
         "@type":"hydra:Collection",
         "hydra:member": [
           {

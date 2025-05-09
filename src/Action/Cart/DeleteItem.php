@@ -2,12 +2,16 @@
 
 namespace AppBundle\Action\Cart;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 
 class DeleteItem
 {
-    public function __construct(private OrderModifierInterface $orderModifier)
+    public function __construct(
+        private OrderModifierInterface $orderModifier,
+        private EntityManagerInterface $entityManager
+    )
     {}
 
     public function __invoke($data, $id, $itemId, Request $request)
@@ -18,6 +22,9 @@ class DeleteItem
                 break;
             }
         }
+
+        // Make sure to flush changes as WriteListener is disabled
+        $this->entityManager->flush();
 
         return $data;
     }

@@ -2,8 +2,14 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
@@ -11,24 +17,38 @@ use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Comparable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET'], 'put' => ['method' => 'PUT', 'denormalization_context' => ['groups' => ['product_update']], 'access_control' => "is_granted('edit', object)"], 'delete' => ['method' => 'DELETE', 'access_control' => "is_granted('edit', object)"]], attributes: ['normalization_context' => ['groups' => ['product']]])]
-class Product extends BaseProduct implements ProductInterface, Comparable
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Put(denormalizationContext: ['groups' => ['product_update']], security: 'is_granted(\'edit\', object)'),
+        new Delete(security: 'is_granted(\'edit\', object)')
+    ],
+    normalizationContext: ['groups' => ['product']]
+)]
+#[ApiResource(
+    uriTemplate: '/restaurants/{id}/products',
+    operations: [new GetCollection()],
+    uriVariables: [
+        'id' => new Link(fromClass: LocalBusiness::class, toProperty: 'restaurant')
+    ],
+    status: 200,
+    normalizationContext: ['groups' => ['product']]
+)]
+class Product extends BaseProduct implements ProductInterface, Comparable, SoftDeleteableInterface
 {
-    protected $deletedAt;
+    use SoftDeleteable;
 
     protected $reusablePackagingEnabled = false;
-
     protected $reusablePackagings;
-
     protected $images;
-
     protected $restaurant;
-
     protected $alcohol = false;
 
     public function __construct()
@@ -38,7 +58,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
         $this->images = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
     }
-
     public function getAllergens()
     {
         $attributeValue = $this->getAttributeByCodeAndLocale('ALLERGENS', $this->currentLocale);
@@ -48,7 +67,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return [];
     }
-
     public function getRestrictedDiets()
     {
         $attributeValue = $this->getAttributeByCodeAndLocale('RESTRICTED_DIETS', $this->currentLocale);
@@ -58,7 +76,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return [];
     }
-
     public function hasNonAdditionalOptions()
     {
         foreach ($this->getOptions() as $option) {
@@ -69,17 +86,14 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return false;
     }
-
     public function hasOptionValue(ProductOptionValueInterface $optionValue): bool
     {
         return $this->hasOption($optionValue->getOption());
     }
-
     public function isReusablePackagingEnabled(): bool
     {
         return $this->reusablePackagingEnabled;
     }
-
     /**
      * @param mixed $reusablePackagingEnabled
      *
@@ -91,12 +105,10 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return $this;
     }
-
     public function getReusablePackagings(): Collection
     {
         return $this->reusablePackagings;
     }
-
     /**
      * @return self
      */
@@ -108,22 +120,18 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return $this;
     }
-
     public function removeReusablePackaging(ReusablePackagings $reusablePackagings)
     {
 
     }
-
     public function clearReusablePackagings()
     {
         $this->reusablePackagings->clear();
     }
-
     public function hasReusablePackagings(): bool
     {
         return count($this->reusablePackagings) > 0;
     }
-
     /**
      * {@inheritdoc}
      */
@@ -145,7 +153,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return new ArrayCollection($values);
     }
-
     /**
      * {@inheritdoc}
      */
@@ -160,7 +167,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
             $this->options->add($productOptions);
         }
     }
-
     /**
      * {@inheritdoc}
      */
@@ -175,7 +181,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
             }
         }
     }
-
     /**
      * {@inheritdoc}
      */
@@ -183,7 +188,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
     {
         return $this->getOptions()->contains($option);
     }
-
     public function getPositionForOption(ProductOptionInterface $option): int
     {
         if ($this->hasOption($option)) {
@@ -196,7 +200,6 @@ class Product extends BaseProduct implements ProductInterface, Comparable
 
         return -1;
     }
-
     public function addOptionAt(ProductOptionInterface $option, int $position): void
     {
         if (!$this->hasOption($option)) {
@@ -215,24 +218,20 @@ class Product extends BaseProduct implements ProductInterface, Comparable
             }
         }
     }
-
     public function getProductOptions()
     {
         return $this->options;
     }
-
     public function getImages()
     {
         return $this->images;
     }
-
     public function addImage(ProductImage $image)
     {
         $image->setProduct($this);
 
         $this->images->add($image);
     }
-
     /**
      * Fix "Nesting level too deep - recursive dependency?"
      * @see https://github.com/Atlantic18/DoctrineExtensions/pull/2185
@@ -241,22 +240,18 @@ class Product extends BaseProduct implements ProductInterface, Comparable
     {
         return $this === $other;
     }
-
     public function getRestaurant(): ?LocalBusiness
     {
         return $this->restaurant;
     }
-
     public function setRestaurant(?LocalBusiness $restaurant)
     {
         $this->restaurant = $restaurant;
     }
-
     public function isAlcohol(): bool
     {
         return $this->alcohol;
     }
-
     public function setAlcohol(bool $alcohol)
     {
         $this->alcohol = $alcohol;

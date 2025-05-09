@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Message\WoopitDocumentWebhook;
@@ -37,7 +37,7 @@ class WoopitDocumentHandler
 
     public function __invoke(WoopitDocumentWebhook $message)
     {
-        $taskImage = $this->iriConverter->getItemFromIri($message->getObject());
+        $taskImage = $this->iriConverter->getResourceFromIri($message->getObject());
 
         if (!$taskImage instanceof TaskImage) {
             return;

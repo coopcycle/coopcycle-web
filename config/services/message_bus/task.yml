@@ -179,7 +179,7 @@ services:
     class: AppBundle\Domain\Task\Reactor\TriggerWebhook
     arguments:
       - '@messenger.default_bus'
-      - '@api_platform.iri_converter'
+      - '@ApiPlatform\Api\IriConverterInterface'
       - '@doctrine.orm.default_entity_manager'
     tags:
       - name: event_subscriber

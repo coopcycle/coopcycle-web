@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Entity\Task;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Symfony\Component\HttpFoundation\Request;

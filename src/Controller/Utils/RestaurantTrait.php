@@ -2,7 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\SynchronizerClient;
@@ -257,7 +258,7 @@ trait RestaurantTrait
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($restaurant),
+                'sub' => $iriConverter->getIriFromResource($restaurant),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -298,9 +299,6 @@ trait RestaurantTrait
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
             $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['restaurant']
             ]);
 
@@ -348,9 +346,6 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['restaurant']
             ]),
             'restaurant' => $restaurant,
@@ -382,7 +377,7 @@ trait RestaurantTrait
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'restaurantId' => $restaurant->getId(),
                     'date' => $date->format('Y-m-d'),
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }
@@ -405,15 +400,11 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['restaurant']
             ]),
             'orders_normalized' => $this->get('serializer')->normalize($orders, 'jsonld', [
                 'resource_class' => Order::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
+                'operation' => new GetCollection(),
                 'groups' => ['order_minimal']
             ]),
             'initial_order' => $request->query->get('order'),
@@ -776,7 +767,7 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
-            'restaurant_iri' => $iriConverter->getIriFromItem($restaurant),
+            'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
         ], $routes));
     }
 
@@ -1133,7 +1124,7 @@ trait RestaurantTrait
             // The "iss" (Issuer) claim contains a redirect URL
             'iss' => $redirectAfterUri,
             // The "sub" (Subject) claim contains a restaurant IRI
-            'sub' => $iriConverter->getIriFromItem($restaurant),
+            'sub' => $iriConverter->getIriFromResource($restaurant),
             // The custom "mplm" (Mercado Pago livemode) contains a boolean
             'mplm' => 'no',
         ]);

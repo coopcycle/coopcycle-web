@@ -2,43 +2,39 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\Delivery\ConfirmQuote as ConfirmDeliveryQuoteController;
-use AppBundle\Action\Delivery\Quote as DeliveryQuoteController;
 use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\State\DeliveryQuoteProcessor;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
-    collectionOperations: [
-        'create_quote' => [
-            'method' => 'POST',
-            'path' => '/deliveries/quotes',
-            'input' => DeliveryInput::class,
-            'controller' => DeliveryQuoteController::class,
-            'normalization_context' => ['groups' => ['delivery_quote']],
-            'denormalization_context' => ['groups' => ['delivery_create', 'pricing_deliveries']],
-            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
-            'openapi_context' => ['summary' => 'Creates a delivery quote']
-        ]
-    ],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'controller' => NotFoundAction::class,
-            'read' => false,
-            'output' => false
-        ],
-        'confirm_quote' => [
-            'method' => 'PUT',
-            'path' => '/deliveries/quotes/{id}/confirm',
-            'controller' => ConfirmDeliveryQuoteController::class,
-            'normalization_context' => ['groups' => ['delivery_quote_confirm']],
-            'access_control' => "is_granted('confirm', object)",
-            'openapi_context' => ['summary' => 'Confirms a delivery quote']
-        ]
+    operations: [
+        new Get(controller: NotFoundAction::class, read: false, output: false),
+        new Put(
+            uriTemplate: '/deliveries/quotes/{id}/confirm',
+            controller: ConfirmDeliveryQuoteController::class,
+            openapiContext: ['summary' => 'Confirms a delivery quote'],
+            normalizationContext: ['groups' => ['delivery_quote_confirm']],
+            security: 'is_granted(\'confirm\', object)'
+        ),
+        new Post(
+            uriTemplate: '/deliveries/quotes',
+            openapiContext: ['summary' => 'Creates a delivery quote'],
+            normalizationContext: ['groups' => ['delivery_quote']],
+            denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
+            input: DeliveryInput::class,
+            processor: DeliveryQuoteProcessor::class
+        )
     ]
 )]
 class DeliveryQuote

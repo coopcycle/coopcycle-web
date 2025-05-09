@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\Controller\Utils\SelectPaymentMethodTrait;
@@ -665,9 +665,6 @@ class OrderController extends AbstractController
         }
 
         $orderNormalized = $this->get('serializer')->normalize($order, 'jsonld', [
-            'resource_class' => Order::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['order', 'address']
         ]);
 

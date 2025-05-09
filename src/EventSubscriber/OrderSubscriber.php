@@ -6,15 +6,11 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Exception\LoopeatInsufficientStockException;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
-use ApiPlatform\Core\DataPersister\DataPersisterInterface;
-use ApiPlatform\Core\EventListener\EventPriorities;
-use ApiPlatform\Core\Validator\ValidatorInterface as ApiPlatformValidatorInterface;
-use Carbon\Carbon;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
@@ -29,8 +25,6 @@ final class OrderSubscriber implements EventSubscriberInterface
     public function __construct(
         private TokenStorageInterface $tokenStorage,
         private OrderTimeHelper $orderTimeHelper,
-        private ApiPlatformValidatorInterface $validator,
-        private DataPersisterInterface $dataPersister,
         private OrderProcessorInterface $orderProcessor,
         private BaseValidatorInterface $baseValidator,
         private LoggerInterface $checkoutLogger
@@ -47,10 +41,7 @@ final class OrderSubscriber implements EventSubscriberInterface
             ],
             KernelEvents::VIEW => [
                 ['preValidate', EventPriorities::PRE_VALIDATE],
-                ['timingResponse', EventPriorities::PRE_VALIDATE],
-                ['validateResponse', EventPriorities::POST_VALIDATE],
                 ['process', EventPriorities::PRE_WRITE],
-                ['deleteItemPostWrite', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -74,7 +65,7 @@ final class OrderSubscriber implements EventSubscriberInterface
         $request = $event->getRequest();
 
         // PUT /api/orders/{id}/accept
-        if ($request->attributes->get('_route') === 'api_orders_accept_item') {
+        if ($request->attributes->get('_route') === '_api_/orders/{id}/accept_put') {
 
             $order = $request->attributes->get('data');
 
@@ -112,74 +103,13 @@ final class OrderSubscriber implements EventSubscriberInterface
             $order->setCustomer($this->getUser()->getCustomer());
         }
 
-        if ($request->attributes->get('_route') === 'api_orders_post_collection'
+        if ($request->attributes->get('_route') === '_api_/orders.{_format}_post'
             && $order->hasVendor() && null === $order->getId() && null === $order->getShippingTimeRange()) {
             $shippingTimeRange = $this->orderTimeHelper->getShippingTimeRange($order);
             $order->setShippingTimeRange($shippingTimeRange);
         }
 
         $event->setControllerResult($order);
-    }
-
-    // FIXME Remove this listener once https://github.com/api-platform/core/pull/3150 is merged
-    public function timingResponse(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        $routes = [
-            'api_orders_get_cart_timing_item', // GET /api/orders/{id}/timing
-            'api_orders_timing_collection', // GET /api/orders/timing
-        ];
-
-        if (!in_array($request->attributes->get('_route'), $routes)) {
-            return;
-        }
-
-        $order = $event->getControllerResult();
-
-        if (!$order->hasVendor()) {
-            return;
-        }
-
-        $timing = $this->orderTimeHelper->getTimeInfo($order);
-
-        $timing['choices'] = array_map(function ($range) {
-            [ $lower, $upper ] = $range;
-
-            return Carbon::instance(Carbon::parse($lower))
-                ->average(Carbon::parse($upper))
-                ->format(\DateTime::ATOM);
-        }, $timing['ranges']);
-
-        $event->setControllerResult(new JsonResponse($timing));
-    }
-
-    public function validateResponse(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        // GET /api/orders/{id}/validate
-        if ($request->attributes->get('_route') !== 'api_orders_validate_item') {
-            return;
-        }
-
-        $controllerResult = $event->getControllerResult();
-
-        $this->validator->validate($controllerResult);
-    }
-
-    public function deleteItemPostWrite(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        // DELETE /api/orders/{id}/items/{itemId}
-        if ($request->attributes->get('_route') !== 'api_orders_delete_item_item') {
-            return;
-        }
-
-        $controllerResult = $event->getControllerResult();
-        $persistResult = $this->dataPersister->persist($controllerResult);
-        $event->setControllerResult($persistResult);
     }
 
     public function process(ViewEvent $event)

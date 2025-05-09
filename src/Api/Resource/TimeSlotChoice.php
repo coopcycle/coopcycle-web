@@ -2,26 +2,23 @@
 
 namespace AppBundle\Api\Resource;
 
-use ApiPlatform\Core\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Action\NotFoundAction;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[ApiResource(
-    collectionOperations: [],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'controller' => NotFoundAction::class,
-            'read' => false,
-            'output' => false
-        ]
-    ],
-    attributes: [
-        'jsonld_context' => []
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        )
     ]
 )]
 final class TimeSlotChoice

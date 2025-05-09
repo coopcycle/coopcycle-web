@@ -2,7 +2,7 @@
 
 namespace AppBundle\Form;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use Doctrine\ORM\PersistentCollection;
 use libphonenumber\NumberParseException;
@@ -69,7 +69,7 @@ class AddressBookType extends AbstractType
                 'choices' => $options['with_addresses'],
                 'choice_label' => 'streetAddress',
                 'choice_value' => function (Address $address = null) {
-                    return $address && null !== $address->getId() ? $this->iriConverter->getIriFromItem($address) : '';
+                    return $address && null !== $address->getId() ? $this->iriConverter->getIriFromResource($address) : '';
                 },
                 'choice_attr' => function(Address $choice, $key, $value) {
 

@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Domain\Order\Reactor;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
 use AppBundle\Entity\User;

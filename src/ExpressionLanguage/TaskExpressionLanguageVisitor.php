@@ -2,7 +2,7 @@
 
 namespace AppBundle\ExpressionLanguage;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 
@@ -57,7 +57,7 @@ class TaskExpressionLanguageVisitor
         $values['packages'] = new PackagesResolver($task);
 
         if (null !== $task->getTimeSlot()) {
-            $values['time_slot'] = $this->iriConverter->getIriFromItem($task->getTimeSlot());
+            $values['time_slot'] = $this->iriConverter->getIriFromResource($task->getTimeSlot());
         } else {
             $values['time_slot'] = null;
         }

@@ -6,7 +6,7 @@ import { money } from "../utils";
 async function _handleApplyPriceDiff(id, diff) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
-    window.Routing.generate("api_incidents_action_item", { id }),
+    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
     { action: "applied_price_diff", diff },
   );
 }

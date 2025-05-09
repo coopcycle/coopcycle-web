@@ -30,4 +30,4 @@ services:
                 ignore_exceptions:
                     - Symfony\Component\Security\Core\Exception\AccessDeniedException
                     - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-                    - ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException
+                    - ApiPlatform\Symfony\Validator\Exception\ValidationException

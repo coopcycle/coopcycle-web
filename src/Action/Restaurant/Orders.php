@@ -29,7 +29,8 @@ class Orders
 
         // We need to change the "_api_resource_class" attributes,
         // so that @context equals "/api/contexts/Order"
-        $request->attributes->set('_api_resource_class', Order::class);
+        // FIXME Why???
+        // $request->attributes->set('_api_resource_class', Order::class);
 
         // FIXME
         // Ideally, $authorizationChecker should be injected

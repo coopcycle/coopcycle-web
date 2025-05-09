@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -124,7 +124,7 @@ class LoopEatController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
-        $subject = $iriConverter->getItemFromIri($payload['sub']);
+        $subject = $iriConverter->getResourceFromIri($payload['sub']);
 
         if (!$subject instanceof LocalBusiness && !$subject instanceof Customer && !$subject instanceof Order) {
             throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s" or "%s" or "%s"',

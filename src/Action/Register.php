@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action;
 
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Nucleos\ProfileBundle\Mailer\RegistrationMailer;

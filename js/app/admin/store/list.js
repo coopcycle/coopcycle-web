@@ -15,7 +15,7 @@ document.querySelectorAll('.delete-store').forEach((el) => {
       'Content-Type': 'application/ld+json'
     }
 
-    const url = window.Routing.generate('api_stores_delete_item', {
+    const url = window.Routing.generate('_api_/stores/{id}.{_format}_delete', {
       id: e.target.dataset.storeId,
     })
 

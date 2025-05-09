@@ -2,55 +2,41 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\Operation;
 use AppBundle\Entity\Organization;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
-
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
-final class OrganizationFilter extends AbstractContextAwareFilter
+final class OrganizationFilter extends AbstractFilter
 {
-    private $tokenStorage;
+    private $security;
 
     public function __construct(
         ManagerRegistry $managerRegistry,
-        TokenStorageInterface $tokenStorage,
-        $requestStack = null,
+        Security $security,
         LoggerInterface $logger = null,
-        array $properties = null)
+        array $properties = null,
+        NameConverterInterface $nameConverter = null)
     {
-        parent::__construct($managerRegistry, $requestStack, $logger, $properties);
+        $this->security = $security;
 
-        $this->tokenStorage = $tokenStorage;
+        parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
-    protected function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
-    }
-
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
     {
         // otherwise filter is applied to order and page as well
         if (!$this->isPropertyEnabled($property, $resourceClass)) {
             return;
         }
 
-        $user = $this->getUser();
+        $user = $this->security->getUser();
 
         if ($user->hasRole('ROLE_ADMIN')) {
             $orgName = filter_var($value);

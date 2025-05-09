@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\LocalBusiness;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use AppBundle\Entity\Cuisine;
 
 trait FoodEstablishmentTrait
@@ -10,7 +10,7 @@ trait FoodEstablishmentTrait
     /**
      * @var mixed The cuisine of the restaurant.
      */
-    #[ApiProperty(iri: 'https://schema.org/servesCuisine')]
+    #[ApiProperty(types: ['https://schema.org/servesCuisine'])]
     protected $servesCuisine;
 
     public function setServesCuisine($servesCuisine)

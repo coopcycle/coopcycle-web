@@ -32,9 +32,6 @@ trait OrderTrait
     private function orderAsJson(Order $order)
     {
         $orderNormalized = $this->get('serializer')->normalize($order, 'jsonld', [
-            'resource_class' => Order::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['order', 'address']
         ]);
 

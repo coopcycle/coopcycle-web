@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\TaskImage;
 use League\Flysystem\FileNotFoundException;
 use Imagine\Exception\RuntimeException as ImagineRuntimeException;

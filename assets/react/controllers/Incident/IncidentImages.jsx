@@ -12,7 +12,7 @@ async function _handleUpload(id, file) {
   const formData = new FormData();
   formData.append("file", file);
   return await httpClient.post(
-    window.Routing.generate("api_incident_images_post_collection"),
+    window.Routing.generate("_api_/incident_images.{_format}_post"),
     formData,
     {
       "Content-Type": "multipart/form-data",

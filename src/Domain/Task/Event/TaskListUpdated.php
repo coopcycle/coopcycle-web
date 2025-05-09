@@ -32,8 +32,6 @@ class TaskListUpdated extends BaseEvent implements SerializableEventInterface
     {
         $normalized = $serializer->normalize($this->collection, 'jsonld', [
             'resource_class' => MyTaskListDto::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['task_list', "task_collection", "task", "delivery", "address"]
         ]);
 

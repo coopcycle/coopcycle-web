@@ -11,7 +11,7 @@ import store from "./incidentStore";
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
-    window.Routing.generate("api_incidents_action_item", { id }),
+    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
     { action: "cancelled" },
   );
 }

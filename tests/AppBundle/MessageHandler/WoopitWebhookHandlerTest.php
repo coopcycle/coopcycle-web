@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\WoopitWebhook;
 use AppBundle\MessageHandler\WoopitWebhookHandler;
@@ -51,7 +51,7 @@ class WoopitWebhookHandlerTest extends TestCase
         $delivery = $this->prophesize(Delivery::class);
         $delivery->getId()->willReturn(1);
 
-        $this->iriConverter->getItemFromIri('/api/deliveries/1')
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
             ->willReturn($delivery->reveal());
 
         $deliveryId = $this->hashids->encode(1);
@@ -86,7 +86,7 @@ class WoopitWebhookHandlerTest extends TestCase
         $delivery = $this->prophesize(Delivery::class);
         $delivery->getId()->willReturn(1);
 
-        $this->iriConverter->getItemFromIri('/api/deliveries/1')
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
             ->willReturn($delivery->reveal());
 
         $deliveryId = $this->hashids->encode(1);
@@ -121,7 +121,7 @@ class WoopitWebhookHandlerTest extends TestCase
         $delivery = $this->prophesize(Delivery::class);
         $delivery->getId()->willReturn(1);
 
-        $this->iriConverter->getItemFromIri('/api/deliveries/1')
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
             ->willReturn($delivery->reveal());
 
         $deliveryId = $this->hashids->encode(1);

@@ -327,7 +327,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
         "hydra:totalItems":2,
@@ -796,7 +796,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           "@...@",
@@ -2147,7 +2147,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/pick",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
@@ -2206,7 +2206,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/drop",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
@@ -2597,7 +2597,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/1/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -2878,7 +2878,6 @@ Feature: Tasks
       """
     Then the response status code should be 200
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
       """
       {
@@ -2978,7 +2977,7 @@ Feature: Tasks
       """
         {
           "@context":"/api/contexts/Task",
-          "@id":"/api/tasks",
+          "@id":"/api/tasks/images",
           "@type":"hydra:Collection",
           "hydra:member": [
             {
@@ -3098,19 +3097,17 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/failure_reasons",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
             "@type":"FailureReason",
-            "@id":"@string@",
             "code":"DAMAGED",
             "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
-            "@id":"@string@",
             "code":"REFUSED",
             "description":"Refused",
             "metadata":[]
@@ -3145,7 +3142,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/failure_reasons",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
         "hydra:totalItems":22,

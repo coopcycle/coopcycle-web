@@ -2,7 +2,11 @@
 
 namespace AppBundle\Entity\Incident;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Incident\CreateImage;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -10,10 +14,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @Vich\Uploadable
- */
-#[ApiResource(iri: 'http://schema.org/MediaObject', attributes: ['normalization_context' => ['groups' => ['incident_image']]], itemOperations: ['get'], collectionOperations: ['post' => ['method' => 'POST', 'controller' => CreateImage::class, 'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')", 'defaults' => ['_api_receive' => false]]])]
+#[Vich\Uploadable]
+#[ApiResource(
+    types: ['http://schema.org/MediaObject'],
+    operations: [
+        new Get(),
+        new Post(
+            defaults: ['_api_receive' => false],
+            controller: CreateImage::class,
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')'
+        )
+    ],
+    normalizationContext: ['groups' => ['incident_image']]
+)]
 class IncidentImage
 {
     #[Groups(['incident'])]
@@ -22,9 +35,9 @@ class IncidentImage
     private $incident;
 
     /**
-     * @Vich\UploadableField(mapping="incident_image", fileNameProperty="imageName")
      * @var File
      */
+    #[Vich\UploadableField(mapping: "incident_image", fileNameProperty: "imageName")]
     #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $file;
 

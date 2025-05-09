@@ -3,13 +3,14 @@
 namespace AppBundle\Api\Filter;
 
 use AppBundle\Entity\Task;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
 
-final class TaskOrderFilter extends AbstractContextAwareFilter
+final class TaskOrderFilter extends AbstractFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
     {
         // Only works on Task class
         if ($resourceClass !== Task::class) {
@@ -25,7 +26,7 @@ final class TaskOrderFilter extends AbstractContextAwareFilter
         $fieldName = $queryNameGenerator->generateParameterName($property); // Generate a unique parameter name to avoid collisions with other filters
 
         $queryBuilder
-            ->addSelect(sprintf('CASE WHEN o.type = :%s THEN 1 ELSE 0 END AS HIDDEN %s', $parameterName,$fieldName))
+            ->addSelect(sprintf('CASE WHEN o.type = :%s THEN 1 ELSE 0 END AS HIDDEN %s', $parameterName, $fieldName))
             ->orderBy('o.doneBefore', 'ASC')
             ->addOrderBy($fieldName, 'ASC')
             ->addOrderBy('o.id', 'ASC')

@@ -2,10 +2,10 @@
 
 namespace AppBundle\Security;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Api\UrlGeneratorInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Api\UrlGeneratorInterface;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Sylius\Order\OrderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\ExpiredTokenException;
@@ -25,7 +25,7 @@ class OrderAccessTokenManager
     public function create($order): string
     {
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($order, UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($order, UrlGeneratorInterface::ABS_URL),
             'exp' => time() + (60 * 60 * 24),
         ];
 
@@ -48,7 +48,7 @@ class OrderAccessTokenManager
 
         if (isset($payload['sub'])) {
             try {
-                return $this->iriConverter->getItemFromIri($payload['sub']);
+                return $this->iriConverter->getResourceFromIri($payload['sub']);
             } catch (InvalidArgumentException|ItemNotFoundException $e) {
             }
         }

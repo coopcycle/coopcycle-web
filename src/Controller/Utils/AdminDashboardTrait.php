@@ -2,13 +2,11 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
-use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -137,11 +135,7 @@ trait AdminDashboardTrait
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
 
         $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
-            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
-                'resource_class' => TaskRecurrenceRule::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-            ]);
+            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld');
         }, $recurrenceRules);
 
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
@@ -150,9 +144,6 @@ trait AdminDashboardTrait
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
-                'resource_class' => Store::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['store', 'store_with_packages']
             ]);
         }, $stores);
@@ -172,7 +163,7 @@ trait AdminDashboardTrait
             );
 
         $addressIris = array_map(
-            fn ($address) => $iriConverter->getItemIriFromResourceClass(Address::class, $address),
+            fn ($address) => $iriConverter->getIriFromResource(Address::class, context: ['uri_variables' => $address]),
             $qb->getQuery()->getArrayResult()
         );
 
@@ -289,9 +280,6 @@ trait AdminDashboardTrait
         }
 
         $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
-            'resource_class' => TaskList::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['task_list']
         ]);
 

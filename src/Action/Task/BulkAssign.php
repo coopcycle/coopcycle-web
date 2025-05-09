@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -40,7 +40,7 @@ class BulkAssign extends Base
         $tasksResults= [];
 
         foreach($tasks as $task) {
-            $taskObj = $this->iriConverter->getItemFromIri($task);
+            $taskObj = $this->iriConverter->getResourceFromIri($task);
             $tasksResults[] = $this->assign($taskObj, $payload, $request);
         }
 

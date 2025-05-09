@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 async function _handleCommentSubmit(id, comment) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.post(
-    window.Routing.generate("api_incidents_add_comment_item", { id }),
+    window.Routing.generate("_api_/incidents/{id}/comments_post", { id }),
     { comment },
   );
 }

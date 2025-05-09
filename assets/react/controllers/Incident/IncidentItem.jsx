@@ -6,7 +6,7 @@ import { money } from "./utils";
 async function _fetchTaskContect(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("api_tasks_get_task_context_item", { id }),
+    window.Routing.generate("_api_/tasks/{id}/context_get", { id }),
   );
 }
 

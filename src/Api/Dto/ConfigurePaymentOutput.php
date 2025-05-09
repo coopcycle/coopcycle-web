@@ -2,7 +2,7 @@
 
 namespace AppBundle\Api\Dto;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use AppBundle\Sylius\Order\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Doctrine\Common\Collections\Collection;

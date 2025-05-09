@@ -5,14 +5,14 @@ import { useTranslation } from 'react-i18next'
 async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient()
   return await httpClient.get(
-    window.Routing.generate('api_tasks_task_failure_reasons_item', { id }),
+    window.Routing.generate('_api_/tasks/{id}/failure_reasons_get', { id }),
   )
 }
 
 async function _createIncident(task, data) {
   const httpClient = new window._auth.httpClient()
   return await httpClient.post(
-    window.Routing.generate('api_incidents_get_collection'),
+    window.Routing.generate('_api_/incidents.{_format}_get_collection'),
     {
       task: task['@id'],
       ...data,

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -47,8 +47,8 @@ class AddPlayer
             throw new NotFoundHttpException("Invitation not found");
         }
 
-        $order = $this->iriConverter->getIriFromItem($data);
-        $player = $this->iriConverter->getIriFromItem($customer);
+        $order = $this->iriConverter->getIriFromResource($data);
+        $player = $this->iriConverter->getIriFromResource($customer);
 
         // Generate X-Player-Token
         $jws = $this->JWSProvider->create([

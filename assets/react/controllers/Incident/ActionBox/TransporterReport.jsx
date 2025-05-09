@@ -22,7 +22,7 @@ import { useTranslation } from "react-i18next";
 async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("api_tasks_task_failure_reasons_item", { id }),
+    window.Routing.generate("_api_/tasks/{id}/failure_reasons_get", { id }),
     { transporter: true },
   );
 }
@@ -48,7 +48,7 @@ async function _handleFormSubmit(
   };
 
   return await httpClient.put(
-    window.Routing.generate("api_incidents_action_item", { id }),
+    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
     payload,
   );
 }
