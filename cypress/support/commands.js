@@ -92,11 +92,12 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
   // open select
   cy.get(selector).click()
 
-  cy.wait(100)
+  cy.wait(300)
 
   cy.root()
-    .parents('body')
-    .find('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+    .closest('body')
+    .find('.ant-select-dropdown')
+    .not('.ant-select-dropdown-hidden')
     .within(() => {
       let attempts = 0
       const maxAttempts = 10
@@ -275,6 +276,22 @@ Cypress.Commands.add('chooseSavedDropoff1Address',
     cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ index }):visible`).click()
   })
 
+Cypress.Commands.add('betaChooseSavedAddressAtPosition',
+  (taskFormIndex, addressIndex) => {
+
+    cy.get(`[data-testid-form="task-${taskFormIndex}"]`).within(() => {
+      cy.get('[data-testid="address-select"]').click()
+      cy.wait(300)
+      cy.root()
+        .closest('body')
+        .find('.ant-select-dropdown')
+        .not('.ant-select-dropdown-hidden')
+        .within(() => {
+          cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ addressIndex })`).click()
+        })
+    })
+  })
+
 Cypress.Commands.add('enterCreditCard', () => {
   const date = new Date(),
     expDate = ('0' + (date.getMonth() + 1)).slice(-2) +
@@ -371,13 +388,16 @@ Cypress.Commands.add('closeRestaurantForToday',
   })
 
 Cypress.Commands.add('chooseDaysOfTheWeek', (daysOfTheWeek) => {
-  for (let i = 1; i < 7; i++) {
-    if (daysOfTheWeek.includes(i)) {
-      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
-        .check()
-    } else {
-      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
-        .uncheck()
-    }
-  }
+  cy.get('[data-testid="recurrence__modal__content"]')
+    .within(() => {
+      for (let i = 1; i < 7; i++) {
+        if (daysOfTheWeek.includes(i)) {
+          cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+            .check()
+        } else {
+          cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+            .uncheck()
+        }
+      }
+    })
 })

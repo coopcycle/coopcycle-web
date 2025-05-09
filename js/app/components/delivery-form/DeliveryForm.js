@@ -524,7 +524,7 @@ export default function({
                     </div>
 
                     {isCreateOrderMode && isDispatcher ? (
-                      <div className="border-top pt-2 pb-3">
+                      <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
                         <RecurrenceRules />
                       </div>
                     ) : null}
