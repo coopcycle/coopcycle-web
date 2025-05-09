@@ -1,7 +1,7 @@
 {% if deliveries|length > 0 %}
 <table class="table table-condensed">
   <thead>
-    <th>{{ 'delivery.table.heading.order'|trans }}</th>
+    <th>{{ 'delivery.table.heading.order'|trans }}&nbsp;#</th>
     {% if with_store is defined and with_store %}
     <th>{{ 'delivery.table.heading.owner'|trans }}</th>
     {% endif %}
