@@ -161,7 +161,7 @@
     </table>
     <div id="delivery_import_spreadsheet"></div>
   {% else %}
-    {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
+    {% include '_partials/delivery/list.html.twig' with { with_store: true } %}
     <nav class="text-center">
       {{ knp_pagination_render(deliveries) }}
     </nav>
