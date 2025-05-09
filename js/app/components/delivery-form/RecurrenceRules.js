@@ -10,9 +10,7 @@ import {
   selectIsRecurrenceModalOpen,
 } from './redux/recurrenceSlice'
 import { useTranslation } from 'react-i18next'
-import {
-  useDeliveryFormFormikContext
-} from './hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
 function Content() {
   const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext()

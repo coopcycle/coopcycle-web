@@ -12,12 +12,8 @@ import classNames from 'classnames'
 
 import TimeRange from '../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
-import {
-  closeRecurrenceModal,
-} from './redux/recurrenceSlice'
-import {
-  useDeliveryFormFormikContext
-} from './hooks/useDeliveryFormFormikContext'
+import { closeRecurrenceModal } from './redux/recurrenceSlice'
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -83,7 +79,8 @@ const validateForm = values => {
 }
 
 export default function ModalContent() {
-  const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } = useDeliveryFormFormikContext()
+  const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } =
+    useDeliveryFormFormikContext()
 
   const { t } = useTranslation()
 
@@ -124,7 +121,7 @@ export default function ModalContent() {
         {({ values, errors, handleSubmit, setFieldValue }) => (
           <div>
             <div className="p-4 border-bottom">
-              { values.rule ? (
+              {values.rule ? (
                 <RecurrenceEditor
                   recurrence={values.rule}
                   onChange={newOpts => {
@@ -132,7 +129,7 @@ export default function ModalContent() {
                     setFieldValue('rule', RRule.optionsToString(cleanOpts))
                   }}
                 />
-              ) : null }
+              ) : null}
               {errors.rule && (
                 <div className="text-danger">
                   {t('RECURRENCE_RULE_DAYS_REQUIRED')}
@@ -147,10 +144,14 @@ export default function ModalContent() {
                 'justify-content-between': isSaved,
               })}>
               {isSaved && (
-                <Button type="danger" size="large" icon={<DeleteOutlined />} onClick={() => {
-                  setFieldValue('rule', null)
-                  handleSubmit()
-                }}>
+                <Button
+                  type="danger"
+                  size="large"
+                  icon={<DeleteOutlined />}
+                  onClick={() => {
+                    setFieldValue('rule', null)
+                    handleSubmit()
+                  }}>
                   {t('ADMIN_DASHBOARD_DELETE')}
                 </Button>
               )}
