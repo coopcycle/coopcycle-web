@@ -121,9 +121,11 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             }
 
             attempts++
-            cy.get('.rc-virtual-list-holder').trigger('wheel', {
+
+            // .ant-select-dropdown
+            cy.root().trigger('wheel', {
               deltaX: 0,
-              deltaY: 150,
+              deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
             })
             cy.wait(100)
