@@ -62,10 +62,10 @@ Cypress.Commands.add('setMockDateTime', dateTime => {
   cy.symfonyConsole(`coopcycle:datetime:mock -d "${dateTime}"`)
 
   cy.clock(new Date(dateTime), ['Date']).then((clock) => {
-    // Set up a timer to tick the clock forward every second (1000ms)
+    // Set up a timer to tick the clock forward every 100ms
     const timer = setInterval(() => {
-      clock.tick(1000);
-    }, 1000);
+      clock.tick(100, { log: false });
+    }, 100);
 
     // Store the timer ID so it can be cleared later
     Cypress.env('clockTimer', timer);
