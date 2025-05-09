@@ -4,7 +4,6 @@ import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
 import { Button, Checkbox } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
@@ -71,7 +70,7 @@ const getByDayValue = recurrenceRule => {
 const validateForm = values => {
   let errors = {}
 
-  if (!values.rule || !getByDayValue(values.rule)) {
+  if (!values.rule) {
     errors.rule = 'Required'
   }
 
@@ -93,8 +92,6 @@ export default function ModalContent() {
     rule: recurrenceRule ?? defaultRecurrenceRule,
   }
 
-  const isSaved = Boolean(recurrenceRule)
-
   return (
     <div data-testid="recurrence__modal__content">
       <div className="modal-header">
@@ -113,7 +110,9 @@ export default function ModalContent() {
         initialValues={initialValues}
         validate={validateForm}
         onSubmit={values => {
-          setSharedFieldValue('rrule', values.rule)
+          // If no days are selected, consider it as no recurrence
+          const rrule = getByDayValue(values.rule) ? values.rule : null
+          setSharedFieldValue('rrule', rrule)
           dispatch(closeRecurrenceModal())
         }}
         validateOnBlur={true}
@@ -121,15 +120,13 @@ export default function ModalContent() {
         {({ values, errors, handleSubmit, setFieldValue }) => (
           <div>
             <div className="p-4 border-bottom">
-              {values.rule ? (
-                <RecurrenceEditor
-                  recurrence={values.rule}
-                  onChange={newOpts => {
-                    const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
-                    setFieldValue('rule', RRule.optionsToString(cleanOpts))
-                  }}
-                />
-              ) : null}
+              <RecurrenceEditor
+                recurrence={values.rule}
+                onChange={newOpts => {
+                  const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
+                  setFieldValue('rule', RRule.optionsToString(cleanOpts))
+                }}
+              />
               {errors.rule && (
                 <div className="text-danger">
                   {t('RECURRENCE_RULE_DAYS_REQUIRED')}
@@ -140,21 +137,8 @@ export default function ModalContent() {
               className={classNames({
                 'd-flex': true,
                 'p-4': true,
-                'justify-content-end': !isSaved,
-                'justify-content-between': isSaved,
+                'justify-content-end': true,
               })}>
-              {isSaved && (
-                <Button
-                  type="danger"
-                  size="large"
-                  icon={<DeleteOutlined />}
-                  onClick={() => {
-                    setFieldValue('rule', null)
-                    handleSubmit()
-                  }}>
-                  {t('ADMIN_DASHBOARD_DELETE')}
-                </Button>
-              )}
               <span data-testid="save">
                 <Button type="primary" size="large" onClick={handleSubmit}>
                   {t('ADMIN_DASHBOARD_TASK_FORM_SAVE')}
