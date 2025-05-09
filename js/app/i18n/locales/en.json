@@ -173,6 +173,7 @@
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Display by dropoff asc.",
         "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Recurrence rule",
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Show recurrence rules",
+        "DELIVERY_FORM_RECURRENCE_RULE": "Repeat",
         "RECURRENCE_RULE_ADD": "Add recurrence rule",
         "RECURRENCE_RULE_DAYS_REQUIRED": "Please choose at least one day",
         "SUBSCRIPTION_CANCELLED": "Recurrence rule cancelled",

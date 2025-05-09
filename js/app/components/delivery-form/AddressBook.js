@@ -116,6 +116,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
       <div className="row">
         <div className="col-sm-12 mb-3">
           <Select
+            data-testid="address-select"
             style={{ width: '100%' }}
             showSearch
             placeholder={t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}

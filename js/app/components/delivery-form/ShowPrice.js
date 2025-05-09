@@ -113,7 +113,7 @@ export default ({
   }, [httpClient])
 
   return (
-    <div className="mb-1 pl-2">
+    <div className="pl-2">
       {
         isModifyOrderMode ?
           <>

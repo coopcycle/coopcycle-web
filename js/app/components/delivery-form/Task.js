@@ -14,7 +14,7 @@ import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikConte
 
 export default ({
   isDispatcher,
-  storeId,
+  storeNodeId,
   addresses,
   index,
   storeDeliveryInfos,
@@ -96,7 +96,7 @@ export default ({
 
         <TaskDateTime
           isDispatcher={isDispatcher}
-          storeId={storeId}
+          storeNodeId={storeNodeId}
           timeSlots={timeSlotLabels}
           index={index}
         />
@@ -105,7 +105,6 @@ export default ({
           <div className="mt-4">
             {packages && packages.length ? (
               <Packages
-                storeId={storeId}
                 index={index}
                 packages={packages}
                 isEdit={isModifyOrderMode}

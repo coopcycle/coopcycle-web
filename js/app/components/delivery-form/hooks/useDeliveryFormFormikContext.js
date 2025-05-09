@@ -21,11 +21,16 @@ export function useDeliveryFormFormikContext({ taskIndex } = {}) {
     }
   }, [values.tasks, taskIndex])
 
+  const rruleValue = useMemo(() => {
+    return values.rrule
+  }, [values])
+
   // Return both the original formik context and your helper functions
   return {
     ...formik,
     isCreateOrderMode,
     isModifyOrderMode,
     taskValues,
+    rruleValue
   }
 }

@@ -43,9 +43,9 @@ const InputLabel = () => {
   return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
 }
 
-export default ({ storeId, index, timeSlotLabels }) => {
+export default ({ storeNodeId, index, timeSlotLabels }) => {
 
-  const { data: store } = useGetStoreQuery(storeId)
+  const { data: store } = useGetStoreQuery(storeNodeId)
   const { httpClient } = useHttpClient()
 
   const { t } = useTranslation()
