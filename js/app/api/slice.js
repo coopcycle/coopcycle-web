@@ -60,7 +60,7 @@ export const apiSlice = createApi({
       query: () => `api/time_slots`,
     }),
     getStore: builder.query({
-      query: (storeId) => `/api/stores/${storeId}`,
+      query: (nodeId) => nodeId,
     }),
     postDelivery: builder.mutation({
       query(body) {
@@ -73,9 +73,9 @@ export const apiSlice = createApi({
     }),
     putDelivery: builder.mutation({
       query(data) {
-        const { deliveryId, ...body } = data
+        const { nodeId, ...body } = data
         return {
-          url: `/api/deliveries/${deliveryId}`,
+          url: nodeId,
           method: 'PUT',
           body,
         }

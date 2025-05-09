@@ -6,7 +6,13 @@ import {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos, isCreateOrderMode) {
+export default function useSubmit(
+  storeId,
+  storeNodeId,
+  deliveryNodeId,
+  isDispatcher,
+  isCreateOrderMode
+) {
   const { httpClient } = useHttpClient()
 
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
@@ -16,7 +22,7 @@ export default function useSubmit(storeId, deliveryId, isDispatcher, storeDelive
 
   const convertValuesToPayload = useCallback((values) => {
     let data = {
-      store: storeDeliveryInfos["@id"],
+      store: storeNodeId,
       tasks: structuredClone(values.tasks),
     };
 
@@ -31,7 +37,7 @@ export default function useSubmit(storeId, deliveryId, isDispatcher, storeDelive
     }
 
     return data
-  }, [storeDeliveryInfos])
+  }, [storeNodeId])
 
   const handleSubmit = useCallback(async (values) => {
 
@@ -39,7 +45,7 @@ export default function useSubmit(storeId, deliveryId, isDispatcher, storeDelive
     if (isCreateOrderMode) {
       result = await createDelivery(convertValuesToPayload(values))
     } else {
-      result = await modifyDelivery({ deliveryId, ...convertValuesToPayload(values) })
+      result = await modifyDelivery({ nodeId: deliveryNodeId, ...convertValuesToPayload(values) })
     }
 
     const { data, error } = result
@@ -48,8 +54,8 @@ export default function useSubmit(storeId, deliveryId, isDispatcher, storeDelive
       setError({ isError: true, errorMessage: error.data['hydra:description'] })
       return
     }
-
-    const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
+    
+    const saveAddressUrl = `${baseURL}${storeNodeId}/addresses`
     if (data) {
       for (const task of values.tasks) {
         if (task.saveInStoreAddresses) {
@@ -71,7 +77,7 @@ export default function useSubmit(storeId, deliveryId, isDispatcher, storeDelive
       // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
       window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
     }
-  }, [convertValuesToPayload, storeId, deliveryId, isDispatcher, httpClient])
+  }, [convertValuesToPayload, storeId, storeNodeId, deliveryNodeId, isDispatcher, httpClient, createDelivery, modifyDelivery, isCreateOrderMode])
 
   return { handleSubmit, error }
 }

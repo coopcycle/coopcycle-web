@@ -109,18 +109,26 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
+export default function({
+  storeId, // prefer using storeNodeId
+  storeNodeId,
+  deliveryId, // prefer using deliveryNodeId
+  deliveryNodeId,
+  order,
+  isDispatcher,
+  isDebugPricing
+}) {
   const { httpClient } = useHttpClient()
 
   const isCreateOrderMode = useMemo(() => {
-    return !Boolean(deliveryId)
-  }, [deliveryId])
+    return !Boolean(deliveryNodeId)
+  }, [deliveryNodeId])
 
   const isModifyOrderMode = useMemo(() => {
     return !isCreateOrderMode
   }, [isCreateOrderMode])
 
-  const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeId)
+  const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeNodeId)
   const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
 
   const [addresses, setAddresses] = useState([])
@@ -136,7 +144,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
-  const { handleSubmit, error } = useSubmit(storeId, deliveryId, isDispatcher, storeDeliveryInfos, isCreateOrderMode)
+  const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
 
   let deliveryPrice
 
@@ -200,27 +208,27 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
     })
 
     const fetchAddresses = () => new Promise(resolve => {
-      httpClient.get(`/api/stores/${storeId}/addresses`).then(result => {
+      httpClient.get(`${storeNodeId}/addresses`).then(result => {
         setAddresses(result.response['hydra:member'])
         resolve()
       })
     })
 
     const fetchTimeSlots = () => new Promise(resolve => {
-      httpClient.get(`/api/stores/${storeId}/time_slots`).then(result => {
+      httpClient.get(`${storeNodeId}/time_slots`).then(result => {
         setTimeSlotLabels(result.response['hydra:member'])
         resolve()
       })
     })
 
     const fetchPackages = () => new Promise(resolve => {
-      httpClient.get(`/api/stores/${storeId}/packages`).then(result => {
+      httpClient.get(`${storeNodeId}/packages`).then(result => {
         setStorePackages(result.response['hydra:member'])
         resolve()
       })
     })
 
-    const fetchStoreDeliveryInfos = () => getStoreTrigger(storeId)
+    const fetchStoreDeliveryInfos = () => getStoreTrigger(storeNodeId)
       .then(() => {
         if (isCreateOrderMode) {
           setInitialValues({
@@ -234,7 +242,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
 
     const fetchDeliveryInfos = () => new Promise(resolve => {
       if (isModifyOrderMode) {
-        httpClient.get(`/api/deliveries/${deliveryId}?groups=barcode,address,delivery`).then(result => {
+        httpClient.get(`${deliveryNodeId}?groups=barcode,address,delivery`).then(result => {
           let response = result.response
 
           //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
@@ -340,7 +348,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
             const previousValues = usePrevious(values)
 
             useEffect(() => {
-              if (!overridePrice && !deliveryId) {
+              if (!overridePrice && isCreateOrderMode) {
                 getPrice(values)
               }
             }, [values]);
@@ -420,7 +428,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                                     task={task}
                                     index={originalIndex}
                                     addresses={addresses}
-                                    storeId={storeId}
+                                    storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     packages={storePackages}
                                     isDispatcher={isDispatcher}
@@ -444,7 +452,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                                     isEditMode={isModifyOrderMode}
                                     index={originalIndex}
                                     addresses={addresses}
-                                    storeId={storeId}
+                                    storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}

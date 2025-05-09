@@ -7,7 +7,7 @@ import './SwitchTimeSlotFreePicker.scss'
 
 export default ({
   isDispatcher,
-  storeId,
+  storeNodeId,
   index,
   format,
   isTimeSlotSelect,
@@ -22,7 +22,7 @@ export default ({
         <div className="timeslot-container">
           <div className="timeslot-container__picker" style={{ width: '95%' }}>
             <TimeSlotPicker
-              storeId={storeId}
+              storeNodeId={storeNodeId}
               index={index}
               timeSlotLabels={timeSlotLabels}
             />
