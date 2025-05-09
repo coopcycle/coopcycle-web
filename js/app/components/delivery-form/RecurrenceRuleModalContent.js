@@ -1,4 +1,5 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
@@ -8,11 +9,9 @@ import moment from 'moment'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
-import Popconfirm from 'antd/lib/popconfirm'
 
 import TimeRange from '../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
-import { useDispatch } from 'react-redux'
 import {
   closeRecurrenceModal,
 } from './redux/recurrenceSlice'
@@ -84,7 +83,7 @@ const validateForm = values => {
 }
 
 export default function ModalContent() {
-  const { rruleValue: recurrenceRule, setFieldValue } = useDeliveryFormFormikContext()
+  const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } = useDeliveryFormFormikContext()
 
   const { t } = useTranslation()
 
@@ -117,7 +116,7 @@ export default function ModalContent() {
         initialValues={initialValues}
         validate={validateForm}
         onSubmit={values => {
-          setFieldValue('rrule', values.rule)
+          setSharedFieldValue('rrule', values.rule)
           dispatch(closeRecurrenceModal())
         }}
         validateOnBlur={true}
@@ -125,13 +124,15 @@ export default function ModalContent() {
         {({ values, errors, handleSubmit, setFieldValue }) => (
           <div>
             <div className="p-4 border-bottom">
-              <RecurrenceEditor
-                recurrence={values.rule}
-                onChange={newOpts => {
-                  const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
-                  setFieldValue('rule', RRule.optionsToString(cleanOpts))
-                }}
-              />
+              { values.rule ? (
+                <RecurrenceEditor
+                  recurrence={values.rule}
+                  onChange={newOpts => {
+                    const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
+                    setFieldValue('rule', RRule.optionsToString(cleanOpts))
+                  }}
+                />
+              ) : null }
               {errors.rule && (
                 <div className="text-danger">
                   {t('RECURRENCE_RULE_DAYS_REQUIRED')}
@@ -146,19 +147,12 @@ export default function ModalContent() {
                 'justify-content-between': isSaved,
               })}>
               {isSaved && (
-                <Popconfirm
-                  placement="right"
-                  title={t('CONFIRM_DELETE')}
-                  onConfirm={() => {
-                    setFieldValue('rule', null)
-                    dispatch(closeRecurrenceModal())
-                  }}
-                  okText={t('CROPPIE_CONFIRM')}
-                  cancelText={t('CROPPIE_CANCEL')}>
-                  <Button type="danger" size="large" icon={<DeleteOutlined />}>
-                    {t('ADMIN_DASHBOARD_DELETE')}
-                  </Button>
-                </Popconfirm>
+                <Button type="danger" size="large" icon={<DeleteOutlined />} onClick={() => {
+                  setFieldValue('rule', null)
+                  handleSubmit()
+                }}>
+                  {t('ADMIN_DASHBOARD_DELETE')}
+                </Button>
               )}
               <span data-testid="save">
                 <Button type="primary" size="large" onClick={handleSubmit}>
