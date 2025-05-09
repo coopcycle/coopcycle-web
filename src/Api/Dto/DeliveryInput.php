@@ -39,4 +39,8 @@ final class DeliveryInput
 
     #[Groups(['delivery_create'])]
     public ArbitraryPrice|null $arbitraryPrice = null;
+
+    // used only in a POST request
+    #[Groups(['delivery_create'])]
+    public string|null $rrule = null;
 }

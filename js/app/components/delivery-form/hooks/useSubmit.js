@@ -37,6 +37,13 @@ export default function useSubmit(
         }
       }
 
+      if (values.rrule) {
+        data = {
+          ...data,
+          rrule: values.rrule,
+        }
+      }
+
       return data
     },
     [storeNodeId],
@@ -109,11 +116,11 @@ export default function useSubmit(
       storeNodeId,
       deliveryNodeId,
       isDispatcher,
+      isCreateOrderMode,
       createDelivery,
       modifyDelivery,
       createAddress,
       modifyAddress,
-      isCreateOrderMode,
     ],
   )
 

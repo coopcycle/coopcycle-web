@@ -7,28 +7,29 @@ import RecurrenceRule from './RecurrenceRule'
 import {
   closeRecurrenceModal,
   openRecurrenceModal,
-  selectIsCancelled,
   selectIsRecurrenceModalOpen,
-  selectRecurrenceRule,
 } from './redux/recurrenceSlice'
 import { useTranslation } from 'react-i18next'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
 function Content() {
-  const recurrenceRule = useSelector(selectRecurrenceRule)
-  const isCancelled = useSelector(selectIsCancelled);
+  const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext()
 
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
-  if (isCancelled) {
-    return (
-      <div className="text-muted">
-        <i className="fa fa-ban"></i>
-        &nbsp;
-        {t('SUBSCRIPTION_CANCELLED')}
-      </div>
-    )
-  }
+  // FIXME: Uncomment this when this component is used on the recurrence rule page
+  // if (isCancelled) {
+  //   return (
+  //     <div className="text-muted">
+  //       <i className="fa fa-ban"></i>
+  //       &nbsp;
+  //       {t('SUBSCRIPTION_CANCELLED')}
+  //     </div>
+  //   )
+  // }
 
   if (!recurrenceRule) {
     return (

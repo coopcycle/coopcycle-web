@@ -12,14 +12,13 @@ import Popconfirm from 'antd/lib/popconfirm'
 
 import TimeRange from '../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import {
   closeRecurrenceModal,
-  createRecurrenceRule,
-  deleteRecurrenceRule,
-  selectRecurrenceRule,
-  updateRecurrenceRule,
 } from './redux/recurrenceSlice'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -85,7 +84,7 @@ const validateForm = values => {
 }
 
 export default function ModalContent() {
-  const recurrenceRule = useSelector(selectRecurrenceRule)
+  const { rruleValue: recurrenceRule, setFieldValue } = useDeliveryFormFormikContext()
 
   const { t } = useTranslation()
 
@@ -118,15 +117,7 @@ export default function ModalContent() {
         initialValues={initialValues}
         validate={validateForm}
         onSubmit={values => {
-          if (isSaved) {
-            dispatch(
-              updateRecurrenceRule(values.rule),
-            )
-          } else {
-            dispatch(
-              createRecurrenceRule(values.rule),
-            )
-          }
+          setFieldValue('rrule', values.rule)
           dispatch(closeRecurrenceModal())
         }}
         validateOnBlur={true}
@@ -159,7 +150,7 @@ export default function ModalContent() {
                   placement="right"
                   title={t('CONFIRM_DELETE')}
                   onConfirm={() => {
-                    dispatch(deleteRecurrenceRule(recurrenceRule))
+                    setFieldValue('rule', null)
                     dispatch(closeRecurrenceModal())
                   }}
                   okText={t('CROPPIE_CONFIRM')}
