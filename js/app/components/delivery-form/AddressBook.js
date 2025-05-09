@@ -272,7 +272,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         }}
         shouldCloseOnOverlayClick={false}
         contentLabel={t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER')}
-        overlayClassName="ReactModal__Overlay--addressProp"
+        overlayClassName="ReactModal__Overlay--zIndex-1001"
         className="ReactModal__Content--addressProp"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
