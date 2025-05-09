@@ -2800,6 +2800,82 @@ Feature: Deliveries
     }
     """
     Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "type":"PICKUP",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "type":"DROPOFF",
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "trackingUrl": @string@
+      }
+      """
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/orders/1"
@@ -2897,6 +2973,7 @@ Feature: Deliveries
         "@*@": "@*@"
       }
       """
+    Then the database should contain an order with a total price 1200
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
@@ -3006,3 +3083,115 @@ Feature: Deliveries
       "@*@": "@*@"
     }
     """
+    Then the database should contain an order with a total price 2000
+
+  Scenario: Can not set a price as a store
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+    """
+    {
+      "store": "/api/stores/1",
+      "pickup": {
+        "address": "24, Rue de la Paix",
+        "doneBefore": "tomorrow 13:00"
+      },
+      "dropoff": {
+        "address": "48, Rue de Rivoli",
+        "doneBefore": "tomorrow 13:30"
+      },
+      "arbitraryPrice": {
+        "variantPrice": 1200,
+        "variantName": "my custom variant"
+      }
+    }
+    """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "type":"PICKUP",
+          "id":@integer@,
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "type":"DROPOFF",
+          "status":"TODO",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone":null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "trackingUrl": @string@
+      }
+      """
+    Then the database should contain an order with a total price 499
