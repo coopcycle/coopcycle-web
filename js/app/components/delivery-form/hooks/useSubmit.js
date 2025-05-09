@@ -102,8 +102,6 @@ export default function useSubmit(
           }
         }
 
-        //TODO: save recurrence rule
-
         // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
         window.location = isDispatcher
           ? '/admin/deliveries'
