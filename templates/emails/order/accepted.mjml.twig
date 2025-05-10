@@ -21,8 +21,9 @@
   </mj-text>
   {% if order.isLoopeat() %}
   <mj-text align="left" line-height="20px">
-  {% if loopeat_context.processingFee > 0 and loopeat_context.processingFeeBehavior == 'on_returns' %}
-  {{ ('order.loopeat.accepted.with_fee')|trans({ '%name%': loopeat_context.name, '%amount%': loopeat_context.processingFee|price_format }, 'emails')|raw }}
+  {% set returns_fee = loopeat_returns_fee(order) %}
+  {% if returns_fee > 0 %}
+  {{ ('order.loopeat.accepted.with_fee')|trans({ '%name%': loopeat_context.name, '%amount%': returns_fee|price_format }, 'emails')|raw }}
   {% else %}
   {{ ('order.loopeat.accepted')|trans({ '%name%': loopeat_context.name }, 'emails')|raw }}
   {% endif %}
