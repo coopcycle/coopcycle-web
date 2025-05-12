@@ -8,6 +8,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 
 trait TaggableTrait
 {
+    /**
+     * @var string[]
+     */
     protected array $tags = [];
 
     public function getTaggableResourceClass(): string
