@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
+use AppBundle\Api\Dto\DeliveryFormTaskOutput;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -14,6 +17,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
@@ -379,16 +383,27 @@ trait StoreTrait
     public function newStoreDeliveryReactFormAction(
         $id,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PricingManager $pricingManager,
+        DeliveryFormDeliveryMapper $deliveryMapper,
     ) {
-        $routes = $request->attributes->get('routes');
-
         $store = $entityManager
             ->getRepository(Store::class)
             ->find($id);
 
         $this->accessControl($store, 'edit_delivery');
+
         $delivery = $store->createDelivery();
+
+        /** @var DeliveryFormDeliveryOutput|null $deliveryData */
+        $deliveryData = null;
+
+        // pre-fill fields with the data from a previous order
+        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
+            $deliveryData = $deliveryMapper->map($data->delivery, $data->previousArbitraryPrice);
+        }
+
+        $routes = $request->attributes->get('routes');
 
         return $this->render(
             'store/deliveries/beta_new.html.twig',
@@ -397,6 +412,7 @@ trait StoreTrait
                 'store' => $store,
                 'order' => null,
                 'delivery' => $delivery,
+                'deliveryData' => $deliveryData,
                 'stores_route' => $routes['stores'],
                 'store_route' => $routes['store'],
                 'back_route' => $routes['back'],

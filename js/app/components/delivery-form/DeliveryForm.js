@@ -114,6 +114,7 @@ export default function({
   storeNodeId,
   deliveryId, // prefer using deliveryNodeId
   deliveryNodeId,
+  preLoadedDeliveryData,
   order,
   isDispatcher,
   isDebugPricing
@@ -149,8 +150,7 @@ export default function({
   let deliveryPrice
 
   if (isModifyOrderMode && order) {
-    const orderInfos = JSON.parse(order)
-    deliveryPrice = { exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal, }
+    deliveryPrice = { exVAT: +order.total, VAT: +order.total - +order.taxTotal, }
   }
 
   const { t } = useTranslation()
@@ -229,7 +229,21 @@ export default function({
     })
 
     const fetchStoreDeliveryInfos = () => getStoreTrigger(storeNodeId)
-      .then(() => {
+
+    const promises = [fetchAddresses(), fetchPackages(), fetchTimeSlots(), fetchStoreDeliveryInfos()]
+
+    if (isDispatcher) {
+      promises.push(fetchTags())
+    }
+
+    Promise.all(promises).then(() => {
+      if (preLoadedDeliveryData) {
+        preLoadedDeliveryData.tasks.forEach(task => {
+          task.address.formattedTelephone = getFormattedValue(task.address.telephone)
+        })
+        setInitialValues(preLoadedDeliveryData)
+        setTrackingLink(preLoadedDeliveryData.trackingUrl)
+      } else {
         if (isCreateOrderMode) {
           setInitialValues({
             tasks: [
@@ -238,40 +252,20 @@ export default function({
             ],
           })
         }
-      })
-
-    const fetchDeliveryInfos = () => new Promise(resolve => {
-      if (isModifyOrderMode) {
-        httpClient.get(`${deliveryNodeId}?groups=barcode,address,delivery`).then(result => {
-          let response = result.response
-
-          //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
-          delete response.dropoff
-          delete response.pickup
-
-          response.tasks.forEach(task => {
-            const formattedTelephone = getFormattedValue(task.address.telephone)
-            task.address.formattedTelephone = formattedTelephone
-          })
-          setInitialValues(response)
-          setTrackingLink(response.trackingUrl)
-          resolve()
-        })
       }
+
+      setIsLoading(false)
     })
-
-    const promises = [fetchAddresses(), fetchPackages(), fetchTimeSlots(), fetchStoreDeliveryInfos()]
-
-    if (isDispatcher) {
-      promises.push(fetchTags())
-    }
-
-    if (isModifyOrderMode) {
-      promises.push(fetchDeliveryInfos())
-    }
-
-    Promise.all(promises).then(() => setIsLoading(false))
-  }, [])
+  }, [
+    storeNodeId,
+    deliveryNodeId,
+    preLoadedDeliveryData,
+    isDispatcher,
+    getStoreTrigger,
+    httpClient,
+    isCreateOrderMode,
+    isModifyOrderMode
+  ])
 
   const convertValuesToPayload = useCallback((values) => {
     const infos = {
