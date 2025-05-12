@@ -1,25 +1,18 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
 import { RRule, rrulestr } from 'rrule'
 import _ from 'lodash'
 import Select from 'react-select'
 import { Button, Checkbox } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
-import Popconfirm from 'antd/lib/popconfirm'
 
 import TimeRange from '../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
-import { useDispatch, useSelector } from 'react-redux'
-import {
-  closeRecurrenceModal,
-  createRecurrenceRule,
-  deleteRecurrenceRule,
-  selectRecurrenceRule,
-  updateRecurrenceRule,
-} from '../redux/recurrenceSlice'
+import { closeRecurrenceModal } from './redux/recurrenceSlice'
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -77,7 +70,7 @@ const getByDayValue = recurrenceRule => {
 const validateForm = values => {
   let errors = {}
 
-  if (!values.rule || !getByDayValue(values.rule)) {
+  if (!values.rule) {
     errors.rule = 'Required'
   }
 
@@ -85,7 +78,8 @@ const validateForm = values => {
 }
 
 export default function ModalContent() {
-  const recurrenceRule = useSelector(selectRecurrenceRule)
+  const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } =
+    useDeliveryFormFormikContext()
 
   const { t } = useTranslation()
 
@@ -97,8 +91,6 @@ export default function ModalContent() {
   const initialValues = {
     rule: recurrenceRule ?? defaultRecurrenceRule,
   }
-
-  const isSaved = Boolean(recurrenceRule)
 
   return (
     <div data-testid="recurrence__modal__content">
@@ -118,15 +110,9 @@ export default function ModalContent() {
         initialValues={initialValues}
         validate={validateForm}
         onSubmit={values => {
-          if (isSaved) {
-            dispatch(
-              updateRecurrenceRule(values.rule),
-            )
-          } else {
-            dispatch(
-              createRecurrenceRule(values.rule),
-            )
-          }
+          // If no days are selected, consider it as no recurrence
+          const rrule = getByDayValue(values.rule) ? values.rule : null
+          setSharedFieldValue('rrule', rrule)
           dispatch(closeRecurrenceModal())
         }}
         validateOnBlur={true}
@@ -151,24 +137,8 @@ export default function ModalContent() {
               className={classNames({
                 'd-flex': true,
                 'p-4': true,
-                'justify-content-end': !isSaved,
-                'justify-content-between': isSaved,
+                'justify-content-end': true,
               })}>
-              {isSaved && (
-                <Popconfirm
-                  placement="right"
-                  title={t('CONFIRM_DELETE')}
-                  onConfirm={() => {
-                    dispatch(deleteRecurrenceRule(recurrenceRule))
-                    dispatch(closeRecurrenceModal())
-                  }}
-                  okText={t('CROPPIE_CONFIRM')}
-                  cancelText={t('CROPPIE_CANCEL')}>
-                  <Button type="danger" size="large" icon={<DeleteOutlined />}>
-                    {t('ADMIN_DASHBOARD_DELETE')}
-                  </Button>
-                </Popconfirm>
-              )}
               <span data-testid="save">
                 <Button type="primary" size="large" onClick={handleSubmit}>
                   {t('ADMIN_DASHBOARD_TASK_FORM_SAVE')}

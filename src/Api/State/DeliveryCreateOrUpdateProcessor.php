@@ -13,6 +13,9 @@ use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use Psr\Log\LoggerInterface;
+use Recurr\Exception\InvalidRRule;
+use Recurr\Rule;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -23,8 +26,10 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
         private readonly OrderFactory $orderFactory,
+        private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
-        private readonly AuthorizationCheckerInterface $authorizationCheckerInterface)
+        private readonly LoggerInterface $logger,
+    )
     {}
 
     /**
@@ -45,36 +50,67 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         /** @var ArbitraryPrice $arbitraryPrice */
         $arbitraryPrice = null;
-        if ($data instanceof DeliveryInput) {
+        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput) {
             $arbitraryPrice = $data->arbitraryPrice;
         }
-
-        $useArbitraryPrice = $this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $arbitraryPrice;
 
         if (null === $delivery->getId()) {
             // New delivery
 
-            if ($useArbitraryPrice) {
-                $this->pricingManager->createOrder(
-                    $delivery,
-                    [
-                        'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice)
-                    ]
-                );
-            } else {
-                $priceForOrder = new UsePricingRules();
-                $this->pricingManager->createOrder(
-                    $delivery,
-                    [
-                        'pricingStrategy' => $priceForOrder,
-                    ]
-                );
+            $pricingStrategy = new UsePricingRules;
+
+            if ($arbitraryPrice) {
+                $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
+            }
+
+            $order = $this->pricingManager->createOrder(
+                $delivery,
+                [
+                    'pricingStrategy' => $pricingStrategy,
+                ]
+            );
+
+            /** @var string $rrule */
+            $rrule = null;
+            if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput) {
+                $rrule = $data->rrule;
+            }
+
+            if ($rrule) {
+                $store = $delivery->getStore();
+
+                $recurrRule = null;
+                try {
+                    $recurrRule = new Rule($data->rrule);
+                } catch (InvalidRRule $e) {
+                    $this->logger->warning('Invalid recurrence rule', [
+                        'rule' => $data->rrule,
+                        'exception' => $e->getMessage(),
+                    ]);
+                }
+
+                if ($recurrRule) {
+                    $recurrenceRule = $this->pricingManager->createRecurrenceRule(
+                        $store,
+                        $delivery,
+                        $recurrRule,
+                        $pricingStrategy
+                    );
+
+                    if (null !== $recurrenceRule) {
+                        $order->setSubscription($recurrenceRule);
+
+                        foreach ($delivery->getTasks() as $task) {
+                            $task->setRecurrenceRule($recurrenceRule);
+                        }
+                    }
+                }
             }
 
         } else {
             // Existing delivery
 
-            if ($useArbitraryPrice) {
+            if ($arbitraryPrice) {
                 $order = $delivery->getOrder();
                 if (null === $order) {
                     // Should not happen normally, but just in case
