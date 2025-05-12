@@ -24,6 +24,7 @@ use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -302,8 +303,8 @@ trait StoreTrait
             // pre-fill fields with the data from a previous order
             $data = $this->duplicateOrder($request, $store, $pricingManager);
             if (null !== $data) {
-                $delivery = $data['delivery'];
-                $previousArbitraryPrice = $data['previousArbitraryPrice'];
+                $delivery = $data->delivery;
+                $previousArbitraryPrice = $data->previousArbitraryPrice;
             }
         }
 
@@ -405,7 +406,7 @@ trait StoreTrait
         ]));
     }
 
-    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager)
+    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager): OrderDuplicate | null
     {
         $hashid = $request->query->get('frmrdr');
 
