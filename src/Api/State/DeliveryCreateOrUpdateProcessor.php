@@ -54,12 +54,12 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             $arbitraryPrice = $data->arbitraryPrice;
         }
 
-        if (null === $delivery->getId()) {
+        if (is_null($delivery->getId())) {
             // New delivery
 
             $pricingStrategy = new UsePricingRules;
 
-            if ($arbitraryPrice) {
+            if (!is_null($arbitraryPrice)) {
                 $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
             }
 
@@ -97,7 +97,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         $pricingStrategy
                     );
 
-                    if (null !== $recurrenceRule) {
+                    if (!is_null($recurrenceRule)) {
                         $order->setSubscription($recurrenceRule);
 
                         foreach ($delivery->getTasks() as $task) {
@@ -110,9 +110,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         } else {
             // Existing delivery
 
-            if ($arbitraryPrice) {
+            if (!is_null($arbitraryPrice)) {
                 $order = $delivery->getOrder();
-                if (null === $order) {
+                if (is_null($order)) {
                     // Should not happen normally, but just in case
                     // there is still some delivery created without an order
                     $order = $this->pricingManager->createOrder(
