@@ -27,11 +27,11 @@ use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
 use Doctrine\Common\Collections\ArrayCollection;
-use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -233,7 +233,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     }
 
 
-    public function getOrder()
+    public function getOrder(): ?OrderInterface
     {
         return $this->order;
     }
