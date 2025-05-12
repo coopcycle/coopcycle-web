@@ -52,7 +52,7 @@ class Webhook
     /**
      * @var string
      */
-    #[ApiProperty(openapiContext: ['type' => 'string', 'enum' => ['delivery.assigned', 'delivery.started', 'delivery.failed', 'delivery.picked', 'delivery.in_transit', 'delivery.completed', 'order.created']])]
+    #[ApiProperty(openapiContext: ['type' => 'string', 'enum' => self::EVENTS])]
     #[Assert\Choice(callback: 'getEvents')]
     #[Groups(['webhook', 'webhook_create'])]
     private $event;
