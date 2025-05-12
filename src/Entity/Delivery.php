@@ -485,6 +485,9 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return true;
     }
 
+    /**
+     * @return ArrayCollection<PackageWithQuantity>
+     */
     public function getPackages()
     {
         $packages = new ArrayCollection();

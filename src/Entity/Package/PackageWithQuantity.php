@@ -4,7 +4,7 @@ namespace AppBundle\Entity\Package;
 
 use AppBundle\Entity\Package;
 
-class PackageWithQuantity
+class PackageWithQuantity implements PackageWithQuantityInterface
 {
     private $package;
     private $quantity = 0;
@@ -15,10 +15,7 @@ class PackageWithQuantity
         $this->quantity = $quantity;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPackage()
+    public function getPackage(): Package
     {
         return $this->package;
     }
@@ -35,10 +32,7 @@ class PackageWithQuantity
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getQuantity()
+    public function getQuantity(): int
     {
         return $this->quantity;
     }

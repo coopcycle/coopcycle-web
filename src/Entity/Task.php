@@ -1045,6 +1045,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this;
     }
 
+    /**
+     * @return ArrayCollection<TaskPackage>
+     */
     public function getPackages()
     {
         return $this->packages;

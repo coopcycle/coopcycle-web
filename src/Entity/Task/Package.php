@@ -2,10 +2,11 @@
 
 namespace AppBundle\Entity\Task;
 
+use AppBundle\Entity\Package\PackageWithQuantityInterface;
 use AppBundle\Entity\Task;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class Package
+class Package implements PackageWithQuantityInterface
 {
 
     #[Groups(['package'])]
@@ -34,10 +35,7 @@ class Package
         return $this->id;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getPackage()
+    public function getPackage(): \AppBundle\Entity\Package
     {
         return $this->package;
     }
@@ -74,10 +72,7 @@ class Package
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getQuantity()
+    public function getQuantity(): int
     {
         return $this->quantity;
     }
