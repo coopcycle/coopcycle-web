@@ -379,10 +379,10 @@ dashboard_delivery:
       _controller: AppBundle\Controller\DashboardController::deliveryItemReactFormAction
       layout: 'dashboard.html.twig'
       routes:
-        stores: admin_stores
-        store: admin_store
-        success: admin_store_deliveries
-        back: admin_deliveries
+        stores: dashboard_stores
+        store: dashboard_store
+        success: dashboard_store_deliveries
+        back: dashboard
   methods:  [ GET, POST ]
 
 dashboard_store_delivery_new:
