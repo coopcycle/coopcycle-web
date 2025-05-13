@@ -20,7 +20,7 @@
       <td>
         {% if is_granted('ROLE_DISPATCHER') %}
           {% if delivery.order is defined and delivery.order is not empty %}
-            <a href="{{ path('admin_order', { id: delivery.order.id }) }}" data-testid="delivery_id">
+            <a href="{{ path('admin_order', { id: delivery.order.id }) }}" data-testid="order_id">
               {{ delivery.order.number }}
             </a>
           {% else %}
@@ -102,9 +102,9 @@
       </td>
       <td class="text-right">
         {% if is_granted('ROLE_DISPATCHER') %}
-          <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.edit'|trans }}</a>
+          <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">{{ 'basics.edit'|trans }}</a>
         {% else %}
-          <a href="{{ path(routes.view, { id: delivery.id }) }}">{{ 'basics.view'|trans }}</a>
+          <a href="{{ path(routes.view, { id: delivery.id }) }}" data-testid="delivery_id">{{ 'basics.view'|trans }}</a>
         {% endif %}
 
         <div {{ react_component('BarcodesModal', {

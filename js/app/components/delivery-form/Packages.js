@@ -80,7 +80,7 @@ export default ({ index, packages, isEdit }) => {
     <>
       <div className="mb-2 font-weight-bold">{t('DELIVERY_FORM_PACKAGES')}</div>
       {packages.map(item => (
-        <div key={item['@id']} className="packages-item mb-2">
+        <div key={item['@id']} className="packages-item mb-2" data-testid={item['@id']}>
           <div className="packages-item__quantity ">
             <Button
               className="packages-item__quantity__button"

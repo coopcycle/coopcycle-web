@@ -125,13 +125,13 @@ export default ({
             <div>
               {overridePrice ?
                 <s>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
-                <span data-testid="tax-included-previous">{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
+                <span>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
               }
             </div>
             <div>
               {overridePrice ?
                 <s>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
-                <span>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
+                <span data-testid="tax-included-previous">{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
               }
             </div>
             {overridePrice && (
