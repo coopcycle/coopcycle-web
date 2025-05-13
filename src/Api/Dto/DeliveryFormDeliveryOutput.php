@@ -8,6 +8,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 //Try to merge into DeliveryInput?
 final class DeliveryFormDeliveryOutput
 {
+    #[Groups(['delivery'])]
+    public int|null $id = null;
 
     /**
      * @var DeliveryFormTaskOutput[]|null

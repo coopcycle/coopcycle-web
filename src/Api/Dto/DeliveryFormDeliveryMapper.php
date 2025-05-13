@@ -43,6 +43,8 @@ class DeliveryFormDeliveryMapper
         $deliveryData->arbitraryPrice = $arbitraryPrice;
 
         if ($deliveryEntity->getId()) {
+            $deliveryData->id = $deliveryEntity->getId();
+
             $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
                 'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
             ], UrlGeneratorInterface::ABSOLUTE_URL);
