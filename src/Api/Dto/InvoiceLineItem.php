@@ -2,12 +2,26 @@
 
 namespace AppBundle\Api\Dto;
 
+use ApiPlatform\Action\NotFoundAction;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
+#[ApiResource(
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            read: false,
+            output: false
+        )
+    ]
+)]
 class InvoiceLineItem
 {
-    public readonly string $invoiceId;
+    #[ApiProperty(identifier: true)]
+    public string $invoiceId;
 
     public readonly \DateTime $invoiceDate;
 

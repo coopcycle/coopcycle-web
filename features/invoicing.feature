@@ -20,6 +20,7 @@ Feature: Invoicing
         "hydra:member":[
           {
             "@type":"InvoiceLineItem",
+            "@id":@string@,
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
@@ -131,6 +132,7 @@ Feature: Invoicing
         "hydra:member":[
           {
             "@type":"InvoiceLineItem",
+            "@id":@string@,
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
@@ -217,6 +219,7 @@ Feature: Invoicing
         "hydra:member":[
           {
             "@type":"InvoiceLineItem",
+            "@id":@string@,
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
             "orderId":@integer@,
