@@ -62,7 +62,7 @@
         isNew: is_new,
         storeId: store.id,
         storeNodeId: store|get_iri_from_item,
-        order: order is not null ? order|serialize('jsonld', {groups: ['Default']}) : null,
+        order: order is not null ? order|serialize : null,
         deliveryId: delivery.id,
         deliveryNodeId: is_new ? null : delivery|get_iri_from_item,
         delivery: deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : null,
