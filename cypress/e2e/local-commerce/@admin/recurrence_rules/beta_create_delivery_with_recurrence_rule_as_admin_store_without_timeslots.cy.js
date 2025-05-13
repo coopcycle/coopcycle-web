@@ -29,7 +29,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.betaChooseSavedAddressAtPosition(0, 1)
 
       //Set pickup time range to 10:10 - 11:20 manually
-      cy.get('[data-testid-form="task-0"]').within(() => {
+      cy.get('[data-testid="form-task-0"]').within(() => {
         cy.antdSelect('.ant-select[data-testid="select-after"]', '10:10')
         cy.antdSelect('.ant-select[data-testid="select-before"]', '11:20')
       })
@@ -40,7 +40,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.betaChooseSavedAddressAtPosition(1, 2)
 
       //Set pickup time range to 11:30 - 12:40 manually
-      cy.get('[data-testid-form="task-1"]').within(() => {
+      cy.get('[data-testid="form-task-1"]').within(() => {
         cy.antdSelect('.ant-select[data-testid="select-after"]', '11:30')
         cy.antdSelect('.ant-select[data-testid="select-before"]', '12:40')
       })

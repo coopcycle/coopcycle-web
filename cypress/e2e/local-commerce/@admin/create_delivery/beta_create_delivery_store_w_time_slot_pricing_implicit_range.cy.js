@@ -40,7 +40,7 @@ context('Delivery (role: admin); store with time slot pricing', () => {
     )
 
     //Set pickup time range to 12:00 - 14:00 manually
-    cy.get('[data-testid-form="task-0"]').within(() => {
+    cy.get('[data-testid="form-task-0"]').within(() => {
       cy.get('.timeslot-container > .timeslot-container__icon').click()
       cy.antdSelect('.ant-select[data-testid="select-after"]', '12:00')
       cy.antdSelect('.ant-select[data-testid="select-before"]', '14:00')

@@ -226,7 +226,7 @@ Cypress.Commands.add('newPickupAddress',
       businessName, telephone, contactName, comments) => {
 
       cy.searchAddress(
-        `[data-testid-form=task-${taskFormIndex}]`,
+        `[data-testid=form-task-${taskFormIndex}]`,
         addressSearch,
         addressMatch,
       )
@@ -279,7 +279,7 @@ Cypress.Commands.add('chooseSavedDropoff1Address',
 Cypress.Commands.add('betaChooseSavedAddressAtPosition',
   (taskFormIndex, addressIndex) => {
 
-    cy.get(`[data-testid-form="task-${taskFormIndex}"]`).within(() => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
       cy.get('[data-testid="address-select"]').click()
       cy.wait(300)
       cy.root()
