@@ -42,7 +42,7 @@ context('Delivery (role: admin)', () => {
       'Pickup comments',
     )
 
-    cy.get(`[data-testid="form-task-${0}"]`).within(() => {
+    cy.get(`[data-testid="form-task-0"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
     cy.get('#react-select-3-option-0').click()
@@ -59,14 +59,14 @@ context('Delivery (role: admin)', () => {
       'Dropoff comments',
     )
 
-    cy.get(`[data-testid="form-task-${1}"]`).within(() => {
+    cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get(
         '[data-testid="/api/packages/1"] > .packages-item__quantity > :nth-child(3)',
       ).click()
     })
-    cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
+    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-    cy.get(`[data-testid="form-task-${1}"]`).within(() => {
+    cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
     cy.get('#react-select-5-option-2').click()

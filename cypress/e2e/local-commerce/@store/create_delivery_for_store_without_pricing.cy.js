@@ -36,8 +36,8 @@ context('store without pricing (role: store)', () => {
       'Dropoff comments'
     )
 
-    cy.get(`[name="tasks[${1}].weight"]`).clear()
-    cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
+    cy.get(`[name="tasks[1].weight"]`).clear()
+    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
     cy.get('button[type="submit"]').click()
 
