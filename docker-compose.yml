@@ -155,7 +155,7 @@ services:
       - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
       - MINIO_REGION=${S3_REGION}
     healthcheck:
-      test: ["CMD", "curl", "http://localhost:9000/minio/health/live"]
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 10s
       retries: 5
       start_period: 30s
