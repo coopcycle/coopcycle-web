@@ -105,11 +105,10 @@ context('Delivery (role: admin)', () => {
 
     cy.betaTaskShouldHaveValue({
       taskFormIndex: 0,
-      headerText: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
       addressName: 'Warehouse',
       telephone: '01 12 12 12 12',
       contactName: 'John Doe',
-      address: '23, Avenue Claude Vellefaux, 75010, Paris, France',
+      address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
       date: '23 avril 2025',
       timeAfter: '00:00',
       timeBefore: '11:59',
@@ -119,11 +118,10 @@ context('Delivery (role: admin)', () => {
 
     cy.betaTaskShouldHaveValue({
       taskFormIndex: 1,
-      headerText: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
       addressName: 'Office',
       telephone: '01 12 12 14 14',
       contactName: 'Jane smith',
-      address: '72, Rue Saint-Maur, 75011, Paris, France',
+      address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
       date: '23 avril 2025',
       timeAfter: '00:00',
       timeBefore: '11:59',

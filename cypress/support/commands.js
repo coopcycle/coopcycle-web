@@ -296,12 +296,12 @@ Cypress.Commands.add(
   'betaTaskShouldHaveValue',
   ({
     taskFormIndex,
-    headerText,
     addressName,
     telephone,
     contactName,
     address,
     date,
+    hourRange,
     timeAfter,
     timeBefore,
     packages,
@@ -310,7 +310,7 @@ Cypress.Commands.add(
     tags,
   }) => {
     cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
-      cy.get('.task__header').contains(headerText).should('exist')
+      cy.get('.task__header').contains(address).should('exist')
 
       cy.get(`[data-testid=address-select]`).within(() => {
         cy.contains(addressName).should('exist')
@@ -331,16 +331,27 @@ Cypress.Commands.add(
       })
 
       cy.get(`.address__autosuggest`).within(() => {
-        cy.get('input').should('have.value', address)
+        cy.get('input')
+          .invoke('val')
+          .should('match', address)
       })
 
       cy.get(`[data-testid=date-picker]`).should('have.value', date)
-      cy.get(`[data-testid=select-after]`).within(() => {
-        cy.contains(timeAfter).should('exist')
-      })
-      cy.get(`[data-testid=select-before]`).within(() => {
-        cy.contains(timeBefore).should('exist')
-      })
+
+      if (hourRange) {
+        cy.get(`[data-testid=hour-picker]`).within(() => {
+          cy.contains(hourRange).should('exist')
+        })
+      }
+
+      if (timeAfter && timeBefore) {
+        cy.get(`[data-testid=select-after]`).within(() => {
+          cy.contains(timeAfter).should('exist')
+        })
+        cy.get(`[data-testid=select-before]`).within(() => {
+          cy.contains(timeBefore).should('exist')
+        })
+      }
 
       if (packages) {
         packages.forEach(pkg => {
