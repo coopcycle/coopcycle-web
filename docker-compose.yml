@@ -154,13 +154,20 @@ services:
       - MINIO_ACCESS_KEY=${S3_CREDENTIALS_KEY}
       - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
       - MINIO_REGION=${S3_REGION}
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
 
   # https://github.com/minio/minio/issues/4882
   # https://docs.min.io/docs/minio-client-complete-guide#policy
   minio_client:
     image: minio/mc
     depends_on:
-      - minio
+      minio:
+        condition: service_healthy
     environment:
       - S3_CREDENTIALS_KEY
       - S3_CREDENTIALS_SECRET
