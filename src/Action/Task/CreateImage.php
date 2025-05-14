@@ -41,16 +41,18 @@ class CreateImage
         return $taskImage;
     }
 
-    private function cloneAndAttach(&$tasks, TaskImage &$taskImage): void {
+    private function cloneAndAttach(array $tasks, TaskImage $taskImage): void
+    {
         $first = array_shift($tasks);
         $first->addImages([$taskImage]);
-        $this->entityManager->persist($first);
-        foreach ($tasks as &$task) {
-            $_taskImage = new TaskImage();
-            $_taskImage->setImageName($taskImage->getImageName());
-            $task->addImages([$_taskImage]);
-            $this->entityManager->persist($task);
-        }
 
+        foreach ($tasks as $task) {
+
+            $taskImageClone = clone $taskImage;
+
+            $task->addImages([$taskImageClone]);
+
+            $this->entityManager->persist($taskImageClone);
+        }
     }
 }
