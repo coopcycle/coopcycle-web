@@ -221,29 +221,29 @@ Cypress.Commands.add('newPickupAddress',
     cy.get('#delivery_tasks_0_address_contactName__display').type(contactName)
   })
 
-  Cypress.Commands.add('betaEnterAddressAtPosition',
-    (taskFormIndex, addressSearch, addressMatch,
-      businessName, telephone, contactName, comments) => {
+Cypress.Commands.add('betaEnterAddressAtPosition',
+  (taskFormIndex, addressSearch, addressMatch,
+    businessName, telephone, contactName, comments) => {
 
-      cy.searchAddress(
-        `[data-testid=form-task-${taskFormIndex}]`,
-        addressSearch,
-        addressMatch,
-      )
+    cy.searchAddress(
+      `[data-testid=form-task-${taskFormIndex}]`,
+      addressSearch,
+      addressMatch,
+    )
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
 
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
+    cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
 
-    })
+  })
 
 Cypress.Commands.add('chooseSavedPickupAddress',
   (index) => {
@@ -291,6 +291,84 @@ Cypress.Commands.add('betaChooseSavedAddressAtPosition',
         })
     })
   })
+
+Cypress.Commands.add(
+  'betaTaskShouldHaveValue',
+  ({
+    taskFormIndex,
+    headerText,
+    addressName,
+    telephone,
+    contactName,
+    address,
+    date,
+    timeAfter,
+    timeBefore,
+    packages,
+    weight,
+    comments,
+    tags,
+  }) => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('.task__header').contains(headerText).should('exist')
+
+      cy.get(`[data-testid=address-select]`).within(() => {
+        cy.contains(addressName).should('exist')
+      })
+
+      cy.get(`.address-infos`).within(() => {
+        cy.get(`[name="tasks[${taskFormIndex}].address.name"]`).should(
+          'have.value',
+          addressName,
+        )
+        cy.get(
+          `[name="tasks[${taskFormIndex}].address.formattedTelephone"]`,
+        ).should('have.value', telephone)
+        cy.get(`[name="tasks[${taskFormIndex}].address.contactName"]`).should(
+          'have.value',
+          contactName,
+        )
+      })
+
+      cy.get(`.address__autosuggest`).within(() => {
+        cy.get('input').should('have.value', address)
+      })
+
+      cy.get(`[data-testid=date-picker]`).should('have.value', date)
+      cy.get(`[data-testid=select-after]`).within(() => {
+        cy.contains(timeAfter).should('exist')
+      })
+      cy.get(`[data-testid=select-before]`).within(() => {
+        cy.contains(timeBefore).should('exist')
+      })
+
+      if (packages) {
+        packages.forEach(pkg => {
+          cy.get(`[data-testid="${pkg.nodeId}"]`).within(() => {
+            cy.get('input').should('have.value', pkg.quantity)
+          })
+        })
+      }
+
+      if (weight !== undefined) {
+        cy.get(`[name="tasks[${taskFormIndex}].weight"]`).should(
+          'have.value',
+          weight,
+        )
+      }
+
+      cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
+        .contains(comments)
+        .should('exist')
+
+      cy.get(`[data-testid=tags-select]`).within(() => {
+        tags.forEach(tag => {
+          cy.contains(tag).should('exist')
+        })
+      })
+    })
+  },
+)
 
 Cypress.Commands.add('enterCreditCard', () => {
   const date = new Date(),
