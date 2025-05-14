@@ -3,7 +3,6 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Task\Package;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -39,7 +38,7 @@ final class DeliveryFormTaskOutput
     public int|null $weight = null;
 
     /**
-     * @var Package[]|null
+     * @var DeliveryFormTaskPackageDto[]|null
      */
     #[Groups(['delivery'])]
     public array|null $packages = null;

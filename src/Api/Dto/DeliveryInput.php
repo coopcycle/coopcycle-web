@@ -32,7 +32,7 @@ final class DeliveryInput
 
     /**
      * @deprecated set packages via TaskInput
-     * @var TaskPackageInput[]|null
+     * @var DeliveryFormTaskPackageDto[]|null
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $packages = null;

@@ -34,7 +34,12 @@ class DeliveryFormDeliveryMapper
             $taskData->comments = $taskEntity->getComments();
             $taskData->tags = $taskEntity->getTags();
             $taskData->weight = $taskEntity->getWeight();
-            $taskData->packages = $taskEntity->getPackages()->toArray();
+            $taskData->packages = array_map(function (Task\Package $taskPackage) {
+                $packageData = new DeliveryFormTaskPackageDto();
+                $packageData->type = $taskPackage->getPackage()->getName();
+                $packageData->quantity = $taskPackage->getQuantity();
+                return $packageData;
+            }, $taskEntity->getPackages()->toArray());
             $taskData->metadata = $taskEntity->getMetadata();
 
             return $taskData;

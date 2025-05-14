@@ -171,9 +171,7 @@ context('Delivery (role: admin)', () => {
       })
 
       cy.get(`[data-testid="/api/packages/1"]`).within(() => {
-        //FIXME: should be 1
-        // cy.get('input').should('have.value', '1')
-        cy.get('input').should('have.value', '0')
+        cy.get('input').should('have.value', '1')
       })
 
       cy.get('[name="tasks[1].weight"]').should('have.value', '2.5')
