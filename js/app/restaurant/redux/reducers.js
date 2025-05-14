@@ -97,7 +97,7 @@ export const initialState = {
     }
   },
   isGroupOrdersEnabled: false,
-  shouldAskToEnableReusablePackaging: true,
+  shouldAskToEnableReusablePackaging: false,
 }
 
 export const isFetching = (state = initialState.isFetching, action = {}) => {
