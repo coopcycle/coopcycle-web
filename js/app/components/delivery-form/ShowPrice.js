@@ -51,7 +51,7 @@ const OverridePriceForm = ({ setCalculatePrice, taxRate }) => {
       </div>
       <PriceVATConverter
         className="override__form__variant-price"
-        taxRate={taxRate.amount}
+        taxRate={taxRate?.amount ?? 0}
         setPrices={setCalculatePrice}
       />
     </div>
