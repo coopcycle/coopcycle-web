@@ -993,7 +993,6 @@ services:
     arguments:
       $centrifugoNamespace: '%centrifugo_namespace%'
 
-  # FIXME Won't work in 2.7
   AppBundle\EventListener\RestaurantFilterConfigurator:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }

@@ -968,7 +968,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
         ];
         $this->jwt = $jwtEncoder->encode($payload);
     }
@@ -984,7 +984,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
             'exp' => time() - (60 * 60),
         ];
         $this->jwt = $jwtEncoder->encode($payload);
@@ -1025,7 +1025,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
         ];
 
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));

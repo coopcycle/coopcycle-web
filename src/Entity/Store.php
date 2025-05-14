@@ -105,7 +105,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      * @var File
      */
     #[Vich\UploadableField(mapping: "store_image", fileNameProperty: "imageName")]
-    // #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
+    #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 
     /**
