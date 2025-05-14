@@ -30,7 +30,6 @@ export default ({
     values,
     taskValues,
     isCreateOrderMode,
-    isModifyOrderMode,
     setFieldValue,
   } = useDeliveryFormFormikContext({
     taskIndex: index,
@@ -107,7 +106,6 @@ export default ({
               <Packages
                 index={index}
                 packages={packages}
-                isEdit={isModifyOrderMode}
               />
             ) : null}
             <TotalWeight index={index} />

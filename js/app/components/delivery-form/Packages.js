@@ -1,34 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Input } from 'antd'
-import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 
 import './Packages.scss'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
-export default ({ index, packages, isEdit }) => {
-  const { setFieldValue, errors, values } = useFormikContext()
+export default ({ index, packages }) => {
+  const {
+    taskValues,
+    taskErrors,
+    setFieldValue,
+  } = useDeliveryFormFormikContext({
+    taskIndex: index,
+  })
 
-  let picked = []
+  const [packagesPicked, setPackagesPicked] = useState(() => {
+    let picked = []
 
-  for (const p of packages) {
-    const newPackages = {
-      type: p.name,
-      quantity: 0,
+    for (const p of packages) {
+      const newPackages = {
+        type: p.name,
+        quantity: 0,
+      }
+      picked.push(newPackages)
     }
-    picked.push(newPackages)
-  }
 
-  // format initial API values in the EDIT case
-  if (isEdit) {
-    const packagesToEdit = values.tasks[index].packages
-    const newPackagesArray = picked.map(p => {
-      const match = packagesToEdit.find(item => item.type === p.type)
-      return match || p
-    })
-    picked = newPackagesArray
-  }
+    const preloadedData = taskValues.packages
 
-  const [packagesPicked, setPackagesPicked] = useState(picked)
+    // Update the initial state with preloaded data if available
+    if (preloadedData && preloadedData.length > 0) {
+      const newPackagesArray = picked.map(p => {
+        const match = preloadedData.find(item => item.type === p.type)
+        return match || p
+      })
+      picked = newPackagesArray
+    }
+
+    return picked
+  })
 
   const { t } = useTranslation()
 
@@ -120,8 +131,8 @@ export default ({ index, packages, isEdit }) => {
           </span>
         </div>
       ))}
-      {errors.tasks?.[index]?.packages && (
-        <div className="text-danger">{errors.tasks[index].packages}</div>
+      {taskErrors?.packages && (
+        <div className="text-danger">{taskErrors.packages}</div>
       )}
     </>
   )

@@ -107,9 +107,7 @@ context('Delivery (role: admin)', () => {
       packages: [
         {
           nodeId: '/api/packages/1',
-          //FIXME: this is a bug in the form, the quantity should be 1
-          // quantity: 1,
-          quantity: 0,
+          quantity: 1,
         },
       ],
       weight: 2.5,
