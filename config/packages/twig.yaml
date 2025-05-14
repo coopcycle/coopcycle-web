@@ -45,8 +45,6 @@ twig:
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
         odoo_url: '%env(ODOO_URL)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
-        loopeat_processing_fee: '%env(int:LOOPEAT_PROCESSING_FEE)%'
-        loopeat_processing_fee_behavior: '%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
     exception_controller: null
