@@ -396,6 +396,8 @@ use Webmozart\Assert\Assert as WMAssert;
         ),
         new GetCollection(uriTemplate: '/me/orders', controller: MyOrders::class),
         new GetCollection(
+            // FIXME Maybe it shouldn't be a path param
+            // It should be like /invoice_line_items?grouped_by_organization=1
             uriTemplate: '/invoice_line_items/grouped_by_organization',
             openapiContext: [
                 'summary' => 'Invoicing: Get the number of orders and sum total grouped by organization',

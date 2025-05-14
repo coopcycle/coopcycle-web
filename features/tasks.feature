@@ -3025,6 +3025,37 @@ Feature: Tasks
       }
       """
 
+  Scenario: Upload image with wrong format
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value           |
+      | file     | @at3_1m4_01.tif |
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"file",
+            "message":@string@,
+            "code":"744f00bc-4389-4c74-92de-9a43cde55534"
+          }
+        ]
+      }
+      """
+
   Scenario: Upload image with task in header
     Given the fixtures files are loaded:
       | tasks.yml           |
