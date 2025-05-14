@@ -39,8 +39,7 @@ class TaskImage
      * @var File
      */
     #[Vich\UploadableField(mapping: 'task_image', fileNameProperty: 'imageName')]
-    // FIXME Make validation work again
-    // #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'], groups: ['task_image_create'])]
+    #[Assert\File(maxSize: '5M', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'], groups: ['task_image_create'])]
     private $file;
 
     #[Groups(['task_image'])]
