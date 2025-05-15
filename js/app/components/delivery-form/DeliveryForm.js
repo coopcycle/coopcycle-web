@@ -449,7 +449,6 @@ export default function({
                         order={order}
                         isDispatcher={isDispatcher}
                         isDebugPricing={isDebugPricing}
-                        priceLoading={priceLoading}
                         setPriceLoading={setPriceLoading}
                       />
                     </div>

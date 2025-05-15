@@ -13,6 +13,7 @@ import {
 } from './hooks/useDeliveryFormFormikContext'
 import _ from 'lodash'
 import OverridePriceForm from './OverridePriceForm'
+import { useCalculatePriceMutation } from '../../api/slice'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -21,12 +22,8 @@ export default ({
   order,
   isDebugPricing,
   isDispatcher,
-  priceLoading,
   setPriceLoading,
 }) => {
-  const [calculateResponseData, setCalculateResponseData] = useState(null)
-  const [priceErrorMessage, setPriceErrorMessage] = useState('')
-
   const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext()
 
   const [overridePrice, setOverridePrice] = useState(() => {
@@ -53,6 +50,16 @@ export default ({
 
   const [newPrice, setNewPrice] = useState(0)
 
+  const [calculatePrice, {
+    data: calculatePriceData,
+    error: calculatePriceError,
+    isLoading: calculatePriceIsLoading,
+  }] = useCalculatePriceMutation()
+
+  const calculatePriceDebounced = useMemo(
+    () => _.debounce(calculatePrice, 800)
+    , [calculatePrice]);
+
   const { t } = useTranslation()
 
   const { httpClient } = useHttpClient()
@@ -65,60 +72,81 @@ export default ({
     return infos
   }, [storeNodeId])
 
-  const getPrice = _.debounce(
-    (values) => {
+  // Pass loading state to parent component
+  useEffect(() => {
+    setPriceLoading(calculatePriceIsLoading)
+  }, [calculatePriceIsLoading, setPriceLoading])
 
-      const infos = convertValuesToPayload(values)
-      infos.tasks.forEach(task => {
-        if (task["@id"]) {
-          delete task["@id"]
-        }
-      })
+  const calculateResponseData = useMemo(() => {
+    const data = calculatePriceData
+    const error = calculatePriceError
 
-      const calculatePrice = async () => {
+    if (error) {
+      return error.data
+    }
 
-        setPriceLoading(true)
+    if (data) {
+      return data
+    }
 
-        const url = `${baseURL}/api/retail_prices/calculate`
-        const { response, error } = await httpClient.post(url, infos)
+    return null
 
-        if (error) {
-          setCalculateResponseData(error.response.data)
-          setPriceErrorMessage(error.response.data['hydra:description'])
-          setNewPrice(0)
-        }
+  }, [calculatePriceData, calculatePriceError])
 
-        if (response) {
-          setCalculateResponseData(response)
-          setNewPrice(response)
-          setPriceErrorMessage('')
+  const priceErrorMessage = useMemo(() => {
+    const error = calculatePriceError
 
-        }
+    if (error) {
+      return error.data['hydra:description']
+    }
 
-        setPriceLoading(false)
+    return ''
 
-      }
-
-      // Don't calculate price until all tasks have an address
-      if (!values.tasks.every(task => task.address.streetAddress)) {
-        return
-      }
-
-      // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
-      if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
-        return
-      }
-
-      calculatePrice()
-    },
-    800
-  )
+  }, [calculatePriceError])
 
   useEffect(() => {
-    if (!overridePrice && isCreateOrderMode) {
-      getPrice(values)
+    const data = calculatePriceData
+    const error = calculatePriceError
+
+    if (error) {
+      setNewPrice(0)
     }
-  }, [values]);
+
+    if (data) {
+      setNewPrice(data)
+    }
+
+  }, [calculatePriceData, calculatePriceError])
+
+  useEffect(() => {
+    if (isModifyOrderMode) {
+      return
+    }
+
+    if (overridePrice) {
+      return
+    }
+
+    // Don't calculate price until all tasks have an address
+    if (!values.tasks.every(task => task.address.streetAddress)) {
+      return
+    }
+
+    // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
+    if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
+      return
+    }
+
+    const infos = convertValuesToPayload(values)
+    infos.tasks.forEach(task => {
+      if (task["@id"]) {
+        delete task["@id"]
+      }
+    })
+
+    calculatePriceDebounced(infos)
+
+  }, [isModifyOrderMode, overridePrice, values, convertValuesToPayload, calculatePriceDebounced]);
 
   useEffect(() => {
     if (overridePrice && newPrice.VAT > 0) {
@@ -204,7 +232,7 @@ export default ({
                 </div>
               ) :
               !overridePrice ?
-                priceLoading ?
+                calculatePriceIsLoading ?
                   <Spinner /> :
                   newPrice.amount ?
                     <>

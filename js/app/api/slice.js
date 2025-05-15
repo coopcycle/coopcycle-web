@@ -52,6 +52,15 @@ export const apiSlice = createApi({
       },
     }),
 
+    calculatePrice: builder.mutation({
+      query(body) {
+        return {
+          url: `/api/retail_prices/calculate`,
+          method: 'POST',
+          body,
+        }
+      },
+    }),
     postDelivery: builder.mutation({
       query(body) {
         return {
@@ -117,6 +126,7 @@ export const {
   useLazyGetStoreQuery,
   usePostStoreAddressMutation,
   usePatchAddressMutation,
+  useCalculatePriceMutation,
   usePostDeliveryMutation,
   usePutDeliveryMutation,
   useRecurrenceRulesGenerateOrdersMutation,
