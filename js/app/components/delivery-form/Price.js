@@ -161,9 +161,9 @@ export default ({
         isModifyOrderMode ?
           <>
             <div className="font-weight-bold mb-1 total__price">
-              {!overridePrice
-                ? t('DELIVERY_FORM_TOTAL_PRICE')
-                : t('DELIVERY_FORM_OLD_PRICE')}
+              {overridePrice
+                ? t('DELIVERY_FORM_OLD_PRICE')
+                : t('DELIVERY_FORM_TOTAL_PRICE')}
             </div>
             <div>
               {overridePrice ?
