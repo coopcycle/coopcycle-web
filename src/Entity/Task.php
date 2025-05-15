@@ -336,6 +336,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * We actually don't expose the 'packages' property in the API, we use aggregates :
      * - DROPOFF : all packages aggregated by package name
      * - PICKUP : all packages of the delivery aggregated by package name
+     *
+     * @use PackagesAwareTrait<TaskPackage>
     */
     use PackagesAwareTrait;
     use EDIFACTMessageAwareTrait;

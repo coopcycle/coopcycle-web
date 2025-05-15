@@ -5,10 +5,13 @@ namespace AppBundle\Entity\Package;
 use AppBundle\Entity\Package;
 use Doctrine\Common\Collections\ArrayCollection;
 
+/**
+ * @template T of PackageWithQuantityInterface
+ */
 interface PackagesAwareInterface
 {
     /**
-     * @return ArrayCollection<PackageWithQuantityInterface>
+     * @return ArrayCollection<int, T>
      */
     public function getPackages();
 

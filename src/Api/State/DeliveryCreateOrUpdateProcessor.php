@@ -48,7 +48,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             throw new ValidationException($errors);
         }
 
-        /** @var ArbitraryPrice $arbitraryPrice */
+        /** @var ArbitraryPrice|null $arbitraryPrice */
         $arbitraryPrice = null;
         if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput && $data->arbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(
