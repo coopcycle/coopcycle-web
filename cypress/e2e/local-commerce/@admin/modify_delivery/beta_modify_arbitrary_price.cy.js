@@ -73,6 +73,9 @@ context('Delivery (role: admin)', () => {
     cy.get('[name="variantName"]').type('Test product')
     cy.get('#variantPriceVAT').type('34')
 
+    cy.get('s[data-testid="tax-included-previous"]').contains('72,00 €')
+    cy.get('[data-testid="tax-included"]').contains('34,00 €')
+
     cy.get('button[type="submit"]').click()
 
     // TODO : check for proper redirect when implemented
