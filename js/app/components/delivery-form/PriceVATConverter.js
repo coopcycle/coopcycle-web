@@ -16,10 +16,8 @@ const removeVat = (vatIncludedPrice, taxRate) => {
   return Math.round((vatIncludedPrice * 100) / (taxRate + 1)) / 100
 }
 
-export default ({ taxRate, setPrices, VAT, exVAT }) => {
+export default ({ taxRate, setPrice, VAT, exVAT }) => {
   const [values, setValues] = useState(() => {
-    console.log('values', { taxRate, VAT, exVAT })
-
     if (VAT === undefined && exVAT === undefined) {
       return { VAT: null, exVAT: null }
     } else if (VAT !== undefined && exVAT !== undefined) {
@@ -54,7 +52,7 @@ export default ({ taxRate, setPrices, VAT, exVAT }) => {
               VAT: addVat(value, taxRate),
             }
             setValues(newValues)
-            setPrices(newValues)
+            setPrice(newValues)
           }}
         />
       </div>
@@ -78,7 +76,7 @@ export default ({ taxRate, setPrices, VAT, exVAT }) => {
               VAT: value,
             }
             setValues(newValues)
-            setPrices(newValues)
+            setPrice(newValues)
           }}
         />
       </div>
