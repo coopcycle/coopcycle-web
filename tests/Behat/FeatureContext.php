@@ -41,6 +41,7 @@ use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
 use PHPUnit\Framework\Assert;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Stripe\Stripe;
@@ -102,7 +103,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected OrderRepository $orderRepository,
         protected KernelInterface $kernel,
         protected UserManager $userManager,
-        protected CollectionManager $typesenseCollectionManager
+        protected CollectionManager $typesenseCollectionManager,
+        protected LoggerInterface $logger,
     )
     {
         $this->tokens = [];
@@ -113,6 +115,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
     protected function getContainer()
     {
         return $this->kernel->getContainer();
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function logScenarioName(BeforeScenarioScope $scope)
+    {
+        $scenario = $scope->getScenario();
+        $this->logger->info(sprintf("TestRun: Before test: %s", $scenario->getTitle()));
     }
 
     /**
