@@ -18,8 +18,8 @@ import "./DeliveryForm.scss"
 
 import {
   useGetStoreAddressesQuery,
-  useGetStorePackagesQuery, useGetStoreQuery,
-  useGetStoreTimeSlotsQuery, useGetTagsQuery,
+  useGetStoreQuery,
+  useGetTagsQuery,
 } from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
@@ -135,8 +135,6 @@ export default function({
     skip: !isDispatcher,
   })
   const { data: addressesData } = useGetStoreAddressesQuery(storeNodeId)
-  const { data: timeSlotsData } = useGetStoreTimeSlotsQuery(storeNodeId)
-  const { data: packagesData } = useGetStorePackagesQuery(storeNodeId)
 
   const tags = useMemo(() => {
     if (tagsData) {
@@ -151,21 +149,6 @@ export default function({
     }
     return []
   }, [addressesData])
-
-  const timeSlotLabels = useMemo(() => {
-    if (timeSlotsData) {
-      return timeSlotsData['hydra:member']
-    }
-    return []
-  }, [timeSlotsData])
-
-  const storePackages = useMemo(() => {
-    if (packagesData) {
-      return packagesData['hydra:member']
-    }
-    return null
-  }, [packagesData])
-
 
   const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({ tasks: [] })
@@ -225,10 +208,6 @@ export default function({
 
     if (!addressesData) return false
 
-    if (!timeSlotsData) return false
-
-    if (!packagesData) return false
-
     if (isDispatcher && !tagsData) {
       return false
     }
@@ -237,8 +216,6 @@ export default function({
   }, [
     storeData,
     addressesData,
-    timeSlotsData,
-    packagesData,
     tagsData,
     isDispatcher
   ])
@@ -383,10 +360,8 @@ export default function({
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
-                                    packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
-                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
@@ -409,10 +384,8 @@ export default function({
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
-                                    packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
-                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
