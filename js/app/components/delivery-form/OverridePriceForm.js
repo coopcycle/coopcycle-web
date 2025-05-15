@@ -38,18 +38,21 @@ export default ({ setPrice, taxRate }) => {
           </div>
         </div>
       </div>
-      {
-        taxRate ? (
-          <PriceVATConverter
-            className="override__form__variant-price"
-            taxRate={taxRate.amount}
-            VAT={(values.variantIncVATPrice !== undefined && values.variantIncVATPrice !== null) ? values.variantIncVATPrice / 100 : undefined}
-            setPrice={setPrice}
-          />
-        ) : (
-          <Spinner />
-        )
-      }
+      {taxRate ? (
+        <PriceVATConverter
+          className="override__form__variant-price"
+          taxRate={taxRate.amount}
+          VAT={
+            values.variantIncVATPrice !== undefined &&
+            values.variantIncVATPrice !== null
+              ? values.variantIncVATPrice / 100
+              : undefined
+          }
+          setPrice={setPrice}
+        />
+      ) : (
+        <Spinner />
+      )}
     </div>
   )
 }

@@ -8,9 +8,7 @@ import { PriceCalculation } from '../../delivery/PriceCalculation'
 
 import './ShowPrice.scss'
 
-import {
-  useDeliveryFormFormikContext
-} from './hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import _ from 'lodash'
 import OverridePriceForm from './OverridePriceForm'
 import { useCalculatePriceMutation, useGetTaxRatesQuery } from '../../api/slice'
@@ -22,12 +20,16 @@ export default ({
   isDispatcher,
   setPriceLoading,
 }) => {
-  const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext()
+  const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } =
+    useDeliveryFormFormikContext()
 
   const [overridePrice, setOverridePrice] = useState(() => {
     if (isCreateOrderMode) {
       // when cloning an order that has an arbitrary price
-      if (values.variantIncVATPrice !== undefined && values.variantIncVATPrice !== null) {
+      if (
+        values.variantIncVATPrice !== undefined &&
+        values.variantIncVATPrice !== null
+      ) {
         return true
       } else {
         return false
@@ -40,7 +42,7 @@ export default ({
   // aka "old price"
   const currentPrice = useMemo(() => {
     if (isModifyOrderMode && order) {
-      return { exVAT: +order.total - +order.taxTotal, VAT: +order.total, }
+      return { exVAT: +order.total - +order.taxTotal, VAT: +order.total }
     }
   }, [order, isModifyOrderMode])
 
@@ -48,10 +50,7 @@ export default ({
 
   const { t } = useTranslation()
 
-  const {
-    data: taxRatesData,
-    error: taxRatesError,
-  } = useGetTaxRatesQuery()
+  const { data: taxRatesData, error: taxRatesError } = useGetTaxRatesQuery()
 
   const taxRate = useMemo(() => {
     if (taxRatesError) {
@@ -60,31 +59,39 @@ export default ({
 
     if (taxRatesData) {
       const taxRates = taxRatesData['hydra:member']
-      return taxRates.find(tax => tax.category === 'SERVICE') ||
+      return (
+        taxRates.find(tax => tax.category === 'SERVICE') ||
         taxRates.find(tax => tax.category === 'BASE_STANDARD')
+      )
     }
 
     return null
-
   }, [taxRatesData, taxRatesError])
 
-  const [calculatePrice, {
-    data: calculatePriceData,
-    error: calculatePriceError,
-    isLoading: calculatePriceIsLoading,
-  }] = useCalculatePriceMutation()
+  const [
+    calculatePrice,
+    {
+      data: calculatePriceData,
+      error: calculatePriceError,
+      isLoading: calculatePriceIsLoading,
+    },
+  ] = useCalculatePriceMutation()
 
   const calculatePriceDebounced = useMemo(
-    () => _.debounce(calculatePrice, 800)
-    , [calculatePrice]);
+    () => _.debounce(calculatePrice, 800),
+    [calculatePrice],
+  )
 
-  const convertValuesToPayload = useCallback((values) => {
-    const infos = {
-      store: storeNodeId,
-      tasks: structuredClone(values.tasks),
-    };
-    return infos
-  }, [storeNodeId])
+  const convertValuesToPayload = useCallback(
+    values => {
+      const infos = {
+        store: storeNodeId,
+        tasks: structuredClone(values.tasks),
+      }
+      return infos
+    },
+    [storeNodeId],
+  )
 
   // Pass loading state to parent component
   useEffect(() => {
@@ -104,7 +111,6 @@ export default ({
     }
 
     return null
-
   }, [calculatePriceData, calculatePriceError])
 
   const priceErrorMessage = useMemo(() => {
@@ -115,7 +121,6 @@ export default ({
     }
 
     return ''
-
   }, [calculatePriceError])
 
   useEffect(() => {
@@ -129,7 +134,6 @@ export default ({
     if (data) {
       setNewPrice(data)
     }
-
   }, [calculatePriceData, calculatePriceError])
 
   useEffect(() => {
@@ -147,27 +151,33 @@ export default ({
     }
 
     // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
-    if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
+    if (
+      !values.tasks.every(
+        task => (task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl,
+      )
+    ) {
       return
     }
 
     const infos = convertValuesToPayload(values)
     infos.tasks.forEach(task => {
-      if (task["@id"]) {
-        delete task["@id"]
+      if (task['@id']) {
+        delete task['@id']
       }
     })
 
     calculatePriceDebounced(infos)
-
-  }, [isModifyOrderMode, overridePrice, values, convertValuesToPayload, calculatePriceDebounced]);
+  }, [
+    isModifyOrderMode,
+    overridePrice,
+    values,
+    convertValuesToPayload,
+    calculatePriceDebounced,
+  ])
 
   useEffect(() => {
     if (overridePrice && newPrice.VAT > 0) {
-      setFieldValue(
-        'variantIncVATPrice',
-        Math.round(newPrice.VAT * 100),
-      )
+      setFieldValue('variantIncVATPrice', Math.round(newPrice.VAT * 100))
     }
 
     if (!overridePrice) {
@@ -178,70 +188,95 @@ export default ({
 
   return (
     <div className="pl-2">
-      {
-        isModifyOrderMode ?
-          <>
-            <div className="font-weight-bold mb-1 total__price">
-              {overridePrice
-                ? t('DELIVERY_FORM_OLD_PRICE')
-                : t('DELIVERY_FORM_TOTAL_PRICE')}
-            </div>
-            <div>
-              {overridePrice ?
-                <s>{money(currentPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
-                <span>{money(currentPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
-              }
-            </div>
-            <div>
-              {overridePrice ?
-                <s data-testid="tax-included-previous">{money(currentPrice.VAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
-                <span data-testid="tax-included-previous">{money(currentPrice.VAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
-              }
-            </div>
-            {overridePrice && (
-              <div className="mb-1">
-                <div className="font-weight-bold mb-1 total__price">
-                  {t('DELIVERY_FORM_NEW_PRICE')}
-                </div>
-
-                <span>
-                  {money(newPrice.exVAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                </span><br />
-                <span data-testid="tax-included">
-                  {money(newPrice.VAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_VAT')}
-                </span>
-              </div>
+      {isModifyOrderMode ? (
+        <>
+          <div className="font-weight-bold mb-1 total__price">
+            {overridePrice
+              ? t('DELIVERY_FORM_OLD_PRICE')
+              : t('DELIVERY_FORM_TOTAL_PRICE')}
+          </div>
+          <div>
+            {overridePrice ? (
+              <s>
+                {money(currentPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+              </s>
+            ) : (
+              <span>
+                {money(currentPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+              </span>
             )}
-          </>
-        :
-          <>
-            <div className="font-weight-bold mb-1 total__price">
-              {t('DELIVERY_FORM_TOTAL_PRICE')}
-            </div>
-            {
-              priceErrorMessage && !overridePrice ? (
-                <div className="alert alert-danger" role="alert">
-                  {isDispatcher ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR') : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
-                </div>
-              ) :
-              !overridePrice ?
-                calculatePriceIsLoading ?
-                  <Spinner /> :
-                  newPrice.amount ?
-                    <>
-                      <span>{money(newPrice.amount - newPrice.tax.amount,)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br />
-                      <span data-testid="tax-included">{money(newPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
-                    </> :
-                    <>
-                      <span>{money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br/>
-                      <span>{money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
-                    </>
-                : null
-            }
-          </>
-        }
+          </div>
+          <div>
+            {overridePrice ? (
+              <s data-testid="tax-included-previous">
+                {money(currentPrice.VAT)} {t('DELIVERY_FORM_TOTAL_VAT')}
+              </s>
+            ) : (
+              <span data-testid="tax-included-previous">
+                {money(currentPrice.VAT)} {t('DELIVERY_FORM_TOTAL_VAT')}
+              </span>
+            )}
+          </div>
+          {overridePrice && (
+            <div className="mb-1">
+              <div className="font-weight-bold mb-1 total__price">
+                {t('DELIVERY_FORM_NEW_PRICE')}
+              </div>
 
-        {!overridePrice && (isDispatcher || isDebugPricing) && Boolean(calculateResponseData) && (
+              <span>
+                {money(newPrice.exVAT * 100 || 0)}{' '}
+                {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+              </span>
+              <br />
+              <span data-testid="tax-included">
+                {money(newPrice.VAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_VAT')}
+              </span>
+            </div>
+          )}
+        </>
+      ) : (
+        <>
+          <div className="font-weight-bold mb-1 total__price">
+            {t('DELIVERY_FORM_TOTAL_PRICE')}
+          </div>
+          {priceErrorMessage && !overridePrice ? (
+            <div className="alert alert-danger" role="alert">
+              {isDispatcher
+                ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR')
+                : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
+            </div>
+          ) : !overridePrice ? (
+            calculatePriceIsLoading ? (
+              <Spinner />
+            ) : newPrice.amount ? (
+              <>
+                <span>
+                  {money(newPrice.amount - newPrice.tax.amount)}{' '}
+                  {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                </span>
+                <br />
+                <span data-testid="tax-included">
+                  {money(newPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}
+                </span>
+              </>
+            ) : (
+              <>
+                <span>
+                  {money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                </span>
+                <br />
+                <span>
+                  {money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}
+                </span>
+              </>
+            )
+          ) : null}
+        </>
+      )}
+
+      {!overridePrice &&
+        (isDispatcher || isDebugPricing) &&
+        Boolean(calculateResponseData) && (
           <PriceCalculation
             className="mt-2"
             isDebugPricing={isDebugPricing}
@@ -251,36 +286,32 @@ export default ({
           />
         )}
 
-        {isDispatcher && (
-          <div className="mt-2">
-            <div
-              style={{ maxWidth: '100%', cursor: 'pointer' }}
-              onClick={() => {
-                setOverridePrice(!overridePrice)
-                setNewPrice(0)
-              }}
-            >
-              <div>
-                <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
-                <Checkbox
-                  className="ml-4 mb-1"
-                  name="delivery.override_price"
-                  checked={overridePrice}
-                  onChange={e => {
-                    e.stopPropagation()
-                    setOverridePrice(e.target.checked)
-                    setNewPrice(0)
-                  }}></Checkbox>
-              </div>
+      {isDispatcher && (
+        <div className="mt-2">
+          <div
+            style={{ maxWidth: '100%', cursor: 'pointer' }}
+            onClick={() => {
+              setOverridePrice(!overridePrice)
+              setNewPrice(0)
+            }}>
+            <div>
+              <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
+              <Checkbox
+                className="ml-4 mb-1"
+                name="delivery.override_price"
+                checked={overridePrice}
+                onChange={e => {
+                  e.stopPropagation()
+                  setOverridePrice(e.target.checked)
+                  setNewPrice(0)
+                }}></Checkbox>
             </div>
-            {overridePrice && (
-              <OverridePriceForm
-                setPrice={setNewPrice}
-                taxRate={taxRate}
-              />
-            )}
           </div>
-        )}
+          {overridePrice && (
+            <OverridePriceForm setPrice={setNewPrice} taxRate={taxRate} />
+          )}
+        </div>
+      )}
     </div>
   )
 }
