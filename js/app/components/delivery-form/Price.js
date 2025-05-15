@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { Checkbox } from 'antd'
 import { useTranslation } from 'react-i18next'
 
@@ -25,22 +25,37 @@ export default ({
   setPriceLoading,
 }) => {
   const [calculateResponseData, setCalculateResponseData] = useState(null)
-  const [calculatedPrice, setCalculatePrice] = useState(0)
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
-  const [overridePrice, setOverridePrice] = useState(false)
+
+  const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext()
+
+  const [overridePrice, setOverridePrice] = useState(() => {
+    if (isCreateOrderMode) {
+      // when cloning an order that has an arbitrary price
+      if (values.variantIncVATPrice !== undefined && values.variantIncVATPrice !== null) {
+        return true
+      } else {
+        return false
+      }
+    } else {
+      return false
+    }
+  })
 
   const [taxRate, setTaxRate] = useState(null)
 
+  // aka "old price"
+  const currentPrice = useMemo(() => {
+    if (isModifyOrderMode && order) {
+      return { exVAT: +order.total - +order.taxTotal, VAT: +order.total, }
+    }
+  }, [order, isModifyOrderMode])
+
+  const [newPrice, setNewPrice] = useState(0)
+
   const { t } = useTranslation()
-  const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext()
 
   const { httpClient } = useHttpClient()
-
-  let deliveryPrice
-
-  if (isModifyOrderMode && order) {
-    deliveryPrice = { exVAT: +order.total, VAT: +order.total - +order.taxTotal, }
-  }
 
   const convertValuesToPayload = useCallback((values) => {
     const infos = {
@@ -70,12 +85,12 @@ export default ({
         if (error) {
           setCalculateResponseData(error.response.data)
           setPriceErrorMessage(error.response.data['hydra:description'])
-          setCalculatePrice(0)
+          setNewPrice(0)
         }
 
         if (response) {
           setCalculateResponseData(response)
-          setCalculatePrice(response)
+          setNewPrice(response)
           setPriceErrorMessage('')
 
         }
@@ -106,10 +121,10 @@ export default ({
   }, [values]);
 
   useEffect(() => {
-    if (overridePrice && calculatedPrice.VAT > 0) {
+    if (overridePrice && newPrice.VAT > 0) {
       setFieldValue(
         'variantIncVATPrice',
-        Math.round(calculatedPrice.VAT * 100),
+        Math.round(newPrice.VAT * 100),
       )
     }
 
@@ -117,7 +132,7 @@ export default ({
       setFieldValue('variantIncVATPrice', null)
       setFieldValue('variantName', null)
     }
-  }, [calculatedPrice, overridePrice, setFieldValue])
+  }, [newPrice, overridePrice, setFieldValue])
 
   useEffect(() => {
     const getDeliveryTaxs = async () => {
@@ -152,14 +167,14 @@ export default ({
             </div>
             <div>
               {overridePrice ?
-                <s>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
-                <span>{money(deliveryPrice.VAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
+                <s>{money(currentPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</s> :
+                <span>{money(currentPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span>
               }
             </div>
             <div>
               {overridePrice ?
-                <s>{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
-                <span data-testid="tax-included-previous">{money(deliveryPrice.exVAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
+                <s>{money(currentPrice.VAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</s> :
+                <span data-testid="tax-included-previous">{money(currentPrice.VAT)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
               }
             </div>
             {overridePrice && (
@@ -169,10 +184,10 @@ export default ({
                 </div>
 
                 <span>
-                  {money(calculatedPrice.exVAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
+                  {money(newPrice.exVAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
                 </span><br />
                 <span data-testid="tax-included">
-                  {money(calculatedPrice.VAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_VAT')}
+                  {money(newPrice.VAT * 100 || 0)} {t('DELIVERY_FORM_TOTAL_VAT')}
                 </span>
               </div>
             )}
@@ -191,10 +206,10 @@ export default ({
               !overridePrice ?
                 priceLoading ?
                   <Spinner /> :
-                  calculatedPrice.amount ?
+                  newPrice.amount ?
                     <>
-                      <span>{money(calculatedPrice.amount - calculatedPrice.tax.amount,)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br />
-                      <span data-testid="tax-included">{money(calculatedPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
+                      <span>{money(newPrice.amount - newPrice.tax.amount,)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br />
+                      <span data-testid="tax-included">{money(newPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}</span>
                     </> :
                     <>
                       <span>{money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}</span><br/>
@@ -221,7 +236,7 @@ export default ({
               style={{ maxWidth: '100%', cursor: 'pointer' }}
               onClick={() => {
                 setOverridePrice(!overridePrice)
-                setCalculatePrice(0)
+                setNewPrice(0)
               }}
             >
               <div>
@@ -233,13 +248,13 @@ export default ({
                   onChange={e => {
                     e.stopPropagation()
                     setOverridePrice(e.target.checked)
-                    setCalculatePrice(0)
+                    setNewPrice(0)
                   }}></Checkbox>
               </div>
             </div>
             {overridePrice && (
               <OverridePriceForm
-                setCalculatePrice={setCalculatePrice}
+                setPrice={setNewPrice}
                 taxRate={taxRate}
               />
             )}

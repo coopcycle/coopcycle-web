@@ -8,8 +8,28 @@ const getCurrencySymbol = () => {
   return currencySymbol
 }
 
-export default ({ taxRate, setPrices }) => {
-  const [values, setValues] = useState({ VAT: null, exVAT: null })
+const addVat = (vatExcludedPrice, taxRate) => {
+  return Math.round((vatExcludedPrice * 100) * (taxRate + 1)) / 100
+}
+
+const removeVat = (vatIncludedPrice, taxRate) => {
+  return Math.round((vatIncludedPrice * 100) / (taxRate + 1)) / 100
+}
+
+export default ({ taxRate, setPrices, VAT, exVAT }) => {
+  const [values, setValues] = useState(() => {
+    console.log('values', { taxRate, VAT, exVAT })
+
+    if (VAT === undefined && exVAT === undefined) {
+      return { VAT: null, exVAT: null }
+    } else if (VAT !== undefined && exVAT !== undefined) {
+      return { VAT: VAT, exVAT: exVAT }
+    } else if (VAT !== undefined) {
+      return { VAT: VAT, exVAT: removeVat(VAT, taxRate) }
+    } else if (exVAT !== undefined) {
+      return { VAT: addVat(exVAT, taxRate), exVAT: exVAT }
+    }
+  })
 
   const { t } = useTranslation()
 
@@ -31,7 +51,7 @@ export default ({ taxRate, setPrices }) => {
           onChange={value => {
             const newValues = {
               exVAT: value,
-              VAT: Math.round((value * 100) * (taxRate + 1)) / 100,
+              VAT: addVat(value, taxRate),
             }
             setValues(newValues)
             setPrices(newValues)
@@ -54,7 +74,7 @@ export default ({ taxRate, setPrices }) => {
           placeholder={0}
           onChange={value => {
             const newValues = {
-              exVAT: Math.round((value * 100) / (taxRate + 1)) / 100,
+              exVAT: removeVat(value, taxRate),
               VAT: value,
             }
             setValues(newValues)

@@ -3,9 +3,10 @@ import { Field, useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { Input } from 'antd'
 import PriceVATConverter from './PriceVATConverter'
+import Spinner from '../core/Spinner'
 
-export default ({ setCalculatePrice, taxRate }) => {
-  const { errors, setFieldValue } = useFormikContext()
+export default ({ setPrice, taxRate }) => {
+  const { values, errors, setFieldValue } = useFormikContext()
 
   const { t } = useTranslation()
 
@@ -37,11 +38,18 @@ export default ({ setCalculatePrice, taxRate }) => {
           </div>
         </div>
       </div>
-      <PriceVATConverter
-        className="override__form__variant-price"
-        taxRate={taxRate?.amount ?? 0}
-        setPrices={setCalculatePrice}
-      />
+      {
+        taxRate ? (
+          <PriceVATConverter
+            className="override__form__variant-price"
+            taxRate={taxRate.amount}
+            VAT={(values.variantIncVATPrice !== undefined && values.variantIncVATPrice !== null) ? values.variantIncVATPrice / 100 : undefined}
+            setPrice={setPrice}
+          />
+        ) : (
+          <Spinner />
+        )
+      }
     </div>
   )
 }
