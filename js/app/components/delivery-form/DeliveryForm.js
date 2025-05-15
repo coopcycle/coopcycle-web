@@ -238,10 +238,28 @@ export default function({
 
     Promise.all(promises).then(() => {
       if (preLoadedDeliveryData) {
-        preLoadedDeliveryData.tasks.forEach(task => {
-          task.address.formattedTelephone = getFormattedValue(task.address.telephone)
-        })
-        setInitialValues(preLoadedDeliveryData)
+        const initialValues = {
+          ...preLoadedDeliveryData,
+          tasks: preLoadedDeliveryData.tasks.map(task => {
+            return {
+              ...task,
+              address: {
+                ...task.address,
+                formattedTelephone: getFormattedValue(task.address.telephone)
+              },
+            }
+          })
+        }
+
+        if (preLoadedDeliveryData.arbitraryPrice) {
+          delete initialValues.arbitraryPrice
+
+          initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
+          initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.value
+        }
+
+        setInitialValues(initialValues)
+
         setTrackingLink(preLoadedDeliveryData.trackingUrl)
       } else {
         if (isCreateOrderMode) {
