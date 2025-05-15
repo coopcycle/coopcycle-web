@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { Checkbox, Input } from 'antd'
-import { useFormikContext, Field } from 'formik'
+import React, { useState, useEffect, useCallback } from 'react'
+import { Checkbox } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { money } from '../../../../assets/react/controllers/Incident/utils'
-import PriceVATConverter from './PriceVATConverter'
 import Spinner from '../core/Spinner'
 import { PriceCalculation } from '../../delivery/PriceCalculation'
 
@@ -13,69 +11,99 @@ import { useHttpClient } from '../../user/useHttpClient'
 import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
+import _ from 'lodash'
+import OverridePriceForm from './OverridePriceForm'
 
 const baseURL = location.protocol + '//' + location.host
 
-const OverridePriceForm = ({ setCalculatePrice, taxRate }) => {
-  const { errors, setFieldValue } = useFormikContext()
-
-  const { t } = useTranslation()
-
-  return (
-    <div className="override__form p-2 mb-1">
-      <div className="override__form__variant-name">
-        <label
-          className="override__form__variant-name___label font-weight-bold"
-          htmlFor="variantName">
-          {t('DELIVERY_FORM_PRODUCT_NAME')}
-        </label>
-        <div className="override__form__variant-name___input">
-          <Field name={'variantName'}>
-            {({ field }) => (
-              <Input
-                id="variantName"
-                {...field}
-                onChange={e => {
-                  setFieldValue('variantName', e.target.value)
-                }}
-              />
-            )}
-          </Field>
-          {errors.variantName && (
-            <div className="text-danger">{errors.variantName}</div>
-          )}
-          <div className="small text-muted">
-            {t('DELIVERY_FORM_NAME_INSTRUCTION')}
-          </div>
-        </div>
-      </div>
-      <PriceVATConverter
-        className="override__form__variant-price"
-        taxRate={taxRate?.amount ?? 0}
-        setPrices={setCalculatePrice}
-      />
-    </div>
-  )
-}
-
 export default ({
-  deliveryPrice,
-  calculatedPrice,
-  calculateResponseData,
+  storeNodeId,
+  order,
   isDebugPricing,
-  priceErrorMessage,
-  setOverridePrice,
-  overridePrice,
-  setCalculatePrice,
   isDispatcher,
   priceLoading,
+  setPriceLoading,
 }) => {
+  const [calculateResponseData, setCalculateResponseData] = useState(null)
+  const [calculatedPrice, setCalculatePrice] = useState(0)
+  const [priceErrorMessage, setPriceErrorMessage] = useState('')
+  const [overridePrice, setOverridePrice] = useState(false)
+
+  const [taxRate, setTaxRate] = useState(null)
+
   const { t } = useTranslation()
-  const { setFieldValue, isModifyOrderMode } = useDeliveryFormFormikContext()
+  const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext()
 
   const { httpClient } = useHttpClient()
 
-  const [taxRate, setTaxRate] = useState(null)
+  let deliveryPrice
+
+  if (isModifyOrderMode && order) {
+    deliveryPrice = { exVAT: +order.total, VAT: +order.total - +order.taxTotal, }
+  }
+
+  const convertValuesToPayload = useCallback((values) => {
+    const infos = {
+      store: storeNodeId,
+      tasks: structuredClone(values.tasks),
+    };
+    return infos
+  }, [storeNodeId])
+
+  const getPrice = _.debounce(
+    (values) => {
+
+      const infos = convertValuesToPayload(values)
+      infos.tasks.forEach(task => {
+        if (task["@id"]) {
+          delete task["@id"]
+        }
+      })
+
+      const calculatePrice = async () => {
+
+        setPriceLoading(true)
+
+        const url = `${baseURL}/api/retail_prices/calculate`
+        const { response, error } = await httpClient.post(url, infos)
+
+        if (error) {
+          setCalculateResponseData(error.response.data)
+          setPriceErrorMessage(error.response.data['hydra:description'])
+          setCalculatePrice(0)
+        }
+
+        if (response) {
+          setCalculateResponseData(response)
+          setCalculatePrice(response)
+          setPriceErrorMessage('')
+
+        }
+
+        setPriceLoading(false)
+
+      }
+
+      // Don't calculate price until all tasks have an address
+      if (!values.tasks.every(task => task.address.streetAddress)) {
+        return
+      }
+
+      // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
+      if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
+        return
+      }
+
+      calculatePrice()
+    },
+    800
+  )
+
+  useEffect(() => {
+    if (!overridePrice && isCreateOrderMode) {
+      getPrice(values)
+    }
+  }, [values]);
 
   useEffect(() => {
     if (overridePrice && calculatedPrice.VAT > 0) {

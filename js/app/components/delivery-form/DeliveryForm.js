@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
@@ -6,7 +6,6 @@ import moment from 'moment'
 import Map from '../../components/delivery-form/Map.js'
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
-import ShowPrice from '../../components/delivery-form/ShowPrice.js'
 import Task from '../../components/delivery-form/Task.js'
 import { usePrevious } from '../../dashboard/redux/utils'
 
@@ -15,13 +14,13 @@ import { getCountry } from '../../i18n'
 import { useTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-
 import "./DeliveryForm.scss"
-import _ from 'lodash'
+
 import { useLazyGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
+import Price from './Price'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -106,9 +105,6 @@ const pickupSchema = {
   tags: [],
 }
 
-
-const baseURL = location.protocol + '//' + location.host
-
 export default function({
   storeId, // prefer using storeNodeId
   storeNodeId,
@@ -133,25 +129,15 @@ export default function({
   const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
 
   const [addresses, setAddresses] = useState([])
-  const [calculateResponseData, setCalculateResponseData] = useState(null)
-  const [calculatedPrice, setCalculatePrice] = useState(0)
-  const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
   const [timeSlotLabels, setTimeSlotLabels] = useState([])
   const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({ tasks: [] })
   const [isLoading, setIsLoading] = useState(true)
-  const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
   const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
-
-  let deliveryPrice
-
-  if (isModifyOrderMode && order) {
-    deliveryPrice = { exVAT: +order.total, VAT: +order.total - +order.taxTotal, }
-  }
 
   const { t } = useTranslation()
 
@@ -285,63 +271,6 @@ export default function({
     isModifyOrderMode
   ])
 
-  const convertValuesToPayload = useCallback((values) => {
-    const infos = {
-      store: storeDeliveryInfos["@id"],
-      tasks: structuredClone(values.tasks),
-    };
-    return infos
-  }, [storeDeliveryInfos])
-
-  const getPrice = _.debounce(
-    (values) => {
-
-      const infos = convertValuesToPayload(values)
-      infos.tasks.forEach(task => {
-        if (task["@id"]) {
-          delete task["@id"]
-        }
-      })
-
-      const calculatePrice = async () => {
-
-        setPriceLoading(true)
-
-        const url = `${baseURL}/api/retail_prices/calculate`
-        const { response, error } = await httpClient.post(url, infos)
-
-        if (error) {
-          setCalculateResponseData(error.response.data)
-          setPriceErrorMessage(error.response.data['hydra:description'])
-          setCalculatePrice(0)
-        }
-
-        if (response) {
-          setCalculateResponseData(response)
-          setCalculatePrice(response)
-          setPriceErrorMessage('')
-
-        }
-
-        setPriceLoading(false)
-
-      }
-
-      // Don't calculate price until all tasks have an address
-      if (!values.tasks.every(task => task.address.streetAddress)) {
-        return
-      }
-
-      // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
-      if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
-        return
-      }
-
-      calculatePrice()
-    },
-    800
-  )
-
   return (
     isLoading ?
       <div className="delivery-spinner">
@@ -358,12 +287,6 @@ export default function({
           {({ values, isSubmitting, setFieldValue }) => {
 
             const previousValues = usePrevious(values)
-
-            useEffect(() => {
-              if (!overridePrice && isCreateOrderMode) {
-                getPrice(values)
-              }
-            }, [values]);
 
             useEffect(() => {
 
@@ -521,17 +444,13 @@ export default function({
                     </div>
 
                     <div className="order-informations__total-price border-top py-3">
-                      <ShowPrice
+                      <Price
+                        storeNodeId={storeNodeId}
+                        order={order}
                         isDispatcher={isDispatcher}
-                        deliveryPrice={deliveryPrice}
                         isDebugPricing={isDebugPricing}
-                        calculatedPrice={calculatedPrice}
-                        calculateResponseData={calculateResponseData}
-                        setCalculatePrice={setCalculatePrice}
-                        priceErrorMessage={priceErrorMessage}
-                        setOverridePrice={setOverridePrice}
-                        overridePrice={overridePrice}
                         priceLoading={priceLoading}
+                        setPriceLoading={setPriceLoading}
                       />
                     </div>
 
