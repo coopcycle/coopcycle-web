@@ -7,15 +7,13 @@ import Spinner from '../core/Spinner'
 import { PriceCalculation } from '../../delivery/PriceCalculation'
 
 import './ShowPrice.scss'
-import { useHttpClient } from '../../user/useHttpClient'
+
 import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
 import _ from 'lodash'
 import OverridePriceForm from './OverridePriceForm'
-import { useCalculatePriceMutation } from '../../api/slice'
-
-const baseURL = location.protocol + '//' + location.host
+import { useCalculatePriceMutation, useGetTaxRatesQuery } from '../../api/slice'
 
 export default ({
   storeNodeId,
@@ -39,8 +37,6 @@ export default ({
     }
   })
 
-  const [taxRate, setTaxRate] = useState(null)
-
   // aka "old price"
   const currentPrice = useMemo(() => {
     if (isModifyOrderMode && order) {
@@ -49,6 +45,28 @@ export default ({
   }, [order, isModifyOrderMode])
 
   const [newPrice, setNewPrice] = useState(0)
+
+  const { t } = useTranslation()
+
+  const {
+    data: taxRatesData,
+    error: taxRatesError,
+  } = useGetTaxRatesQuery()
+
+  const taxRate = useMemo(() => {
+    if (taxRatesError) {
+      return null
+    }
+
+    if (taxRatesData) {
+      const taxRates = taxRatesData['hydra:member']
+      return taxRates.find(tax => tax.category === 'SERVICE') ||
+        taxRates.find(tax => tax.category === 'BASE_STANDARD')
+    }
+
+    return null
+
+  }, [taxRatesData, taxRatesError])
 
   const [calculatePrice, {
     data: calculatePriceData,
@@ -59,10 +77,6 @@ export default ({
   const calculatePriceDebounced = useMemo(
     () => _.debounce(calculatePrice, 800)
     , [calculatePrice]);
-
-  const { t } = useTranslation()
-
-  const { httpClient } = useHttpClient()
 
   const convertValuesToPayload = useCallback((values) => {
     const infos = {
@@ -161,27 +175,6 @@ export default ({
       setFieldValue('variantName', null)
     }
   }, [newPrice, overridePrice, setFieldValue])
-
-  useEffect(() => {
-    const getDeliveryTaxs = async () => {
-      const { response, error } = await httpClient.get(
-        `${baseURL}/api/tax_rates`
-      )
-
-      if (error) {
-        return
-      }
-
-      if (response) {
-        const taxRates = await response['hydra:member']
-        setTaxRate(
-          taxRates.find(tax => tax.category === 'SERVICE') ||
-            taxRates.find(tax => tax.category === 'BASE_STANDARD'),
-        )
-      }
-    }
-    getDeliveryTaxs()
-  }, [httpClient])
 
   return (
     <div className="pl-2">

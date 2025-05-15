@@ -8,6 +8,10 @@ export const apiSlice = createApi({
   // The "endpoints" represent operations and requests for this server
   // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
+    getTaxRates: builder.query({
+      query: () => `api/tax_rates`,
+    }),
+
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
     }),
@@ -118,6 +122,7 @@ export const apiSlice = createApi({
 
 // Export the auto-generated hook for the query endpoints
 export const {
+  useGetTaxRatesQuery,
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
