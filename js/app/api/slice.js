@@ -11,6 +11,9 @@ export const apiSlice = createApi({
     getTaxRates: builder.query({
       query: () => `api/tax_rates`,
     }),
+    getTags: builder.query({
+      query: () => `api/tags`,
+    }),
 
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
@@ -45,6 +48,15 @@ export const apiSlice = createApi({
 
     getStore: builder.query({
       query: nodeId => nodeId,
+    }),
+    getStoreAddresses: builder.query({
+      query: storeNodeId => `${storeNodeId}/addresses`,
+    }),
+    getStoreTimeSlots: builder.query({
+      query: storeNodeId => `${storeNodeId}/time_slots`,
+    }),
+    getStorePackages: builder.query({
+      query: storeNodeId => `${storeNodeId}/packages`,
     }),
     postStoreAddress: builder.mutation({
       query({ storeNodeId, ...body }) {
@@ -123,12 +135,15 @@ export const apiSlice = createApi({
 // Export the auto-generated hook for the query endpoints
 export const {
   useGetTaxRatesQuery,
+  useGetTagsQuery,
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
   useGetTimeSlotsQuery,
   useGetStoreQuery,
-  useLazyGetStoreQuery,
+  useGetStoreAddressesQuery,
+  useGetStoreTimeSlotsQuery,
+  useGetStorePackagesQuery,
   usePostStoreAddressMutation,
   usePatchAddressMutation,
   useCalculatePriceMutation,

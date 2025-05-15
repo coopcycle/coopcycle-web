@@ -16,8 +16,11 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import "./DeliveryForm.scss"
 
-import { useLazyGetStoreQuery } from '../../api/slice'
-import { useHttpClient } from '../../user/useHttpClient'
+import {
+  useGetStoreAddressesQuery,
+  useGetStorePackagesQuery, useGetStoreQuery,
+  useGetStoreTimeSlotsQuery, useGetTagsQuery,
+} from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
 import Price from './Price'
@@ -115,8 +118,6 @@ export default function({
   isDispatcher,
   isDebugPricing
 }) {
-  const { httpClient } = useHttpClient()
-
   const isCreateOrderMode = useMemo(() => {
     return !Boolean(deliveryNodeId)
   }, [deliveryNodeId])
@@ -125,16 +126,50 @@ export default function({
     return !isCreateOrderMode
   }, [isCreateOrderMode])
 
-  const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeNodeId)
-  const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const [addresses, setAddresses] = useState([])
-  const [storePackages, setStorePackages] = useState(null)
-  const [tags, setTags] = useState([])
-  const [timeSlotLabels, setTimeSlotLabels] = useState([])
+  const { data: storeData } = useGetStoreQuery(storeNodeId)
+  const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
+
+  const { data: tagsData } = useGetTagsQuery(undefined, {
+    skip: !isDispatcher,
+  })
+  const { data: addressesData } = useGetStoreAddressesQuery(storeNodeId)
+  const { data: timeSlotsData } = useGetStoreTimeSlotsQuery(storeNodeId)
+  const { data: packagesData } = useGetStorePackagesQuery(storeNodeId)
+
+  const tags = useMemo(() => {
+    if (tagsData) {
+      return tagsData['hydra:member']
+    }
+    return []
+  }, [tagsData])
+
+  const addresses = useMemo(() => {
+    if (addressesData) {
+      return addressesData['hydra:member']
+    }
+    return []
+  }, [addressesData])
+
+  const timeSlotLabels = useMemo(() => {
+    if (timeSlotsData) {
+      return timeSlotsData['hydra:member']
+    }
+    return []
+  }, [timeSlotsData])
+
+  const storePackages = useMemo(() => {
+    if (packagesData) {
+      return packagesData['hydra:member']
+    }
+    return null
+  }, [packagesData])
+
+
   const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({ tasks: [] })
-  const [isLoading, setIsLoading] = useState(true)
+
   const [priceLoading, setPriceLoading] = useState(false)
 
   const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
@@ -185,88 +220,71 @@ export default function({
     return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
 
-  useEffect(() => {
-    const fetchTags = () => new Promise(resolve => {
-      httpClient.get(`/api/tags`).then(result => {
-        setTags(result.response['hydra:member'])
-        resolve()
-      })
-    })
+  const isDataReady = useMemo(() => {
+    if (!storeData) return false
 
-    const fetchAddresses = () => new Promise(resolve => {
-      httpClient.get(`${storeNodeId}/addresses`).then(result => {
-        setAddresses(result.response['hydra:member'])
-        resolve()
-      })
-    })
+    if (!addressesData) return false
 
-    const fetchTimeSlots = () => new Promise(resolve => {
-      httpClient.get(`${storeNodeId}/time_slots`).then(result => {
-        setTimeSlotLabels(result.response['hydra:member'])
-        resolve()
-      })
-    })
+    if (!timeSlotsData) return false
 
-    const fetchPackages = () => new Promise(resolve => {
-      httpClient.get(`${storeNodeId}/packages`).then(result => {
-        setStorePackages(result.response['hydra:member'])
-        resolve()
-      })
-    })
+    if (!packagesData) return false
 
-    const fetchStoreDeliveryInfos = () => getStoreTrigger(storeNodeId)
-
-    const promises = [fetchAddresses(), fetchPackages(), fetchTimeSlots(), fetchStoreDeliveryInfos()]
-
-    if (isDispatcher) {
-      promises.push(fetchTags())
+    if (isDispatcher && !tagsData) {
+      return false
     }
 
-    Promise.all(promises).then(() => {
-      if (preLoadedDeliveryData) {
-        const initialValues = {
-          ...preLoadedDeliveryData,
-          tasks: preLoadedDeliveryData.tasks.map(task => {
-            return {
-              ...task,
-              address: {
-                ...task.address,
-                formattedTelephone: getFormattedValue(task.address.telephone)
-              },
-            }
-          })
-        }
+    return true
+  }, [
+    storeData,
+    addressesData,
+    timeSlotsData,
+    packagesData,
+    tagsData,
+    isDispatcher
+  ])
 
-        if (preLoadedDeliveryData.arbitraryPrice) {
-          delete initialValues.arbitraryPrice
+  useEffect(() => {
+    if (!isDataReady) return
 
-          initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
-          initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.variantPrice
-        }
-
-        setInitialValues(initialValues)
-
-        setTrackingLink(preLoadedDeliveryData.trackingUrl)
-      } else {
-        if (isCreateOrderMode) {
-          setInitialValues({
-            tasks: [
-              { ...pickupSchema },
-              { ...dropoffSchema }
-            ],
-          })
-        }
+    if (preLoadedDeliveryData) {
+      const initialValues = {
+        ...preLoadedDeliveryData,
+        tasks: preLoadedDeliveryData.tasks.map(task => {
+          return {
+            ...task,
+            address: {
+              ...task.address,
+              formattedTelephone: getFormattedValue(task.address.telephone)
+            },
+          }
+        })
       }
 
-      setIsLoading(false)
-    })
+      if (preLoadedDeliveryData.arbitraryPrice) {
+        delete initialValues.arbitraryPrice
+
+        initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
+        initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.variantPrice
+      }
+
+      setInitialValues(initialValues)
+
+      setTrackingLink(preLoadedDeliveryData.trackingUrl)
+    } else {
+      if (isCreateOrderMode) {
+        setInitialValues({
+          tasks: [
+            { ...pickupSchema },
+            { ...dropoffSchema }
+          ],
+        })
+      }
+    }
+
+    setIsLoading(false)
   }, [
-    storeNodeId,
-    deliveryNodeId,
+    isDataReady,
     preLoadedDeliveryData,
-    isDispatcher,
-    getStoreTrigger,
-    httpClient,
     isCreateOrderMode,
     isModifyOrderMode
   ])
