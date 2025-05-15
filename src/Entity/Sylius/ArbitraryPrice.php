@@ -2,24 +2,31 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-
-
 class ArbitraryPrice implements PriceInterface
 {
+    /**
+     * @var int
+     */
+    private $variantPrice;
+
+    /**
+     * @var ?string
+     */
+    private $variantName;
+
     public function __construct(
-        private readonly ?string $variantName,
-        private readonly int $variantPrice,
+        ?string $variantName,
+        int $variantPrice,
     ) {
+        $this->variantName = $variantName;
+        $this->variantPrice = $variantPrice;
     }
 
-    #[Groups(['delivery', 'delivery_create'])]
     public function getVariantName(): ?string
     {
         return $this->variantName;
     }
 
-    #[Groups(['delivery', 'delivery_create'])]
     public function getValue(): ?int
     {
         return $this->variantPrice;

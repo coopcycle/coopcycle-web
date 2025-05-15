@@ -241,7 +241,7 @@ export default function({
           delete initialValues.arbitraryPrice
 
           initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
-          initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.value
+          initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.variantPrice
         }
 
         setInitialValues(initialValues)

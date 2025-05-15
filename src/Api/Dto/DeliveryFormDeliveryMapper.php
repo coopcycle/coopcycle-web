@@ -45,7 +45,10 @@ class DeliveryFormDeliveryMapper
             return $taskData;
         }, $deliveryEntity->getTasks());
 
-        $deliveryData->arbitraryPrice = $arbitraryPrice;
+        $deliveryData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
+            $arbitraryPrice->getValue(),
+            $arbitraryPrice->getVariantName()
+        ) : null;
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
