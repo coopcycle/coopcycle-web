@@ -160,7 +160,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->fixturesLoader->load([
             __DIR__.'/../../fixtures/ORM/settings_mandatory.yml',
             __DIR__.'/../../fixtures/ORM/sylius_channels.yml'
-        ]);
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
