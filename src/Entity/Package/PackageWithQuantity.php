@@ -15,7 +15,7 @@ class PackageWithQuantity implements PackageWithQuantityInterface
         $this->quantity = $quantity;
     }
 
-    public function getPackage(): Package
+    public function getPackage(): ?Package
     {
         return $this->package;
     }

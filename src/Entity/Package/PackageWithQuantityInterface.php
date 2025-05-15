@@ -6,7 +6,7 @@ use AppBundle\Entity\Package;
 
 interface PackageWithQuantityInterface
 {
-    public function getPackage(): Package;
+    public function getPackage(): ?Package;
 
     public function getQuantity(): int;
 }

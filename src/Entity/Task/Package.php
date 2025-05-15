@@ -35,7 +35,7 @@ class Package implements PackageWithQuantityInterface
         return $this->id;
     }
 
-    public function getPackage(): \AppBundle\Entity\Package
+    public function getPackage(): ?\AppBundle\Entity\Package
     {
         return $this->package;
     }
