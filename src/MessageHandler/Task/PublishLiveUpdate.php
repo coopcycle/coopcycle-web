@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler\Task;
 
-use AppBundle\Domain\Task\Event;
+use AppBundle\Domain\Event;
 use AppBundle\Service\LiveUpdates;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -18,7 +18,6 @@ class PublishLiveUpdate
     
     public function __invoke(Event $event)
     {
-
         $this->liveUpdates->toAdmins($event);
     }
 }

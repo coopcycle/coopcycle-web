@@ -8,13 +8,13 @@ use AppBundle\Domain\Task\Event\TaskCancelled;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Domain\Task\Event\TaskFailed;
-use AppBundle\Domain\Task\Event\TaskListUpdated;
-use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
+use AppBundle\Domain\TaskList\Event\TaskListUpdated;
+use AppBundle\Domain\TaskList\Event\TaskListUpdatedv2;
 use AppBundle\Domain\Task\Event\TaskRescheduled;
 use AppBundle\Domain\Task\Event\TaskStarted;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Domain\Task\Event\TaskUpdated;
-use AppBundle\Domain\Task\Reactor\PublishLiveUpdate;
+use AppBundle\MessageHandler\Task\PublishLiveUpdate;
 use AppBundle\Domain\Tour\Event\TourCreated;
 use AppBundle\Domain\Tour\Event\TourUpdated;
 use AppBundle\Entity\TaskList;
@@ -43,12 +43,7 @@ class PublishLiveUpdateTest extends TestCase
         $user = $this->prophesize(User::class);
         $event = $this->prophesize(TaskListUpdated::class);
 
-        $event->getCourier()
-            ->willReturn($user->reveal())
-            ->shouldBeCalledOnce();
-
-        $this->liveUpdates->toUsers(
-            [$user->reveal()],
+        $this->liveUpdates->toAdmins(
             $event->reveal()
         )->shouldBeCalledOnce();
 
@@ -72,8 +67,7 @@ class PublishLiveUpdateTest extends TestCase
         foreach ($taskEvents as $eventClass) {
             $event = $this->prophesize($eventClass);
 
-            $this->liveUpdates->toRoles(
-                ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+            $this->liveUpdates->toAdmins(
                 $event->reveal()
             )->shouldBeCalledOnce();
 
@@ -93,17 +87,7 @@ class PublishLiveUpdateTest extends TestCase
         $event = $this->prophesize(TaskListUpdatedv2::class);
         $taskList = $this->prophesize(TaskList::class);
 
-        $taskList->getCourier()
-            ->willReturn($user->reveal())
-            ->shouldBeCalledOnce();
-
-        $event->getTaskList()
-            ->willReturn($taskList->reveal())
-            ->shouldBeCalledOnce();
-
-        $this->liveUpdates->toUserAndRoles(
-            $user->reveal(),
-            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+        $this->liveUpdates->toAdmins(
             $event->reveal()
         )->shouldBeCalledOnce();
 
@@ -120,8 +104,7 @@ class PublishLiveUpdateTest extends TestCase
         foreach ($tourEvents as $eventClass) {
             $event = $this->prophesize($eventClass);
 
-            $this->liveUpdates->toRoles(
-                ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+            $this->liveUpdates->toAdmins(
                 $event->reveal()
             )->shouldBeCalledOnce();
 
@@ -139,8 +122,7 @@ class PublishLiveUpdateTest extends TestCase
     {
         $event = $this->prophesize(Event::class);
 
-        $this->liveUpdates->toRoles(
-            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+        $this->liveUpdates->toAdmins(
             $event->reveal()
         )->shouldBeCalledOnce();
 
