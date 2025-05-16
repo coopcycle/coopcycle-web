@@ -3,23 +3,19 @@
 namespace AppBundle\MessageHandler;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Webhook;
 use AppBundle\Entity\WebhookExecution;
 use AppBundle\Message\Webhook as WebhookMessage;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 
-use function PHPUnit\Framework\isInstanceOf;
 
 #[AsMessageHandler]
 class WebhookHandler

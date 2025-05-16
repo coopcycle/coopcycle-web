@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\HumanReadableEventInterface;
+use AppBundle\Domain\NamedMessage;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Message\TopBarNotification;
@@ -12,7 +13,6 @@ use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Name\NamedMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

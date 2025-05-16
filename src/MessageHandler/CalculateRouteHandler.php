@@ -2,7 +2,6 @@
 
 namespace AppBundle\MessageHandler;
 
-use AppBundle\Domain\Task\Event;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
@@ -11,7 +10,6 @@ use AppBundle\Message\CalculateRoute;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
@@ -20,17 +18,14 @@ class CalculateRouteHandler
     public $logger;
     private $objectManager;
     private $routing;
-    private $eventBus;
 
     public function __construct(
         EntityManagerInterface $objectManager,
         RoutingInterface $routing,
-        MessageBus $eventBus,
         LoggerInterface $logger)
     {
         $this->objectManager = $objectManager;
         $this->routing = $routing;
-        $this->eventBus = $eventBus;
         $this->logger = $logger;
     }
 
@@ -79,11 +74,6 @@ class CalculateRouteHandler
         }
 
         $this->objectManager->flush();
-
-        // Send only one event to avoid flooding
-        $this->eventBus->handle(
-            new Event\TaskCollectionsUpdated($toUpdate)
-        );
     }
 
     private function calculate(TaskCollectionInterface $taskCollection)
