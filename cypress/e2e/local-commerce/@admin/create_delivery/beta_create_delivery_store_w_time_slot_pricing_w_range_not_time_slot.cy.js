@@ -1,9 +1,10 @@
-context('Delivery (role: admin)', () => {
+context('Delivery (role: admin); store with time slot pricing', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_distance_pricing.yml"])
+    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
+    cy.visit('/login')
     cy.login('admin', '12345678')
   })
 
@@ -11,7 +12,7 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery order', function () {
+  it('[beta form] create delivery order with manually selected range NOT belonging to a time slot choices', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -35,8 +36,15 @@ context('Delivery (role: admin)', () => {
       'Office',
       '+33112121212',
       'John Doe',
-      'Pickup comments'
+      'Pickup comments',
     )
+
+    //Set pickup time range to 12:30 - 13:30 manually
+    cy.get('[data-testid="form-task-0"]').within(() => {
+      cy.get('.timeslot-container > .timeslot-container__icon').click()
+      cy.antdSelect('.ant-select[data-testid="select-after"]', '12:30')
+      cy.antdSelect('.ant-select[data-testid="select-before"]', '13:30')
+    })
 
     // Dropoff
 
@@ -47,30 +55,36 @@ context('Delivery (role: admin)', () => {
       'Office',
       '+33112121212',
       'Jane smith',
-      'Dropoff comments'
+      'Dropoff comments',
     )
 
-    cy.get(`[name="tasks[${1}].weight"]`).clear()
-    cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
+    cy.get(`[name="tasks[1].weight"]`).clear()
+    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-    cy.get('[data-testid="tax-included"]').contains('1,99 €')
+    cy.get('[data-testid="tax-included"]').contains('2,00 €')
 
     cy.get('button[type="submit"]').click()
 
     // list of deliveries page
     // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // cy.location('pathname', { timeout: 10000 }).should(
+    //   'match',
+    //   /\/admin\/stores\/[0-9]+\/deliveries$/,
+    // )
 
-    cy.urlmatch(/\/admin\/deliveries$/)
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/deliveries$/,
+    )
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery__list_item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€1.99/)
+      .contains(/€2.00/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -88,10 +102,13 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Order page
-    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+    cy.location('pathname', { timeout: 10000 }).should(
+      'match',
+      /\/admin\/orders\/[0-9]+$/,
+    )
 
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
-      .contains('€1.99')
+      .contains('€2.00')
   })
 })

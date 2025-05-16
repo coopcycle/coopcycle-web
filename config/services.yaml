@@ -1010,6 +1010,8 @@ services:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+  AppBundle\Api\Dto\DeliveryFormDeliveryMapper:
+
   AppBundle\Utils\RestaurantFilter:
     arguments:
       - '@routing_service'

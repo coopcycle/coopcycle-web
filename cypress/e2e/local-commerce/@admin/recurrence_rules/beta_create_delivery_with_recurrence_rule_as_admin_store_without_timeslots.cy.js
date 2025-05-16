@@ -29,25 +29,25 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.betaChooseSavedAddressAtPosition(0, 1)
 
       //Set pickup time range to 10:10 - 11:20 manually
-      cy.get('[data-testid-form="task-0"]').within(() => {
+      cy.get('[data-testid="form-task-0"]').within(() => {
         cy.antdSelect('.ant-select[data-testid="select-after"]', '10:10')
         cy.antdSelect('.ant-select[data-testid="select-before"]', '11:20')
       })
 
-      cy.get(`[name="tasks[${0}].comments"]`).type('Pickup comments')
+      cy.get(`[name="tasks[0].comments"]`).type('Pickup comments')
 
       // Dropoff
       cy.betaChooseSavedAddressAtPosition(1, 2)
 
       //Set pickup time range to 11:30 - 12:40 manually
-      cy.get('[data-testid-form="task-1"]').within(() => {
+      cy.get('[data-testid="form-task-1"]').within(() => {
         cy.antdSelect('.ant-select[data-testid="select-after"]', '11:30')
         cy.antdSelect('.ant-select[data-testid="select-before"]', '12:40')
       })
 
-      cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
+      cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-      cy.get(`[name="tasks[${1}].comments"]`).type('Dropoff comments')
+      cy.get(`[name="tasks[1].comments"]`).type('Dropoff comments')
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 

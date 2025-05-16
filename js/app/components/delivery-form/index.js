@@ -20,6 +20,7 @@ export default function ({
   storeNodeId,
   deliveryId,
   deliveryNodeId,
+  delivery,
   order,
   isDispatcher,
   isDebugPricing,
@@ -37,7 +38,8 @@ export default function ({
             storeNodeId={storeNodeId}
             deliveryId={deliveryId}
             deliveryNodeId={deliveryNodeId}
-            order={order}
+            preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
+            order={order ? JSON.parse(order) : null}
             isDispatcher={isDispatcher}
             isDebugPricing={isDebugPricing}
           />

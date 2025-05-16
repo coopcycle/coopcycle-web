@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
@@ -6,7 +6,6 @@ import moment from 'moment'
 import Map from '../../components/delivery-form/Map.js'
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
-import ShowPrice from '../../components/delivery-form/ShowPrice.js'
 import Task from '../../components/delivery-form/Task.js'
 import { usePrevious } from '../../dashboard/redux/utils'
 
@@ -15,13 +14,16 @@ import { getCountry } from '../../i18n'
 import { useTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-
 import "./DeliveryForm.scss"
-import _ from 'lodash'
-import { useLazyGetStoreQuery } from '../../api/slice'
-import { useHttpClient } from '../../user/useHttpClient'
+
+import {
+  useGetStoreAddressesQuery,
+  useGetStoreQuery,
+  useGetTagsQuery,
+} from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
+import Price from './Price'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -106,20 +108,16 @@ const pickupSchema = {
   tags: [],
 }
 
-
-const baseURL = location.protocol + '//' + location.host
-
 export default function({
   storeId, // prefer using storeNodeId
   storeNodeId,
   deliveryId, // prefer using deliveryNodeId
   deliveryNodeId,
+  preLoadedDeliveryData,
   order,
   isDispatcher,
   isDebugPricing
 }) {
-  const { httpClient } = useHttpClient()
-
   const isCreateOrderMode = useMemo(() => {
     return !Boolean(deliveryNodeId)
   }, [deliveryNodeId])
@@ -128,30 +126,36 @@ export default function({
     return !isCreateOrderMode
   }, [isCreateOrderMode])
 
-  const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeNodeId)
-  const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const [addresses, setAddresses] = useState([])
-  const [calculateResponseData, setCalculateResponseData] = useState(null)
-  const [calculatedPrice, setCalculatePrice] = useState(0)
-  const [priceErrorMessage, setPriceErrorMessage] = useState('')
-  const [storePackages, setStorePackages] = useState(null)
-  const [tags, setTags] = useState([])
-  const [timeSlotLabels, setTimeSlotLabels] = useState([])
+  const { data: storeData } = useGetStoreQuery(storeNodeId)
+  const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
+
+  const { data: tagsData } = useGetTagsQuery(undefined, {
+    skip: !isDispatcher,
+  })
+  const { data: addressesData } = useGetStoreAddressesQuery(storeNodeId)
+
+  const tags = useMemo(() => {
+    if (tagsData) {
+      return tagsData['hydra:member']
+    }
+    return []
+  }, [tagsData])
+
+  const addresses = useMemo(() => {
+    if (addressesData) {
+      return addressesData['hydra:member']
+    }
+    return []
+  }, [addressesData])
+
   const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({ tasks: [] })
-  const [isLoading, setIsLoading] = useState(true)
-  const [overridePrice, setOverridePrice] = useState(false)
+
   const [priceLoading, setPriceLoading] = useState(false)
 
   const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
-
-  let deliveryPrice
-
-  if (isModifyOrderMode && order) {
-    const orderInfos = JSON.parse(order)
-    deliveryPrice = { exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal, }
-  }
 
   const { t } = useTranslation()
 
@@ -199,136 +203,68 @@ export default function({
     return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
 
+  const isDataReady = useMemo(() => {
+    if (!storeData) return false
+
+    if (!addressesData) return false
+
+    if (isDispatcher && !tagsData) {
+      return false
+    }
+
+    return true
+  }, [
+    storeData,
+    addressesData,
+    tagsData,
+    isDispatcher
+  ])
+
   useEffect(() => {
-    const fetchTags = () => new Promise(resolve => {
-      httpClient.get(`/api/tags`).then(result => {
-        setTags(result.response['hydra:member'])
-        resolve()
-      })
-    })
+    if (!isDataReady) return
 
-    const fetchAddresses = () => new Promise(resolve => {
-      httpClient.get(`${storeNodeId}/addresses`).then(result => {
-        setAddresses(result.response['hydra:member'])
-        resolve()
-      })
-    })
-
-    const fetchTimeSlots = () => new Promise(resolve => {
-      httpClient.get(`${storeNodeId}/time_slots`).then(result => {
-        setTimeSlotLabels(result.response['hydra:member'])
-        resolve()
-      })
-    })
-
-    const fetchPackages = () => new Promise(resolve => {
-      httpClient.get(`${storeNodeId}/packages`).then(result => {
-        setStorePackages(result.response['hydra:member'])
-        resolve()
-      })
-    })
-
-    const fetchStoreDeliveryInfos = () => getStoreTrigger(storeNodeId)
-      .then(() => {
-        if (isCreateOrderMode) {
-          setInitialValues({
-            tasks: [
-              { ...pickupSchema },
-              { ...dropoffSchema }
-            ],
-          })
-        }
-      })
-
-    const fetchDeliveryInfos = () => new Promise(resolve => {
-      if (isModifyOrderMode) {
-        httpClient.get(`${deliveryNodeId}?groups=barcode,address,delivery`).then(result => {
-          let response = result.response
-
-          //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
-          delete response.dropoff
-          delete response.pickup
-
-          response.tasks.forEach(task => {
-            const formattedTelephone = getFormattedValue(task.address.telephone)
-            task.address.formattedTelephone = formattedTelephone
-          })
-          setInitialValues(response)
-          setTrackingLink(response.trackingUrl)
-          resolve()
+    if (preLoadedDeliveryData) {
+      const initialValues = {
+        ...preLoadedDeliveryData,
+        tasks: preLoadedDeliveryData.tasks.map(task => {
+          return {
+            ...task,
+            address: {
+              ...task.address,
+              formattedTelephone: getFormattedValue(task.address.telephone)
+            },
+          }
         })
       }
-    })
 
-    const promises = [fetchAddresses(), fetchPackages(), fetchTimeSlots(), fetchStoreDeliveryInfos()]
+      if (preLoadedDeliveryData.arbitraryPrice) {
+        delete initialValues.arbitraryPrice
 
-    if (isDispatcher) {
-      promises.push(fetchTags())
+        initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
+        initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.variantPrice
+      }
+
+      setInitialValues(initialValues)
+
+      setTrackingLink(preLoadedDeliveryData.trackingUrl)
+    } else {
+      if (isCreateOrderMode) {
+        setInitialValues({
+          tasks: [
+            { ...pickupSchema },
+            { ...dropoffSchema }
+          ],
+        })
+      }
     }
 
-    if (isModifyOrderMode) {
-      promises.push(fetchDeliveryInfos())
-    }
-
-    Promise.all(promises).then(() => setIsLoading(false))
-  }, [])
-
-  const convertValuesToPayload = useCallback((values) => {
-    const infos = {
-      store: storeDeliveryInfos["@id"],
-      tasks: structuredClone(values.tasks),
-    };
-    return infos
-  }, [storeDeliveryInfos])
-
-  const getPrice = _.debounce(
-    (values) => {
-
-      const infos = convertValuesToPayload(values)
-      infos.tasks.forEach(task => {
-        if (task["@id"]) {
-          delete task["@id"]
-        }
-      })
-
-      const calculatePrice = async () => {
-
-        setPriceLoading(true)
-
-        const url = `${baseURL}/api/retail_prices/calculate`
-        const { response, error } = await httpClient.post(url, infos)
-
-        if (error) {
-          setCalculateResponseData(error.response.data)
-          setPriceErrorMessage(error.response.data['hydra:description'])
-          setCalculatePrice(0)
-        }
-
-        if (response) {
-          setCalculateResponseData(response)
-          setCalculatePrice(response)
-          setPriceErrorMessage('')
-
-        }
-
-        setPriceLoading(false)
-
-      }
-
-      // Don't calculate price until all tasks have an address
-      if (!values.tasks.every(task => task.address.streetAddress)) {
-        return
-      }
-
-      // Don't calculate price if a time slot (timeSlotUrl) is selected, but no choice (timeSlot) is made yet
-      if (!values.tasks.every(task => ((task.timeSlotUrl && task.timeSlot) || !task.timeSlotUrl))) {
-        return
-      }
-
-      calculatePrice()
-    },
-    800
-  )
+    setIsLoading(false)
+  }, [
+    isDataReady,
+    preLoadedDeliveryData,
+    isCreateOrderMode,
+    isModifyOrderMode
+  ])
 
   return (
     isLoading ?
@@ -346,12 +282,6 @@ export default function({
           {({ values, isSubmitting, setFieldValue }) => {
 
             const previousValues = usePrevious(values)
-
-            useEffect(() => {
-              if (!overridePrice && isCreateOrderMode) {
-                getPrice(values)
-              }
-            }, [values]);
 
             useEffect(() => {
 
@@ -430,10 +360,8 @@ export default function({
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
-                                    packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
-                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
@@ -456,10 +384,8 @@ export default function({
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
-                                    packages={storePackages}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
-                                    timeSlotLabels={timeSlotLabels}
                                   />
                                 </div>
                               );
@@ -509,17 +435,12 @@ export default function({
                     </div>
 
                     <div className="order-informations__total-price border-top py-3">
-                      <ShowPrice
+                      <Price
+                        storeNodeId={storeNodeId}
+                        order={order}
                         isDispatcher={isDispatcher}
-                        deliveryPrice={deliveryPrice}
                         isDebugPricing={isDebugPricing}
-                        calculatedPrice={calculatedPrice}
-                        calculateResponseData={calculateResponseData}
-                        setCalculatePrice={setCalculatePrice}
-                        priceErrorMessage={priceErrorMessage}
-                        setOverridePrice={setOverridePrice}
-                        overridePrice={overridePrice}
-                        priceLoading={priceLoading}
+                        setPriceLoading={setPriceLoading}
                       />
                     </div>
 

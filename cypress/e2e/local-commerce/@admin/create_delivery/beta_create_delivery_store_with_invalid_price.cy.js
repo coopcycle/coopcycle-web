@@ -1,16 +1,30 @@
-context('store with invalid pricing (role: store)', () => {
+context('Delivery (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixtures('stores.yml')
+    cy.setMockDateTime('2025-04-23 8:30:00')
+    cy.login('admin', '12345678')
   })
 
-  it('create delivery for store with invalid pricing', () => {
-    cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
+  afterEach(() => {
+    cy.resetMockDateTime()
+  })
 
-    cy.login('store_invalid_pricing', 'password')
+  it('[beta form] create delivery for store with invalid pricing', function () {
+    cy.visit('/admin/stores')
 
-    cy.urlmatch(/\/dashboard$/)
+    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
+      .find('.dropdown-toggle')
+      .click()
 
-    cy.get('a').contains('Créer une livraison').click()
+    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
+      .contains('Créer une livraison')
+      .click()
+
+    cy.wait(500)
+
+    cy.get('body > div.content > div > div > div > a')
+      .contains('click here')
+      .click()
 
     // Pickup
 
@@ -43,13 +57,17 @@ context('store with invalid pricing (role: store)', () => {
 
     cy.get('.alert-danger', { timeout: 10000 }).should(
       'contain',
-      "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, nous vous recontacterons avec le prix corrigé.",
+      "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
     )
 
     cy.get('button[type="submit"]').click()
 
-    cy.urlmatch(/\/dashboard\/stores\/[0-9]+\/deliveries$/)
-    cy.get('[data-testid=delivery__list_item]')
+    // TODO : check for proper redirect when implemented
+    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+
+    cy.urlmatch(/\/admin\/deliveries$/)
+
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')

@@ -60,7 +60,7 @@ final class TaskInput
     public int|null $weight = null;
 
     /**
-     * @var TaskPackageInput[]|null
+     * @var DeliveryFormTaskPackageDto[]|null
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $packages = null;

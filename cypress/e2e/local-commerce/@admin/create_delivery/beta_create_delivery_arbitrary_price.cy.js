@@ -9,18 +9,16 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery for store with invalid pricing', function () {
+  it('[beta form] create delivery order with arbitrary price', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
+    cy.get('[data-testid=store_Acme__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
+    cy.get('[data-testid=store_Acme__list_item]')
       .contains('Créer une livraison')
       .click()
-
-    cy.wait(500)
 
     cy.get('body > div.content > div > div > div > a')
       .contains('click here')
@@ -50,15 +48,18 @@ context('Delivery (role: admin)', () => {
       'Dropoff comments'
     )
 
-    cy.get(`[name="tasks[${1}].weight"]`).clear()
-    cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
+    cy.get(`[name="tasks[1].weight"]`).clear()
+    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-    cy.get('[data-testid="tax-included"]').should('not.exist')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('.alert-danger', { timeout: 10000 }).should(
-      'contain',
-      "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
-    )
+    cy.get('[name="delivery.override_price"]').check()
+
+    cy.get('[name="variantName"]').clear()
+    cy.get('[name="variantName"]').type('Test product')
+
+    cy.get('#variantPriceVAT').clear()
+    cy.get('#variantPriceVAT').type('72')
 
     cy.get('button[type="submit"]').click()
 
@@ -74,7 +75,28 @@ context('Delivery (role: admin)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€0.00/)
+      .contains(/€72.00/)
       .should('exist')
+
+    cy.get('[data-testid="delivery__list_item"]')
+      .find('[data-testid="delivery_id"]')
+      .click()
+
+    // Delivery page
+    cy.get('[data-testid="breadcrumb"]')
+      .find('[data-testid="order_id"]')
+      .should('exist')
+
+    cy.get('[data-testid="breadcrumb"]')
+      .find('[data-testid="order_id"]')
+      .click()
+
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+    cy.get('[data-testid="name"]')
+      .contains('Test product')
+
+    cy.get('[data-testid="total"]')
+      .contains('€72.00')
   })
 })

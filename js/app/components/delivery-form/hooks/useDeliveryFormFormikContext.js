@@ -3,7 +3,7 @@ import { useFormikContext } from 'formik'
 
 export function useDeliveryFormFormikContext({ taskIndex } = {}) {
   const formik = useFormikContext()
-  const { values } = formik
+  const { values, errors } = formik
 
   const isCreateOrderMode = useMemo(() => {
     return !Boolean(values.id)
@@ -21,6 +21,14 @@ export function useDeliveryFormFormikContext({ taskIndex } = {}) {
     }
   }, [values.tasks, taskIndex])
 
+  const taskErrors = useMemo(() => {
+    if (taskIndex !== undefined && taskIndex != null) {
+      return errors.tasks?.[taskIndex]
+    } else {
+      return null
+    }
+  }, [errors.tasks, taskIndex])
+
   const rruleValue = useMemo(() => {
     return values.rrule
   }, [values])
@@ -31,6 +39,7 @@ export function useDeliveryFormFormikContext({ taskIndex } = {}) {
     isCreateOrderMode,
     isModifyOrderMode,
     taskValues,
+    taskErrors,
     rruleValue
   }
 }

@@ -190,6 +190,7 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
       { hourOptions.length > 0 ?
         <div style={{ display: 'flex', marginTop: '0.5em' }}>
           <DatePicker
+            data-testid="date-picker"
             format="LL"
             style={{ width: '60%' }}
             className="mr-2"
@@ -201,6 +202,7 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
             }}
           />
           <Select
+            data-testid="hour-picker"
             style={{ width: '35%' }}
             onChange={option => {
               handleHourChange(option)
