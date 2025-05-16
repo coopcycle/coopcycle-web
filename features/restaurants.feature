@@ -2,7 +2,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve the restaurants list
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the current time is "2021-12-10 11:00:00"
@@ -42,7 +41,6 @@ Feature: Manage restaurants
   Scenario: Search restaurants
     Given the current time is "2021-12-22 20:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
@@ -77,7 +75,8 @@ Feature: Manage restaurants
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
-            "description": null
+            "description": null,
+            "contactName": null
           },
           "state":"normal",
           "openingHoursSpecification":[
@@ -123,7 +122,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a restaurant
     Given the current time is "2021-12-22 13:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -163,7 +161,8 @@ Feature: Manage restaurants
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "telephone":"+33612345678",
       "image":@string@,
@@ -205,7 +204,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a closed restaurant
     Given the current time is "2021-12-19 12:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -245,7 +243,8 @@ Feature: Manage restaurants
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "telephone":"+33612345678",
       "image":@string@,
@@ -288,7 +287,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a restaurant timing (tomorrow)
     Given the current time is "2020-09-17 15:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -329,7 +327,6 @@ Feature: Manage restaurants
   Scenario: Retrieve a restaurant timing (today)
     Given the current time is "2020-09-17 12:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -369,7 +366,6 @@ Feature: Manage restaurants
 
   Scenario: Disabled restaurant can't be found
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | payment_methods.yml |
       | products.yml        |
@@ -392,7 +388,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -490,7 +485,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve all menus for a restaurant
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -513,7 +507,7 @@ Feature: Manage restaurants
     """
     {
       "@context":"/api/contexts/Restaurant",
-      "@id":"/api/restaurants",
+      "@id":"/api/restaurants/1/menus",
       "@type":"hydra:Collection",
       "hydra:member":[
         {
@@ -537,7 +531,6 @@ Feature: Manage restaurants
 
   Scenario: Restaurant is deliverable
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
@@ -547,7 +540,6 @@ Feature: Manage restaurants
 
   Scenario: Restaurant is not deliverable
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     When I add "Accept" header equal to "application/ld+json"
@@ -557,7 +549,6 @@ Feature: Manage restaurants
 
   Scenario: Change active menu
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -613,7 +604,6 @@ Feature: Manage restaurants
 
   Scenario: User has not sufficient access rights
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -632,7 +622,6 @@ Feature: Manage restaurants
 
   Scenario: User is not authorized to modify restaurant
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -653,7 +642,6 @@ Feature: Manage restaurants
 
   Scenario: Change restaurant state
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -696,7 +684,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve restaurant products
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -757,7 +744,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve restaurant product options
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -838,7 +824,6 @@ Feature: Manage restaurants
 
   Scenario: Deleted products are not retrieved
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -884,7 +869,6 @@ Feature: Manage restaurants
 
   Scenario: Retrieve restaurant deliveries
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | payment_methods.yml |
       | products.yml        |
@@ -912,14 +896,14 @@ Feature: Manage restaurants
     And the response should be in JSON
     Given I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "GET" request to "/api/restaurants/1/deliveries/2020-05-09"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/deliveries?date=2020-05-09"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
         "@context":"/api/contexts/Restaurant",
-        "@id":"/api/restaurants",
+        "@id":"/api/restaurants/1/deliveries",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -994,13 +978,16 @@ Feature: Manage restaurants
             "trackingUrl": @string@
           }
         ],
-        "hydra:totalItems":1
+        "hydra:totalItems":1,
+        "hydra:view":{
+          "@id":"/api/restaurants/1/deliveries?date=2020-05-09",
+          "@type":"hydra:PartialCollectionView"
+        }
       }
       """
 
   Scenario: Delete closing rule
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |

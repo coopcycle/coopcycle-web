@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\TaskList;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\TaskList;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -83,9 +83,9 @@ class Item
     public function getItemIri(IriConverterInterface $iriConverter)
     {
         if ($this->task) {
-            return $iriConverter->getIriFromItem($this->task);
+            return $iriConverter->getIriFromResource($this->task);
         } else if ($this->tour) {
-            return $iriConverter->getIriFromItem($this->tour);
+            return $iriConverter->getIriFromResource($this->tour);
         }
     }
 }

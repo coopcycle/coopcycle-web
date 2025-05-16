@@ -2,7 +2,6 @@ Feature: Stores
 
   Scenario: Not authorized to list stores
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -15,7 +14,6 @@ Feature: Stores
 
   Scenario: Not authorized to retrieve store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -28,7 +26,6 @@ Feature: Stores
 
   Scenario: Not authorized to list store deliveries with JWT
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -43,7 +40,6 @@ Feature: Stores
 
   Scenario: Not authorized to list store deliveries with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     Given the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
@@ -54,7 +50,6 @@ Feature: Stores
 
   Scenario: List my stores
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -71,7 +66,7 @@ Feature: Stores
       """
       {
         "@context":"/api/contexts/Store",
-        "@id":"/api/stores",
+        "@id":"/api/me/stores",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -95,7 +90,6 @@ Feature: Stores
 
   Scenario: List stores
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -136,7 +130,6 @@ Feature: Stores
 
   Scenario: Retrieve store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -169,7 +162,8 @@ Feature: Stores
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -182,7 +176,6 @@ Feature: Stores
 
   Scenario: Retrieve store with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -211,7 +204,8 @@ Feature: Stores
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -224,7 +218,6 @@ Feature: Stores
 
   Scenario: Retrieve time slot with opening hours
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -287,7 +280,6 @@ Feature: Stores
 
   Scenario: Retrieve time slot with opening hours with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -348,7 +340,6 @@ Feature: Stores
 
   Scenario: List store deliveries with JWT, ordered by dropoff desc
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -469,7 +460,6 @@ Feature: Stores
 
   Scenario: List store deliveries with JWT, ordered by dropoff asc
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -588,7 +578,6 @@ Feature: Stores
 
   Scenario: List store deliveries with OAuth, ordered by dropoff desc
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -701,9 +690,9 @@ Feature: Stores
       }
       """
 
+  @deprecated
   Scenario: Retrieve store dropoff addresses
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -748,7 +737,6 @@ Feature: Stores
 
   Scenario: Add an adress to store saved addresses as admin
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -762,10 +750,10 @@ Feature: Stores
       {
         "contactName":null,
         "geo":{
-          "latitude":48.8317573,
-          "longitude":2.326347
+          "latitude":48.864577,
+          "longitude":2.333338
         },
-        "streetAddress":"10 rue Mouton Duvernet, Paris",
+        "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
         "telephone":null,
         "name":null,
         "description": null
@@ -775,7 +763,7 @@ Feature: Stores
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
-    And the response should be in JSON
+    Then the response should be in JSON
     And the JSON should match:
       """
       {
@@ -790,10 +778,10 @@ Feature: Stores
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.8317573,
-              "longitude":2.326347
+              "latitude":48.864577,
+              "longitude":2.333338
             },
-            "streetAddress":"10 rue Mouton Duvernet, Paris",
+            "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
             "description": null
@@ -805,7 +793,6 @@ Feature: Stores
 
   Scenario: Reorder store time slots
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -843,7 +830,6 @@ Feature: Stores
     When the user "bob" sends a "PATCH" request to "/api/stores/6" with body:
       """
       {
-        "@id": "/api/stores/6",
         "timeSlots": [
           "/api/time_slots/2",
           "/api/time_slots/1",
@@ -878,7 +864,6 @@ Feature: Stores
 
   Scenario: Retrieve store timeslots
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -895,7 +880,7 @@ Feature: Stores
       """
       {
         "@context": "/api/contexts/Store",
-        "@id": "/api/stores",
+        "@id": "/api/stores/1/time_slots",
         "@type": "hydra:Collection",
         "hydra:member": [
             {
@@ -915,7 +900,6 @@ Feature: Stores
 
   Scenario: Retrieve timeslots opening hours
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the current time is "2024-05-31 11:00:00"
     And the user "bob" is loaded:
@@ -960,7 +944,6 @@ Feature: Stores
 
   Scenario: Retrieve packages
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -977,7 +960,7 @@ Feature: Stores
       """
       {
            "@context": "/api/contexts/Store",
-           "@id": "/api/stores",
+           "@id": "/api/stores/1/packages",
            "@type": "hydra:Collection",
            "hydra:member": [
                {

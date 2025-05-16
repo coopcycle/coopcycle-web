@@ -35,16 +35,7 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     // errors, so we let them fail the test
   })
 
-
-// before(() => {
-//   /* code that needs to run before all specs */
-//   const prefix = Cypress.env('COMMAND_PREFIX')
-
-//   let cmd =
-//     'bin/console coopcycle:setup --env=test'
-//   if (prefix) {
-//     cmd = `${prefix} ${cmd}`
-//   }
-
-//   cy.exec(cmd)
-// })
+// Log the test name before each test
+beforeEach(function () {
+  cy.symfonyConsole(`coopcycle:tests:log -m "Before test: ${this.currentTest.fullTitle()}"`);
+});

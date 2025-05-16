@@ -13,7 +13,7 @@ class RestaurantFilterConfigurator
     protected static $routes = [
         'homepage',
         'restaurants',
-        'api_restaurants_get_collection',
+        '_api_/restaurants_get_collection',
         'shops',
         'restaurants_by_cuisine',
     ];

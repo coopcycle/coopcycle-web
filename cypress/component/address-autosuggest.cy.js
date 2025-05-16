@@ -63,8 +63,6 @@ describe('Address Autosuggest', () => {
 
   it('search address (Geocode.Earth, fr)', function () {
 
-    console.log(Cypress.env())
-
     // eslint-disable-next-line jest/valid-expect-in-promise
     cy.mount(<AddressAutosuggest
       country="fr"

@@ -2,8 +2,8 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\Tour;
@@ -13,15 +13,12 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
 {
-
     public function __construct(
         protected ItemNormalizer $normalizer,
-        protected IriConverterInterface $iriConverterInterface,
-        protected TaskNormalizer $taskNormalizer
+        protected TaskNormalizer $taskNormalizer,
+        protected ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory
     )
-    {
-        $this->normalizer = $normalizer;
-    }
+    {}
 
     private function flattenItemsUris(array $items)
     {
@@ -76,17 +73,18 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
                 }, $object->getTasks()
             );
         } else  {
+
+            // Since API Platform 2.7, IRIs for custom operations have changed
+            // It means that when doing PUT /api/orders/{id}/accept, the @id will be /api/orders/{id}/accept, not /api/orders/{id} like before
+            // In our JS code, we often override the state with the entire response
+            // This custom code makes sure it works like before, by tricking IriConverter
+            $context['operation'] = $this->resourceMetadataFactory->create(TaskList::class)->getOperation();
+
             $data = $this->normalizer->normalize($object, $format, $context);
 
             if (isset($data['items'])) {
                 $data['items'] = $this->flattenItemsUris($data['items']);
             }
-        }
-
-        // Legacy
-        if (isset($context['item_operation_name']) && $context['item_operation_name'] === 'my_tasks') {
-            $data['hydra:member'] = $data['items'];
-            $data['hydra:totalItems'] = count($data['items']);
         }
 
         return $data;

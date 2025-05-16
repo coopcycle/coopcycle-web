@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler\Task;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskDone;
@@ -35,7 +35,7 @@ class TriggerWebhook
 
         $this->messageBus->dispatch(
             new Webhook(
-                $this->iriConverter->getIriFromItem($task->getDelivery()),
+                $this->iriConverter->getIriFromResource($task->getDelivery()),
                 $this->getEventName($event)
             )
         );
@@ -47,7 +47,7 @@ class TriggerWebhook
         if ($woopitDelivery) {
             $this->messageBus->dispatch(
                 new WoopitWebhook(
-                    $this->iriConverter->getIriFromItem($task->getDelivery()),
+                    $this->iriConverter->getIriFromResource($task->getDelivery()),
                     $this->getWoopitEventName($event)
                 )
             );

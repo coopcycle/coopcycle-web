@@ -11,6 +11,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
 use AppBundle\Exception\NoAvailableTimeSlotException;
 use AppBundle\Exception\ShippingAddressMissingException;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -51,6 +52,7 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->adjustmentFactory = static::$kernel->getContainer()->get('sylius.factory.adjustment');
         $this->deliveryManager = $this->prophesize(DeliveryManager::class);
+        $this->pricingManager = $this->prophesize(PricingManager::class);
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
 
@@ -58,6 +60,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             $this->adjustmentFactory,
             $this->translator->reveal(),
             $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
             $this->promotionRepository->reveal(),
             new NullLogger(),
             new NullLoggingUtils()
@@ -280,7 +283,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->createFromOrder($order)
             ->willReturn($delivery);
 
-        $this->deliveryManager
+        $this->pricingManager
             ->getPrice($delivery, $pricing)
             ->willReturn(750);
 
@@ -310,7 +313,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->createFromOrder($order)
             ->willReturn($delivery);
 
-        $this->deliveryManager
+        $this->pricingManager
             ->getPrice($delivery, $pricing)
             ->willReturn(null);
 
@@ -340,7 +343,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->createFromOrder($order)
             ->willReturn($delivery);
 
-        $this->deliveryManager
+        $this->pricingManager
             ->getPrice($delivery, $pricing)
             ->willReturn(350);
 
@@ -372,7 +375,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->createFromOrder($order)
             ->willThrow(new ShippingAddressMissingException());
 
-        $this->deliveryManager
+        $this->pricingManager
             ->getPrice(
                 Argument::type(Delivery::class),
                 Argument::type(PricingRuleSet::class)
@@ -548,7 +551,7 @@ class OrderFeeProcessorTest extends KernelTestCase
             ->createFromOrder($order)
             ->willThrow(new NoAvailableTimeSlotException());
 
-        $this->deliveryManager
+        $this->pricingManager
             ->getPrice(
                 Argument::type(Delivery::class),
                 Argument::type(PricingRuleSet::class)

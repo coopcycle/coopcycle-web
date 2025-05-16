@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\LocalBusiness;
 
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -10,10 +9,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 trait CatalogTrait
 {
-    #[ApiSubresource]
     protected $products;
 
-    #[ApiSubresource]
     protected $productOptions;
 
     protected $taxons;

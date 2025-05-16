@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { DatePicker, Select } from 'antd'
 import { timePickerProps } from '../../utils/antd'
-import { useFormikContext } from 'formik'
 
 import './DateRangePicker.scss'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
 function getNextRoundedTime() {
   const now = moment()
@@ -53,24 +55,24 @@ function generateTimeSlots(after = null) {
 
 const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   const { t } = useTranslation()
-  const { values, setFieldValue, errors } = useFormikContext()
+  const { taskValues, setFieldValue, errors } = useDeliveryFormFormikContext({
+    taskIndex: index,
+  })
 
-  const task = values.tasks[index]
-
-  useEffect(() => { 
-    if (!values.tasks[index].after && !values.tasks[index].before) {
+  useEffect(() => {
+    if (!taskValues.after && !taskValues.before) {
         const after = getNextRoundedTime()
         const before = after.clone().add(10, 'minutes')
         setFieldValue(`tasks[${index}].after`, after.toISOString(true))
         setFieldValue(`tasks[${index}].before`, before.toISOString(true))
       }
     },
-    [values.tasks[index].after, values.tasks[index].before]
+    [taskValues.after, taskValues.before, index, setFieldValue],
   )
 
   const [isComplexPicker, setIsComplexPicker] = useState(
-    moment(values.tasks[index].after).isBefore(
-      values.tasks[index].before,
+    moment(taskValues.after).isBefore(
+      taskValues.before,
       'day',
     ),
   )
@@ -80,14 +82,14 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
 
 
   useEffect(() => {
-    if (values.tasks[index].after) {
-      setSecondSelectOptions(generateTimeSlots(moment(values.tasks[index].after)))
+    if (taskValues.after) {
+      setSecondSelectOptions(generateTimeSlots(moment(taskValues.after)))
     }
-  }, [values.tasks[index].after])
+  }, [taskValues.after])
 
   const handleDateChange = newValue => {
-    const afterHour = moment(values.tasks[index].after).format('HH:mm:ss')
-    const beforeHour = moment(values.tasks[index].before).format('HH:mm:ss')
+    const afterHour = moment(taskValues.after).format('HH:mm:ss')
+    const beforeHour = moment(taskValues.before).format('HH:mm:ss')
     const newDate = newValue.format('YYYY-MM-DD')
 
     setFieldValue(`tasks[${index}].after`, moment(`${newDate} ${afterHour}`).toISOString(true))
@@ -95,7 +97,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   }
 
   const handleAfterHourChange = newValue => {
-    const date = moment(values.tasks[index].after).format('YYYY-MM-DD')
+    const date = moment(taskValues.after).format('YYYY-MM-DD')
     const newAfter = moment(`${date} ${newValue}:00`)
     const newBefore = newAfter.clone().add(10, 'minutes')
 
@@ -104,7 +106,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   }
 
   const handleBeforeHourChange = newValue => {
-    const date = moment(values.tasks[index].after).format('YYYY-MM-DD')
+    const date = moment(taskValues.after).format('YYYY-MM-DD')
     const newBefore = moment(`${date} ${newValue}:00`)
     setFieldValue(`tasks[${index}].before`, newBefore.toISOString(true))
   }
@@ -117,7 +119,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
   // When we switch back to simple picker, we need to set back after and before at the same day
   const handleSwitchComplexAndSimplePicker = () => {
     if (isComplexPicker === true) {
-      const before = moment(values.tasks[index].after).clone().add(1, 'hours')
+      const before = moment(taskValues.after).clone().add(1, 'hours')
       setFieldValue(`tasks[${index}].before`, before.toISOString(true))
     }
     setIsComplexPicker(!isComplexPicker)
@@ -125,7 +127,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
 
   return isComplexPicker ? (
     <>
-      {task.type === 'DROPOFF' ? (
+      {taskValues.type === 'DROPOFF' ? (
         <div className="mb-2 font-weight-bold">
           {t('DELIVERY_FORM_DROPOFF_HOUR')}
         </div>
@@ -143,7 +145,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
           //     ? [afterValue, beforeValue]
           //     : [defaultAfterValue, defaultBeforeValue]
           // }
-          value={[moment(values.tasks[index].after), moment(values.tasks[index].before)]}
+          value={[moment(taskValues.after), moment(taskValues.before)]}
           onChange={handleComplexPickerDateChange}
           showTime={{
             ...timePickerProps,
@@ -163,7 +165,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
     </>
   ) : (
     <>
-      {task.type === 'DROPOFF' ? (
+      {taskValues.type === 'DROPOFF' ? (
         <div className="mb-2 font-weight-bold">
           {t('DELIVERY_FORM_DROPOFF_HOUR')}
         </div>
@@ -174,19 +176,21 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
       )}
       <div className="picker-container">
         <DatePicker
+          data-testid="date-picker"
           className="picker-container__datepicker mr-2"
           format={format}
           // defaultValue={afterValue || defaultAfterValue}
-          value={moment(values.tasks[index].after)}
+          value={moment(taskValues.after)}
           onChange={newDate => {
             handleDateChange(newDate)
           }}
         />
 
         <Select
+          data-testid={`select-after`}
           className="picker-container__select-left mr-2"
           format={format}
-          value={moment(values.tasks[index].after).format('HH:mm')}
+          value={moment(taskValues.after).format('HH:mm')}
           onChange={newAfterHour => {
             handleAfterHourChange(newAfterHour)
           }}>
@@ -201,9 +205,10 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
         </Select>
 
         <Select
+          data-testid={`select-before`}
           className="picker-container__select-right"
           format={format}
-          value={moment(values.tasks[index].before).format('HH:mm')}
+          value={moment(taskValues.before).format('HH:mm')}
           onChange={newBeforeHour => {
             handleBeforeHourChange(newBeforeHour)
           }}>

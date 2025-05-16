@@ -2,7 +2,6 @@ Feature: Pricing rules set
 
   Scenario: Delete pricing rule set fails if store then succeed if store is deleted
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -13,11 +12,22 @@ Feature: Pricing rules set
     And I add "Accept" header equal to "application/ld+json"
     And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
     Then the response status code should be 400
-    And print last JSON response
     And the response should be in JSON
     And the JSON should match:
     """
-    {"error": [{"entity": "AppBundle\\Entity\\Store", "name": "Acme","id": 1}]}
+    {
+      "@context":"/api/contexts/ConstraintViolationList",
+      "@type":"ConstraintViolationList",
+      "hydra:title":"An error occurred",
+      "hydra:description":"AppBundle\\Entity\\Delivery\\PricingRuleSet is used by AppBundle\\Entity\\Store#1",
+      "violations":[
+        {
+          "propertyPath":"",
+          "message":"AppBundle\\Entity\\Delivery\\PricingRuleSet is used by AppBundle\\Entity\\Store#1",
+          "code":null
+        }
+      ]
+    }
     """
     And the user "admin" sends a "DELETE" request to "/api/stores/1"
     And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
@@ -25,7 +35,6 @@ Feature: Pricing rules set
 
     Scenario: Delete pricing rule set fails if restaurant then succeed if restaurant is deleted
         Given the fixtures files are loaded:
-        | sylius_channels.yml |
         | products.yml          |
         | restaurants.yml          |
         And the user "admin" is loaded:
@@ -38,18 +47,21 @@ Feature: Pricing rules set
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
         Then the response status code should be 400
         And the response should be in JSON
-        And the JSON node "error" should exist
         And the JSON should match:
         """
-         {
-            "error": [
-                {
-                    "entity": "AppBundle\\Entity\\LocalBusiness",
-                    "name": "Good Old Times with variables pricing",
-                    "id": 7
-                }
-            ]
-        }       
+        {
+          "@context":"/api/contexts/ConstraintViolationList",
+          "@type":"ConstraintViolationList",
+          "hydra:title":"An error occurred",
+          "hydra:description":"AppBundle\\Entity\\Delivery\\PricingRuleSet is used by AppBundle\\Entity\\Contract#4",
+          "violations":[
+            {
+              "propertyPath":"",
+              "message":"AppBundle\\Entity\\Delivery\\PricingRuleSet is used by AppBundle\\Entity\\Contract#4",
+              "code":null
+            }
+          ]
+        }
         """
         And the user "admin" sends a "DELETE" request to "/api/restaurants/7"
         And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
@@ -57,7 +69,6 @@ Feature: Pricing rules set
 
   Scenario: Get the applications of a pricing rule set
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | pricing_rule_set.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
@@ -73,7 +84,7 @@ Feature: Pricing rules set
     """
       {
           "@context": "/api/contexts/PricingRuleSet",
-          "@id": "/api/pricing_rule_sets",
+          "@id": "/api/pricing_rule_sets/1/applications",
           "@type": "hydra:Collection",
           "hydra:member": [
               {

@@ -64,8 +64,6 @@ checkout.user_with_same_email_exists: Una cuenta asociada con ese correo electro
   ya existe
 order.shippingTimeRange.notAvailable: No esta disponible en estos momentos
 pricing_rule.expression.syntax_error: Error de sintax en la expresión "%expression%"
-store.multi_drop.conflict: No se puede tener activado crear pedidos y permitido entregas
-  multiples a la misma vez
 order.adjustments.unexpectedCount: Número inesperado de "%type%" ajustes
 siret.head_office: Debe facilitar un número SIRET de establecimiento, no de sede social.
 delivery.check.outOfBounds: Su solicitud está fuera de la zona aceptada o demasiado
@@ -75,3 +73,4 @@ googlemaps.api_key.invalid: El Google Maps API Key no es válido. %error%
 loopeat.insufficient_stock: Cantidad insuficiente de envases reutilizables parar «
   %name% »
 siret.invalid: Numero SIRET invalido
+form.package_set.duplicatePackageNames: Los nombres de los paquetes deben ser únicos en un conjunto de paquetes

@@ -1,6 +1,6 @@
-# 'excl_setup' means that the file does not include the 'setup.yml' file; see the 'setup.yml' file for more information.
+# 'excl_setup' means that the file does not include the 'setup_default.yml' file; see the 'setup_default.yml' file for more information.
 include:
-  - admin_user.yml
+  - user_admin.yml
   - user_courier.yml
   - addresses.yml
   - packages.yml
@@ -63,6 +63,8 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
     packageSet: '@package_set_1'
     __calls:
       - addAddress: [ "@warehouse" ]
@@ -74,6 +76,8 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
     timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
     __calls:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
@@ -92,6 +96,8 @@ AppBundle\Entity\Store:
     address: "@address_1"
     enabled: true
     timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
     __calls:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
@@ -102,6 +108,8 @@ AppBundle\Entity\Store:
     enabled: true
     pricingRuleSet: '@pricing_rule_set_impossible'
     timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
     __calls:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]

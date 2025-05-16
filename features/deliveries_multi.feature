@@ -2,7 +2,6 @@ Feature: Multi-step deliveries
 
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -110,7 +109,6 @@ Feature: Multi-step deliveries
 
   Scenario: Create delivery with pickup & dropoff + packages with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -248,7 +246,6 @@ Feature: Multi-step deliveries
 
   Scenario: Create delivery with multiple pickups & 1 dropoff + packages with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -382,7 +379,6 @@ Feature: Multi-step deliveries
 
   Scenario: Create delivery with multiple pickups & 1 dropoff, without time slot for pickups
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -514,7 +510,6 @@ Feature: Multi-step deliveries
 
   Scenario: Suggest delivery optimizations with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -556,9 +551,7 @@ Feature: Multi-step deliveries
           "@id": @string@,
           "suggestions": [
             {
-              "@context": {"@*@": "@*@"},
               "@type": "OptimizationSuggestion",
-              "@id": @string@,
               "gain": {
                 "type": "distance",
                 "amount": @integer@

@@ -22,9 +22,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-
-
-
 class SyncTransportersCommandTest extends KernelTestCase {
 
     use ProphecyTrait;
@@ -88,6 +85,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         // LOAD AND PERSIST FIXTURES
         $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
             __DIR__.'/../../../features/fixtures/ORM/stores.yml'
         ]);
 
@@ -517,7 +515,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
 
         $this->assertEquals(
-            '64 Rue Alexandre Dumas, 75011 Paris',
+            'Rue Alexandre Dumas 64, 75011 Paris',
             $dropoff->getAddress()->getStreetaddress()
         );
         $this->assertEquals(new GeoCoordinates(48.854034, 2.395023), $dropoff->getAddress()->getGeo());

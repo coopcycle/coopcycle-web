@@ -2,7 +2,10 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use Gedmo\Timestampable\Traits\Timestampable;
@@ -12,7 +15,13 @@ use League\Bundle\OAuth2ServerBundle\Model\Client;
 /**
  * @see https://schema.org/SoftwareApplication Documentation on Schema.org
  */
-#[ApiResource(iri: 'http://schema.org/SoftwareApplication', itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_ADMIN')"]], collectionOperations: [], attributes: ['normalization_context' => ['groups' => ['api_app']]])]
+#[ApiResource(
+    types: ['http://schema.org/SoftwareApplication'],
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')')
+    ],
+    normalizationContext: ['groups' => ['api_app']]
+)]
 class ApiApp
 {
     use Timestampable;

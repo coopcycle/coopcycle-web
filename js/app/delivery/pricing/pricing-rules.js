@@ -1,10 +1,11 @@
 import React, { StrictMode } from 'react'
-import { render } from '../../utils/react'
 import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
-import { I18nextProvider } from 'react-i18next'
+import { ConfigProvider } from 'antd'
+import { Provider } from 'react-redux'
 
 import './pricing-rules.scss'
+
 import {
   parsePriceAST,
   PriceRange,
@@ -12,7 +13,7 @@ import {
   PricePerPackage,
   PercentagePrice,
 } from './pricing-rule-parser'
-import i18n from '../../i18n'
+import { antdLocale } from '../../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
 import AddRulePerDelivery from './components/AddRulePerDelivery'
 import RulePicker from './components/RulePicker'
@@ -23,6 +24,9 @@ import AddRulePerTask from './components/AddRulePerTask'
 import { PriceChoice } from './components/PriceChoice'
 import PercentageEditor from './components/PercentageEditor'
 import Position from './components/Position'
+import { accountSlice } from '../../entities/account/reduxSlice'
+import { createStoreFromPreloadedState } from './redux/store'
+import { pricingSlice } from './redux/pricingSlice'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -31,6 +35,31 @@ const wrapper = document.getElementById('rule-set')
 
 const zones = JSON.parse(wrapper.dataset.zones)
 const packages = JSON.parse(wrapper.dataset.packages)
+
+const buildInitialState = () => {
+  return {
+    [accountSlice.name]: accountSlice.getInitialState(),
+    [pricingSlice.name]: {
+      ...pricingSlice.getInitialState(),
+      zones: zones,
+      packages: packages,
+    }
+  }
+}
+
+const store = createStoreFromPreloadedState(buildInitialState())
+
+const RenderRoot = ({children}) => {
+  return (
+    <StrictMode>
+      <Provider store={store}>
+        <ConfigProvider locale={antdLocale}>
+          {children}
+        </ConfigProvider>
+      </Provider>
+    </StrictMode>
+  )
+}
 
 const onListChange = () => {
   if ($('.delivery-pricing-ruleset > li').length === 0) {
@@ -43,7 +72,12 @@ const onListChange = () => {
     $(el).find('.delivery-pricing-ruleset__rule__position').val(index)
 
     const rulePositionContainer = $(el).find('.delivery-pricing-ruleset__rule__position__container')
-    render(<Position position={index} />, rulePositionContainer[0])
+    const root = createRoot(rulePositionContainer[0])
+    root.render(
+      <RenderRoot>
+        <Position position={index} />
+      </RenderRoot>
+    )
 
     $(el).attr('data-testid', `pricing-rule-${index}`)
   })
@@ -62,12 +96,14 @@ function renderPriceTypeItem($input, editorRoot, priceType, defaultValue) {
       $input.addClass('d-none')
 
       editorRoot.render(
-        <PercentageEditor
-          defaultValue={defaultValue}
-          onChange={({ percentage }) => {
-            $input.val(`price_percentage(${percentage})`)
-          }}
-        />,
+        <RenderRoot>
+          <PercentageEditor
+            defaultValue={defaultValue}
+            onChange={({ percentage }) => {
+              $input.val(`price_percentage(${percentage})`)
+            }}
+          />
+        </RenderRoot>,
       )
 
       break
@@ -75,14 +111,16 @@ function renderPriceTypeItem($input, editorRoot, priceType, defaultValue) {
       $input.addClass('d-none')
 
       editorRoot.render(
-        <PriceRangeEditor
-          defaultValue={defaultValue}
-          onChange={({ attribute, price, step, threshold }) => {
-            $input.val(
-              `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
-            )
-          }}
-        />,
+        <RenderRoot>
+          <PriceRangeEditor
+            defaultValue={defaultValue}
+            onChange={({ attribute, price, step, threshold }) => {
+              $input.val(
+                `price_range(${attribute}, ${price}, ${step}, ${threshold})`,
+              )
+            }}
+          />
+        </RenderRoot>,
       )
 
       break
@@ -90,16 +128,19 @@ function renderPriceTypeItem($input, editorRoot, priceType, defaultValue) {
       $input.addClass('d-none')
 
       editorRoot.render(
-        <PricePerPackageEditor
-          defaultValue={defaultValue}
-          onChange={({ packageName, unitPrice, offset, discountPrice }) => {
-            $input.val(
-              `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
-            )
-          }}
-          packages={packages}
-        />,
+        <RenderRoot>
+          <PricePerPackageEditor
+            defaultValue={defaultValue}
+            onChange={({ packageName, unitPrice, offset, discountPrice }) => {
+              $input.val(
+                `price_per_package(packages, "${packageName}", ${unitPrice}, ${offset}, ${discountPrice})`,
+              )
+            }}
+            packages={packages}
+          />
+        </RenderRoot>,
       )
+
       break
     case 'fixed':
     default:
@@ -141,16 +182,16 @@ const renderPriceChoice = item => {
   }
   const editorRoot = createRoot(editorContainer[0])
 
-  render(
-    <I18nextProvider i18n={i18n}>
+  const priceChoiceRoot = createRoot($label[0])
+  priceChoiceRoot.render(
+    <RenderRoot>
       <PriceChoice
         defaultValue={priceType}
         onChange={value => {
           renderPriceTypeItem($input, editorRoot, value, price)
         }}
       />
-    </I18nextProvider>,
-    $label[0],
+    </RenderRoot>
   )
 
   renderPriceTypeItem($input, editorRoot, priceType, price)
@@ -160,7 +201,12 @@ function hydrate(item, { ruleTarget, expression, expressionAST }) {
   const ruleTargetContainer = $(item).find(
     '.delivery-pricing-ruleset__rule__target__container',
   )
-  render(<PricingRuleTarget target={ruleTarget} />, ruleTargetContainer[0])
+  const ruleTargetRoot = createRoot(ruleTargetContainer[0])
+  ruleTargetRoot.render(
+    <RenderRoot>
+      <PricingRuleTarget target={ruleTarget} />
+    </RenderRoot>
+  )
 
   let $expressionInput = $(item).find(
     '.delivery-pricing-ruleset__rule__expression input',
@@ -168,16 +214,16 @@ function hydrate(item, { ruleTarget, expression, expressionAST }) {
   function onExpressionChange(newExpression) {
     $expressionInput.val(newExpression)
   }
-  render(
-    <RulePicker
-      ruleTarget={ruleTarget}
-      zones={zones}
-      packages={packages}
-      expression={expression}
-      expressionAST={expressionAST}
-      onExpressionChange={onExpressionChange}
-    />,
-    $(item).find('.rule-expression-container')[0],
+  const rulePickerRoot = createRoot($(item).find('.rule-expression-container')[0])
+  rulePickerRoot.render(
+    <RenderRoot>
+      <RulePicker
+        ruleTarget={ruleTarget}
+        expression={expression}
+        expressionAST={expressionAST}
+        onExpressionChange={onExpressionChange}
+      />
+    </RenderRoot>
   )
 
   const priceEl = $(item).find('.delivery-pricing-ruleset__rule__price')
@@ -276,7 +322,7 @@ function hasLegacyRules() {
 $('#pricing-rule-set-header').each(function (index, item) {
   const root = createRoot(item)
   root.render(
-    <StrictMode>
+    <RenderRoot>
       {hasLegacyRules() && (
         <LegacyPricingRulesWarning
           migrateToTarget={ruleTarget => {
@@ -285,17 +331,19 @@ $('#pricing-rule-set-header').each(function (index, item) {
           }}
         />
       )}
-    </StrictMode>,
+    </RenderRoot>,
   )
 })
 
 $('#pricing-rule-set-footer').each(function (index, item) {
-  render(
-    <div className="mb-5 d-flex justify-content-end gap-4">
-      <AddRulePerDelivery onAddRule={addPricingRule} />
-      <AddRulePerTask onAddRule={addPricingRule} />
-    </div>,
-    item,
+  const root = createRoot(item)
+  root.render(
+    <RenderRoot>
+      <div className="mb-5 d-flex justify-content-end gap-4">
+        <AddRulePerTask onAddRule={addPricingRule} />
+        <AddRulePerDelivery onAddRule={addPricingRule} />
+      </div>
+    </RenderRoot>,
   )
 })
 

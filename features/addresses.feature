@@ -2,7 +2,6 @@ Feature: Addresses
 
   Scenario: Not authorized to list addresses
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -15,7 +14,6 @@ Feature: Addresses
 
   Scenario: Not authorized to retrieve address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -28,7 +26,6 @@ Feature: Addresses
 
 Scenario: Ability to PATCH an address as admin
   Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | stores.yml          |
   And the user "bob" is loaded:
     | email      | bob@coopcycle.org |

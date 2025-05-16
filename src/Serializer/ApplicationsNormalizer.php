@@ -2,6 +2,7 @@
 
 namespace AppBundle\Serializer;
 
+use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
@@ -22,9 +23,9 @@ class ApplicationsNormalizer implements NormalizerInterface
     public function normalize($object, $format = null, array $context = array())
     {
         return [
-            'entity' => $this->getClass($object),
-            'name' => $this->getName($object),
-            'id' => $this->getId($object)
+            'entity' => $this->getClass($object->resource),
+            'name' => $this->getName($object->resource),
+            'id' => $this->getId($object->resource)
         ];
     }
 
@@ -57,7 +58,6 @@ class ApplicationsNormalizer implements NormalizerInterface
 
     public function supportsNormalization($object, $format = null, array $context = [])
     {
-        return $this->normalizer->supportsNormalization($object, $format) &&
-        (array_key_exists('item_operation_name', $context) && $context['item_operation_name'] =='applications');
+        return $this->normalizer->supportsNormalization($object, $format) && $object instanceof ResourceApplication;
     }
 }

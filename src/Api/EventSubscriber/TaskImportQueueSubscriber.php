@@ -5,7 +5,7 @@ namespace AppBundle\Api\EventSubscriber;
 use AppBundle\Entity\Task\ImportQueue;
 use AppBundle\Message\ImportTasks;
 use AppBundle\Security\TokenStoreExtractor;
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

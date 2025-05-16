@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\Message\Webhook;
@@ -33,7 +33,7 @@ class TriggerWebhook
 
         $this->messageBus->dispatch(
             new Webhook(
-                $this->iriConverter->getIriFromItem($order),
+                $this->iriConverter->getIriFromResource($order),
                 $this->getEventName($event)
             )
         );

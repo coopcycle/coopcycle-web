@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\MessageHandler\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\MessageHandler\Order\SendRemotePushNotification;
 use AppBundle\Entity\User;

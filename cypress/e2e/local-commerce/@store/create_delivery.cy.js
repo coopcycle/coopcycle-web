@@ -1,24 +1,14 @@
 context('Delivery (role: store)', () => {
   beforeEach(() => {
-    const prefix = Cypress.env('COMMAND_PREFIX')
-
-    let cmd =
-      'bin/console coopcycle:fixtures:load -f cypress/fixtures/stores.yml --env test'
-    if (prefix) {
-      cmd = `${prefix} ${cmd}`
-    }
-
-    cy.exec(cmd)
+    cy.loadFixtures('stores.yml')
   })
 
   it('create delivery', () => {
     cy.intercept('/api/routing/route/*').as('apiRoutingRoute')
 
-    cy.visit('/login')
-
     cy.login('store_1', 'store_1')
 
-    cy.location('pathname').should('eq', '/dashboard')
+    cy.urlmatch(/\/dashboard$/)
 
     cy.get('a').contains('Créer une livraison').click()
 
@@ -46,8 +36,8 @@ context('Delivery (role: store)', () => {
       'Dropoff comments'
     )
 
-    cy.get(`[name="tasks[${1}].weight"]`).clear()
-    cy.get(`[name="tasks[${1}].weight"]`).type(2.5)
+    cy.get(`[name="tasks[1].weight"]`).clear()
+    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
@@ -57,12 +47,9 @@ context('Delivery (role: store)', () => {
       .invoke('text')
       .should('contains', 'Distance : 1.50 kms')
 
-      cy.get('button[type="submit"]').click()
+    cy.get('button[type="submit"]').click()
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/dashboard\/stores\/[0-9]+\/deliveries$/,
-    )
+    cy.urlmatch(/\/dashboard\/stores\/[0-9]+\/deliveries$/)
     cy.get('[data-testid=delivery__list_item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

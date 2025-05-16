@@ -6,11 +6,7 @@ describe(
       describe(` (${ customerType })`, () => {
 
         beforeEach(() => {
-
-          cy.symfonyConsole(
-            'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
-
-          cy.visit('/login')
+          cy.loadFixtures('checkout.yml')
           cy.login('bob', '12345678')
         })
 
@@ -67,7 +63,7 @@ describe(
 
                 cy.get('.order-button:visible').click()
 
-                cy.location('pathname').should('eq', '/order/')
+                cy.urlmatch(/\/order\/$/)
 
                 cy.get('input[name="checkout_address[customer][fullName]"]')
                   .type('John Doe')
@@ -105,7 +101,7 @@ describe(
 
                 cy.contains('Commander').click()
 
-                cy.location('pathname').should('eq', '/order/payment')
+                cy.urlmatch(/\/order\/payment$/)
               })
           })
       })

@@ -1,42 +1,42 @@
 // override: false means that we won't override env vars from the command line
 require('dotenv').config({override: false})
+const { defineConfig } = require('cypress')
+const webpackConfig = require('./webpack.config')
+const env = process.env
 
-let env = process.env
-
-module.exports = {
+module.exports = defineConfig({
   chromeWebSecurity: false,
 
   env: {
     ...env,
     COMMAND_PREFIX: "docker compose exec -T php",
-    coverage: false,
+    coverage: false
   },
 
-  nodeVersion: "system",
   viewportWidth: 1600,
+
+  defaultCommandTimeout: 10000,
 
   retries: {
     // Configure retry attempts for `cypress run`
-    runMode: 2,
+    runMode: 9,
     // Configure retry attempts for `cypress open`
-    openMode: 0,
+    openMode: 0
   },
 
   e2e: {
-    // We've imported your old cypress plugins here.
-    // You may want to clean this up later by importing these.
-    setupNodeEvents(on, config) {
-      return require("./cypress/plugins/index.js")(on, config);
-    },
     baseUrl: "http://localhost:9080",
     experimentalStudio: true,
+    experimentalMemoryManagement: true,
+    experimentalSourceRewriting: true
   },
 
   component: {
-    setupNodeEvents(on, config) {},
     devServer: {
-      framework: "react",
-      bundler: "webpack",
-    },
-  },
-};
+      framework: 'react',
+      bundler: 'webpack',
+      // optionally pass in webpack config
+      webpackConfig
+    }
+  }
+})

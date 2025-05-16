@@ -2,7 +2,6 @@ Feature: Carts
 
   Scenario: Can't update order when state is cart
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -41,7 +40,6 @@ Feature: Carts
 
   Scenario: Update cart restaurant
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -103,7 +101,6 @@ Feature: Carts
 
   Scenario: Update cart shipping address
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -183,7 +180,6 @@ Feature: Carts
 
   Scenario: Update cart shipping address (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -263,7 +259,6 @@ Feature: Carts
 
   Scenario: Update cart shipping time (legacy)
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -328,7 +323,6 @@ Feature: Carts
 
   Scenario: Update cart shipping time
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -396,7 +390,6 @@ Feature: Carts
 
   Scenario: Clear cart shipping time
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -458,7 +451,6 @@ Feature: Carts
 
   Scenario: Add promotion coupon (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -527,7 +519,6 @@ Feature: Carts
 
   Scenario: Enable reusable packaging (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -589,7 +580,6 @@ Feature: Carts
 
   Scenario: Add items to cart (legacy options payload)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -647,14 +637,12 @@ Feature: Carts
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":@integer@
                 }
@@ -699,7 +687,6 @@ Feature: Carts
 
   Scenario: Add items to cart
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -757,14 +744,12 @@ Feature: Carts
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":@integer@
                 }
@@ -809,7 +794,6 @@ Feature: Carts
 
   Scenario: Add items to cart (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -867,14 +851,12 @@ Feature: Carts
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":@integer@
                 }
@@ -892,7 +874,7 @@ Feature: Carts
         "adjustments":{
           "delivery":[
             {
-              "id":4,
+              "id": @integer@,
               "label":"Livraison",
               "amount":350
             }
@@ -902,7 +884,7 @@ Feature: Carts
           "reusable_packaging":[],
           "tax":[
             {
-              "id":@integer@,
+              "id": @integer@,
               "label":"TVA 20%",
               "amount":@integer@
             }
@@ -919,7 +901,6 @@ Feature: Carts
 
   Scenario: Obtain reusable packaging potential action (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml    |
       | payment_methods.yml    |
       | products.yml           |
       | restaurants.yml        |
@@ -985,7 +966,6 @@ Feature: Carts
 
   Scenario: Update cart items quantity
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1063,7 +1043,6 @@ Feature: Carts
 
   Scenario: Update cart items quantity (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1140,7 +1119,6 @@ Feature: Carts
 
   Scenario: Delete cart item
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1201,7 +1179,6 @@ Feature: Carts
 
   Scenario: Delete cart item (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1261,7 +1238,6 @@ Feature: Carts
 
   Scenario: Start cart session
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1278,9 +1254,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1317,9 +1295,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1345,7 +1325,6 @@ Feature: Carts
 
   Scenario: Start cart session as an authenticated user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1367,9 +1346,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":"/api/customers/1",
@@ -1406,9 +1387,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":"/api/customers/1",
@@ -1434,7 +1417,6 @@ Feature: Carts
 
   Scenario: Start cart session (with collection fulfillment method)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1451,9 +1433,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1479,7 +1463,6 @@ Feature: Carts
 
   Scenario: Wrong cart session token
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1510,7 +1493,6 @@ Feature: Carts
 
   Scenario: Update cart shipping address with expired session
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1548,7 +1530,6 @@ Feature: Carts
 
   Scenario: Assign cart to customer
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1613,7 +1594,6 @@ Feature: Carts
 
   Scenario: Can't assign cart to customer
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1640,7 +1620,6 @@ Feature: Carts
 
   Scenario: Assign cart to guest customer
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1662,9 +1641,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1751,9 +1732,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/2",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1840,9 +1823,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/3",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1919,7 +1904,6 @@ Feature: Carts
 
   Scenario: Update cart with invalid phone number
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1967,7 +1951,6 @@ Feature: Carts
 
   Scenario: Update cart fulfillment method
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2023,7 +2006,6 @@ Feature: Carts
 
   Scenario: Update cart fulfillment method (not enabled)
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2063,7 +2045,6 @@ Feature: Carts
   Scenario: Get cart timing (with session)
     Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2105,7 +2086,6 @@ Feature: Carts
 
   Scenario: Validate cart (with session)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2145,7 +2125,6 @@ Feature: Carts
 
   Scenario: Start cart session with address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2171,9 +2150,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -2196,7 +2177,6 @@ Feature: Carts
 
   Scenario: Start cart session as an authenticated user with existing address not belonging to user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2223,9 +2203,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":"/api/customers/1",
@@ -2248,7 +2230,6 @@ Feature: Carts
 
   Scenario: Start cart session as an authenticated user with existing address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2275,9 +2256,11 @@ Feature: Carts
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":"/api/customers/1",
@@ -2300,7 +2283,6 @@ Feature: Carts
 
   Scenario: Don't allow negative tip amount
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2323,7 +2305,6 @@ Feature: Carts
 
   Scenario: Select Edenred payment method
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -2351,17 +2332,15 @@ Feature: Carts
       """
       {
         "@context": {"@*@": "@*@"},
-        "@type": "ConfigurePaymentOutput",
+        "@type": "http://schema.org/Order",
         "@id": "@string@",
         "payments": [
           {
             "@context": {"@*@": "@*@"},
             "@type": "@string@",
-            "@id": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
               "@type": "@string@",
-              "@id": "@string@",
               "code": "CARD"
             },
             "amount": @integer@
@@ -2369,11 +2348,9 @@ Feature: Carts
           {
             "@context": {"@*@": "@*@"},
             "@type": "@string@",
-            "@id": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
               "@type": "@string@",
-              "@id": "@string@",
               "code": "EDENRED"
             },
             "amount": @integer@
@@ -2382,3 +2359,30 @@ Feature: Carts
         "redirectUrl":"@string@||@null@"
       }
       """
+
+  Scenario: Update Edenred credentials
+    Given the fixtures files are loaded:
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | telephone  | 0033612345678     |
+    Given the user "bob" has created a cart at restaurant with id "1"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/orders/1/edenred_credentials" with body:
+      """
+      {
+        "accessToken": "123456",
+        "refreshToken": "123456"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON

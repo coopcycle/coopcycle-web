@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Webhook;
@@ -36,7 +36,7 @@ class WebhookHandler
 
     public function __invoke(WebhookMessage $message)
     {
-        $object = $this->iriConverter->getItemFromIri($message->getObject());
+        $object = $this->iriConverter->getResourceFromIri($message->getObject());
 
         if (!$object instanceof Delivery && !$object instanceof OrderInterface) {
             return;

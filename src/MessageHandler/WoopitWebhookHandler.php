@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\WoopitWebhook;
 use BenjaminFavre\OAuthHttpClient\OAuthHttpClient;
@@ -42,7 +42,7 @@ class WoopitWebhookHandler
 
     public function __invoke(WoopitWebhook $message)
     {
-        $delivery = $this->iriConverter->getItemFromIri($message->getObject());
+        $delivery = $this->iriConverter->getResourceFromIri($message->getObject());
 
         if (!$delivery instanceof Delivery) {
             return;

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ObjectNormalizer;
+use ApiPlatform\JsonLd\Serializer\ObjectNormalizer;
 use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 

@@ -1,104 +1,83 @@
-import React, { useEffect, useState } from 'react'
-import { useFormikContext, Field } from 'formik'
+import React, { useMemo, useState } from 'react'
+import { Field } from 'formik'
 import AddressBookNew from './AddressBook'
-import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import { Input, Button } from 'antd'
-import DateRangePicker from './DateRangePicker'
 import Packages from './Packages'
 import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
-import Spinner from '../core/Spinner'
-import TimeSlotPicker from './TimeSlotPicker'
 
 import './Task.scss'
 import TagsSelect from '../TagsSelect'
+import { TaskDateTime } from './TaskDateTime'
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
+import {
+  useGetStorePackagesQuery,
+  useGetStoreTimeSlotsQuery,
+} from '../../api/slice'
 
-const renderTimeSlotPicker = ({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => 
-  isDispatcher ? 
-    (<SwitchTimeSlotFreePicker
-      storeDeliveryInfos={storeDeliveryInfos}
-      index={index}
-      format={format}
-      isTimeSlotSelect={isTimeSlotSelect}
-      setIsTimeSlotSelect={setIsTimeSlotSelect}
-      isDispatcher={isDispatcher}
-      timeSlotLabels={timeSlotLabels}
-    />)
-  :  (<TimeSlotPicker
-        storeDeliveryInfos={storeDeliveryInfos}
-        index={index}
-        timeSlotLabels={timeSlotLabels}
-      />)
-
-
-const renderDatePart = ({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) => {
-    if (!Array.isArray(storeDeliveryInfos.timeSlots)) { // not loaded yet
-      return <Spinner />
-    } else if (storeDeliveryInfos.timeSlots.length > 0 && !isEdit) {
-      return renderTimeSlotPicker({isDispatcher, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels})
-    } else {
-      return <DateRangePicker format={format} index={index} isDispatcher={isDispatcher} />
-    }
-}
 
 export default ({
+  isDispatcher,
+  storeNodeId,
   addresses,
-  storeId,
   index,
   storeDeliveryInfos,
-  isEdit,
   onRemove,
   showRemoveButton,
-  packages,
-  isDispatcher,
   tags,
-  timeSlotLabels
 }) => {
   const { t } = useTranslation()
 
-  const { values, setFieldValue } = useFormikContext()
-  const task = values.tasks[index]
+  const {
+    values,
+    taskValues,
+    isCreateOrderMode,
+    setFieldValue,
+  } = useDeliveryFormFormikContext({
+    taskIndex: index,
+  })
 
-  const format = 'LL'
+  const [showLess, setShowLess] = useState(
+    taskValues.type === 'DROPOFF' && values.tasks.length > 2,
+  )
 
-  const [showLess, setShowLess] = useState(task.type === 'DROPOFF' && values.tasks.length > 2)
-  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
+  const { data: timeSlotsData } = useGetStoreTimeSlotsQuery(storeNodeId)
+  const { data: packagesData } = useGetStorePackagesQuery(storeNodeId)
 
-  useEffect(() => {
-    if (
-      isTimeSlotSelect &&
-      storeDeliveryInfos.timeSlots?.length > 0 &&
-      !isEdit
-    ) {
-      setFieldValue(`tasks[${index}].after`, null)
-      setFieldValue(`tasks[${index}].before`, null)
-    } else {
-      setFieldValue(`tasks[${index}].timeSlot`, null)
+  const timeSlotLabels = useMemo(() => {
+    if (timeSlotsData) {
+      return timeSlotsData['hydra:member']
     }
-  }, [isTimeSlotSelect, storeDeliveryInfos])
+    return []
+  }, [timeSlotsData])
+
+  const packages = useMemo(() => {
+    if (packagesData) {
+      return packagesData['hydra:member']
+    }
+    return null
+  }, [packagesData])
 
   return (
-    <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
+    <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
       <div
         className={
-          task.type === 'PICKUP'
+          taskValues.type === 'PICKUP'
             ? 'task__header task__header--pickup'
             : 'task__header task__header--dropoff'
         }
-        onClick={() => setShowLess(!showLess)}
-      >
-        {task.type === 'PICKUP' ? (
+        onClick={() => setShowLess(!showLess)}>
+        {taskValues.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
           <i className="fa fa-arrow-down"></i>
         )}
         <h4 className="task__header__title ml-2 mb-4">
-          { task.address?.streetAddress ?
-              task.address.streetAddress :
-              task.type === 'PICKUP' ?
-                t('DELIVERY_FORM_PICKUP_INFORMATIONS') :
-                t('DELIVERY_FORM_DROPOFF_INFORMATIONS')
-          }
+          {taskValues.address?.streetAddress
+            ? taskValues.address.streetAddress
+            : taskValues.type === 'PICKUP'
+              ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
+              : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
         </h4>
 
         <button type="button" className="task__button">
@@ -111,7 +90,7 @@ export default ({
             }></i>
         </button>
 
-        { showRemoveButton && (
+        {showRemoveButton && (
           <i
             className="fa fa-trash cursor-pointer"
             onClick={() => onRemove(index)}
@@ -126,19 +105,26 @@ export default ({
           addresses={addresses}
           index={index}
           storeDeliveryInfos={storeDeliveryInfos}
-          shallPrefillAddress={Boolean(task.type === 'PICKUP' && !isEdit && storeDeliveryInfos.prefillPickupAddress)}
+          shallPrefillAddress={Boolean(
+            taskValues.type === 'PICKUP' &&
+              isCreateOrderMode &&
+              storeDeliveryInfos.prefillPickupAddress,
+          )}
         />
 
-        { renderDatePart({isDispatcher, isEdit, storeDeliveryInfos, index,  format, isTimeSlotSelect, setIsTimeSlotSelect, timeSlotLabels}) }
+        <TaskDateTime
+          isDispatcher={isDispatcher}
+          storeNodeId={storeNodeId}
+          timeSlots={timeSlotLabels}
+          index={index}
+        />
 
-        {task.type === 'DROPOFF' ? (
+        {taskValues.type === 'DROPOFF' ? (
           <div className="mt-4">
             {packages && packages.length ? (
               <Packages
-                storeId={storeId}
                 index={index}
                 packages={packages}
-                isEdit={isEdit}
               />
             ) : null}
             <TotalWeight index={index} />
@@ -163,18 +149,20 @@ export default ({
         {isDispatcher && (
           <div className="mt-4 mb-4">
             <div className="tags__title block mb-2 font-weight-bold">Tags</div>
-            <TagsSelect
-              tags={tags}
-              defaultValue={values.tasks[index].tags || []}
-              onChange={values => {
-                const tags = values.map(tag => tag.value)
-                setFieldValue(`tasks[${index}].tags`, tags)
-              }}
-            />
+            <div data-testid="tags-select">
+              <TagsSelect
+                tags={tags}
+                defaultValue={values.tasks[index].tags || []}
+                onChange={values => {
+                  const tags = values.map(tag => tag.value)
+                  setFieldValue(`tasks[${index}].tags`, tags)
+                }}
+              />
+            </div>
           </div>
         )}
       </div>
-      {task.type === 'DROPOFF' && (
+      {taskValues.type === 'DROPOFF' && (
         <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
           {showRemoveButton && (
             <Button

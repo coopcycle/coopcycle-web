@@ -2,7 +2,6 @@ Feature: Orders
 
   Scenario: Not authorized to list orders
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -16,7 +15,6 @@ Feature: Orders
 
   Scenario: Not authorized to retrieve order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -35,7 +33,6 @@ Feature: Orders
 
   Scenario: User can retrieve own orders
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -51,7 +48,6 @@ Feature: Orders
 
   Scenario: Restaurant owner can retrieve order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -73,7 +69,6 @@ Feature: Orders
   Scenario: Create order (legacy options payload)
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -141,7 +136,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -161,7 +157,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -248,7 +245,6 @@ Feature: Orders
   Scenario: Create order
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -316,7 +312,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -336,7 +333,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -423,7 +421,6 @@ Feature: Orders
   Scenario: Calculate order timing
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -485,7 +482,6 @@ Feature: Orders
   Scenario: Get order timing
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -525,7 +521,6 @@ Feature: Orders
   Scenario: Get order timing with holidays
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -566,7 +561,6 @@ Feature: Orders
   Scenario: Create order with address
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -597,7 +591,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          }
+          },
+          "contactName": null
         },
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
@@ -638,7 +633,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "isOpen":false,
@@ -658,7 +654,8 @@ Feature: Orders
         "streetAddress":"190 Rue de Rivoli, Paris",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -721,7 +718,6 @@ Feature: Orders
   Scenario: Create order without shipping date
     Given the current time is "2017-09-02 13:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -752,7 +748,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          }
+          },
+          "contactName": null
         },
         "items": [{
           "product": "PIZZA",
@@ -802,7 +799,8 @@ Feature: Orders
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
             "telephone": null,
-            "description": null
+            "description": null,
+            "contactName": null
           },
           "telephone":"+33612345678",
           "isOpen":true,
@@ -821,7 +819,8 @@ Feature: Orders
           "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "items":[
           {
@@ -883,7 +882,6 @@ Feature: Orders
   Scenario: Create order with missing additional product option
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -946,7 +944,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "telephone":null,
         "name":null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -963,14 +962,12 @@ Feature: Orders
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":@string@,
                 "label":"1 × Pepperoni",
                 "amount":0
               }
             ],
             "tax":[
               {
-                "id":@string@,
                 "label":"TVA 10%",
                 "amount":82
               }
@@ -991,14 +988,12 @@ Feature: Orders
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":@string@,
                 "label":"1 × Gluten free",
                 "amount":0
               }
             ],
             "tax":[
               {
-                "id":@string@,
                 "label":"TVA 10%",
                 "amount":127
               }
@@ -1039,7 +1034,6 @@ Feature: Orders
   Scenario: Refuse order when restaurant is closed
     Given the current time is "2017-09-02 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1094,7 +1088,6 @@ Feature: Orders
   Scenario: Delivery exceeds max distance
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1149,7 +1142,6 @@ Feature: Orders
   Scenario: Disabled product is ignored
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1223,14 +1215,12 @@ Feature: Orders
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":245
                 }
@@ -1267,7 +1257,6 @@ Feature: Orders
   Scenario: Shipping date is in the past
     Given the current time is "2017-09-03 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1322,7 +1311,6 @@ Feature: Orders
   Scenario: Amount is not sufficient
     Given the current time is "2017-09-02 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1372,7 +1360,6 @@ Feature: Orders
 
   Scenario: Validate cart
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1413,7 +1400,6 @@ Feature: Orders
 
   Scenario: Get cart payment details
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1450,7 +1436,6 @@ Feature: Orders
 
   Scenario: Get cart payment methods for guest
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1477,9 +1462,11 @@ Feature: Orders
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1521,7 +1508,6 @@ Feature: Orders
 
   Scenario: Get cart payment details for guest
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1545,9 +1531,11 @@ Feature: Orders
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1589,7 +1577,6 @@ Feature: Orders
 
   Scenario: Get cart payment methods
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -1630,7 +1617,6 @@ Feature: Orders
 
   Scenario: Retrieve Centrifugo connection details for order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |

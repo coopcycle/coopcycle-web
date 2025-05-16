@@ -9,6 +9,10 @@ class Context
     public $logoUrl;
     public $name;
     public $customerAppUrl;
+
+    public $processingFee;
+    public $processingFeeBehavior;
+
     public $hasCredentials = false;
     public $formats = [];
 

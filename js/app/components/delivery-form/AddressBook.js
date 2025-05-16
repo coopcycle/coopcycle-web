@@ -116,6 +116,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
       <div className="row">
         <div className="col-sm-12 mb-3">
           <Select
+            data-testid="address-select"
             style={{ width: '100%' }}
             showSearch
             placeholder={t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}
@@ -141,18 +142,25 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         <div className="address-infos__item">
           <Field name={`tasks[${index}].address.name`}>
             {({ field, form }) => (
-              <Input
-                {...field}
-                value={form.values.tasks[index].address.name}
-                onChange={e => {
-                  handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.name`,
-                    e.target.value,
-                  )
-                }}
-                placeholder={t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL')}
-              />
+              <>
+                <Input
+                  {...field}
+                  value={form.values.tasks[index].address.name}
+                  onChange={e => {
+                    handleModifyAddress()
+                    form.setFieldValue(
+                      `tasks[${index}].address.name`,
+                      e.target.value,
+                    )
+                  }}
+                  placeholder={t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL')}
+                />
+                {errors.tasks?.[index]?.address?.name && (
+                  <div className="text-danger">
+                    {errors.tasks[index].address.name}
+                  </div>
+                )}
+              </>
             )}
           </Field>
         </div>
@@ -183,18 +191,25 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         <div className="address-infos__item">
           <Field name={`tasks[${index}].address.contactName`}>
             {({ field, form }) => (
-              <Input
-                {...field}
-                value={form.values.tasks[index].address.contactName}
-                onChange={e => {
-                  handleModifyAddress()
-                  form.setFieldValue(
-                    `tasks[${index}].address.contactName`,
-                    e.target.value,
-                  )
-                }}
-                placeholder={t('DELIVERY_FORM_CONTACT_PLACEHOLDER')}
-              />
+              <>
+                <Input
+                  {...field}
+                  value={form.values.tasks[index].address.contactName}
+                  onChange={e => {
+                    handleModifyAddress()
+                    form.setFieldValue(
+                      `tasks[${index}].address.contactName`,
+                      e.target.value,
+                    )
+                  }}
+                  placeholder={t('DELIVERY_FORM_CONTACT_PLACEHOLDER')}
+                />
+                {errors.tasks?.[index]?.address?.contactName && (
+                  <div className="text-danger">
+                    {errors.tasks[index].address.contactName}
+                  </div>
+                )}
+              </>
             )}
           </Field>
         </div>
@@ -258,7 +273,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         }}
         shouldCloseOnOverlayClick={false}
         contentLabel={t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER')}
-        overlayClassName="ReactModal__Overlay--addressProp"
+        overlayClassName="ReactModal__Overlay--zIndex-1001"
         className="ReactModal__Content--addressProp"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">

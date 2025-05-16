@@ -2,7 +2,6 @@ Feature: Webhooks
 
   Scenario: Create webhook
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -31,7 +30,6 @@ Feature: Webhooks
 
   Scenario: Create webhook with invalid event
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -65,7 +63,6 @@ Feature: Webhooks
 
   Scenario: Can't create webhook as user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -85,7 +82,6 @@ Feature: Webhooks
 
   Scenario: Retrieve webhook
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | webhooks.yml        |
     And the OAuth client with name "Acme" has an access token
@@ -106,7 +102,6 @@ Feature: Webhooks
 
   Scenario: Not authorized to retrieve webhook
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | webhooks.yml        |
     And the OAuth client with name "Acme2" has an access token
@@ -117,7 +112,6 @@ Feature: Webhooks
 
   Scenario: Delete webhook
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | webhooks.yml        |
     And the OAuth client with name "Acme" has an access token

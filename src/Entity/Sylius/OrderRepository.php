@@ -32,7 +32,7 @@ class OrderRepository extends BaseOrderRepository
      * @param $indexBy
      * @return QueryBuilder
      */
-    public function createOpmizedQueryBuilder($alias, $indexBy = null)
+    public function createOptimizedQueryBuilder($alias, $indexBy = null)
     {
         $qb = parent::createQueryBuilder($alias, $indexBy);
 
@@ -53,6 +53,17 @@ class OrderRepository extends BaseOrderRepository
             ->leftJoin('o.loopeatDetails', 'order_loopeat_details');
 
         return $qb;
+    }
+
+    public function findCartById($id) : ?Order {
+        $qb = $this->createOptimizedQueryBuilder('o');
+        
+        return $qb->where('o.id = :id')
+            ->andWhere('o.state = :state')
+            ->setParameter('id', $id)
+            ->setParameter('state', OrderInterface::STATE_CART)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 
     // This method is called by Dependency Injection
@@ -240,7 +251,7 @@ class OrderRepository extends BaseOrderRepository
 
     public function search($q): QueryBuilder
     {
-        $qb = $this->createOpmizedQueryBuilder('o');
+        $qb = $this->createOptimizedQueryBuilder('o');
 
         $qb
             ->leftJoin(Customer::class, 'c', Join::WITH, 'o.customer = c.id')

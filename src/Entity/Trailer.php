@@ -2,17 +2,44 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Action\Trailer\SetVehicles;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['trailer']], 'denormalization_context' => ['groups' => ['trailer_create']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'access_control' => "is_granted('ROLE_ADMIN')"]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('ROLE_ADMIN')"], 'set_vehicles' => ['method' => 'PUT', 'security' => "is_granted('ROLE_ADMIN')", 'path' => '/trailers/{id}/vehicles', 'controller' => SetVehicles::class, 'write' => false, 'read' => false]], order: ['name' => 'ASC'])]
-class Trailer
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Patch(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Put(
+            uriTemplate: '/trailers/{id}/vehicles',
+            controller: SetVehicles::class,
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            read: false,
+            write: false
+        ),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(security: 'is_granted(\'ROLE_ADMIN\')')
+    ],
+    normalizationContext: ['groups' => ['trailer']],
+    denormalizationContext: ['groups' => ['trailer_create']],
+    order: ['name' => 'ASC']
+)]
+class Trailer implements SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;

@@ -114,8 +114,8 @@ class WoopitSubscriptionsCommand extends Command
 
     private function getCallbacks()
     {
-        $quoteUrl = $this->urlGenerator->generate('api_quote_requests_get_collection', [], UrlGeneratorInterface::ABSOLUTE_URL);
-        $deliveryUrl = $this->urlGenerator->generate('api_quote_requests_post_deliveries_collection', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $quoteUrl = $this->urlGenerator->generate('_api_/woopit/quotes_post', [], UrlGeneratorInterface::ABSOLUTE_URL);
+        $deliveryUrl = $this->urlGenerator->generate('_api_/woopit/deliveries_post', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         return [
             "quote" => [

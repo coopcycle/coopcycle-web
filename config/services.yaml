@@ -81,6 +81,8 @@ services:
     public: false
     bind:
       $locale: "%env(COOPCYCLE_LOCALE)%"
+      $country: "%country_iso%"
+      $environment: "%kernel.environment%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -120,12 +122,21 @@ services:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
 
-  AppBundle\Api\DataTransformer\:
-    resource: '../src/Api/DataTransformer/*'
+  # AppBundle\Api\DataTransformer\:
+  #   resource: '../src/Api/DataTransformer/*'
+
+  AppBundle\Api\State\:
+    resource: '../src/Api/State/*'
 
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
     tags: ['api_platform.filter']
+
+  AppBundle\ExpressionLanguage\:
+    resource: '../src/ExpressionLanguage/*'
+
+  AppBundle\Pricing\:
+    resource: '../src/Pricing/*'
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
@@ -210,6 +221,7 @@ services:
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
   Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
   Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
+  ApiPlatform\State\ProcessorInterface $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -238,9 +250,6 @@ services:
   AppBundle\LoopEat\Context: ~
 
   AppBundle\LoopEat\ContextInitializer:
-    arguments:
-      $processingFee: "%env(int:LOOPEAT_PROCESSING_FEE)%"
-      $processingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -577,6 +586,12 @@ services:
         - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
+  AppBundle\Pricing\PriceCalculationVisitor:
+    arguments:
+      $expressionLanguage: "@coopcycle.expression_language"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
   AppBundle\EventListener\RegistrationListener:
     tags:
       - { name: kernel.event_subscriber }
@@ -599,10 +614,6 @@ services:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
-    tags:
-      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
@@ -741,7 +752,7 @@ services:
     autowire: false
     autoconfigure: false
     public: true
-    parent: ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter
+    parent: 'api_platform.doctrine.orm.date_filter'
     arguments:
       $properties: []
 
@@ -841,11 +852,6 @@ services:
     tags:
       - { name: doctrine.event_subscriber, priority: -100 }
 
-  AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
-    arguments:
-        $denyAccessListener: '@api_platform.security.listener.request.deny_access'
-    tags: [ 'kernel.event_subscriber' ]
-
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
@@ -863,18 +869,6 @@ services:
     arguments:
         - '@snc_redis.default'
         - '@translator'
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\PricingRuleSetDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\WarehouseDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\TimeSlotDeleteSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
-
-  AppBundle\Api\EventSubscriber\PackageSetDeleteSubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
@@ -942,11 +936,6 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
-  AppBundle\Action\Delivery\CalculateRetailPrice:
-    public: true
-    arguments:
-      $state: "%region_iso%"
-
   AppBundle\Action\CentrifugoToken:
     public: true
     arguments:
@@ -962,13 +951,6 @@ services:
     public: true
     arguments:
       $centrifugoNamespace: '%centrifugo_namespace%'
-
-  AppBundle\Action\Urbantz\ReceiveWebhook:
-    public: true
-    arguments:
-      $country: "%country_iso%"
-    tags:
-      - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Action\GoogleSignIn:
     public: true
@@ -1004,62 +986,23 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
 
-  AppBundle\Api\DataProvider\RestaurantCollectionDataProvider:
-    parent: 'api_platform.doctrine.orm.collection_data_provider'
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
-    calls:
-      - setRestaurantFilter: ['@coopcycle.utils.restaurant_filter']
-      - setTimingRegistry: ['@AppBundle\Service\TimingRegistry']
-    autoconfigure: false
-    autowire: false
-    public: false
-
-  AppBundle\Api\DataProvider\TaskListCollectionDataProvider:
-    parent: 'api_platform.doctrine.orm.collection_data_provider'
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
-    calls:
-      - setTokenExtractor: ['@AppBundle\Security\TokenStoreExtractor']
-    autoconfigure: false
-    autowire: false
-    public: false
-
-  AppBundle\Api\DataProvider\TaskCollectionDataProvider:
+  AppBundle\Api\State\TasksProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
 
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
-  AppBundle\Api\DataProvider\StoreAddressesSubresourceDataProvider:
-    arguments:
-      $requestStack: '@request_stack'
-      $doctrine: '@doctrine'
-    tags:
-      - { name: 'api_platform.subresource_data_provider', priority: 2 }
-    autoconfigure: false
-
-  AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
-
-  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
-    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
-    autoconfigure: false
-
-  AppBundle\Api\DataProvider\InvoiceLineItemGroupedByOrganizationCollectionDataProvider:
+  AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
 
-  AppBundle\Api\DataProvider\InvoiceLineItemCollectionDataProvider:
+  AppBundle\Api\State\InvoiceLineItemsProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Api\Dto\DeliveryFormDeliveryMapper:
 
   AppBundle\Utils\RestaurantFilter:
     arguments:
@@ -1116,14 +1059,31 @@ services:
 
   AppBundle\Mjml\MjmlServerRenderer: ~
 
-  AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
+  AppBundle\Api\State\CartItemProcessor:
     arguments:
       $orderItemFactory: "@sylius.factory.order_item"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
+    tags: [ 'api_platform.state_processor' ]
 
-  AppBundle\Api\DataTransformer\CartSessionInputDataTransformer:
+  AppBundle\Api\State\CartSessionProcessor:
     arguments:
       $orderFactory: "@sylius.factory.order"
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\CalculateRetailPriceProcessor:
+    arguments:
+      $state: "%region_iso%"
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\EvaluatePricingRuleProcessor:
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\UrbantzWebhookProcessor:
+    arguments:
+      $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: urbantz }
+      - { name: api_platform.state_processor }
 
   AppBundle\Twig\CoopCycleExtension:
     arguments:
@@ -1187,11 +1147,6 @@ services:
     resource: '../src/Messenger/*'
 
   AppBundle\MessageHandler\EmailHandler: ~
-
-  AppBundle\Api\Swagger\SwaggerDecorator:
-      decorates: 'api_platform.openapi.factory'
-      arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
-      autoconfigure: false
 
   AppBundle\MessageHandler\ImportTasksHandler: ~
 
@@ -1452,8 +1407,6 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
-  AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
-
   AppBundle\Security\BearerTokenAuthenticator:
     abstract: true
 
@@ -1558,8 +1511,6 @@ services:
     arguments:
       $fleetKey: '%tile38_fleet_key%'
 
-  AppBundle\Pricing\PricingManager: ~
-
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
 
@@ -1610,7 +1561,7 @@ services:
 
   AppBundle\Paygreen\EnvironmentFactory:
     arguments:
-      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+      $paygreenEnvironment: '%env(PAYGREEN_ENVIRONMENT)%'
 
   Paygreen\Sdk\Payment\V3\Environment:
     factory: '@AppBundle\Paygreen\EnvironmentFactory'
@@ -1650,6 +1601,14 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  AppBundle\Api\Filter\AssignedFilter:
+    arguments:
+      $properties: { assigned: ~ }
+      $security: '@security.helper'
+    tags: [ 'api_platform.filter' ]
+
+  AppBundle\Fixtures\DatabasePurger: ~
 
   AppBundle\Domain\EventStore: ~
 

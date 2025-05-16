@@ -1,5 +1,4 @@
 include:
-  - sylius_channels.yml
   - packages.yml
 
 AppBundle\Entity\Base\GeoCoordinates:
@@ -135,6 +134,7 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2024-12-01 12:30:00'))>
     __calls:
       - assignTo: [ "@bob", <identity(new \DateTime('2024-12-01'))> ]
+
 AppBundle\Entity\Tag:
   tag_important:
     name: "Important"

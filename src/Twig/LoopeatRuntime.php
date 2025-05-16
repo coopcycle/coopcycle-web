@@ -4,11 +4,14 @@ namespace AppBundle\Twig;
 
 use AppBundle\LoopEat\Client;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\OrderProcessing\OrderDepositRefundProcessor;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class LoopeatRuntime implements RuntimeExtensionInterface
 {
-    public function __construct(private Client $client)
+    public function __construct(
+        private Client $client,
+        private OrderDepositRefundProcessor $orderDepositRefundProcessor)
     {}
 
     public function getAuthorizationUrl(OrderInterface $order, int $requiredCredits = 0, bool $showDeposit = false)
@@ -33,5 +36,10 @@ class LoopeatRuntime implements RuntimeExtensionInterface
         $initiative = $this->client->initiative();
 
         return $initiative['name'];
+    }
+
+    public function getReturnsFee(OrderInterface $order): int
+    {
+        return $this->orderDepositRefundProcessor->getLoopeatReturnsFee($order);
     }
 }

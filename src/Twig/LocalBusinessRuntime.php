@@ -69,9 +69,6 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
     public function seo(LocalBusiness $entity): array
     {
         return $this->serializer->normalize($entity, 'jsonld', [
-            'resource_class' => LocalBusiness::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['restaurant_seo', 'address']
         ]);
     }

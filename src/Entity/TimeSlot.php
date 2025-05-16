@@ -2,46 +2,55 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\TimeSlot\Choices as ChoicesController;
+use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
+use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\ShippingOptionsInterface;
 use AppBundle\Utils\OpeningHoursSpecification;
 use AppBundle\Validator\Constraints\NotOverlappingOpeningHours as AssertNotOverlappingOpeningHours;
-use ApiPlatform\Core\Annotation\ApiResource;
+use AppBundle\Validator\Constraints\TimeSlotDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Serializer\Annotation\Groups;
-use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 
 #[ApiResource(
-    collectionOperations: [
-        'get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"],
-        'choices' => [
-            'method' => 'GET',
-            'path' => '/time_slots/choices',
-            'controller' => ChoicesController::class,
-            'status' => 200,
-            'read' => false,
-            'write' => false,
-            'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
-            'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')",
-            'openapi_context' => ['summary' => 'Retrieves choices for time slot']
-        ]
+    operations: [
+        new Get(
+        // Make sure to add requirements for operations like "/time_slots/choices" to work
+            requirements: ['id' => '[0-9]+']
+        ),
+        new Delete(
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            validationContext: ['groups' => ['deleteValidation']],
+            processor: ValidationAwareRemoveProcessor::class
+        ),
+        new Get(
+            uriTemplate: '/time_slots/{id}/choices',
+            controller: OpeningHours::class,
+            normalizationContext: ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(
+            uriTemplate: '/time_slots/choices',
+            controller: ChoicesController::class,
+            openapiContext: ['summary' => 'Retrieves choices for time slot'],
+            normalizationContext: ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
+            security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')'
+        )
     ],
-    itemOperations: [
-        'get' => ['method' => 'GET'],
-        'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"],
-        'choices' => [
-            'method' => 'GET',
-            'path' => '/time_slots/{id}/choices',
-            'controller' => OpeningHours::class,
-            'normalization_context' => ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
-            'security' => "is_granted('edit', object)"
-        ]],
     normalizationContext: ['groups' => ['time_slot']],
     paginationClientEnabled: true
 )]
+#[AssertCanDelete(groups: ['deleteValidation'])]
 class TimeSlot
 {
     use Timestampable;

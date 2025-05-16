@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,7 +46,7 @@ class BulkMarkAsDone extends Base
         }
 
         $tasks = $payload["tasks"];
-        $tasksObjs = array_map(function ($taskIri) { return $this->iriConverter->getItemFromIri($taskIri); }, $tasks);
+        $tasksObjs = array_map(function ($taskIri) { return $this->iriConverter->getResourceFromIri($taskIri); }, $tasks);
 
         $tasksResults= [];
         $tasksFailed= [];
@@ -67,7 +67,7 @@ class BulkMarkAsDone extends Base
             try {
                 $tasksResults[] = $this->done($task, $request);
             } catch(BadRequestHttpException $e) {
-                $tasksFailed[$this->iriConverter->getIriFromItem($task)] = $e->getMessage();
+                $tasksFailed[$this->iriConverter->getIriFromResource($task)] = $e->getMessage();
             }
         }
 

@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Domain\Order\Event\OrderAccepted;
 use AppBundle\Domain\Order\Event\OrderCreated;
@@ -91,7 +91,7 @@ class SendRemotePushNotification
                 'event' => [
                     'name' => 'order:created',
                     'data' => [
-                        'order' => $this->iriConverter->getIriFromItem($order),
+                        'order' => $this->iriConverter->getIriFromResource($order),
                     ]
                 ],
             ];

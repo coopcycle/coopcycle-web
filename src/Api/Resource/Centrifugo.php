@@ -2,13 +2,33 @@
 
 namespace AppBundle\Api\Resource;
 
-use ApiPlatform\Core\Action\NotFoundAction;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\CentrifugoToken as TokenController;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(itemOperations: ['get_token' => ['method' => 'GET', 'path' => '/centrifugo/token', 'controller' => TokenController::class, 'read' => false, 'normalization_context' => ['groups' => ['centrifugo']], 'openapi_context' => ['summary' => 'Retrieves Centrifugo token']], 'refresh_token' => ['method' => 'POST', 'path' => '/centrifugo/token/refresh', 'controller' => TokenController::class, 'read' => false, 'normalization_context' => ['groups' => ['centrifugo_refresh']], 'openapi_context' => ['summary' => 'Refreshes Centrifugo token']]], collectionOperations: [])]
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/centrifugo/token',
+            controller: TokenController::class,
+            openapiContext: ['summary' => 'Retrieves Centrifugo token'],
+            normalizationContext: ['groups' => ['centrifugo']],
+            read: false
+        ),
+        new Post(
+            uriTemplate: '/centrifugo/token/refresh',
+            controller: TokenController::class,
+            openapiContext: ['summary' => 'Refreshes Centrifugo token'],
+            normalizationContext: ['groups' => ['centrifugo_refresh']],
+            read: false
+        )
+    ]
+)]
 final class Centrifugo
 {
     /**

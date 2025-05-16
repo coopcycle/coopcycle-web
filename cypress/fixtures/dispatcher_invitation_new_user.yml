@@ -1,6 +1,6 @@
 include:
-  - setup.yml
-  - admin_user.yml
+  - setup_default.yml
+  - user_admin.yml
   - addresses.yml
 
 AppBundle\Entity\Invitation:

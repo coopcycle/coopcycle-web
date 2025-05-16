@@ -13,6 +13,9 @@ use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Security;
 
+/**
+ * Operations on the Order entity for both FoodTech and Package Delivery/'LastMile' activities
+ */
 class OrderManager
 {
     public function __construct(

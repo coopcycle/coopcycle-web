@@ -1,0 +1,86 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+  geo_client_1:
+    __construct: [ "48.8638614", "2.3762269" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"
+  client_1:
+    name: 'Office'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
+    geo: "@geo_client_1"
+
+AppBundle\Entity\TimeSlot:
+  time_slot_1:
+    name: 'Acme time slot'
+    openingHours:
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+    rules: [ '@pricing_rule_1' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'distance \> 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\PackageSet:
+  package_set_1:
+    name: 'Standard'
+
+AppBundle\Entity\Package:
+  package_small:
+    name: 'SMALL'
+    maxVolumeUnits: 1.0
+    averageVolumeUnits: 1.0
+    packageSet: '@package_set_1'
+    description: ''
+    short_code: 'SM'
+    color: '#a91de0'
+  package_xl:
+    name: 'XL'
+    maxVolumeUnits: 3.0
+    averageVolumeUnits: 3.0
+    packageSet: '@package_set_1'
+    description: ''
+    short_code: 'XL'
+    color: '#a91de0'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    timeSlot: '@time_slot_1'
+    timeSlots:
+      - '@time_slot_1'
+    packageSet: '@package_set_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+

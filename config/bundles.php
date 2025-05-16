@@ -16,7 +16,7 @@ return [
     Sylius\Bundle\CustomerBundle\SyliusCustomerBundle::class => ['all' => true],
     Sylius\Calendar\SyliusCalendarBundle::class => ['all' => true],
     ACSEO\TypesenseBundle\ACSEOTypesenseBundle::class => ['all' => true],
-    ApiPlatform\Core\Bridge\Symfony\Bundle\ApiPlatformBundle::class => ['all' => true],
+    ApiPlatform\Symfony\Bundle\ApiPlatformBundle::class => ['all' => true],
     BabDev\PagerfantaBundle\BabDevPagerfantaBundle::class => ['all' => true],
     Doctrine\Bundle\DoctrineBundle\DoctrineBundle::class => ['all' => true],
     Craue\ConfigBundle\CraueConfigBundle::class => ['all' => true],

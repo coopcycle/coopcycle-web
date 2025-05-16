@@ -4,7 +4,8 @@ namespace AppBundle\Controller;
 
 use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
@@ -130,6 +131,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -215,7 +217,7 @@ class AdminController extends AbstractController
             $qb = $this->orderRepository->search($request->query->get('q'));
         } else {
             $qb = $this->orderRepository
-                ->createOpmizedQueryBuilder('o');
+                ->createOptimizedQueryBuilder('o');
             $qb
                 ->andWhere('o.state != :state')
                 ->setParameter('state', OrderInterface::STATE_CART)
@@ -387,14 +389,14 @@ class AdminController extends AbstractController
         ]));
     }
 
-    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
+    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter, NormalizerInterface $normalizer)
     {
         if ($request->query->has('order')) {
             $order = $request->query->get('order');
             if (is_numeric($order)) {
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'date' => $date,
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }
@@ -403,10 +405,9 @@ class AdminController extends AbstractController
 
         $orders = $this->orderRepository->findOrdersByDate($date);
 
-        $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
+        $ordersNormalized = $normalizer->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
+            'operation' => new GetCollection(),
             'groups' => ['order_minimal']
         ]);
 
@@ -754,7 +755,8 @@ class AdminController extends AbstractController
         Filesystem $deliveryImportsFilesystem,
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
-        SlugifyInterface $slugify
+        SlugifyInterface $slugify,
+        LoggerInterface $logger,
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -762,20 +764,25 @@ class AdminController extends AbstractController
         ]);
 
         $deliveryImportForm->handleRequest($request);
-        if ($deliveryImportForm->isSubmitted() && $deliveryImportForm->isValid()) {
+        if ($deliveryImportForm->isSubmitted()) {
+            if ($deliveryImportForm->isValid()) {
+                $store = $deliveryImportForm->get('store')->getData();
 
-            $store = $deliveryImportForm->get('store')->getData();
-
-            return $this->handleDeliveryImportForStore(
-                store: $store,
-                form: $deliveryImportForm,
-                messageBus: $messageBus,
-                entityManager: $this->entityManager,
-                filesystem: $deliveryImportsFilesystem,
-                hashids: $hashids8,
-                routeTo: 'admin_deliveries',
-                slugify: $slugify
-            );
+                return $this->handleDeliveryImportForStore(
+                    store: $store,
+                    form: $deliveryImportForm,
+                    messageBus: $messageBus,
+                    entityManager: $this->entityManager,
+                    filesystem: $deliveryImportsFilesystem,
+                    hashids: $hashids8,
+                    routeTo: 'admin_deliveries',
+                    slugify: $slugify
+                );
+            } else {
+                $logger->warning('Delivery import form is not valid', [
+                    'errors' => $deliveryImportForm->getErrors(true, false),
+                ]);
+            }
         }
 
         $dataExportForm = $this->createForm(DataExportType::class);
@@ -1085,7 +1092,10 @@ class AdminController extends AbstractController
 
             foreach ($originalRules as $originalRule) {
                 if (!$ruleSet->getRules()->contains($originalRule)) {
-                    $em->remove($originalRule);
+                    // When duplicating a pricing rule, entities are detached
+                    if ($em->contains($originalRule)) {
+                        $em->remove($originalRule);
+                    }
                 }
             }
 

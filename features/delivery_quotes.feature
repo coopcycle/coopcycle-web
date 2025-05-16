@@ -2,7 +2,6 @@ Feature: Delivery quotes
 
   Scenario: Create and confirm delivery quote
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
       | sylius_products.yml |
       | payment_methods.yml |
@@ -51,7 +50,7 @@ Feature: Delivery quotes
       """
       {
         "@context":"/api/contexts/DeliveryQuote",
-        "@id":"/api/delivery_quotes/1",
+        "@id":"/api/deliveries/quotes/1/confirm",
         "@type":"DeliveryQuote",
         "delivery":"/api/deliveries/1"
       }
@@ -59,7 +58,6 @@ Feature: Delivery quotes
 
   Scenario: Can't confirm delivery quote
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
       | sylius_products.yml |
       | stores.yml          |
@@ -107,7 +105,6 @@ Feature: Delivery quotes
 
   Scenario: Create delivery quote with multiple tasks and timeSlot
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
       | sylius_products.yml |
       | payment_methods.yml |
@@ -163,7 +160,7 @@ Feature: Delivery quotes
       """
       {
         "@context":"/api/contexts/DeliveryQuote",
-        "@id":"/api/delivery_quotes/1",
+        "@id":"/api/deliveries/quotes/1/confirm",
         "@type":"DeliveryQuote",
         "delivery":"/api/deliveries/1"
       }
