@@ -6,10 +6,10 @@ import DateRangePicker from './DateRangePicker'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
 
-export const TaskDateTime = ({ isDispatcher, storeId, timeSlots, index }) => {
+export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) => {
   const format = 'LL'
 
-  const { data: store } = useGetStoreQuery(storeId)
+  const { data: store } = useGetStoreQuery(storeNodeId)
 
   const { isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext({
     taskIndex: index,
@@ -40,7 +40,7 @@ export const TaskDateTime = ({ isDispatcher, storeId, timeSlots, index }) => {
       return (
         <SwitchTimeSlotFreePicker
           isDispatcher={isDispatcher}
-          storeId={storeId}
+          storeNodeId={storeNodeId}
           index={index}
           format={format}
           isTimeSlotSelect={isTimeSlotSelect}
@@ -51,7 +51,7 @@ export const TaskDateTime = ({ isDispatcher, storeId, timeSlots, index }) => {
     } else {
       return (
         <TimeSlotPicker
-          storeId={storeId}
+          storeNodeId={storeNodeId}
           index={index}
           timeSlotLabels={timeSlots}
         />

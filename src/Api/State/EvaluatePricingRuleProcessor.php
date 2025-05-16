@@ -5,6 +5,7 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Pricing\PriceCalculationVisitor;
@@ -17,6 +18,9 @@ final class EvaluatePricingRuleProcessor implements ProcessorInterface
         private readonly PriceCalculationVisitor $priceCalculationVisitor)
     {}
 
+    /**
+     * @param DeliveryInput $data
+     */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);

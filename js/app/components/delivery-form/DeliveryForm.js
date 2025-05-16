@@ -20,6 +20,8 @@ import "./DeliveryForm.scss"
 import _ from 'lodash'
 import { useLazyGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
+import { RecurrenceRules } from './RecurrenceRules'
+import useSubmit from './hooks/useSubmit'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -107,24 +109,31 @@ const pickupSchema = {
 
 const baseURL = location.protocol + '//' + location.host
 
-export default function({ storeId, deliveryId, order, isDispatcher, isDebugPricing }) {
+export default function({
+  storeId, // prefer using storeNodeId
+  storeNodeId,
+  deliveryId, // prefer using deliveryNodeId
+  deliveryNodeId,
+  order,
+  isDispatcher,
+  isDebugPricing
+}) {
   const { httpClient } = useHttpClient()
 
-  const isEditMode = useMemo(() => {
-    return Boolean(deliveryId)
-  }, [deliveryId])
   const isCreateOrderMode = useMemo(() => {
-    return !isEditMode
-  }, [isEditMode])
+    return !Boolean(deliveryNodeId)
+  }, [deliveryNodeId])
 
-  const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeId)
+  const isModifyOrderMode = useMemo(() => {
+    return !isCreateOrderMode
+  }, [isCreateOrderMode])
+
+  const [ getStoreTrigger, { data: store } ] = useLazyGetStoreQuery(storeNodeId)
   const storeDeliveryInfos = useMemo(() => store ?? {}, [store])
 
   const [addresses, setAddresses] = useState([])
-  // const [storeDeliveryInfos, setStoreDeliveryInfos] = useState({})
   const [calculateResponseData, setCalculateResponseData] = useState(null)
   const [calculatedPrice, setCalculatePrice] = useState(0)
-  const [error, setError] = useState({ isError: false, errorMessage: ' ' })
   const [priceErrorMessage, setPriceErrorMessage] = useState('')
   const [storePackages, setStorePackages] = useState(null)
   const [tags, setTags] = useState([])
@@ -135,10 +144,11 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
   const [overridePrice, setOverridePrice] = useState(false)
   const [priceLoading, setPriceLoading] = useState(false)
 
+  const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
 
   let deliveryPrice
 
-  if (isEditMode && order) {
+  if (isModifyOrderMode && order) {
     const orderInfos = JSON.parse(order)
     deliveryPrice = { exVAT: +orderInfos.total, VAT: +orderInfos.total - +orderInfos.taxTotal, }
   }
@@ -198,27 +208,27 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
     })
 
     const fetchAddresses = () => new Promise(resolve => {
-      httpClient.get(`/api/stores/${storeId}/addresses`).then(result => {
+      httpClient.get(`${storeNodeId}/addresses`).then(result => {
         setAddresses(result.response['hydra:member'])
         resolve()
       })
     })
 
     const fetchTimeSlots = () => new Promise(resolve => {
-      httpClient.get(`/api/stores/${storeId}/time_slots`).then(result => {
+      httpClient.get(`${storeNodeId}/time_slots`).then(result => {
         setTimeSlotLabels(result.response['hydra:member'])
         resolve()
       })
     })
 
     const fetchPackages = () => new Promise(resolve => {
-      httpClient.get(`/api/stores/${storeId}/packages`).then(result => {
+      httpClient.get(`${storeNodeId}/packages`).then(result => {
         setStorePackages(result.response['hydra:member'])
         resolve()
       })
     })
 
-    const fetchStoreDeliveryInfos = () => getStoreTrigger(storeId)
+    const fetchStoreDeliveryInfos = () => getStoreTrigger(storeNodeId)
       .then(() => {
         if (isCreateOrderMode) {
           setInitialValues({
@@ -231,8 +241,8 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       })
 
     const fetchDeliveryInfos = () => new Promise(resolve => {
-      if (isEditMode) {
-        httpClient.get(`/api/deliveries/${deliveryId}?groups=barcode,address,delivery`).then(result => {
+      if (isModifyOrderMode) {
+        httpClient.get(`${deliveryNodeId}?groups=barcode,address,delivery`).then(result => {
           let response = result.response
 
           //we delete duplication of data as we only modify tasks to avoid potential conflicts/confusions
@@ -256,7 +266,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
       promises.push(fetchTags())
     }
 
-    if (isEditMode) {
+    if (isModifyOrderMode) {
       promises.push(fetchDeliveryInfos())
     }
 
@@ -270,70 +280,6 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
     };
     return infos
   }, [storeDeliveryInfos])
-
-  const handleSubmit = useCallback(async (values) => {
-    const saveAddressUrl = `${baseURL}/api/stores/${storeId}/addresses`
-
-    const getUrl = (deliveryId) => {
-      if (deliveryId) {
-        const editDeliveryURL = `${baseURL}/api/deliveries/${deliveryId}`
-        return editDeliveryURL
-      } else {
-        const createDeliveryUrl = `${baseURL}/api/deliveries`
-        return createDeliveryUrl
-      }
-    }
-
-    const createOrEditADelivery = async (deliveryId) => {
-      const url = getUrl(deliveryId);
-      const method = deliveryId ? 'put' : 'post';
-      deliveryId && !isDispatcher
-      let data = convertValuesToPayload(values)
-
-      if (values.variantIncVATPrice && values.variantName) {
-        data = {
-          ...data,
-          arbitraryPrice: {
-            variantPrice: values.variantIncVATPrice,
-            variantName: values.variantName
-          }
-        }
-      }
-
-      return await httpClient[method](url, data);
-    }
-
-    const { response, error } = await createOrEditADelivery(deliveryId)
-
-    if (error) {
-      setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
-      return
-    }
-
-    if (response) {
-      for (const task of values.tasks) {
-        if (task.saveInStoreAddresses) {
-          await httpClient.post(saveAddressUrl, task.address)
-          if (error) {
-            setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
-            return
-          }
-        }
-        if (task.updateInStoreAddresses) {
-          await httpClient.patch(`${baseURL}${task.address['@id']}`, task.address)
-          if (error) {
-            setError({ isError: true, errorMessage: error.response.data['hydra:description'] })
-            return
-          }
-        }
-      }
-
-      // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
-      window.location = isDispatcher ? "/admin/deliveries" : `/dashboard/stores/${storeId}/deliveries`
-    }
-  }, [storeDeliveryInfos])
-
-  const isStoreOwnerAndEdit = isEditMode && !isDispatcher
 
   const getPrice = _.debounce(
     (values) => {
@@ -402,7 +348,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
             const previousValues = usePrevious(values)
 
             useEffect(() => {
-              if (!overridePrice && !deliveryId) {
+              if (!overridePrice && isCreateOrderMode) {
                 getPrice(values)
               }
             }, [values]);
@@ -477,12 +423,12 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
-                                    isEditMode={Boolean(deliveryId)}
+                                    isEditMode={isModifyOrderMode}
                                     key={originalIndex}
                                     task={task}
                                     index={originalIndex}
                                     addresses={addresses}
-                                    storeId={storeId}
+                                    storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     packages={storePackages}
                                     isDispatcher={isDispatcher}
@@ -503,10 +449,10 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
-                                    isEditMode={isEditMode}
+                                    isEditMode={isModifyOrderMode}
                                     index={originalIndex}
                                     addresses={addresses}
-                                    storeId={storeId}
+                                    storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
                                     showRemoveButton={originalIndex > 1}
@@ -519,7 +465,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                               );
                             })}
 
-                          {storeDeliveryInfos.multiDropEnabled && !(isStoreOwnerAndEdit) ? <div
+                          {storeDeliveryInfos.multiDropEnabled && (isCreateOrderMode || isDispatcher) ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
@@ -543,9 +489,7 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                   </FieldArray>
 
                   <div className="order-informations">
-
-                    {isEditMode && (
-
+                    {isModifyOrderMode && (
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                           {t("DELIVERY_FORM_TRACKING_LINK")}
@@ -564,10 +508,9 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                       />
                     </div>
 
-                    <div className='order-informations__total-price border-top border-bottom pt-3 mb-4'>
+                    <div className="order-informations__total-price border-top py-3">
                       <ShowPrice
                         isDispatcher={isDispatcher}
-                        deliveryId={deliveryId}
                         deliveryPrice={deliveryPrice}
                         isDebugPricing={isDebugPricing}
                         calculatedPrice={calculatedPrice}
@@ -580,25 +523,32 @@ export default function({ storeId, deliveryId, order, isDispatcher, isDebugPrici
                       />
                     </div>
 
-                    {!(isEditMode && !isDispatcher) ?
-                      <div className='order-informations__complete-order'>
+                    {isCreateOrderMode && isDispatcher ? (
+                      <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
+                        <RecurrenceRules />
+                      </div>
+                    ) : null}
+
+                    {isCreateOrderMode || isDispatcher ? (
+                      <div className="order-informations__complete-order border-top py-3">
                         <Button
                           type="primary"
                           style={{ height: '2.5em' }}
                           htmlType="submit"
                           disabled={isSubmitting || priceLoading}>
-                          {t("DELIVERY_FORM_SUBMIT")}
+                          {t('DELIVERY_FORM_SUBMIT')}
                         </Button>
-                      </div> : null
-                    }
-
-                    {error.isError ?
-                      <div className="alert alert-danger mt-4" role="alert">
-                        {error.errorMessage}
                       </div>
-                      : null}
-                  </div>
+                    ) : null}
 
+                    {error.isError ? (
+                      <div className="border-top py-3">
+                        <div className="alert alert-danger" role="alert">
+                          {error.errorMessage}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </Form>
             )

@@ -10,6 +10,9 @@ import { PriceCalculation } from '../../delivery/PriceCalculation'
 
 import './ShowPrice.scss'
 import { useHttpClient } from '../../user/useHttpClient'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -56,7 +59,6 @@ const OverridePriceForm = ({ setCalculatePrice, taxRate }) => {
 }
 
 export default ({
-  deliveryId,
   deliveryPrice,
   calculatedPrice,
   calculateResponseData,
@@ -69,7 +71,7 @@ export default ({
   priceLoading,
 }) => {
   const { t } = useTranslation()
-  const { setFieldValue } = useFormikContext()
+  const { setFieldValue, isModifyOrderMode } = useDeliveryFormFormikContext()
 
   const { httpClient } = useHttpClient()
 
@@ -87,7 +89,7 @@ export default ({
       setFieldValue('variantIncVATPrice', null)
       setFieldValue('variantName', null)
     }
-  }, [calculatedPrice, overridePrice])
+  }, [calculatedPrice, overridePrice, setFieldValue])
 
   useEffect(() => {
     const getDeliveryTaxs = async () => {
@@ -108,12 +110,12 @@ export default ({
       }
     }
     getDeliveryTaxs()
-  }, [])
+  }, [httpClient])
 
   return (
-    <div className="mb-1 pl-2">
+    <div className="pl-2">
       {
-        deliveryId ?
+        isModifyOrderMode ?
           <>
             <div className="font-weight-bold mb-1 total__price">
               {!overridePrice

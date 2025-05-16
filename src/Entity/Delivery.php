@@ -9,28 +9,23 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
-use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
-use AppBundle\Api\State\DeliveryPersistProcessor;
-use AppBundle\Api\State\DeliveryCreateProcessor;
+use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
-use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
@@ -47,9 +42,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new Get(security: 'is_granted(\'view\', object)'),
         new Put(
-            controller: EditDelivery::class,
             denormalizationContext: ['groups' => ['delivery_create']],
-            security: 'is_granted(\'edit\', object)'
+            security: 'is_granted(\'edit\', object)',
+            input: DeliveryInput::class,
+            processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Put(
             uriTemplate: '/deliveries/{id}/pick',
@@ -92,7 +88,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
             input: DeliveryInput::class,
-            processor: DeliveryCreateProcessor::class
+            processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
             uriTemplate: '/deliveries/assert',
@@ -125,7 +121,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             input: DeliveryFromTasksInput::class,
-            processor: DeliveryPersistProcessor::class
+            processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
             uriTemplate: '/deliveries/suggest_optimizations',
@@ -203,26 +199,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     #[Groups(['delivery_create'])]
     private $store;
-
-    /**
-     * @var ?ArbitraryPrice
-     */
-    #[Groups(['delivery_create'])]
-    private $arbitraryPrice;
-
-    const OPENAPI_CONTEXT_POST_PARAMETERS = [[
-        "name" => "delivery",
-        "in" => "body",
-        "schema" => [
-            "type" => "object",
-            "required" => ["dropoff"],
-            "properties" => [
-                "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
-                "pickup" => ['$ref' => '#/definitions/Task-task_create'],
-            ]
-        ],
-        "style" => "form"
-    ]];
 
     public function __construct()
     {
@@ -625,31 +601,5 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }, $this->getTasks()));
         usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
         return $messages;
-    }
-
-    /**
-     * Get the value of arbitraryPrice
-     */
-    public function hasArbitraryPrice(): bool
-    {
-        return !is_null($this->arbitraryPrice);
-    }
-
-    /**
-     * Get the value of arbitraryPrice
-     */
-    public function getArbitraryPrice(): ?ArbitraryPrice
-    {
-        return $this->arbitraryPrice;
-    }
-
-    /**
-     * Set the value of arbitraryPrice
-     */
-    public function setArbitraryPrice(ArbitraryPrice $arbitraryPrice): self
-    {
-        $this->arbitraryPrice = $arbitraryPrice;
-
-        return $this;
     }
 }

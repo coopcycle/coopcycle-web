@@ -367,6 +367,7 @@
         "ADMIN_DASHBOARD_ONLY_UNASSIGNED_WITH_SHIFT": "Solo la columna de tareas no asignadas maneja la selección con la tecla shift",
         "RECURRENCE_RULE_ADD": "Agregar regla de recurrencia",
         "RECURRENCE_RULE_DAYS_REQUIRED": "Por favor, elija al menos un día",
+        "DELIVERY_FORM_RECURRENCE_RULE": "Repetir",
         "SUBSCRIPTION_CANCELLED": "Regla de recurrencia cancelada",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Mostrar las entregas de forma ascendente.",
         "ADMIN_DASHBOARD_DELETE_GROUP_CONFIRM": "¿Estas segura que quieres borrar todas las tareas del grupo?",

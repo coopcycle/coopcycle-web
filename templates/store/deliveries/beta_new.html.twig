@@ -65,7 +65,9 @@
   <div {{ react_component('Delivery/DeliveryForm', {
         isNew: is_new,
         storeId: store.id,
+        storeNodeId: store|get_iri_from_item,
         deliveryId: delivery.id,
+        deliveryNodeId: delivery.id is not null ? delivery|get_iri_from_item : null,
         order: order,
         trackingLink: tracking_link,
         isDispatcher: isDispatcher,

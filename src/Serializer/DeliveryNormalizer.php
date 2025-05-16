@@ -213,7 +213,7 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
         /**
          * FIXME: Avoid using this method in the new code
          * It exists only to support legacy use cases
-         * Prefer using the DeliveryInputDataTransformer instead
+         * Prefer using the DeliveryProcessor instead
          */
 
         $this->logger->info('Deprecated: DeliveryNormalizer::denormalize', [
