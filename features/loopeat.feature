@@ -63,3 +63,4 @@ Feature: Loopeat
       }
       """
     Then print last response
+    # FIXME Implement a stub Loopeat client for tests

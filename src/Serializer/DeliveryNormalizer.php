@@ -2,8 +2,9 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Address;
@@ -145,9 +146,9 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 
             $address = null;
             if (is_string($data['address'])) {
-                $addressIRI = $this->iriConverter->getIriFromResourceClass(Address::class);
+                $addressIRI = $this->iriConverter->getIriFromResource(Address::class, operation: new GetCollection());
                 if (0 === strpos($data['address'], $addressIRI)) {
-                    $address = $this->iriConverter->getItemFromIri($data['address']);
+                    $address = $this->iriConverter->getResourceFromIri($data['address']);
                 } else {
                     $address = $this->geocoder->geocode($data['address']);
                 }

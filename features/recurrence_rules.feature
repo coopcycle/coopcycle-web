@@ -312,7 +312,7 @@ Feature: Task recurrence rules
       """
       {
         "@context":"/api/contexts/RecurrenceRule",
-        "@id":"/api/recurrence_rules",
+        "@id":"/api/recurrence_rules/2",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -357,7 +357,7 @@ Feature: Task recurrence rules
       """
       {
         "@context":"/api/contexts/RecurrenceRule",
-        "@id":"/api/recurrence_rules",
+        "@id":"/api/recurrence_rules/4",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -403,7 +403,7 @@ Feature: Task recurrence rules
       """
       {
         "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules",
+        "@id": "/api/recurrence_rules/generate_orders",
         "@type": "hydra:Collection",
         "hydra:member": [
           {
@@ -441,7 +441,7 @@ Feature: Task recurrence rules
       """
       {
         "@context": "/api/contexts/RecurrenceRule",
-        "@id": "/api/recurrence_rules",
+        "@id": "/api/recurrence_rules/generate_orders",
         "@type": "hydra:Collection",
         "hydra:member": [
           {

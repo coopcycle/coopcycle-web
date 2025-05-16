@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Entity\MercadopagoAccount;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,7 +49,7 @@ class MercadopagoController extends AbstractController
         }
 
         try {
-            $restaurant = $iriConverter->getItemFromIri($payload['sub']);
+            $restaurant = $iriConverter->getResourceFromIri($payload['sub']);
         } catch (ItemNotFoundException $e) {
             throw $this->createAccessDeniedException();
         }

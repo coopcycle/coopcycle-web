@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
@@ -74,7 +74,7 @@ class WebhookHandlerTest extends TestCase
         $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
             ->willReturn([ $webhook ]);
 
-        $this->iriConverter->getItemFromIri('/api/deliveries/1')
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
             ->willReturn($delivery);
 
         $mockResponse = new MockResponse('', ['http_code' => 200]);
@@ -134,7 +134,7 @@ class WebhookHandlerTest extends TestCase
         $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'order.created'])
             ->willReturn([ $webhook ]);
 
-        $this->iriConverter->getItemFromIri('/api/orders/1')
+        $this->iriConverter->getResourceFromIri('/api/orders/1')
             ->willReturn($order);
 
         $mockResponse = new MockResponse('', ['http_code' => 200]);
@@ -196,7 +196,7 @@ class WebhookHandlerTest extends TestCase
         $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
             ->willReturn([ $webhook ]);
 
-        $this->iriConverter->getItemFromIri('/api/deliveries/1')
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
             ->willReturn($delivery);
 
         $responses = [
@@ -268,7 +268,7 @@ class WebhookHandlerTest extends TestCase
         $this->webhookRepository->findBy(['oauth2Client' => $oauth2Client->reveal(), 'event' => 'delivery.picked'])
             ->willReturn([]);
 
-        $this->iriConverter->getItemFromIri('/api/deliveries/1')
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
             ->willReturn($delivery);
 
         call_user_func_array($this->handler, [

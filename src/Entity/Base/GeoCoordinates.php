@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Base;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use Geocoder\Model\Coordinates as GeocoderCoordinates;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;

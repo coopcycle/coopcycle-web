@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 async function _handleResheduleSubmit(id, after, before) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
-    window.Routing.generate("api_incidents_action_item", { id }),
+    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
     { action: "rescheduled", after, before },
   );
 }

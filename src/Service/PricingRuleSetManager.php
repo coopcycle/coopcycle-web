@@ -29,11 +29,13 @@ class PricingRuleSetManager
             }
         }
 
-        return array_merge(
+        $results = array_merge(
             $this->getStores($pricingRuleSet),
             $contracts,
             $this->getDeliveryForms($pricingRuleSet)
         );
+
+        return $results;
     }
 
     /**

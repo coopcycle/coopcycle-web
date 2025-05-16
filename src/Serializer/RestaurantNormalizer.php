@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Assets\PlaceholderImageResolver;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;

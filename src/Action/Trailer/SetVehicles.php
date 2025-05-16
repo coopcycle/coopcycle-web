@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Trailer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Trailer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,7 @@ final class SetVehicles
         $vehiclesIri = $data['compatibleVehicles'];
         $vehicles = [];
         foreach ($vehiclesIri as $iri) {
-            array_push($vehicles, $this->iriConverterInterface->getItemFromIri($iri));
+            array_push($vehicles, $this->iriConverterInterface->getResourceFromIri($iri));
         }
         $trailer->setCompatibleVehicles($vehicles);
 

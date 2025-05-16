@@ -4,7 +4,7 @@ namespace AppBundle\Serializer\Csv;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Sylius\Order\AdjustmentInterface;
-use ApiPlatform\Core\Serializer\ItemNormalizer;
+use ApiPlatform\Serializer\ItemNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 

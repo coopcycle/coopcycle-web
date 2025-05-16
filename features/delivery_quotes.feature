@@ -50,7 +50,7 @@ Feature: Delivery quotes
       """
       {
         "@context":"/api/contexts/DeliveryQuote",
-        "@id":"/api/delivery_quotes/1",
+        "@id":"/api/deliveries/quotes/1/confirm",
         "@type":"DeliveryQuote",
         "delivery":"/api/deliveries/1"
       }
@@ -160,7 +160,7 @@ Feature: Delivery quotes
       """
       {
         "@context":"/api/contexts/DeliveryQuote",
-        "@id":"/api/delivery_quotes/1",
+        "@id":"/api/deliveries/quotes/1/confirm",
         "@type":"DeliveryQuote",
         "delivery":"/api/deliveries/1"
       }

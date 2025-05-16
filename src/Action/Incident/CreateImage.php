@@ -2,8 +2,8 @@
 
 namespace AppBundle\Action\Incident;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Form\IncidentImageType;
@@ -30,7 +30,7 @@ class CreateImage
 
         if ($request->headers->has('X-Attach-To')) {
             /** @var Incident $incident */
-            $incident = $this->iriConverter->getItemFromIri($request->headers->get('X-Attach-To'));
+            $incident = $this->iriConverter->getResourceFromIri($request->headers->get('X-Attach-To'));
         }
 
         $form = $this->formFactory->create(IncidentImageType::class, $incidentImage);

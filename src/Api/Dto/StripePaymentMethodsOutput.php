@@ -3,6 +3,7 @@
 namespace AppBundle\Api\Dto;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 final class StripePaymentMethodsOutput
 {
@@ -24,6 +25,7 @@ final class StripePaymentMethodsOutput
         ]);
     }
 
+    #[Groups(['user'])]
     public function getMethods()
     {
         return $this->methods;

@@ -136,7 +136,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -156,7 +157,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -310,7 +312,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
@@ -330,7 +333,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -587,7 +591,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          }
+          },
+          "contactName": null
         },
         "shippedAt": "2017-09-02 12:30:00",
         "items": [{
@@ -628,7 +633,8 @@ Feature: Orders
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "telephone":"+33612345678",
         "isOpen":false,
@@ -648,7 +654,8 @@ Feature: Orders
         "streetAddress":"190 Rue de Rivoli, Paris",
         "name":null,
         "telephone": null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -741,7 +748,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          }
+          },
+          "contactName": null
         },
         "items": [{
           "product": "PIZZA",
@@ -791,7 +799,8 @@ Feature: Orders
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
             "telephone": null,
-            "description": null
+            "description": null,
+            "contactName": null
           },
           "telephone":"+33612345678",
           "isOpen":true,
@@ -810,7 +819,8 @@ Feature: Orders
           "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
           "telephone": null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "items":[
           {
@@ -934,7 +944,8 @@ Feature: Orders
         "streetAddress":"1, rue de Rivoli",
         "telephone":null,
         "name":null,
-        "description": null
+        "description": null,
+        "contactName": null
       },
       "items":[
         {
@@ -951,14 +962,12 @@ Feature: Orders
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":@string@,
                 "label":"1 × Pepperoni",
                 "amount":0
               }
             ],
             "tax":[
               {
-                "id":@string@,
                 "label":"TVA 10%",
                 "amount":82
               }
@@ -979,14 +988,12 @@ Feature: Orders
           "adjustments":{
             "menu_item_modifier":[
               {
-                "id":@string@,
                 "label":"1 × Gluten free",
                 "amount":0
               }
             ],
             "tax":[
               {
-                "id":@string@,
                 "label":"TVA 10%",
                 "amount":127
               }
@@ -1208,14 +1215,12 @@ Feature: Orders
             "adjustments":{
               "menu_item_modifier":[
                 {
-                  "id":@string@,
                   "label":"1 × Pepperoni",
                   "amount":0
                 }
               ],
               "tax":[
                 {
-                  "id":@string@,
                   "label":"TVA 10%",
                   "amount":245
                 }
@@ -1457,9 +1462,11 @@ Feature: Orders
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,
@@ -1524,9 +1531,11 @@ Feature: Orders
     And the JSON should match:
       """
       {
+        "@context": "/api/contexts/CartSession",
+        "@id": @string@,
+        "@type": "CartSession",
         "token":@string@,
         "cart":{
-          "@context":"/api/contexts/Order",
           "@id":"/api/orders/1",
           "@type":"http://schema.org/Order",
           "customer":null,

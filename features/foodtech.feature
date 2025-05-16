@@ -43,12 +43,11 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders?date=2018-08-27"
     Then the response status code should be 200
     And the response should be in JSON
-    # FIXME @id should be "/api/restaurants/1/orders"
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Order",
-        "@id":@string@,
+        "@context":"/api/contexts/Restaurant",
+        "@id":"/api/restaurants/1/orders",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -99,12 +98,6 @@ Feature: Food Tech
         "hydra:view":{
           "@id":"/api/restaurants/1/orders?date=2018-08-27",
           "@type":"hydra:PartialCollectionView"
-        },
-        "hydra:search":{
-          "@type":"hydra:IriTemplate",
-          "hydra:template":@string@,
-          "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":@array@
         }
       }
       """

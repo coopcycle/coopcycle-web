@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Delivery;
 
-use ApiPlatform\Core\Bridge\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;

@@ -18,7 +18,7 @@ export default () => {
 
   const fetchWarehouses = () => {
     setIsLoading(true)
-    httpClient.get(window.Routing.generate("api_warehouses_get_collection")).then(({ response }) => {
+    httpClient.get(window.Routing.generate("_api_/warehouses.{_format}_get_collection")).then(({ response }) => {
       setWarehouses(response["hydra:member"])
       setIsLoading(false)
     })
@@ -42,12 +42,12 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"api_warehouses_delete_item"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchWarehouses} />,
+      render: (record) => <DeleteIcon deleteUrl={"_api_/warehouses/{id}.{_format}_delete"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchWarehouses} />,
     },
   ]
 
   const onSubmit = async (values) => {
-    const url = window.Routing.generate("api_warehouses_post_collection")
+    const url = window.Routing.generate("_api_/warehouses.{_format}_post")
 
     const { error } = await httpClient.post(url, values);
 

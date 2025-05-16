@@ -1,6 +1,8 @@
 vich_uploader:
     db_driver: orm
     storage: flysystem
+    metadata:
+        type: attribute
     mappings:
         restaurant_image:
             uri_prefix: ''

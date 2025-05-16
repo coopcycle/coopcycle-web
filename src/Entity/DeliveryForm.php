@@ -2,14 +2,25 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 
 /**
  * A form to order deliveries, to be embedded anywhere.
  */
-#[ApiResource(itemOperations: ['delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"]])]
+#[ApiResource(
+    operations: [
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Post(),
+        new GetCollection()
+    ]
+)]
 class DeliveryForm
 {
     use Timestampable;

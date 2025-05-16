@@ -2,13 +2,11 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
-use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -43,6 +41,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Annotation\Route;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
@@ -62,9 +61,7 @@ trait AdminDashboardTrait
         return $this->redirectToRoute('admin_dashboard_fullscreen', array_merge($defaultParams, $params));
     }
 
-    /**
-     * @Route("/admin/dashboard", name="admin_dashboard")
-     */
+    #[Route("/admin/dashboard", name: "admin_dashboard")]
     public function dashboardAction(Request $request,
         TaskManager $taskManager,
         JWTManagerInterface $jwtManager,
@@ -77,10 +74,7 @@ trait AdminDashboardTrait
             $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager);
     }
 
-    /**
-     * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
-     */
+    #[Route("/admin/dashboard/fullscreen/{date}", name: "admin_dashboard_fullscreen", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"])]
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
         JWTManagerInterface $jwtManager,
@@ -137,11 +131,7 @@ trait AdminDashboardTrait
             $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
 
         $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
-            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
-                'resource_class' => TaskRecurrenceRule::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-            ]);
+            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld');
         }, $recurrenceRules);
 
         $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
@@ -150,9 +140,6 @@ trait AdminDashboardTrait
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
-                'resource_class' => Store::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['store', 'store_with_packages']
             ]);
         }, $stores);
@@ -172,7 +159,7 @@ trait AdminDashboardTrait
             );
 
         $addressIris = array_map(
-            fn ($address) => $iriConverter->getItemIriFromResourceClass(Address::class, $address),
+            fn ($address) => $iriConverter->getIriFromResource(Address::class, context: ['uri_variables' => $address]),
             $qb->getQuery()->getArrayResult()
         );
 
@@ -265,11 +252,7 @@ trait AdminDashboardTrait
         return $taskList;
     }
 
-    /**
-     * @Route("/admin/task-lists/{date}/{username}", name="admin_task_list_create",
-     *   methods={"POST"},
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
-     */
+    #[Route("/admin/task-lists/{date}/{username}", name: "admin_task_list_create", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"], methods: ["POST"])]
     public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager)
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
@@ -289,18 +272,13 @@ trait AdminDashboardTrait
         }
 
         $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
-            'resource_class' => TaskList::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['task_list']
         ]);
 
         return new JsonResponse($taskListNormalized);
     }
 
-    /**
-     * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
-     */
+    #[Route("/admin/tasks/{taskId}/images/{imageId}/download", name: "admin_task_image_download")]
     public function downloadTaskImageAction($taskId, $imageId,
         StorageInterface $storage,
         SlugifyInterface $slugify,
