@@ -4,7 +4,7 @@ namespace AppBundle\Twig;
 
 use AppBundle\Assets\PlaceholderImageResolver;
 use Twig\Extension\RuntimeExtensionInterface;
-use Intervention\Image\ImageManagerStatic;
+use Intervention\Image\ImageManager;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
@@ -59,9 +59,11 @@ class AssetsRuntime implements RuntimeExtensionInterface
             return '';
         }
 
-        return (string) ImageManagerStatic::make(
-            stream_get_contents($this->storage->resolveStream($obj, $fieldName))
-        )->encode('data-url');
+        $imageManager = ImageManager::gd();
+
+        $image = $imageManager->read(stream_get_contents($this->storage->resolveStream($obj, $fieldName)));
+
+        return $image->toJpeg()->toDataUri();
     }
 
     public function hasCustomBanner(): bool
