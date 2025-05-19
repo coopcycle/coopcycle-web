@@ -184,6 +184,7 @@ export default function({
       }
 
       if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
+        taskErrors.address = taskErrors.address || {};
         taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
       }
 
