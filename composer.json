@@ -169,7 +169,6 @@
         "invenso/rector": "^1.0",
         "doctrine/annotations": "^1.13",
         "geocoder-php/geocode-earth-provider": "^1.4",
-        "sensio/framework-extra-bundle": "*",
         "doctrine/dbal": "^3",
         "twig/extra-bundle": "^2.12|^3.0",
         "symfony/workflow": "5.4.*",
