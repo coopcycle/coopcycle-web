@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1cc93f986b6660e2ad4e39637b15b9ca",
+    "content-hash": "f14cb30eac75c7eac0b9295c1f0e4339",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -25257,45 +25257,40 @@
         },
         {
             "name": "theofidry/alice-data-fixtures",
-            "version": "1.8.3",
+            "version": "1.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/theofidry/AliceDataFixtures.git",
-                "reference": "711b52f6a3916b1e92c3270420baad1309443b8f"
+                "reference": "39a2fb2d83d683bec58e9fa0c1e22feceb17056e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/711b52f6a3916b1e92c3270420baad1309443b8f",
-                "reference": "711b52f6a3916b1e92c3270420baad1309443b8f",
+                "url": "https://api.github.com/repos/theofidry/AliceDataFixtures/zipball/39a2fb2d83d683bec58e9fa0c1e22feceb17056e",
+                "reference": "39a2fb2d83d683bec58e9fa0c1e22feceb17056e",
                 "shasum": ""
             },
             "require": {
                 "nelmio/alice": "^3.10",
-                "php": "^8.3",
+                "php": "^8.2",
                 "psr/log": "^1 || ^2 || ^3",
                 "webmozart/assert": "^1.10"
             },
             "conflict": {
-                "doctrine/data-fixtures": "<1.7.0",
                 "doctrine/dbal": "<3.0",
-                "doctrine/doctrine-bundle": "<2.11.0",
-                "doctrine/mongodb-odm": "<2.6.0",
-                "doctrine/mongodb-odm-bundle": "<5.1.0",
-                "doctrine/orm": "<2.20 || >=3.0",
-                "doctrine/persistence": "<2.5.7 || >=3.0 <3.4.0",
-                "doctrine/phpcr-bundle": "<3.0",
-                "doctrine/phpcr-odm": "<2.0.0",
-                "illuminate/database": "<10.0",
+                "doctrine/orm": "<2.6.3",
+                "doctrine/persistence": "<2.0",
+                "illuminate/database": "<8.12",
                 "ocramius/proxy-manager": "<2.1",
-                "symfony/framework-bundle": ">=6.0 <6.4.19",
+                "symfony/framework-bundle": "<5.4 || >=6.0 <6.4",
                 "zendframework/zend-code": "<3.3.1"
             },
             "require-dev": {
                 "bamarni/composer-bin-plugin": "^1.4.1",
-                "phpspec/prophecy": "^1.20.0",
-                "phpspec/prophecy-phpunit": "^2.3.0",
-                "phpunit/phpunit": "^11.5.12",
-                "symfony/phpunit-bridge": "^7.2"
+                "doctrine/annotations": "^1.13",
+                "phpspec/prophecy": "^1.14.0",
+                "phpspec/prophecy-phpunit": "^2.0.1",
+                "phpunit/phpunit": "^9.5.10",
+                "symfony/phpunit-bridge": "^5.3.8 || ^6.4"
             },
             "suggest": {
                 "alcaeus/mongo-php-adapter": "To use Doctrine with the MongoDB flavour",
@@ -25346,7 +25341,7 @@
             ],
             "support": {
                 "issues": "https://github.com/theofidry/AliceDataFixtures/issues",
-                "source": "https://github.com/theofidry/AliceDataFixtures/tree/1.8.3"
+                "source": "https://github.com/theofidry/AliceDataFixtures/tree/1.7.2"
             },
             "funding": [
                 {
@@ -25354,7 +25349,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-09T09:51:17+00:00"
+            "time": "2024-07-05T21:18:40+00:00"
         },
         {
             "name": "twig/cache-extra",
