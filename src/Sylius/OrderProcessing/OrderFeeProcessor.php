@@ -14,6 +14,7 @@ use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Model\OrderInterface as BaseOrderInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Webmozart\Assert\Assert;
@@ -194,6 +195,7 @@ final class OrderFeeProcessor implements OrderProcessorInterface
 
     private function decreasePlatformFee(Adjustment $adjustment): bool
     {
+        /** @var PromotionInterface|null */
         $promotion = $this->promotionRepository
             ->findOneBy(['code' => $adjustment->getOriginCode()]);
 
