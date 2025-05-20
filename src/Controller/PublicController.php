@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Order\AdhocOrderType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use phpcent\Client as CentrifugoClient;
@@ -43,6 +45,8 @@ class PublicController extends AbstractController
         }
 
         $id = current($decoded);
+
+        /** @var OrderInterface|null */
         $order = $this->orderRepository->find($id);
 
         if (null === $order) {
@@ -80,6 +84,7 @@ class PublicController extends AbstractController
 
                 $stripeToken = $paymentForm->get('stripePayment')->get('stripeToken')->getData();
 
+                /** @var Payment */
                 $lastPayment = $order->getPayments()
                     ->filter(fn (PaymentInterface $payment): bool =>
                         in_array($payment->getState(), [PaymentInterface::STATE_CART, PaymentInterface::STATE_NEW])

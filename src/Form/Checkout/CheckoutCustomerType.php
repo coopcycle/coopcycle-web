@@ -5,6 +5,7 @@ namespace AppBundle\Form\Checkout;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Form\Type\LegalType;
 use AppBundle\Form\Type\PhoneNumberType;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Validator\Constraints\UserWithSameEmailNotExists as AssertUserWithSameEmailNotExists;
 use Nucleos\UserBundle\Util\Canonicalizer;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
@@ -89,6 +90,7 @@ class CheckoutCustomerType extends AbstractType
                 $email = $form->get('email')->getData();
                 $emailCanonical = $this->canonicalizer->canonicalize($email);
 
+                /** @var CustomerInterface|null */
                 $customer = $this->customerRepository
                     ->findOneBy([
                         'emailCanonical' => $emailCanonical,

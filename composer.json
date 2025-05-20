@@ -83,7 +83,7 @@
         "twig/twig": "^2.0 || ^3.0",
         "sylius/order-bundle": "^1.7.5",
         "sylius/payment-bundle": "^1.7.5",
-        "laravolt/avatar": "^4",
+        "laravolt/avatar": "^6",
         "sylius/product-bundle": "^1.7.5",
         "sylius/taxonomy-bundle": "^1.7.5",
         "sonata-project/seo-bundle": "^3.0",
@@ -168,12 +168,12 @@
         "invenso/rector": "^1.0",
         "doctrine/annotations": "^1.13",
         "geocoder-php/geocode-earth-provider": "^1.4",
-        "sensio/framework-extra-bundle": "*",
         "doctrine/dbal": "^3",
         "twig/extra-bundle": "^2.12|^3.0",
         "symfony/workflow": "5.4.*",
         "symfony/lock": "5.4.*",
-        "symfony/proxy-manager-bridge": "5.4.*"
+        "symfony/proxy-manager-bridge": "5.4.*",
+        "phpstan/phpdoc-parser": "^1.33"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",

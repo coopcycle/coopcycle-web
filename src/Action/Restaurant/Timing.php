@@ -27,7 +27,7 @@ class Timing
         // https://github.com/coopcycle/coopcycle-web/issues/2213
 
         $rangeAsArray = isset($data['range']) && is_array($data['range']) ?
-            $data['range'] : [ null, null ];
+            $data['range'] : [ 'now', 'now' ];
 
         $range = new TsRange();
         $range->setLower(

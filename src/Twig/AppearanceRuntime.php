@@ -3,7 +3,7 @@
 namespace AppBundle\Twig;
 
 use AppBundle\Service\SettingsManager;
-use Intervention\Image\ImageManagerStatic;
+use Intervention\Image\ImageManager;
 use League\Flysystem\Filesystem;
 use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -49,12 +49,15 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
             $companyLogo = $this->settingsManager->get('company_logo');
 
-            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
+            $imageManager = ImageManager::gd();
 
-                return (string) ImageManagerStatic::make($this->assetsFilesystem->read($companyLogo))->encode('data-url');
+            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
+                $image = $imageManager->read($this->assetsFilesystem->read($companyLogo));
+            } else {
+                $image = $imageManager->read(file_get_contents($this->logoFallback));
             }
 
-            return (string) ImageManagerStatic::make(file_get_contents($this->logoFallback))->encode('data-url');
+            return $image->toPng()->toDataUri();
         });
     }
 
