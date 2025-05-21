@@ -137,9 +137,9 @@ Encore
 
   .enableVersioning(Encore.isProduction())
 
-if (!Encore.isProduction()) {
-  Encore.enableEslintPlugin()
-}
+  .addPlugin(new webpack.ProvidePlugin({
+    process: 'process/browser'
+  }))
 
 // https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
 Encore.configureDevServerOptions(options => {
