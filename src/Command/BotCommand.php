@@ -191,8 +191,8 @@ class BotCommand extends DaemonCommand
             ]);
 
             if (200 === $response->getStatusCode()) {
-                $data = json_decode($response->getBody(), true);
-                $tasks = $data['hydra:member'];
+                $data = $response->toArray();
+                $tasks = $data['items'];
             }
 
         } catch (\Exception $e) {
