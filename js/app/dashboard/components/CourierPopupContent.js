@@ -1,21 +1,16 @@
 import React, { Component } from 'react'
 import TimeAgo from 'react-timeago'
-
-import buildFormatter from 'react-timeago/lib/formatters/buildFormatter'
-import esStrings from 'react-timeago/lib/language-strings/es'
-import frStrings from 'react-timeago/lib/language-strings/fr'
+import { makeIntlFormatter } from 'react-timeago/defaultFormatter'
 
 const locale = $('html').attr('lang')
 
-let formatter
-switch (locale) {
-case 'es':
-  formatter = buildFormatter(esStrings)
-  break
-case 'fr':
-  formatter = buildFormatter(frStrings)
-  break
-}
+const intlFormatter = makeIntlFormatter({
+  locale, // string
+  // localeMatcher?: 'best fit', // 'lookup' | 'best fit',
+  // numberingSystem?: 'latn' // Intl$NumberingSystem such as 'arab', 'deva', 'hebr' etc.
+  // style?: 'long', // 'long' | 'short' | 'narrow',
+  // numeric?: 'auto', //  'always' | 'auto', Using 'auto` will convert "1 day ago" to "yesterday" etc.
+})
 
 export default class extends Component {
 
@@ -39,7 +34,7 @@ export default class extends Component {
       <div className="text-center">
         <strong>{ username }</strong>
         <br />
-        <TimeAgo date={ lastSeen.toDate() } formatter={ formatter } />
+        <TimeAgo date={ lastSeen.toDate() } formatter={ intlFormatter } />
       </div>
     )
   }
