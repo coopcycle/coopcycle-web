@@ -1,6 +1,7 @@
 const reactPlugin = require('eslint-plugin-react');
 const reactCompiler = require('eslint-plugin-react-compiler');
 const pluginCypress = require('eslint-plugin-cypress/flat');
+const reactHooks = require('eslint-plugin-react-hooks');
 
 module.exports = [
   // root: true,
@@ -11,11 +12,9 @@ module.exports = [
   // },
   // extends: [
   //   'eslint:recommended',
-  //   'plugin:react/recommended',
   //   'plugin:react-hooks/recommended',
   //   'plugin:jest/recommended',
   //   'plugin:storybook/recommended',
-  //   'plugin:cypress/recommended',
   // ],
   // parser: 'babel-eslint',
   // parserOptions: {
@@ -27,9 +26,7 @@ module.exports = [
   // },
   {
     plugins: {
-      // react: react,
       cypress: pluginCypress
-      // 'eslint-plugin-react-compiler',
       // 'jest'
     },
   },
@@ -47,8 +44,11 @@ module.exports = [
       },
     },
   },
+  // FIXME Doesn't work
+  // pluginCypress.configs.recommended,
   reactPlugin.configs.flat.recommended, // This is not a plugin object, but a shareable config object
   reactPlugin.configs.flat['jsx-runtime'], // Add this if you are using React 17+
+  reactHooks.configs['recommended-latest'],
   reactCompiler.configs.recommended,
   {
     rules: {
