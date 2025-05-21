@@ -3,7 +3,6 @@ import { DragDropContext } from '@hello-pangea/dnd'
 import Split from 'react-split'
 
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 
 import {
   setToursEnabled,
