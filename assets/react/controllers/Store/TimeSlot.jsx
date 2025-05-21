@@ -15,7 +15,7 @@ async function _fetchTimeSlots() {
 
 async function _putTimeSlots(id, data) {
   const httpClient = new window._auth.httpClient();
-  const uri = window.Routing.generate('_api_/stores.{_format}_get_collection', { id })
+  const uri = window.Routing.generate('_api_/stores/{id}.{_format}_patch', { id })
 
   return await httpClient.patch(uri, {
     '@id': uri,

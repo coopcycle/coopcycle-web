@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import store from './address-storage'
 import AddressAutosuggest from '../components/AddressAutosuggest'
@@ -31,7 +31,7 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
     const restaurants =
       container.dataset.restaurants ? JSON.parse(container.dataset.restaurants) : []
 
-    render(
+    createRoot(el).render(
       <AddressAutosuggest
         address={ resolveAddress(form) }
         addresses={ addresses }
@@ -93,7 +93,8 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
         }}
         required={ false }
         preciseOnly={ false }
-        reportValidity={ false } />, el)
+        reportValidity={ false } />
+    )
   }
 
 })

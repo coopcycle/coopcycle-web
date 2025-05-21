@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f64b4fa317657866ba3b21b62e943609",
+    "content-hash": "f43ad15cc3a18e5a8c37f5d9fdbb1a53",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
-            "version": "v0.7.10",
+            "version": "v0.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/acseo/TypesenseBundle.git",
-                "reference": "701f73f55378bdfe3950826f95cd1d7e54b4db0f"
+                "reference": "99d88d6669c7ba1479c80a887a3911d4fec8126b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/acseo/TypesenseBundle/zipball/701f73f55378bdfe3950826f95cd1d7e54b4db0f",
-                "reference": "701f73f55378bdfe3950826f95cd1d7e54b4db0f",
+                "url": "https://api.github.com/repos/acseo/TypesenseBundle/zipball/99d88d6669c7ba1479c80a887a3911d4fec8126b",
+                "reference": "99d88d6669c7ba1479c80a887a3911d4fec8126b",
                 "shasum": ""
             },
             "require": {
@@ -57,9 +57,9 @@
             "description": "This bundle provides integration with Typesense in Symfony",
             "support": {
                 "issues": "https://github.com/acseo/TypesenseBundle/issues",
-                "source": "https://github.com/acseo/TypesenseBundle/tree/v0.7.10"
+                "source": "https://github.com/acseo/TypesenseBundle/tree/v0.8.1"
             },
-            "time": "2024-10-07T07:57:39+00:00"
+            "time": "2024-12-13T12:25:08+00:00"
         },
         {
             "name": "api-platform/core",
@@ -3986,66 +3986,21 @@
             "time": "2025-04-09T20:32:01+00:00"
         },
         {
-            "name": "flow-php/dremel",
-            "version": "0.9.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/flow-php/dremel.git",
-                "reference": "4fbcdbe6535a8ef28aec69ec6ca0345bb06e3d5a"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/dremel/zipball/4fbcdbe6535a8ef28aec69ec6ca0345bb06e3d5a",
-                "reference": "4fbcdbe6535a8ef28aec69ec6ca0345bb06e3d5a",
-                "shasum": ""
-            },
-            "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Flow\\": [
-                        "src/Flow"
-                    ]
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHP ETL - Dremel algorithm implementation",
-            "keywords": [
-                "Algorithm",
-                "dremel",
-                "etl",
-                "extract",
-                "filter",
-                "load",
-                "transform"
-            ],
-            "support": {
-                "issues": "https://github.com/flow-php/dremel/issues",
-                "source": "https://github.com/flow-php/dremel/tree/0.9.2"
-            },
-            "time": "2024-07-15T12:20:45+00:00"
-        },
-        {
             "name": "flow-php/filesystem",
-            "version": "0.9.2",
+            "version": "0.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flow-php/filesystem.git",
-                "reference": "c1589155c12bb0c5a071031db66b65fdfc30f3ac"
+                "reference": "edb3f60d002edff5b3914f676b21de32271c487b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/filesystem/zipball/c1589155c12bb0c5a071031db66b65fdfc30f3ac",
-                "reference": "c1589155c12bb0c5a071031db66b65fdfc30f3ac",
+                "url": "https://api.github.com/repos/flow-php/filesystem/zipball/edb3f60d002edff5b3914f676b21de32271c487b",
+                "reference": "edb3f60d002edff5b3914f676b21de32271c487b",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
                 "webmozart/glob": "^3.0 || ^4.0"
             },
             "type": "library",
@@ -4077,32 +4032,41 @@
             ],
             "support": {
                 "issues": "https://github.com/flow-php/filesystem/issues",
-                "source": "https://github.com/flow-php/filesystem/tree/0.9.2"
+                "source": "https://github.com/flow-php/filesystem/tree/0.16.2"
             },
-            "time": "2024-08-04T07:40:47+00:00"
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-04-28T19:24:46+00:00"
         },
         {
             "name": "flow-php/parquet",
-            "version": "0.9.2",
+            "version": "0.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flow-php/parquet.git",
-                "reference": "00146de53b7df590896fdb2347506ce71855b87e"
+                "reference": "756797398ddf8d10b701bd3f47c9681b6d0c76d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/parquet/zipball/00146de53b7df590896fdb2347506ce71855b87e",
-                "reference": "00146de53b7df590896fdb2347506ce71855b87e",
+                "url": "https://api.github.com/repos/flow-php/parquet/zipball/756797398ddf8d10b701bd3f47c9681b6d0c76d0",
+                "reference": "756797398ddf8d10b701bd3f47c9681b6d0c76d0",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.1",
                 "ext-bcmath": "*",
                 "ext-zlib": "*",
-                "flow-php/dremel": "^0.9.0 || 1.x-dev",
-                "flow-php/snappy": "^0.9.0 || 1.x-dev",
+                "flow-php/snappy": "^0.16.0 || 1.x-dev",
                 "packaged/thrift": "^0.15.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "type": "library",
             "autoload": {
@@ -4131,26 +4095,36 @@
             ],
             "support": {
                 "issues": "https://github.com/flow-php/parquet/issues",
-                "source": "https://github.com/flow-php/parquet/tree/0.9.2"
+                "source": "https://github.com/flow-php/parquet/tree/0.16.2"
             },
-            "time": "2024-08-12T10:07:37+00:00"
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-05-14T10:58:10+00:00"
         },
         {
             "name": "flow-php/snappy",
-            "version": "0.9.2",
+            "version": "0.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/flow-php/snappy.git",
-                "reference": "89917ac1c12b0cbf62b7449a217c259ecf48f4a5"
+                "reference": "595f26d4bcfef93b530fea0409df9f5e65914df4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/flow-php/snappy/zipball/89917ac1c12b0cbf62b7449a217c259ecf48f4a5",
-                "reference": "89917ac1c12b0cbf62b7449a217c259ecf48f4a5",
+                "url": "https://api.github.com/repos/flow-php/snappy/zipball/595f26d4bcfef93b530fea0409df9f5e65914df4",
+                "reference": "595f26d4bcfef93b530fea0409df9f5e65914df4",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0"
             },
             "type": "library",
             "autoload": {
@@ -4180,9 +4154,19 @@
             ],
             "support": {
                 "issues": "https://github.com/flow-php/snappy/issues",
-                "source": "https://github.com/flow-php/snappy/tree/0.9.2"
+                "source": "https://github.com/flow-php/snappy/tree/0.16.2"
             },
-            "time": "2024-07-31T06:09:31+00:00"
+            "funding": [
+                {
+                    "url": "https://flow-php.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/norberttech",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-01-30T16:34:22+00:00"
         },
         {
             "name": "friendsofphp/proxy-manager-lts",
@@ -5036,29 +5020,28 @@
         },
         {
             "name": "geocoder-php/photon-provider",
-            "version": "0.6.0",
+            "version": "0.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/geocoder-php/photon-provider.git",
-                "reference": "5f106fc034537738f54fdb34ccbc97a99199c832"
+                "reference": "4475d3dbad224f2ddcf0738e86104cdd4a94a3ae"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/geocoder-php/photon-provider/zipball/5f106fc034537738f54fdb34ccbc97a99199c832",
-                "reference": "5f106fc034537738f54fdb34ccbc97a99199c832",
+                "url": "https://api.github.com/repos/geocoder-php/photon-provider/zipball/4475d3dbad224f2ddcf0738e86104cdd4a94a3ae",
+                "reference": "4475d3dbad224f2ddcf0738e86104cdd4a94a3ae",
                 "shasum": ""
             },
             "require": {
                 "geocoder-php/common-http": "^4.1",
-                "php": "^7.4 || ^8.0",
-                "willdurand/geocoder": "^4.0"
+                "php": "^8.0",
+                "willdurand/geocoder": "^4.0|^5.0"
             },
             "provide": {
                 "geocoder-php/provider-implementation": "1.0"
             },
             "require-dev": {
-                "geocoder-php/provider-integration-tests": "^1.0",
-                "php-http/curl-client": "^2.2",
+                "geocoder-php/provider-integration-tests": "^1.6.3",
                 "php-http/message": "^1.0",
                 "phpunit/phpunit": "^9.5"
             },
@@ -5083,9 +5066,9 @@
             "description": "Geocoder Photon adapter",
             "homepage": "http://geocoder-php.org/Geocoder/",
             "support": {
-                "source": "https://github.com/geocoder-php/photon-provider/tree/0.6.0"
+                "source": "https://github.com/geocoder-php/photon-provider/tree/0.10.0"
             },
-            "time": "2023-07-09T14:05:05+00:00"
+            "time": "2025-03-23T13:40:53+00:00"
         },
         {
             "name": "gesdinet/jwt-refresh-token-bundle",

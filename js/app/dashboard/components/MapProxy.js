@@ -10,7 +10,6 @@ import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
 import { isMarkerInsidePolygon } from '../utils'
-import { render } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 
 const tagsColor = tags => {
@@ -390,14 +389,14 @@ export default class MapProxy {
 
       popupComponent = React.createRef()
       const popupContent = document.createElement('div')
-      const cb = () => {
-        this.courierPopups.set(username, popupComponent)
-      }
+      const root = createRoot(popupContent)
 
-      render(<CourierPopupContent
+      root.render(<CourierPopupContent
         ref={ popupComponent }
         username={ username }
-        lastSeen={ lastSeen } />, popupContent, cb)
+        lastSeen={ lastSeen } />)
+
+      this.courierPopups.set(username, popupComponent)
 
       const tooltip = L.tooltip({
         offset: [ 0, -15 ],

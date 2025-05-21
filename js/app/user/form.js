@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Switch } from 'antd'
 
 import i18n from '../i18n'
@@ -37,19 +37,20 @@ function renderSwitch($input) {
     tagsEl.classList.add('d-none')
   
     const tags = JSON.parse(tagsEl.dataset.tags)
-  
+
     const defaultValue = tagsEl.value
-    render(
+
+    createRoot(el).render(
       <TagsSelect
         tags={ tags }
         defaultValue={ defaultValue }
         onChange={ tags => {
           const slugs = tags.map(tag => tag.slug)
           tagsEl.value = slugs.join(' ')
-        } } />, el)
+        } } />)
   }
 
-  render(
+  createRoot($switch.get(0)).render(
     <Switch
       defaultChecked={ checked }
       checkedChildren={ i18n.t('USER_EDIT_ENABLED_LABEL') }
@@ -61,9 +62,7 @@ function renderSwitch($input) {
           $hidden.remove()
         }
       }}
-    />,
-    $switch.get(0)
-  )
+    />)
 
 }
 

@@ -7,6 +7,7 @@ use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
@@ -1052,7 +1053,9 @@ class AdminController extends AbstractController
         array_map(
             function ($ruleSet) use (&$relatedEntitiesByPricingRuleSetId, $normalizer, $pricingRuleSetManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $pricingRuleSetManager->getPricingRuleSetApplications($ruleSet)
                 );
                 $relatedEntitiesByPricingRuleSetId[$ruleSet->getId()] = $normalizedRelatedEntities;
@@ -2153,7 +2156,9 @@ class AdminController extends AbstractController
         array_map(
             function ($ruleSet) use (&$relatedEntitiesByTimeSlotId, $normalizer, $timeSlotManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $timeSlotManager->getTimeSlotApplications($ruleSet)
                 );
                 $relatedEntitiesByTimeSlotId[$ruleSet->getId()] = $normalizedRelatedEntities;
@@ -2262,7 +2267,9 @@ class AdminController extends AbstractController
         array_map(
             function ($packageSet) use (&$relatedEntitiesByPackageSetId, $normalizer, $packageSetManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $packageSetManager->getPackageSetApplications($packageSet)
                 );
                 $relatedEntitiesByPackageSetId[$packageSet->getId()] = $normalizedRelatedEntities;

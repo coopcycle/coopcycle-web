@@ -1,11 +1,13 @@
 import { debounce } from 'lodash'
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import { OptionGroup } from '../restaurant/components/ProductDetails/ProductOptionGroup'
 
 var $previewLoader = $('#preview-loader')
 var $form = $('form[name="product_option"]')
+
+const previewRoot = createRoot(document.getElementById('preview'))
 
 const updatePreview = debounce(() => {
   $previewLoader.removeClass('hidden')
@@ -14,10 +16,11 @@ const updatePreview = debounce(() => {
     type: $form.attr('method'),
     data : $form.serialize(),
     success: function(data) {
-      render(<OptionGroup
+      previewRoot.render(<OptionGroup
         index={ 0 }
         option={ data }
-        onChange={ () => {} } />, document.getElementById('preview'), () => $previewLoader.addClass('hidden'))
+        onChange={ () => {} } />)
+      setTimeout(() => $previewLoader.addClass('hidden'), 0);
     }
   })
 }, 500)
