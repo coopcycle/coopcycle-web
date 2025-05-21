@@ -12,18 +12,9 @@ module.exports = [
   // },
   // extends: [
   //   'eslint:recommended',
-  //   'plugin:react-hooks/recommended',
   //   'plugin:jest/recommended',
   //   'plugin:storybook/recommended',
   // ],
-  // parser: 'babel-eslint',
-  // parserOptions: {
-  //   ecmaFeatures: {
-  //     jsx: true,
-  //   },
-  //   ecmaVersion: 6,
-  //   sourceType: 'module',
-  // },
   {
     plugins: {
       cypress: pluginCypress
