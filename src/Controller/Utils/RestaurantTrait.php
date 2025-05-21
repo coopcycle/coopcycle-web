@@ -77,7 +77,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -940,7 +940,7 @@ trait RestaurantTrait
 
     public function restaurantProductOptionPreviewAction(Request $request,
         FactoryInterface $productOptionFactory,
-        NormalizerInterface $serializer,
+        ObjectNormalizer $normalizer,
         LocaleProviderInterface $localeProvider)
     {
         $productOption = $productOptionFactory
@@ -970,8 +970,13 @@ trait RestaurantTrait
                 }
             }
 
+
             return new JsonResponse(
-                $serializer->normalize($productOption, 'json', ['groups' => ['product_option']])
+                $normalizer->normalize($productOption, context: [
+                    'groups' => ['product_option'],
+                    // Disable IRI generation as objects don't have ids
+                    'iri' => false,
+                ])
             );
         }
 
