@@ -50,7 +50,7 @@
     "@react-hook/size": "^2.1.2",
     "@reduxjs/toolkit": "^2.6.0",
     "@release-notes/changelog-parser": "^0.1.2",
-    "@sentry/browser": "^8.35.0",
+    "@sentry/browser": "^8.55.0",
     "@storybook/addon-essentials": "^7.6.20",
     "@storybook/addon-links": "^7.6.20",
     "@storybook/blocks": "^7.5.3",
