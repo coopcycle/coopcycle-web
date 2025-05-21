@@ -2,32 +2,15 @@ const reactPlugin = require('eslint-plugin-react');
 const reactCompiler = require('eslint-plugin-react-compiler');
 const pluginCypress = require('eslint-plugin-cypress/flat');
 const reactHooks = require('eslint-plugin-react-hooks');
+const jest = require('eslint-plugin-jest');
+const storybook = require('eslint-plugin-storybook');
 
 module.exports = [
-  // root: true,
-  // env: {
-  //   browser: true,
-  //   es6: true,
-  //   node: true,
-  // },
-  // extends: [
-  //   'eslint:recommended',
-  //   'plugin:jest/recommended',
-  //   'plugin:storybook/recommended',
-  // ],
   {
     plugins: {
       cypress: pluginCypress
-      // 'jest'
     },
   },
-  // globals: {
-  //   $: true,
-  //   io: true,
-  //   CoopCycle: true,
-  //   Stripe: true,
-  //   google: true,
-  // },
   {
     settings: {
       react: {
@@ -37,6 +20,8 @@ module.exports = [
   },
   // FIXME Doesn't work
   // pluginCypress.configs.recommended,
+  jest.configs['flat/recommended'],
+  ...storybook.configs['flat/recommended'],
   reactPlugin.configs.flat.recommended, // This is not a plugin object, but a shareable config object
   reactPlugin.configs.flat['jsx-runtime'], // Add this if you are using React 17+
   reactHooks.configs['recommended-latest'],
