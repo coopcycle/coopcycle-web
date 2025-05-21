@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import _ from 'lodash'
 import {  Input, Button } from 'antd'
 import { UserOutlined, PhoneOutlined, StarOutlined } from '@ant-design/icons'
@@ -412,10 +412,11 @@ export default function (el, options) {
   }
 
   const reactContainer = document.createElement('div')
+  const reactRoot = createRoot(reactContainer)
 
   el.append(reactContainer)
 
-  render(
+  reactRoot.render(
     <AddressBook
       baseTestId={el.id ?? 'AddressBook'}
       allowSearchSavedAddresses={Boolean(allowSearchSavedAddresses)}
@@ -467,7 +468,5 @@ export default function (el, options) {
         }
       }}
       {...autosuggestProps}
-    />,
-    reactContainer,
-  )
+    />)
 }

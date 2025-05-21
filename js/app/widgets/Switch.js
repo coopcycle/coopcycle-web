@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
+import React, { createRef, Component } from 'react'
+import { createRoot } from 'react-dom/client'
 import { Switch } from 'antd'
 
 class SwitchWrapper extends Component {
@@ -34,7 +34,10 @@ class SwitchWrapper extends Component {
   }
 }
 
+// https://stackoverflow.com/questions/37949981/call-child-method-from-parent
 export default function(el, options) {
+
+  const ref = createRef()
 
   let props = {
     checked: options.checked,
@@ -55,10 +58,10 @@ export default function(el, options) {
     }
   }
 
-  const component = render(<SwitchWrapper { ...props } onChange={ options.onChange } />, el)
+  createRoot(el).render(<SwitchWrapper ref={ ref } { ...props } onChange={ options.onChange } />)
 
   return {
-    check: () => component.check(),
-    uncheck: () => component.uncheck()
+    check: () => ref.current.check(),
+    uncheck: () => ref.current.uncheck()
   }
 }
