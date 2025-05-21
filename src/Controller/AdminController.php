@@ -7,6 +7,7 @@ use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
@@ -1052,7 +1053,9 @@ class AdminController extends AbstractController
         array_map(
             function ($ruleSet) use (&$relatedEntitiesByPricingRuleSetId, $normalizer, $pricingRuleSetManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $pricingRuleSetManager->getPricingRuleSetApplications($ruleSet)
                 );
                 $relatedEntitiesByPricingRuleSetId[$ruleSet->getId()] = $normalizedRelatedEntities;
