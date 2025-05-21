@@ -77,6 +77,7 @@ fos_js_routing:
         - _api_/task_lists/set_items/{date}/{username}_put
         - _api_/stores.{_format}_get_collection
         - _api_/stores/{id}.{_format}_delete
+        - _api_/stores/{id}.{_format}_patch
         - _api_/restaurants/{id}.{_format}_delete
         - _api_/delivery_forms/{id}.{_format}_delete
         - _api_/pricing_rule_sets/{id}.{_format}_delete
