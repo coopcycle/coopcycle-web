@@ -755,7 +755,8 @@ trait StoreTrait
     public function storeRecurrenceRulesAction($id, Request $request,
         EntityManagerInterface $entityManager,
         DeliveryManager $deliveryManager,
-        PricingManager $pricingManager
+        PricingManager $pricingManager,
+        PaginatorInterface $paginator
     )
     {
         $store = $entityManager
@@ -768,9 +769,19 @@ trait StoreTrait
 
         $data = [];
         $this->entityManager->getFilters()->enable('soft_deleteable');
-        $recurrenceRules = $this->entityManager->getRepository(RecurrenceRule::class)->findBy(
-            array('store' => $store),
-            array('createdAt' => 'DESC')
+
+        $qb = $this->entityManager->getRepository(RecurrenceRule::class)->createQueryBuilder('o');
+        $qb->andWhere('o.store = :store');
+        $qb->addOrderBy('o.createdAt', 'DESC');
+        $qb->setParameter('store', $store);
+
+        $recurrenceRules = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            10,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
         );
 
         // The date is not relevant while viewing/editing the recurrence rules (only the time is),
@@ -807,6 +818,7 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'recurrence_rules' => $data,
+            'pagination' => $recurrenceRules,
             'routes' => [
                 'view' => $routes['store_recurrence_rule'],
             ],
