@@ -14,6 +14,8 @@ class TopBarNotificationHandler
     private $redis;
     private $liveUpdates;
 
+    public const MAX_NOTIFICATIONS = 100;
+
     public function __construct(
         Redis $redis,
         LiveUpdates $liveUpdates)
@@ -37,8 +39,15 @@ class TopBarNotificationHandler
                 'timestamp' => (new \DateTime())->getTimestamp()
             ];
 
-            $this->redis->lpush($listKey, $uuid);
-            $this->redis->hset($hashKey, $uuid, json_encode($payload));
+            $this->redis->lPush($listKey, $uuid);
+            $this->redis->hSet($hashKey, $uuid, json_encode($payload));
+
+            $length = $this->redis->lLen($listKey);
+            if ($length > self::MAX_NOTIFICATIONS) {
+                $itemsToRemove = $this->redis->lRange($listKey, self::MAX_NOTIFICATIONS, $length - 1);
+                $this->redis->lTrim($listKey, 0, self::MAX_NOTIFICATIONS - 1);
+                $this->redis->hDel($hashKey, ...$itemsToRemove);
+            }
 
             $notificationsPayload = [
                 'name' => 'notifications',
