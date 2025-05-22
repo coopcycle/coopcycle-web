@@ -1369,7 +1369,7 @@ form.failure_reason.description.label: Description
 basics.manage: Gérer
 basics.settings: Paramètres
 form.store_type.failure_reason_set.label: "Motifs d'échec"
-form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">raisons d\'échec</a> à utiliser dans ce %entity%.
+form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">motifs dʼéchec</a> à utiliser dans ce %entity%.
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options
