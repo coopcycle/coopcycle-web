@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event\OrderAccepted;
-use AppBundle\Domain\Order\Reactor\CreateTasks;
+use AppBundle\MessageHandler\Order\CreateTasks;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;

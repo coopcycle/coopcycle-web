@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Command;
+namespace Tests\AppBundle\Message\Order\Command;
 
-use AppBundle\Domain\Order\Command\Checkout;
+use AppBundle\Message\Order\Command\Checkout;
 use AppBundle\Entity\Sylius\Order;
 use PHPUnit\Framework\TestCase;
 

@@ -7,7 +7,8 @@ use AppBundle\Exception\TaskAlreadyCompletedException;
 use AppBundle\Exception\TaskCancelledException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
+
 
 class Failed extends Base
 {
@@ -22,12 +23,14 @@ class Failed extends Base
                 $this->getContactName($request),
                 $this->getReason($request) // @deprecated failure must be set using `PUT /api/tasks/:id/incidents`
             );
-        } catch (PreviousTaskNotCompletedException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        } catch (TaskAlreadyCompletedException $e) {
-            throw new BadRequestHttpException($e->getMessage());
-        } catch (TaskCancelledException $e) {
-            throw new BadRequestHttpException($e->getMessage());
+        } catch (HandlerFailedException $e) {
+            $child = $e->getPrevious();
+
+            if ($child instanceof PreviousTaskNotCompletedException || $child instanceof TaskAlreadyCompletedException || $child instanceof TaskCancelledException) {
+                throw new BadRequestHttpException($child->getMessage());
+            } else {
+                throw $e;
+            }
         }
 
         return $task;

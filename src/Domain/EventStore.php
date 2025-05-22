@@ -5,6 +5,7 @@ namespace AppBundle\Domain;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderDomainEvent;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
+use AppBundle\Domain\DomainEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\TaskEvent;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,7 +28,7 @@ class EventStore extends ArrayCollection
         $this->requestStack = $requestStack;
     }
 
-    public function createEvent(Event $event)
+    public function createEvent(DomainEvent $event)
     {
         if ($event instanceof OrderDomainEvent) {
             return $this->createOrderEvent($event);
@@ -38,7 +39,7 @@ class EventStore extends ArrayCollection
         }
     }
 
-    public function addEvent(Event $event)
+    public function addEvent(DomainEvent $event)
     {
         if ($event instanceof OrderDomainEvent) {
             $domainEvent = $this->createOrderEvent($event);

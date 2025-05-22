@@ -1248,7 +1248,7 @@ class Order extends BaseOrder implements OrderInterface
         if (null !== $this->getDelivery()) {
             $pickup = $this->getDelivery()->getPickup();
 
-            if ($pickup->isAssigned()) {
+            if (null !== $pickup && $pickup->isAssigned()) {
                 return $pickup->getAssignedCourier()->getUsername();
             }
         }

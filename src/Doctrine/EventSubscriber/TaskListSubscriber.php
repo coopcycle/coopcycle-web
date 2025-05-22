@@ -2,10 +2,9 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
+use AppBundle\Domain\TaskList\Event\TaskListUpdated;
+use AppBundle\Domain\TaskList\Event\TaskListUpdatedv2;
 use AppBundle\Entity\TaskList;
-use AppBundle\Domain\Task\Event\TaskListUpdated;
-use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Message\PushNotification;
@@ -13,14 +12,12 @@ use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Nucleos\UserBundle\Model\UserInterface;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -29,7 +26,6 @@ class TaskListSubscriber implements EventSubscriber
     private $taskLists = [];
 
     public function __construct(
-        private readonly MessageBus $eventBus,
         private readonly MessageBusInterface $messageBus,
         private readonly TranslatorInterface $translator,
         private readonly RoutingInterface $routing,
@@ -175,8 +171,8 @@ class TaskListSubscriber implements EventSubscriber
             // legacy event and new version of event
             // see https://github.com/coopcycle/coopcycle-app/issues/1803
             $myTaskListDto = $this->taskListRepository->findMyTaskListAsDto($taskList->getCourier(), $taskList->getDate());
-            $this->eventBus->handle(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
-            $this->eventBus->handle(new TaskListUpdatedv2($taskList));
+            $this->messageBus->dispatch(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
+            $this->messageBus->dispatch(new TaskListUpdatedv2($taskList));
 
             $date = $taskList->getDate();
             $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];

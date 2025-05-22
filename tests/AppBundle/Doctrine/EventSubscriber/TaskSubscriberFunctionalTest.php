@@ -47,19 +47,21 @@ class TaskSubscriberFunctionalTest extends KernelTestCase
         $this->entityManager->persist($address);
 
         $task = new Task();
+        $task->setType(Task::TYPE_PICKUP);
         $task->setStatus(Task::STATUS_TODO);
         $task->setBefore(new \DateTime());
         $task->setAddress($address);
         $this->entityManager->persist($task);
 
         $task2 = new Task();
+        $task->setType(Task::TYPE_DROPOFF);
         $task2->setStatus(Task::STATUS_CANCELLED);
         $task2->setBefore(new \DateTime());
         $task2->setAddress($address);
         $this->entityManager->persist($task2);
 
         $delivery = new Delivery();
-        $delivery->setTasks([$task, $task2]);
+        $delivery->withTasks($task, $task2);
         $this->entityManager->persist($delivery);
 
         $order = new Order();
@@ -87,19 +89,21 @@ class TaskSubscriberFunctionalTest extends KernelTestCase
         $this->entityManager->persist($address);
 
         $task = new Task();
+        $task->setType(Task::TYPE_PICKUP);
         $task->setStatus(Task::STATUS_TODO);
         $task->setBefore(new \DateTime());
         $task->setAddress($address);
         $this->entityManager->persist($task);
 
         $task2 = new Task();
+        $task->setType(Task::TYPE_DROPOFF);
         $task2->setStatus(Task::STATUS_TODO);
         $task2->setBefore(new \DateTime());
         $task2->setAddress($address);
         $this->entityManager->persist($task2);
 
         $delivery = new Delivery();
-        $delivery->setTasks([$task, $task2]);
+        $delivery->withTasks($task, $task2);
         $this->entityManager->persist($delivery);
 
         $order = new Order();
