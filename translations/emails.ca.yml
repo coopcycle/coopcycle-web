@@ -43,20 +43,6 @@ task.done.subject: 'Tasca #%task.id% finalitzat'
 task.done.body: "Hola,\n<br>\nTasca #%task.id% s’ha completat\n"
 task.failed.subject: "Tasca #%task.id% no s'ha pogut completar"
 task.failed.body: "Hola,\n<br>\nTasca #%task.id% no s'ha pogut completar.\n"
-covid_19.body: "<h1>instruccions a seguir per al seu lliurament</h1>\n<p>Donada la\
-  \ pandèmia actual de COVID-19 (Coronavirus), vostè <strong>must strictly</strong>\
-  \ segueixi les següents instruccions:</p>\n<h2>1. Manten distància solcial</h2>\n\
-  <p>Deixarem la seva comanda a la seva porta, perquè no hagi d'acostar-se a la persona\
-  \ que ve a lliurar. Pot o no deixar propina.</p>\n<h2>2. Desembale la seva comanda\
-  \ després de rebre'l</h2>\n<p>El virus pot sobreviure en superfícies de cartó i\
-  \ plàstic durant diversos dies. L'empaquetat és, per tant, una ruta d'alt risc de\
-  \ transmissió del virus.\nPer tant, li demanem que <strong>desempaqueti la seva\
-  \ comanda i transfereixi el contingut a plats</strong>.</p>\n<h2>3. Tiri l'embalatge.</h2>\n\
-  <p>Una vegada que la seva comanda estigui desempaquetada, asseguri's de tirar <strong>l'embolcall\
-  \ a unes escombraries tancades</strong> Per a evitar tocar-la inadvertidament més\
-  \ tard.</p>\n<h2>4. Netella les mans!</h2>\n<p>Una vegada que hi hagi desempacado\
-  \ la seva comanda i rebutjat l'embalatge,<strong>netella les mans!</strong></p>\n"
-covid_19.subject: COVID-19 | Instruccions importants per a la teva comanda
 order.payment.body: "Hola,\n<br>\nHem completat un lliurament que ens ha demanat.\n\
   <br>\nA continuació trobarà un enllaç que li permet pagar amb targeta de crèdit.\n"
 order.payment.subject: Pagament de la teva comanda %order.number%

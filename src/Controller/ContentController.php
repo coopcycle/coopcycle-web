@@ -100,14 +100,6 @@ class ContentController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/covid-19', name: 'covid_19')]
-    public function covid19Action(TranslatorInterface $translator)
-    {
-        return $this->render('content/raw.html.twig', [
-            'text' => $translator->trans('covid_19.body', [], 'emails')
-        ]);
-    }
-
     #[Route(path: '/terms-text', name: 'terms-text')]
     public function termsTextAction(Request $request, Filesystem $assetsFilesystem)
     {

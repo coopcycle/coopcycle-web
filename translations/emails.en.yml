@@ -88,20 +88,6 @@ task.failed.body: |
   Task #%task.id% could not be completed.
 order.payment.subject: Payment of your order %order.number%
 order.payment.body: "Hello,\n<br>\nYou have ordered a delivery service from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
-covid_19.subject: COVID-19 | Important instructions for your order
-covid_19.body: "<h1>Instructions to follow for your delivery</h1>\n<p>Given the current\
-  \ COVID-19 (Coronavirus) pandemic, you <strong>must strictly</strong> adhere to\
-  \ the following instructions:</p>\n<h2>1. Respect social distancing</h2>\n<p>We\
-  \ will drop off your order on your doorstep, so you won't have to approach the person\
-  \ who comes to deliver. There is also no need to leave a tip.</p>\n<h2>2. Unpack\
-  \ your order after receipt</h2>\n<p>The virus can survive on cardboard and plastic\
-  \ surfaces for several days. Packaging is therefore a high risk route of transmission\
-  \ of the virus.\nWe therefore ask you to <strong>unpack your order and transfer\
-  \ the contents to plates</strong>.</p>\n<h2>3. Dispose of the packaging</h2>\n<p>Once\
-  \ your order is unpacked, be sure to <strong>dispose of the packaging in a closed\
-  \ bin</strong> to avoid inadvertently touching it later.</p>\n<h2>4. Wash your hands!</h2>\n\
-  <p>Once you have unpacked your order and discarded the packaging, <strong>wash your\
-  \ hands!</strong></p>\n"
 
 order.expiring_authorization.subject: A payment authorization will expire soon
 order.expiring_authorization.text: The payment authorization for order <strong>%order.number%</strong>
