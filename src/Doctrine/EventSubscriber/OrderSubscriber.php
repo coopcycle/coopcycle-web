@@ -60,6 +60,7 @@ class OrderSubscriber implements EventSubscriber
             if (is_null($oldValue) && !is_null($newValue) && !is_null($delivery)) {
                 foreach ($delivery->getTasks() as $task) {
                     $task->setMetadata('order_number', $newValue);
+                    $task->setMetadata('order_total', $order->getTotal());
                     $uow->recomputeSingleEntityChangeSet($em->getClassMetadata(get_class($task)), $task);
 
                     $this->changedTasks[] = $task;
