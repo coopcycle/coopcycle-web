@@ -71,7 +71,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
     }
 
     /**
-     * @param PaginatorInterface $data
+     * @param PaginatorInterface|array $data
      */
     private function postProcessResult(iterable $data, string $operationName): iterable
     {
@@ -101,13 +101,16 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o), $orders);
 
-        // Make sure to return a Paginator
-        return new TraversablePaginator(
-            new \ArrayIterator($invoiceLineItems),
-            $data->getCurrentPage(),
-            $data->getItemsPerPage(),
-            $data->getTotalItems()
-        );
+        if ($data instanceof PaginatorInterface) {
+            return new TraversablePaginator(
+                new \ArrayIterator($invoiceLineItems),
+                $data->getCurrentPage(),
+                $data->getItemsPerPage(),
+                $data->getTotalItems()
+            );
+        }
+
+        return $data;
     }
 
     private function preloadEntities(array $orders): void
