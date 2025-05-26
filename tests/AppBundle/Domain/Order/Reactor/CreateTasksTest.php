@@ -9,9 +9,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Restaurant;
-use AppBundle\Entity\Vendor;
 use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\RoutingInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTextEncoder;
 use PHPUnit\Framework\TestCase;
@@ -23,6 +21,8 @@ class CreateTasksTest extends TestCase
     use ProphecyTrait;
 
     private $createTasks;
+    private $deliveryManager;
+    private $orderTextEncoder;
 
     public function setUp(): void
     {
@@ -57,8 +57,6 @@ class CreateTasksTest extends TestCase
 
     public function testDoesNothingWhenOrderIsTakeaway()
     {
-        $delivery = new Delivery();
-
         $order = $this->prophesize(OrderInterface::class);
         $order
             ->getDelivery()
@@ -124,6 +122,9 @@ class CreateTasksTest extends TestCase
         $order
             ->getNotes()
             ->willReturn(null);
+        $order
+            ->getTotal()
+            ->willReturn(100);
 
         $delivery = new Delivery();
 
@@ -139,5 +140,14 @@ class CreateTasksTest extends TestCase
 
         $this->assertEquals('Order XXX', $delivery->getPickup()->getComments());
         $this->assertEquals('Order XXX', $delivery->getDropoff()->getComments());
+
+        $this->assertEquals('AB123', $delivery->getPickup()->getMetadata()['order_number']);
+        $this->assertEquals('AB123', $delivery->getDropoff()->getMetadata()['order_number']);
+
+        $this->assertEquals(100, $delivery->getPickup()->getMetadata()['order_total']);
+        $this->assertEquals(100, $delivery->getDropoff()->getMetadata()['order_total']);
+
+        $this->assertEquals('CARD', $delivery->getPickup()->getMetadata()['payment_method']);
+        $this->assertEquals('CARD', $delivery->getDropoff()->getMetadata()['payment_method']);
     }
 }
