@@ -101,7 +101,7 @@
         "martin-georgiev/postgresql-for-doctrine": "^1.3",
         "hautelook/alice-bundle": "~2.9.0",
         "nyholm/psr7": "^1.1",
-        "hwi/oauth-bundle": "^1.3.0",
+        "hwi/oauth-bundle": "^2.3.0",
         "php-http/httplug-bundle": "^1.16",
         "m6web/daemon-bundle": "^6.0",
         "azuyalabs/yasumi": "^2.1",
