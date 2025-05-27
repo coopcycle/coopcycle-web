@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductVariant as BaseProductVariant;
+use Sylius\Component\Product\Model\ProductVariantTranslationInterface;
 use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 
 class ProductVariant extends BaseProductVariant implements ProductVariantInterface
@@ -198,5 +199,10 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
     public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void
     {
         $this->pricingRuleSet = $pricingRuleSet;
+    }
+
+    protected function createTranslation(): ProductVariantTranslationInterface
+    {
+        return new ProductVariantTranslation();
     }
 }
