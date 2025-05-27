@@ -135,7 +135,7 @@ class PricingManager
     /**
      * @throws NoRuleMatchedException
      */
-    public function createOrder(Delivery $delivery, array $optionalArgs = []): ?OrderInterface
+    public function createOrder(Delivery $delivery, array $optionalArgs = []): OrderInterface
     {
         // Defining a default value in the method signature fails in the phpunit tests
         // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
