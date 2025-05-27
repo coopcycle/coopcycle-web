@@ -7,17 +7,11 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use AppBundle\Service\TaskManager;
-use SimpleBus\Message\Recorder\RecordsMessages;
-use SimpleBus\SymfonyBridge\Bus\CommandBus;
 
 class OrderSubscriber implements EventSubscriber
 {
-    public function __construct(
-        protected RecordsMessages $eventRecorder,
-        protected CommandBus $commandBus,
-        protected TaskManager $taskManager)
-    {
-    }
+    public function __construct(protected TaskManager $taskManager)
+    {}
 
     private array $changedTasks = [];
 

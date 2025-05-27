@@ -4,13 +4,12 @@ namespace Tests\AppBundle\Domain\Task\Reactor;
 
 use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Task\Event;
-use AppBundle\Domain\Task\Reactor\TriggerWebhook;
 use AppBundle\Entity\Delivery;
-// use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Message\Webhook;
+use AppBundle\MessageHandler\Task\TriggerWebhook;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\Assert;

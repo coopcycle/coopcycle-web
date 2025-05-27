@@ -3,17 +3,14 @@
 namespace Tests\AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Task\Event\TaskStarted;
-use AppBundle\Domain\Task\Reactor\SendSms;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
-use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Message\Sms;
+use AppBundle\MessageHandler\Task\SendSms;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
 use PHPUnit\Framework\Assert;

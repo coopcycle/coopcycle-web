@@ -5,8 +5,6 @@ imports:
   - { resource: services/validators.yml }
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
-  - { resource: services/message_bus/order.yml }
-  - { resource: services/message_bus/task.yml }
 
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
@@ -815,16 +813,11 @@ services:
 
   # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 48 }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
-      $eventStore: '@coopcycle.domain.event_store'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 32 }
@@ -835,8 +828,6 @@ services:
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
@@ -1164,8 +1155,6 @@ services:
   AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
-    arguments:
-      $eventBus: '@simple_bus.event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
 
@@ -1622,3 +1611,27 @@ services:
     tags: [ 'api_platform.filter' ]
 
   AppBundle\Fixtures\DatabasePurger: ~
+
+  AppBundle\Domain\EventStore: ~
+
+  AppBundle\MessageHandler\Task\SendSms:
+    arguments:
+      - '@coopcycle.settings_manager'
+      - '@sylius.repository.order'
+      - '@messenger.default_bus'
+      - '@libphonenumber\PhoneNumberUtil'
+      - '@router'
+      - '@translator'
+      - '%secret%'
+
+  AppBundle\MessageHandler\Task\NotifyUrbantz:
+    arguments:
+      - '@urbantz.client'
+      - '@doctrine.orm.default_entity_manager'
+      - '%secret%'
+      - '@monolog.logger.urbantz'
+
+  AppBundle\MessageHandler\Task\NotifyLoopeat:
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+      - '@monolog.logger.loopeat'
