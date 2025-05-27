@@ -20,5 +20,8 @@ final class DeliveryFormDeliveryOutput
     public ArbitraryPriceDto|null $arbitraryPrice = null;
 
     #[Groups(['delivery'])]
+    public bool $isSavedOrder = false;
+
+    #[Groups(['delivery'])]
     public string|null $trackingUrl = null;
 }
