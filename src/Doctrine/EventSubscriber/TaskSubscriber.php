@@ -6,7 +6,6 @@ use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\OrderManager;
@@ -18,7 +17,6 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
 
 class TaskSubscriber implements EventSubscriber
@@ -34,7 +32,7 @@ class TaskSubscriber implements EventSubscriber
     private $createdAddresses;
 
     public function __construct(
-        MessageBus $eventBus,
+        MessageBusInterface $eventBus,
         EventStore $eventStore,
         EntityChangeSetProcessor $processor,
         LoggerInterface $logger,
@@ -102,17 +100,17 @@ class TaskSubscriber implements EventSubscriber
             $this->processor->process($task, $uow->getEntityChangeSet($task));
         }
 
-        foreach ($this->processor->recordedMessages() as $recordedMessage) {
+        foreach ($this->processor->recordedMessages as $recordedMessage) {
             // If the task is not persisted yet (i.e entity insertions),
             // we handle the event in postFlush
             if ($uow->isScheduledForInsert($recordedMessage->getTask())) {
                 $this->postFlushEvents[] = $recordedMessage;
                 continue;
             }
-            $this->eventBus->handle($recordedMessage);
+            $this->eventBus->dispatch($recordedMessage);
         }
 
-        if (count($this->processor->recordedMessages()) > 0) {
+        if (count($this->processor->recordedMessages) > 0) {
             $uow->computeChangeSets();
         }
     }
@@ -130,7 +128,7 @@ class TaskSubscriber implements EventSubscriber
 
         $this->logger->debug(sprintf('There are %d "task:created" events to handle', count($this->createdTasks)));
         foreach ($this->createdTasks as $task) {
-            $this->eventBus->handle(new TaskCreated($task));
+            $this->eventBus->dispatch(new TaskCreated($task));
         }
 
         $this->logger->debug(sprintf('There are %d "task:updated" events to handle', count($this->tasksToUpdate)));
@@ -139,7 +137,7 @@ class TaskSubscriber implements EventSubscriber
         $this->logger->debug(sprintf('There are %d more events to handle', count($this->postFlushEvents)));
         foreach ($this->postFlushEvents as $postFlushEvent) {
             $this->logger->debug(sprintf('Handling event %s', $postFlushEvent::messageName()));
-            $this->eventBus->handle($postFlushEvent);
+            $this->eventBus->dispatch($postFlushEvent);
         }
 
         $this->createdTasks = [];

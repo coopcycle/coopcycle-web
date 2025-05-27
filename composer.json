@@ -93,7 +93,6 @@
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/nominatim-provider": "^5.0",
         "jmikola/geojson": "~1.0",
-        "simple-bus/symfony-bridge": "^6.0",
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.3",
         "oneup/uploader-bundle": "^4.0.1",

@@ -9,15 +9,14 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 abstract class Base
 {
-    protected $tokenStorage;
-    protected $taskManager;
-
     use TokenStorageTrait;
 
-    public function __construct(TokenStorageInterface $tokenStorage, TaskManager $taskManager)
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        protected TaskManager $taskManager
+    )
     {
         $this->tokenStorage = $tokenStorage;
-        $this->taskManager = $taskManager;
     }
 
     protected function getNotes(Request $request)

@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Controller\RestaurantController;
+use AppBundle\Domain\Order\Event;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Contract;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -31,7 +32,6 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Container\ContainerInterface;
 use Psr\Log\NullLogger;
 use Ramsey\Uuid\Uuid;
-use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Bundle\ResourceBundle\Doctrine\ORM\EntityRepository as SyliusEntityRepository;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
@@ -44,6 +44,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -125,7 +127,14 @@ class RestaurantControllerTest extends WebTestCase
             ->get('parameter_bag')
             ->willReturn($parameterBag->reveal());
 
-        $eventBus = $this->prophesize(EventBus::class);
+        $eventBus = $this->prophesize(MessageBusInterface::class);
+        $eventBus
+            ->dispatch(Argument::type(Event::class))
+            ->will(function ($args) {
+                return new Envelope($args[0]);
+        });
+
+
         $jwtTokenManager = $this->prophesize(JWTTokenManagerInterface::class);
 
         $this->controller = new RestaurantController(
