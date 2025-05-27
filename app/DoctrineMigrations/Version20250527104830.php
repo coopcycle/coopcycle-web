@@ -17,7 +17,7 @@ final class Version20250527104830 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql(<<<'SQL'
-            ALTER TABLE sylius_product_variant_translation ALTER name TYPE VARCHAR(65535)
+            ALTER TABLE sylius_product_variant_translation ALTER name TYPE VARCHAR(1020)
         SQL);
     }
 

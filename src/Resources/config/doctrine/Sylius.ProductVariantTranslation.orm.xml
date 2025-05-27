@@ -3,7 +3,7 @@
   <entity name="AppBundle\Entity\Sylius\ProductVariantTranslation" table="sylius_product_variant_translation">
     <attribute-overrides>
         <attribute-override name="name">
-            <field nullable="true" length="65535" />
+            <field nullable="true" length="1020" />
         </attribute-override>
     </attribute-overrides>
   </entity>
