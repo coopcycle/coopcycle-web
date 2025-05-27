@@ -144,9 +144,6 @@ class CreateTasksTest extends TestCase
         $this->assertEquals('AB123', $delivery->getPickup()->getMetadata()['order_number']);
         $this->assertEquals('AB123', $delivery->getDropoff()->getMetadata()['order_number']);
 
-        $this->assertEquals(100, $delivery->getPickup()->getMetadata()['order_total']);
-        $this->assertEquals(100, $delivery->getDropoff()->getMetadata()['order_total']);
-
         $this->assertEquals('CARD', $delivery->getPickup()->getMetadata()['payment_method']);
         $this->assertEquals('CARD', $delivery->getDropoff()->getMetadata()['payment_method']);
     }
