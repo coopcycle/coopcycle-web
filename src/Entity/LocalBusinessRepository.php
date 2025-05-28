@@ -8,16 +8,22 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptions;
+use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Utils\RestaurantFilter;
 use Carbon\Carbon;
 use DeepCopy\Filter\KeepFilter;
 use DeepCopy\Filter\ReplaceFilter;
+use DeepCopy\Filter\SetNullFilter;
 use DeepCopy\Matcher\PropertyMatcher;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Resource\Model\AbstractTranslation;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class LocalBusinessRepository extends EntityRepository
@@ -481,12 +487,12 @@ class LocalBusinessRepository extends EntityRepository
         $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
 
         // Set "id" to NULL so that new entities are created
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\Product', 'id'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOption', 'id'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOptions', 'id'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOptionValue  ', 'id'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductVariant', 'id'));
-        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('Sylius\Resource\Model\AbstractTranslation', 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(Product::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOption::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOptions::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOptionValue::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductVariant::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(AbstractTranslation::class, 'id'));
 
         $generateUUID = function ($currentValue) {
             return Uuid::uuid4()->toString();
@@ -497,17 +503,17 @@ class LocalBusinessRepository extends EntityRepository
         };
 
         // Generate new UUIDs for "code"
-        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\Product', 'code'));
-        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOption', 'code'));
-        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOptionValue', 'code'));
-        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\ProductVariant', 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(Product::class, 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(ProductOption::class, 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(ProductOptionValue::class, 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(ProductVariant::class, 'code'));
 
         // Replace restaurant to dest
-        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher('AppBundle\Entity\Sylius\Product', 'restaurant'));
-        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOption', 'restaurant'));
+        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher(Product::class, 'restaurant'));
+        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher(ProductOption::class, 'restaurant'));
 
         // Keep configured tax category
-        $copier->addFilter(new KeepFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductVariant', 'taxCategory'));
+        $copier->addFilter(new KeepFilter(), new PropertyMatcher(ProductVariant::class, 'taxCategory'));
 
         $productOptions = [];
         foreach ($src->getProductOptions() as $productOption) {
