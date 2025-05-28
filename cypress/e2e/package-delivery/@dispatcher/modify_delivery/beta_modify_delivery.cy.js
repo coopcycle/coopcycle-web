@@ -1,7 +1,7 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      '../cypress/fixtures/user_admin.yml',
+      'ORM/user_admin.yml',
       'ORM/tags.yml',
       '../features/fixtures/ORM/store_default.yml',
     ])
