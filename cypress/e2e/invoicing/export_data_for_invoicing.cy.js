@@ -2,7 +2,7 @@ import moment from 'moment'
 
 context('Invoicing (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('package_delivery_orders.yml')
+    cy.loadFixturesWithSetup('../cypress/fixtures/package_delivery_orders.yml')
     cy.login('admin', '12345678')
   })
 

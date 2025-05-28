@@ -1,6 +1,6 @@
 context('Checkout', () => {
   beforeEach(() => {
-    cy.loadFixtures('checkout.yml')
+    cy.loadFixtures('../cypress/fixtures/checkout.yml')
   })
 
   it('homepage search with imprecise address', () => {

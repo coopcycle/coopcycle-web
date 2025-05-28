@@ -1,6 +1,6 @@
 context('Delivery (role: admin) for a store with invalid pricing', () => {
   beforeEach(() => {
-    cy.loadFixtures('stores.yml')
+    cy.loadFixtures('../cypress/fixtures/stores.yml')
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 

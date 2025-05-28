@@ -1,6 +1,6 @@
 context('Setup simple multi-point pricing (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('pricing.yml')
+    cy.loadFixturesWithSetup('../cypress/fixtures/pricing.yml')
     cy.login('admin', '12345678')
   })
 
